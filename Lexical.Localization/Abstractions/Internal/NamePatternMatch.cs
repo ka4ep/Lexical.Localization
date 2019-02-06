@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Lexical.Asset.Internal
+namespace Lexical.Localization.Internal
 {
     public class NamePatternMatch : IAssetNamePatternMatch
     {

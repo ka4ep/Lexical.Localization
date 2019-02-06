@@ -1,5 +1,5 @@
 ﻿using ConsoleApp1;
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;

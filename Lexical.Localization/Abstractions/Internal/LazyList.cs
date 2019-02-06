@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lexical.Asset.Internal
+namespace Lexical.Localization.Internal
 {
     /// <summary>
     /// A cheap structure that is initially reserved from stack with one slot for one slot.

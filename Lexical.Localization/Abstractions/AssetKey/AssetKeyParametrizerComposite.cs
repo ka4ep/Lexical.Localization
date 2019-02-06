@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Composition of <see cref="IAssetKeyParametrizer" />s.

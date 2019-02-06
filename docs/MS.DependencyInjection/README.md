@@ -56,7 +56,7 @@ using (var serviceProvider = serviceCollection.BuildServiceProvider())
 <details><summary>Example full code (<u>click here</u>).</summary>
 ```csharp
 using System.Collections.Generic;
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -152,7 +152,7 @@ using (var serviceProvider = serviceCollection.BuildServiceProvider())
 ```csharp
 using System.Collections.Generic;
 using System.Globalization;
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.DependencyInjection;

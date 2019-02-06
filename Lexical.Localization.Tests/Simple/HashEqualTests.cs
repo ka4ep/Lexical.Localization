@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Lexical.Localization.Ms.Extensions;
-using Lexical.Asset;
-using Lexical.Asset.Internal;
+using Lexical.Localization;
+using Lexical.Localization.Internal;
 
 namespace Lexical.Localization.Tests
 {

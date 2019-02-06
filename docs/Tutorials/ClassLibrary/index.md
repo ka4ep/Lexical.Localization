@@ -23,7 +23,7 @@ First, Add NuGet reference to **Lexical.Localization**.
 Then, write this example class **MyController1.cs** that uses the static instance **LocalizationRoot.Global**.
 
 ```C#
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 
 namespace TutorialLibrary
@@ -44,7 +44,7 @@ namespace TutorialLibrary
 Localization strings can now be provided in the startup of the application by adding IAssets to the static instance.
 
 ```C#
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 using System;
 using System.Collections.Generic;
@@ -90,7 +90,7 @@ First, add NuGet reference to **Lexical.Localization.Abstractions**.
 Then write this example code **MyController2.cs**
 
 ```C#
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 
 namespace TutorialLibrary
@@ -120,7 +120,7 @@ namespace TutorialLibrary
 In the setup of the application IAssetRoot needs to be provided for the class.
 
 ```c#
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 using System;
 using System.Collections.Generic;
@@ -195,7 +195,7 @@ namespace TutorialLibrary
 In the setup of the application IStringLocalizerFactory or IStringLocalizer&lt;Type&gt; needs to be provided for the class.
 
 ```c#
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;

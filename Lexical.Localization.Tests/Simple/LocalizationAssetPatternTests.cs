@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Lexical.Localization;
-using Lexical.Asset;
+using Lexical.Localization;
 
 namespace Lexical.Localization.Tests
 {

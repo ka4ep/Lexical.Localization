@@ -3,10 +3,10 @@
 // Date:           8.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 using Lexical.Localization.Inlines;
-using Lexical.Asset.Internal;
+using Lexical.Localization.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using System;

@@ -7,7 +7,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Lexical.Asset;
+using Lexical.Localization;
 using Microsoft.Extensions.Localization;
 
 namespace Lexical.Localization.Ms.Extensions

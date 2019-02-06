@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Attribute that describes parameter name a type represents.

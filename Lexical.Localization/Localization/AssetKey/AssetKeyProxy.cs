@@ -3,11 +3,11 @@
 // Date:           26.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Asset.Internal;
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Proxy implementation of asset key. Contains single parameter name and value.

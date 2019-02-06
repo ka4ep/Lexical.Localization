@@ -13,8 +13,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Lexical.Asset;
-using Lexical.Asset.Internal;
+using Lexical.Localization;
+using Lexical.Localization.Internal;
 using Microsoft.Extensions.Localization;
 
 namespace Lexical.Localization.Ms.Extensions

@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Lexical.Asset.Internal
+namespace Lexical.Localization.Internal
 {
     public class EqualsComparer<T> : IEqualityComparer<T>
     {

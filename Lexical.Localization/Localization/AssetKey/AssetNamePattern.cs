@@ -3,13 +3,13 @@
 // Date:           22.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Asset.Internal;
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Pattern that can be matched against localization keys and asset filenames.

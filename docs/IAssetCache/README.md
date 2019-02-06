@@ -122,10 +122,10 @@ asset.Reload();
 
 # Links
 * [Example code](https://github.com/tagcode/Lexical.Localization/tree/master/docs/IAssetCache)
-* [Lexical.Asset.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Asset.Abstractions/))
+* [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [IAssetCache](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetCache.cs)
-* [Lexical.Asset](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset) ([NuGet](https://www.nuget.org/packages/Lexical.Asset/))
- * [AssetCache](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset/Asset/AssetCache.cs)
+* [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
+ * [AssetCache](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization/Asset/AssetCache.cs)
  * [AssetCachePartResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Asset/AssetCachePartResources.cs)
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/)) 
  * [AssetCachePartStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationAsset/AssetCachePartStrings.cs)

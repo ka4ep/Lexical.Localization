@@ -7,7 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Lexical.Asset.Internal
+namespace Lexical.Localization.Internal
 {
     /// <summary>
     /// This class is a simple list of T. Modifications are done under a lock. 

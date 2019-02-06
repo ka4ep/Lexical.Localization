@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// This <see cref="IAssetCachePart"/> is a component of <see cref="IAssetCache"/> that adds a cache

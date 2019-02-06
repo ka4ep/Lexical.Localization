@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;

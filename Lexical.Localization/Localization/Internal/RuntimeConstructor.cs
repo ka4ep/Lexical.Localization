@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Lexical.Asset.Internal
+namespace Lexical.Localization.Internal
 {
     // Example
     /* RuntimeConstructor<int, IList> listConstructor = new RuntimeConstructor<int, IList>(typeof(List<>));

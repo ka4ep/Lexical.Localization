@@ -5,7 +5,7 @@
 // --------------------------------------------------------
 using System.Collections.Generic;
 
-namespace Lexical.Asset.Internal
+namespace Lexical.Localization.Internal
 {
     public class MapList<Key, Value> : Dictionary<Key, List<Value>>
     {

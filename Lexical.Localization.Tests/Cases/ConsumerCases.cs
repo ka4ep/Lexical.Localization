@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using ConsoleApp1;
 using System.Globalization;
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Utils.Permutation;
 
 namespace Lexical.Localization.Tests

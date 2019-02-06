@@ -23,9 +23,9 @@ It must be populated with parts, either with [part builder helper](PartBuilder/i
 </details>
 
 # Links
-* [Lexical.Asset.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Asset.Abstractions/))
+* [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [IAssetLoader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetLoader.cs)
  * [IAssetLoaderPart](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetLoaderPart.cs)
  * [IAssetLoaderPartOptions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetLoaderPartOptions.cs)
-* [Lexical.Asset](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset) ([NuGet](https://www.nuget.org/packages/Lexical.Asset/))
+* [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [AssetLoader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/AssetLoader/AssetLoader.cs) is the default implementation of IAssetLoader.

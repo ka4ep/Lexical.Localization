@@ -3,14 +3,14 @@
 // Date:           5.11.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Asset.Internal;
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// This class matches loads file binary resources (byte[]) from file system.

@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Asset root where asset can be assigned.

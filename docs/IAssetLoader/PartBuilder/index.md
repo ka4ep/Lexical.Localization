@@ -19,7 +19,7 @@ Path can be added multiple times, this creates a new part for each.
 
 **3.** Files can be loaded with abstraction of [IFileProvider](https://github.com/aspnet/Extensions/blob/master/src/FileProviders/Abstractions/src/IFileProvider.cs).
 File provider source is added with **.FileProvider(*IFileProvider*)**. 
-Note that, this extension method is available by importing namespace Lexical.Asset.Ms.Extensions and **Lexical.Localization.Ms.Extensions**.
+Note that, this extension method is available by importing namespace Lexical.Localization.Ms.Extensions and **Lexical.Localization.Ms.Extensions**.
 The caller's assembly must also import nuget library [Microsoft.Extensions.FileProviders.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.FileProviders.Abstractions/).
 [!code-csharp[Snippet](Examples.cs#Snippet_3)]
 
@@ -144,7 +144,7 @@ Other formats can implemented by two ways:
 **1.** Implement ILocalizationFileReader and add its constructor to Lexical.Localization.LocalizationTextReaderBuilder.BinaryReaderConstructors.
 
 <br/>
-**2.** Implement delegate Lexical.Asset.AssetFileConstructor that constructs an IAsset, and then provide that delegate to part builder with **.AssetFileConstructor(*delegate*)**
+**2.** Implement delegate Lexical.Localization.AssetFileConstructor that constructs an IAsset, and then provide that delegate to part builder with **.AssetFileConstructor(*delegate*)**
 [!code-csharp[Snippet](Examples.cs#Snippet_13)]
 
 # ResourceManager
@@ -162,10 +162,10 @@ Note two, resource managers cannot be read from IFileProviders sources.
 
 # Links
 * [Example code](https://github.com/tagcode/Lexical.Localization/tree/master/docs/IAssetLoader/PartBuilder/Examples.cs)
-* [Lexical.Asset.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Asset.Abstractions/))
+* [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [IAssetLoaderPart](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetLoaderPart.cs)
  * [IAssetLoaderPartOptions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetLoaderPartOptions.cs)
-* [Lexical.Asset](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset) ([NuGet](https://www.nuget.org/packages/Lexical.Asset/))
+* [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [AssetLoaderPartBuilder](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/AssetLoader/AssetLoaderPartBuilder.cs)
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [AssetLoaderPartBuilder](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationAssetLoader/AssetLoaderPartBuilder.cs)

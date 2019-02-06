@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 #region Snippet_7b1
 using Lexical.Localization.Inlines;

@@ -10,7 +10,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Lexical.Asset.Internal
+namespace Lexical.Localization.Internal
 {
     /// <summary>
     /// Collection of interfaces and extension methods.

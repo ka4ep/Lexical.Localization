@@ -1,5 +1,5 @@
-﻿using Lexical.Asset;
-using Lexical.Asset.Internal;
+﻿using Lexical.Localization;
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;

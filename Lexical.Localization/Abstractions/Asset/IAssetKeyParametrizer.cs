@@ -1,7 +1,7 @@
-﻿using Lexical.Asset.Internal;
+﻿using Lexical.Localization.Internal;
 using System.Collections.Generic;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Extracts parameters from an object.

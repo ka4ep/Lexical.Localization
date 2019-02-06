@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     #region interface
     /// <summary>

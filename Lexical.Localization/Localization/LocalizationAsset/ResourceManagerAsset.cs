@@ -3,8 +3,8 @@
 // Date:           19.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Asset;
-using Lexical.Asset.Internal;
+using Lexical.Localization;
+using Lexical.Localization.Internal;
 using System;
 using System.Globalization;
 using System.IO;

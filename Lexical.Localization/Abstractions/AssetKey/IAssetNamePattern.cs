@@ -7,9 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using Lexical.Asset.Internal;
+using Lexical.Localization.Internal;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     #region IAssetNamePattern
     /// <summary>

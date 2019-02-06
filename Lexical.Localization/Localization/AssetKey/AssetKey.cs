@@ -3,7 +3,7 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Asset.Internal;
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +13,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     [Serializable]
     [DebuggerDisplay("{DebugPrint()}")]

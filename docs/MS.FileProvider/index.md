@@ -6,7 +6,7 @@ Loading requires an asset loader and
 [loader part](../IAssetLoader/PartClasses/index.html#file-provider). Note that, the calling assembly must:
 * import nuget **Microsoft.Extensions.FileProviders.Abstractions**
 * import namespace **Lexical.Localization.Ms.Extensions** 
-* import namespace **Lexical.Asset.Ms.Extensions**
+* import namespace **Lexical.Localization.Ms.Extensions**
 
 # [Snippet](#tab/snippet-1)
 [!code-csharp[Snippet](../IAssetLoader/PartClasses/Example_8.cs#Snippet)]
@@ -35,8 +35,8 @@ Asset loader part can also be constructed with
 * [Microsoft.Extensions.FileProviders.Physical](https://github.com/aspnet/Extensions/tree/master/src/FileProviders/Physical/src) ([NuGet](https://www.nuget.org/packages/Microsoft.Extensions.FileProviders.Physical/))
 * [Microsoft.Extensions.FileProviders.Embedded](https://github.com/aspnet/Extensions/tree/master/src/FileProviders/Embedded/src) ([NuGet](https://www.nuget.org/packages/Microsoft.Extensions.FileProviders.Embedded/))
 * [Microsoft.Extensions.FileProviders.Composite](https://github.com/aspnet/Extensions/tree/master/src/FileProviders/Composite/src) ([NuGet](https://www.nuget.org/packages/Microsoft.Extensions.FileProviders.Composite/))
-* [Lexical.Asset](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset) ([NuGet](https://www.nuget.org/packages/Lexical.Asset/))
- * [AssetLoaderPartBuilder](https://github.com/tagcode/Lexical.Asset/blob/master/Lexical.Asset/Ms.Extensions/FileProvider/AssetLoaderPartBuilder.cs)
+* [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
+ * [AssetLoaderPartBuilder](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/FileProvider/AssetLoaderPartBuilder.cs)
  * [AssetLoaderPartFileProviderResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderResources.cs)
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [AssetLoaderPartBuilder](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/FileProvider/AssetLoaderPartBuilder.cs)

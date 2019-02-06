@@ -3,7 +3,7 @@
 // Date:           29.11.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Asset;
+using Lexical.Localization;
 using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections.Generic;
@@ -30,8 +30,8 @@ namespace Lexical.Localization
         public static AssetLoaderPartBuilder KeyPolicy(this AssetLoaderPartBuilder partBuilder, IAssetKeyNamePolicy keyPattern)
         {
             // Add build participant
-            partBuilder.AddBuilderPart(AssetLoaderPartBuilderParticipant.Instance);
-            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderLocalizationPartBuilderParticipant.Instance);
+            partBuilder.AddBuilderPart(AssetLoaderPartBuilderStringsParticipant.Instance);
+            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderStringsParticipant.Instance);
             partBuilder.Add<IAssetKeyNamePolicy>(KEY_KEYPOLICY, keyPattern);
             return partBuilder;
         }
@@ -45,8 +45,8 @@ namespace Lexical.Localization
         public static AssetLoaderPartBuilder KeyPolicies(this AssetLoaderPartBuilder partBuilder, IEnumerable<IAssetKeyNamePolicy> keyPatterns)
         {
             // Add build participant
-            partBuilder.AddBuilderPart(AssetLoaderPartBuilderParticipant.Instance);
-            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderLocalizationPartBuilderParticipant.Instance);
+            partBuilder.AddBuilderPart(AssetLoaderPartBuilderStringsParticipant.Instance);
+            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderStringsParticipant.Instance);
             partBuilder.AddRange<IAssetKeyNamePolicy>(KEY_KEYPOLICY, keyPatterns);
             return partBuilder;
         }
@@ -60,8 +60,8 @@ namespace Lexical.Localization
         public static AssetLoaderPartBuilder KeyPattern(this AssetLoaderPartBuilder partBuilder, string keyPattern)
         {
             // Add build participant
-            partBuilder.AddBuilderPart(AssetLoaderPartBuilderParticipant.Instance);
-            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderLocalizationPartBuilderParticipant.Instance);
+            partBuilder.AddBuilderPart(AssetLoaderPartBuilderStringsParticipant.Instance);
+            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderStringsParticipant.Instance);
             partBuilder.Add<IAssetKeyNamePolicy>(KEY_KEYPOLICY, new AssetNamePattern(keyPattern));
             return partBuilder;
         }
@@ -75,8 +75,8 @@ namespace Lexical.Localization
         public static AssetLoaderPartBuilder KeyPatterns(this AssetLoaderPartBuilder partBuilder, IEnumerable<string> keyPatterns)
         {
             // Add build participant
-            partBuilder.AddBuilderPart(AssetLoaderPartBuilderParticipant.Instance);
-            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderLocalizationPartBuilderParticipant.Instance);
+            partBuilder.AddBuilderPart(AssetLoaderPartBuilderStringsParticipant.Instance);
+            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderStringsParticipant.Instance);
             partBuilder.AddRange<IAssetKeyNamePolicy>(KEY_KEYPOLICY, keyPatterns.Select(str => new AssetNamePattern(str)));
             return partBuilder;
         }
@@ -104,8 +104,8 @@ namespace Lexical.Localization
         public static AssetLoaderPartBuilder AssetFileConstructor(this AssetLoaderPartBuilder partBuilder, AssetFileConstructor keyPatterns)
         {
             // Add build participant
-            partBuilder.AddBuilderPart(AssetLoaderPartBuilderParticipant.Instance);
-            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderLocalizationPartBuilderParticipant.Instance);
+            partBuilder.AddBuilderPart(AssetLoaderPartBuilderStringsParticipant.Instance);
+            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderStringsParticipant.Instance);
             partBuilder.Add<AssetFileConstructor>(KEY_ASSETFILECONSTRUCTOR, keyPatterns);
             return partBuilder;
         }
@@ -119,8 +119,8 @@ namespace Lexical.Localization
         public static AssetLoaderPartBuilder AssetFileConstructor(this AssetLoaderPartBuilder partBuilder, IEnumerable<AssetFileConstructor> keyPatterns)
         {
             // Add build participant
-            partBuilder.AddBuilderPart(AssetLoaderPartBuilderParticipant.Instance);
-            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderLocalizationPartBuilderParticipant.Instance);
+            partBuilder.AddBuilderPart(AssetLoaderPartBuilderStringsParticipant.Instance);
+            partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderStringsParticipant.Instance);
             partBuilder.AddRange<AssetFileConstructor>(KEY_ASSETFILECONSTRUCTOR, keyPatterns);
             return partBuilder;
         }
@@ -146,8 +146,8 @@ namespace Lexical.Localization
         /// <returns>part builder</returns>
         public static AssetLoaderPartBuilder Strings(this AssetLoaderPartBuilder partBuilder)
         {
-            partBuilder.AddBuilderPart(AssetLoaderPartBuilderParticipant.Instance);
-            partBuilder.AddUnique<string>(Lexical.Asset.AssetLoaderPartBuilderExtensions.Key_PartTypes, PartType_Strings);
+            partBuilder.AddBuilderPart(AssetLoaderPartBuilderStringsParticipant.Instance);
+            partBuilder.AddUnique<string>(Lexical.Localization.AssetLoaderPartBuilderExtensions.Key_PartTypes, PartType_Strings);
             return partBuilder;
         }
 
@@ -163,8 +163,8 @@ namespace Lexical.Localization
         /// <returns>part builder</returns>
         public static AssetLoaderPartBuilder ResourceManager(this AssetLoaderPartBuilder partBuilder)
         {
-            partBuilder.AddBuilderPart(AssetLoaderPartBuilderParticipant.Instance);
-            partBuilder.AddUnique<string>(Lexical.Asset.AssetLoaderPartBuilderExtensions.Key_PartTypes, PartType_ResourceManager);
+            partBuilder.AddBuilderPart(AssetLoaderPartBuilderStringsParticipant.Instance);
+            partBuilder.AddUnique<string>(Lexical.Localization.AssetLoaderPartBuilderExtensions.Key_PartTypes, PartType_ResourceManager);
             return partBuilder;
         }
 
@@ -174,12 +174,12 @@ namespace Lexical.Localization
     /// Knows how to build <see cref="AssetLoaderPartEmbeddedResources"/> and 
     /// <see cref="AssetLoaderPartFileResources"/>.
     /// </summary>
-    internal class AssetLoaderPartBuilderParticipant : IAssetLoaderPartBuilderPart
+    public partial class AssetLoaderPartBuilderStringsParticipant : IAssetLoaderPartBuilderPart
     {
         /// <summary>
         /// Static instance
         /// </summary>
-        static readonly AssetLoaderPartBuilderParticipant instance = new AssetLoaderPartBuilderParticipant();
+        static readonly AssetLoaderPartBuilderStringsParticipant instance = new AssetLoaderPartBuilderStringsParticipant();
 
         /// <summary>
         /// Static instance getter
@@ -217,7 +217,7 @@ namespace Lexical.Localization
                 {
                     IList<IAssetNamePattern> filePatterns = builder.GetFilePatterns();
                     // Asset "FilePattern"
-                    if (filePatterns == null || filePatterns.Count == 0) { errors.Add($"Please add file name pattern with .{nameof(Lexical.Asset.AssetLoaderPartBuilderExtensions.FilePattern)}()."); }
+                    if (filePatterns == null || filePatterns.Count == 0) { errors.Add($"Please add file name pattern with .{nameof(Lexical.Localization.AssetLoaderPartBuilderExtensions.FilePattern)}()."); }
 
                     else
                     {
@@ -252,7 +252,7 @@ namespace Lexical.Localization
                 {
                     IList<IAssetNamePattern> embeddedPatterns = builder.GetEmbeddedPatterns();
                     // Asset "EmbeddedPattern"
-                    if (embeddedPatterns == null || embeddedPatterns.Count == 0) { errors.Add($"Please add embedded resource name pattern with .{nameof(Lexical.Asset.AssetLoaderPartBuilderExtensions.EmbeddedPattern)}()."); }
+                    if (embeddedPatterns == null || embeddedPatterns.Count == 0) { errors.Add($"Please add embedded resource name pattern with .{nameof(Lexical.Localization.AssetLoaderPartBuilderExtensions.EmbeddedPattern)}()."); }
 
                     else
                     {
@@ -297,7 +297,7 @@ namespace Lexical.Localization
                     IList<IAssetNamePattern> filePatterns = builder.GetFilePatterns();
 
                     // Asset "FilePattern"
-                    if (filePatterns == null || filePatterns.Count == 0) { errors.Add($"Please add file name pattern with .{nameof(Lexical.Asset.AssetLoaderPartBuilderExtensions.FilePattern)}()."); }
+                    if (filePatterns == null || filePatterns.Count == 0) { errors.Add($"Please add file name pattern with .{nameof(Lexical.Localization.AssetLoaderPartBuilderExtensions.FilePattern)}()."); }
 
                     else
                     {
@@ -322,7 +322,7 @@ namespace Lexical.Localization
                     IList<IAssetNamePattern> embeddedPatterns = builder.GetEmbeddedPatterns();
 
                     // Asset "EmbeddedPattern"
-                    if (embeddedPatterns == null || embeddedPatterns.Count == 0) { errors.Add($"Please add embedded resource pattern with .{nameof(Lexical.Asset.AssetLoaderPartBuilderExtensions.EmbeddedPattern)}()."); }
+                    if (embeddedPatterns == null || embeddedPatterns.Count == 0) { errors.Add($"Please add embedded resource pattern with .{nameof(Lexical.Localization.AssetLoaderPartBuilderExtensions.EmbeddedPattern)}()."); }
                     else
                     {
                         foreach (IAssetNamePattern embeddedPattern in embeddedPatterns)

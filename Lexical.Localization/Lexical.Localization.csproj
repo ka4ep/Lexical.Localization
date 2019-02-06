@@ -7,7 +7,7 @@
     <Company>Lexical</Company>
     <Description>Localization class library for .NET</Description>
     <Copyright>Toni Kalajainen</Copyright>
-    <PackageLicenseUrl>https://lexical.fi/License/Localization/</PackageLicenseUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/tagcode/Lexical.Localization/master/LICENSE?token=AE_lkRucodZ8Nn1i71P8NpdqBKAtPZEaks5cWv6XwA%3D%3D</PackageLicenseUrl>
     <PackageProjectUrl>https://lexical.fi/Localization/index.html</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tagcode/Lexical.Localization</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -42,11 +42,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Include="README.md">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>README.tt</DependentUpon>
-    </None>
     <None Update="Localization\Ms.Extensions\Localization\StringLocalizerKey.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>StringLocalizerKey.cs</LastGenOutput>
@@ -58,10 +53,6 @@
     <None Update="Abstractions\Inlines\InlineExtensions.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>InlineExtensions.cs</LastGenOutput>
-    </None>
-    <None Update="README.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>README.md</LastGenOutput>
     </None>
   </ItemGroup>
 

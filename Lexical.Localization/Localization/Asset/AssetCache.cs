@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Bases for cache. Individual cache features for different interfaces need to be added separately.

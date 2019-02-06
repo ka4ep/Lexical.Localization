@@ -1,5 +1,5 @@
 using ConsoleApp1;
-using Lexical.Asset;
+using Lexical.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 

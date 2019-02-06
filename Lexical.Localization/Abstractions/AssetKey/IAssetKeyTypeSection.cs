@@ -5,7 +5,7 @@
 // --------------------------------------------------------
 using System;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Key has capability of "type" parameter assignment.

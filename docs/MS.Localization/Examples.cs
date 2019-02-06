@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Reflection;
 using System.Resources;
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;

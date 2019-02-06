@@ -159,12 +159,12 @@ public interface IAssetSource
 
 # Links
 * [Example code](https://github.com/tagcode/Lexical.Localization/tree/master/docs/IAssetBuilder)
-* [Lexical.Asset.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization/Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Asset.Abstractions/))
+* [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization/Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [IAssetBuilder](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetBuilder.cs)
  * [IAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetSource.cs)
-* [Lexical.Asset](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset) ([NuGet](https://www.nuget.org/packages/Lexical.Asset/))
- * [AssetBuilder](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset/Asset/AssetBuilder.cs)
- * [AssetSource](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset/Asset/AssetSource.cs) Passes IAsset to to builder.
+* [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
+ * [AssetBuilder](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization/Asset/AssetBuilder.cs)
+ * [AssetSource](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization/Asset/AssetSource.cs) Passes IAsset to to builder.
  * [AssetCacheSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Asset/AssetCache.cs) Adds cache to the built asset. 
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [ConfigurationBuilderLocalizationAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/Configuration/ConfigurationBuilderLocalizationAssetSource.cs) Adapts IConfigurationBuilder to IAssetSource.

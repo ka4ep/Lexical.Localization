@@ -9,9 +9,9 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Lexical.Asset.Internal;
+using Lexical.Localization.Internal;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// <see cref="DynamicMetaObject" /> implementation for <see cref="IAssetKey" /> interfaces.

@@ -5,7 +5,7 @@
 // --------------------------------------------------------
 using System;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Makes copies of keys. Copies parts that parametrizer recognizes.

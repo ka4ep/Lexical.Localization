@@ -6,7 +6,7 @@
 using System;
 using System.Reflection;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Key has capability of "assembly" parameter assignment.

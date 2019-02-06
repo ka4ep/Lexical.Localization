@@ -46,7 +46,7 @@ the is distinction in the end of the class names: **AssetLoaderPartFile*Strings*
 Third type of source is [IFileProvider](https://github.com/aspnet/Extensions/blob/master/src/FileProviders/Abstractions/src/IFileProvider.cs).
 [AssetLoaderPartFileProviderStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderStrings.cs)
 loads strings from file providers. The calling assembly must have nuget dependency to **[Microsoft.Extensions.FileProviders.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.FileProviders.Abstractions/)**,
-and import namespaces **Lexical.Localization.Ms.Extensions** and **Lexical.Asset.Ms.Extensions**.
+and import namespaces **Lexical.Localization.Ms.Extensions** and **Lexical.Localization.Ms.Extensions**.
 # [Snippet](#tab/snippet-8)
 [!code-csharp[Snippet](Example_8.cs#Snippet)]
 # [Full Code](#tab/full-8)
@@ -82,7 +82,7 @@ What options are supported or needed is implementation specific.
 
 # Links
 * [Example code](https://github.com/tagcode/Lexical.Localization/tree/master/docs/IAssetLoader/PartClasses)
-* [Lexical.Asset.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Asset.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Asset.Abstractions/))
+* [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [IAssetLoaderPart](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetLoaderPart.cs)
  * [IAssetLoaderPartOptions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetLoaderPartOptions.cs)
 

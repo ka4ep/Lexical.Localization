@@ -36,7 +36,7 @@ Go to properties of **localization.ini** and change **Copy to Output Directory**
 Next, open the **Program.cs** and modify the code to the following.
 
 ```C#
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 using System;
 using System.Globalization;

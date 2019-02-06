@@ -3,12 +3,12 @@
 // Date:           28.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Asset.Internal;
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// A composition of <see cref="IAsset"/> instances.

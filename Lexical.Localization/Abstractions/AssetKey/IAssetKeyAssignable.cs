@@ -3,7 +3,7 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Key has capability of "key" parameter assignment.

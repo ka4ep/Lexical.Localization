@@ -6,7 +6,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     public class AssetKeyException : AssetException
     {

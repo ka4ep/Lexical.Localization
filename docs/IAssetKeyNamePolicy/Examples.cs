@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization;
 
 namespace docs

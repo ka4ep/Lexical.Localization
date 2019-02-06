@@ -10,7 +10,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// This class reads parameters from <see cref="IAssetKey"/> by using two interface annotations:

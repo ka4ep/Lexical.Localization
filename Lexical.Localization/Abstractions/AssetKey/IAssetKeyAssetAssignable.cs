@@ -5,7 +5,7 @@
 // --------------------------------------------------------
 using System;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// A key where <see cref="IAsset"/> can be assigned. (Typically a mutable root.)

@@ -5,7 +5,7 @@
 // --------------------------------------------------------
 using System;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Signals that the class gives asset specific parameters, hints or capabilities.

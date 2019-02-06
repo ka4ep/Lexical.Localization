@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lexical.Asset.Internal
+namespace Lexical.Localization.Internal
 {
     /// <summary>
     /// Pair (2-tuple). Hashcode is cached. Elements are immutable. Type is stack allocated. 

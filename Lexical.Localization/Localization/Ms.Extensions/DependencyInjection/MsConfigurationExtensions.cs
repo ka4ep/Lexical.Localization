@@ -5,7 +5,7 @@
 // --------------------------------------------------------
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Lexical.Asset;
+using Lexical.Localization;
 
 namespace Lexical.Localization.Ms.Extensions
 {

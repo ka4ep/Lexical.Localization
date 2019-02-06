@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// This class adapts IDictionary{byte[], byte[]} to <see cref="IAssetResourceProvider"/> and <see cref="ILocalizationStringProvider"/>.

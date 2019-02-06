@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration.Ini;
 using System;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Utils.Permutation;
 
 namespace Lexical.Localization.Tests.Cases

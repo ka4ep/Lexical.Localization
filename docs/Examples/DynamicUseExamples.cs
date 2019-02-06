@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using Lexical.Localization;
 using Lexical.Localization.Inlines;
-using Lexical.Asset;
+using Lexical.Localization;
 
 namespace docs
 {

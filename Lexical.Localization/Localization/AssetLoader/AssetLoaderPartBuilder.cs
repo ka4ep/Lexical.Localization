@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// <see cref="AssetLoaderPartBuilder"/> is a helper that constructs <see cref="IAssetLoaderPart"/>s.
@@ -22,7 +22,7 @@ namespace Lexical.Asset
     /// </code>
     /// 
     /// </summary>
-    public class AssetLoaderPartBuilder : AssetLoaderPartOptions
+    public partial class AssetLoaderPartBuilder : AssetLoaderPartOptions
     {
         /// <summary>
         /// Builder parts.
@@ -257,7 +257,7 @@ namespace Lexical.Asset
         /// <returns>part builder</returns>
         public static AssetLoaderPartBuilder Resource(this AssetLoaderPartBuilder partBuilder)
         {
-            partBuilder.AddBuilderPart(AssetLoaderPartBuilderParticipant.Instance);
+            partBuilder.AddBuilderPart(AssetLoaderPartBuilderResourcesParticipant.Instance);
             partBuilder.AddUnique<string>(Key_PartTypes, PartType_Resource);
             return partBuilder;
         }
@@ -340,12 +340,12 @@ namespace Lexical.Asset
     /// Knows how to build <see cref="AssetLoaderPartEmbeddedResources"/> and 
     /// <see cref="AssetLoaderPartFileResources"/>.
     /// </summary>
-    internal class AssetLoaderPartBuilderParticipant : IAssetLoaderPartBuilderPart
+    internal class AssetLoaderPartBuilderResourcesParticipant : IAssetLoaderPartBuilderPart
     {
         /// <summary>
         /// Static instance
         /// </summary>
-        static readonly AssetLoaderPartBuilderParticipant instance = new AssetLoaderPartBuilderParticipant();
+        static readonly AssetLoaderPartBuilderResourcesParticipant instance = new AssetLoaderPartBuilderResourcesParticipant();
 
         /// <summary>
         /// Static instance getter

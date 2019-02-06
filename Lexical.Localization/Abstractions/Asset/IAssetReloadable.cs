@@ -4,7 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     public interface IAssetReloadable : IAsset
     {

@@ -1,4 +1,4 @@
-﻿using Lexical.Asset;
+﻿using Lexical.Localization;
 
 namespace Lexical.Localization.Inlines
 {

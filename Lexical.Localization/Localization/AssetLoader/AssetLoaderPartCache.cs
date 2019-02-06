@@ -3,14 +3,14 @@
 // Date:           23.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Asset;
-using Lexical.Asset.Internal;
+using Lexical.Localization;
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Decorates <see cref="IAssetLoaderPart"/> by caching loaded parts.

@@ -5,7 +5,7 @@
 // --------------------------------------------------------
 using System;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Key has capability of "resource" parameter assignment. "resource" describes a part of a path to assembly's embedded resource.

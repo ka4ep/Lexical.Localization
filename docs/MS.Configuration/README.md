@@ -35,7 +35,7 @@ IAsset asset = new ConfigurationLocalizationAsset(configuration, namePolicy);
 
 ```csharp
 using System.Reflection;
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
@@ -110,7 +110,7 @@ IAsset asset = assetBuilder.Build();
 
 ```csharp
 using System.Reflection;
-using Lexical.Asset;
+using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;

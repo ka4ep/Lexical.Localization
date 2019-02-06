@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// Adapts single <see cref="IAsset"/> to <see cref="IAssetSource"/>.

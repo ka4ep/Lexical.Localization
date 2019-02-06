@@ -1,4 +1,4 @@
-﻿using Lexical.Asset;
+﻿using Lexical.Localization;
 using Lexical.Localization;
 
 namespace docs

@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using Lexical.Asset;
+using Lexical.Localization;
 
 namespace Lexical.Localization.Tests
 {

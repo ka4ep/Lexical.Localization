@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
-using Lexical.Asset;
+using Lexical.Localization;
 
 namespace Lexical.Localization.Ms.Extensions
 {

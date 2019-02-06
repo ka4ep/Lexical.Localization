@@ -1,6 +1,6 @@
-﻿using Lexical.Asset;
+﻿using Lexical.Localization;
 using Lexical.Localization;
-using Lexical.Asset.Ms.Extensions;
+using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 

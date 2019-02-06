@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Lexical.Asset.Internal
+namespace Lexical.Localization.Internal
 {
     public static class CanonicalNameUtils
     {

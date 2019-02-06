@@ -3,8 +3,8 @@
 // Date:           25.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Asset;
-using Lexical.Asset.Internal;
+using Lexical.Localization;
+using Lexical.Localization.Internal;
 using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Lexical.Asset.Ms.Extensions
+namespace Lexical.Localization.Ms.Extensions
 {
     /// <summary>
     /// Provides <see cref="IAssetResourceProvider"/> assets from <see cref="IFileProvider"/> files.

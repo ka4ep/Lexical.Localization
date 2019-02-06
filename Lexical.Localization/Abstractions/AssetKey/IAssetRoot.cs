@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     /// <summary>
     /// This interface signals that this key is the root key.

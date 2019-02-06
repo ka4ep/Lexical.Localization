@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Lexical.Asset
+namespace Lexical.Localization
 {
     #region interface
     /// <summary>
