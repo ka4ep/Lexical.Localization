@@ -1,0 +1,144 @@
+# Culture Policy
+The default implementation is **CulturePolicy**. 
+
+```csharp
+// Create policy
+ICulturePolicyAssignable culturePolicy = new CulturePolicy();
+```
+
+ICulturePolicy is assigned to localization root from where if affects the constructed keys.
+
+```csharp
+// Create localization source
+var source = new Dictionary<string, string> {
+    { "MyController:hello", "Hello World!" },
+    { "en:MyController:hello", "Hello World!" },
+    { "de:MyController:hello", "Hallo Welt!" }
+};
+// Create asset with culture policy
+IAsset asset = new LocalizationStringDictionary(source);
+// Create root and assign culturePolicy
+IAssetRoot root = new LocalizationRoot(asset, culturePolicy);
+```
+
+Direct way to use *CulturePolicy* is to assign prefered culture and fallback culture on the provider instance.
+Typical fallback culture is the root culture "".
+
+```csharp
+// Set active culture and set fallback culture
+ICulturePolicy cultureArray_ =
+    new CulturePolicy().SetCultures(
+        CultureInfo.GetCultureInfo("en-US"),
+        CultureInfo.GetCultureInfo("en"),
+        CultureInfo.GetCultureInfo("")
+    );
+```
+
+They can also be assigned as strings.
+
+```csharp
+// Create policy from array of cultures
+ICulturePolicy culturePolicy = new CulturePolicy().SetCultures("en-US", "en", "");
+```
+
+**.SetCultureWithFallbackCultures()** assigns culture and its default fallback cultures.
+
+```csharp
+// Create policy from culture, adds fallback cultures "en" and "".
+ICulturePolicy culturePolicy = new CulturePolicy().SetCultureWithFallbackCultures("en-US");
+```
+
+Culture policy can be configured to use **CultureInfo.CurrentCulture**. 
+This is also the default state of new *CulturePolicy*.
+Active culture can be controlled from that field.
+
+```csharp
+// Set to use CultureInfo.CurrentCulture
+ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentCulture();
+// Change current culture
+CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en");
+```
+
+Or **CultureInfo.CurrentUICulture**.
+
+```csharp
+// Set to use CultureInfo.CurrentCulture
+ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentCulture();
+// Change current culture
+CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en");
+```
+
+**.SetFunc()** assigns a delegate that uses the returned *CultureInfo*.
+
+```csharp
+// Assign delegate 
+ICulturePolicy culturePolicy = new CulturePolicy().SetFunc(() => CultureInfo.GetCultureInfo("fi"));
+```
+
+**.SetSourceFunc()** assigns a delegate that uses the returned *ICulturePolicy*.
+
+```csharp
+// Assign delegate 
+ICulturePolicy source = new CulturePolicy().SetToCurrentUICulture();
+ICulturePolicy culturePolicy = new CulturePolicy().SetSourceFunc(() => source);
+```
+
+**.ToSnapshot()** takes an array snapshot of the source, fixing its value.
+**.AsReadonly()** creates a new policy where the enumerable cannot be changed. 
+Together these two make an immutable policy.
+
+```csharp
+// Freeze current culture
+ICulturePolicy culturePolicy = new CulturePolicy()
+    .SetToCurrentCulture()
+    .ToSnapshot()
+    .AsReadonly();
+```
+
+<br/>
+<details>
+  <summary><b>ICulturePolicy</b> is an interface for controlling the active culture and the fallback culture(s). (<u>click here</u>)</summary>
+
+```csharp
+/// <summary>
+/// Interface for policy that returns active culture policy, and fallback cultures.
+/// </summary>
+public interface ICulturePolicy
+{
+    /// <summary>
+    /// Enumerable that returns first the active culture, and then fallback cultures.
+    /// 
+    /// For example: "en-UK", "en", "".
+    /// </summary>
+    IEnumerable<CultureInfo> Cultures { get; }
+}
+```
+</details>
+
+<details>
+  <summary><b>ICulturePolicyAssignable</b> is interface for classes where policy can be modified. (<u>click here</u>)</summary>
+
+```csharp
+/// <summary>
+/// Interface for culture policy where culture is assignable.
+/// </summary>
+public interface ICulturePolicyAssignable : ICulturePolicy
+{
+    /// <summary>
+    /// Set new enumerable of cultures. The first element is active culture, others fallback cultures.
+    /// </summary>
+    /// <param name="cultureEnumerable"></param>
+    /// <returns></returns>
+    ICulturePolicyAssignable SetCultures(IEnumerable<CultureInfo> cultureEnumerable);
+}
+```
+</details>
+
+# Links
+* [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
+ * [ICulturePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/CulturePolicy/ICulturePolicy.cs)
+ * [ICulturePolicyAssignable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/CulturePolicy/ICulturePolicy.cs)
+* [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
+ * [CulturePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/CulturePolicy/CulturePolicy.cs)
+ * [CulturePolicyImmutable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/CulturePolicy/CulturePolicyImmutable.cs)
+ * [CulturePolicyExtensions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/CulturePolicy/CulturePolicyExtensions.cs)

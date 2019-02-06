@@ -1,0 +1,113 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\res.ConsoleApp1.MyController.Icon.Error" />
+    <None Remove="Resources\res.ConsoleApp1.MyController.Icon.Success" />
+    <None Remove="Resources\res.en.ConsoleApp1.MyController.Icon.Error" />
+    <None Remove="Resources\res.en.ConsoleApp1.MyController.Icon.Success" />
+    <None Remove="Resources\res.fi-Savo.ConsoleApp1.MyController.Icon.Error" />
+    <None Remove="Resources\res.fi-Savo.ConsoleApp1.MyController.Icon.Success" />
+    <None Remove="Resources\res.fi.ConsoleApp1.MyController.Icon.Error" />
+    <None Remove="Resources\res.fi.ConsoleApp1.MyController.Icon.Success" />
+    <None Remove="Resources\res.sv.ConsoleApp1.MyController.Icon.Error" />
+    <None Remove="Resources\res.sv.ConsoleApp1.MyController.Icon.Success" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\res.ConsoleApp1.MyController.Icon.Error">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\res.ConsoleApp1.MyController.Icon.Success">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\res.en.ConsoleApp1.MyController.Icon.Error">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\res.en.ConsoleApp1.MyController.Icon.Success">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\res.fi-Savo.ConsoleApp1.MyController.Icon.Error">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\res.fi-Savo.ConsoleApp1.MyController.Icon.Success">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\res.fi.ConsoleApp1.MyController.Icon.Error">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\res.fi.ConsoleApp1.MyController.Icon.Success">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\res.sv.ConsoleApp1.MyController.Icon.Error">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\res.sv.ConsoleApp1.MyController.Icon.Success">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Ini" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Xml" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Composite" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
+  </ItemGroup>  
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Lexical.Localization\Lexical.Localization.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="Assets\localization.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\localization.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\localization.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="README.md">
+      <DependentUpon>README.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </None>
+    <None Update="README.tt">
+      <LastGenOutput>README.md</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\ConsoleApp1.MyController.en.resx">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\ConsoleApp1.MyController.fi.resx">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\ConsoleApp1.MyController.resx">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  
+</Project>

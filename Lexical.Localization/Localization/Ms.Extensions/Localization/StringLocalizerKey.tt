@@ -1,0 +1,144 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ output extension=".cs" #>
+<#
+    string dir = Path.GetDirectoryName(Host.TemplateFile);
+    string srcDir = Path.Combine(dir, "..", "..", "LocalizationKey");
+    string srcFilename = Path.Combine(srcDir, "LocalizationKey.cs");
+    string srcText = File.ReadAllText(srcFilename);
+    string srcCode = GetRegion(srcText, "Code");
+    srcCode = Regex.Replace(srcCode, @"([^I])LocalizationKey(\W)", m => m.Groups[1].Value + "StringLocalizerKey" + m.Groups[2].Value);    
+    //srcCode = srcCode.Replace("ILocalizationKeyComparer", "StringLocalizerComparer");
+    srcCode = srcCode.Replace("/**TypeSectionInterfaces**/", ", IStringLocalizer<T>");
+   
+
+    string srcInterfaces = GetRegion(srcText, "Interfaces");
+#>
+// --------------------------------------------------------
+// Copyright:      Toni Kalajainen
+// Date:           9.10.2018
+// Url:            http://lexical.fi
+// --------------------------------------------------------
+using System;
+using System.Text;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Dynamic;
+using System.Reflection;
+using System.Diagnostics;
+using System.Globalization;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using Lexical.Asset;
+using Lexical.Asset.Internal;
+using Microsoft.Extensions.Localization;
+
+namespace Lexical.Localization.Ms.Extensions
+{
+    /// <summary>
+    /// StringLocalizerKey that implements and is assignable to following interfaces:
+    ///     <see cref="IStringLocalizer"/>
+    ///     <see cref="IStringLocalizerFactory"/>
+    ///     <see cref="ILocalizationKey"/>
+    /// </summary>
+    [DebuggerDisplay("{DebugPrint()}")]
+    [Serializable]
+    public class StringLocalizerKey :  
+<#= srcInterfaces #>,
+        IStringLocalizer, IStringLocalizerFactory
+    {
+<#= srcCode #>
+
+        public IStringLocalizer Create(string basename, string location) => new _ResourceSection(new _AssemblySection(this, location), basename);
+        public IStringLocalizer Create(Type type) => typeSectionConstructor.Create(type, this);
+        public IStringLocalizer WithCulture(CultureInfo culture) => new _Cultured(this, culture);
+        public LocalizedString this[string name] 
+        { 
+            get {
+                ILocalizationKey key = this.Key(name);
+                string printedString = key.ResolveFormulatedString();
+                if (printedString == null)
+                    return new LocalizedString(name, key.BuildName(), true);
+                else
+                    return new LocalizedString(name, printedString);
+                }
+        }
+        public LocalizedString this[string name, params object[] arguments] 
+        { 
+            get {
+                ILocalizationKey key = this.Key(name).Format(arguments);
+                string printedString = key.ResolveFormulatedString();
+                if (printedString == null)
+                    return new LocalizedString(name, key.BuildName(), true);
+                else
+                    return new LocalizedString(name, printedString);
+                }
+        }
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+        {
+            ILocalizationStringCollection collections = this.FindAsset() as ILocalizationStringCollection;
+            if (collections == null) return null;
+
+            CultureInfo ci = null;
+            if (includeParentCultures && ((ci = this.FindCulture()) != null))
+            {
+                IEnumerable<LocalizedString> result = null;
+                while (true)
+                {
+                    IEnumerable<KeyValuePair<string, string>> strs = collections?.GetAllStrings(this);
+                    if (strs != null)
+                    {
+                        IEnumerable<LocalizedString> converted = ConvertStrings(strs);
+                        result = result == null ? converted : result.Concat(converted);
+                    }
+
+                    if (ci.Parent == ci || ci.Parent == null || ci.Name == ci.Parent?.Name) break;
+                }
+                return result;
+            }
+            else
+            {
+                IEnumerable<KeyValuePair<string, string>> strs = collections?.GetAllStrings(this);
+                return strs == null ? null : ConvertStrings(strs);
+            }
+        }
+        IEnumerable<LocalizedString> ConvertStrings(IEnumerable<KeyValuePair<string, string>> lines)
+        {
+            foreach(var kp in lines)
+            {
+                string value = kp.Value; // <- What kind of value is expected? Is formulation expected?
+                yield return new LocalizedString(kp.Key, value);
+            }
+        }
+
+        public static class Library
+        {
+            private static Lazy<DynamicObjectLibrary> lazy = new Lazy<DynamicObjectLibrary>(CreateDefault);
+            public static DynamicObjectLibrary Default => lazy.Value;
+
+            public static DynamicObjectLibrary CreateDefault()
+                => LocalizationKey.Library.CreateDefault();
+        }
+    }
+
+}
+<#+
+        /// <summary>
+        /// Searches text for a region.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="regionName"></param>
+        /// <returns>region or ""</returns>
+        static string GetRegion(string text, string regionName)
+        {
+            Regex rex = new Regex(@"#region\s*"+regionName+@"\s*\r?\n\r?(?<region>.*?)\r?\n\s*#endregion\s*"+regionName+@"\s*\r?\n", RegexOptions.Singleline);
+            Match match = rex.Match(text);
+            return match.Groups[1].Value;
+        }
+#>

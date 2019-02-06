@@ -1,0 +1,54 @@
+﻿using System.Collections.Generic;
+using System.Globalization;
+using Lexical.Asset;
+using Lexical.Localization;
+using Lexical.Localization.Ms.Extensions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+
+namespace docs
+{
+    public class Ms_DependencyInjection_Example2
+    {
+        // Rename to "Main", or run from Main.
+        public static void Run(string[] args)
+        {
+            #region Snippet
+            // Create service collection
+            IServiceCollection serviceCollection = new ServiceCollection();
+
+            // Add localization services: IAssetRoot, IAssetKey<T>, IAssetBuilder, ICulturePolicy
+            //                            IStringLocalizer<T>, IStringLocalizerFactory
+            serviceCollection.AddLexicalLocalization(
+                addStringLocalizerService: true,     // <- string localizer
+                addCulturePolicyService: true,
+                useGlobalInstance: false,
+                addCache: true);
+
+            // Create localization source
+            var source = new Dictionary<string, string> {
+                { "en:ConsoleApp1.MyController:Hello", "Hello World!" }
+            };
+            // Create asset source
+            IAssetSource assetSource = new LocalizationStringDictionary(source).ToSource();
+            // Add asset source
+            serviceCollection.AddSingleton<IAssetSource>(assetSource);
+
+            // Build service provider
+            using (var serviceProvider = serviceCollection.BuildServiceProvider())
+            {
+                // Get string localizer for class "ConsoleApp1.MyController".
+                IStringLocalizer stringLocalizer 
+                    = serviceProvider.GetService<IStringLocalizer<ConsoleApp1.MyController>>();
+
+                // Narrow scope down to "en" culture
+                IStringLocalizer stringLocalizerScoped = stringLocalizer.WithCulture(CultureInfo.GetCultureInfo("en"));
+
+                // Get "Hello World!"
+                string str = stringLocalizerScoped.GetString("Hello");
+            }
+            #endregion Snippet
+        }
+    }
+
+}

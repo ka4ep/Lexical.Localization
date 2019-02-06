@@ -1,0 +1,1348 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Lexical.Localization</name>
+    </assembly>
+    <members>
+        <member name="T:Lexical.Localization.CulturePolicy">
+            <summary>
+            ICulturePolicy implementation that is based on an array.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.CulturePolicy.CultureChain(System.Globalization.CultureInfo)">
+            <summary>
+            Enumerate culture path towards root.
+            
+            For example if <paramref name="culture"/> is "fi-FI" then that is yielded first.
+            Then "fi", and then "".
+            </summary>
+            <param name="culture"></param>
+            <returns>list of cultures</returns>
+        </member>
+        <member name="M:Lexical.Localization.CulturePolicy.CreateFromCurrentCulture">
+            <summary>
+            Create culture policy current active culture.
+            </summary>
+            <param name="culture"></param>
+            <returns>CulturePolicy with cultures</returns>
+        </member>
+        <member name="M:Lexical.Localization.CulturePolicy.CreateFromCurrentUICulture">
+            <summary>
+            Create culture policy current active culture.
+            </summary>
+            <param name="culture"></param>
+            <returns>CulturePolicy with cultures</returns>
+        </member>
+        <member name="M:Lexical.Localization.CulturePolicy.UpdateToCurrentCulture">
+            <summary>
+            Update to current culture and it's path towards root.
+            
+            For example if current culture is "fi-FI",
+            then updates to "fi-FI", "fi", "".
+            
+            Doesn't work if was created as Immutable.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.CulturePolicy.UpdateToCurrentUICulture">
+            <summary>
+            Update to current culture and it's path towards root.
+            
+            For example if current culture is "fi-FI",
+            then updates to "fi-FI", "fi", "".
+            
+            Doesn't work if was created as Immutable.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.CulturePolicyFunc">
+            <summary>
+            Adapts getter delegate into <see cref="T:Lexical.Localization.ICulturePolicy"/>.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.CultureResolver">
+            <summary>
+            CultureResolver makes CultureInfo.CurrentCulture call on every request.
+            Then returns enumerator that iterates towards parent cultures, and adds FallbackCulture if one is provided.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.CultureResolver.FallbackCulture">
+            <summary>
+            Fallback culture to search strings from when active culture fails. Can be null.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.CultureResolver.fallbackCulture">
+            <summary>
+            Fallback culture to search strings from.
+            
+            May be null.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.CultureResolver.ActiveCultureResolver">
+            <summary>
+            This function resolves the current culture to use.
+            
+            This function is used by the DefaultKeyResolver. If it's changed,
+            then this function will not be used.
+            
+            The default value returns CultureInfo.Current.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.CultureResolver.activeCultureResolver">
+            <summary>
+            This function resolves the current culture to use.
+            
+            This function is used by the DefaultKeyResolver. If it's changed,
+            then this function will not be used.
+            
+            The default value returns CultureInfo.Current.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.CultureResolver.CurrentCulture">
+            <summary>
+            Function that returns current culture. This is the default value.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.CultureResolver.Cultures">
+            <summary>
+            Returns:
+                1. ActiveCultureResolver, e.g. "{lang}-{region}"
+                2. ActiveCultureResolver.Parent, if not root, e.g. "{lang}"
+                3. Fallback Culture if set, e.g. "en"
+                4. ""
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.CultureResolver.Immutable">
+            <summary>
+            Version of this class where fields can be written only in constructor.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.CultureResolver.SetFallbackCulture(System.Globalization.CultureInfo)">
+            <summary>
+            Set new fallback culture
+            </summary>
+            <param name="newFallbackCulture">fallback culture or null</param>
+            <returns>this</returns>
+        </member>
+        <member name="M:Lexical.Localization.CultureResolver.SetFallbackCulture(System.String)">
+            <summary>
+            Set new fallback culture
+            </summary>
+            <param name="newFallbackCulture">fallback culture or null</param>
+            <returns>this</returns>
+            <exception cref="T:System.Globalization.CultureNotFoundException">if culture was not found</exception>
+        </member>
+        <member name="M:Lexical.Localization.CultureResolver.SetToUseCurrentCulture">
+            <summary>
+            Sets cultureResolver to point to use CultureInfo.CurrentCulture.
+            </summary>
+            <returns>this</returns>
+        </member>
+        <member name="M:Lexical.Localization.CultureResolver.SetToUseCurrentUICulture">
+            <summary>
+            Sets cultureResolver to point to use CultureInfo.CurrentUICulture.
+            </summary>
+            <returns>this</returns>
+        </member>
+        <member name="M:Lexical.Localization.CultureResolver.SetCulture(System.Globalization.CultureInfo)">
+            <summary>
+            Sets cultureResolver to use a specific culture.
+            </summary>
+            <param name="culture"></param>
+            <returns>this</returns>
+        </member>
+        <member name="M:Lexical.Localization.CultureResolver.SetCulture(System.String)">
+            <summary>
+            Sets cultureResolver to use a specific culture.
+            </summary>
+            <param name="culture"></param>
+            <returns>this</returns>
+        </member>
+        <member name="M:Lexical.Localization.AssetFileConstructors.FileFormat(System.String)">
+            <summary>
+            Extact file extension from <paramref name="filename"/>.
+            Then search matching <see cref="T:Lexical.Asset.AssetFileConstructor"/> from <see cref="T:Lexical.Localization.LocalizationTextReaderBuilder"/>'s singleton instance.
+            </summary>
+            <param name="filename">filename whose fileformat extension is extracted.</param>
+            <returns></returns>
+            <exception cref="!:ArgumentException">If file format is not supported</exception>
+        </member>
+        <member name="F:Lexical.Localization.AssetLoaderPartBuilderExtensions.KEY_KEYPOLICY">
+            <summary>
+            List of <see cref="T:Lexical.Asset.IAssetKeyNamePolicy"/>s.
+            Value type is <see cref="T:System.Collections.Generic.List`1"/>. 
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.KeyPolicy(Lexical.Asset.AssetLoaderPartBuilder,Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            Add <see cref="T:Lexical.Asset.IAssetKeyNamePolicy"/>.
+            </summary>
+            <param name="partBuilder"></param>
+            <param name="keyPattern"></param>
+            <returns>partBuilder</returns>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.KeyPolicies(Lexical.Asset.AssetLoaderPartBuilder,System.Collections.Generic.IEnumerable{Lexical.Asset.IAssetKeyNamePolicy})">
+            <summary>
+            Add range of <see cref="T:Lexical.Asset.IAssetKeyNamePolicy"/>s.
+            </summary>
+            <param name="partBuilder"></param>
+            <param name="keyPatterns"></param>
+            <returns>partBuilder</returns>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.KeyPattern(Lexical.Asset.AssetLoaderPartBuilder,System.String)">
+            <summary>
+            Add <see cref="T:Lexical.Asset.IAssetKeyNamePolicy"/>.
+            </summary>
+            <param name="partBuilder"></param>
+            <param name="keyPattern"></param>
+            <returns>partBuilder</returns>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.KeyPatterns(Lexical.Asset.AssetLoaderPartBuilder,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Add range of <see cref="T:Lexical.Asset.IAssetNamePattern"/>s.
+            </summary>
+            <param name="partBuilder"></param>
+            <param name="keyPatterns"></param>
+            <returns>partBuilder</returns>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.GetKeyPolicies(Lexical.Asset.AssetLoaderPartBuilder)">
+            <summary>
+            Get <see cref="T:Lexical.Asset.IAssetNamePattern"/>s.
+            </summary>
+            <param name="partBuilder"></param>
+            <returns>file providers or null</returns>
+        </member>
+        <member name="F:Lexical.Localization.AssetLoaderPartBuilderExtensions.KEY_ASSETFILECONSTRUCTOR">
+            <summary>
+            List of <see cref="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.AssetFileConstructor(Lexical.Asset.AssetLoaderPartBuilder,Lexical.Asset.AssetFileConstructor)"/>s.
+            Value type is <see cref="T:System.Collections.Generic.List`1"/>. 
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.AssetFileConstructor(Lexical.Asset.AssetLoaderPartBuilder,Lexical.Asset.AssetFileConstructor)">
+            <summary>
+            Add <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/>.
+            </summary>
+            <param name="partBuilder"></param>
+            <param name="keyPatterns"></param>
+            <returns>partBuilder</returns>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.AssetFileConstructor(Lexical.Asset.AssetLoaderPartBuilder,System.Collections.Generic.IEnumerable{Lexical.Asset.AssetFileConstructor})">
+            <summary>
+            Add range of <see cref="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.AssetFileConstructor(Lexical.Asset.AssetLoaderPartBuilder,Lexical.Asset.AssetFileConstructor)"/>s.
+            </summary>
+            <param name="partBuilder"></param>
+            <param name="keyPatterns"></param>
+            <returns>partBuilder</returns>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.GetAssetFileConstructors(Lexical.Asset.AssetLoaderPartBuilder)">
+            <summary>
+            Get <see cref="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.AssetFileConstructor(Lexical.Asset.AssetLoaderPartBuilder,Lexical.Asset.AssetFileConstructor)"/>s.
+            </summary>
+            <param name="partBuilder"></param>
+            <returns>file providers or null</returns>
+        </member>
+        <member name="F:Lexical.Localization.AssetLoaderPartBuilderExtensions.PartType_Strings">
+            <summary>
+            Part type that implements <see cref="T:Lexical.Localization.ILocalizationStringProvider"/>.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.Strings(Lexical.Asset.AssetLoaderPartBuilder)">
+            <summary>
+            Add signal that <paramref name="partBuilder"/> is to produce a part that implements <see cref="T:Lexical.Localization.ILocalizationStringProvider"/>.
+            </summary>
+            <param name="partBuilder"></param>
+            <returns>part builder</returns>
+        </member>
+        <member name="F:Lexical.Localization.AssetLoaderPartBuilderExtensions.PartType_ResourceManager">
+            <summary>
+            Part type that implements <see cref="T:Lexical.Asset.IAssetResourceProvider"/>.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartBuilderExtensions.ResourceManager(Lexical.Asset.AssetLoaderPartBuilder)">
+            <summary>
+            Add signal that <paramref name="partBuilder"/> is to produce a part that implements <see cref="T:Lexical.Localization.ILocalizationStringProvider"/>.
+            </summary>
+            <param name="partBuilder"></param>
+            <returns>part builder</returns>
+        </member>
+        <member name="T:Lexical.Localization.AssetLoaderPartBuilderParticipant">
+            <summary>
+            Knows how to build <see cref="T:Lexical.Asset.AssetLoaderPartEmbeddedResources"/> and 
+            <see cref="T:Lexical.Asset.AssetLoaderPartFileResources"/>.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.AssetLoaderPartBuilderParticipant.instance">
+            <summary>
+            Static instance
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.AssetLoaderPartBuilderParticipant.Instance">
+            <summary>
+            Static instance getter
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.AssetLoaderPartBuilderParticipant.builderParameters">
+            <summary>
+            Parameters that are used for configuring the builder part
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.AssetLoaderPartBuilderParticipant.BuilderParameters">
+            <summary>
+            Parameters that are used for configuring the builder part
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartBuilderParticipant.TryBuild(Lexical.Asset.AssetLoaderPartBuilder,System.Collections.Generic.IList{System.String})">
+            <summary>
+            Check the parameters, and if they match, build new part.
+            </summary>
+            <param name="builder"></param>
+            <param name="errors"></param>
+            <returns>parts</returns>
+        </member>
+        <member name="T:Lexical.Localization.AssetLoaderPartEmbeddedResourceManager">
+            <summary>
+            This class matches loads .resources (.resx) files from assemblies.
+            
+            This component is used as part of <see cref="T:Lexical.Asset.IAssetLoader"/>.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.AssetLoaderPartEmbeddedResourceManager.ResourceSetType">
+            <summary>
+            This option determines which <see cref="T:System.Resources.ResourceSet"/> to use when loading <see cref="T:System.Resources.ResourceManager"/>.
+            The type <see cref="T:System.Resources.ResourceSet"/> assignable type, or null.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.AssetLoaderPartEmbeddedResourceManager.KeyNamePolicy">
+            <summary>
+            Key name policy that is used within .resource/.resx file.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartEmbeddedResourceManager.#ctor(System.String,Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            Create <see cref="T:Lexical.Asset.IAssetLoaderPart"/> that matches <see cref="T:Lexical.Asset.IAssetKey"/>s to <see cref="T:Lexical.Asset.IAsset"/> instances that source keys from <see cref="T:System.Resources.ResourceManager"/>.
+            </summary>
+            <param name="pattern">file name pattern that detects .resources embedded resources</param>
+            <param name="keyNamePolicy">(optional) key name policy to use within .resx file</param>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartEmbeddedResourceManager.#ctor(Lexical.Asset.IAssetNamePattern,Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            Create <see cref="T:Lexical.Asset.IAssetLoaderPart"/> that matches <see cref="T:Lexical.Asset.IAssetKey"/>s to <see cref="T:Lexical.Asset.IAsset"/> instances that source keys from <see cref="T:System.Resources.ResourceManager"/>.
+            </summary>
+            <param name="pattern">file name pattern that detects .resources embedded resources</param>
+            <param name="keyNamePolicy">(optional) key name policy to use within .resx file</param>
+        </member>
+        <member name="T:Lexical.Localization.AssetLoaderPartEmbeddedStrings">
+            <summary>
+            This class loads embedded files as strings.
+            
+            Use with <see cref="T:Lexical.Asset.IAssetLoader"/>.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartEmbeddedStrings.#ctor(Lexical.Asset.IAssetNamePattern,Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            Create part that matches <paramref name="resourceNamePattern"/> to existing files 
+            and <paramref name="keyNamePattern"/> to to lines found in those files.
+            
+            Derives file extension from the <paramref name="resourceNamePattern"/> and searches for matching
+            <see cref="T:Lexical.Asset.AssetFileConstructor"/> from LocalizationTextReaderBuilder.
+            </summary>
+            <param name="resourceNamePattern"></param>
+            <param name="keyNamePattern"></param>
+        </member>
+        <member name="T:Lexical.Localization.AssetLoaderPartFileResourceManager">
+            <summary>
+            This class matches loads .resources (.resx) files from files.
+            
+            This component is used as part of <see cref="T:Lexical.Asset.IAssetLoader"/>.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.AssetLoaderPartFileResourceManager.ResourceSetType">
+            <summary>
+            This option determines which <see cref="T:System.Resources.ResourceSet"/> to use when loading <see cref="T:System.Resources.ResourceManager"/>.
+            The type <see cref="T:System.Resources.ResourceSet"/> assignable type, or null.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.AssetLoaderPartFileResourceManager.KeyNamePolicy">
+            <summary>
+            Key name policy that is used within .resource/.resx file.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartFileResourceManager.#ctor(System.String,Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            Create <see cref="T:Lexical.Asset.IAssetLoaderPart"/> that matches <see cref="T:Lexical.Asset.IAssetKey"/>s to <see cref="T:Lexical.Asset.IAsset"/> instances that source keys from <see cref="T:System.Resources.ResourceManager"/>.
+            </summary>
+            <param name="pattern">file name pattern that detects .resources embedded resources</param>
+            <param name="keyNamePolicy">(optional) key name policy to use within .resx file</param>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartFileResourceManager.#ctor(Lexical.Asset.IAssetNamePattern,Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            Create <see cref="T:Lexical.Asset.IAssetLoaderPart"/> that matches <see cref="T:Lexical.Asset.IAssetKey"/>s to <see cref="T:Lexical.Asset.IAsset"/> instances that source keys from <see cref="T:System.Resources.ResourceManager"/>.
+            </summary>
+            <param name="pattern">file name pattern that detects .resources embedded resources</param>
+            <param name="keyNamePolicy">(optional) key name policy to use within .resx file</param>
+        </member>
+        <member name="T:Lexical.Localization.AssetLoaderPartFileStrings">
+            <summary>
+            This class loads file files as strings.
+            
+            Use with <see cref="T:Lexical.Asset.IAssetLoader"/>.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartFileStrings.#ctor(Lexical.Asset.IAssetNamePattern,Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            Create part that matches <paramref name="filenamePattern"/> to existing files 
+            and <paramref name="keyNamePattern"/> to to lines found in those files.
+            
+            Derives file extension from the <paramref name="filenamePattern"/> and searches for matching
+            <see cref="T:Lexical.Asset.AssetFileConstructor"/> from LocalizationTextReaderBuilder.
+            </summary>
+            <param name="filenamePattern"></param>
+            <param name="keyNamePattern"></param>
+        </member>
+        <member name="T:Lexical.Localization.IAssetLoaderPartResourceManager">
+            <summary>
+            <see cref="T:Lexical.Asset.IAssetLoaderPart"/> that loads <see cref="T:System.Resources.ResourceManager"/>s.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.IAssetLoaderPartResourceManager.ResourceSetType">
+            <summary>
+            This option determines which <see cref="T:System.Resources.ResourceSet"/> to use when loading <see cref="T:System.Resources.ResourceManager"/>.
+            The type <see cref="T:System.Resources.ResourceSet"/> assignable type, or null.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.IAssetLoaderPartResourceManager.KeyNamePolicy">
+            <summary>
+            Key name policy that is used within .resource/.resx file.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.AssetLoaderPartResourceManagerExtensions.Key_ResourceSetType">
+            <summary>
+            Key name in <see cref="T:Lexical.Asset.AssetLoaderPartOptions"/> to option that determines which <see cref="T:System.Resources.ResourceSet"/> to use when loading <see cref="T:System.Resources.ResourceManager"/>.
+            The type <see cref="T:System.Resources.ResourceSet"/> assignable type, or null.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.AssetLoaderPartResourceManagerExtensions.SetResourceSetType(Lexical.Localization.IAssetLoaderPartResourceManager,System.Type)">
+            <summary>
+            This option determines which <see cref="T:System.Resources.ResourceSet"/> to use when loading <see cref="T:System.Resources.ResourceManager"/>.
+            The type <see cref="T:System.Resources.ResourceSet"/> assignable type, or null.
+            </summary>
+            <param name="resourceSetType">resource set, or null for default</param>
+            <returns>this</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Lexical.Localization.AssetCacheExtensions__.AddCache(Lexical.Asset.IAssetBuilder,System.Action{Lexical.Asset.IAssetCache})" -->
+        <!-- Badly formed XML comment ignored for member "M:Lexical.Localization.AssetCacheExtensions__.CreateCache(Lexical.Asset.IAsset,System.Action{Lexical.Asset.IAssetCache})" -->
+        <member name="T:Lexical.Localization.AssetCachePartCultures">
+            <summary>
+            This <see cref="T:Lexical.Asset.IAssetCachePart"/> handles caching of <see cref="T:Lexical.Localization.ILocalizationAssetCultureCapabilities" /> requests as a part of <see cref="T:Lexical.Asset.IAssetCache"/>.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.AssetCachePartStrings">
+            <summary>
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.LocalizationAssetFunc">
+            <summary>
+            Adapts delegate into <see cref="T:Lexical.Asset.IAsset"/>.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.LocalizationStringDictionary">
+            <summary>
+            This class adapts IDictionary{string, string} to ILanguageStringResolver and ILanguageStringCollection.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationStringDictionary.#ctor(System.Collections.Generic.IReadOnlyDictionary{System.String,System.String},Lexical.Asset.IAssetKeyNamePolicy,Lexical.Asset.IAssetKeyParametrizer)">
+            <summary>
+            Create language string resolver that uses a dictionary as a source.
+            </summary>
+            <param name="source">dictionary</param>
+            <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
+            <param name="parametrizer">(optional) object that extracts parameters</param>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationStringDictionary.#ctor(System.Collections.Generic.IReadOnlyDictionary{System.String,System.String},System.String,Lexical.Asset.IAssetKeyParametrizer)">
+            <summary>
+            Create language string resolver that uses a dictionary as a source.
+            </summary>
+            <param name="source">dictionary</param>
+            <param name="namePattern">name patern</param>
+            <param name="parametrizer">(optional) object that extracts parameters</param>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationStringDictionary.IsEqualOrSuperset(Lexical.Asset.IAssetNamePatternMatch,Lexical.Asset.IAssetNamePatternMatch)">
+            <summary>
+            Comapres two matches for equality or being superset.
+            </summary>
+            <param name="match"></param>
+            <param name="other"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationAssetExtensions_.AddDictionary(Lexical.Asset.IAssetBuilder,System.Collections.Generic.IReadOnlyDictionary{System.String,System.String},Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            Add string dictionary to builder.
+            </summary>
+            <param name="composition"></param>
+            <param name="dictionary"></param>
+            <param name="namePolicy">instructions how to convert key to string</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationAssetExtensions_.AddDictionary(Lexical.Asset.IAssetComposition,System.Collections.Generic.IReadOnlyDictionary{System.String,System.String},Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            Add string dictionary to composition.
+            </summary>
+            <param name="composition"></param>
+            <param name="dictionary"></param>
+            <param name="namePolicy">instructions how to convert key to string</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationAssetExtensions_.AddSourceFunc(Lexical.Asset.IAssetBuilder,System.Func{Lexical.Asset.IAssetKey,System.String})">
+            <summary>
+            Adapts <see cref="T:System.Delegate"/> to <see cref="T:Lexical.Asset.IAssetSource"/> and adds to builder.
+            </summary>
+            <param name="builder"></param>
+            <param name="resolver"></param>
+            <returns>builder</returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationAssetExtensions_.Add(Lexical.Asset.IAssetComposition,System.Func{Lexical.Asset.IAssetKey,System.String})">
+            <summary>
+            Adapts <see cref="T:System.Delegate"/> to <see cref="T:Lexical.Localization.ILocalizationStringProvider"/> and adds to composition.
+            </summary>
+            <param name="builder"></param>
+            <param name="resolverFunc"></param>
+            <returns>composition</returns>
+        </member>
+        <member name="T:Lexical.Localization.LocalizationStringsFunc">
+            <summary>
+            Adapts Delegate to <see cref="T:Lexical.Localization.ILocalizationStringProvider"/>.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.LocalizationStringsFunc.ResolverFunc">
+            <summary>
+            Function that resolve key to a language string.
+            </summary>
+            <param name="key"></param>
+            <returns>resolved string or null</returns>
+        </member>
+        <member name="T:Lexical.Localization.ResourceManagerAsset">
+            <summary>
+            Adapts <see cref="T:System.Resources.ResourceManager"/> (.resx) to <see cref="T:Lexical.Asset.IAsset"/>.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.ResourceManagerAsset.namepolicy_for_type_resourcemanager">
+            <summary>
+            Name policy where only "section" and "key" parameters are written out when creating key identifier to match against .resx.
+            
+            Separator character is '.'.
+            
+            Example "ConsoleApp1.MyController.Success"
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.ResourceManagerAsset.namepolicy_for_location_resourcemanager">
+            <summary>
+            Name policy where "type", "section" and "key" parameters are written out when creating key identifier to match against .resx.
+            
+            Example "ConsoleApp1.MyController.Success"
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.ResourceManagerAsset.namepolicy_for_root_resourcemanager">
+            <summary>
+            Name policy where "resource", "type", "section" and "key" parameters are written out when creating key identifier to match against .resx.
+            
+            Example "ConsoleApp1.MyController.Success"
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.ResourceManagerAsset.CreateType(System.Resources.ResourceManager,System.Type)">
+            <summary>
+            Create resource manager that is assigned to a specific type.
+            
+            In these .resx language string files, the key of each line uses name policy "{section.}{key}".
+            </summary>
+            <param name="resourceManager"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.ResourceManagerAsset.CreateType(System.Type)">
+            <summary>
+            Create resource manager that is assigned to a specific type.
+            
+            In these .resx language string files, the key of each line uses name policy "{section.}{key}".
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.ResourceManagerAsset.CreateLocation(System.Resources.ResourceManager,System.String,System.Reflection.Assembly)">
+            <summary>
+            Create resource manager that is assigned to a specific embedded resource location.
+            
+            In these .resx language string files, the key of each line uses name policy "{section.}{key}".
+            </summary>
+            <param name="resourceManager"></param>
+            <param name="assembly"></param>
+            <param name="baseName">embedded resources location within assembly, corresponds to "resource" parameter in <see cref="T:Lexical.Asset.IAssetKey"/>.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.ResourceManagerAsset.CreateLocation(System.String,System.Reflection.Assembly)">
+            <summary>
+            Create resource manager that is assigned to a specific embedded resource location.
+            </summary>
+            <param name="assembly"></param>
+            <param name="baseName">embedded resources location within assembly, corresponds to "resource" parameter in <see cref="T:Lexical.Asset.IAssetKey"/>.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.ResourceManagerAsset.CreateRoot(System.Reflection.Assembly)">
+            <summary>
+            Create resource manager asset that is assigned to a root of an assembly.
+            
+            In these .resx language string files, the key of each line uses name policy "{resource.}{type.}{section_0.}{section_1.}{section_2.}{section_3.}{.key_0}{.key_1}{.key_2}{.key_n}".
+            </summary>
+            <param name="assembly"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.ResourceManagerAsset.#ctor(System.Resources.ResourceManager,Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            Construct an <see cref="T:Lexical.Asset.IAsset"/> that reads strings and resources from <see cref="F:Lexical.Localization.ResourceManagerAsset.ResourceManager"/>.
+            
+            </summary>
+            <param name="resourceManager">source of language strings and resource files</param>
+            <param name="namePolicy">policy that converts <see cref="T:Lexical.Asset.IAssetKey"/> into keys that correlate with keys in <paramref name="resourceManager"/>.</param>
+        </member>
+        <member name="F:Lexical.Localization.LocalizationKey.name">
+            <summary>
+            Local name of this key.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.LocalizationKey.prevKey">
+            <summary>
+            (optional) Link to previous key.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationKey.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Deserialize from stream.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationKey.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialize
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationKey.ToString">
+            <summary>
+            Produce string using the following algorithm:
+              1. Search for language strings
+                 a. Search for formultion arguments. Apply arguments. Return
+              2. Build and return key identity.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:Lexical.Localization.LocalizationKey.dynamicMetaObject">
+            <summary>
+            Cached dynamic object.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationKey.GetMetaObject(System.Linq.Expressions.Expression)">
+            <summary>
+            Get-or-create dynamic object.
+            </summary>
+            <param name="expression">the expression in the calling environgment</param>
+            <returns>object</returns>
+        </member>
+        <member name="F:Lexical.Localization.LocalizationKey.hashcode">
+            <summary>
+            Cached hashcode
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.LocalizationKey.hashcodeCalculated">
+            <summary>
+            Determines if hashcode is calculated and cached
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.LocalizationKey.comparer">
+            <summary>
+            Preferred comparer
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationKey.Equals(System.Object)">
+            <summary>
+            Equals comparison
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationKey.GetHashCode">
+            <summary>
+            Hashcode calculation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.Localization.LocalizationKey.Library">
+            <summary>
+            A library of interfaces and extension methods that DynamicMetaObject implementation seaches from when 
+            invoked with dynamic calls.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.LocalizationKeyDynamicMetaObject">
+            <summary>
+            <see cref="T:System.Dynamic.DynamicMetaObject" /> implementation for <see cref="T:Lexical.Localization.ILocalizationKey" /> interfaces.
+            
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationKeyDynamicMetaObject.BindResolveResourceConvert(System.Dynamic.ConvertBinder)">
+            <summary>
+            Tries to match to key.ResolveResource() and key.ResolveString(). (instead of the super-type's key.GetResource() and key.GetString().)
+            </summary>
+            <param name="binder"></param>
+            <returns>DynamicMetaObject or null</returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationKeyDynamicMetaObject.BindInlineInvokeMember(System.Dynamic.InvokeMemberBinder,System.Dynamic.DynamicMetaObject[])">
+            <summary>
+            Try to bind member to inline method.
+            </summary>
+            <param name="binder"></param>
+            <param name="args"></param>
+            <returns>Inline expression bound or null</returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationKeySerialization.DeserializeTo(Lexical.Asset.IAssetKey,System.Byte[])">
+            <summary>
+            Deserialize into a fake root that reads localization asset and culture policy from another root.
+            </summary>
+            <param name="root"></param>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationKeySerialization.DeserializeTo(Lexical.Asset.IAsset,Lexical.Localization.ICulturePolicy,System.Byte[])">
+            <summary>
+            Deserialize and assign specific asset and culturepolicy references.
+            </summary>
+            <param name="asset"></param>
+            <param name="culturePolicy"></param>
+            <param name="data"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.Localization.LocalizationRoot">
+            <summary>
+            Localization root where culture policy and language strings cannot be modified after construction.
+            </summary>
+            <summary>
+            Static global singleton instance.
+            
+            Localization is one of those cases where global singleton instance make sense.
+            Even in inversion of control use case.
+            
+            This is because localized string is considered to be akin to interned string. 
+            They are both static and something that should be compile-time data. 
+            Language strings, however, are run-time data due to practical logistics.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.LocalizationRoot.Mutable">
+            <summary>
+            Localization root where culture policy and localization asset can be changed.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.LocalizationRoot.LinkedTo">
+            <summary>
+            Localization root where culture policy and localization asset are taken used another root.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.LocalizationRoot.GlobalDynamic">
+            <summary>
+            Dynamic reference to the singleton instance of localization root.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.LocalizationRoot.Global">
+            <summary>
+            Singleton instance to localization root. 
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.LocalizationRoot.Builder">
+            <summary>
+            Asset builder. 
+            
+            Add <see cref="T:Lexical.Asset.IAssetSource"/>s here.
+            Then call <see cref="M:Lexical.Asset.IAssetBuilder.Build"/>.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.ILocalizationTextReader.NamePolicy">
+            <summary>
+            Name policy
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.ILocalizationTextReader.Read">
+            <summary>
+            Read file.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationTextReaderExtensions.ToDictionary(Lexical.Localization.ILocalizationTextReader,System.Collections.Generic.IDictionary{System.String,System.String},System.String)">
+            <summary>
+            Convert <see cref="T:Lexical.Localization.ILocalizationTextReader"/> to key-values.
+            </summary>
+            <param name="textFile"></param>
+            <param name="dst"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationTextReaderExtensions.ToDictionaryAndClose(Lexical.Localization.ILocalizationTextReader,System.Collections.Generic.IDictionary{System.String,System.String},System.String)">
+            <summary>
+            Convert <see cref="T:Lexical.Localization.ILocalizationTextReader"/> to key-values.
+            </summary>
+            <param name="textFile"></param>
+            <param name="dst"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationTextReaderExtensions.ToAsset(Lexical.Localization.ILocalizationTextReader)">
+            <summary>
+            Convert <see cref="T:Lexical.Localization.ILocalizationTextReader"/> to <see cref="T:Lexical.Asset.IAsset"/>.
+            </summary>
+            <param name="textFile"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.LocalizationTextReaderExtensions.ToAssetAndClose(Lexical.Localization.ILocalizationTextReader)">
+            <summary>
+            Convert <see cref="T:Lexical.Localization.ILocalizationTextReader"/> to <see cref="T:Lexical.Asset.IAsset"/>.
+            </summary>
+            <param name="textFile"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Lexical.Localization.LocalizationTextReaderBuilder.TextReaderConstructors">
+            <summary>
+            Location where file format specific constructors are placed.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.LocalizationTextReaderBuilder.BinaryReaderConstructors">
+            <summary>
+            Location where file format specific constructors are placed.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.Writer.LocalizationKeyTree">
+            <summary>
+            Class that organizes localization keys into a tree structure.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Writer.LocalizationKeyTree.Create(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.Object,System.String}},Lexical.Asset.IAssetKeyParametrizer)">
+            <summary>
+            Re-organize flat keyvalues into tree representation.
+            </summary>
+            <param name="keyValues"></param>
+            <param name="parametrizer"></param>
+            <returns>tree root ""</returns>
+        </member>
+        <member name="T:Lexical.Localization.Writer.LocalizationKeyTree.PartComparer">
+            <summary>
+            LocalizationKeyTree is an intermediate model for writing text files
+            
+            Reorganize parts so that non-canonicals parts, so that "root" is first, then "culture", and then others by parameter name.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.Writer.ILocalizationKeyTreeWriter.NamePolicy">
+            <summary>
+            Name policy
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Writer.ILocalizationKeyTreeWriter.Write(Lexical.Localization.Writer.LocalizationKeyTree)">
+            <summary>
+            Write tree completely.
+            </summary>
+            <param name="root"></param>
+        </member>
+        <member name="M:Lexical.Localization.Writer.ILocalizationKeyTreeWriter.Flush">
+            <summary>
+            Flush content to source.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Writer.LocalizationKeyTreeWriterExtensions.Write(Lexical.Localization.Writer.ILocalizationKeyTreeWriter,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.Object,System.String}},Lexical.Asset.IAssetKeyParametrizer)">
+            <summary>
+            Write using <see cref="T:Lexical.Asset.IAssetKey"/> map.
+            </summary>
+            <param name="writer"></param>
+            <param name="keyValues"></param>
+        </member>
+        <member name="M:Lexical.Localization.Writer.LocalizationKeyTreeWriterExtensions.Write(Lexical.Localization.Writer.ILocalizationKeyTreeWriter,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{Lexical.Asset.IAssetKey,System.String}})">
+            <summary>
+            Write using <see cref="T:Lexical.Asset.IAssetKey"/> map.
+            </summary>
+            <param name="writer"></param>
+            <param name="keyValues"></param>
+        </member>
+        <member name="M:Lexical.Localization.Writer.LocalizationKeyTreeWriterExtensions.Convert(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{Lexical.Asset.IAssetKey,System.String}},Lexical.Asset.IAssetKeyParametrizer)">
+            <summary>
+            Converts <see cref="T:Lexical.Asset.IAssetKey"/> to AssetKeyProxy.
+            
+            Reorders non-canonical parts to be first, and "culture" to be very first.
+            </summary>
+            <param name="keyValues"></param>
+            <param name="parametrizer">(optional) code that extracts sections from keys</param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.Localization.Writer.LocalizationKeyTreeWriterBuilder">
+            <summary>
+            Class that creates <see cref="!:LocalizationKeyTreeWriter"/> for different fileformats.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.Writer.LocalizationKeyTreeWriterBuilder.TextWriterConstructors">
+            <summary>
+            Location where file format specific constructors are placed.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.Writer.LocalizationKeyTreeWriterBuilder.BinaryWriterConstructors">
+            <summary>
+            Location where file format specific constructors are placed.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.Writer.LocalizationKeyTreeWriterBuilder.Extensions">
+            <summary>
+            Get list of supported extensions
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Writer.LocalizationKeyTreeWriterBuilder.Create(System.String,System.IO.TextWriter,Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            
+            </summary>
+            <param name="fileformat"></param>
+            <param name="writer"></param>
+            <param name="policy"></param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentException">if format is not supported</exception>
+        </member>
+        <member name="T:Lexical.Localization.Writer.ResXWriter">
+            <summary>
+            Writes .resx files.
+            
+            Uses template because ResXWriter is not available in .NET Core.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.ConfigurationBuilderLocalizationAssetSource">
+            <summary>
+            Adapts <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder"/> to <see cref="T:Lexical.Asset.IAssetSource"/>.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.ConfigurationLocalizationAsset">
+            <summary>
+            Adapts <see cref="T:Microsoft.Extensions.Configuration.IConfiguration"/> to <see cref="T:Lexical.Asset.IAsset"/>.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.Ms.Extensions.ConfigurationLocalizationAsset.CULTURE_ROOT">
+            <summary>
+            Use this name policy when culture is at the root of the configuration.
+            For examples: .ini
+            [en]
+            Section:Section:key = value
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.ConfigurationLocalizationAsset.GetString(Lexical.Asset.IAssetKey)">
+            <summary>
+            Try to read a localization string.
+            </summary>
+            <param name="key"></param>
+            <returns>resolved string or null</returns>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.MsConfigurationExtensions.AddLocalizationAsset_From_ConfigurationBuilder(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Adds an adapter that adapts a required service <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder"/> to <see cref="T:Lexical.Asset.IAssetSource"/>.
+            </summary>
+            <param name="serviceCollection"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.MsConfigurationExtensions.AddLocalizationAsset(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfigurationBuilder)">
+            <summary>
+            Adds an adapter that adapts a specific instnace <see cref="T:Microsoft.Extensions.Configuration.IConfigurationBuilder"/> to <see cref="T:Lexical.Asset.IAssetSource"/>.
+            </summary>
+            <param name="serviceCollection"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.MsConfigurationExtensions.AddLocalizationAsset(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,Lexical.Asset.IAssetKeyNamePolicy,Lexical.Asset.IAssetKeyParametrizer)">
+            <summary>
+            Adds an instance of <see cref="T:Microsoft.Extensions.Configuration.IConfiguration"/> as <see cref="T:Lexical.Asset.IAsset"/>.
+            </summary>
+            <param name="serviceCollection"></param>
+            <param name="configuration"></param>
+            <param name="namePolicy"></param>
+            <param name="parametrizer"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.MsLocalizationExtensions.AddLexicalLocalization(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Adds the following Lexical.Localization services:
+               <see cref="T:Lexical.Asset.IAssetRoot"/>
+               <see cref="T:Lexical.Asset.IAssetKey`1"/>
+               <see cref="T:Lexical.Asset.IAssetBuilder"/>
+               
+            If <paramref name="addCulturePolicyService"/> is true a <see cref="T:Lexical.Localization.CultureResolver"/> is added,
+            otherwise <see cref="T:Lexical.Localization.ICulturePolicy"/> must be added to the service collection.
+            
+            Further services are needed:
+               <see cref="T:Lexical.Asset.IAssetSource"/> one or more.
+               
+            If <paramref name="addStringLocalizerService"/> is true, the following services are added:
+               <see cref="T:Microsoft.Extensions.Localization.IStringLocalizerFactory"/>
+               <see cref="T:Microsoft.Extensions.Localization.IStringLocalizer`1"/>
+               
+            If <paramref name="useGlobalInstance"/> is true, then uses global <see cref="T:Lexical.Localization.LocalizationRoot"/>.
+            
+            
+            After this call, the <paramref name="serviceCollection"/> still needs to be populated with 
+            instances of <see cref="T:Lexical.Asset.IAssetSource"/>, such as:
+                <see cref="T:Lexical.Localization.Ms.Extensions.ConfigurationBuilderLocalizationAssetSource"/>
+                <see cref="T:Lexical.Asset.AssetResourceDictionary"/>
+                <see cref="T:Lexical.Localization.LocalizationStringDictionary"/>
+                <see cref="T:Lexical.Asset.AssetCacheSource"/>
+            
+            </summary>
+            <param name="serviceCollection"></param>
+            <param name="addStringLocalizerService"></param>
+            <param name="addCulturePolicyService">Add instance of <see cref="T:Lexical.Localization.CultureResolver"/></param>
+            <param name="useGlobalInstance"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.MsLocalizationExtensions.ToAsset(Microsoft.Extensions.Localization.IStringLocalizerFactory)">
+            <summary>
+            Adapts <see cref="T:Microsoft.Extensions.Localization.IStringLocalizerFactory"/> into an <see cref="T:Lexical.Asset.IAsset" />.
+            
+            Notice, that using asset that is converted this way, requres that keys have 
+            <see cref="T:Lexical.Asset.IAssetKeyTypeSection"/> hint, or
+            <see cref="T:Lexical.Asset.IAssetKeyAssemblySection"/>+<see cref="T:Lexical.Asset.IAssetKeyResourceSection"/> hints.
+            </summary>
+            <param name="stringLocalizerFactory"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.MsLocalizationExtensions.ToSource(Microsoft.Extensions.Localization.IStringLocalizerFactory)">
+            <summary>
+            Adapts <see cref="T:Microsoft.Extensions.Localization.IStringLocalizerFactory"/> into an <see cref="T:Lexical.Asset.IAssetSource" />.
+            
+            Notice, that using asset that is converted this way, requres that keys have 
+            <see cref="T:Lexical.Asset.IAssetKeyTypeSection"/> hint, or
+            <see cref="T:Lexical.Asset.IAssetKeyAssemblySection"/>+<see cref="T:Lexical.Asset.IAssetKeyResourceSection"/> hints.
+            </summary>
+            <param name="stringLocalizerFactory"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderParticipant">
+            <summary>
+            Knows how to build <see cref="T:Lexical.Asset.AssetLoaderPartEmbeddedResources"/> and 
+            <see cref="T:Lexical.Asset.AssetLoaderPartFileResources"/>.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderParticipant.instance">
+            <summary>
+            Static instance
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderParticipant.Instance">
+            <summary>
+            Static instance getter
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderParticipant.builderParameters">
+            <summary>
+            Parameters that are used for configuring the builder part
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderParticipant.BuilderParameters">
+            <summary>
+            Parameters that are used for configuring the builder part
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderParticipant.TryBuild(Lexical.Asset.AssetLoaderPartBuilder,System.Collections.Generic.IList{System.String})">
+            <summary>
+            Check the parameters, and if they match, build new part.
+            </summary>
+            <param name="builder"></param>
+            <param name="errors"></param>
+            <returns>parts</returns>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.AssetLoaderPartFileProviderStrings">
+            <summary>
+            Provides <see cref="T:Lexical.Localization.ILocalizationStringProvider"/> assets from <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/> text files.
+            Use as a member of <see cref="T:Lexical.Asset.IAssetLoader"/>.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.Ms.Extensions.AssetLoaderPartFileProviderStrings.assetConstructor">
+            <summary>
+            Function that loads assets. Has to load asset completely as caller will close the stream.
+            Return null if file is not found.
+            Throw <see cref="T:System.Exception"/> if there was a problem loading the file.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.AssetLoaderPartFileProviderStrings.#ctor(Microsoft.Extensions.FileProviders.IFileProvider,System.String,Lexical.Asset.AssetFileConstructor)">
+            <summary>
+            Create asset loader that loads assets from <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/> source.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="filePattern"></param>
+            <param name="assetConstructor">asset constructor, callee closes stream, caller can close it too, return null if load failed</param>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.AssetLoaderPartFileProviderStrings.#ctor(Microsoft.Extensions.FileProviders.IFileProvider,Lexical.Asset.IAssetNamePattern,Lexical.Asset.AssetFileConstructor)">
+            <summary>
+            Create asset loader that loads assets from <see cref="T:Microsoft.Extensions.FileProviders.IFileProvider"/> source.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="filePattern"></param>
+            <param name="assetConstructor">asset constructor, callee closes stream, caller can close it too</param>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.AssetLoaderPartFileProviderStrings.#ctor(Microsoft.Extensions.FileProviders.IFileProvider,Lexical.Asset.IAssetNamePattern,Lexical.Asset.IAssetKeyNamePolicy)">
+            <summary>
+            Create part that matches <paramref name="filenamePattern"/> to existing files 
+            and <paramref name="keyNamePattern"/> to to lines found in those files.
+            
+            Derives file extension from the <paramref name="filenamePattern"/> and searches for matching
+            <see cref="T:Lexical.Asset.AssetFileConstructor"/> from LocalizationTextReaderBuilder.
+            </summary>
+            <param name="fileProvider"></param>
+            <param name="filenamePattern"></param>
+            <param name="keyNamePattern"></param>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.ResourceManagerStringLocalizerAsset.Create(System.String,System.String,System.String,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Creates <see cref="T:Microsoft.Extensions.Localization.ResourceManagerStringLocalizer"/> and then adapts it into <see cref="T:Lexical.Asset.IAsset"/>.
+            
+            Search path = Assembly.RootNameSpace + [.resourcesPath] + filename + [.culture] + ".resx"
+            </summary>
+            <param name="asmRef">"location" assembly name, short name or full name.</param>
+            <param name="resourcePath">(optional) embedded resource folder, e.g. "Resources"</param>
+            <param name="filename">"basename" name of the resx file, e.g. "localization", searches for "localization.xx.resx"</param>
+            <param name="loggerFactory"></param>
+            <exception cref="T:System.ArgumentNullException">assemblyRef is null</exception>
+            <exception cref="T:System.IO.FileNotFoundException">assemblyRef is not found.</exception>
+            <exception cref="T:System.IO.FileLoadException">A file that was found could not be loaded.</exception>
+            <exception cref="T:System.BadImageFormatException">assemblyRef is not a valid assembly</exception>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.ResourceManagerStringLocalizerAsset.Create(System.String,System.Type,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Creates <see cref="T:Microsoft.Extensions.Localization.ResourceManagerStringLocalizer"/> and then adapts it into <see cref="T:Lexical.Asset.IAsset"/>.
+            
+            Search path = Assembly.RootNameSpace + [.resourcesPath] + filename + [.culture] + ".resx"
+            </summary>
+            <param name="resourcePath">(optional) embedded resource folder, e.g. "Resources"</param>
+            <param name="type">type searches for "typename.xx.resx"</param>
+            <param name="loggerFactory"></param>
+            <exception cref="T:System.ArgumentNullException">assemblyRef is null</exception>
+            <exception cref="T:System.IO.FileNotFoundException">assemblyRef is not found.</exception>
+            <exception cref="T:System.IO.FileLoadException">A file that was found could not be loaded.</exception>
+            <exception cref="T:System.BadImageFormatException">assemblyRef is not a valid assembly</exception>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.ResourceManagerStringLocalizerAsset.CreateFactory(System.String,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Creates <see cref="T:Microsoft.Extensions.Localization.ResourceManagerStringLocalizerFactory"/> and then adapts it into <see cref="T:Lexical.Asset.IAsset"/>.
+            
+            This asset serves keys that have AssemblySection and ResourceSection hints, or TypeSection{T}() hint.
+            <code>
+             var resx_key = root.AssemblySection("MyAssembly").ResourceSection("Resources").TypeSection("localization");
+             var key = resx_key["Success"];
+            </code>
+            
+            This asset is needed if <see cref="T:Lexical.Asset.IAssetRoot"/> is converted to <see cref="T:Microsoft.Extensions.Localization.IStringLocalizerFactory" />.
+            </summary>
+            <param name="resourcePath"></param>
+            <param name="loggerFactory"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.ResourceManagerStringLocalizerAssetSource">
+            <summary>
+            A source that creates <see cref="T:Microsoft.Extensions.Localization.ResourceManagerStringLocalizer"/> and adapts it into <see cref="T:Lexical.Asset.IAsset"/>.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.ResourceManagerStringLocalizerAssetSource.Type(System.String,System.Type,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Create a source that uses .resx files that are inteded for a specific type.
+            </summary>
+            <param name="resourcePath">(optional) hint, for embedded resouce path</param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.ResourceManagerStringLocalizerAssetSource.Location(System.String,System.String,System.String,Microsoft.Extensions.Logging.ILoggerFactory)">
+            <summary>
+            Create a source that uses .resx files in a specific assembly and filename.
+            </summary>
+            <param name="location">assembly name</param>
+            <param name="resourcePath">(optional) hint, for embedded resource path</param>
+            <param name="basename">.resx filename</param>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.ResourceManagerStringLocalizerFactoryAssetSource">
+            <summary>
+            A source that creates <see cref="T:Microsoft.Extensions.Localization.ResourceManagerStringLocalizerFactory"/> and adapts it into <see cref="T:Lexical.Asset.IAsset"/>.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.StringLocalizerAsset">
+            <summary>
+            Adapts <see cref="T:Microsoft.Extensions.Localization.IStringLocalizer"/> into <see cref="T:Lexical.Asset.IAsset"/>.
+            
+            Can be constructed in three kinds:
+              Unassigned - adapter is not assigned to any location or type.
+              Type - adapter is assigned for specific type
+              Location - adapter is assigned to specific location
+            
+            If <see cref="M:Microsoft.Extensions.Localization.IStringLocalizer.WithCulture(System.Globalization.CultureInfo)"/> is called, then creates a new 
+            adapter with WithCulture is assigned.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.StringLocalizerAsset.Type">
+            <summary>
+            StringLocalizer adapter that is assigned to a specific Type
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.StringLocalizerAsset.Type.#ctor(Microsoft.Extensions.Localization.IStringLocalizer,System.Type,System.Globalization.CultureInfo)">
+            <summary>
+            
+            </summary>
+            <param name="stringLocalizer"></param>
+            <param name="basename">Embed location, e.g. "Resources" folder in an assembly</param>
+            <param name="location">Assembly name</param>
+            <param name="culture"></param>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.StringLocalizerAsset.Location">
+            <summary>
+            StringLocalizer adapter that is assigned to a specific Assembly + Embed location
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.StringLocalizerAsset.Location.#ctor(Microsoft.Extensions.Localization.IStringLocalizer,System.String,System.String,System.Globalization.CultureInfo)">
+            <summary>
+            
+            </summary>
+            <param name="stringLocalizer"></param>
+            <param name="basename">Embed location, e.g. "Resources" folder in an assembly</param>
+            <param name="location">Assembly name</param>
+            <param name="culture"></param>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.StringLocalizerAsset.FindStringLocalizer(Lexical.Asset.IAssetKey,System.Globalization.CultureInfo)">
+            <summary>
+            Find a localizer that matches the key.
+            </summary>
+            <param name="key"></param>
+            <returns>localizer or null</returns>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.StringLocalizerFactoryAsset">
+            <summary>
+            Adapts <see cref="T:Microsoft.Extensions.Localization.IStringLocalizerFactory"/> into <see cref="T:Lexical.Asset.IAsset"/>.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.StringLocalizerKey">
+            <summary>
+            StringLocalizerKey that implements and is assignable to following interfaces:
+                <see cref="T:Microsoft.Extensions.Localization.IStringLocalizer"/>
+                <see cref="T:Microsoft.Extensions.Localization.IStringLocalizerFactory"/>
+                <see cref="T:Lexical.Localization.ILocalizationKey"/>
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.Ms.Extensions.StringLocalizerKey.name">
+            <summary>
+            Local name of this key.
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.Ms.Extensions.StringLocalizerKey.prevKey">
+            <summary>
+            (optional) Link to previous key.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.StringLocalizerKey.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Deserialize from stream.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.StringLocalizerKey.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialize
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.StringLocalizerKey.ToString">
+            <summary>
+            Produce string using the following algorithm:
+              1. Search for language strings
+                 a. Search for formultion arguments. Apply arguments. Return
+              2. Build and return key identity.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="F:Lexical.Localization.Ms.Extensions.StringLocalizerKey.dynamicMetaObject">
+            <summary>
+            Cached dynamic object.
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.StringLocalizerKey.GetMetaObject(System.Linq.Expressions.Expression)">
+            <summary>
+            Get-or-create dynamic object.
+            </summary>
+            <param name="expression">the expression in the calling environgment</param>
+            <returns>object</returns>
+        </member>
+        <member name="F:Lexical.Localization.Ms.Extensions.StringLocalizerKey.hashcode">
+            <summary>
+            Cached hashcode
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.Ms.Extensions.StringLocalizerKey.hashcodeCalculated">
+            <summary>
+            Determines if hashcode is calculated and cached
+            </summary>
+        </member>
+        <member name="F:Lexical.Localization.Ms.Extensions.StringLocalizerKey.comparer">
+            <summary>
+            Preferred comparer
+            </summary>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.StringLocalizerKey.Equals(System.Object)">
+            <summary>
+            Equals comparison
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Lexical.Localization.Ms.Extensions.StringLocalizerKey.GetHashCode">
+            <summary>
+            Hashcode calculation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.StringLocalizerRoot">
+            <summary>
+            StringLocalizerRoot implements and is assignable to:
+                <see cref="T:Microsoft.Extensions.Localization.IStringLocalizer"/>
+                <see cref="T:Microsoft.Extensions.Localization.IStringLocalizerFactory"/>
+                <see cref="T:Lexical.Localization.ILocalizationKey"/>
+                <see cref="!:ILocalizationRoot"/>
+            </summary>
+            <summary>
+            Global singleton instance with compability to Lexical.Localization and Microsoft.Extensions.Localization.
+            
+            This singleton provides keys for both frameworks, instances of <see cref="T:Microsoft.Extensions.Localization.IStringLocalizer"/> and <see cref="T:Lexical.Asset.IAssetKey"/>.
+            
+            This singleton uses the same asset and builder references as <see cref="T:Lexical.Localization.LocalizationRoot"/> singleton.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.StringLocalizerRoot.Mutable">
+            <summary>
+            Localization root where culture policy and localization asset can be changed.
+            </summary>
+        </member>
+        <member name="T:Lexical.Localization.Ms.Extensions.StringLocalizerRoot.LinkedTo">
+            <summary>
+            Localization root where culture policy and localization asset are taken used another root.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.Ms.Extensions.StringLocalizerRoot.GlobalDynamic">
+            <summary>
+            Dynamic reference to the singleton instance of localization root.
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.Ms.Extensions.StringLocalizerRoot.Global">
+            <summary>
+            Singleton instance to localization root. 
+            Implements 
+                <see cref="T:Microsoft.Extensions.Localization.IStringLocalizer"/>
+                <see cref="T:Microsoft.Extensions.Localization.IStringLocalizerFactory"/>
+                <see cref="T:Lexical.Asset.IAssetKey"/>
+                <see cref="T:Lexical.Asset.IAssetRoot"/>
+            </summary>
+        </member>
+        <member name="P:Lexical.Localization.Ms.Extensions.StringLocalizerRoot.Builder">
+            <summary>
+            Asset builder. 
+            
+            Add <see cref="T:Lexical.Asset.IAssetSource"/>s here.
+            Then call <see cref="M:Lexical.Asset.IAssetBuilder.Build"/>.
+            </summary>
+        </member>
+    </members>
+</doc>
