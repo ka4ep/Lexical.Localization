@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.12.0</Version>
+    <Authors>Toni Kalajainen</Authors>
+    <Company>Lexical</Company>
+    <Description>Localization class library abstractions</Description>
+    <Copyright>Toni Kalajainen</Copyright>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/tagcode/Lexical.Localization/master/LICENSE?token=AE_lkRucodZ8Nn1i71P8NpdqBKAtPZEaks5cWv6XwA%3D%3D</PackageLicenseUrl>
+    <PackageProjectUrl>https://lexical.fi/Localization/index.html</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/tagcode/Lexical.Localization</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <LangVersion>7.2</LangVersion>
+    <PackageTags>Localization Lexical</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageIconUrl>http://avalanche.fi/theme/logo_blue.svg</PackageIconUrl>  
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="Inlines\InlineExtensions.cs">
+      <DependentUpon>InlineExtensions.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Inlines\InlineExtensions.tt">
+      <LastGenOutput>InlineExtensions.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+</Project>

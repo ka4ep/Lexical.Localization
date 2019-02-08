@@ -14,6 +14,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexical.Localization.Tests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "docs", "docs\docs.csproj", "{6D920DBB-BB29-4BAD-AF73-A422EA7B980A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexical.Localization.Abstractions", "Lexical.Localization.Abstractions\Lexical.Localization.Abstractions.csproj", "{B7C80D2C-534A-4122-80B8-79B6292065EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{6D920DBB-BB29-4BAD-AF73-A422EA7B980A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D920DBB-BB29-4BAD-AF73-A422EA7B980A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D920DBB-BB29-4BAD-AF73-A422EA7B980A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7C80D2C-534A-4122-80B8-79B6292065EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7C80D2C-534A-4122-80B8-79B6292065EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7C80D2C-534A-4122-80B8-79B6292065EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7C80D2C-534A-4122-80B8-79B6292065EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

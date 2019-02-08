@@ -35,9 +35,6 @@ Lexical.Localization is a localization class library for .NET.
 * Singletons
 * File format conversion tools
 
-**Favourable Lisence** for class library development.
-Lisence is transitive to consumers for run-time use and the purpose of setting up application.
-
 **Links**
 * [Website](http://lexical.fi/Localization/index.html)
 * [Github](https://github.com/tagcode/Lexical.Localization)

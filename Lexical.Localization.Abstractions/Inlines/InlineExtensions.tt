@@ -9,7 +9,7 @@
 <#
     HashSet<string> visited = new HashSet<string>();
 #>
-using Lexical.Asset;
+using Lexical.Localization;
 
 namespace Lexical.Localization.Inlines
 {

@@ -69,6 +69,7 @@
   </ItemGroup>  
   
   <ItemGroup>
+    <ProjectReference Include="..\Lexical.Localization.Abstractions\Lexical.Localization.Abstractions.csproj" />
     <ProjectReference Include="..\Lexical.Localization\Lexical.Localization.csproj" />
   </ItemGroup>
   
