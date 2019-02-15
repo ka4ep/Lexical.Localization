@@ -33,5 +33,5 @@ services *IStringLocalizer&lt;T&gt;* and *IStringLocalizerFactory*.
  * [IServiceCollection](https://github.com/aspnet/Extensions/blob/master/src/DependencyInjection/DI.Abstractions/src/IServiceCollection.cs)
 * [Microsoft.Extensions.DependencyInjection](https://github.com/aspnet/Extensions/tree/master/src/DependencyInjection/DI/src) ([NuGet](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/))
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [MsLocalizationExtensions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/DependencyInjection/MsLocalizationExtensions.cs)
- * [MsConfigurationExtensions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/DependencyInjection/MsConfigurationExtensions.cs)
+ * [MsLocalizationExtensions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/DependencyInjection/MsLocalizationExtensions.cs)
+ * [MsConfigurationExtensions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/DependencyInjection/MsConfigurationExtensions.cs)

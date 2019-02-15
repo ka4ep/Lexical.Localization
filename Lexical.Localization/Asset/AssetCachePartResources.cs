@@ -36,7 +36,7 @@ namespace Lexical.Localization
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
 
             // Create a cloner that reads values from IAssetKeys
-            this.cloner = new AssetKeyCloner(parametrizer);
+            this.cloner = new AssetKeyCloner(parametrizer, AssetKeyProxy.Parametrizer.Default);
 
             // Create parametrizer, comparer and cache that reads IAssetKeys and AssetKeyProxies interchangeably. AssetKeyProxy.Parametrizer must be on the left side, or it won't work. (because AssetKeyProxy : IAssetKey).
             IAssetKeyParametrizer compositeParametrizer = AssetKeyProxy.Parametrizer.Default.Concat(parametrizer);

@@ -37,19 +37,19 @@ Together these two make an immutable policy.
 <br/>
 <details>
   <summary><b>ICulturePolicy</b> is an interface for controlling the active culture and the fallback culture(s). (<u>click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization/Abstractions/CulturePolicy/ICulturePolicy.cs#ICulturePolicy)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/CulturePolicy/ICulturePolicy.cs#ICulturePolicy)]
 </details>
 
 <details>
   <summary><b>ICulturePolicyAssignable</b> is interface for classes where policy can be modified. (<u>click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization/Abstractions/CulturePolicy/ICulturePolicy.cs#ICulturePolicyAssignable)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/CulturePolicy/ICulturePolicy.cs#ICulturePolicyAssignable)]
 </details>
 
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
- * [ICulturePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/CulturePolicy/ICulturePolicy.cs)
- * [ICulturePolicyAssignable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/CulturePolicy/ICulturePolicy.cs)
+ * [ICulturePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/CulturePolicy/ICulturePolicy.cs)
+ * [ICulturePolicyAssignable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/CulturePolicy/ICulturePolicy.cs)
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [CulturePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/CulturePolicy/CulturePolicy.cs)
- * [CulturePolicyImmutable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/CulturePolicy/CulturePolicyImmutable.cs)
- * [CulturePolicyExtensions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/CulturePolicy/CulturePolicyExtensions.cs)
+ * [CulturePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/CulturePolicy/CulturePolicy.cs)
+ * [CulturePolicyImmutable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/CulturePolicy/CulturePolicyImmutable.cs)
+ * [CulturePolicyExtensions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/CulturePolicy/CulturePolicyExtensions.cs)

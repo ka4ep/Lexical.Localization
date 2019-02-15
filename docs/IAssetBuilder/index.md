@@ -20,22 +20,22 @@ Extension method **AddLexicalLocalization()** adds IAsset, IAssetRoot, ICultureP
 
 <details>
   <summary><b>IAssetBuilder</b> is the interface for factory class(es) that instantiate IAssets. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization/Abstractions/Asset/IAssetBuilder.cs#interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Asset/IAssetBuilder.cs#interface)]
 </details>
 <details>
   <summary><b>IAssetSource</b> is the interface for sources that contribute asset(s) to the built result. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization/Abstractions/Asset/IAssetSource.cs#interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Asset/IAssetSource.cs#interface)]
 </details>
 
 # Links
 * [Example code](https://github.com/tagcode/Lexical.Localization/tree/master/docs/IAssetBuilder)
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization/Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
- * [IAssetBuilder](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetBuilder.cs)
- * [IAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetSource.cs)
+ * [IAssetBuilder](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetBuilder.cs)
+ * [IAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetSource.cs)
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [AssetBuilder](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization/Asset/AssetBuilder.cs)
  * [AssetSource](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization/Asset/AssetSource.cs) Passes IAsset to to builder.
- * [AssetCacheSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Asset/AssetCache.cs) Adds cache to the built asset. 
+ * [AssetCacheSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Asset/AssetCache.cs) Adds cache to the built asset. 
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [ConfigurationBuilderLocalizationAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/Configuration/ConfigurationBuilderLocalizationAssetSource.cs) Adapts IConfigurationBuilder to IAssetSource.
- * [ResourceManagerStringLocalizerAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/Localization/ResourceManagerStringLocalizerAssetSource.cs) Adapts location of .resources file to IAssetSource.
+ * [ConfigurationBuilderLocalizationAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Configuration/ConfigurationBuilderLocalizationAssetSource.cs) Adapts IConfigurationBuilder to IAssetSource.
+ * [ResourceManagerStringLocalizerAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/ResourceManagerStringLocalizerAssetSource.cs) Adapts location of .resources file to IAssetSource.

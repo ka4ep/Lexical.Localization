@@ -66,7 +66,9 @@ namespace Lexical.Localization.Ms.Extensions
         }
 
         ILocalizationKeyCultured ILocalizationKeyCultureAssignable.SetCulture(CultureInfo culture) => new _Cultured(this, culture);
+        ILocalizationKeyCultured ILocalizationKeyCultureAssignable.SetCulture(string cultureName) => new _Cultured(this, CultureInfo.GetCultureInfo(cultureName));
         public _Cultured SetCulture(CultureInfo culture) => new _Cultured(this, culture);
+        public _Cultured SetCulture(string cultureName) => new _Cultured(this, CultureInfo.GetCultureInfo(cultureName));
         [Serializable]
         public class _Cultured : StringLocalizerKey, ILocalizationKeyCultured, IAssetKeyNonCanonicallyCompared
         {

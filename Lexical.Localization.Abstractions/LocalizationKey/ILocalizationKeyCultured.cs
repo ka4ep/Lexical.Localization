@@ -22,8 +22,18 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="subkey">Name for new sub key.</param>
         /// <returns>new key</returns>
-        [AssetKeyConstructor("culture")]
         ILocalizationKeyCultured SetCulture(CultureInfo culture);
+
+        /// <summary>
+        /// Set to a specific culture
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="cultureName"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="AssetKeyException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
+        /// <exception cref="CultureNotFoundException">if culture was not found</exception>
+        [AssetKeyConstructor("culture")]
+        ILocalizationKeyCultured SetCulture(string cultureName);
     }
 
     /// <summary>
@@ -50,20 +60,6 @@ namespace Lexical.Localization
         public static ILocalizationKeyCultured SetCulture(this IAssetKey key, CultureInfo culture)
         {
             if (key is ILocalizationKeyCultureAssignable casted) return casted.SetCulture(culture);
-            throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyCultureAssignable)}.");
-        }
-
-        /// <summary>
-        /// Set to a specific culture
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="cultureName"></param>
-        /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
-        /// <exception cref="CultureNotFoundException">if culture was not found</exception>
-        public static ILocalizationKeyCultured SetCulture(this IAssetKey key, string cultureName)
-        {
-            if (key is ILocalizationKeyCultureAssignable casted) return casted.SetCulture(CultureInfo.GetCultureInfo(cultureName));
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyCultureAssignable)}.");
         }
 

@@ -77,7 +77,7 @@ Files can then be loaded with a constructor.
 # Implementing
 <details>
   <summary><b>ILocalizationFileReader</b> is interface for classes that tokenize text file formats, and any hierarchical formats. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization/Localization/LocalizationFile/ILocalizationFileFormat.cs#ILocalizationFileReader)]
+[!code-csharp[Snippet](../../Lexical.Localization//LocalizationFile/ILocalizationFileFormat.cs#ILocalizationFileReader)]
 </details>
 
 <p/>
@@ -88,10 +88,10 @@ Non-hierarchical formats can be implemented by implementing IAsset that reads th
 
 # Links
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [ILocalizationFileReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationReader/ILocalizationFileReader.cs)
- * [LocalizationTextReaderBuilder](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationReader/ILocalizationFileReader.cs)
- * [IniReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationReader/Reader/IniReader.cs)
- * [JsonReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationReader/Reader/JsonReader.cs)
- * [ResourcesReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationReader/Reader/ResourcesReader.cs)
- * [ResxReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationReader/Reader/ResxReader.cs)
- * [XmlReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationReader/Reader/XmlReader.cs)
+ * [ILocalizationFileReadable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/ILocalizationFileReadable.cs)
+ * [ILocalizationFileWritable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/ILocalizationFileWritable.cs)
+ * [IniFileFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/IniFileFormat.cs)
+ * [JsonFileFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/JsonFileFormat.cs)
+ * [ResourcesFileFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/ResourcesFileFormat.cs)
+ * [ResxFileFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/ResxFileFormat.cs)
+ * [XmlFileFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/XmlFileFormat.cs)

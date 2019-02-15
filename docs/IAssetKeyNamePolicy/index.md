@@ -10,7 +10,7 @@ Extension method **.Build(*IAssetKey*)** can be used to test the conversion from
 
 <details>
   <summary><b>IAssetKeyNamePolicy</b> is the root interface for classes that formulate **IAssetKey**s into identity strings. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization/Abstractions/AssetKey/IAssetKeyNamePolicy.cs#IAssetKeyNamePolicy)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/IAssetKeyNamePolicy.cs#IAssetKeyNamePolicy)]
 </details>
 
 # Asset Key Name Provider
@@ -27,7 +27,7 @@ Custom policies can be created by instantiating AssetKeyNameProvider and adding 
 
 <details>
   <summary><b>IAssetKeyNameProvider</b> is policy interface where Build() can be implemented directly. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization/Abstractions/AssetKey/IAssetKeyNamePolicy.cs#IAssetKeyNameProvider)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/IAssetKeyNamePolicy.cs#IAssetKeyNameProvider)]
 </details>
 
 # Asset Name Pattern
@@ -63,15 +63,15 @@ Custom parameters can be created. Parameter key object should implement IAssetKe
 
 <details>
   <summary><b>IAssetNamePattern</b> is the interface for name patterns. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization/Abstractions/AssetKey/IAssetNamePattern.cs#IAssetNamePattern)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/IAssetNamePattern.cs#IAssetNamePattern)]
 </details>
 
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
- * [IAssetKeyNamePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/AssetKey/IAssetKeyNamePolicy.cs) is the root interface for classes that formulate IAssetKey into identity string.
- * [IAssetKeyNameProvider](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/AssetKey/IAssetKeyNamePolicy.cs) is a subinterface where Build() can be implemented directly.
- * [IAssetNamePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/AssetKey/IAssetNamePattern.cs) is a subinterface that formulates parametrization with a template string.
+ * [IAssetKeyNamePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetKeyNamePolicy.cs) is the root interface for classes that formulate IAssetKey into identity string.
+ * [IAssetKeyNameProvider](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetKeyNamePolicy.cs) is a subinterface where Build() can be implemented directly.
+ * [IAssetNamePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetNamePattern.cs) is a subinterface that formulates parametrization with a template string.
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [AssetKeyNameProvider](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/AssetKey/AssetKeyNameProvider.cs) is implementation of IAssetNameProvider.
- * [AssetNamePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/AssetKey/AssetNamePattern.cs) is the default implementation of IAssetNamePattern.
+ * [AssetKeyNameProvider](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/AssetKeyNameProvider.cs) is implementation of IAssetNameProvider.
+ * [AssetNamePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/AssetNamePattern.cs) is the default implementation of IAssetNamePattern.
  

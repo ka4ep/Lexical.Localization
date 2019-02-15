@@ -31,5 +31,5 @@ There is an extension method **.AddConfigurationBuilder()** that adds IConfigura
  * [IConfigurationBuilder](https://github.com/aspnet/Extensions/blob/master/src/Configuration/Config.Abstractions/src/IConfigurationBuilder.cs)
 * [Microsoft.Extensions.Configuration](https://github.com/aspnet/Extensions/tree/master/src/Configuration/Config/src) ([NuGet](https://www.nuget.org/packages/Microsoft.Extensions.Configuration/))
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [ConfigurationLocalizationAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/Configuration/ConfigurationLocalizationAsset.cs)
- * [ConfigurationBuilderLocalizationAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/Configuration/ConfigurationBuilderLocalizationAssetSource.cs)
+ * [ConfigurationLocalizationAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Configuration/ConfigurationLocalizationAsset.cs)
+ * [ConfigurationBuilderLocalizationAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Configuration/ConfigurationBuilderLocalizationAssetSource.cs)

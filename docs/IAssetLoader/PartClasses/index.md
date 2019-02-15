@@ -44,7 +44,7 @@ the is distinction in the end of the class names: **AssetLoaderPartFile*Strings*
 
 # File Provider
 Third type of source is [IFileProvider](https://github.com/aspnet/Extensions/blob/master/src/FileProviders/Abstractions/src/IFileProvider.cs).
-[AssetLoaderPartFileProviderStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderStrings.cs)
+[AssetLoaderPartFileProviderStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderStrings.cs)
 loads strings from file providers. The calling assembly must have nuget dependency to **[Microsoft.Extensions.FileProviders.Abstractions](https://www.nuget.org/packages/Microsoft.Extensions.FileProviders.Abstractions/)**,
 and import namespaces **Lexical.Localization.Ms.Extensions** and **Lexical.Localization.Ms.Extensions**.
 # [Snippet](#tab/snippet-8)
@@ -54,7 +54,7 @@ and import namespaces **Lexical.Localization.Ms.Extensions** and **Lexical.Local
 ***
 
 
-And [AssetLoaderPartFileProviderResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderResources.cs)
+And [AssetLoaderPartFileProviderResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderResources.cs)
 loads binary resources.
 
 # [Snippet](#tab/snippet-10)
@@ -64,7 +64,7 @@ loads binary resources.
 ***
 
 # Options
-[AssetLoaderPartOptions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetLoader.cs) is is a IDictionary&lt;string, object&gt;
+[AssetLoaderPartOptions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetLoader.cs) is is a IDictionary&lt;string, object&gt;
 that carries options for IAssetLoaderParts. 
 
 <br/>
@@ -83,18 +83,18 @@ What options are supported or needed is implementation specific.
 # Links
 * [Example code](https://github.com/tagcode/Lexical.Localization/tree/master/docs/IAssetLoader/PartClasses)
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
- * [IAssetLoaderPart](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetLoaderPart.cs)
- * [IAssetLoaderPartOptions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Abstractions/Asset/IAssetLoaderPartOptions.cs)
+ * [IAssetLoaderPart](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetLoaderPart.cs)
+ * [IAssetLoaderPartOptions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetLoaderPartOptions.cs)
 
 Table of IAssetLoaderPart implementations
 
 | Name | Source Type | File Type(s) | Description |
 |----------|:-------|:-------|:-------|
-| [AssetLoaderPartFileStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationAssetLoader/AssetLoaderPartFileStrings.cs) | file | strings | Loads string assets from text files |
-| [AssetLoaderPartFileResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/AssetLoader/AssetLoaderPartFileResources.cs) | file | binary | Loads binary assets from local files |
-| [AssetLoaderPartFileResourceManager](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationAssetLoader/AssetLoaderPartFileResourceManager.cs) | file | .resources/.resx | Loads binary assets .resources files |
-| [AssetLoaderPartEmbeddedStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationAssetLoader/AssetLoaderPartEmbeddedStrings.cs) | embedded resources | strings | Loads string assets from embedded text files |
-| [AssetLoaderPartEmbeddedResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/AssetLoader/AssetLoaderPartEmbeddedResources.cs) | embedded resources | binary | Loads binary assets from embedded files |
-| [AssetLoaderPartEmbeddedResourceManager](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/LocalizationAssetLoader/AssetLoaderPartEmbeddedResourceManager.cs) | embedded resource | .resources/.resx | Loads string assets from embedded .resources files |
-| [AssetLoaderPartFileProviderResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderResources.cs) | IFileProvider | binary | Loads binary assets using IFileProvider interface |
-| [AssetLoaderPartFileProviderStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderStrings.cs) | IFileProvider | strings | Loads string assets from text files using IFileProvider interface |
+| [AssetLoaderPartFileStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAssetLoader/AssetLoaderPartFileStrings.cs) | file | strings | Loads string assets from text files |
+| [AssetLoaderPartFileResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetLoader/AssetLoaderPartFileResources.cs) | file | binary | Loads binary assets from local files |
+| [AssetLoaderPartFileResourceManager](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAssetLoader/AssetLoaderPartFileResourceManager.cs) | file | .resources/.resx | Loads binary assets .resources files |
+| [AssetLoaderPartEmbeddedStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAssetLoader/AssetLoaderPartEmbeddedStrings.cs) | embedded resources | strings | Loads string assets from embedded text files |
+| [AssetLoaderPartEmbeddedResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetLoader/AssetLoaderPartEmbeddedResources.cs) | embedded resources | binary | Loads binary assets from embedded files |
+| [AssetLoaderPartEmbeddedResourceManager](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAssetLoader/AssetLoaderPartEmbeddedResourceManager.cs) | embedded resource | .resources/.resx | Loads string assets from embedded .resources files |
+| [AssetLoaderPartFileProviderResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderResources.cs) | IFileProvider | binary | Loads binary assets using IFileProvider interface |
+| [AssetLoaderPartFileProviderStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderStrings.cs) | IFileProvider | strings | Loads string assets from text files using IFileProvider interface |
