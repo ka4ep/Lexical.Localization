@@ -1,4 +1,4 @@
-﻿# File Formats
+﻿# Localization File
 Four fileformats can be used out of the box, provided that the files follow a suitable structure.
 Localization files can be organized in many ways, internally and between each other. 
 [Key name policy](../IAssetKeyNamePolicy/) is used for describing file names and lines.
@@ -76,15 +76,20 @@ Files can then be loaded with a constructor.
 
 # Implementing
 <details>
-  <summary><b>ILocalizationFileReader</b> is interface for classes that tokenize text file formats, and any hierarchical formats. (<u>Click here</u>)</summary>
+  <summary><b>ILocalizationFileFormat</b> is interface for classes that tokenize text file formats, and any hierarchical formats. (<u>Click here</u>)</summary>
 [!code-csharp[Snippet](../../Lexical.Localization//LocalizationFile/ILocalizationFileFormat.cs#ILocalizationFileReader)]
 </details>
 
 <p/>
-And then adding to constructor delegate to **LocalizationTextReaderBuilder**.
+And then adding to constructor delegate to **LocalizationFileFormatMap.Singleton**.
 [!code-csharp[Snippet](Examples.cs#Snippet_2)]
 
 Non-hierarchical formats can be implemented by implementing IAsset that reads the format.	
+
+<details>
+  <summary>Example implementation ExtFileFormat. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](Examples.cs#Snippet_3)]
+</details>
 
 # Links
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))

@@ -50,7 +50,7 @@ asset = new StringLocalizerAsset(stringLocalizer);
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Success", "Onnistui" } };
-IAsset asset = new LocalizationStringDictionary(source, AssetKeyNameProvider.Default);
+IAsset asset = new LocalizationDictionary(source, AssetKeyNameProvider.Default);
 
 // Create root
 IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());
@@ -73,7 +73,7 @@ And to *IStringLocalizer*.
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Success", "Onnistui" } };
-IAsset asset = new LocalizationStringDictionary(source, AssetKeyNameProvider.Default);
+IAsset asset = new LocalizationDictionary(source, AssetKeyNameProvider.Default);
 
 // Create root
 IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());

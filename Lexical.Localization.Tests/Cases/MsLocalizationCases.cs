@@ -50,10 +50,10 @@ namespace Lexical.Localization.Tests
             init["strings"] = true;
             init["resources"] = true;
             IAssetBuilder builder = StringLocalizerRoot.Builder;
-            builder.AddAsset(new LocalizationStringDictionary(languageStrings, AssetKeyNameProvider.Default));
-            builder.AddAsset(new LocalizationStringDictionary(languageStrings_en, AssetKeyNameProvider.Default));
-            builder.AddAsset(new LocalizationStringDictionary(languageStrings_fi, AssetKeyNameProvider.Default));
-            builder.AddAsset(new LocalizationStringDictionary(languageStrings_fi_savo, AssetKeyNameProvider.Default));
+            builder.AddAsset(new LocalizationDictionary(languageStrings, AssetKeyNameProvider.Default));
+            builder.AddAsset(new LocalizationDictionary(languageStrings_en, AssetKeyNameProvider.Default));
+            builder.AddAsset(new LocalizationDictionary(languageStrings_fi, AssetKeyNameProvider.Default));
+            builder.AddAsset(new LocalizationDictionary(languageStrings_fi_savo, AssetKeyNameProvider.Default));
             builder.AddAsset(new AssetResourceDictionary(res, AssetKeyNameProvider.Default));
             builder.AddAsset(new AssetResourceDictionary(res_en, AssetKeyNameProvider.Default));
             builder.AddAsset(new AssetResourceDictionary(res_fi, AssetKeyNameProvider.Default));

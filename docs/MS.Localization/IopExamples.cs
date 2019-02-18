@@ -60,7 +60,7 @@ namespace docs
                 #region Snippet_4a
                 // Create asset
                 var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Success", "Onnistui" } };
-                IAsset asset = new LocalizationStringDictionary(source, AssetKeyNameProvider.Default);
+                IAsset asset = new LocalizationDictionary(source, AssetKeyNameProvider.Default);
 
                 // Create root
                 IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());
@@ -83,7 +83,7 @@ namespace docs
                 #region Snippet_4b
                 // Create asset
                 var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Success", "Onnistui" } };
-                IAsset asset = new LocalizationStringDictionary(source, AssetKeyNameProvider.Default);
+                IAsset asset = new LocalizationDictionary(source, AssetKeyNameProvider.Default);
 
                 // Create root
                 IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());
@@ -104,7 +104,7 @@ namespace docs
                 #region Snippet_9
                 // Create asset
                 var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Success", "Onnistui" } };
-                IAsset asset = new LocalizationStringDictionary(source, AssetKeyNameProvider.Default);
+                IAsset asset = new LocalizationDictionary(source, AssetKeyNameProvider.Default);
 
                 // Create root
                 IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());

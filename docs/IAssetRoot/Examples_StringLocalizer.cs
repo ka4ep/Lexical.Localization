@@ -16,7 +16,7 @@ namespace docs
             // Create localization source
             var source = new Dictionary<string, string> { { "en:MyController:hello", "Hello World!" } };
             // Create asset
-            IAsset asset = new LocalizationStringDictionary(source);
+            IAsset asset = new LocalizationDictionary(source);
             // Create culture policy
             ICulturePolicy culturePolicy = new CulturePolicy();
             // Create root

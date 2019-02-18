@@ -8,7 +8,7 @@ Asset cache needs to be populated with [IAssetCacheParts](https://github.com/tag
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-IAsset asset = new LocalizationStringDictionary(source);
+IAsset asset = new LocalizationDictionary(source);
 
 // Create cache
 IAssetCache asset_cached = new AssetCache(asset);
@@ -16,6 +16,8 @@ IAssetCache asset_cached = new AssetCache(asset);
 asset_cached.Add(new AssetCachePartResources(asset_cached.Source, asset_cached.Options));
 // Adds feature to cache ILocalizationStringProvider specific requests
 asset_cached.Add(new AssetCachePartStrings(asset_cached.Source, asset_cached.Options));
+// Adds feature to cache IAssetKeysCollection specific requests
+asset_cached.Add(new AssetCachePartKeys(asset_cached.Source, asset_cached.Options));
 // Adds feature to cache ILocalizationAssetCultureCapabilities specific requests
 asset_cached.Add(new AssetCachePartCultures(asset_cached.Source, asset_cached.Options));
 
@@ -28,7 +30,7 @@ There are extension methods for convenience.
 
 ```csharp
 // Create cache decorator
-IAssetCache asset_cached = new AssetCache(asset).AddResourceCache().AddStringsCache().AddCulturesCache();
+IAssetCache asset_cached = new AssetCache(asset).AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache();
 ```
 
 <br/>
@@ -68,7 +70,7 @@ public interface IAssetCachePart : IAsset
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-IAsset asset = new LocalizationStringDictionary(source);
+IAsset asset = new LocalizationDictionary(source);
 
 // Create cache
 IAssetCache asset_cached = asset.CreateCache();
@@ -106,7 +108,7 @@ Table of Asset cache option's keys
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-IAsset asset = new LocalizationStringDictionary(source);
+IAsset asset = new LocalizationDictionary(source);
 
 // Cache it
 asset = asset.CreateCache();
@@ -126,7 +128,7 @@ asset.Reload();
  * [IAssetCache](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetCache.cs)
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [AssetCache](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization/Asset/AssetCache.cs)
- * [AssetCachePartResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization//Asset/AssetCachePartResources.cs)
+ * [AssetCachePartResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Asset/AssetCachePartResources.cs)
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/)) 
- * [AssetCachePartStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization//LocalizationAsset/AssetCachePartStrings.cs)
- * [AssetCachePartCultures](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization//LocalizationAsset/AssetCachePartCultures.cs)
+ * [AssetCachePartStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/AssetCachePartStrings.cs)
+ * [AssetCachePartCultures](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/AssetCachePartCultures.cs)

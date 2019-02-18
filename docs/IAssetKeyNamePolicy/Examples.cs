@@ -17,7 +17,7 @@ namespace docs
                 // Create key name policy
                 IAssetKeyNamePolicy policy = new AssetKeyNameProvider().SetDefault(true, "/");
                 // Create asset
-                IAsset asset = new LocalizationStringDictionary(source, policy);
+                IAsset asset = new LocalizationDictionary(source, policy);
                 // Create key
                 IAssetKey key = new LocalizationRoot(asset).Section("MyController").Key("Hello");
                 // Retrieve string

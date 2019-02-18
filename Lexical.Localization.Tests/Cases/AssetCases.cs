@@ -51,8 +51,8 @@ namespace Lexical.Localization.Tests
         }
     }
 
-    [Case(nameof(IAsset), nameof(LocalizationStringDictionary))]
-    public class Asset_LocalizationStringDictionary : AssetData
+    [Case(nameof(IAsset), nameof(LocalizationDictionary))]
+    public class Asset_LocalizationDictionary : AssetData
     {
         public object Initialize(Run init)
         {
@@ -63,7 +63,7 @@ namespace Lexical.Localization.Tests
             var source = new Dictionary<string, string>(languageStrings.Concat(languageStrings_en).Concat(languageStrings_fi).Concat(languageStrings_fi_savo));
 
             // Create asset
-            IAsset asset = new LocalizationStringDictionary(source, AssetKeyNameProvider.Default);
+            IAsset asset = new LocalizationDictionary(source, AssetKeyNameProvider.Default);
 
             return asset;
         }
@@ -183,10 +183,10 @@ namespace Lexical.Localization.Tests
             IAssetBuilder builder = LocalizationRoot.Builder;
 
             // Add asset sources
-            builder.AddAsset(new LocalizationStringDictionary(languageStrings, AssetKeyNameProvider.Default));
-            builder.AddAsset(new LocalizationStringDictionary(languageStrings_en, AssetKeyNameProvider.Default));
-            builder.AddAsset(new LocalizationStringDictionary(languageStrings_fi, AssetKeyNameProvider.Default));
-            builder.AddAsset(new LocalizationStringDictionary(languageStrings_fi_savo, AssetKeyNameProvider.Default));
+            builder.AddAsset(new LocalizationDictionary(languageStrings, AssetKeyNameProvider.Default));
+            builder.AddAsset(new LocalizationDictionary(languageStrings_en, AssetKeyNameProvider.Default));
+            builder.AddAsset(new LocalizationDictionary(languageStrings_fi, AssetKeyNameProvider.Default));
+            builder.AddAsset(new LocalizationDictionary(languageStrings_fi_savo, AssetKeyNameProvider.Default));
             builder.AddAsset(new AssetResourceDictionary(res, AssetKeyNameProvider.Default));
             builder.AddAsset(new AssetResourceDictionary(res_en, AssetKeyNameProvider.Default));
             builder.AddAsset(new AssetResourceDictionary(res_fi, AssetKeyNameProvider.Default));

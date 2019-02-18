@@ -318,7 +318,7 @@ namespace docs
                 AssetLoaderPartBuilder builder = new AssetLoaderPartBuilder()
                     .Path(".")                                                  // Add directory to search files from
                     .FilePattern("Assets/localization{-culture}.ext")           // Add file name pattern
-                    .AssetFileConstructor( (s, p) => new LocalizationStringDictionary(new Dictionary<string, string>()) )
+                    .AssetFileConstructor( (s, p) => new LocalizationDictionary(new Dictionary<string, string>()) )
                     .KeyPolicy(default)                                         // Add key policy default to file extension
                     .Strings();                                                 // Signal to read strings
                 #endregion Snippet_13

@@ -18,7 +18,7 @@ namespace Lexical.Localization.Tests
             languageStrings["fi:ConsoleApp1:MyController:Error"] = "Virhe (Koodi=0x{0:X8})";
             languageStrings["fi-Savo:ConsoleApp1:MyController:Success"] = "Onnistuepie";
             languageStrings["fi-Savo:ConsoleApp1:MyController:Error"] = "Epäonnistuepa (Koodi=0x{0:X8})";
-            IAsset asset = new LocalizationStringDictionary(languageStrings, AssetKeyNameProvider.Default);
+            IAsset asset = new LocalizationDictionary(languageStrings, AssetKeyNameProvider.Default);
 
             // The root must be LocalizationRoot. AssetRoot does not have any of the localization features, such as culture, inlining or formulating.
             dynamic root = new LocalizationRoot(asset, new CulturePolicy());

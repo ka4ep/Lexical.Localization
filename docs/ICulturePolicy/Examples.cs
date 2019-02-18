@@ -27,7 +27,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!" }
                 };
                 // Create asset with culture policy
-                IAsset asset = new LocalizationStringDictionary(source);
+                IAsset asset = new LocalizationDictionary(source);
                 // Create root and assign culturePolicy
                 IAssetRoot root = new LocalizationRoot(asset, culturePolicy);
                 #endregion Snippet_1

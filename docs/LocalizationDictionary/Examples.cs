@@ -7,7 +7,7 @@ using Microsoft.Extensions.Localization;
 
 namespace docs
 {
-    public class LocalizationStringDictionary_Examples
+    public class LocalizationDictionary_Examples
     {
         // Rename to "Main", or run from Main.
         public static void Run(string[] args)
@@ -21,7 +21,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!" }
                 };
                 // Create asset
-                IAsset asset = new LocalizationStringDictionary(source);
+                IAsset asset = new LocalizationDictionary(source);
                 #endregion Snippet_1
                 // Create root 
                 IAssetRoot root = new LocalizationRoot(asset);
@@ -34,7 +34,7 @@ namespace docs
                 };
                 #region Snippet_2
                 // Create asset with name pattern
-                IAsset asset = new LocalizationStringDictionary(source, "{culture:}{type:}{key}");
+                IAsset asset = new LocalizationDictionary(source, "{culture:}{type:}{key}");
                 // Extract all keys
                 foreach (IAssetKey key in asset.GetAllKeys())
                     Console.WriteLine(key);

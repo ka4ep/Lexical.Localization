@@ -106,10 +106,10 @@ Non-hierarchical formats can be implemented by implementing IAsset that reads th
 
 # Links
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [ILocalizationFileReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization//LocalizationReader/ILocalizationFileReader.cs)
- * [LocalizationTextReaderBuilder](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization//LocalizationReader/ILocalizationFileReader.cs)
- * [IniReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization//LocalizationReader/Reader/IniReader.cs)
- * [JsonReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization//LocalizationReader/Reader/JsonReader.cs)
- * [ResourcesReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization//LocalizationReader/Reader/ResourcesReader.cs)
- * [ResxReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization//LocalizationReader/Reader/ResxReader.cs)
- * [XmlReader](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization//LocalizationReader/Reader/XmlReader.cs)
+ * [ILocalizationFileReadable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/ILocalizationFileReadable.cs)
+ * [ILocalizationFileWritable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/ILocalizationFileWritable.cs)
+ * [IniFileFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/IniFileFormat.cs)
+ * [JsonFileFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/JsonFileFormat.cs)
+ * [ResourcesFileFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/ResourcesFileFormat.cs)
+ * [ResxFileFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/ResxFileFormat.cs)
+ * [XmlFileFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationFile/XmlFileFormat.cs)

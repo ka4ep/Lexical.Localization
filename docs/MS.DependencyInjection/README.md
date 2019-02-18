@@ -28,7 +28,7 @@ Assets are contributed to the service provider by adding *IAssetSource*s.
 // Create localization source
 var source = new Dictionary<string, string> { { "en:ConsoleApp1.MyController:Hello", "Hello World!" } };
 // Create asset source
-IAssetSource assetSource = new LocalizationStringDictionary(source).ToSource();
+IAssetSource assetSource = new LocalizationDictionary(source).ToSource();
 // Add asset source
 serviceCollection.AddSingleton<IAssetSource>(assetSource);
 ```
@@ -81,7 +81,7 @@ namespace docs
             // Create localization source
             var source = new Dictionary<string, string> { { "en:ConsoleApp1.MyController:Hello", "Hello World!" } };
             // Create asset source
-            IAssetSource assetSource = new LocalizationStringDictionary(source).ToSource();
+            IAssetSource assetSource = new LocalizationDictionary(source).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 
@@ -129,7 +129,7 @@ var source = new Dictionary<string, string> {
     { "en:ConsoleApp1.MyController:Hello", "Hello World!" }
 };
 // Create asset source
-IAssetSource assetSource = new LocalizationStringDictionary(source).ToSource();
+IAssetSource assetSource = new LocalizationDictionary(source).ToSource();
 // Add asset source
 serviceCollection.AddSingleton<IAssetSource>(assetSource);
 
@@ -182,7 +182,7 @@ namespace docs
                 { "en:ConsoleApp1.MyController:Hello", "Hello World!" }
             };
             // Create asset source
-            IAssetSource assetSource = new LocalizationStringDictionary(source).ToSource();
+            IAssetSource assetSource = new LocalizationDictionary(source).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 

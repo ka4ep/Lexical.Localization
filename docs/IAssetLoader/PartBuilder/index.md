@@ -158,10 +158,10 @@ Construct with **.ResourceManager()**.
 Note that, MSBuild spreads embedded .resx files into satellite assemblies under culture specific folders.
 ![ResXes](resx.png)
 
-To read .resources/.resx with IFileProvider, use combination of [RootFileProvider](~/sdk/FileProvider/docs/Root/index.html), [PackageFileProvider](~/sdk/FileProvider/docs/Package/index.html) 
+These assemblies can be read in with IFileProvider, when used the combination of [RootFileProvider](~/sdk/FileProvider/docs/Root/index.html), [PackageFileProvider](~/sdk/FileProvider/docs/Package/index.html) 
 and [DllFileProvider](~/sdk/FileProvider/docs/Dll/index.html).
-Construct with **.ResourceManager()**. 
-[!code-csharp[Snippet](Examples.cs#Snippet_9)]
+To do so construct asset builder with **.FileProvider()**. 
+[!code-csharp[Snippet](Examples.cs#Snippet_20)]
 
 
 # Links

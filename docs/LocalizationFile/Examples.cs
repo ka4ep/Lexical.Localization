@@ -17,10 +17,10 @@ namespace docs
         {
             {
                 #region Snippet_1
-                using (FileStream fs = new FileStream("localization.ext", FileMode.Open))
+                using (FileStream fs = new FileStream("localization.ini", FileMode.Open))
                 {
                     // Get .ext file format
-                    ILocalizationFileStreamReader fileFormat = LocalizationFileFormatMap.Singleton.TryGet("ext") as ILocalizationFileStreamReader;
+                    ILocalizationFileStreamReader fileFormat = LocalizationFileFormatMap.Singleton.TryGet("ini") as ILocalizationFileStreamReader;
                     // Create reader
                     ILocalizationFileReadable textReader = fileFormat.OpenStream(fs, AssetKeyNameProvider.Default);
                     // Convert to asset
@@ -31,7 +31,7 @@ namespace docs
 
             {
                 #region Snippet_2
-                // Add reader of .ext files (ExtReader) to the collection of readers.
+                // Add reader of custom .ext format to the global collection of readers.
                 LocalizationFileFormatMap.Singleton["ext"] = new ExtFileFormat();
                 #endregion Snippet_2
             }
@@ -39,6 +39,7 @@ namespace docs
         }
     }
 
+    #region Snippet_3
     class ExtFileFormat : ILocalizationFileFormat, ILocalizationFileStreamReader
     {
         public string Extension 
@@ -64,5 +65,6 @@ namespace docs
             throw new System.NotImplementedException();
         }
     }
+    #endregion Snippet_3
 
 }

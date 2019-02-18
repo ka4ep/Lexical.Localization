@@ -327,7 +327,7 @@ Other formats can implemented by two ways:
 AssetLoaderPartBuilder builder = new AssetLoaderPartBuilder()
     .Path(".")                                                  // Add directory to search files from
     .FilePattern("Assets/localization{-culture}.ext")           // Add file name pattern
-    .AssetFileConstructor( (s, p) => new LocalizationStringDictionary(new Dictionary<string, string>()) )
+    .AssetFileConstructor( (s, p) => new LocalizationDictionary(new Dictionary<string, string>()) )
     .KeyPolicy(default)                                         // Add key policy default to file extension
     .Strings();                                                 // Signal to read strings
 ```
@@ -337,7 +337,7 @@ Although .resx and .resources fileformats can be read as string files, an altern
 that it uses ResourceManagerAsset which forwards calls to System.Resources.ResourceManager instance.
 ResourceManagerAsset can read both strings and resources. 
 
-Constructe with **.ResourceManager()**. 
+Construct with **.ResourceManager()**. 
 
 ```csharp
 // Create builder
@@ -351,7 +351,26 @@ AssetLoaderPartBuilder builder = new AssetLoaderPartBuilder()
 Note that, MSBuild spreads embedded .resx files into satellite assemblies under culture specific folders.
 ![ResXes](resx.png)
 
-Note two, resource managers cannot be read from IFileProviders sources.
+These assemblies can be read in with IFileProvider, when used the combination of [RootFileProvider](~/sdk/FileProvider/docs/Root/index.html), [PackageFileProvider](~/sdk/FileProvider/docs/Package/index.html) 
+and [DllFileProvider](~/sdk/FileProvider/docs/Dll/index.html).
+To do so construct asset builder with **.FileProvider()**. 
+
+```csharp
+// Create Root File Provider
+IFileProvider root = new RootFileProvider();
+// Create Package File Provider
+IFileProvider fileProvider = new PackageFileProvider(root)
+    .ConfigureOptions(o => o.AddPackageLoader(Dll.Singleton))
+    .AddDisposable(root);
+// Create builder
+AssetLoaderPartBuilder builder = new AssetLoaderPartBuilder()
+    .FileProvider(fileProvider)                                 // Add file provider that opens .dll files
+    .FilePattern("{filename}.dll/{assembly}.Resources.{type.}{culture.}resources")  // Add file name pattern
+    .MatchParameters("filename", "assembly", "culture", "type") // Match parameters against existing file names
+    .KeyPattern("{assembly:}{type:}{key}")                       // Add key policy
+    .Strings();                                                 // Signal to read strings
+```
+
 
 # Links
 * [Example code](https://github.com/tagcode/Lexical.Localization/tree/master/docs/IAssetLoader/PartBuilder/Examples.cs)

@@ -60,7 +60,7 @@ namespace TutorialTest
             // Create asset
             Dictionary<string, string> strs = new Dictionary<string, string>();
             strs["fi:TutorialLibrary.MyController1:OK"] = "Toiminto onnistui";
-            IAsset asset = new LocalizationStringDictionary(strs, AssetKeyNameProvider.Default);
+            IAsset asset = new LocalizationDictionary(strs, AssetKeyNameProvider.Default);
 
             // Add asset to global singleton instance
             LocalizationRoot.Builder.AddSource(asset);
@@ -136,7 +136,7 @@ namespace TutorialTest
             // Create asset
             Dictionary<string, string> strs = new Dictionary<string, string>();
             strs["fi:TutorialLibrary.MyController2:OK"] = "Toiminto onnistui";
-            IAsset asset = new LocalizationStringDictionary(strs, AssetKeyNameProvider.Default);
+            IAsset asset = new LocalizationDictionary(strs, AssetKeyNameProvider.Default);
 
             // Create asset root
             IAssetRoot root = new LocalizationRoot(asset, new CulturePolicy());
@@ -213,7 +213,7 @@ namespace TutorialTest
             // Create asset
             Dictionary<string, string> strs = new Dictionary<string, string>();
             strs["fi:TutorialLibrary.MyController3:OK"] = "Toiminto onnistui";
-            IAsset asset = new LocalizationStringDictionary(strs, AssetKeyNameProvider.Default);
+            IAsset asset = new LocalizationDictionary(strs, AssetKeyNameProvider.Default);
 
             // Create asset root
             IStringLocalizerFactory root = new StringLocalizerRoot(asset, new CulturePolicy());
