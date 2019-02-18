@@ -1,4 +1,8 @@
-﻿using System;
+﻿// --------------------------------------------------------
+// Copyright:      Toni Kalajainen
+// Url:            http://lexical.fi
+// --------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Text;
 

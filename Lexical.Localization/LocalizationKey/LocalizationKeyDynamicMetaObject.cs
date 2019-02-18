@@ -3,14 +3,11 @@
 // Date:           13.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization;
 using Lexical.Localization.Internal;
 using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Lexical.Localization

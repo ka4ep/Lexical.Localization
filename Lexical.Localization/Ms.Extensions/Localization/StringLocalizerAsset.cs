@@ -3,13 +3,11 @@
 // Date:           18.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 
 namespace Lexical.Localization.Ms.Extensions

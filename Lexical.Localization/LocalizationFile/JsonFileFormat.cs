@@ -3,7 +3,6 @@
 // Date:           25.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

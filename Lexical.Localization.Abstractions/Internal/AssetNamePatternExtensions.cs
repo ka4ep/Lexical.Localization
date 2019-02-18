@@ -3,7 +3,6 @@
 // Date:           22.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-
 namespace Lexical.Localization
 {
     public static partial class AssetNamePatternExtensions

@@ -1,4 +1,8 @@
-﻿using Lexical.Localization.Internal;
+﻿// --------------------------------------------------------
+// Copyright:      Toni Kalajainen
+// Url:            http://lexical.fi
+// --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System.Collections.Generic;
 
 namespace Lexical.Localization
