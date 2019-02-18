@@ -3,16 +3,8 @@
 // Date:           8.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.FileProviders;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
-using Lexical.Localization;
-using Lexical.Localization.Inlines;
 using Lexical.Localization;
 
 namespace docs

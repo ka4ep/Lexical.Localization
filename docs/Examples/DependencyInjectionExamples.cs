@@ -1,5 +1,4 @@
 ﻿using Lexical.Localization;
-using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

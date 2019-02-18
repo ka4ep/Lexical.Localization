@@ -64,6 +64,19 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Set to a specific culture
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="cultureName"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="AssetKeyException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
+        public static ILocalizationKeyCultured SetCulture(this IAssetKey key, string cultureName)
+        {
+            if (key is ILocalizationKeyCultureAssignable casted) return casted.SetCulture(cultureName);
+            throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyCultureAssignable)}.");
+        }
+
+        /// <summary>
         /// Try to set to a specific culture.
         /// </summary>
         /// <param name="key"></param>
@@ -131,7 +144,6 @@ namespace Lexical.Localization
         {
             // Arrange
             IAsset asset = key.FindAsset();
-            IDictionary<string, string> inlines = key.FindInlines();
             byte[] result = null;
 
             // 1. Try selected culture
