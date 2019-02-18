@@ -17,41 +17,41 @@ namespace Lexical.Localization
         /// <summary>
         /// Gets all keys in asset.
         /// </summary>
-        /// <param name="key">(optional) key criteria to match with</param>
+        /// <param name="filterCriteria">(optional) key criteria to match with</param>
         /// <returns>an enumerable of keys, or null if not supported</returns>
-        IEnumerable<IAssetKey> GetAllKeys(IAssetKey key = null);
+        IEnumerable<IAssetKey> GetAllKeys(IAssetKey filterCriteria = null);
     }
 
     public static partial class LocalizationAssetExtensions
     {
         /// <summary>
         /// Get all keys in asset..
-        /// If <paramref name="key"/>> is null, return all keys in the <paramref name="asset"/>.
-        /// If <paramref name="key"/>> has a selected <paramref name="culture"/>, then return <paramref name="key"/> of that culture.
-        /// If <paramref name="key"/> doesn't have a selected culture, then return all keys of requested section from all cultures.
+        /// If <paramref name="filterCriteria"/>> is null, return all keys in the <paramref name="asset"/>.
+        /// If <paramref name="filterCriteria"/>> has a selected <paramref name="culture"/>, then return <paramref name="filterCriteria"/> of that culture.
+        /// If <paramref name="filterCriteria"/> doesn't have a selected culture, then return all keys of requested section from all cultures.
         /// </summary>
         /// <param name="asset"></param>
-        /// <param name="key">(optional) key criteria to match with</param>
+        /// <param name="filterCriteria">(optional) key criteria to match with</param>
         /// <returns>resolved string or null</returns>
-        public static IEnumerable<IAssetKey> GetAllKeys(this IAsset asset, IAssetKey key = null)
+        public static IEnumerable<IAssetKey> GetAllKeys(this IAsset asset, IAssetKey filterCriteria = null)
         {
             IEnumerable<IAssetKey> result = null;
-            if (asset is IAssetKeyCollection casted) result = casted.GetAllKeys(key);
+            if (asset is IAssetKeyCollection casted) result = casted.GetAllKeys(filterCriteria);
             if (asset is IAssetComposition composition)
             {
                 foreach (IAssetKeyCollection strs in composition.GetComponents<IAssetKeyCollection>(true))
                 {
-                    IEnumerable<IAssetKey> _result = strs.GetAllKeys(key);
+                    IEnumerable<IAssetKey> _result = strs.GetAllKeys(filterCriteria);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                 }
                 foreach (IAssetProvider _ in composition.GetComponents<IAssetProvider>(true))
                 {
-                    IEnumerable<IAsset> assets = _.LoadAssets(key);
+                    IEnumerable<IAsset> assets = _.LoadAssets(filterCriteria);
                     if (assets != null)
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            IEnumerable<IAssetKey> _result = loaded_asset.GetAllKeys(key);
+                            IEnumerable<IAssetKey> _result = loaded_asset.GetAllKeys(filterCriteria);
                             if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                         }
                     }
@@ -59,12 +59,12 @@ namespace Lexical.Localization
             }
             if (asset is IAssetProvider provider)
             {
-                IEnumerable<IAsset> loaded_assets = provider.LoadAllAssets(key);
+                IEnumerable<IAsset> loaded_assets = provider.LoadAllAssets(filterCriteria);
                 if (loaded_assets != null)
                 {
                     foreach (IAsset loaded_asset in loaded_assets)
                     {
-                        IEnumerable<IAssetKey> _result = loaded_asset.GetAllKeys(key);
+                        IEnumerable<IAssetKey> _result = loaded_asset.GetAllKeys(filterCriteria);
                         if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                     }
                 }

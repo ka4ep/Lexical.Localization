@@ -13,8 +13,8 @@ namespace Lexical.Localization
     /// <summary>
     /// This class adapts IDictionary{string, string} to ILanguageStringResolver and ILanguageStringCollection.
     /// </summary>
-    public class LocalizationStringDictionary : 
-        ILocalizationStringProvider, ILocalizationStringCollection, IAssetReloadable, 
+    public class LocalizationStringDictionary :
+        ILocalizationStringProvider, ILocalizationStringCollection, IAssetReloadable, IAssetKeyCollection,
         ILocalizationAssetCultureCapabilities
     {
         protected IReadOnlyDictionary<string, string> source;
@@ -62,7 +62,7 @@ namespace Lexical.Localization
             }
         }
 
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator() 
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
             => source.GetEnumerator();
 
         public virtual string GetString(IAssetKey key)
@@ -73,6 +73,67 @@ namespace Lexical.Localization
             // Search dictionary
             source.TryGetValue(id, out result);
             return result;
+        }
+
+        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey criteriaKey = null)
+        {
+            if (namePolicy is IAssetNamePattern pattern) return GetAllKeysWithPattern(pattern, criteriaKey);
+
+            // Cannot provide keys
+            return null;
+        }
+
+        IEnumerable<IAssetKey> GetAllKeysWithPattern(IAssetNamePattern pattern, IAssetKey criteriaKey)
+        {
+            KeyValuePair<string, string>[] criteriaParams = AssetKeyParametrizer.Singleton.GetAllParameters(criteriaKey).ToArray();
+            IAssetKey root = new LocalizationRoot();
+
+            foreach (var line in source)
+            {
+                IAssetNamePatternMatch match = pattern.Match(line.Key);
+                if (!match.Success) continue;
+
+                // Filter by criteria key
+                bool ok = true;
+                if (criteriaKey != null)
+                {
+                    // Iterate all criteria parameters (key,value)
+                    foreach (var criteriaParameter in criteriaParams)
+                    {
+                        if (criteriaParameter.Key == "root") continue;
+                        // Search key in our pattern.
+                        IAssetNamePatternPart[] parts;
+                        // If criteria has a parameter that is not in the pattern, then exit, no values can be provided.
+                        if (!pattern.ParameterMap.TryGetValue(criteriaParameter.Key, out parts)) yield break;
+
+                        // Test if one of the parts match criteria's value
+                        bool okk = false;
+                        foreach (var part in parts)
+                        {
+                            if (part.CaptureIndex < 0) continue;
+                            string matchValue = match[part.CaptureIndex];
+                            if (matchValue == criteriaParameter.Value) { okk = true; break; }
+                        }
+                        // criteria did not match, go to next line
+                        ok &= okk;
+                        if (!ok) break;
+                    }
+
+                }
+                if (!ok) continue;
+
+
+                object _key = root;
+                foreach (var part in pattern.CaptureParts)
+                {
+                    string partValue = match[part.CaptureIndex];
+                    if (partValue == null) continue;
+
+                    _key = parametrizer.TryCreatePart(_key, part.ParameterName, partValue);
+                }
+                if (_key is IAssetKey kk) yield return kk;
+
+            }
         }
 
         public virtual IAsset Reload()

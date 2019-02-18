@@ -17,7 +17,7 @@ namespace docs
             // Add IAssetBuilder, an instruction to construct one later
             serviceCollection.AddSingleton<IAssetBuilder, AssetBuilder>();
             // Add IAssetSource, that will construct cache cache
-            serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddCulturesCache()));
+            serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache()));
             // Add IAssetSource, that adds strings
             Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
             serviceCollection.AddSingleton<IAssetSource>(new AssetSource(new LocalizationStringDictionary(strings, AssetKeyNameProvider.Default)));

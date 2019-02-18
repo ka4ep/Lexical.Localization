@@ -14,7 +14,7 @@ namespace docs
 
             #region Snippet
             // Create cache decorator
-            IAssetCache asset_cached = new AssetCache(asset).AddResourceCache().AddStringsCache().AddCulturesCache();
+            IAssetCache asset_cached = new AssetCache(asset).AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache();
             #endregion Snippet
 
             // Assign the cached asset
