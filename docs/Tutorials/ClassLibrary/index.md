@@ -45,7 +45,6 @@ Localization strings can now be provided in the startup of the application by ad
 
 ```C#
 using Lexical.Localization;
-using Lexical.Localization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -91,7 +90,6 @@ Then write this example code **MyController2.cs**
 
 ```C#
 using Lexical.Localization;
-using Lexical.Localization;
 
 namespace TutorialLibrary
 {
@@ -120,7 +118,6 @@ namespace TutorialLibrary
 In the setup of the application IAssetRoot needs to be provided for the class.
 
 ```c#
-using Lexical.Localization;
 using Lexical.Localization;
 using System;
 using System.Collections.Generic;
@@ -195,7 +192,6 @@ namespace TutorialLibrary
 In the setup of the application IStringLocalizerFactory or IStringLocalizer&lt;Type&gt; needs to be provided for the class.
 
 ```c#
-using Lexical.Localization;
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;

@@ -37,7 +37,6 @@ Next, open the **Program.cs** and modify the code to the following.
 
 ```C#
 using Lexical.Localization;
-using Lexical.Localization;
 using System;
 using System.Globalization;
 
