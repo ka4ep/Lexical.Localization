@@ -41,7 +41,7 @@ namespace docs
             //serviceCollection.AddSingleton( s=>s.GetService<ResourceManagerStringLocalizerFactory>().ToSource() );
 
             // Add cache
-            serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(_ => _.AddResourceCache().AddStringsCache().AddCulturesCache()));
+            serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(_ => _.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache()));
 
             serviceCollection.AddTransient<MyController4>();
             serviceCollection.AddTransient<MyController5>();

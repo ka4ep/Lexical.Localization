@@ -25,7 +25,7 @@ namespace Lexical.Localization.Tests
             languageStrings["fi-Savo:ConsoleApp1.MyController:Success"] = "Onnistuepie";
             languageStrings["fi-Savo:ConsoleApp1.MyController:Error"] = "Epäonnistuepa (Koodi=0x{0:X8})";
             IAsset map = new LocalizationStringDictionary(languageStrings, "{culture:}[type:]{section_0:}{section_1:}{section_2:}{section_n:}{key}");
-            IAssetCache asset = new AssetCache(map).AddResourceCache().AddStringsCache().AddCulturesCache();
+            IAssetCache asset = new AssetCache(map).AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache();
             LocalizationRoot.Global.SetAsset(asset);
             IAssetKey root = LocalizationRoot.Global;
             IAssetKey section = root.TypeSection("ConsoleApp1.MyController");
@@ -79,7 +79,7 @@ namespace Lexical.Localization.Tests
             languageStrings["fi-Savo:ConsoleApp1.MyController:Icon:Success"] = "Onnistuepie";
             languageStrings["fi-Savo:ConsoleApp1.MyController:Icon:Error"] = "Epäonnistuepa (Koodi=0x{0:X8})";
             IAsset map = new LocalizationStringDictionary(languageStrings, AssetKeyNameProvider.Default);
-            IAsset asset = new AssetCache(map).AddResourceCache().AddStringsCache().AddCulturesCache();
+            IAsset asset = new AssetCache(map).AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache();
             ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentCulture();
             IAssetKey root = new LocalizationRoot(asset, culturePolicy);
             IAssetKey section = root.Section("ConsoleApp1.MyController").Section("Icon");

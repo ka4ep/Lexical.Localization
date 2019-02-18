@@ -1,7 +1,9 @@
-﻿using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
-using Lexical.Localization.Ms.Extensions;
+﻿using Lexical.FileProvider;
+using Lexical.FileProvider.Package;
+using Lexical.FileProvider.PackageLoader;
+using Lexical.FileProvider.Root;
 using Lexical.Localization;
+using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.FileProviders;
 using System.Collections.Generic;
 using System.IO;
@@ -320,6 +322,28 @@ namespace docs
                     .KeyPolicy(default)                                         // Add key policy default to file extension
                     .Strings();                                                 // Signal to read strings
                 #endregion Snippet_13
+            }
+
+            {
+                #region Snippet_20
+                // Create Root File Provider
+                IFileProvider root = new RootFileProvider();
+                // Create Package File Provider
+                IFileProvider fileProvider = new PackageFileProvider(root)
+                    .ConfigureOptions(o => o.AddPackageLoader(Dll.Singleton))
+                    .AddDisposable(root);
+                // Create builder
+                AssetLoaderPartBuilder builder = new AssetLoaderPartBuilder()
+                    .FileProvider(fileProvider)                                 // Add file provider that opens .dll files
+                    .FilePattern("{filename}.dll/{assembly}.Resources.{type.}{culture.}resources")  // Add file name pattern
+                    .MatchParameters("filename", "assembly", "culture", "type") // Match parameters against existing file names
+                    .KeyPattern("{assembly:}{type:}{key}")                       // Add key policy
+                    .Strings();                                                 // Signal to read strings
+                #endregion Snippet_20
+                IAssetLoaderPart[] parts = builder.Build().ToArray();
+                IAsset asset = new AssetLoader( parts );
+                ILocalizationKey key = LocalizationRoot.Global.TypeSection("ConsoleApp1.MyController").Key("Success").SetCulture("fi");
+                System.Console.WriteLine(asset.GetString(key) );
             }
 
 

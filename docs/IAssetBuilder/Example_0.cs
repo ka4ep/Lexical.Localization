@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lexical.Localization;
-using Lexical.Localization;
 
 namespace docs
 {
@@ -15,7 +14,7 @@ namespace docs
             Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
 
             // Create IAssetSource that adds cache 
-            IAssetSource assetSource_0 = new AssetCacheSource(c => c.AddResourceCache().AddStringsCache().AddCulturesCache());
+            IAssetSource assetSource_0 = new AssetCacheSource(c => c.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache());
             // Create IAssetSource that static reference of IAsset (string dictionary)
             IAssetSource assetSource_1 = new AssetSource(new LocalizationStringDictionary(strings, AssetKeyNameProvider.Default) );
 

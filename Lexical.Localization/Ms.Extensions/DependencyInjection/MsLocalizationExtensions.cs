@@ -98,7 +98,7 @@ namespace Lexical.Localization.Ms.Extensions
             if (addCache)
             {
                 // Add cache
-                serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddCulturesCache()));
+                serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache()));
             }
 
             return serviceCollection;

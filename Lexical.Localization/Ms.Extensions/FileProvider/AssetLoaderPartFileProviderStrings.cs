@@ -55,9 +55,11 @@ namespace Lexical.Localization.Ms.Extensions
         /// <param name="fileProvider"></param>
         /// <param name="filenamePattern"></param>
         /// <param name="keyNamePattern"></param>
-        public AssetLoaderPartFileProviderStrings(IFileProvider fileProvider, IAssetNamePattern filenamePattern, IAssetKeyNamePolicy keyNamePattern) : base(fileProvider,filenamePattern)
+        public AssetLoaderPartFileProviderStrings(IFileProvider fileProvider, IAssetNamePattern filenamePattern, IAssetKeyNamePolicy keyNamePattern) : base(fileProvider, filenamePattern)
         {
-            this.assetConstructor = AssetFileConstructors.FileFormat(filenamePattern.Pattern, keyNamePattern);
+            string filenameExample = filenamePattern.Pattern.Replace("{", "").Replace("}", "").Replace("]", "").Replace("[", "");
+
+            this.assetConstructor = AssetFileConstructors.FileFormat(filenameExample, keyNamePattern);
         }
         public AssetLoaderPartFileProviderStrings(IFileProvider fileProvider, IAssetNamePattern filenamePattern, string keyNamePattern) : this(fileProvider, filenamePattern, new AssetNamePattern(keyNamePattern)) { }
         public AssetLoaderPartFileProviderStrings(IFileProvider fileProvider, string filenamePattern, string keyNamePattern) : this(fileProvider, new AssetNamePattern(filenamePattern), new AssetNamePattern(keyNamePattern)) { }

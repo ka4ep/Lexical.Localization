@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lexical.Localization;
-using Lexical.Localization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace docs

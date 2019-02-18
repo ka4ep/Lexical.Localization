@@ -61,7 +61,7 @@ namespace Lexical.Localization
             // Add build participant
             partBuilder.AddBuilderPart(AssetLoaderPartBuilderStringsParticipant.Instance);
             partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderStringsParticipant.Instance);
-            partBuilder.Add<IAssetKeyNamePolicy>(KEY_KEYPOLICY, new AssetNamePattern(keyPattern));
+            partBuilder.Add<IAssetKeyNamePolicy>(KEY_KEYPOLICY, keyPattern == default ? default : new AssetNamePattern(keyPattern));
             return partBuilder;
         }
 
@@ -76,7 +76,7 @@ namespace Lexical.Localization
             // Add build participant
             partBuilder.AddBuilderPart(AssetLoaderPartBuilderStringsParticipant.Instance);
             partBuilder.AddBuilderPart(Lexical.Localization.Ms.Extensions.AssetLoaderPartBuilderStringsParticipant.Instance);
-            partBuilder.AddRange<IAssetKeyNamePolicy>(KEY_KEYPOLICY, keyPatterns.Select(str => new AssetNamePattern(str)));
+            partBuilder.AddRange<IAssetKeyNamePolicy>(KEY_KEYPOLICY, keyPatterns.Select(str => str == null ? null : new AssetNamePattern(str)));
             return partBuilder;
         }
 

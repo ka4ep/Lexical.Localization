@@ -6,6 +6,7 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            AssetLoaderPartBuilder_Examples.Run(args);
             Ms_DependencyInjection_Example0.Run(args);
             Ms_DependencyInjection_Example1.Run(args);
             Ms_DependencyInjection_Example2.Run(args);

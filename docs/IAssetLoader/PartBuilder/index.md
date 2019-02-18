@@ -152,13 +152,17 @@ Although .resx and .resources fileformats can be read as string files, an altern
 that it uses ResourceManagerAsset which forwards calls to System.Resources.ResourceManager instance.
 ResourceManagerAsset can read both strings and resources. 
 
-Constructe with **.ResourceManager()**. 
+Construct with **.ResourceManager()**. 
 [!code-csharp[Snippet](Examples.cs#Snippet_9)]
 
 Note that, MSBuild spreads embedded .resx files into satellite assemblies under culture specific folders.
 ![ResXes](resx.png)
 
-Note two, resource managers cannot be read from IFileProviders sources.
+To read .resources/.resx with IFileProvider, use combination of [RootFileProvider](~/sdk/FileProvider/docs/Root/index.html), [PackageFileProvider](~/sdk/FileProvider/docs/Package/index.html) 
+and [DllFileProvider](~/sdk/FileProvider/docs/Dll/index.html).
+Construct with **.ResourceManager()**. 
+[!code-csharp[Snippet](Examples.cs#Snippet_9)]
+
 
 # Links
 * [Example code](https://github.com/tagcode/Lexical.Localization/tree/master/docs/IAssetLoader/PartBuilder/Examples.cs)

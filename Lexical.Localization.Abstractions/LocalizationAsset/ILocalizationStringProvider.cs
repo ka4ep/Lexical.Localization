@@ -97,7 +97,6 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="asset"></param>
         /// <param name="key"></param>
-        /// <param name="culture">culture to resolve to</param>
         /// <returns>resolved string or null</returns>
         public static IEnumerable<KeyValuePair<string, string>> GetAllStrings(this IAsset asset, IAssetKey key = null)
         {
