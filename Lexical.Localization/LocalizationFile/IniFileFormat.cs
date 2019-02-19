@@ -143,14 +143,14 @@ namespace Lexical.Localization.LocalizationFile
             if (c > 0) writer.WriteLine();
 
             // Write all non-culture sections
-            foreach (var node in root.Children.Values.Where(node => node.Proxy.Name != "culture").OrderBy(node => node.Proxy, ParameterKey.Comparer.Default))
+            foreach (var node in root.Children.Values.Where(node => node.Parameter.Name != "culture").OrderBy(node => node.Parameter, ParameterKey.Comparer.Default))
             {
                 _writeRecusive(node);
                 writer.WriteLine();
             }
 
             // Write all culture sections.
-            foreach (var node in root.Children.Values.Where(node => node.Proxy.Name == "culture").OrderBy(node => node.Proxy, ParameterKey.Comparer.Default))
+            foreach (var node in root.Children.Values.Where(node => node.Parameter.Name == "culture").OrderBy(node => node.Parameter, ParameterKey.Comparer.Default))
             {
                 writer.Write("[");
                 writer.Write(node.ParameterValue);
@@ -167,7 +167,7 @@ namespace Lexical.Localization.LocalizationFile
             WriteLines(node);
 
             // Children
-            foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Proxy, ParameterKey.Comparer.Default))
+            foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Parameter, ParameterKey.Comparer.Default))
             {
                 _writeRecusive(childNode);
             }

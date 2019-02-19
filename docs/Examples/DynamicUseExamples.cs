@@ -25,7 +25,7 @@ namespace docs
                 languageStrings["fi-Savo:ConsoleApp1:MyController:Success"] = "Onnistuepie";
                 languageStrings["fi-Savo:ConsoleApp1:MyController:Error"] = "Epäonnistuepa (Koodi=0x{0:X8})";
 
-                dynamic myLocalization = new LocalizationRoot(new LocalizationDictionary(languageStrings, AssetKeyNameProvider.Default), new CulturePolicy());
+                dynamic myLocalization = new LocalizationRoot(new LocalizationStringDictionary(languageStrings, AssetKeyNameProvider.Default), new CulturePolicy());
                 //dynamic x = myLocalization.SetCulture("fi");
                 dynamic mySection1 = myLocalization.Section("ConsoleApp1");
                 IAssetKey k = mySection1.Section("MyController");

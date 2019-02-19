@@ -30,7 +30,7 @@ namespace docs
                 { "en:ConsoleApp1.MyController:Hello", "Hello World!" }
             };
             // Create asset source
-            IAssetSource assetSource = new LocalizationDictionary(source).ToSource();
+            IAssetSource assetSource = new LocalizationStringDictionary(source).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 

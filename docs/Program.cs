@@ -7,7 +7,7 @@ namespace docs
         static void Main(string[] args)
         {
             Serialization_Examples.Run(args);
-            LocalizationDictionary_Examples.Run(args);
+            LocalizationStringDictionary_Examples.Run(args);
             AssetLoaderPartBuilder_Examples.Run(args);
             Ms_DependencyInjection_Example0.Run(args);
             Ms_DependencyInjection_Example1.Run(args);

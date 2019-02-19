@@ -48,14 +48,14 @@ namespace Lexical.Localization.LocalizationFile
         /// <summary>
         /// 
         /// </summary>
-        public readonly ParameterKey Proxy;
+        public readonly ParameterKey Parameter;
 
         string[] parameters;
         List<string> values;
         Dictionary<string, TreeNode> children;
 
-        public string ParameterName => Proxy.Name;
-        public string ParameterValue => Proxy.Value;
+        public string ParameterName => Parameter.Name;
+        public string ParameterValue => Parameter.Value;
         public string[] ParameterNames => parameters ?? (parameters = new string[] { ParameterName });
 
         public bool HasChildren => children != null && children.Count > 0;
@@ -66,7 +66,7 @@ namespace Lexical.Localization.LocalizationFile
 
         public TreeNode(ParameterKey parameter, TreeNode parent = null)
         {
-            this.Proxy = parameter;
+            this.Parameter = parameter;
             this.Parent = parent;
         }
 
@@ -134,12 +134,12 @@ namespace Lexical.Localization.LocalizationFile
         TreeNode getOrCreateChild(string parameterName, string parameterValue)
         {
             TreeNode subsection;
-            if (!Children.TryGetValue(parameterValue, out subsection)) Children[parameterValue] = subsection = new TreeNode(new ParameterKey(this.Proxy, parameterName, parameterValue), this);
+            if (!Children.TryGetValue(parameterValue, out subsection)) Children[parameterValue] = subsection = new TreeNode(new ParameterKey(this.Parameter, parameterName, parameterValue), this);
             return subsection;
         }
 
         public override string ToString()
-            => $"{GetType().Name}({Proxy.Name}, {ParameterValue})";
+            => $"{GetType().Name}({Parameter.Name}, {ParameterValue})";
 
         public class Parametrizer : IAssetKeyParametrizer
         {
@@ -171,16 +171,16 @@ namespace Lexical.Localization.LocalizationFile
                 => (obj as TreeNode)?.getOrCreateChild(parameterName, parameterValue);
 
             public bool IsCanonical(object part, string parameterName)
-                => part is TreeNode tree ? tree.Proxy is ParameterKey.NonCanonical == false : false;
+                => part is TreeNode tree ? tree.Parameter is ParameterKey.NonCanonical == false : false;
             public bool IsNonCanonical(object part, string parameterName)
-                => part is TreeNode tree ? tree.Proxy is ParameterKey.NonCanonical : false;
+                => part is TreeNode tree ? tree.Parameter is ParameterKey.NonCanonical : false;
 
             static string[] empty = new string[0];
             public string[] GetPartParameters(object obj)
                 => obj is TreeNode tree ? tree.ParameterNames : empty;
 
             public string GetPartValue(object obj, string parameter)
-                => obj is TreeNode tree && tree.Proxy!=null && tree.Proxy.Name==parameter ? tree.Proxy.Value : null;
+                => obj is TreeNode tree && tree.Parameter!=null && tree.Parameter.Name==parameter ? tree.Parameter.Value : null;
 
             public void VisitParts<T>(object obj, ParameterPartVisitor<T> visitor, ref T data)
             {

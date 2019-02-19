@@ -11,7 +11,7 @@ namespace docs
         {
             // Create asset
             var source = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-            IAsset asset = new LocalizationDictionary(source);
+            IAsset asset = new LocalizationStringDictionary(source);
 
             #region Snippet
             // Decorate with cache

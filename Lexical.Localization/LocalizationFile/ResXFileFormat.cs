@@ -157,7 +157,7 @@ namespace Lexical.Localization.LocalizationFile
             // Children
             if (node.HasChildren)
             {
-                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Proxy, ParameterKey.Comparer.Default))
+                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Parameter, ParameterKey.Comparer.Default))
                 {
                     _writeRecusive(childNode);
                 }

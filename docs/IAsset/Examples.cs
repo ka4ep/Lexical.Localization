@@ -15,7 +15,7 @@ namespace docs
                 // Language string source
                 Dictionary<string, string> src = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
                 // Create Asset
-                IAsset asset = new LocalizationDictionary(src);
+                IAsset asset = new LocalizationStringDictionary(src);
                 #endregion Snippet_1
 
                 #region Snippet_2

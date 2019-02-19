@@ -1,5 +1,5 @@
 # Localization String Dictionary
-**LocalizationDictionary** is the simplest asset. It uses a dictionary as a source.
+**LocalizationStringDictionary** is the simplest asset. It uses a dictionary as a source.
 
 ```csharp
 // Create localization source
@@ -9,14 +9,14 @@ var source = new Dictionary<string, string> {
     { "de:MyController:hello", "Hallo Welt!" }
 };
 // Create asset
-IAsset asset = new LocalizationDictionary(source);
+IAsset asset = new LocalizationStringDictionary(source);
 ```
 
-If LocalizationDictionary was constructed with a [name pattern](../IAssetKeyNamePolicy/index.html#asset-name-pattern) (IAssetNamePattern or string) then keys can be enumerated from it.
+If LocalizationStringDictionary was constructed with a [name pattern](../IAssetKeyNamePolicy/index.html#asset-name-pattern) (IAssetNamePattern or string) then keys can be enumerated from it.
 
 ```csharp
 // Create asset with name pattern
-IAsset asset = new LocalizationDictionary(source, "{culture:}{type:}{key}");
+IAsset asset = new LocalizationStringDictionary(source, "{culture:}{type:}{key}");
 // Extract all keys
 foreach (IAssetKey key in asset.GetAllKeys())
     Console.WriteLine(key);

@@ -34,7 +34,7 @@ namespace Lexical.Localization.Ms.Extensions
         /// instances of <see cref="IAssetSource"/>, such as:
         ///     <see cref="ConfigurationBuilderLocalizationAssetSource"/>
         ///     <see cref="AssetResourceDictionary"/>
-        ///     <see cref="LocalizationDictionary"/>
+        ///     <see cref="LocalizationStringDictionary"/>
         /// 
         /// </summary>
         /// <param name="serviceCollection"></param>

@@ -133,7 +133,7 @@ namespace Lexical.Localization.LocalizationFile
 
                 // Children
                 int count = node.Children.Count;
-                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Proxy, ParameterKey.Comparer.Default))
+                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Parameter, ParameterKey.Comparer.Default))
                     _writeRecusive(childNode, indent + 2, --count > 0);
 
                 // End section: }\n
