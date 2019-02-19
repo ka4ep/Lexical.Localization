@@ -247,38 +247,42 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Enumerate from tail towards head.
+        /// Enumerate from head towards tail.
         /// </summary>
         /// <returns></returns>
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
-            => new Enumerator(this);
+            => ((IEnumerable<KeyValuePair<string, string>>)ToKeyValueArray()).GetEnumerator();
 
         /// <summary>
-        /// Enumerate from tail towards head.
+        /// Enumerate from head towards tail.
         /// </summary>
         /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
-            => new Enumerator(this);
+            => ToKeyValueArray().GetEnumerator();
 
-        class Enumerator : IEnumerator<KeyValuePair<string, string>>, IEnumerator
+        public KeyValuePair<string, string>[] ToKeyValueArray(bool includeNonCanonical = true)
         {
-            ParameterKey start, current;
-            internal Enumerator(ParameterKey start)
-            {
-                this.start = start;
-            }
-            object IEnumerator.Current
-                => current == null ? new KeyValuePair<string, string>() : new KeyValuePair<string, string>(current.Name, current.Value);
-            KeyValuePair<string, string> IEnumerator<KeyValuePair<string, string>>.Current 
-                => current == null ? new KeyValuePair<string, string>() : new KeyValuePair<string, string>(current.Name, current.Value);
-            public void Dispose()
-                => start = current = null;
-            public bool MoveNext()
-                => (current = current?.Previous) != null;
-            public void Reset()
-                => current = start;
-        }
+            // Count the number of keys
+            int count = 0;
+            if (includeNonCanonical)
+                for (ParameterKey k = this; k != null; k = k.Previous) count++;
+            else
+                for (ParameterKey k = this; k != null; k = k.Previous)
+                    if (k is IAssetKeyNonCanonicallyCompared == false) count++;
 
+            // Create result
+            KeyValuePair<string, string>[] result = new KeyValuePair<string, string>[count];
+            int ix = count - 1;
+            if (includeNonCanonical)
+                for (ParameterKey k = this; k != null; k = k.Previous)
+                    result[ix--] = new KeyValuePair<string, string>(k.Name, k.Value);
+            else
+                for (ParameterKey k = this; k != null; k = k.Previous)
+                    if (k is IAssetKeyNonCanonicallyCompared == false)
+                        result[ix--] = new KeyValuePair<string, string>(k.Name, k.Value);
+
+            return result;
+        }
     }
 
 }
