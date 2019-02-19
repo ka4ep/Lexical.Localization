@@ -15,7 +15,7 @@ Lexical.Localization is a localization class library for .NET.
 
 **File types**
  * Language Strings
- * Binary files
+ * Localization of binary assets for gfx and audio
 
 **File formats**
  * .ini

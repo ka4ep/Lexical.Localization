@@ -8,65 +8,6 @@ Files can be loaded with a couple of ways.
 2. With asset loader and [part builder](../IAssetLoader/PartBuilder/index.md).
 3. With asset loader and [part class](../IAssetLoader/PartClasses/index.md#file-strings).
 
-Example of **.xml** localization file.
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-  <ConsoleApp1.MyController>
-    <Success>Success</Success>
-    <Error>Error (Code=0x{0:X8})</Error>
-  </ConsoleApp1.MyController>
-  <en>
-    <ConsoleApp1.MyController>
-        <Success>Success</Success>
-        <Error>Error (Code=0x{0:X8})</Error>
-    </ConsoleApp1.MyController>
-  </en>
-  <fi>
-    <ConsoleApp1.MyController>
-      <Success>Onnistui</Success>
-        <Error>Virhe (Koodi=0x{0:X8})</Error>
-    </ConsoleApp1.MyController>
-  </fi>
-</configuration>
-```
-
-Example of **.ini** localization file.
-```none
-ConsoleApp1.MyController:Success      = Success
-ConsoleApp1.MyController:Error        = Error (Code=0x{0:X8})
-
-[en]
-ConsoleApp1.MyController:Success      = Success
-ConsoleApp1.MyController:Error        = Error (Code=0x{0:X8})
-
-[fi]
-ConsoleApp1.MyController:Success      = Onnistui
-ConsoleApp1.MyController:Error        = Virhe (Koodi=0x{0:X8})
-```
-
-Example of **.json** localization file.
-```
-{
-  "ConsoleApp1.MyController": {
-      "Success": "Success",
-      "Error": "Error (Code=0x{0:X8})"
-  },
-  "en": {
-    "ConsoleApp1.MyController": {
-      "Success": "Success",
-      "Error": "Error (Code=0x{0:X8})"
-    }
-  },
-  "fi": {
-    "ConsoleApp1.MyController": {
-      "Success": "Onnistui",
-      "Error": "Virhe (Koodi=0x{0:X8})"
-    }
-  }
-}
-```
-
 Example of **.resx** localization file.
 ![resx](img1.png)
 
