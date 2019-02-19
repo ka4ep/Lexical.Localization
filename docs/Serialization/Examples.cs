@@ -29,16 +29,14 @@ namespace docs
             {
                 #region Snippet_2
                 // Convert to context-free parameters
-                List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
-                parameters.Add(new KeyValuePair<string, string>("culture", "en"));
-                parameters.Add(new KeyValuePair<string, string>("type", "MyLibrary:Type"));
-                parameters.Add(new KeyValuePair<string, string>("key", "\"hello\""));
+                ParameterKey parameters = new ParameterKey("culture", "en")
+                    .Append("type", "MyLibrary:Type").Append("key", "\"hello\"");
                 // Parametrizer for AssetKey
                 IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
                 // Convert to context-dependent instance
                 object key = LocalizationRoot.Global;
-                foreach (var parameter in parameters)
-                    key = parametrizer.CreatePart(key, parameter.Key, parameter.Value);
+                foreach (var parameter in parameters.ToArray())
+                    key = parametrizer.CreatePart(key, parameter.Name, parameter.Value);
                 // Type-cast
                 IAssetKey key_ = (IAssetKey)key;
                 #endregion Snippet_2

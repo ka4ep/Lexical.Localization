@@ -70,6 +70,15 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Create a new link in a new reference.
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name=""></param>
+        /// <returns>new reference with a new key</returns>
+        public ParameterKey Append(string parameterName, string parameterValue)
+            => new ParameterKey(this, parameterName, parameterValue);
+
+        /// <summary>
         /// Proxy implementation of non-canonical parameter. Implements <see cref="IAssetKeyNonCanonicallyCompared"/>.
         /// </summary>
         public class NonCanonical : ParameterKey, IAssetKeyNonCanonicallyCompared

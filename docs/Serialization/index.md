@@ -34,16 +34,10 @@ For example to escape key "Success:Plural" would be
 key:Success\:Plural
 ```
 
-**AssetKeyStringSerializer** prints parameters as a string
-[!code-csharp[Snippet](Examples.cs#Snippet_3)]
-
-And parses string back to parameters.
-[!code-csharp[Snippet](Examples.cs#Snippet_4)]
-
-AssetKeyStringSerializer also prints out IAssetKey.
+**AssetKeyStringSerializer** prints IAssetKey as string.
 [!code-csharp[Snippet](Examples.cs#Snippet_5)]
 
-And parse it to IAssetKey.
+And parses it back to IAssetKey.
 [!code-csharp[Snippet](Examples.cs#Snippet_6)]
 
 # Parameters

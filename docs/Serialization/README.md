@@ -16,16 +16,13 @@ And back to IAssetKey.
 
 ```csharp
 // Convert to context-free parameters
-List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
-parameters.Add(new KeyValuePair<string, string>("culture", "en"));
-parameters.Add(new KeyValuePair<string, string>("type", "MyLibrary:Type"));
-parameters.Add(new KeyValuePair<string, string>("key", "\"hello\""));
+ParameterKey parameters = new ParameterKey("culture", "en").Append("type", "MyLibrary:Type").Append("key", "\"hello\"");
 // Parametrizer for AssetKey
 IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
 // Convert to context-dependent instance
 object key = LocalizationRoot.Global;
-foreach (var parameter in parameters)
-    key = parametrizer.CreatePart(key, parameter.Key, parameter.Value);
+foreach (var parameter in parameters.ToArray())
+    key = parametrizer.CreatePart(key, parameter.Name, parameter.Value);
 // Type-cast
 IAssetKey key_ = (IAssetKey)key;
 ```
@@ -57,52 +54,22 @@ For example to escape key "Success:Plural" would be
 key:Success\:Plural
 ```
 
-**AssetKeyStringSerializer** prints parameters as a string
-
-```csharp
-// Parametrizer for AssetKey
-IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
-// Create context-dependent key
-IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
-// Convert to context-free parameters
-IEnumerable<KeyValuePair<string, string>> parameters = parametrizer.GetAllParameters(key);
-// Serialize to string
-string str = AssetKeyStringSerializer.Singleton.PrintParameters(parameters);
-```
-
-And parses string back to parameters.
-
-```csharp
-// Key in string format
-string str = "culture:en:type:MyLibrary.MyController:key:Success";
-// Convert to context-free parameters
-IEnumerable<KeyValuePair<string, string>> parameters = AssetKeyStringSerializer.Singleton.ParseParameters(str);
-// Parametrizer for AssetKey
-IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
-// Convert to context-dependent instance
-object key = LocalizationRoot.Global;
-foreach (var parameter in parameters)
-    key = parametrizer.CreatePart(key, parameter.Key, parameter.Value);
-// Type-cast
-IAssetKey key_ = (IAssetKey)key;
-```
-
-AssetKeyStringSerializer also prints out IAssetKey.
+**AssetKeyStringSerializer** prints IAssetKey as string.
 
 ```csharp
 // Create context-dependent key
 IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
 // Serialize to string
-string str = AssetKeyStringSerializer.Singleton.PrintKey(key);
+string str = AssetKeyStringSerializer.Instance.PrintKey(key);
 ```
 
-And parse it to IAssetKey.
+And parses it back to IAssetKey.
 
 ```csharp
 // Key in string format
 string str = "culture:en:type:MyLibrary.MyController:key:Success";
 // Parse string
-IAssetKey key = AssetKeyStringSerializer.Singleton.ParseKey(str, LocalizationRoot.Global);
+IAssetKey key = AssetKeyStringSerializer.Instance.ParseKey(str, LocalizationRoot.Global);
 ```
 
 # Parameters
