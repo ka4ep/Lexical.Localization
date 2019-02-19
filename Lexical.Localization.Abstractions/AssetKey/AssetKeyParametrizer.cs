@@ -102,6 +102,12 @@ namespace Lexical.Localization
             /// </summary>
             public bool isSection;
 
+            /// <summary>
+            /// Read attributes [AssetKeyParameter] and [AssetKeyConstructor] from all methods, either
+            /// on the type or its interfaces.
+            /// </summary>
+            /// <param name="type"></param>
+            /// <returns></returns>
             public static TypeInfo ReadAttributes(Type type)
             {
                 TypeInfo result = new TypeInfo { Type = type };

@@ -1,6 +1,5 @@
 ﻿using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
-using Lexical.Localization;
 using Lexical.Localization.LocalizationFile;
 using Microsoft.Extensions.FileProviders;
 using System.Collections.Generic;

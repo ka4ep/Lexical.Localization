@@ -144,7 +144,7 @@ namespace Lexical.Localization
         {
             protected Type type;
             public virtual Type Type => type;
-            public _TypeSection(IAssetKey prevKey, Type type) : base(prevKey, type.FullName/*CanonicalName()*/) { this.type = type; }
+            public _TypeSection(IAssetKey prevKey, Type type) : base(prevKey, type.FullName) { this.type = type; }
             public _TypeSection(IAssetKey prevKey, String name) : base(prevKey, name) { this.name = name; }
             public _TypeSection(SerializationInfo info, StreamingContext context) : base(info, context) {
                 this.type = info.GetValue(nameof(Type), typeof(Type)) as Type;
