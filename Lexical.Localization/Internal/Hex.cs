@@ -30,7 +30,7 @@ namespace Lexical.Localization.Internal
         /// <param name="str">string of hexadecimal characters [0-9a-fA-F]</param>
         /// <returns>value</returns>
         /// <exception cref="System.FormatException"></exception>
-        public static uint ToUInt(String str, int startIndex)
+        public static uint ToUInt(String str, int startIndex = 0)
         {
             HexEnumerator stream = new HexEnumerator(str.GetEnumerator());
             for (int i=0; i<startIndex; i++)

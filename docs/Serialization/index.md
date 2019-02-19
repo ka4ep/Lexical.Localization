@@ -15,7 +15,7 @@ parameterName:parameterValue:parameterName:parameterValue:...
 
 For example:
 ```none
-culture:en:Type:MyController:Key:Success
+culture:en:type:MyController:key:Success
 ```
 
 Escaping uses the following rules.
@@ -34,14 +34,20 @@ For example to escape key "Success:Plural" would be
 key:Success\:Plural
 ```
 
-**AssetKeyStringSerializer** Serializes key to string.
+**AssetKeyStringSerializer** prints parameters as a string
 [!code-csharp[Snippet](Examples.cs#Snippet_3)]
 
-And string to key.
+And parses string back to parameters.
 [!code-csharp[Snippet](Examples.cs#Snippet_4)]
 
+AssetKeyStringSerializer also prints out IAssetKey.
+[!code-csharp[Snippet](Examples.cs#Snippet_5)]
+
+And parse it to IAssetKey.
+[!code-csharp[Snippet](Examples.cs#Snippet_6)]
+
 # Parameters
-Well known parameters are
+IAssetKey supports the following parameters.
 
 | Parameter | Canonical | Section | Description |
 |:---------|:-------|:--------|:---------|

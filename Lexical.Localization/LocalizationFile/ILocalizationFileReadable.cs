@@ -16,6 +16,19 @@ namespace Lexical.Localization.LocalizationFile
     public interface ILocalizationFileReadable : IDisposable
     {
         /// <summary>
+        /// Read file as a stream of elements that describe a hierarchical structure.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<KeyValuePair<ParameterKey, string>> Read();
+    }
+
+
+    /// <summary>
+    /// A structured document that contains a localization file.
+    /// </summary>
+    public interface ILocalizationFileTokenizer : IDisposable
+    {
+        /// <summary>
         /// Return associated name policy. 
         /// 
         /// Name policy is either innate to the implemented file format, or it was
@@ -27,10 +40,10 @@ namespace Lexical.Localization.LocalizationFile
         /// Read file as a stream of elements that describe a hierarchical structure.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<TextElement> Read();
+        IEnumerable<Token> Read();
     }
 
-    public struct TextElement
+    public struct Token
     {
         /// <summary>
         /// Token type
@@ -47,13 +60,13 @@ namespace Lexical.Localization.LocalizationFile
         /// </summary>
         /// <param name="section"></param>
         /// <returns></returns>
-        public static TextElement Begin(string section) => new TextElement { Token = TokenKind.BeginSection, Value = section };
+        public static Token Begin(string section) => new Token { Kind = TokenKind.BeginSection, Value = section };
 
         /// <summary>
         /// Create element that describes ending of a section.
         /// </summary>
         /// <returns></returns>
-        public static TextElement End() => new TextElement { Token = TokenKind.EndSection };
+        public static Token End() => new Token { Kind = TokenKind.EndSection };
 
         /// <summary>
         /// Create element that describes key-value pair.
@@ -61,12 +74,12 @@ namespace Lexical.Localization.LocalizationFile
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static TextElement KeyValue(string key, string value) => new TextElement { Token = TokenKind.KeyValue, Key = key, Value = value };
+        public static Token KeyValue(string key, string value) => new Token { Kind = TokenKind.KeyValue, Key = key, Value = value };
 
         /// <summary>
         /// Element type.
         /// </summary>
-        public TokenKind Token;
+        public TokenKind Kind;
 
         /// <summary>
         /// Key
@@ -84,7 +97,7 @@ namespace Lexical.Localization.LocalizationFile
         /// <returns></returns>
         public override string ToString()
         {
-            switch (Token)
+            switch (Kind)
             {
                 case TokenKind.BeginSection: return $"BeginSection {Value}";
                 case TokenKind.EndSection: return $"EndSection {Value}";
@@ -103,7 +116,7 @@ namespace Lexical.Localization.LocalizationFile
         /// <param name="readable"></param>
         /// <param name="adapter"></param>
         /// <returns></returns>
-        public static ILocalizationFileReadable Decorate(this ILocalizationFileReadable readable, Func<IEnumerable<TextElement>, IEnumerable<TextElement>> adapter)
+        public static ILocalizationFileTokenizer Decorate(this ILocalizationFileTokenizer readable, Func<IEnumerable<Token>, IEnumerable<Token>> adapter)
             => new LocalizationFileReadableDecorator(readable, adapter);
 
         /// <summary>
@@ -112,16 +125,16 @@ namespace Lexical.Localization.LocalizationFile
         /// <param name="readable"></param>
         /// <param name=initialSections"></param>
         /// <returns></returns>
-        public static ILocalizationFileReadable DecorateSections(this ILocalizationFileReadable readable, IReadOnlyDictionary<string, string> initialSections)
+        public static ILocalizationFileTokenizer DecorateSections(this ILocalizationFileTokenizer readable, IReadOnlyDictionary<string, string> initialSections)
             => initialSections == null ? readable : new InitialSections(readable, initialSections);
 
         /// <summary>
-        /// Convert <see cref="ILocalizationFileReadable"/> to key-values.
+        /// Convert <see cref="ILocalizationFileTokenizer"/> to key-values.
         /// </summary>
         /// <param name="textFile"></param>
         /// <param name="dst"></param>
         /// <returns></returns>
-        public static IReadOnlyDictionary<string, string> ToDictionary(this ILocalizationFileReadable textFile, IDictionary<string, string> dst = default, string sectionSeparator = default)
+        public static IReadOnlyDictionary<string, string> ToDictionary(this ILocalizationFileTokenizer textFile, IDictionary<string, string> dst = default, string sectionSeparator = default)
         {
             if (dst == null) dst = new Dictionary<string, string>();
             if (sectionSeparator == null) sectionSeparator = ":";
@@ -129,16 +142,16 @@ namespace Lexical.Localization.LocalizationFile
             return (IReadOnlyDictionary<string, string>)dst;
         }
 
-        public static IDictionary<string, string> WriteToDictionary(this ILocalizationFileReadable textFile, IDictionary<string, string> dictionary, string sectionSeparator)
+        public static IDictionary<string, string> WriteToDictionary(this ILocalizationFileTokenizer textFile, IDictionary<string, string> dictionary, string sectionSeparator)
         {
             List<string> stack = new List<string>();
             foreach (var element in textFile.Read())
             {
-                switch (element.Token)
+                switch (element.Kind)
                 {
-                    case TextElement.TokenKind.BeginSection: stack.Add(element.Value); break;
-                    case TextElement.TokenKind.EndSection: if (stack.Count > 0) stack.RemoveAt(stack.Count - 1); break;
-                    case TextElement.TokenKind.KeyValue:
+                    case Token.TokenKind.BeginSection: stack.Add(element.Value); break;
+                    case Token.TokenKind.EndSection: if (stack.Count > 0) stack.RemoveAt(stack.Count - 1); break;
+                    case Token.TokenKind.KeyValue:
                         string full_key = stack.Count == 0 ? element.Key : string.Join(sectionSeparator, stack) + (string.IsNullOrEmpty(element.Key) ? "" : sectionSeparator + element.Key);
                         dictionary[full_key] = element.Value;
                         break;
@@ -148,12 +161,12 @@ namespace Lexical.Localization.LocalizationFile
         }
 
         /// <summary>
-        /// Convert <see cref="ILocalizationFileReadable"/> to key-values.
+        /// Convert <see cref="ILocalizationFileTokenizer"/> to key-values.
         /// </summary>
         /// <param name="textFile"></param>
         /// <param name="dst"></param>
         /// <returns></returns>
-        public static IReadOnlyDictionary<string, string> ToDictionaryAndClose(this ILocalizationFileReadable textFile, IDictionary<string, string> dst = default, string sectionSeparator = default)
+        public static IReadOnlyDictionary<string, string> ToDictionaryAndClose(this ILocalizationFileTokenizer textFile, IDictionary<string, string> dst = default, string sectionSeparator = default)
         {
             if (dst == null) dst = new Dictionary<string, string>();
             if (sectionSeparator == null) sectionSeparator = ":";
@@ -163,19 +176,19 @@ namespace Lexical.Localization.LocalizationFile
         }
 
         /// <summary>
-        /// Convert <see cref="ILocalizationFileReadable"/> to <see cref="IAsset"/>.
+        /// Convert <see cref="ILocalizationFileTokenizer"/> to <see cref="IAsset"/>.
         /// </summary>
         /// <param name="textFile"></param>
         /// <returns></returns>
-        public static IAsset ToAsset(this ILocalizationFileReadable textFile)
+        public static IAsset ToAsset(this ILocalizationFileTokenizer textFile)
             => new LocalizationDictionary(textFile.ToDictionary(), textFile.NamePolicy);
 
         /// <summary>
-        /// Convert <see cref="ILocalizationFileReadable"/> to <see cref="IAsset"/>.
+        /// Convert <see cref="ILocalizationFileTokenizer"/> to <see cref="IAsset"/>.
         /// </summary>
         /// <param name="textFile"></param>
         /// <returns></returns>
-        public static IAsset ToAssetAndClose(this ILocalizationFileReadable textFile)
+        public static IAsset ToAssetAndClose(this ILocalizationFileTokenizer textFile)
             => new LocalizationDictionary(
                   source:     textFile.ToDictionaryAndClose(dst: null, sectionSeparator: null), 
                   namePolicy: textFile.NamePolicy
@@ -183,39 +196,39 @@ namespace Lexical.Localization.LocalizationFile
     }
 
 
-    class LocalizationFileReadableDecorator : ILocalizationFileReadable
+    class LocalizationFileReadableDecorator : ILocalizationFileTokenizer
     {
-        ILocalizationFileReadable source;
-        Func<IEnumerable<TextElement>, IEnumerable<TextElement>> adapter;
+        ILocalizationFileTokenizer source;
+        Func<IEnumerable<Token>, IEnumerable<Token>> adapter;
 
-        public LocalizationFileReadableDecorator(ILocalizationFileReadable source, Func<IEnumerable<TextElement>, IEnumerable<TextElement>> adapter)
+        public LocalizationFileReadableDecorator(ILocalizationFileTokenizer source, Func<IEnumerable<Token>, IEnumerable<Token>> adapter)
         {
             this.source = source ?? throw new ArgumentNullException(nameof(adapter));
             this.adapter = adapter ?? throw new ArgumentNullException(nameof(adapter));
         }
         public IAssetKeyNamePolicy NamePolicy => source.NamePolicy;
         public void Dispose() => source.Dispose();
-        public IEnumerable<TextElement> Read() => adapter(source.Read());
+        public IEnumerable<Token> Read() => adapter(source.Read());
     }
 
-    class InitialSections : ILocalizationFileReadable
+    class InitialSections : ILocalizationFileTokenizer
     {
-        ILocalizationFileReadable source;
+        ILocalizationFileTokenizer source;
         IReadOnlyDictionary<string, string> initialSections;
-        public InitialSections(ILocalizationFileReadable source, IReadOnlyDictionary<string, string> initialSections)
+        public InitialSections(ILocalizationFileTokenizer source, IReadOnlyDictionary<string, string> initialSections)
         {
             this.source = source ?? throw new ArgumentNullException(nameof(source));
             this.initialSections = initialSections ?? throw new ArgumentNullException(nameof(initialSections));
         }
         public IAssetKeyNamePolicy NamePolicy => source.NamePolicy;
         public void Dispose() => source.Dispose();
-        public IEnumerable<TextElement> Read()
+        public IEnumerable<Token> Read()
         {
             string[] keys = initialSections.Keys.ToArray();
             Array.Sort(keys);
-            foreach (string key in keys) yield return TextElement.Begin(initialSections[key]);
-            foreach (TextElement te in source.Read()) yield return te;
-            foreach (string key in keys) yield return TextElement.End();
+            foreach (string key in keys) yield return Token.Begin(initialSections[key]);
+            foreach (Token te in source.Read()) yield return te;
+            foreach (string key in keys) yield return Token.End();
         }
     }
 

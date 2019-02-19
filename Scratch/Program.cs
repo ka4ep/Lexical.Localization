@@ -13,10 +13,10 @@ namespace Scratch
             parrr.Add(new KeyValuePair<string, string> ( "type", "MyLibrary:Type" ));
             parrr.Add(new KeyValuePair<string, string> ( "key", "\"hello\"" ));
 
-            string str2 = AssetKeyStringSerializer.Xml.PrintString(parrr);
+            string str2 = AssetKeyStringSerializer.Xml.PrintParameters(parrr);
             Console.WriteLine(str2);
 
-            var pars = AssetKeyStringSerializer.Xml.ParseString(str2);
+            var pars = AssetKeyStringSerializer.Xml.ParseParameters(str2);
 
             Console.ReadKey();
         }

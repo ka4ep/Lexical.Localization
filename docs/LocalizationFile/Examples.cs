@@ -21,7 +21,7 @@ namespace docs
                     // Get .ext file format
                     ILocalizationFileStreamReader fileFormat = LocalizationFileFormatMap.Singleton.TryGet("ini") as ILocalizationFileStreamReader;
                     // Create reader
-                    ILocalizationFileReadable textReader = fileFormat.OpenStream(fs, AssetKeyNameProvider.Default);
+                    ILocalizationFileTokenizer textReader = fileFormat.OpenStream(fs, AssetKeyNameProvider.Default);
                     // Convert to asset
                     IAsset asset = textReader.ToAssetAndClose();
                 }
@@ -43,11 +43,11 @@ namespace docs
     {
         public string Extension 
             => "ext";
-        public ILocalizationFileReadable OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = null)
+        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = null)
             => new ExtReader(stream, namePolicy);
     }
 
-    class ExtReader : ILocalizationFileReadable
+    class ExtReader : ILocalizationFileTokenizer
     {
         public IAssetKeyNamePolicy NamePolicy => throw new System.NotImplementedException();
         public ExtReader(Stream stream, IAssetKeyNamePolicy namePolicy)
@@ -59,7 +59,7 @@ namespace docs
             throw new System.NotImplementedException();
         }
 
-        public IEnumerable<TextElement> Read()
+        public IEnumerable<Token> Read()
         {
             throw new System.NotImplementedException();
         }

@@ -17,7 +17,7 @@ namespace Lexical.Localization
     public class AssetKeyStringSerializer
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
-        static AssetKeyStringSerializer generic = new AssetKeyStringSerializer("\\\n\t\r\0\a\b\f:");
+        static AssetKeyStringSerializer instance = new AssetKeyStringSerializer("\\\n\t\r\0\a\b\f:");
         static AssetKeyStringSerializer json = new AssetKeyStringSerializer("\\\n\t\r\0\a\b\f:\"");
         static AssetKeyStringSerializer ini = new AssetKeyStringSerializer("\\\n\t\r\0\a\b\f:=[]");
         static AssetKeyStringSerializer xml = new AssetKeyStringSerializer("\\\n\t\r\0\a\b\f:\"'&<>");
@@ -25,7 +25,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
         /// </summary>
-        public static AssetKeyStringSerializer Generic => generic;
+        public static AssetKeyStringSerializer Instance => instance;
 
         /// <summary>
         /// String serializer for json literals
@@ -72,9 +72,37 @@ namespace Lexical.Localization
         ///  \:
         ///  \\
         /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public string PrintKey(IAssetKey key)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var parameter in AssetKeyParametrizer.Singleton.GetAllParameters(key))
+            {
+                if (parameter.Key == "root") continue;
+                if (sb.Length > 0) sb.Append(':');
+                sb.Append(EscapeLiteral(parameter.Key));
+                sb.Append(':');
+                sb.Append(EscapeLiteral(parameter.Value));
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Convert a sequence of key,value pairs to a string.
+        /// 
+        /// The format is as following:
+        ///   parameterKey:parameterValue:parameterKey:parameterValue:...
+        /// 
+        /// Escape character is backslash.
+        ///  \unnnn
+        ///  \xnnnn
+        ///  \:
+        ///  \\
+        /// </summary>
         /// <param name="keyParameters"></param>
         /// <returns></returns>
-        public string PrintString(IEnumerable<KeyValuePair<string, string>> keyParameters)
+        public string PrintParameters(IEnumerable<KeyValuePair<string, string>> keyParameters)
         {
             StringBuilder sb = new StringBuilder();
             foreach(var parameter in keyParameters)
@@ -88,16 +116,17 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Parse string into parameter key value pairs.
+        /// Parse string into IAssetKey.
         /// </summary>
         /// <param name="keyString"></param>
-        /// <returns></returns>
+        /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <returns>key</returns>
         /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
-        public KeyValuePair<string, string>[] ParseString(string keyString)
+        public IAssetKey ParseKey(string keyString, IAssetKey rootKey = default)
         {
+            object result = rootKey ?? new LocalizationRoot();
+            IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
             MatchCollection matches = ParsePattern.Matches(keyString);
-            KeyValuePair<string, string>[] result = new KeyValuePair<string, string>[matches.Count];
-            int ix = 0;
             foreach (Match m in matches)
             {
                 if (!m.Success) throw new FormatException(keyString);
@@ -105,7 +134,55 @@ namespace Lexical.Localization
                 if (!k_key.Success || !k_value.Success) throw new FormatException(keyString);
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                result[ix++] = new KeyValuePair<string, string>(key, value);
+                if (key == "root") continue;
+                result = parametrizer.CreatePart(result, key, value);
+            }
+            return (IAssetKey)result;
+        }
+
+        /// <summary>
+        /// Try parse string into IAssetKey.
+        /// </summary>
+        /// <param name="keyString"></param>
+        /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <returns>key or null</returns>
+        public IAssetKey TryParseKey(string keyString, IAssetKey rootKey = default)
+        {
+            object result = rootKey ?? new LocalizationRoot();
+            IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
+            MatchCollection matches = ParsePattern.Matches(keyString);
+            foreach (Match m in matches)
+            {
+                if (!m.Success) throw new FormatException(keyString);
+                Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                if (!k_key.Success || !k_value.Success) throw new FormatException(keyString);
+                string key = UnescapeLiteral(k_key.Value);
+                string value = UnescapeLiteral(k_value.Value);
+                if (key == "root") continue;
+                result = parametrizer.TryCreatePart(result, key, value);
+                if (result == null) return null;
+            }
+            return result as IAssetKey;
+        }
+
+        /// <summary>
+        /// Parse string into parameter key value pairs.
+        /// </summary>
+        /// <param name="keyString"></param>
+        /// <returns></returns>
+        /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
+        public ParameterKey ParseParameters(string keyString)
+        {
+            MatchCollection matches = ParsePattern.Matches(keyString);
+            ParameterKey result = null;
+            foreach (Match m in matches)
+            {
+                if (!m.Success) throw new FormatException(keyString);
+                Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                if (!k_key.Success || !k_value.Success) throw new FormatException(keyString);
+                string key = UnescapeLiteral(k_key.Value);
+                string value = UnescapeLiteral(k_value.Value);
+                result = new ParameterKey(result, key, value);
             }
             return result;
         }
@@ -117,7 +194,7 @@ namespace Lexical.Localization
         /// <param name="keyString"></param>
         /// <param name="result">output of result</param>
         /// <returns>true if successful</returns>
-        public bool TryParseString(string keyString, out KeyValuePair<string, string>[] result)
+        public bool TryParseParameters(string keyString, out KeyValuePair<string, string>[] result)
         {
             MatchCollection matches = ParsePattern.Matches(keyString);
             result = new KeyValuePair<string, string>[matches.Count];

@@ -13,7 +13,7 @@ namespace Lexical.Localization.LocalizationFile
     /// <summary>
     /// Class where key values are organized in tree structure.
     /// </summary>
-    public class LocalizationKeyTree
+    public class TreeNode
     {
         /// <summary>
         /// Create tree structure from source of flat key values.
@@ -21,9 +21,9 @@ namespace Lexical.Localization.LocalizationFile
         /// <param name="keyValues"></param>
         /// <param name="parametrizer"></param>
         /// <returns>tree root ""</returns>
-        public static LocalizationKeyTree Create(IEnumerable<KeyValuePair<object, string>> keyValues, IAssetKeyParametrizer parametrizer)
+        public static TreeNode Create(IEnumerable<KeyValuePair<object, string>> keyValues, IAssetKeyParametrizer parametrizer)
         {
-            LocalizationKeyTree root = new LocalizationKeyTree(new AssetKeyProxy.NonCanonical("root", ""), null);
+            TreeNode root = new TreeNode(new ParameterKey.NonCanonical("root", ""), null);
             root.AddRange(parametrizer, keyValues);
             return root;
         }
@@ -33,9 +33,9 @@ namespace Lexical.Localization.LocalizationFile
         /// </summary>
         /// <param name="keyValues"></param>
         /// <returns></returns>
-        public static LocalizationKeyTree Create(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
+        public static TreeNode Create(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
         {
-            LocalizationKeyTree root = new LocalizationKeyTree(new AssetKeyProxy.NonCanonical("root", ""), null);
+            TreeNode root = new TreeNode(new ParameterKey.NonCanonical("root", ""), null);
             root.AddRange(AssetKeyParametrizer.Singleton, keyValues.Select(kp=>new KeyValuePair<object, string>(kp.Key, kp.Value)));
             return root;
         }
@@ -43,38 +43,38 @@ namespace Lexical.Localization.LocalizationFile
         /// <summary>
         /// Parent node, unless is root then null.
         /// </summary>
-        public readonly LocalizationKeyTree Parent;
+        public readonly TreeNode Parent;
 
         /// <summary>
         /// 
         /// </summary>
-        public readonly AssetKeyProxy Proxy;
+        public readonly ParameterKey Proxy;
 
         string[] parameters;
         List<string> values;
-        Dictionary<string, LocalizationKeyTree> children;
+        Dictionary<string, TreeNode> children;
 
-        public string ParameterName => Proxy.ParameterName;
-        public string ParameterValue => Proxy.ParameterValue;
+        public string ParameterName => Proxy.Name;
+        public string ParameterValue => Proxy.Value;
         public string[] ParameterNames => parameters ?? (parameters = new string[] { ParameterName });
 
         public bool HasChildren => children != null && children.Count > 0;
-        public Dictionary<string, LocalizationKeyTree> Children => children ?? (children = new Dictionary<string, LocalizationKeyTree>(StringComparer.InvariantCulture));
+        public Dictionary<string, TreeNode> Children => children ?? (children = new Dictionary<string, TreeNode>(StringComparer.InvariantCulture));
 
         public bool HasValues => values != null && values.Count > 0;
         public List<string> Values => values ?? (values = new List<string>(1));
 
-        public LocalizationKeyTree(AssetKeyProxy parameter, LocalizationKeyTree parent = null)
+        public TreeNode(ParameterKey parameter, TreeNode parent = null)
         {
             this.Proxy = parameter;
             this.Parent = parent;
         }
 
-        public LocalizationKeyTree AddRange(IAssetKeyParametrizer parametrizer, IEnumerable<KeyValuePair<object, string>> keyValues)
+        public TreeNode AddRange(IAssetKeyParametrizer parametrizer, IEnumerable<KeyValuePair<object, string>> keyValues)
         {
             // Create composite paramerizer
-            IAssetKeyParametrizer compositeParametrizer = parametrizer is LocalizationKeyTree.Parametrizer ? parametrizer :
-                new AssetKeyParametrizerComposite(parametrizer, LocalizationKeyTree.Parametrizer.Instance);
+            IAssetKeyParametrizer compositeParametrizer = parametrizer is TreeNode.Parametrizer ? parametrizer :
+                new AssetKeyParametrizerComposite(parametrizer, TreeNode.Parametrizer.Instance);
             // Create comparer that can compare LocalizationKeyTree and argument's keys
             ParametrizerCanonicalComparer<object> comparer = new ParametrizerCanonicalComparer<object>(compositeParametrizer);
 
@@ -122,7 +122,7 @@ namespace Lexical.Localization.LocalizationFile
                 // Parameter value
                 string parameterValue = parametrizer.GetPartValue(key_part, parameterName);
                 // Add-or-get section
-                LocalizationKeyTree subsection = getOrCreateChild(parameterName, parameterValue);
+                TreeNode subsection = getOrCreateChild(parameterName, parameterValue);
                 // Add key=value
                 if (part_index == key_parts.Length - 1) subsection.Values.Add(value);
                 // Recurse
@@ -131,15 +131,15 @@ namespace Lexical.Localization.LocalizationFile
 
         }
 
-        LocalizationKeyTree getOrCreateChild(string parameterName, string parameterValue)
+        TreeNode getOrCreateChild(string parameterName, string parameterValue)
         {
-            LocalizationKeyTree subsection;
-            if (!Children.TryGetValue(parameterValue, out subsection)) Children[parameterValue] = subsection = new LocalizationKeyTree(new AssetKeyProxy(this.Proxy, parameterName, parameterValue), this);
+            TreeNode subsection;
+            if (!Children.TryGetValue(parameterValue, out subsection)) Children[parameterValue] = subsection = new TreeNode(new ParameterKey(this.Proxy, parameterName, parameterValue), this);
             return subsection;
         }
 
         public override string ToString()
-            => $"{GetType().Name}({Proxy.ParameterName}, {ParameterValue})";
+            => $"{GetType().Name}({Proxy.Name}, {ParameterValue})";
 
         public class Parametrizer : IAssetKeyParametrizer
         {
@@ -148,47 +148,47 @@ namespace Lexical.Localization.LocalizationFile
 
             public IEnumerable<object> Break(object obj)
             {
-                LocalizationKeyTree key = obj as LocalizationKeyTree;
+                TreeNode key = obj as TreeNode;
                 if (key == null) return null;
 
                 // Count
                 int count = 0;
-                for (LocalizationKeyTree k = key; k != null; k = k.Parent)
+                for (TreeNode k = key; k != null; k = k.Parent)
                     count++;
 
                 // Array from root to tail
                 object[] result = new object[count];
                 int ix = 0;
-                for (LocalizationKeyTree k = key; k != null; k = k.Parent)
+                for (TreeNode k = key; k != null; k = k.Parent)
                     result[ix++] = k;
                 return result;
             }
 
             public object GetPreviousPart(object part)
-                => part is LocalizationKeyTree tree ? tree.Parent : null;
+                => part is TreeNode tree ? tree.Parent : null;
 
             public object TryCreatePart(object obj, string parameterName, string parameterValue)
-                => (obj as LocalizationKeyTree)?.getOrCreateChild(parameterName, parameterValue);
+                => (obj as TreeNode)?.getOrCreateChild(parameterName, parameterValue);
 
             public bool IsCanonical(object part, string parameterName)
-                => part is LocalizationKeyTree tree ? tree.Proxy is AssetKeyProxy.NonCanonical == false : false;
+                => part is TreeNode tree ? tree.Proxy is ParameterKey.NonCanonical == false : false;
             public bool IsNonCanonical(object part, string parameterName)
-                => part is LocalizationKeyTree tree ? tree.Proxy is AssetKeyProxy.NonCanonical : false;
+                => part is TreeNode tree ? tree.Proxy is ParameterKey.NonCanonical : false;
 
             static string[] empty = new string[0];
             public string[] GetPartParameters(object obj)
-                => obj is LocalizationKeyTree tree ? tree.ParameterNames : empty;
+                => obj is TreeNode tree ? tree.ParameterNames : empty;
 
             public string GetPartValue(object obj, string parameter)
-                => obj is LocalizationKeyTree tree && tree.Proxy!=null && tree.Proxy.ParameterName==parameter ? tree.Proxy.ParameterValue : null;
+                => obj is TreeNode tree && tree.Proxy!=null && tree.Proxy.Name==parameter ? tree.Proxy.Value : null;
 
             public void VisitParts<T>(object obj, ParameterPartVisitor<T> visitor, ref T data)
             {
-                LocalizationKeyTree key = (obj as LocalizationKeyTree);
+                TreeNode key = (obj as TreeNode);
                 if (key == null) return;
 
                 // Push to stack
-                LocalizationKeyTree prevKey = key.Parent;
+                TreeNode prevKey = key.Parent;
                 if (prevKey != null) VisitParts(prevKey, visitor, ref data);
 
                 // Pop from stack in reverse order

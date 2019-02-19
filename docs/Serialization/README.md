@@ -16,7 +16,10 @@ And back to IAssetKey.
 
 ```csharp
 // Convert to context-free parameters
-IEnumerable<KeyValuePair<string, string>> parameters = null;
+List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
+parameters.Add(new KeyValuePair<string, string>("culture", "en"));
+parameters.Add(new KeyValuePair<string, string>("type", "MyLibrary:Type"));
+parameters.Add(new KeyValuePair<string, string>("key", "\"hello\""));
 // Parametrizer for AssetKey
 IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
 // Convert to context-dependent instance
@@ -35,7 +38,7 @@ parameterName:parameterValue:parameterName:parameterValue:...
 
 For example:
 ```none
-culture:en:Type:MyController:Key:Success
+culture:en:type:MyController:key:Success
 ```
 
 Escaping uses the following rules.
@@ -54,7 +57,7 @@ For example to escape key "Success:Plural" would be
 key:Success\:Plural
 ```
 
-**AssetKeyStringSerializer** Serializes key to string.
+**AssetKeyStringSerializer** prints parameters as a string
 
 ```csharp
 // Parametrizer for AssetKey
@@ -64,16 +67,16 @@ IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success
 // Convert to context-free parameters
 IEnumerable<KeyValuePair<string, string>> parameters = parametrizer.GetAllParameters(key);
 // Serialize to string
-string str = AssetKeyStringSerializer.Generic.PrintString(parameters);
+string str = AssetKeyStringSerializer.Singleton.PrintParameters(parameters);
 ```
 
-And string to key.
+And parses string back to parameters.
 
 ```csharp
 // Key in string format
-string str = "culture:en:Type:MyLibrary.MyController:key:Success";
+string str = "culture:en:type:MyLibrary.MyController:key:Success";
 // Convert to context-free parameters
-IEnumerable<KeyValuePair<string, string>> parameters = AssetKeyStringSerializer.Generic.ParseString(str);
+IEnumerable<KeyValuePair<string, string>> parameters = AssetKeyStringSerializer.Singleton.ParseParameters(str);
 // Parametrizer for AssetKey
 IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
 // Convert to context-dependent instance
@@ -84,8 +87,26 @@ foreach (var parameter in parameters)
 IAssetKey key_ = (IAssetKey)key;
 ```
 
+AssetKeyStringSerializer also prints out IAssetKey.
+
+```csharp
+// Create context-dependent key
+IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
+// Serialize to string
+string str = AssetKeyStringSerializer.Singleton.PrintKey(key);
+```
+
+And parse it to IAssetKey.
+
+```csharp
+// Key in string format
+string str = "culture:en:type:MyLibrary.MyController:key:Success";
+// Parse string
+IAssetKey key = AssetKeyStringSerializer.Singleton.ParseKey(str, LocalizationRoot.Global);
+```
+
 # Parameters
-Well known parameters are
+IAssetKey supports the following parameters.
 
 | Parameter | Canonical | Section | Description |
 |:---------|:-------|:--------|:---------|

@@ -26,15 +26,15 @@ namespace Lexical.Localization.LocalizationFile
         public ILocalizationFileWritable CreateText(TextWriter text, IAssetKeyNamePolicy namePolicy = default)
             => new JsonWritable(text, namePolicy);
 
-        public ILocalizationFileReadable OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
+        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
             => new JsonReader(stream, namePolicy);
 
-        public ILocalizationFileReadable OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
+        public ILocalizationFileTokenizer OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
             => new JsonReader(text, namePolicy);
 
     }
 
-    public class JsonReader : ILocalizationFileReadable
+    public class JsonReader : ILocalizationFileTokenizer
     {
         public IAssetKeyNamePolicy NamePolicy { get; protected set; }
         TextReader textReader;
@@ -51,7 +51,7 @@ namespace Lexical.Localization.LocalizationFile
             this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
         }
 
-        public IEnumerable<TextElement> Read()
+        public IEnumerable<Token> Read()
         {
             using (var json = new JsonTextReader(textReader))
             {
@@ -61,11 +61,11 @@ namespace Lexical.Localization.LocalizationFile
                     switch (json.TokenType)
                     {
                         case JsonToken.StartObject:
-                            if (section != null) yield return TextElement.Begin(section);
+                            if (section != null) yield return Token.Begin(section);
                             section = null;
                             break;
                         case JsonToken.EndObject:
-                            yield return TextElement.End();
+                            yield return Token.End();
                             break;
                         case JsonToken.PropertyName: section = json.Value?.ToString(); break;
                         case JsonToken.Date:
@@ -73,7 +73,7 @@ namespace Lexical.Localization.LocalizationFile
                         case JsonToken.Boolean:
                         case JsonToken.Float:
                         case JsonToken.Integer:
-                            if (section != null) yield return TextElement.KeyValue(section, json.Value?.ToString());
+                            if (section != null) yield return Token.KeyValue(section, json.Value?.ToString());
                             section = null;
                             break;
                     }
@@ -106,12 +106,12 @@ namespace Lexical.Localization.LocalizationFile
             this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
         }
 
-        public void Write(LocalizationKeyTree root)
+        public void Write(TreeNode root)
         {
             _writeRecusive(root, 0, false);
         }
 
-        void _writeRecusive(LocalizationKeyTree node, int indent, bool continues)
+        void _writeRecusive(TreeNode node, int indent, bool continues)
         {
             // Test if is root
             bool isRoot = node.Parent == null;
@@ -133,7 +133,7 @@ namespace Lexical.Localization.LocalizationFile
 
                 // Children
                 int count = node.Children.Count;
-                foreach (LocalizationKeyTree childNode in node.Children.Values.OrderBy(n => n.Proxy, AssetKeyProxy.Comparer.Default))
+                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Proxy, ParameterKey.Comparer.Default))
                     _writeRecusive(childNode, indent + 2, --count > 0);
 
                 // End section: }\n

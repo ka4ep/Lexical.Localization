@@ -58,7 +58,7 @@ namespace docs
                 Console.WriteLine(myLocalization.TypeSection<ConstructionExamples>().Key("Success"));
 
                 var key1 = myLocalization.TypeSection<ConstructionExamples>().SetCulture("en").Key("Success");
-                var key2 = myLocalization.Section(typeof(ConstructionExamples)).Key("Success").SetCulture("en");
+                var key2 = myLocalization.TypeSection(typeof(ConstructionExamples)).Key("Success").SetCulture("en");
                 Console.WriteLine($"{key2.Equals(key1)} {key1.GetHashCode()}=={key2.GetHashCode()}");
                 Console.WriteLine($"{key1.Equals(key2)} {key1.GetHashCode()}=={key2.GetHashCode()}");
             }

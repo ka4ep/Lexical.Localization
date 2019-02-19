@@ -18,11 +18,11 @@ namespace Lexical.Localization.LocalizationFile
         public ILocalizationFileWritable CreateStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
             => new ResourcesWritable(stream, namePolicy);
 
-        public ILocalizationFileReadable OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
+        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
             => new ResourcesReadable(stream, namePolicy);
     }
 
-    public class ResourcesReadable : ILocalizationFileReadable, IDisposable
+    public class ResourcesReadable : ILocalizationFileTokenizer, IDisposable
     {
         public IAssetKeyNamePolicy NamePolicy { get; protected set; }
         System.Resources.ResourceReader reader;
@@ -33,7 +33,7 @@ namespace Lexical.Localization.LocalizationFile
             this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Colon_Dot_Dot;
         }
 
-        public IEnumerable<TextElement> Read()
+        public IEnumerable<Token> Read()
         {
             IDictionaryEnumerator dict = reader.GetEnumerator();
             while (dict.MoveNext())
@@ -49,7 +49,7 @@ namespace Lexical.Localization.LocalizationFile
                     throw new LocalizationException("Failed to read .resources file", e);
                 }
                 if (key!=null && value != null)
-                    yield return TextElement.KeyValue(key, value);
+                    yield return Token.KeyValue(key, value);
             }
         }
 
@@ -73,14 +73,14 @@ namespace Lexical.Localization.LocalizationFile
             this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Colon_Dot_Dot;
         }
 
-        public void Write(LocalizationKeyTree node)
+        public void Write(TreeNode node)
         {
             if (node.HasValues)
             {
                 // Write lines
                 foreach (string value in node.Values.OrderBy(n => n, AlphaNumericComparer.Default))
                 {
-                    string str = NamePolicy.BuildName(node, LocalizationKeyTree.Parametrizer.Instance);
+                    string str = NamePolicy.BuildName(node, TreeNode.Parametrizer.Instance);
                     writer.AddResource(str, value);
                 }
             }
@@ -88,7 +88,7 @@ namespace Lexical.Localization.LocalizationFile
             // Children
             if (node.HasChildren)
             {
-                foreach (LocalizationKeyTree childNode in node.Children.Values.OrderBy(n => n.Proxy, AssetKeyProxy.Comparer.Default))
+                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Proxy, ParameterKey.Comparer.Default))
                 {
                     Write(childNode);
                 }

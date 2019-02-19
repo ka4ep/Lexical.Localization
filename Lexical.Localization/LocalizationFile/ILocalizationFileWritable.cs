@@ -23,7 +23,7 @@ namespace Lexical.Localization.LocalizationFile
         /// Write tree completely.
         /// </summary>
         /// <param name="root"></param>
-        void Write(LocalizationKeyTree root);
+        void Write(TreeNode root);
 
         /// <summary>
         /// Flush content to source.
@@ -39,7 +39,7 @@ namespace Lexical.Localization.LocalizationFile
         /// <param name="writer"></param>
         /// <param name="keyValues"></param>
         public static void Write(this ILocalizationFileWritable writer, IEnumerable<KeyValuePair<object, string>> keyValues, IAssetKeyParametrizer parametrizer = default)
-            => writer.Write( LocalizationKeyTree.Create(keyValues, parametrizer) );
+            => writer.Write( TreeNode.Create(keyValues, parametrizer) );
 
         /// <summary>
         /// Write using <see cref="IAssetKey"/> map.
@@ -47,9 +47,9 @@ namespace Lexical.Localization.LocalizationFile
         /// <param name="writer"></param>
         /// <param name="keyValues"></param>
         public static void Write(this ILocalizationFileWritable writer, IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
-            => writer.Write(LocalizationKeyTree.Create(keyValues));
+            => writer.Write(TreeNode.Create(keyValues));
         /// <summary>
-        /// Converts <see cref="IAssetKey"/> to AssetKeyProxy.
+        /// Converts <see cref="IAssetKey"/> to ParameterKey.
         /// 
         /// Reorders non-canonical parts to be first, and "culture" to be very first.
         /// </summary>
@@ -59,7 +59,7 @@ namespace Lexical.Localization.LocalizationFile
         public static IEnumerable<KeyValuePair<object, string>> Convert(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues, IAssetKeyParametrizer parametrizer = default)
         {
             if (parametrizer == null) parametrizer = AssetKeyParametrizer.Singleton;
-            List<AssetKeyProxy> list = new List<AssetKeyProxy>();
+            List<ParameterKey> list = new List<ParameterKey>();
             foreach (var kp in keyValues)
             {
                 // Arrange
@@ -76,11 +76,11 @@ namespace Lexical.Localization.LocalizationFile
                     {
                         string value = parametrizer.GetPartValue(key_part, parameter);
                         if (value == null) continue;
-                        list.Add(new AssetKeyProxy.NonCanonical(parameter, value));
+                        list.Add(new ParameterKey.NonCanonical(parameter, value));
                     }
                 }
                 // Sort non-canonicals by parameter names
-                list.Sort(AssetKeyProxy.Comparer.Default);
+                list.Sort(ParameterKey.Comparer.Default);
 
                 // Add canonical parts
                 foreach (var key_part in parts.Where(part => part is IAssetKeyNonCanonicallyCompared == false))
@@ -91,7 +91,7 @@ namespace Lexical.Localization.LocalizationFile
                     {
                         string value = parametrizer.GetPartValue(key_part, parameter);
                         if (value == null) continue;
-                        list.Add(new AssetKeyProxy(parameter, value));
+                        list.Add(new ParameterKey(parameter, value));
                     }
                 }
 

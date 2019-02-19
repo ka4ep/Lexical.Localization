@@ -27,14 +27,14 @@ namespace Lexical.Localization.LocalizationFile
         public ILocalizationFileWritable CreateText(TextWriter text, IAssetKeyNamePolicy namePolicy = default)
             => new ResXWritable(text, namePolicy);
 
-        public ILocalizationFileReadable OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
+        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
             => new ResXReadable(stream, namePolicy);
 
-        public ILocalizationFileReadable OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
+        public ILocalizationFileTokenizer OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
             => new ResXReadable(text, namePolicy);
     }
 
-    public class ResXReadable : ILocalizationFileReadable, IDisposable
+    public class ResXReadable : ILocalizationFileTokenizer, IDisposable
     {
         public IAssetKeyNamePolicy NamePolicy { get; protected set; }
         TextReader textReader;
@@ -46,7 +46,7 @@ namespace Lexical.Localization.LocalizationFile
             this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Colon_Dot_Dot;
         }
 
-        public IEnumerable<TextElement> Read()
+        public IEnumerable<Token> Read()
         {
             using (var xml = System.Xml.XmlReader.Create(textReader))
             {
@@ -68,7 +68,7 @@ namespace Lexical.Localization.LocalizationFile
                             if (in_value && key_name != null && xml.Value != null)
                             {
                                 //if (key_type == null)
-                                yield return TextElement.KeyValue(key_name, xml.Value);
+                                yield return Token.KeyValue(key_name, xml.Value);
                             }
                             break;
                     }
@@ -134,21 +134,21 @@ namespace Lexical.Localization.LocalizationFile
             }
         }
 
-        public void Write(LocalizationKeyTree root)
+        public void Write(TreeNode root)
         {
             writer.WriteLine(template_header);
             _writeRecusive(root);
             writer.WriteLine(template_footer);
         }
 
-        void _writeRecusive(LocalizationKeyTree node)
+        void _writeRecusive(TreeNode node)
         {
             if (node.HasValues)
             {
                 // Write lines
                 foreach (string value in node.Values.OrderBy(n => n, AlphaNumericComparer.Default))
                 {
-                    string key = NamePolicy.BuildName(node, LocalizationKeyTree.Parametrizer.Instance);
+                    string key = NamePolicy.BuildName(node, TreeNode.Parametrizer.Instance);
                     string str = string.Format(template_keyvalue_formulation, HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(value));
                     writer.WriteLine(str);
                 }
@@ -157,7 +157,7 @@ namespace Lexical.Localization.LocalizationFile
             // Children
             if (node.HasChildren)
             {
-                foreach (LocalizationKeyTree childNode in node.Children.Values.OrderBy(n => n.Proxy, AssetKeyProxy.Comparer.Default))
+                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Proxy, ParameterKey.Comparer.Default))
                 {
                     _writeRecusive(childNode);
                 }

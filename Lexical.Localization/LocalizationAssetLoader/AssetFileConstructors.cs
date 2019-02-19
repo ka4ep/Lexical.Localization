@@ -48,18 +48,18 @@ namespace Lexical.Localization
             throw new ArgumentException($"File format provider {fileFormat.GetType().FullName} doesn't support reading localization files.");
         }
 
-        public static ILocalizationFileReadable IniReader(string text) => new IniReadable(new StringReader(text));
-        public static ILocalizationFileReadable IniReader(string text, IAssetKeyNamePolicy namePolicy) => new IniReadable(new StringReader(text), namePolicy);
+        public static ILocalizationFileTokenizer IniReader(string text) => new IniReadable(new StringReader(text));
+        public static ILocalizationFileTokenizer IniReader(string text, IAssetKeyNamePolicy namePolicy) => new IniReadable(new StringReader(text), namePolicy);
         public static IAsset IniAsset(Stream stream, IReadOnlyDictionary<string, string> initialSections = null) => new IniReadable(new StreamReader(stream), null).DecorateSections(initialSections).ToAssetAndClose();
         public static IAsset IniAsset(Stream stream, IAssetKeyNamePolicy namePolicy, IReadOnlyDictionary<string, string> initialSections = null) => new IniReadable(new StreamReader(stream), namePolicy).DecorateSections(initialSections).ToAssetAndClose();
 
-        public static ILocalizationFileReadable JsonReader(string text) => new JsonReader(new StringReader(text));
-        public static ILocalizationFileReadable JsonReader(string text, IAssetKeyNamePolicy namePolicy) => new JsonReader(new StringReader(text), namePolicy);
+        public static ILocalizationFileTokenizer JsonReader(string text) => new JsonReader(new StringReader(text));
+        public static ILocalizationFileTokenizer JsonReader(string text, IAssetKeyNamePolicy namePolicy) => new JsonReader(new StringReader(text), namePolicy);
         public static IAsset JsonAsset(Stream stream, IReadOnlyDictionary<string, string> initialSections = null) => new JsonReader(new StreamReader(stream)).DecorateSections(initialSections).ToAssetAndClose();
         public static IAsset JsonAsset(Stream stream, IAssetKeyNamePolicy namePolicy, IReadOnlyDictionary<string, string> initialSections = null) => new JsonReader(new StreamReader(stream), namePolicy).DecorateSections(initialSections).ToAssetAndClose();
 
-        public static ILocalizationFileReadable XmlReader(string text) => new XmlReadable(new StringReader(text));
-        public static ILocalizationFileReadable XmlReader(string text, IAssetKeyNamePolicy namePolicy) => new XmlReadable(new StringReader(text), namePolicy);
+        public static ILocalizationFileTokenizer XmlReader(string text) => new XmlReadable(new StringReader(text));
+        public static ILocalizationFileTokenizer XmlReader(string text, IAssetKeyNamePolicy namePolicy) => new XmlReadable(new StringReader(text), namePolicy);
         public static IAsset XmlAsset(Stream stream, IReadOnlyDictionary<string, string> initialSections = null) => new XmlReadable(new StreamReader(stream)).DecorateSections(initialSections).ToAssetAndClose();
         public static IAsset XmlAsset(Stream stream, IAssetKeyNamePolicy namePolicy, IReadOnlyDictionary<string, string> initialSections = null) => new XmlReadable(new StreamReader(stream), namePolicy).DecorateSections(initialSections).ToAssetAndClose();
 

@@ -7,7 +7,7 @@ using Lexical.Localization.Internal;
 namespace Lexical.Localization.Tests
 {
     [TestClass]
-    public class SerializationTests
+    public class StringSerializationTests
     {
         [TestMethod]
         public void Test1()
@@ -24,14 +24,11 @@ namespace Lexical.Localization.Tests
 
             /// Section-1
             // Arrange
-            IAssetKey section1 = root1.Section(typeof(MyController).CanonicalName());
-            // BinaryFormatter cannot serialize System.RuntimeType
-            //ILocalizationKey section2 = root2.Section(typeof(MyController));
-            //ILocalizationKey section3 = root3.Section<MyController>();
-            IAssetKey section2 = section1;
-            IAssetKey section3 = section1;
-            IAssetKey section4 = new LocalizationKey._Section(new LocalizationRoot(), typeof(MyController).CanonicalName());
-            IAssetKey sectionX = root1.Section("MySection");
+            IAssetKey section1 = root1.TypeSection(typeof(MyController).FullName);
+            IAssetKey section2 = root2.TypeSection(typeof(MyController));
+            IAssetKey section3 = root3.TypeSection<MyController>();
+            IAssetKey section4 = new LocalizationKey._TypeSection(new LocalizationRoot(), typeof(MyController).FullName);
+            IAssetKey sectionX = root1.TypeSection("MySection");
             // Assert
             SerializeEqual(section1, section2, section3);
             SerializeEqual(section1, section4);
@@ -46,12 +43,9 @@ namespace Lexical.Localization.Tests
 
             /// Section-2
             // Arrange
-            IAssetKey subSection1 = section1.Section(typeof(MyController).CanonicalName());
-            // BinaryFormatter cannot serialize System.RuntimeType
-            //ILocalizationKey subSection2 = section2.Section(typeof(MyController));
-            //ILocalizationKey subSection3 = section3.Section<MyController>();
-            IAssetKey subSection2 = subSection1;
-            IAssetKey subSection3 = subSection1;
+            IAssetKey subSection1 = section1.TypeSection(typeof(MyController).FullName);
+            IAssetKey subSection2 = section2.TypeSection(typeof(MyController));
+            IAssetKey subSection3 = section3.TypeSection<MyController>();
             IAssetKey subSectionX = section1.Section("MySubSection");
             // Assert
             SerializeEqual(subSection1, subSection2, subSection3);
@@ -75,21 +69,19 @@ namespace Lexical.Localization.Tests
             SerializeNotEqual(key3, keyX);
 
             /// Culture
-            // Does not work "CultureInfo is not marked as serializable"
-            /*
             // Arrange
-            ILocalizationKey ckey1 = root1.Section("MySection").Section("MySubsection")["Key"].SetCulture("fi");
-            ILocalizationKey ckey2 = root1.Section("MySection").Section("MySubsection").SetCulture("fi")["Key"];
-            ILocalizationKey ckey3 = root1.Section("MySection").SetCulture("fi").Section("MySubsection")["Key"];
-            ILocalizationKey ckey4 = root1.SetCulture("fi").Section("MySection").Section("MySubsection")["Key"];
-            ILocalizationKey ckeyX = root1.Section("MySection").Section("MySubsection")["Key"];
+            IAssetKey ckey1 = root1.Section("MySection").Section("MySubsection").Key("Key").SetCulture("fi");
+            IAssetKey ckey2 = root1.Section("MySection").Section("MySubsection").SetCulture("fi").Key("Key");
+            IAssetKey ckey3 = root1.Section("MySection").SetCulture("fi").Section("MySubsection").Key("Key");
+            IAssetKey ckey4 = root1.SetCulture("fi").Section("MySection").Section("MySubsection").Key("Key");
+            IAssetKey ckeyX = root1.Section("MySection").Section("MySubsection").Key("Key");
             // Assert
             SerializeEqual(ckey1, ckey2, ckey3);
             SerializeNotEqual(ckey1, ckeyX);
             SerializeNotEqual(ckey2, ckeyX);
             SerializeNotEqual(ckey3, ckeyX);
-            */
 
+            /*
             /// Format args
             // Arrange
             IAssetKey fkey1 = root1.Section("MySection").Section("MySubsection").Key("Key").Format(0xBad);
@@ -102,13 +94,13 @@ namespace Lexical.Localization.Tests
             SerializeNotEqual(fkey1, fkeyX);
             SerializeNotEqual(fkey2, fkeyX);
             SerializeNotEqual(fkey3, fkeyX);
-
+            */
         }
 
         public static void SerializeEqual(IAssetKey _x, IAssetKey _y)
         {
-            byte[] xData = LocalizationKeySerialization.Instance.Serialize(_x), yData = LocalizationKeySerialization.Instance.Serialize(_y);
-            IAssetKey x = LocalizationKeySerialization.Instance.Deserialize(xData), y = LocalizationKeySerialization.Instance.Deserialize(yData);
+            string xData = AssetKeyStringSerializer.Instance.PrintKey(_x), yData = AssetKeyStringSerializer.Instance.PrintKey(_y);
+            IAssetKey x = AssetKeyStringSerializer.Instance.ParseKey(xData), y = AssetKeyStringSerializer.Instance.ParseKey(yData);
             Assert.AreEqual(_x, _y, "x.Equals(y) == false");
             Assert.AreEqual(_y, _x, "y.Equals(x) == false");
             Assert.IsTrue(_x.GetHashCode() == _y.GetHashCode(), "x.GetHashCode() != y.GetHashCode()");
@@ -116,10 +108,10 @@ namespace Lexical.Localization.Tests
 
         public static void SerializeEqual(IAssetKey _x, IAssetKey _y, IAssetKey _z)
         {
-            byte[] xData = LocalizationKeySerialization.Instance.Serialize(_x);
-            byte[] yData = LocalizationKeySerialization.Instance.Serialize(_y);
-            byte[] zData = LocalizationKeySerialization.Instance.Serialize(_z);
-            IAssetKey x = LocalizationKeySerialization.Instance.Deserialize(xData), y = LocalizationKeySerialization.Instance.Deserialize(yData), z = LocalizationKeySerialization.Instance.Deserialize(zData);
+            string xData = AssetKeyStringSerializer.Instance.PrintKey(_x);
+            string yData = AssetKeyStringSerializer.Instance.PrintKey(_y);
+            string zData = AssetKeyStringSerializer.Instance.PrintKey(_z);
+            IAssetKey x = AssetKeyStringSerializer.Instance.ParseKey(xData), y = AssetKeyStringSerializer.Instance.ParseKey(yData), z = AssetKeyStringSerializer.Instance.ParseKey(zData);
             Assert.AreEqual(x, y, "x.Equals(y) == false");
             Assert.AreEqual(x, z, "x.Equals(z) == false");
             Assert.AreEqual(y, x, "y.Equals(x) == false");
@@ -133,8 +125,8 @@ namespace Lexical.Localization.Tests
 
         public static void SerializeNotEqual(IAssetKey _x, IAssetKey _y)
         {
-            byte[] xData = LocalizationKeySerialization.Instance.Serialize(_x), yData = LocalizationKeySerialization.Instance.Serialize(_y);
-            IAssetKey x = LocalizationKeySerialization.Instance.Deserialize(xData), y = LocalizationKeySerialization.Instance.Deserialize(yData);
+            string xData = AssetKeyStringSerializer.Instance.PrintKey(_x), yData = AssetKeyStringSerializer.Instance.PrintKey(_y);
+            IAssetKey x = AssetKeyStringSerializer.Instance.ParseKey(xData), y = AssetKeyStringSerializer.Instance.ParseKey(yData);
             Assert.AreNotEqual(x, y, "x.Equals(y) == true");
             Assert.AreNotEqual(y, x, "y.Equals(x) == true");
             Assert.IsFalse(x.GetHashCode() == y.GetHashCode(), "x.GetHashCode() == y.GetHashCode()");
@@ -142,8 +134,8 @@ namespace Lexical.Localization.Tests
 
         public static void SerializeNotEqual(IAssetKey _x, IAssetKey _y, IAssetKey _z)
         {
-            byte[] xData = LocalizationKeySerialization.Instance.Serialize(_x), yData = LocalizationKeySerialization.Instance.Serialize(_y), zData = LocalizationKeySerialization.Instance.Serialize(_z);
-            IAssetKey x = LocalizationKeySerialization.Instance.Deserialize(xData), y = LocalizationKeySerialization.Instance.Deserialize(yData), z = LocalizationKeySerialization.Instance.Deserialize(zData);
+            string xData = AssetKeyStringSerializer.Instance.PrintKey(_x), yData = AssetKeyStringSerializer.Instance.PrintKey(_y), zData = AssetKeyStringSerializer.Instance.PrintKey(_z);
+            IAssetKey x = AssetKeyStringSerializer.Instance.ParseKey(xData), y = AssetKeyStringSerializer.Instance.ParseKey(yData), z = AssetKeyStringSerializer.Instance.ParseKey(zData);
             Assert.AreNotEqual(x, y, "x.Equals(y) == true");
             Assert.AreNotEqual(x, z, "x.Equals(z) == true");
             Assert.AreNotEqual(y, x, "y.Equals(x) == true");

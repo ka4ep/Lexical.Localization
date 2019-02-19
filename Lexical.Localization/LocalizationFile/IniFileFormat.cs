@@ -25,14 +25,14 @@ namespace Lexical.Localization.LocalizationFile
         public ILocalizationFileWritable CreateText(TextWriter text, IAssetKeyNamePolicy namePolicy = default)
             => new IniWritable(text, namePolicy);
 
-        public ILocalizationFileReadable OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
+        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
             => new IniReadable(stream, namePolicy);
 
-        public ILocalizationFileReadable OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
+        public ILocalizationFileTokenizer OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
             => new IniReadable(text, namePolicy);
     }
 
-    public class IniReadable : ILocalizationFileReadable, IDisposable
+    public class IniReadable : ILocalizationFileTokenizer, IDisposable
     {
         public IAssetKeyNamePolicy NamePolicy { get; protected set; }
         TextReader textReader;
@@ -49,7 +49,7 @@ namespace Lexical.Localization.LocalizationFile
             this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
         }
 
-        public IEnumerable<TextElement> Read()
+        public IEnumerable<Token> Read()
         {
             string currentSection = null;
             while (textReader.Peek() >= 0)
@@ -65,9 +65,9 @@ namespace Lexical.Localization.LocalizationFile
                 // Section
                 if (ch == '[' && line[line.Length - 1] == ']')
                 {
-                    if (currentSection != null) { yield return TextElement.End(); currentSection = null; }
+                    if (currentSection != null) { yield return Token.End(); currentSection = null; }
                     string sectionName = line.Substring(1, line.Length - 2).Trim();
-                    if (!string.IsNullOrEmpty(sectionName)) { yield return TextElement.Begin(sectionName); currentSection = sectionName; }
+                    if (!string.IsNullOrEmpty(sectionName)) { yield return Token.Begin(sectionName); currentSection = sectionName; }
                     continue;
                 }
 
@@ -76,10 +76,10 @@ namespace Lexical.Localization.LocalizationFile
                 if (ix >= 0)
                 {
                     string key = line.Substring(0, ix).Trim(), value = line.Substring(ix + 1).Trim();
-                    yield return TextElement.KeyValue(key, value);
+                    yield return Token.KeyValue(key, value);
                 }
             }
-            if (currentSection != null) yield return TextElement.End();
+            if (currentSection != null) yield return Token.End();
         }
 
         public void Dispose()
@@ -136,21 +136,21 @@ namespace Lexical.Localization.LocalizationFile
             }
         }
 
-        public void Write(LocalizationKeyTree root)
+        public void Write(TreeNode root)
         {
             // Write root lines
             int c = WriteLines(root);
             if (c > 0) writer.WriteLine();
 
             // Write all non-culture sections
-            foreach (var node in root.Children.Values.Where(node => node.Proxy.ParameterName != "culture").OrderBy(node => node.Proxy, AssetKeyProxy.Comparer.Default))
+            foreach (var node in root.Children.Values.Where(node => node.Proxy.Name != "culture").OrderBy(node => node.Proxy, ParameterKey.Comparer.Default))
             {
                 _writeRecusive(node);
                 writer.WriteLine();
             }
 
             // Write all culture sections.
-            foreach (var node in root.Children.Values.Where(node => node.Proxy.ParameterName == "culture").OrderBy(node => node.Proxy, AssetKeyProxy.Comparer.Default))
+            foreach (var node in root.Children.Values.Where(node => node.Proxy.Name == "culture").OrderBy(node => node.Proxy, ParameterKey.Comparer.Default))
             {
                 writer.Write("[");
                 writer.Write(node.ParameterValue);
@@ -162,23 +162,23 @@ namespace Lexical.Localization.LocalizationFile
             }
         }
 
-        void _writeRecusive(LocalizationKeyTree node)
+        void _writeRecusive(TreeNode node)
         {
             WriteLines(node);
 
             // Children
-            foreach (LocalizationKeyTree childNode in node.Children.Values.OrderBy(n => n.Proxy, AssetKeyProxy.Comparer.Default))
+            foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Proxy, ParameterKey.Comparer.Default))
             {
                 _writeRecusive(childNode);
             }
         }
 
-        int WriteLines(LocalizationKeyTree node)
+        int WriteLines(TreeNode node)
         {
             if (!node.HasValues) return 0;
 
             // Key string
-            string str = keyNamePolicy.BuildName(node, LocalizationKeyTree.Parametrizer.Instance);
+            string str = keyNamePolicy.BuildName(node, TreeNode.Parametrizer.Instance);
 
             // Write lines
             node.Values.Sort(AlphaNumericComparer.Default);

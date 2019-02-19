@@ -37,7 +37,7 @@ namespace Lexical.Localization.LocalizationFile
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <returns>readable container that must be disposed</returns>
         /// <exception cref="IOException"></exception>
-        ILocalizationFileReadable OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default);
+        ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default);
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ namespace Lexical.Localization.LocalizationFile
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <returns>readable container that must be disposed</returns>
         /// <exception cref="IOException"></exception>
-        ILocalizationFileReadable OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+        ILocalizationFileTokenizer OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default);
     }
 
     /// <summary>
@@ -92,9 +92,9 @@ namespace Lexical.Localization.LocalizationFile
 
     public static class LocalizationFileFormatExtensions
     {
-        public static ILocalizationFileReadable OpenText(this ILocalizationFileTextReader reader, TextReader text, IAssetKeyNamePolicy namePolicy, IReadOnlyDictionary<string, string> initialSections)
+        public static ILocalizationFileTokenizer OpenText(this ILocalizationFileTextReader reader, TextReader text, IAssetKeyNamePolicy namePolicy, IReadOnlyDictionary<string, string> initialSections)
             => reader.OpenText(text, namePolicy).DecorateSections(initialSections);
-        public static ILocalizationFileReadable OpenStream(this ILocalizationFileStreamReader reader, Stream stream, IAssetKeyNamePolicy namePolicy, IReadOnlyDictionary<string, string> initialSections)
+        public static ILocalizationFileTokenizer OpenStream(this ILocalizationFileStreamReader reader, Stream stream, IAssetKeyNamePolicy namePolicy, IReadOnlyDictionary<string, string> initialSections)
             => reader.OpenStream(stream, namePolicy).DecorateSections(initialSections);
     }
 

@@ -153,7 +153,8 @@ namespace Lexical.Localization
             {
                 var t = Type;
                 // .NET Core can't serialize TypeSection<T> if T isn't [Serializable]
-                if (t.IsSerializable) info.AddValue(nameof(Type), t);
+                if (t == null) info.AddValue(nameof(Type), name); 
+                else if (t.IsSerializable) info.AddValue(nameof(Type), t);
                 base.GetObjectData(info, context);
             }
         }

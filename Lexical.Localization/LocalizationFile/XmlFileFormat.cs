@@ -27,14 +27,14 @@ namespace Lexical.Localization.LocalizationFile
         public ILocalizationFileWritable CreateText(TextWriter text, IAssetKeyNamePolicy namePolicy = default)
             => new XmlWritable(text, namePolicy);
 
-        public ILocalizationFileReadable OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
+        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
             => new XmlReadable(stream, namePolicy);
 
-        public ILocalizationFileReadable OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
+        public ILocalizationFileTokenizer OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
             => new XmlReadable(text, namePolicy);
     }
 
-    public class XmlReadable : ILocalizationFileReadable, IDisposable
+    public class XmlReadable : ILocalizationFileTokenizer, IDisposable
     {
         public IAssetKeyNamePolicy NamePolicy { get; protected set; }
         TextReader textReader;
@@ -46,7 +46,7 @@ namespace Lexical.Localization.LocalizationFile
             this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
         }
 
-        public IEnumerable<TextElement> Read()
+        public IEnumerable<Token> Read()
         {
             using (var xml = System.Xml.XmlReader.Create(textReader))
             {
@@ -56,9 +56,9 @@ namespace Lexical.Localization.LocalizationFile
                 {
                     switch (xml.NodeType)
                     {
-                        case XmlNodeType.Element: yield return TextElement.Begin(xml.Name); break;
-                        case XmlNodeType.EndElement: yield return TextElement.End(); break;
-                        case XmlNodeType.Text: yield return TextElement.KeyValue(section, xml.Value); break;
+                        case XmlNodeType.Element: yield return Token.Begin(xml.Name); break;
+                        case XmlNodeType.EndElement: yield return Token.End(); break;
+                        case XmlNodeType.Text: yield return Token.KeyValue(section, xml.Value); break;
                     }
                 }
             }
@@ -90,7 +90,7 @@ namespace Lexical.Localization.LocalizationFile
             this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
         }
 
-        public void Write(LocalizationKeyTree root)
+        public void Write(TreeNode root)
         {
             writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             writer.WriteLine();
@@ -98,7 +98,7 @@ namespace Lexical.Localization.LocalizationFile
             writer.WriteLine();
         }
 
-        void _writeRecusive(LocalizationKeyTree node, int indent)
+        void _writeRecusive(TreeNode node, int indent)
         {
             bool isRoot = node.Parent == null;
             string name = isRoot ? "configuration" : node.ParameterValue;
@@ -130,7 +130,7 @@ namespace Lexical.Localization.LocalizationFile
                 writer.Write(_name);
                 writer.Write('>');
                 writer.WriteLine();
-                foreach (LocalizationKeyTree childNode in node.Children.Values.OrderBy(n => n.Proxy, AssetKeyProxy.Comparer.Default))
+                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Proxy, ParameterKey.Comparer.Default))
                     _writeRecusive(childNode, indent + 2);
                 Indent(indent);
                 writer.Write("</");
