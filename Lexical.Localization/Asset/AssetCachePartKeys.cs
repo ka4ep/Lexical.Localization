@@ -27,8 +27,10 @@ namespace Lexical.Localization
         AssetKeyCloner cloner;
         public readonly IAssetKeyParametrizer parametrizer;
 
-        Dictionary<IAssetKey, string> stringCache;
-        Dictionary<IAssetKey, IAssetKey[]> allStrings;
+        /// <summary>
+        /// Cached queries where key is filter-criteria-key, and value is query result.
+        /// </summary>
+        Dictionary<IAssetKey, Key[]> cachedQueries;
 
         public AssetCachePartKeys(IAsset source, AssetCacheOptions options, IAssetKeyParametrizer parametrizer = default)
         {
@@ -43,19 +45,18 @@ namespace Lexical.Localization
             IAssetKeyParametrizer compositeParametrizer = Key.Parametrizer.Default.Concat(parametrizer);
             this.comparer = new AssetKeyComparer().AddCanonicalParametrizerComparer(compositeParametrizer).AddNonCanonicalParametrizerComparer(compositeParametrizer);
 
-            this.stringCache = new Dictionary<IAssetKey, string>(comparer);
-            this.allStrings = new Dictionary<IAssetKey, IAssetKey[]>(comparer);
+            this.cachedQueries = new Dictionary<IAssetKey, Key[]>(comparer);
         }
 
-        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey key = null)
+        public IEnumerable<Key> GetAllKeys(IAssetKey key = null)
         {
             int iter = iteration;
-            IAssetKey[] value = null;
+            Key[] queryResult = null;
             m_lock.EnterReadLock();
             // Hash-Equals may throw exceptions, we need try-finally to release lock properly.
             try
             {
-                if (allStrings.TryGetValue(key ?? cloner.Root, out value)) return value;
+                if (cachedQueries.TryGetValue(key ?? cloner.Root, out queryResult)) return queryResult;
             }
             finally
             {
@@ -63,7 +64,7 @@ namespace Lexical.Localization
             }
 
             // Read from backend and write to cache
-            value = Source.GetAllKeys(key)?.ToArray();
+            queryResult = Source.GetAllKeys(key)?.ToArray();
 
             // Write to cache, be that null or not
             IAssetKey cacheKey = (Options.GetCloneKeys() ? cloner.Copy(key) : key) ?? cloner.Root;
@@ -71,15 +72,15 @@ namespace Lexical.Localization
             try
             {
                 // The caller has flushed the cache, so let's not cache the data.
-                if (iter != iteration) return value;
-                allStrings[cacheKey] = value;
+                if (iter != iteration) return queryResult;
+                cachedQueries[cacheKey] = queryResult;
             }
             finally
             {
                 m_lock.ExitWriteLock();
             }
 
-            return value;
+            return queryResult;
         }
         
         IAsset IAssetReloadable.Reload()
@@ -90,8 +91,7 @@ namespace Lexical.Localization
             m_lock.EnterWriteLock();
             try
             {
-                stringCache.Clear();
-                allStrings.Clear();
+                cachedQueries.Clear();
             }
             finally
             {

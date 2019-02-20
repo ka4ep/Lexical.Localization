@@ -1,9 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Lexical.Localization;
-using Lexical.Localization;
 
 namespace Lexical.Localization.Tests
 {

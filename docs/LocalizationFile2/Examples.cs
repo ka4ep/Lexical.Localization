@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace docs
 {
-    public class ILocalizationFileReader_Examples
+    public class ILocalizationFileReader2_Examples
     {
         // Rename to "Main", or run from Main.
         public static void Run(string[] args)
@@ -31,7 +31,7 @@ namespace docs
             {
                 #region Snippet_2
                 // Add reader of custom .ext format to the global collection of readers.
-                LocalizationFileFormatMap.Singleton["ext"] = new ExtFileFormat();
+                LocalizationFileFormatMap.Singleton["ext"] = new ExtFileFormat2();
                 #endregion Snippet_2
             }
 
@@ -39,18 +39,18 @@ namespace docs
     }
 
     #region Snippet_3
-    class ExtFileFormat : ILocalizationFileFormat, ILocalizationFileStreamReader
+    class ExtFileFormat2 : ILocalizationFileFormat, ILocalizationFileStreamReader
     {
         public string Extension 
             => "ext";
         public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = null)
-            => new ExtReader(stream, namePolicy);
+            => new ExtReader2(stream, namePolicy);
     }
 
-    class ExtReader : ILocalizationFileTokenizer
+    class ExtReader2 : ILocalizationFileTokenizer
     {
         public IAssetKeyNamePolicy NamePolicy => throw new System.NotImplementedException();
-        public ExtReader(Stream stream, IAssetKeyNamePolicy namePolicy)
+        public ExtReader2(Stream stream, IAssetKeyNamePolicy namePolicy)
         {
         }
 

@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using System.Reflection;
-using Lexical.Localization;
-using Lexical.Localization;
+﻿using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;
+using System.Collections.Generic;
 
 namespace docs
 {
@@ -18,7 +15,7 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "en:MyController:hello", "Hello World!" } };
                 // Create asset
-                IAsset asset = new LocalizationStringDictionary(source);
+                IAsset asset = new LocalizationStringAsset(source);
                 // Create culture policy
                 ICulturePolicy culturePolicy = new CulturePolicy();
                 // Create root
@@ -42,7 +39,7 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "en:Section:Key", "Hello World!" } };
                 // Create asset
-                IAsset asset = new LocalizationStringDictionary(source);
+                IAsset asset = new LocalizationStringAsset(source);
                 #region Snippet_5x
                 // Create reference
                 IAssetKey key = new LocalizationKey._Section(null, "Section").Key("Key");
@@ -61,7 +58,7 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "en:MyController:hello", "Hello World!" } };
                 // Create asset
-                IAsset asset = new LocalizationStringDictionary(source);
+                IAsset asset = new LocalizationStringAsset(source);
                 // Assets are added to global static builder. It must be (re-)built after adding.
                 LocalizationRoot.Builder.AddAsset(asset).Build();
                 #endregion Snippet_2b

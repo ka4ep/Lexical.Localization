@@ -67,7 +67,7 @@ namespace Lexical.Localization
         /// <param name="parametrizer">(optional) how to extract parameters from key. If not set uses the default implementation <see cref="AssetKeyParametrizer"/></param>
         /// <returns>full name string</returns>
         string IAssetKeyNameProvider.BuildName(object key, IAssetKeyParametrizer parametrizer)
-            => PrintKey(key, parametrizer);
+            => PrintAssetKey(key, parametrizer);
 
         /// <summary>
         /// Convert a sequence of key,value pairs to a string.
@@ -84,7 +84,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="parametrizer"></param>
         /// <returns></returns>
-        public string PrintKey(object key, IAssetKeyParametrizer parametrizer = default)
+        public string PrintAssetKey(object key, IAssetKeyParametrizer parametrizer = default)
         {
             StringBuilder sb = new StringBuilder();
             if (parametrizer == null) parametrizer = AssetKeyParametrizer.Singleton;
@@ -113,7 +113,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="keyParameters"></param>
         /// <returns></returns>
-        public string PrintParameters(IEnumerable<KeyValuePair<string, string>> keyParameters)
+        public string PrintKey(IEnumerable<KeyValuePair<string, string>> keyParameters)
         {
             StringBuilder sb = new StringBuilder();
             foreach(var parameter in keyParameters)
@@ -131,12 +131,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="keyString"></param>
         /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <param name="parametrizer"></param>
         /// <returns>key</returns>
         /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
-        public IAssetKey ParseKey(string keyString, IAssetKey rootKey)
+        public IAssetKey ParseAssetKey(string keyString, IAssetKey rootKey, IAssetKeyParametrizer parametrizer = default)
         {
             object result = rootKey;
-            IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
+            if (parametrizer == null) parametrizer = AssetKeyParametrizer.Singleton;
             MatchCollection matches = ParsePattern.Matches(keyString);
             foreach (Match m in matches)
             {
@@ -157,7 +158,7 @@ namespace Lexical.Localization
         /// <param name="keyString"></param>
         /// <param name="rootKey">root key to span values from</param>
         /// <returns>key or null</returns>
-        public IAssetKey TryParseKey(string keyString, IAssetKey rootKey, IAssetKeyParametrizer parametrizer = default)
+        public IAssetKey TryParseAssetKey(string keyString, IAssetKey rootKey, IAssetKeyParametrizer parametrizer = default)
         {
             object result = rootKey;
             if (parametrizer == null) parametrizer = AssetKeyParametrizer.Singleton;
@@ -182,7 +183,7 @@ namespace Lexical.Localization
         /// <param name="keyString"></param>
         /// <returns>key or null if string was empty</returns>
         /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
-        public Key ParseParameters(string keyString)
+        public Key ParseKey(string keyString)
         {
             MatchCollection matches = ParsePattern.Matches(keyString);
             Key result = null;
@@ -204,7 +205,7 @@ namespace Lexical.Localization
         /// <param name="keyString"></param>
         /// <param name="result">output of result, or null if string was empty</param>
         /// <returns>true if successful</returns>
-        public bool TryParseParameters(string keyString, out Key result)
+        public bool TryParseKey(string keyString, out Key result)
         {
             MatchCollection matches = ParsePattern.Matches(keyString);
             result = null;

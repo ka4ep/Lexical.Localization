@@ -10,38 +10,11 @@ using Microsoft.Extensions.Localization;
 
 namespace docs
 {
-    public class Serialization_Examples
+    public class AssetKeyParameterNamePolicy_Examples
     {
         // Rename to "Main", or run from Main.
         public static void Run(string[] args)
         {
-            {
-                #region Snippet_1
-                // Parametrizer for AssetKey
-                IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
-                // Create context-dependent key
-                IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
-                // Convert to context-free parameters
-                IEnumerable<KeyValuePair<string, string>> parameters = parametrizer.GetAllParameters(key).ToArray();
-                #endregion Snippet_1
-            }
-
-            {
-                #region Snippet_2
-                // Convert to context-free parameters
-                IEnumerable<KeyValuePair<string, string>> parameters =
-                    new Key("culture", "en")
-                    .Append("type", "MyLibrary:Type").Append("key", "\"hello\"");
-                // Parametrizer for AssetKey
-                IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
-                // Convert to context-dependent instance
-                object key = LocalizationRoot.Global;
-                foreach (var parameter in parameters)
-                    key = parametrizer.CreatePart(key, parameter.Key, parameter.Value);
-                // Type-cast
-                IAssetKey key_ = (IAssetKey)key;
-                #endregion Snippet_2
-            }
 
             {
                 #region Snippet_3
@@ -52,7 +25,7 @@ namespace docs
                 // Convert to context-free parameters
                 IEnumerable<KeyValuePair<string, string>> parameters = parametrizer.GetAllParameters(key);
                 // Serialize to string
-                string str = AssetKeyParameterNamePolicy.Instance.PrintParameters(parameters);
+                string str = AssetKeyParameterNamePolicy.Instance.PrintKey(parameters);
                 #endregion Snippet_3
             }
 
@@ -61,7 +34,7 @@ namespace docs
                 // Key in string format
                 string str = "culture:en:type:MyLibrary.MyController:key:Success";
                 // Convert to context-free parameters
-                IEnumerable<KeyValuePair<string, string>> parameters = AssetKeyParameterNamePolicy.Instance.ParseParameters(str);
+                IEnumerable<KeyValuePair<string, string>> parameters = AssetKeyParameterNamePolicy.Instance.ParseKey(str);
                 // Parametrizer for AssetKey
                 IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
                 // Convert to context-dependent instance
@@ -78,7 +51,7 @@ namespace docs
                 // Create context-dependent key
                 IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
                 // Serialize to string
-                string str = AssetKeyParameterNamePolicy.Instance.PrintKey(key);
+                string str = AssetKeyParameterNamePolicy.Instance.PrintAssetKey(key);
                 #endregion Snippet_5
             }
 
@@ -87,7 +60,7 @@ namespace docs
                 // Key in string format
                 string str = "culture:en:type:MyLibrary.MyController:key:Success";
                 // Parse string
-                IAssetKey key = AssetKeyParameterNamePolicy.Instance.ParseKey(str, LocalizationRoot.Global);
+                IAssetKey key = AssetKeyParameterNamePolicy.Instance.ParseAssetKey(str, LocalizationRoot.Global);
                 #endregion Snippet_6
             }
         }

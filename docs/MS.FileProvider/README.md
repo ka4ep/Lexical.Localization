@@ -25,8 +25,6 @@ IAssetLoader assetLoader = new AssetLoader(part);
 ```csharp
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
-using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 
@@ -86,8 +84,6 @@ IAsset asset = new AssetLoader(parts);
 ```csharp
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
-using Lexical.Localization.Ms.Extensions;
-using Lexical.Localization;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using System.Linq;

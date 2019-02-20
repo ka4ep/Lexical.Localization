@@ -26,10 +26,10 @@ namespace Lexical.Localization.Tests
             Dictionary<string, string> languageStrings4 = new Dictionary<string, string>();
             languageStrings4["fi-Savo:ConsoleApp1:MyController:Success"] = "Onnistuepie";
             languageStrings4["fi-Savo:ConsoleApp1:MyController:Error"] = "Epäonnistuepa (Koodi=0x{0:X8})";
-            IAsset map1 = new LocalizationStringDictionary(languageStrings1, "{culture:}{section_0:}{section_1:}{section_n:}{key}");
-            IAsset map2 = new LocalizationStringDictionary(languageStrings2, "{culture:}{section_0:}{section_1:}{section_n:}{key}");
-            IAsset map3 = new LocalizationStringDictionary(languageStrings3, "{culture.}{section_0.}{section_1.}{section_n.}{key}");
-            IAsset map4 = new LocalizationStringDictionary(languageStrings4, "{culture:}{section_0:}{section_1:}{section_n:}{key}");
+            IAsset map1 = new LocalizationStringAsset(languageStrings1, "{culture:}{section_0:}{section_1:}{section_n:}{key}");
+            IAsset map2 = new LocalizationStringAsset(languageStrings2, "{culture:}{section_0:}{section_1:}{section_n:}{key}");
+            IAsset map3 = new LocalizationStringAsset(languageStrings3, "{culture.}{section_0.}{section_1.}{section_n.}{key}");
+            IAsset map4 = new LocalizationStringAsset(languageStrings4, "{culture:}{section_0:}{section_1:}{section_n:}{key}");
             IAsset asset = new AssetComposition(map1, map2, map3, map4);
             IAssetKey root = LocalizationRoot.Global;
             IAssetKey section = root.Section("ConsoleApp1").Section("MyController");

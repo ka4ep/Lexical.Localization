@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using Lexical.Localization;
-using Lexical.Localization;
+﻿using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 namespace docs
 {
@@ -27,7 +26,7 @@ namespace docs
             // Create localization source
             var source = new Dictionary<string, string> { { "en:ConsoleApp1.MyController:Hello", "Hello World!" } };
             // Create asset source
-            IAssetSource assetSource = new LocalizationStringDictionary(source).ToSource();
+            IAssetSource assetSource = new LocalizationStringAsset(source).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
             #endregion Snippet_2

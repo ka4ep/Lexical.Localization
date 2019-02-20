@@ -40,7 +40,7 @@ And then adding to constructor delegate to **LocalizationFileFormatMap.Singleton
 
 ```csharp
 // Add reader of custom .ext format to the global collection of readers.
-LocalizationFileFormatMap.Singleton["ext"] = new ExtFileFormat();
+LocalizationFileFormatMap.Singleton["ext"] = new ExtFileFormat2();
 ```
 
 Non-hierarchical formats can be implemented by implementing IAsset that reads the format.	
@@ -49,18 +49,18 @@ Non-hierarchical formats can be implemented by implementing IAsset that reads th
   <summary>Example implementation ExtFileFormat. (<u>Click here</u>)</summary>
 
 ```csharp
-class ExtFileFormat : ILocalizationFileFormat, ILocalizationFileStreamReader
+class ExtFileFormat2 : ILocalizationFileFormat, ILocalizationFileStreamReader
 {
     public string Extension 
         => "ext";
     public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = null)
-        => new ExtReader(stream, namePolicy);
+        => new ExtReader2(stream, namePolicy);
 }
 
-class ExtReader : ILocalizationFileTokenizer
+class ExtReader2 : ILocalizationFileTokenizer
 {
     public IAssetKeyNamePolicy NamePolicy => throw new System.NotImplementedException();
-    public ExtReader(Stream stream, IAssetKeyNamePolicy namePolicy)
+    public ExtReader2(Stream stream, IAssetKeyNamePolicy namePolicy)
     {
     }
 

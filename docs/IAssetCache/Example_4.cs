@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Lexical.Localization;
+using System;
 using System.Collections.Generic;
-using Lexical.Localization;
-using Lexical.Localization;
 
 namespace docs
 {
@@ -13,7 +12,7 @@ namespace docs
             #region Snippet
             // Create asset
             var source = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-            IAsset asset = new LocalizationStringDictionary(source);
+            IAsset asset = new LocalizationStringAsset(source);
 
             // Cache it
             asset = asset.CreateCache();

@@ -28,7 +28,7 @@ Assets are contributed to the service provider by adding *IAssetSource*s.
 // Create localization source
 var source = new Dictionary<string, string> { { "en:ConsoleApp1.MyController:Hello", "Hello World!" } };
 // Create asset source
-IAssetSource assetSource = new LocalizationStringDictionary(source).ToSource();
+IAssetSource assetSource = new LocalizationStringAsset(source).ToSource();
 // Add asset source
 serviceCollection.AddSingleton<IAssetSource>(assetSource);
 ```
@@ -55,11 +55,10 @@ using (var serviceProvider = serviceCollection.BuildServiceProvider())
 
 <details><summary>Example full code (<u>click here</u>).</summary>
 ```csharp
-using System.Collections.Generic;
-using Lexical.Localization;
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 namespace docs
 {
@@ -81,7 +80,7 @@ namespace docs
             // Create localization source
             var source = new Dictionary<string, string> { { "en:ConsoleApp1.MyController:Hello", "Hello World!" } };
             // Create asset source
-            IAssetSource assetSource = new LocalizationStringDictionary(source).ToSource();
+            IAssetSource assetSource = new LocalizationStringAsset(source).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 
@@ -129,7 +128,7 @@ var source = new Dictionary<string, string> {
     { "en:ConsoleApp1.MyController:Hello", "Hello World!" }
 };
 // Create asset source
-IAssetSource assetSource = new LocalizationStringDictionary(source).ToSource();
+IAssetSource assetSource = new LocalizationStringAsset(source).ToSource();
 // Add asset source
 serviceCollection.AddSingleton<IAssetSource>(assetSource);
 
@@ -150,13 +149,12 @@ using (var serviceProvider = serviceCollection.BuildServiceProvider())
 # [Full Code](#tab/full-2)
 
 ```csharp
-using System.Collections.Generic;
-using System.Globalization;
-using Lexical.Localization;
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace docs
 {
@@ -182,7 +180,7 @@ namespace docs
                 { "en:ConsoleApp1.MyController:Hello", "Hello World!" }
             };
             // Create asset source
-            IAssetSource assetSource = new LocalizationStringDictionary(source).ToSource();
+            IAssetSource assetSource = new LocalizationStringAsset(source).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 

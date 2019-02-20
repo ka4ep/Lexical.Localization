@@ -1,5 +1,5 @@
 # Asset Key Name Policy
-Asset key name policy is a pattern rule mechanism that converts IAssetKeys into identity strings so that they can match against lines in identity based localization sources.
+Asset key name policy is a pattern rule mechanism that converts IAssetKeys into identity strings so that they can matched against lines in identity based localization sources.
 
 For instance, if localization source has separator character '/', 
 then the loading asset must be instructed to use a policy that matches the separator. 
@@ -10,7 +10,7 @@ var source = new Dictionary<string, string> { { "en/MyController/Hello", "Hello 
 // Create key name policy
 IAssetKeyNamePolicy policy = new AssetKeyNameProvider().SetDefault(true, "/");
 // Create asset
-IAsset asset = new LocalizationStringDictionary(source, policy);
+IAsset asset = new LocalizationStringAsset(source, policy);
 // Create key
 IAssetKey key = new LocalizationRoot(asset).Section("MyController").Key("Hello");
 // Retrieve string
@@ -145,6 +145,7 @@ IAssetNamePattern myPolicy = new AssetNamePattern("{location<[^/]+>/}{section}{-
 Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");
 ```
 
+## Parameters
 Some of the parameters are well-known, and they also have a respective method that parametrizes a key.
 
 | Parameter | Key Method  | Description |
@@ -254,11 +255,91 @@ public interface IAssetNamePattern : IAssetKeyNamePolicy
 ```
 </details>
 
+# Asset Key Parametrizer
+The context free format of a key is an array of keys and values **IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;**.
+
+**AssetKeyParametrizer** converts implementations of *IAssetKey* to *IEnumerable*
+
+```csharp
+// Parametrizer for AssetKey
+IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
+// Create context-dependent key
+IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
+// Convert to context-free parameters
+IEnumerable<KeyValuePair<string, string>> parameters = parametrizer.GetAllParameters(key).ToArray();
+```
+
+And back to IAssetKey.
+
+```csharp
+// Convert to context-free parameters
+IEnumerable<KeyValuePair<string, string>> parameters =
+    new Key("culture", "en")
+    .Append("type", "MyLibrary:Type").Append("key", "\"hello\"");
+// Parametrizer for AssetKey
+IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
+// Convert to context-dependent instance
+object key = LocalizationRoot.Global;
+foreach (var parameter in parameters)
+    key = parametrizer.CreatePart(key, parameter.Key, parameter.Value);
+// Type-cast
+IAssetKey key_ = (IAssetKey)key;
+```
+
+# Asset Key Parameter Name Policy
+**AssetKeyParameterNamePolicy** is *IAssetNameKeyPolicy* implementation that uses string format which contains full parameter names and values.
+
+```none
+parameterName:parameterValue:parameterName:parameterValue:...
+```
+
+For example:
+```none
+culture:en:type:MyController:key:Success
+```
+
+It uses the following escape rules.
+
+| Sequence | Meaning |
+|:---------|:--------|
+| \\: | Colon |
+| \\t | Tab |
+| \\r | Carriage return |
+| \\n | New line |
+| \\xnnnn | Unicode 16bit surrogate |
+| \\unnnn | Unicode variable length surrogate |
+
+For example to escape key "Success:Plural" would be
+```none
+key:Success\:Plural
+```
+
+**AssetKeyParameterNamePolicy** prints IAssetKey as string that contains parameter names and values.
+
+```csharp
+// Create context-dependent key
+IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
+// Serialize to string
+string str = AssetKeyParameterNamePolicy.Instance.PrintAssetKey(key);
+```
+
+And parses them back to IAssetKey.
+
+```csharp
+// Key in string format
+string str = "culture:en:type:MyLibrary.MyController:key:Success";
+// Parse string
+IAssetKey key = AssetKeyParameterNamePolicy.Instance.ParseAssetKey(str, LocalizationRoot.Global);
+```
+
+
+
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [IAssetKeyNamePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetKeyNamePolicy.cs) is the root interface for classes that formulate IAssetKey into identity string.
  * [IAssetKeyNameProvider](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetKeyNamePolicy.cs) is a subinterface where Build() can be implemented directly.
  * [IAssetNamePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetNamePattern.cs) is a subinterface that formulates parametrization with a template string.
+ * [AssetKeyParameterNamePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/AssetKeyParameterNamePolicy.cs) is context-free key format.
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [AssetKeyNameProvider](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/AssetKeyNameProvider.cs) is implementation of IAssetNameProvider.
  * [AssetNamePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/AssetNamePattern.cs) is the default implementation of IAssetNamePattern.

@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Lexical.Localization;
+using System;
 using System.Collections.Generic;
-using Lexical.Localization;
-using Lexical.Localization;
 
 namespace docs
 {

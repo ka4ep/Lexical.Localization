@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Lexical.Localization;
-using Lexical.Localization;
+﻿using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
+using System;
+using System.Collections.Generic;
 
 namespace docs
 {
@@ -28,7 +24,7 @@ namespace docs
 
             // Add dictionary of strings
             Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-            serviceCollection.AddSingleton<IAssetSource>(new AssetSource(new LocalizationStringDictionary(strings, AssetKeyNameProvider.Default)));
+            serviceCollection.AddSingleton<IAssetSource>(new AssetSource(new LocalizationStringAsset(strings, AssetKeyNameProvider.Default)));
 
             // Create service scope
             using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())

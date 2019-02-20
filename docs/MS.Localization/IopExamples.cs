@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Reflection;
-using System.Resources;
-using Lexical.Localization;
-using Lexical.Localization;
+﻿using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Reflection;
 
 namespace docs
 {
@@ -60,7 +57,7 @@ namespace docs
                 #region Snippet_4a
                 // Create asset
                 var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Success", "Onnistui" } };
-                IAsset asset = new LocalizationStringDictionary(source, AssetKeyNameProvider.Default);
+                IAsset asset = new LocalizationStringAsset(source, AssetKeyNameProvider.Default);
 
                 // Create root
                 IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());
@@ -83,7 +80,7 @@ namespace docs
                 #region Snippet_4b
                 // Create asset
                 var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Success", "Onnistui" } };
-                IAsset asset = new LocalizationStringDictionary(source, AssetKeyNameProvider.Default);
+                IAsset asset = new LocalizationStringAsset(source, AssetKeyNameProvider.Default);
 
                 // Create root
                 IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());
@@ -104,7 +101,7 @@ namespace docs
                 #region Snippet_9
                 // Create asset
                 var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Success", "Onnistui" } };
-                IAsset asset = new LocalizationStringDictionary(source, AssetKeyNameProvider.Default);
+                IAsset asset = new LocalizationStringAsset(source, AssetKeyNameProvider.Default);
 
                 // Create root
                 IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());

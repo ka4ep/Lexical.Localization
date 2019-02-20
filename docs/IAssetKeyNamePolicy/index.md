@@ -1,5 +1,5 @@
 ﻿# Asset Key Name Policy
-Asset key name policy is a pattern rule mechanism that converts IAssetKeys into identity strings so that they can match against lines in identity based localization sources.
+Asset key name policy is a pattern rule mechanism that converts IAssetKeys into identity strings so that they can matched against lines in identity based localization sources.
 
 For instance, if localization source has separator character '/', 
 then the loading asset must be instructed to use a policy that matches the separator. 
@@ -45,6 +45,7 @@ Regular expression can be written inside angle brackets "{parameter&lt;*regexp*&
 Expressions give more control when name pattern is used for matching against filenames or key-value lines.
 [!code-csharp[Snippet](Examples.cs#Snippet_4c)]
 
+## Parameters
 Some of the parameters are well-known, and they also have a respective method that parametrizes a key.
 
 | Parameter | Key Method  | Description |
@@ -66,11 +67,57 @@ Custom parameters can be created. Parameter key object should implement IAssetKe
 [!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/IAssetNamePattern.cs#IAssetNamePattern)]
 </details>
 
+# Asset Key Parametrizer
+The context free format of a key is an array of keys and values **IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;**.
+
+**AssetKeyParametrizer** converts implementations of *IAssetKey* to *IEnumerable*
+[!code-csharp[Snippet](AssetKeyParameterizer_Examples.cs#Snippet_1)]
+
+And back to IAssetKey.
+[!code-csharp[Snippet](AssetKeyParameterizer_Examples.cs#Snippet_2)]
+
+# Asset Key Parameter Name Policy
+**AssetKeyParameterNamePolicy** is *IAssetNameKeyPolicy* implementation that uses string format which contains full parameter names and values.
+
+```none
+parameterName:parameterValue:parameterName:parameterValue:...
+```
+
+For example:
+```none
+culture:en:type:MyController:key:Success
+```
+
+It uses the following escape rules.
+
+| Sequence | Meaning |
+|:---------|:--------|
+| \\: | Colon |
+| \\t | Tab |
+| \\r | Carriage return |
+| \\n | New line |
+| \\xnnnn | Unicode 16bit surrogate |
+| \\unnnn | Unicode variable length surrogate |
+
+For example to escape key "Success:Plural" would be
+```none
+key:Success\:Plural
+```
+
+**AssetKeyParameterNamePolicy** prints IAssetKey as string that contains parameter names and values.
+[!code-csharp[Snippet](AssetKeyParameterNamePolicy_Examples.cs#Snippet_5)]
+
+And parses them back to IAssetKey.
+[!code-csharp[Snippet](AssetKeyParameterNamePolicy_Examples.cs#Snippet_6)]
+
+
+
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [IAssetKeyNamePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetKeyNamePolicy.cs) is the root interface for classes that formulate IAssetKey into identity string.
  * [IAssetKeyNameProvider](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetKeyNamePolicy.cs) is a subinterface where Build() can be implemented directly.
  * [IAssetNamePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetNamePattern.cs) is a subinterface that formulates parametrization with a template string.
+ * [AssetKeyParameterNamePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/AssetKeyParameterNamePolicy.cs) is context-free key format.
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [AssetKeyNameProvider](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/AssetKeyNameProvider.cs) is implementation of IAssetNameProvider.
  * [AssetNamePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/AssetNamePattern.cs) is the default implementation of IAssetNamePattern.

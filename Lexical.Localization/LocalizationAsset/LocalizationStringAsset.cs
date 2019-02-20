@@ -17,7 +17,7 @@ namespace Lexical.Localization
     /// 
     /// This class adapts IDictionary{string, string} to ILanguageStringResolver and ILanguageStringCollection.
     /// </summary>
-    public class LocalizationStringDictionary :
+    public class LocalizationStringAsset :
         ILocalizationStringProvider, ILocalizationStringCollection, IAssetReloadable, IAssetKeyCollection,
         ILocalizationAssetCultureCapabilities
     {
@@ -36,7 +36,7 @@ namespace Lexical.Localization
         /// <param name="source">dictionary</param>
         /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
         /// <param name="parametrizer">(optional) object that extracts parameters</param>
-        public LocalizationStringDictionary(IReadOnlyDictionary<string, string> source, IAssetKeyNamePolicy namePolicy = default, IAssetKeyParametrizer parametrizer = default)
+        public LocalizationStringAsset(IReadOnlyDictionary<string, string> source, IAssetKeyNamePolicy namePolicy = default, IAssetKeyParametrizer parametrizer = default)
         {
             this.source = source ?? throw new ArgumentNullException(nameof(source));
             this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <param name="source">dictionary</param>
         /// <param name="namePattern">name patern</param>
         /// <param name="parametrizer">(optional) object that extracts parameters</param>
-        public LocalizationStringDictionary(IReadOnlyDictionary<string, string> source, string namePattern, IAssetKeyParametrizer parametrizer = default)
+        public LocalizationStringAsset(IReadOnlyDictionary<string, string> source, string namePattern, IAssetKeyParametrizer parametrizer = default)
         {
             this.source = source ?? throw new ArgumentNullException(nameof(source));
             this.namePolicy = new AssetNamePattern(namePattern);
@@ -223,7 +223,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetBuilder AddStrings(this IAssetBuilder builder, IReadOnlyDictionary<string, string> dictionary, IAssetKeyNamePolicy namePolicy)
         {
-            builder.AddAsset(new LocalizationStringDictionary(dictionary, namePolicy));
+            builder.AddAsset(new LocalizationStringAsset(dictionary, namePolicy));
             return builder;
         }
 
@@ -236,7 +236,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetComposition AddStrings(this IAssetComposition composition, IReadOnlyDictionary<string, string> dictionary, IAssetKeyNamePolicy namePolicy)
         {
-            composition.Add(new LocalizationStringDictionary(dictionary, namePolicy));
+            composition.Add(new LocalizationStringAsset(dictionary, namePolicy));
             return composition;
         }
     }

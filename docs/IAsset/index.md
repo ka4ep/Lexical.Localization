@@ -99,7 +99,7 @@ Asset interfaces are not called directly but used instead by calling extension m
       <td>Calls delegate Func&lt;IAsset&gt; to provide IAsset</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/LocalizationStringDictionary.cs">LocalizationStringDictionary</a></td>
+      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/LocalizationStringAsset.cs">LocalizationStringAsset</a></td>
       <td>Adapts Dictionary&lt;string, string&gt; to IAsset</td>
     </tr>
     <tr>

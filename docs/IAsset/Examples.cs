@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using Lexical.Localization;
-using Lexical.Localization;
+﻿using Lexical.Localization;
+using System.Collections.Generic;
 
 namespace docs
 {
@@ -15,7 +13,7 @@ namespace docs
                 // Language string source
                 Dictionary<string, string> src = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
                 // Create Asset
-                IAsset asset = new LocalizationStringDictionary(src);
+                IAsset asset = new LocalizationStringAsset(src);
                 #endregion Snippet_1
 
                 #region Snippet_2

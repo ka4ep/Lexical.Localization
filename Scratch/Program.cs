@@ -8,15 +8,20 @@ namespace Scratch
     {
         static void Main(string[] args)
         {
-            List<KeyValuePair<string, string>> parrr = new List<KeyValuePair<string, string>>();
-            parrr.Add(new KeyValuePair<string, string> ( "culture", "en" ));
-            parrr.Add(new KeyValuePair<string, string> ( "type", "MyLibrary:Type" ));
-            parrr.Add(new KeyValuePair<string, string> ( "key", "\"hello\"" ));
+            var source = new Dictionary<string, string> {
+                    { "MyController:hello", "Hello World!" },
+                    { "en:MyController:hello", "Hello World!" },
+                    { "de:MyController:hello", "Hallo Welt!" }
+                };
 
-            string str2 = AssetKeyParameterNamePolicy.Xml.PrintParameters(parrr);
-            Console.WriteLine(str2);
+            IAsset asset = new LocalizationAsset().AddStringSource(source, "{culture:}{type:}[key]").Load();
 
-            var pars = AssetKeyParameterNamePolicy.Xml.ParseParameters(str2);
+            LocalizationRoot.Builder.AddAsset(asset).Build();
+            IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("hello");
+
+            Console.WriteLine(key);
+            Console.WriteLine(key.SetCulture("en"));
+            Console.WriteLine(key.SetCulture("de"));
 
             Console.ReadKey();
         }

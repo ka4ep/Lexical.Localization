@@ -137,8 +137,6 @@ IAssetLoader assetLoader = new AssetLoader(part);
 ```csharp
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
-using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 
@@ -188,7 +186,6 @@ IAssetLoader assetLoader = new AssetLoader(part);
 # [Full Code](#tab/full-10)
 
 ```csharp
-using Lexical.Localization;
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.FileProviders;

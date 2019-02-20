@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Lexical.Localization;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Reflection;
-using Lexical.Localization;
-using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
-using Microsoft.Extensions.Localization;
 
 namespace docs
 {
@@ -27,7 +23,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!" }
                 };
                 // Create asset with culture policy
-                IAsset asset = new LocalizationStringDictionary(source);
+                IAsset asset = new LocalizationStringAsset(source);
                 // Create root and assign culturePolicy
                 IAssetRoot root = new LocalizationRoot(asset, culturePolicy);
                 #endregion Snippet_1

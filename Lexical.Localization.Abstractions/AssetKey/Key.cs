@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-            => AssetKeyParameterNamePolicy.Instance.BuildName(this);
+            => AssetKeyParameterNamePolicy.Instance.PrintKey(this);
 
         /// <summary>
         /// Asset key comparer.
@@ -145,8 +145,16 @@ namespace Lexical.Localization
 
         public class Parametrizer : IAssetKeyParametrizer
         {
-            private static Parametrizer instance = new Parametrizer();
+            private static Parametrizer instance = new Parametrizer().AddCanonicalParameterName("root").AddCanonicalParameterName("culture");
             public static Parametrizer Default => instance;
+
+            HashSet<string> nonCanonicalParameterNames = new HashSet<string>();
+
+            public Parametrizer AddCanonicalParameterName(string parameterName)
+            {
+                nonCanonicalParameterNames.Add(parameterName);
+                return this;
+            }
 
             public IEnumerable<object> Break(object obj)
             {
@@ -195,9 +203,9 @@ namespace Lexical.Localization
                 Key key = obj as Key;
                 if (key == null) return null;
 
-                return (parameterName != "culture" && parameterName != "root") ?
-                    new Key(key, parameterName, parameterValue) :
-                    new Key.NonCanonical(key, parameterName, parameterValue);
+                return nonCanonicalParameterNames.Contains(parameterName) ?
+                    new Key.NonCanonical(key, parameterName, parameterValue) :
+                    new Key(key, parameterName, parameterValue);
             }
 
             public object TryCreatePart(object obj, string parameterName, string parameterValue, bool canonical)

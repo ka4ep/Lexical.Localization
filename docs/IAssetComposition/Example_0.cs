@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Lexical.Localization;
+using System.Collections.Generic;
 using System.Reflection;
-using Lexical.Localization;
-using Lexical.Localization;
 
 namespace docs
 {
@@ -12,7 +11,7 @@ namespace docs
         {
             #region Snippet
             // Create individual assets
-            IAsset asset_1 = new LocalizationStringDictionary(new Dictionary<string, string> { { "en:hello", "Hello World!" } });
+            IAsset asset_1 = new LocalizationStringAsset(new Dictionary<string, string> { { "en:hello", "Hello World!" } });
             IAsset asset_2 = new AssetResourceDictionary(new Dictionary<string, byte[]> { { "en:Hello.Icon", new byte[] { 1, 2, 3 } } });
             IAsset asset_3 = new AssetLoader().Add( new AssetLoaderPartEmbeddedStrings("[assembly.]localization{-culture}.ini", AssetKeyNameProvider.Default ).AddAssembly(Assembly.GetExecutingAssembly()).AddMatchParameters("assembly"));
 

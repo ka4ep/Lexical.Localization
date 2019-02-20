@@ -1,6 +1,5 @@
-﻿using System.Linq;
-using Lexical.Localization;
-using Lexical.Localization;
+﻿using Lexical.Localization;
+using System.Linq;
 
 namespace docs
 {

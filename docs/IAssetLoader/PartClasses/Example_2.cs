@@ -1,6 +1,5 @@
-﻿using System.Reflection;
-using Lexical.Localization;
-using Lexical.Localization;
+﻿using Lexical.Localization;
+using System.Reflection;
 
 namespace docs
 {

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Lexical.Localization;
-using Lexical.Localization;
+﻿using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using System.Reflection;
 
 namespace docs
 {

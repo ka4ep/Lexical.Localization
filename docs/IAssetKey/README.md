@@ -49,7 +49,7 @@ Extension methods can be used for retrieving strings and binary resources.
 // Language string source
 Dictionary<string, string> src = new Dictionary<string, string> { { "en:Section:Key", "Hello World!" } };
 // Create Asset
-IAsset asset = new LocalizationStringDictionary(src, AssetKeyNameProvider.Colon_Colon_Colon);
+IAsset asset = new LocalizationStringAsset(src, AssetKeyNameProvider.Colon_Colon_Colon);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root

@@ -181,7 +181,7 @@ namespace Lexical.Localization.LocalizationFile
         /// <param name="textFile"></param>
         /// <returns></returns>
         public static IAsset ToAsset(this ILocalizationFileTokenizer textFile)
-            => new LocalizationStringDictionary(textFile.ToDictionary(), textFile.NamePolicy);
+            => new LocalizationStringAsset(textFile.ToDictionary(), textFile.NamePolicy);
 
         /// <summary>
         /// Convert <see cref="ILocalizationFileTokenizer"/> to <see cref="IAsset"/>.
@@ -189,7 +189,7 @@ namespace Lexical.Localization.LocalizationFile
         /// <param name="textFile"></param>
         /// <returns></returns>
         public static IAsset ToAssetAndClose(this ILocalizationFileTokenizer textFile)
-            => new LocalizationStringDictionary(
+            => new LocalizationStringAsset(
                   source:     textFile.ToDictionaryAndClose(dst: null, sectionSeparator: null), 
                   namePolicy: textFile.NamePolicy
                );

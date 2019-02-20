@@ -1,15 +1,7 @@
-﻿using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
-using Lexical.Localization.Ms.Extensions;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Ini;
-using Microsoft.Extensions.Configuration.Json;
-using Microsoft.Extensions.Configuration.Xml;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.IO;
+﻿using Lexical.Localization.Ms.Extensions;
 using Lexical.Utils.Permutation;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace Lexical.Localization.Tests.Cases
 {
