@@ -10,7 +10,7 @@ using Microsoft.Extensions.Localization;
 
 namespace docs
 {
-    public class AssetKeyParameterNamePolicy_Examples
+    public class KeyNamePolicy_Examples
     {
         // Rename to "Main", or run from Main.
         public static void Run(string[] args)
@@ -25,7 +25,7 @@ namespace docs
                 // Convert to context-free parameters
                 IEnumerable<KeyValuePair<string, string>> parameters = parametrizer.GetAllParameters(key);
                 // Serialize to string
-                string str = AssetKeyParameterNamePolicy.Instance.PrintKey(parameters);
+                string str = Key.NamePolicy.Instance.PrintKey(parameters);
                 #endregion Snippet_3
             }
 
@@ -34,7 +34,7 @@ namespace docs
                 // Key in string format
                 string str = "culture:en:type:MyLibrary.MyController:key:Success";
                 // Convert to context-free parameters
-                IEnumerable<KeyValuePair<string, string>> parameters = AssetKeyParameterNamePolicy.Instance.ParseKey(str);
+                IEnumerable<KeyValuePair<string, string>> parameters = Key.NamePolicy.Instance.ParseKey(str);
                 // Parametrizer for AssetKey
                 IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
                 // Convert to context-dependent instance
@@ -51,7 +51,7 @@ namespace docs
                 // Create context-dependent key
                 IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
                 // Serialize to string
-                string str = AssetKeyParameterNamePolicy.Instance.PrintAssetKey(key);
+                string str = Key.NamePolicy.Instance.PrintAssetKey(key);
                 #endregion Snippet_5
             }
 
@@ -60,7 +60,7 @@ namespace docs
                 // Key in string format
                 string str = "culture:en:type:MyLibrary.MyController:key:Success";
                 // Parse string
-                IAssetKey key = AssetKeyParameterNamePolicy.Instance.ParseAssetKey(str, LocalizationRoot.Global);
+                IAssetKey key = Key.NamePolicy.Instance.ParseAssetKey(str, LocalizationRoot.Global);
                 #endregion Snippet_6
             }
         }

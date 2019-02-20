@@ -6,6 +6,7 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            KeyNamePolicy_Examples.Run(args);
             LocalizationAsset_Examples.Run(args);
             LocalizationStringAsset_Examples.Run(args);
             AssetLoaderPartBuilder_Examples.Run(args);

@@ -17,7 +17,7 @@ namespace Lexical.Localization
     /// 
     /// This class has one parameter name and a value, and it can carry a link to previous node.
     /// </summary>
-    public class Key : IAssetKey, IAssetKeyLinked, IEnumerable<KeyValuePair<string, string>>
+    public partial class Key : IAssetKey, IAssetKeyLinked, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>
     {
         /// <summary>
         /// Parameter name, e.g. "culture"
@@ -91,15 +91,26 @@ namespace Lexical.Localization
             public NonCanonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
         }
 
+        public static AssetKeyComparer ChainComparer = new AssetKeyComparer().AddCanonicalParametrizerComparer(Parametrizer.Default).AddNonCanonicalParametrizerComparer(Parametrizer.Default);
+
+        bool IEquatable<Key>.Equals(Key other)
+            => ChainComparer.Equals(this, other);
+
+        public override int GetHashCode()
+            => ChainComparer.GetHashCode(this);
+
+        public override bool Equals(object obj)
+            => obj is Key other ? ChainComparer.Equals(this, other) : false;
+
         /// <summary>
         /// Prints the key in "parameterName:parameterValue:..." format.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-            => AssetKeyParameterNamePolicy.Instance.PrintKey(this);
+            => Key.NamePolicy.Instance.PrintKey(this);
 
         /// <summary>
-        /// Asset key comparer.
+        /// Comparer that compares the node only, not the whole chain.
         /// </summary>
         public class Comparer : IEqualityComparer<Key>, IComparer<Key>
         {
@@ -201,7 +212,7 @@ namespace Lexical.Localization
             public object TryCreatePart(object obj, string parameterName, string parameterValue)
             {
                 Key key = obj as Key;
-                if (key == null) return null;
+                //if (key == null) return null;
 
                 return nonCanonicalParameterNames.Contains(parameterName) ?
                     new Key.NonCanonical(key, parameterName, parameterValue) :
@@ -211,7 +222,7 @@ namespace Lexical.Localization
             public object TryCreatePart(object obj, string parameterName, string parameterValue, bool canonical)
             {
                 Key key = obj as Key;
-                if (key == null && obj != null) return null;
+                //if (key == null && obj != null) return null;
 
                 return canonical ?
                     new Key(key, parameterName, parameterValue) :

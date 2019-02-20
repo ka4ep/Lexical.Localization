@@ -1,7 +1,7 @@
 ﻿# Localization Asset
 **LocalizationAsset** is simple language string container. Asset is populated from different IEnumeration sources, which become effective when **Load()** is called.
 
-**.AddKeySource(*IEnumerable&lt;KeyValuePair&lt;Key, string&gt;, string&gt;*)** adds language strings with the context-free Key class. It is typically used from a file source.
+**.AddKeySource(*IEnumerable&lt;KeyValuePair&lt;Key, string&gt;, string&gt;*)** add a source of language strings.
 [!code-csharp[Snippet](Examples.cs#Snippet_1b)]
 
 Language strings can now be queried from the asset.

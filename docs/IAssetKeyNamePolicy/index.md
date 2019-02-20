@@ -76,8 +76,8 @@ The context free format of a key is an array of keys and values **IEnumerable&lt
 And back to IAssetKey.
 [!code-csharp[Snippet](AssetKeyParameterizer_Examples.cs#Snippet_2)]
 
-# Asset Key Parameter Name Policy
-**AssetKeyParameterNamePolicy** is *IAssetNameKeyPolicy* implementation that uses string format which contains full parameter names and values.
+# Key Name Policy
+**Key.NamePolicy** is *IAssetNameKeyPolicy* implementation that uses string format which contains full parameter names and values.
 
 ```none
 parameterName:parameterValue:parameterName:parameterValue:...
@@ -104,11 +104,11 @@ For example to escape key "Success:Plural" would be
 key:Success\:Plural
 ```
 
-**AssetKeyParameterNamePolicy** prints IAssetKey as string that contains parameter names and values.
-[!code-csharp[Snippet](AssetKeyParameterNamePolicy_Examples.cs#Snippet_5)]
+**Key.NamePolicy** prints IAssetKey as string that contains parameter names and values.
+[!code-csharp[Snippet](KeyNamePolicy_Examples.cs#Snippet_5)]
 
 And parses them back to IAssetKey.
-[!code-csharp[Snippet](AssetKeyParameterNamePolicy_Examples.cs#Snippet_6)]
+[!code-csharp[Snippet](KeyNamePolicy_Examples.cs#Snippet_6)]
 
 
 
@@ -117,7 +117,7 @@ And parses them back to IAssetKey.
  * [IAssetKeyNamePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetKeyNamePolicy.cs) is the root interface for classes that formulate IAssetKey into identity string.
  * [IAssetKeyNameProvider](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetKeyNamePolicy.cs) is a subinterface where Build() can be implemented directly.
  * [IAssetNamePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetNamePattern.cs) is a subinterface that formulates parametrization with a template string.
- * [AssetKeyParameterNamePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/AssetKeyParameterNamePolicy.cs) is context-free key format.
+ * [Key.NamePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/Key.NamePolicy.cs) is context-free key format.
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [AssetKeyNameProvider](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/AssetKeyNameProvider.cs) is implementation of IAssetNameProvider.
  * [AssetNamePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/AssetNamePattern.cs) is the default implementation of IAssetNamePattern.
