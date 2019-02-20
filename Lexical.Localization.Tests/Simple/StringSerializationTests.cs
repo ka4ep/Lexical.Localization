@@ -99,8 +99,8 @@ namespace Lexical.Localization.Tests
 
         public static void SerializeEqual(IAssetKey _x, IAssetKey _y)
         {
-            string xData = AssetKeyStringSerializer.Instance.PrintKey(_x), yData = AssetKeyStringSerializer.Instance.PrintKey(_y);
-            IAssetKey x = AssetKeyStringSerializer.Instance.ParseKey(xData), y = AssetKeyStringSerializer.Instance.ParseKey(yData);
+            string xData = AssetKeyParameterNamePolicy.Instance.PrintKey(_x), yData = AssetKeyParameterNamePolicy.Instance.PrintKey(_y);
+            IAssetKey x = AssetKeyParameterNamePolicy.Instance.ParseKey(xData), y = AssetKeyParameterNamePolicy.Instance.ParseKey(yData);
             Assert.AreEqual(_x, _y, "x.Equals(y) == false");
             Assert.AreEqual(_y, _x, "y.Equals(x) == false");
             Assert.IsTrue(_x.GetHashCode() == _y.GetHashCode(), "x.GetHashCode() != y.GetHashCode()");
@@ -108,10 +108,10 @@ namespace Lexical.Localization.Tests
 
         public static void SerializeEqual(IAssetKey _x, IAssetKey _y, IAssetKey _z)
         {
-            string xData = AssetKeyStringSerializer.Instance.PrintKey(_x);
-            string yData = AssetKeyStringSerializer.Instance.PrintKey(_y);
-            string zData = AssetKeyStringSerializer.Instance.PrintKey(_z);
-            IAssetKey x = AssetKeyStringSerializer.Instance.ParseKey(xData), y = AssetKeyStringSerializer.Instance.ParseKey(yData), z = AssetKeyStringSerializer.Instance.ParseKey(zData);
+            string xData = AssetKeyParameterNamePolicy.Instance.PrintKey(_x);
+            string yData = AssetKeyParameterNamePolicy.Instance.PrintKey(_y);
+            string zData = AssetKeyParameterNamePolicy.Instance.PrintKey(_z);
+            IAssetKey x = AssetKeyParameterNamePolicy.Instance.ParseKey(xData), y = AssetKeyParameterNamePolicy.Instance.ParseKey(yData), z = AssetKeyParameterNamePolicy.Instance.ParseKey(zData);
             Assert.AreEqual(x, y, "x.Equals(y) == false");
             Assert.AreEqual(x, z, "x.Equals(z) == false");
             Assert.AreEqual(y, x, "y.Equals(x) == false");
@@ -125,8 +125,8 @@ namespace Lexical.Localization.Tests
 
         public static void SerializeNotEqual(IAssetKey _x, IAssetKey _y)
         {
-            string xData = AssetKeyStringSerializer.Instance.PrintKey(_x), yData = AssetKeyStringSerializer.Instance.PrintKey(_y);
-            IAssetKey x = AssetKeyStringSerializer.Instance.ParseKey(xData), y = AssetKeyStringSerializer.Instance.ParseKey(yData);
+            string xData = AssetKeyParameterNamePolicy.Instance.PrintKey(_x), yData = AssetKeyParameterNamePolicy.Instance.PrintKey(_y);
+            IAssetKey x = AssetKeyParameterNamePolicy.Instance.ParseKey(xData), y = AssetKeyParameterNamePolicy.Instance.ParseKey(yData);
             Assert.AreNotEqual(x, y, "x.Equals(y) == true");
             Assert.AreNotEqual(y, x, "y.Equals(x) == true");
             Assert.IsFalse(x.GetHashCode() == y.GetHashCode(), "x.GetHashCode() == y.GetHashCode()");
@@ -134,8 +134,8 @@ namespace Lexical.Localization.Tests
 
         public static void SerializeNotEqual(IAssetKey _x, IAssetKey _y, IAssetKey _z)
         {
-            string xData = AssetKeyStringSerializer.Instance.PrintKey(_x), yData = AssetKeyStringSerializer.Instance.PrintKey(_y), zData = AssetKeyStringSerializer.Instance.PrintKey(_z);
-            IAssetKey x = AssetKeyStringSerializer.Instance.ParseKey(xData), y = AssetKeyStringSerializer.Instance.ParseKey(yData), z = AssetKeyStringSerializer.Instance.ParseKey(zData);
+            string xData = AssetKeyParameterNamePolicy.Instance.PrintKey(_x), yData = AssetKeyParameterNamePolicy.Instance.PrintKey(_y), zData = AssetKeyParameterNamePolicy.Instance.PrintKey(_z);
+            IAssetKey x = AssetKeyParameterNamePolicy.Instance.ParseKey(xData), y = AssetKeyParameterNamePolicy.Instance.ParseKey(yData), z = AssetKeyParameterNamePolicy.Instance.ParseKey(zData);
             Assert.AreNotEqual(x, y, "x.Equals(y) == true");
             Assert.AreNotEqual(x, z, "x.Equals(z) == true");
             Assert.AreNotEqual(y, x, "y.Equals(x) == true");

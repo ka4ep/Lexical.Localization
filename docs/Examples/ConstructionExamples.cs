@@ -37,7 +37,7 @@ namespace docs
             {
                 #region Snippet_Plain_1
                 AssetBuilder builder = new AssetBuilder();
-                builder.AddDictionary(languageStrings, AssetKeyNameProvider.Default);
+                builder.AddStrings(languageStrings, AssetKeyNameProvider.Default);
 
                 CulturePolicy culturePolicy = new CulturePolicy();
                 culturePolicy.SetCultures("en", "fi", "");
@@ -72,7 +72,7 @@ namespace docs
                 #region Snippet_Singleton
                 // How to setup singleton instance
                 (LocalizationRoot.Global.CulturePolicy as ICulturePolicyAssignable).SetToCurrentCulture();
-                LocalizationRoot.Builder.AddDictionary(languageStrings, AssetKeyNameProvider.Default);
+                LocalizationRoot.Builder.AddStrings(languageStrings, AssetKeyNameProvider.Default);
                 LocalizationRoot.Builder.Build();
 
                 // Try it out

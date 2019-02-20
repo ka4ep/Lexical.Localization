@@ -23,7 +23,7 @@ namespace Lexical.Localization.LocalizationFile
         /// <returns>tree root ""</returns>
         public static TreeNode Create(IEnumerable<KeyValuePair<object, string>> keyValues, IAssetKeyParametrizer parametrizer)
         {
-            TreeNode root = new TreeNode(new ParameterKey.NonCanonical("root", ""), null);
+            TreeNode root = new TreeNode(new Key.NonCanonical("root", ""), null);
             root.AddRange(parametrizer, keyValues);
             return root;
         }
@@ -35,7 +35,7 @@ namespace Lexical.Localization.LocalizationFile
         /// <returns></returns>
         public static TreeNode Create(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
         {
-            TreeNode root = new TreeNode(new ParameterKey.NonCanonical("root", ""), null);
+            TreeNode root = new TreeNode(new Key.NonCanonical("root", ""), null);
             root.AddRange(AssetKeyParametrizer.Singleton, keyValues.Select(kp=>new KeyValuePair<object, string>(kp.Key, kp.Value)));
             return root;
         }
@@ -48,7 +48,7 @@ namespace Lexical.Localization.LocalizationFile
         /// <summary>
         /// 
         /// </summary>
-        public readonly ParameterKey Parameter;
+        public readonly Key Parameter;
 
         string[] parameters;
         List<string> values;
@@ -64,7 +64,7 @@ namespace Lexical.Localization.LocalizationFile
         public bool HasValues => values != null && values.Count > 0;
         public List<string> Values => values ?? (values = new List<string>(1));
 
-        public TreeNode(ParameterKey parameter, TreeNode parent = null)
+        public TreeNode(Key parameter, TreeNode parent = null)
         {
             this.Parameter = parameter;
             this.Parent = parent;
@@ -134,7 +134,7 @@ namespace Lexical.Localization.LocalizationFile
         TreeNode getOrCreateChild(string parameterName, string parameterValue)
         {
             TreeNode subsection;
-            if (!Children.TryGetValue(parameterValue, out subsection)) Children[parameterValue] = subsection = new TreeNode(new ParameterKey(this.Parameter, parameterName, parameterValue), this);
+            if (!Children.TryGetValue(parameterValue, out subsection)) Children[parameterValue] = subsection = new TreeNode(new Key(this.Parameter, parameterName, parameterValue), this);
             return subsection;
         }
 
@@ -171,9 +171,9 @@ namespace Lexical.Localization.LocalizationFile
                 => (obj as TreeNode)?.getOrCreateChild(parameterName, parameterValue);
 
             public bool IsCanonical(object part, string parameterName)
-                => part is TreeNode tree ? tree.Parameter is ParameterKey.NonCanonical == false : false;
+                => part is TreeNode tree ? tree.Parameter is Key.NonCanonical == false : false;
             public bool IsNonCanonical(object part, string parameterName)
-                => part is TreeNode tree ? tree.Parameter is ParameterKey.NonCanonical : false;
+                => part is TreeNode tree ? tree.Parameter is Key.NonCanonical : false;
 
             static string[] empty = new string[0];
             public string[] GetPartParameters(object obj)

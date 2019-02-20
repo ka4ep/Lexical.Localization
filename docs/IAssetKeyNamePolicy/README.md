@@ -1,5 +1,5 @@
 # Asset Key Name Policy
-Asset key name policy is a mechanism that converts IAssetKeys into identity strings so that they can be match against lines in localization sources.
+Asset key name policy is a pattern rule mechanism that converts IAssetKeys into identity strings so that they can match against lines in identity based localization sources.
 
 For instance, if localization source has separator character '/', 
 then the loading asset must be instructed to use a policy that matches the separator. 

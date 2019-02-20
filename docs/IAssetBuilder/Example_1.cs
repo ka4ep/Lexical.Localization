@@ -19,7 +19,7 @@ namespace docs
             // Add IAssetSource that adds cache 
             builder.AddCache();
             // Add IAssetSource that adds strings
-            builder.AddDictionary(strings, AssetKeyNameProvider.Default);
+            builder.AddStrings(strings, AssetKeyNameProvider.Default);
             #endregion Snippet
 
             // Instantiate IAsset

@@ -16,8 +16,8 @@ namespace Lexical.Localization
         public readonly IAssetKeyParametrizer ReaderParametrizer;
         public readonly IAssetKeyParametrizer WriterParametrizer;
 
-        public IAssetKey Root = new ParameterKey("", "");
-        ParameterPartVisitor<ParameterKey> visitor1;
+        public IAssetKey Root = new Key("", "");
+        ParameterPartVisitor<Key> visitor1;
         ParameterPartVisitor<IAssetKey> visitor2;
 
         /// <summary>
@@ -63,17 +63,17 @@ namespace Lexical.Localization
         /// Create a proxy copy of the key. 
         /// 
         /// Proxy copy doesn't have any of the interface features, just parameter name + value pairs.
-        /// Proxy result must be parametrized with <see cref="ParameterKey.Parametrizer"/>.
+        /// Proxy result must be parametrized with <see cref="Key.Parametrizer"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="culture"></param>
         /// <returns>copy of every part the parametrizer extracted</returns>
         public IAssetKey Copy(IAssetKey key)
         {
-            if (WriterParametrizer is ParameterKey.Parametrizer proxyWriter)
+            if (WriterParametrizer is Key.Parametrizer proxyWriter)
             {
-                ParameterKey result = null;
-                if (key != null) ReaderParametrizer.VisitParts<ParameterKey>(key, visitor1, ref result);
+                Key result = null;
+                if (key != null) ReaderParametrizer.VisitParts<Key>(key, visitor1, ref result);
                 return result ?? Root;
             }
             else
@@ -84,7 +84,7 @@ namespace Lexical.Localization
             }
         }
 
-        void Visitor1(object obj, ref ParameterKey result)
+        void Visitor1(object obj, ref Key result)
         {
             IAssetKey part = obj as IAssetKey;
             if (part == null) return;
@@ -97,9 +97,9 @@ namespace Lexical.Localization
                 if (parameterNamesToExclude.Contains(parameterName)) continue;
                 string parameterValue = ReaderParametrizer.GetPartValue(part, parameterName);
                 if (parameterValue == null) continue;
-                ParameterKey newKey = null;
+                Key newKey = null;
 
-                newKey = ((ParameterKey.Parametrizer)WriterParametrizer).TryCreatePart(result, parameterName, parameterValue, part is IAssetKeyNonCanonicallyCompared == false) as ParameterKey;
+                newKey = ((Key.Parametrizer)WriterParametrizer).TryCreatePart(result, parameterName, parameterValue, part is IAssetKeyNonCanonicallyCompared == false) as Key;
                 if (newKey != null) result = newKey;
             }
         }

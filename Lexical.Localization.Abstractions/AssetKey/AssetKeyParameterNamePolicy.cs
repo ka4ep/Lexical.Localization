@@ -14,33 +14,33 @@ namespace Lexical.Localization
     /// <summary>
     /// Context free format of asset key
     /// </summary>
-    public class AssetKeyStringSerializer
+    public class AssetKeyParameterNamePolicy : IAssetKeyNameProvider
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
-        static AssetKeyStringSerializer instance = new AssetKeyStringSerializer("\\\n\t\r\0\a\b\f:");
-        static AssetKeyStringSerializer json = new AssetKeyStringSerializer("\\\n\t\r\0\a\b\f:\"");
-        static AssetKeyStringSerializer ini = new AssetKeyStringSerializer("\\\n\t\r\0\a\b\f:=[]");
-        static AssetKeyStringSerializer xml = new AssetKeyStringSerializer("\\\n\t\r\0\a\b\f:\"'&<>");
+        static AssetKeyParameterNamePolicy instance = new AssetKeyParameterNamePolicy("\\\n\t\r\0\a\b\f:");
+        static AssetKeyParameterNamePolicy json = new AssetKeyParameterNamePolicy("\\\n\t\r\0\a\b\f:\"");
+        static AssetKeyParameterNamePolicy ini = new AssetKeyParameterNamePolicy("\\\n\t\r\0\a\b\f:=[]");
+        static AssetKeyParameterNamePolicy xml = new AssetKeyParameterNamePolicy("\\\n\t\r\0\a\b\f:\"'&<>");
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
         /// </summary>
-        public static AssetKeyStringSerializer Instance => instance;
+        public static AssetKeyParameterNamePolicy Instance => instance;
 
         /// <summary>
         /// String serializer for json literals
         /// </summary>
-        public static AssetKeyStringSerializer Json => json;
+        public static AssetKeyParameterNamePolicy Json => json;
 
         /// <summary>
         /// String serializer for ini literals, where it's possible to use any char
         /// </summary>
-        public static AssetKeyStringSerializer Ini => ini;
+        public static AssetKeyParameterNamePolicy Ini => ini;
 
         /// <summary>
         /// String serializer for xml literals, where ambersands aren't needed 
         /// </summary>
-        public static AssetKeyStringSerializer Xml => xml;
+        public static AssetKeyParameterNamePolicy Xml => xml;
 
         Regex ParsePattern =
             new Regex(@"(?<key>([^:\\]|\\.)*)\:(?<value>([^:\\]|\\.)*)(\:|$)", opts);
@@ -53,12 +53,21 @@ namespace Lexical.Localization
         /// Create new string serializer
         /// </summary>
         /// <param name="escapeCharacters">list of characters that are to be escaped</param>
-        public AssetKeyStringSerializer(string escapeCharacters)
+        public AssetKeyParameterNamePolicy(string escapeCharacters)
         {
             LiteralEscape = new Regex("["+Regex.Escape(escapeCharacters)+"]", opts);
             escapeChar = EscapeChar;
             unescapeChar = UnescapeChar;
         }
+
+        /// <summary>
+        /// Build path string from key.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="parametrizer">(optional) how to extract parameters from key. If not set uses the default implementation <see cref="AssetKeyParametrizer"/></param>
+        /// <returns>full name string</returns>
+        string IAssetKeyNameProvider.BuildName(object key, IAssetKeyParametrizer parametrizer)
+            => PrintKey(key, parametrizer);
 
         /// <summary>
         /// Convert a sequence of key,value pairs to a string.
@@ -73,11 +82,13 @@ namespace Lexical.Localization
         ///  \\
         /// </summary>
         /// <param name="key"></param>
+        /// <param name="parametrizer"></param>
         /// <returns></returns>
-        public string PrintKey(IAssetKey key)
+        public string PrintKey(object key, IAssetKeyParametrizer parametrizer = default)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var parameter in AssetKeyParametrizer.Singleton.GetAllParameters(key))
+            if (parametrizer == null) parametrizer = AssetKeyParametrizer.Singleton;
+            foreach (var parameter in parametrizer.GetAllParameters(key))
             {
                 if (parameter.Key == "root") continue;
                 if (sb.Length > 0) sb.Append(':');
@@ -122,9 +133,9 @@ namespace Lexical.Localization
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>key</returns>
         /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
-        public IAssetKey ParseKey(string keyString, IAssetKey rootKey = default)
+        public IAssetKey ParseKey(string keyString, IAssetKey rootKey)
         {
-            object result = rootKey ?? new LocalizationRoot();
+            object result = rootKey;
             IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
             MatchCollection matches = ParsePattern.Matches(keyString);
             foreach (Match m in matches)
@@ -144,12 +155,12 @@ namespace Lexical.Localization
         /// Try parse string into IAssetKey.
         /// </summary>
         /// <param name="keyString"></param>
-        /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <param name="rootKey">root key to span values from</param>
         /// <returns>key or null</returns>
-        public IAssetKey TryParseKey(string keyString, IAssetKey rootKey = default)
+        public IAssetKey TryParseKey(string keyString, IAssetKey rootKey, IAssetKeyParametrizer parametrizer = default)
         {
-            object result = rootKey ?? new LocalizationRoot();
-            IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
+            object result = rootKey;
+            if (parametrizer == null) parametrizer = AssetKeyParametrizer.Singleton;
             MatchCollection matches = ParsePattern.Matches(keyString);
             foreach (Match m in matches)
             {
@@ -166,51 +177,48 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Parse string into parameter key value pairs.
+        /// Parse string "parameterName:parameterValue:..." into parameter key value pairs.
         /// </summary>
         /// <param name="keyString"></param>
-        /// <returns></returns>
+        /// <returns>key or null if string was empty</returns>
         /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
-        public ParameterKey ParseParameters(string keyString)
+        public Key ParseParameters(string keyString)
         {
             MatchCollection matches = ParsePattern.Matches(keyString);
-            ParameterKey result = null;
+            Key result = null;
             foreach (Match m in matches)
             {
                 if (!m.Success) throw new FormatException(keyString);
                 Group k_key = m.Groups["key"], k_value = m.Groups["value"];
                 if (!k_key.Success || !k_value.Success) throw new FormatException(keyString);
-                string key = UnescapeLiteral(k_key.Value);
+                string ame = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                result = new ParameterKey(result, key, value);
+                result = new Key(result, ame, value);
             }
             return result;
         }
 
-
         /// <summary>
-        /// Parse string into parameter key value pairs.
+        /// Parse string "parameterName:parameterValue:..." into parameter key value pairs.
         /// </summary>
         /// <param name="keyString"></param>
-        /// <param name="result">output of result</param>
+        /// <param name="result">output of result, or null if string was empty</param>
         /// <returns>true if successful</returns>
-        public bool TryParseParameters(string keyString, out KeyValuePair<string, string>[] result)
+        public bool TryParseParameters(string keyString, out Key result)
         {
             MatchCollection matches = ParsePattern.Matches(keyString);
-            result = new KeyValuePair<string, string>[matches.Count];
-            int ix = 0;
+            result = null;
             foreach (Match m in matches)
             {
                 if (!m.Success) { result = null; return false; }
                 Group k_key = m.Groups["key"], k_value = m.Groups["value"];
                 if (!k_key.Success || !k_value.Success) { result = null; return false; }
-                string key = UnescapeLiteral(k_key.Value);
+                string name = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                result[ix++] = new KeyValuePair<string, string>(key, value);
+                result = new Key(result, name, value);
             }
             return true;
         }
-
 
         /// <summary>
         /// Escape literal and output it to string builder.

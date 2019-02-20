@@ -44,10 +44,23 @@ namespace Lexical.Localization
         /// <param name="builder"></param>
         /// <param name="resolverFunc"></param>
         /// <returns>composition</returns>
-        public static IAssetComposition Add(this IAssetComposition composition, Func<IAssetKey, string> resolverFunc)
+        public static IAssetComposition AddSourceFunc(this IAssetComposition composition, Func<IAssetKey, string> resolverFunc)
         {
             composition.Add(new LocalizationStringsFunc(resolverFunc));
             return composition;
+        }
+
+
+        /// <summary>
+        /// Adapts <see cref="Delegate"/> to <see cref="IAssetSource"/> and adds to builder.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="resolver"></param>
+        /// <returns>builder</returns>
+        public static IAssetBuilder AddSourceFunc(this IAssetBuilder builder, Func<IAssetKey, string> resolver)
+        {
+            builder.Sources.Add(new AssetSource(new LocalizationStringsFunc(resolver)));
+            return builder;
         }
     }
 }

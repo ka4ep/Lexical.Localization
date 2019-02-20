@@ -130,7 +130,7 @@ namespace Lexical.Localization.LocalizationFile
                 writer.Write(_name);
                 writer.Write('>');
                 writer.WriteLine();
-                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Parameter, ParameterKey.Comparer.Default))
+                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Parameter, Key.Comparer.Default))
                     _writeRecusive(childNode, indent + 2);
                 Indent(indent);
                 writer.Write("</");

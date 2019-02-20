@@ -16,13 +16,15 @@ And back to IAssetKey.
 
 ```csharp
 // Convert to context-free parameters
-ParameterKey parameters = new ParameterKey("culture", "en").Append("type", "MyLibrary:Type").Append("key", "\"hello\"");
+IEnumerable<KeyValuePair<string, string>> parameters =
+    new ParameterKey("culture", "en")
+    .Append("type", "MyLibrary:Type").Append("key", "\"hello\"");
 // Parametrizer for AssetKey
 IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
 // Convert to context-dependent instance
 object key = LocalizationRoot.Global;
-foreach (var parameter in parameters.ToArray())
-    key = parametrizer.CreatePart(key, parameter.Name, parameter.Value);
+foreach (var parameter in parameters)
+    key = parametrizer.CreatePart(key, parameter.Key, parameter.Value);
 // Type-cast
 IAssetKey key_ = (IAssetKey)key;
 ```

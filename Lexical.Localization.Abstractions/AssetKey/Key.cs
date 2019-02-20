@@ -11,9 +11,13 @@ using System.Collections.Generic;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Contains a single parameter name and value. Is also a linked list.
+    /// This class is a context-free implementation of <see cref="IAssetKey"/>. 
+    /// It can be used as a reference, but not as a provider of localization content.
+    /// It is used for purposes of persisting and comparing keys.
+    /// 
+    /// This class has one parameter name and a value, and it can carry a link to previous node.
     /// </summary>
-    public class ParameterKey : IAssetKey, IAssetKeyLinked, IEnumerable<KeyValuePair<string, string>>
+    public class Key : IAssetKey, IAssetKeyLinked, IEnumerable<KeyValuePair<string, string>>
     {
         /// <summary>
         /// Parameter name, e.g. "culture"
@@ -28,7 +32,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Link to previous key in a linked list.
         /// </summary>
-        public ParameterKey Previous;
+        public Key Previous;
 
         IAssetKey IAssetKeyLinked.PreviousKey => Previous;
         string IAssetKey.Name => Name;
@@ -50,7 +54,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        public ParameterKey(string parameterName, string parameterValue)
+        public Key(string parameterName, string parameterValue)
         {
             this.Name = parameterName;
             this.Value = parameterValue;
@@ -62,7 +66,7 @@ namespace Lexical.Localization
         /// <param name="previous">(optional) previous link</param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        public ParameterKey(ParameterKey previous, string parameterName, string parameterValue)
+        public Key(Key previous, string parameterName, string parameterValue)
         {
             this.Name = parameterName;
             this.Value = parameterValue;
@@ -75,31 +79,35 @@ namespace Lexical.Localization
         /// <param name="parameterName"></param>
         /// <param name=""></param>
         /// <returns>new reference with a new key</returns>
-        public ParameterKey Append(string parameterName, string parameterValue)
-            => new ParameterKey(this, parameterName, parameterValue);
+        public Key Append(string parameterName, string parameterValue)
+            => new Key(this, parameterName, parameterValue);
 
         /// <summary>
         /// Proxy implementation of non-canonical parameter. Implements <see cref="IAssetKeyNonCanonicallyCompared"/>.
         /// </summary>
-        public class NonCanonical : ParameterKey, IAssetKeyNonCanonicallyCompared
+        public class NonCanonical : Key, IAssetKeyNonCanonicallyCompared
         {
             public NonCanonical(string parameterName, string parameterValue) : base(parameterName, parameterValue) { }
-            public NonCanonical(ParameterKey previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
+            public NonCanonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
         }
 
+        /// <summary>
+        /// Prints the key in "parameterName:parameterValue:..." format.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
-            => AssetKeyNameProvider.Default.BuildName(this, Parametrizer.Default);
+            => AssetKeyParameterNamePolicy.Instance.BuildName(this);
 
         /// <summary>
         /// Asset key comparer.
         /// </summary>
-        public class Comparer : IEqualityComparer<ParameterKey>, IComparer<ParameterKey>
+        public class Comparer : IEqualityComparer<Key>, IComparer<Key>
         {
             private static Comparer instance = new Comparer();
-            private static IEqualityComparer<ParameterKey[]> arrayComparer = new ArrayComparer<ParameterKey>(new Comparer());
+            private static IEqualityComparer<Key[]> arrayComparer = new ArrayComparer<Key>(new Comparer());
 
             public static Comparer Default => instance;
-            public static IEqualityComparer<ParameterKey[]> Array => arrayComparer;
+            public static IEqualityComparer<Key[]> Array => arrayComparer;
 
             public readonly IComparer<string> parameterNameComparer;
             public readonly IComparer<string> parameterValueComparer;
@@ -110,7 +118,7 @@ namespace Lexical.Localization
                 this.parameterValueComparer = parameterValueComparer ?? AlphaNumericComparer.Default;
             }
 
-            public int Compare(ParameterKey x, ParameterKey y)
+            public int Compare(Key x, Key y)
             {
                 string x_comparand = x.Name, y_comparand = y.Name;
                 int o = parameterNameComparer.Compare(x_comparand, y_comparand);
@@ -119,14 +127,14 @@ namespace Lexical.Localization
                 return o;
             }
 
-            public bool Equals(ParameterKey x, ParameterKey y)
+            public bool Equals(Key x, Key y)
             {
                 if (x == null && y == null) return true;
                 if (x == null || y == null) return false;
                 return x.Name == y.Name && x.Value == y.Value;
             }
 
-            public int GetHashCode(ParameterKey obj)
+            public int GetHashCode(Key obj)
             {
                 int hash = 24342;
                 if (obj.Value != null) { hash ^= obj.Value.GetHashCode(); hash *= 137; }
@@ -142,18 +150,18 @@ namespace Lexical.Localization
 
             public IEnumerable<object> Break(object obj)
             {
-                ParameterKey key = obj as ParameterKey;
+                Key key = obj as Key;
                 if (key == null) return null;
 
                 // Count
                 int count = 0;
-                for (ParameterKey k = key; k != null; k = k.Previous)
+                for (Key k = key; k != null; k = k.Previous)
                     count++;
 
                 // Array from root to tail
                 object[] result = new object[count];
                 int ix = count;
-                for (ParameterKey k = key; k != null; k = k.Previous)
+                for (Key k = key; k != null; k = k.Previous)
                     result[--ix] = k;
 
                 return result;
@@ -161,54 +169,54 @@ namespace Lexical.Localization
 
             public string[] GetPartParameters(object obj)
             {
-                ParameterKey part = obj as ParameterKey;
+                Key part = obj as Key;
                 if (part == null) return null;
                 return part.Parameters;
             }
 
             public string GetPartValue(object obj, string parameter)
             {
-                ParameterKey part = obj as ParameterKey;
+                Key part = obj as Key;
                 if (part == null) return null;
 
                 return parameter == part.Name ? part.Value : null;
             }
 
             public object GetPreviousPart(object part)
-                => part is ParameterKey proxy ? proxy.Previous : null;
+                => part is Key proxy ? proxy.Previous : null;
 
             public bool IsCanonical(object part, string parameterName)
-                => part is ParameterKey proxy && part is ParameterKey.NonCanonical == false;
+                => part is Key proxy && part is Key.NonCanonical == false;
             public bool IsNonCanonical(object part, string parameterName)
-                => part is ParameterKey proxy && part is ParameterKey.NonCanonical;
+                => part is Key proxy && part is Key.NonCanonical;
 
             public object TryCreatePart(object obj, string parameterName, string parameterValue)
             {
-                ParameterKey key = obj as ParameterKey;
+                Key key = obj as Key;
                 if (key == null) return null;
 
                 return (parameterName != "culture" && parameterName != "root") ?
-                    new ParameterKey(key, parameterName, parameterValue) :
-                    new ParameterKey.NonCanonical(key, parameterName, parameterValue);
+                    new Key(key, parameterName, parameterValue) :
+                    new Key.NonCanonical(key, parameterName, parameterValue);
             }
 
             public object TryCreatePart(object obj, string parameterName, string parameterValue, bool canonical)
             {
-                ParameterKey key = obj as ParameterKey;
+                Key key = obj as Key;
                 if (key == null && obj != null) return null;
 
                 return canonical ?
-                    new ParameterKey(key, parameterName, parameterValue) :
-                    new ParameterKey.NonCanonical(key, parameterName, parameterValue);
+                    new Key(key, parameterName, parameterValue) :
+                    new Key.NonCanonical(key, parameterName, parameterValue);
             }
 
             public void VisitParts<T>(object obj, ParameterPartVisitor<T> visitor, ref T data)
             {
-                ParameterKey key = obj as ParameterKey;
+                Key key = obj as Key;
                 if (key == null) return;
 
                 // Push to stack
-                ParameterKey prevKey = key.Previous;
+                Key prevKey = key.Previous;
                 if (prevKey != null) VisitParts(prevKey, visitor, ref data);
 
                 // Pop from stack in reverse order
@@ -222,24 +230,24 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="includeNonCanonical">include all keys that implement ILocalizationKeyNonCanonicallyCompared</param>
         /// <returns>array of keys</returns>
-        public ParameterKey[] ToArray(bool includeNonCanonical = true)
+        public Key[] ToArray(bool includeNonCanonical = true)
         {
             // Count the number of keys
             int count = 0;
             if (includeNonCanonical)
-                for (ParameterKey k = this; k != null; k = k.Previous) count++;
+                for (Key k = this; k != null; k = k.Previous) count++;
             else
-                for (ParameterKey k = this; k != null; k = k.Previous)
+                for (Key k = this; k != null; k = k.Previous)
                     if (k is IAssetKeyNonCanonicallyCompared == false) count++;
 
             // Create result
-            ParameterKey[] result = new ParameterKey[count];
+            Key[] result = new Key[count];
             int ix = count - 1;
             if (includeNonCanonical)
-                for (ParameterKey k = this; k != null; k = k.Previous)
+                for (Key k = this; k != null; k = k.Previous)
                     result[ix--] = k;
             else
-                for (ParameterKey k = this; k != null; k = k.Previous)
+                for (Key k = this; k != null; k = k.Previous)
                     if (k is IAssetKeyNonCanonicallyCompared == false)
                         result[ix--] = k;
 
@@ -265,19 +273,19 @@ namespace Lexical.Localization
             // Count the number of keys
             int count = 0;
             if (includeNonCanonical)
-                for (ParameterKey k = this; k != null; k = k.Previous) count++;
+                for (Key k = this; k != null; k = k.Previous) count++;
             else
-                for (ParameterKey k = this; k != null; k = k.Previous)
+                for (Key k = this; k != null; k = k.Previous)
                     if (k is IAssetKeyNonCanonicallyCompared == false) count++;
 
             // Create result
             KeyValuePair<string, string>[] result = new KeyValuePair<string, string>[count];
             int ix = count - 1;
             if (includeNonCanonical)
-                for (ParameterKey k = this; k != null; k = k.Previous)
+                for (Key k = this; k != null; k = k.Previous)
                     result[ix--] = new KeyValuePair<string, string>(k.Name, k.Value);
             else
-                for (ParameterKey k = this; k != null; k = k.Previous)
+                for (Key k = this; k != null; k = k.Previous)
                     if (k is IAssetKeyNonCanonicallyCompared == false)
                         result[ix--] = new KeyValuePair<string, string>(k.Name, k.Value);
 

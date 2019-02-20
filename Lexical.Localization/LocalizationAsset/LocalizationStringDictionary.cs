@@ -11,6 +11,10 @@ using System.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
+    /// Contains localization key-value pairs. 
+    /// The key is in string format, and is matched by converting the requesting IAssetKey to identity string with
+    /// help of a <see cref="IAssetKeyNamePolicy"/>.
+    /// 
     /// This class adapts IDictionary{string, string} to ILanguageStringResolver and ILanguageStringCollection.
     /// </summary>
     public class LocalizationStringDictionary :
@@ -23,6 +27,11 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Create language string resolver that uses a dictionary as a source.
+        /// 
+        /// 
+        /// If <paramref name="parametrizer"/> is provided this implementation can provide values for
+        /// <see cref="ILocalizationStringCollection.GetAllStrings(IAssetKey)"/> and 
+        /// <see cref="IAssetKeyCollection.GetAllKeys(IAssetKey)"/> requests.         
         /// </summary>
         /// <param name="source">dictionary</param>
         /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
@@ -75,7 +84,7 @@ namespace Lexical.Localization
             return result;
         }
 
-        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey criteriaKey = null)
+        public IEnumerable<Key> GetAllKeys(IAssetKey criteriaKey = null)
         {
             if (namePolicy is IAssetNamePattern pattern) return GetAllKeysWithPattern(pattern, criteriaKey);
 
@@ -83,10 +92,13 @@ namespace Lexical.Localization
             return null;
         }
 
-        IEnumerable<IAssetKey> GetAllKeysWithPattern(IAssetNamePattern pattern, IAssetKey criteriaKey)
+        IEnumerable<Key> GetAllKeysWithPattern(IAssetNamePattern pattern, IAssetKey criteriaKey)
         {
-            KeyValuePair<string, string>[] criteriaParams = AssetKeyParametrizer.Singleton.GetAllParameters(criteriaKey).ToArray();
-            IAssetKey root = new LocalizationRoot();
+            KeyValuePair<string, string>[] criteriaParams = 
+                criteriaKey == null ? null : (
+                    criteriaKey is Key _criteria_key ? _criteria_key.ToKeyValueArray() :
+                    AssetKeyParametrizer.Singleton.GetAllParameters(criteriaKey).ToArray()
+                );
 
             foreach (var line in source)
             {
@@ -95,7 +107,7 @@ namespace Lexical.Localization
 
                 // Filter by criteria key
                 bool ok = true;
-                if (criteriaKey != null)
+                if (criteriaParams != null)
                 {
                     // Iterate all criteria parameters (key,value)
                     foreach (var criteriaParameter in criteriaParams)
@@ -122,17 +134,15 @@ namespace Lexical.Localization
                 }
                 if (!ok) continue;
 
-
-                object _key = root;
+                Key _key = null;
                 foreach (var part in pattern.CaptureParts)
                 {
                     string partValue = match[part.CaptureIndex];
                     if (partValue == null) continue;
 
-                    _key = parametrizer.TryCreatePart(_key, part.ParameterName, partValue);
+                    _key = new Key(_key, part.ParameterName, partValue);
                 }
-                if (_key is IAssetKey kk) yield return kk;
-
+                if (_key != null) yield return _key;
             }
         }
 
@@ -211,7 +221,7 @@ namespace Lexical.Localization
         /// <param name="dictionary"></param>
         /// <param name="namePolicy">instructions how to convert key to string</param>
         /// <returns></returns>
-        public static IAssetBuilder AddDictionary(this IAssetBuilder builder, IReadOnlyDictionary<string, string> dictionary, IAssetKeyNamePolicy namePolicy)
+        public static IAssetBuilder AddStrings(this IAssetBuilder builder, IReadOnlyDictionary<string, string> dictionary, IAssetKeyNamePolicy namePolicy)
         {
             builder.AddAsset(new LocalizationStringDictionary(dictionary, namePolicy));
             return builder;
@@ -224,24 +234,10 @@ namespace Lexical.Localization
         /// <param name="dictionary"></param>
         /// <param name="namePolicy">instructions how to convert key to string</param>
         /// <returns></returns>
-        public static IAssetComposition AddDictionary(this IAssetComposition composition, IReadOnlyDictionary<string, string> dictionary, IAssetKeyNamePolicy namePolicy)
+        public static IAssetComposition AddStrings(this IAssetComposition composition, IReadOnlyDictionary<string, string> dictionary, IAssetKeyNamePolicy namePolicy)
         {
             composition.Add(new LocalizationStringDictionary(dictionary, namePolicy));
             return composition;
         }
-
-
-        /// <summary>
-        /// Adapts <see cref="Delegate"/> to <see cref="IAssetSource"/> and adds to builder.
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="resolver"></param>
-        /// <returns>builder</returns>
-        public static IAssetBuilder AddSourceFunc(this IAssetBuilder builder, Func<IAssetKey, string> resolver)
-        {
-            builder.Sources.Add(new AssetSource(new LocalizationStringsFunc(resolver)));
-            return builder;
-        }
-
     }
 }

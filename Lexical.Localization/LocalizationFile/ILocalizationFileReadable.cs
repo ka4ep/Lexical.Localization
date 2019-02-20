@@ -19,7 +19,7 @@ namespace Lexical.Localization.LocalizationFile
         /// Read file as a stream of elements that describe a hierarchical structure.
         /// </summary>
         /// <returns></returns>
-        IEnumerable<KeyValuePair<ParameterKey, string>> Read();
+        IEnumerable<KeyValuePair<Key, string>> Read();
     }
 
 

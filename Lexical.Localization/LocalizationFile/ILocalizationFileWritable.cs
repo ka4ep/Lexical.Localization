@@ -59,7 +59,7 @@ namespace Lexical.Localization.LocalizationFile
         public static IEnumerable<KeyValuePair<object, string>> Convert(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues, IAssetKeyParametrizer parametrizer = default)
         {
             if (parametrizer == null) parametrizer = AssetKeyParametrizer.Singleton;
-            List<ParameterKey> list = new List<ParameterKey>();
+            List<Key> list = new List<Key>();
             foreach (var kp in keyValues)
             {
                 // Arrange
@@ -76,11 +76,11 @@ namespace Lexical.Localization.LocalizationFile
                     {
                         string value = parametrizer.GetPartValue(key_part, parameter);
                         if (value == null) continue;
-                        list.Add(new ParameterKey.NonCanonical(parameter, value));
+                        list.Add(new Key.NonCanonical(parameter, value));
                     }
                 }
                 // Sort non-canonicals by parameter names
-                list.Sort(ParameterKey.Comparer.Default);
+                list.Sort(Key.Comparer.Default);
 
                 // Add canonical parts
                 foreach (var key_part in parts.Where(part => part is IAssetKeyNonCanonicallyCompared == false))
@@ -91,7 +91,7 @@ namespace Lexical.Localization.LocalizationFile
                     {
                         string value = parametrizer.GetPartValue(key_part, parameter);
                         if (value == null) continue;
-                        list.Add(new ParameterKey(parameter, value));
+                        list.Add(new Key(parameter, value));
                     }
                 }
 
