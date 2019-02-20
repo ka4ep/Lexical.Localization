@@ -1,20 +1,7 @@
 # Localization Asset
-**LocalizationAsset** is simple language string container. Asset is populated from different IEnumeration sources, which become effective content is built with **Load()** method.
+**LocalizationAsset** is simple language string container. Asset is populated from different IEnumeration sources, which become effective when **Load()** is called.
 
-**.AddStringSource(*IEnumerable&lt;KeyValuePair&lt;string, string &gt;, string&gt;*)** adds language strings with strings as keys.
-
-```csharp
-// Create localization source
-var source = new Dictionary<string, string> {
-    { "MyController:hello", "Hello World!"    },
-    { "en:MyController:hello", "Hello World!" },
-    { "de:MyController:hello", "Hallo Welt!"  }
-};
-// Create asset with string source
-IAsset asset = new LocalizationAsset().AddStringSource(source, "{culture:}{type:}{key}").Load();
-```
-
-**.AddKeySource(*IEnumerable&lt;KeyValuePair&lt;Key, string &gt;, string&gt;*)** adds language strings with context-free keys.
+**.AddKeySource(*IEnumerable&lt;KeyValuePair&lt;Key, string&gt;, string&gt;*)** adds language strings with the context-free Key class. It is typically used from a file source.
 
 ```csharp
 // Create localization source
@@ -27,7 +14,34 @@ var source = new Dictionary<Key, string> {
 IAsset asset = new LocalizationAsset().AddKeySource(source).Load();
 ```
 
-**.AddAssetKeySource(*IEnumerable&lt;KeyValuePair&lt;IAssetKey, string &gt;, string&gt;*)** adds language strings with IAssetKeys as keys. These keys are converted to Key internally when **.Load()** is called.
+Language strings can now be queried from the asset.
+
+```csharp
+IAssetKey key = new LocalizationRoot(asset).TypeSection("MyController").Key("hello");
+Console.WriteLine(key);
+Console.WriteLine(key.SetCulture("en"));
+Console.WriteLine(key.SetCulture("de"));
+```
+
+<details>
+  <summary><b>.AddStringSource()</b> adds language string source with String based keys. (<u>Click here</u>)</summary>
+These keys are converted to Key internally when <b>.Load()</b> is called.
+
+```csharp
+// Create localization source
+var source = new Dictionary<string, string> {
+    { "MyController:hello", "Hello World!"    },
+    { "en:MyController:hello", "Hello World!" },
+    { "de:MyController:hello", "Hallo Welt!"  }
+};
+// Create asset with string source
+IAsset asset = new LocalizationAsset().AddStringSource(source, "{culture:}{type:}{key}").Load();
+```
+</details>
+
+<details>
+  <summary><b>.AddAssetKeySource()</b> adds language string source with IAssetKey based keys. (<u>Click here</u>)</summary>
+These keys are converted to Key internally when <b>.Load()</b> is called.
 
 ```csharp
 // Create localization source
@@ -39,6 +53,8 @@ var source = new Dictionary<IAssetKey, string> {
 // Create asset with string source
 IAsset asset = new LocalizationAsset().AddAssetKeySource(source).Load();
 ```
+</details>
+<br/>
 
 Keys can be enumerated with **GetAllKeys()**. 
 

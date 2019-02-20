@@ -1,17 +1,27 @@
 ﻿# Localization Asset
-**LocalizationAsset** is simple language string container. Asset is populated from different IEnumeration sources, which become effective content is built with **Load()** method.
+**LocalizationAsset** is simple language string container. Asset is populated from different IEnumeration sources, which become effective when **Load()** is called.
 
-**.AddStringSource(*IEnumerable&lt;KeyValuePair&lt;string, string &gt;, string&gt;*)** adds language strings with strings as keys.
-[!code-csharp[Snippet](Examples.cs#Snippet_1a)]
-
-**.AddKeySource(*IEnumerable&lt;KeyValuePair&lt;Key, string &gt;, string&gt;*)** adds language strings with context-free keys.
+**.AddKeySource(*IEnumerable&lt;KeyValuePair&lt;Key, string&gt;, string&gt;*)** adds language strings with the context-free Key class. It is typically used from a file source.
 [!code-csharp[Snippet](Examples.cs#Snippet_1b)]
 
-**.AddAssetKeySource(*IEnumerable&lt;KeyValuePair&lt;IAssetKey, string &gt;, string&gt;*)** adds language strings with IAssetKeys as keys. These keys are converted to Key internally when **.Load()** is called.
+Language strings can now be queried from the asset.
+[!code-csharp[Snippet](Examples.cs#Snippet_2b)]
+
+<details>
+  <summary><b>.AddStringSource()</b> adds language string source with String based keys. (<u>Click here</u>)</summary>
+These keys are converted to Key internally when <b>.Load()</b> is called.
+[!code-csharp[Snippet](Examples.cs#Snippet_1a)]
+</details>
+
+<details>
+  <summary><b>.AddAssetKeySource()</b> adds language string source with IAssetKey based keys. (<u>Click here</u>)</summary>
+These keys are converted to Key internally when <b>.Load()</b> is called.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c)]
+</details>
+<br/>
 
 Keys can be enumerated with **GetAllKeys()**. 
-[!code-csharp[Snippet](Examples.cs#Snippet_2)]
+[!code-csharp[Snippet](Examples.cs#Snippet_3a)]
 
 The query can be filtered with a criteria key. It returns only keys that have equal parameters as the criteria key.
-[!code-csharp[Snippet](Examples.cs#Snippet_3)]
+[!code-csharp[Snippet](Examples.cs#Snippet_3b)]
