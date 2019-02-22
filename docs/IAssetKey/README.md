@@ -65,7 +65,7 @@ byte[] data = key.GetResource();
 ```
 
 ## Canonical and non-canonical key parts
-*Canonical* key parts are parts whose position in the linked list matters.
+*Canonical* key parts are parts whose position in the linked list matters for the consumer of the localization content.
 Canonical parts typically add to the identity of the key. 
 
 ```csharp

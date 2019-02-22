@@ -31,7 +31,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Comparer that can compare instances of <see cref="Key"/> and <see cref="IAssetKey"/>.
         /// </summary>
-        protected AssetKeyComparer comparer;
+        public readonly IEqualityComparer<IAssetKey> Comparer;
 
         /// <summary>
         /// Create language string resolver that uses a dictionary as a source.
@@ -43,7 +43,7 @@ namespace Lexical.Localization
         {
             this.sources = new List<IEnumerable<KeyValuePair<Key, string>>>();
             IAssetKeyParametrizer compositeParametrizer = Key.Parametrizer.Default.Concat(AssetKeyParametrizer.Singleton);
-            this.comparer = new AssetKeyComparer().AddCanonicalParametrizerComparer(compositeParametrizer).AddNonCanonicalParametrizerComparer(compositeParametrizer);
+            this.Comparer = new AssetKeyComparer().AddCanonicalParametrizerComparer(compositeParametrizer).AddNonCanonicalParametrizerComparer(compositeParametrizer);
             Load();
         }
 
@@ -169,7 +169,7 @@ namespace Lexical.Localization
 
         protected virtual void SetContent(IEnumerable<KeyValuePair<Key, string>> src)
         {
-            var newMap = new Dictionary<IAssetKey, string>(comparer);
+            var newMap = new Dictionary<IAssetKey, string>(Comparer);
             foreach (var line in src)
             {
                 if (line.Key == null) continue;

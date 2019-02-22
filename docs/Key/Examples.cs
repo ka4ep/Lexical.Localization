@@ -15,7 +15,23 @@ namespace docs
         // Rename to "Main", or run from Main.
         public static void Run(string[] args)
         {
+            {
+                #region Snippet_1
+                Key key = new Key("culture", "en").Append("type", "MyController").Append("key", "Success");
+                #endregion Snippet_1
+            }
 
+            {
+                #region Snippet_2
+                // Parametrizer for AssetKey
+                IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
+                // Convert to context-dependent instance
+                object key = LocalizationRoot.Global;
+                foreach (var parameter in parameters) key = parametrizer.CreatePart(key, parameter.Key, parameter.Value);
+                // Type-cast
+                IAssetKey key_ = (IAssetKey)key;
+                #endregion Snippet_2
+            }
             {
                 #region Snippet_3
                 // Parametrizer for AssetKey

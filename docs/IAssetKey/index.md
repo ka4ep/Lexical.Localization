@@ -25,7 +25,7 @@ Extension methods can be used for retrieving strings and binary resources.
 [!code-csharp[Snippet](Examples.cs#Snippet_3b)]
 
 ## Canonical and non-canonical key parts
-*Canonical* key parts are parts whose position in the linked list matters.
+*Canonical* key parts are parts whose position in the linked list matters for the consumer of the localization content.
 Canonical parts typically add to the identity of the key. 
 [!code-csharp[Snippet](Examples.cs#Snippet_4a)]
 

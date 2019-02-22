@@ -107,18 +107,18 @@ namespace Lexical.Localization
         /// <summary>
         /// Read all parameters as key-value pairs.
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="parameterizer"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, string>> GetAllParameters(this IAssetKeyParametrizer reader, object obj)
+        public static IEnumerable<KeyValuePair<string, string>> GetAllParameters(this IAssetKeyParametrizer parameterizer, object obj)
         {
-            IEnumerable<object> parts = reader.Break(obj);
+            IEnumerable<object> parts = parameterizer.Break(obj);
             if (parts!=null)
             foreach (object part in parts)
             {
-                foreach(string parameterName in reader.GetPartParameters(part))
+                foreach(string parameterName in parameterizer.GetPartParameters(part))
                 {
-                    string value = reader.GetPartValue(part, parameterName);
+                    string value = parameterizer.GetPartValue(part, parameterName);
                     if (value != null) yield return new KeyValuePair<string, string>(parameterName, value);
                 }
             }

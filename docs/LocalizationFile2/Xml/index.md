@@ -16,7 +16,7 @@ Example of **.xml** localization file.
   </culture:en>
   <culture:fi>
     <type:ConsoleApp1.MyController>
-      <key:Success>Onnistui</Success>
+      <key:Success>Onnistui</key:Success>
       <key:Error>Virhe (Koodi=0x{0:X8})</key:Error>
     </type:ConsoleApp1.MyController>
   </culture:fi>

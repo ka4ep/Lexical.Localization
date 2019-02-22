@@ -7,6 +7,7 @@ using Lexical.Localization.Internal;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lexical.Localization
 {
@@ -81,6 +82,22 @@ namespace Lexical.Localization
         /// <returns>new reference with a new key</returns>
         public Key Append(string parameterName, string parameterValue)
             => new Key(this, parameterName, parameterValue);
+
+        /// <summary>
+        /// Concatenate two keys.
+        /// </summary>
+        /// <param name="anotherKey"></param>
+        /// <returns></returns>
+        public Key Concat(Key anotherKey)
+        {
+            Key result = this;
+            if (anotherKey != null)
+            {
+                foreach (Key k in anotherKey.ToArray())
+                    result = Key.Parametrizer.Default.CreatePart(result, k.Name, k.Value) as Key;
+            }
+            return result;
+        }
 
         /// <summary>
         /// Proxy implementation of non-canonical parameter. Implements <see cref="IAssetKeyNonCanonicallyCompared"/>.
@@ -287,7 +304,49 @@ namespace Lexical.Localization
         IEnumerator IEnumerable.GetEnumerator()
             => ToKeyValueArray().GetEnumerator();
 
-        public KeyValuePair<string, string>[] ToKeyValueArray(bool includeNonCanonical = true)
+        string[] cachedKeyArray;
+
+        public string[] ToKeyArray()
+            => cachedKeyArray ?? (cachedKeyArray = ToKeyValueArray().Select(kv => kv.Key).ToArray());
+
+        public string[] ToKeyArray(bool includeNonCanonical)
+            => includeNonCanonical ? ToKeyArray() : _toKeyArray(includeNonCanonical);
+
+        string[] _toKeyArray(bool includeNonCanonical)
+        {
+            // Count the number of keys
+            int count = 0;
+            if (includeNonCanonical)
+                for (Key k = this; k != null; k = k.Previous) count++;
+            else
+                for (Key k = this; k != null; k = k.Previous)
+                    if (k is IAssetKeyNonCanonicallyCompared == false) count++;
+
+            if (count == 0) return empty;
+
+            // Create result
+            string[] result = new string[count];
+            int ix = count - 1;
+            if (includeNonCanonical)
+                for (Key k = this; k != null; k = k.Previous)
+                    result[ix--] = k.Name;
+            else
+                for (Key k = this; k != null; k = k.Previous)
+                    if (k is IAssetKeyNonCanonicallyCompared == false)
+                        result[ix--] = k.Name;
+
+            return result;
+        }
+
+        KeyValuePair<string, string>[] cachedKeyValueArray;
+
+        public KeyValuePair<string, string>[] ToKeyValueArray()
+            => cachedKeyValueArray ?? (cachedKeyValueArray = _toKeyValueArray(false));
+
+        public KeyValuePair<string, string>[] ToKeyValueArray(bool includeNonCanonical)
+            => includeNonCanonical ? ToKeyValueArray() : _toKeyValueArray(includeNonCanonical);
+
+        KeyValuePair<string, string>[] _toKeyValueArray(bool includeNonCanonical)
         {
             // Count the number of keys
             int count = 0;

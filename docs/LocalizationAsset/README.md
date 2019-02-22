@@ -1,14 +1,14 @@
 # Localization Asset
 **LocalizationAsset** is simple language string container. Asset is populated from different IEnumeration sources, which become effective when **Load()** is called.
 
-**.AddKeySource(*IEnumerable&lt;KeyValuePair&lt;Key, string&gt;, string&gt;*)** adds language strings with the context-free Key class. It is typically used from a file source.
+**.AddKeySource(*IEnumerable&lt;KeyValuePair&lt;Key, string&gt;, string&gt;*)** add a source of language strings.
 
 ```csharp
 // Create localization source
 var source = new Dictionary<Key, string> {
-    { new Key("type", "MyController").Append("key", "hello"),                         "Hello World!" },
-    { new Key("type", "MyController").Append("key", "hello").Append("culture", "en"), "Hello World!" },
-    { new Key("type", "MyController").Append("key", "hello").Append("culture", "de"), "Hallo Welt!"  }
+    { Key.NamePolicy.Instance.ParseKey("type:MyController:key:hello"),            "Hello World!" },
+    { Key.NamePolicy.Instance.ParseKey("culture:en:type:MyController:key:hello"), "Hello World!" },
+    { Key.NamePolicy.Instance.ParseKey("culture:de:type:MyController:key:hello"), "Hallo Welt!"  }
 };
 // Create asset with string source
 IAsset asset = new LocalizationAsset().AddKeySource(source).Load();
