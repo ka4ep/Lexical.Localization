@@ -80,7 +80,7 @@ namespace Lexical.Localization
                 return this;
             }
 
-            AssetKeyCloner cloner = new AssetKeyCloner(parametrizer ?? AssetKeyParametrizer.Singleton, Key.Parametrizer.Default).AddParameterToExclude("root"); 
+            AssetKeyCloner cloner = new AssetKeyCloner(Key.Root).AddParameterToExclude("root"); 
             IEnumerable<KeyValuePair<Key, string>> adaptedSource = keyValueSource.Select( kp=>new KeyValuePair<Key, string>((Key)cloner.Copy(kp.Key), kp.Value) ).Where(kp=>kp.Key!=null);
             lock (sources) sources.Add(adaptedSource);
             return this;

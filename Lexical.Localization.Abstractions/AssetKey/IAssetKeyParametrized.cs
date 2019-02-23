@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
+using System.Collections.Generic;
 
 namespace Lexical.Localization
 {
@@ -44,13 +45,36 @@ namespace Lexical.Localization
             => key is IAssetKeyParametrized parametrized ? parametrized.ParameterName : null;
 
         /// <summary>
+        /// Get all parameters as parameterName,parameterValue pairs.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static KeyValuePair<string, string>[] GetParameters(this IAssetKey key)
+        {
+            int count = 0;
+            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+                if (k.GetParameterName() != null) count++;
+
+            KeyValuePair<string, string>[] result = new KeyValuePair<string, string>[count];
+            int ix = count;
+            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+            {
+                string parameterName = k.GetParameterName();
+                if (parameterName != null)
+                    result[--ix] = new KeyValuePair<string, string>(parameterName, k.Name);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
         /// </summary>
         /// <param name="parameterName">parameter name describes the key type to be created</param>
         /// <param name="parameterValue">parameter value translates to <see cref="IAssetKey.Name"/>.</param>
         /// <returns>new key that is appended to this key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
-        public static IAssetKey Append(this IAssetKey key, string parameterName, string parameterValue)
+        public static IAssetKey AppendParameter(this IAssetKey key, string parameterName, string parameterValue)
         {
             if (key is IAssetKeyParameterAssignable assignable)
             {
@@ -142,6 +166,7 @@ namespace Lexical.Localization
                 result = result?.TryAppendParameter(keyParametrized.ParameterName, key.Name);
             }
         }
+
     }
 
 

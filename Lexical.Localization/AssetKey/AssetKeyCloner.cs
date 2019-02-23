@@ -13,12 +13,15 @@ namespace Lexical.Localization
     /// </summary>
     public class AssetKeyCloner
     {
-        public readonly IAssetKeyParametrizer ReaderParametrizer;
-        public readonly IAssetKeyParametrizer WriterParametrizer;
+        /// <summary>
+        /// Root from where keys are appended. Determines the class of the constructed keys.
+        /// </summary>
+        public readonly IAssetKey Root;
 
-        public IAssetKey Root = new Key("", "");
-        ParameterPartVisitor<Key> visitor1;
-        ParameterPartVisitor<IAssetKey> visitor2;
+        /// <summary>
+        /// Visitor delegate
+        /// </summary>
+        AssetKeyVisitor<IAssetKey> visitor;
 
         /// <summary>
         /// List of parameters not to clone.
@@ -28,24 +31,11 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new cloner.
         /// </summary>
-        /// <param name="readerParametrizer">object that reads parameters from <see cref="IAssetKey" /></param>
-        public AssetKeyCloner(IAssetKeyParametrizer readerParametrizer, IAssetKeyParametrizer writerParametrizer)
+        /// <param name="root">root from which parameters are constructed</param>
+        public AssetKeyCloner(IAssetKey root)
         {
-            this.ReaderParametrizer = readerParametrizer ?? throw new ArgumentNullException(nameof(readerParametrizer));
-            this.WriterParametrizer = writerParametrizer ?? throw new ArgumentNullException(nameof(writerParametrizer));
-            this.visitor1 = Visitor1;
-            this.visitor2 = Visitor2;
-        }
-
-        /// <summary>
-        /// Set root, might be needed for cloning.
-        /// </summary>
-        /// <param name="root"></param>
-        /// <returns></returns>
-        public AssetKeyCloner SetRoot(IAssetKey root)
-        {
-            this.Root = root;
-            return this;
+            this.Root = root ?? throw new ArgumentNullException(nameof(root));
+            this.visitor = Visitor;
         }
 
         /// <summary>
@@ -65,63 +55,21 @@ namespace Lexical.Localization
         /// Proxy copy doesn't have any of the interface features, just parameter name + value pairs.
         /// Proxy result must be parametrized with <see cref="Key.Parametrizer"/>.
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="culture"></param>
+        /// <param name="key">key to copy. If null root is returned</param>
         /// <returns>copy of every part the parametrizer extracted</returns>
         public IAssetKey Copy(IAssetKey key)
         {
-            if (WriterParametrizer is Key.Parametrizer proxyWriter)
-            {
-                Key result = null;
-                if (key != null) ReaderParametrizer.VisitParts<Key>(key, visitor1, ref result);
-                return result ?? Root;
-            }
-            else
-            {
-                IAssetKey result = Root;
-                if (key != null) ReaderParametrizer.VisitParts<IAssetKey>(key, visitor2, ref result);
-                return result ?? Root;
-            }
+            if (key == null) return Root;
+            IAssetKey result = Root;
+            key.VisitFromRoot(visitor, ref result);
+            return result ?? Root;
         }
 
-        void Visitor1(object obj, ref Key result)
+        void Visitor(IAssetKey key, ref IAssetKey result)
         {
-            IAssetKey part = obj as IAssetKey;
-            if (part == null) return;
-
-            // Pop from stack in reverse order
-            string[] parameterNames = ReaderParametrizer.GetPartParameters(part);
-            if (parameterNames == null || parameterNames.Length==0) return;
-            foreach (string parameterName in parameterNames)
-            {
-                if (parameterNamesToExclude.Contains(parameterName)) continue;
-                string parameterValue = ReaderParametrizer.GetPartValue(part, parameterName);
-                if (parameterValue == null) continue;
-                Key newKey = null;
-
-                newKey = ((Key.Parametrizer)WriterParametrizer).TryCreatePart(result, parameterName, parameterValue, part is IAssetKeyNonCanonicallyCompared == false) as Key;
-                if (newKey != null) result = newKey;
-            }
-        }
-
-        void Visitor2(object obj, ref IAssetKey result)
-        {
-            IAssetKey part = obj as IAssetKey;
-            if (part == null) return;
-
-            // Pop from stack in reverse order
-            string[] parameterNames = ReaderParametrizer.GetPartParameters(part);
-            if (parameterNames == null || parameterNames.Length == 0) return;
-            foreach (string parameterName in parameterNames)
-            {
-                if (parameterNamesToExclude.Contains(parameterName)) continue;
-                string parameterValue = ReaderParametrizer.GetPartValue(part, parameterName);
-                if (parameterValue == null) continue;
-                IAssetKey newKey = null;
-
-                newKey = WriterParametrizer.TryCreatePart(result, parameterName, parameterValue) as IAssetKey;
-                if (newKey != null) result = newKey;
-            }
+            string parameterName = key.GetParameterName(), parameterValue = key.Name;
+            if (!String.IsNullOrEmpty(parameterName) && parameterValue != null)
+                result = result.AppendParameter(parameterName, parameterValue);
         }
 
     }

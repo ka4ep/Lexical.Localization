@@ -20,6 +20,9 @@ namespace Lexical.Localization
     /// </summary>
     public partial class Key : IAssetKey, IAssetKeyLinked, IAssetKeyParametrized, IAssetKeyParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>
     {
+        private static readonly Key root = new Key("root", "");
+        public static Key Root => root;
+
         /// <summary>
         /// Parameter name, e.g. "culture"
         /// </summary>
