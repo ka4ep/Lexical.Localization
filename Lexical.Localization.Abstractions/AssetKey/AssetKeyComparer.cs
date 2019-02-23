@@ -20,10 +20,7 @@ namespace Lexical.Localization
     /// </summary>
     public class AssetKeyComparer : IEqualityComparer<IAssetKey>
     {
-        private static AssetKeyComparer instance =
-            new AssetKeyComparer()
-            .AddCanonicalParametrizerComparer(AssetKeyParametrizer.Singleton)
-            .AddNonCanonicalParametrizerComparer(AssetKeyParametrizer.Singleton);
+        private static AssetKeyComparer instance = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
 
         /// <summary>
         /// Makes comparisons on interface level. 
@@ -33,14 +30,14 @@ namespace Lexical.Localization
         ///    Key                      canonical compare
         ///    Section                  canonical compare
         ///    TypeSection              canonical compare
-        ///    AssemblySection          canonical compare
         ///    Resource                 canonical compare
-        ///    Root                     not compare
-        ///    Culture                  non-canonical compre
-        ///    Format Args              not compared
+        ///    LocationSection          canonical compare
+        ///    AssemblySection          non-canonical compare
+        ///    Culture                  non-canonical compare
+        ///    Format Args              non-canonical compare
+        ///    Inlining                 non-canonical compare
         ///    CulturePolicy            not compared
-        ///    Inlining                 not compared
-        ///    LocalizationAsset        not compared
+        ///    Root                     not compared
         /// </summary>
         public static AssetKeyComparer Default => instance;
 
@@ -80,17 +77,15 @@ namespace Lexical.Localization
             return this;
         }
 
-        public AssetKeyComparer AddCanonicalParametrizerComparer(IAssetKeyParametrizer parametrizer = default)
+        public AssetKeyComparer AddCanonicalParametrizedComparer()
         {
-            ParametrizerCanonicalComparer<IAssetKey> comparer = new ParametrizerCanonicalComparer<IAssetKey>(parametrizer ?? AssetKeyParametrizer.Singleton);
-            canonicalComparers.Add(comparer);
+            canonicalComparers.Add(ParametrizedComparer.Instance);
             return this;
         }
 
-        public AssetKeyComparer AddNonCanonicalParametrizerComparer(IAssetKeyParametrizer parametrizer = default)
+        public AssetKeyComparer AddNonCanonicalParametrizedComparer()
         {
-            ParametrizerNonCanonicalComparer comparer = new ParametrizerNonCanonicalComparer(parametrizer ?? AssetKeyParametrizer.Singleton);
-            noncanonicalComparers.Add(comparer);
+            noncanonicalComparers.Add(ParametrizedNonCanonicalComparer.Instance);
             return this;
         }
 
@@ -108,8 +103,8 @@ namespace Lexical.Localization
 
             // Canonical Comparisons
             IAssetKey xLink = x, yLink = y;
-            while (xLink is IAssetKeyNonCanonicallyCompared) xLink = xLink.GetPreviousKey();
-            while (yLink is IAssetKeyNonCanonicallyCompared) yLink = yLink.GetPreviousKey();
+            while (xLink != null && xLink is IAssetKeyCanonicallyCompared == false) xLink = xLink.GetPreviousKey();
+            while (yLink != null && yLink is IAssetKeyCanonicallyCompared == false) yLink = yLink.GetPreviousKey();
             if (!CanonicalEquals(xLink, yLink)) return false;
 
             return true;
@@ -129,8 +124,8 @@ namespace Lexical.Localization
 
             // Compare next canonical keys
             IAssetKey xLink = x.GetPreviousKey(), yLink = y.GetPreviousKey();
-            while (xLink is IAssetKeyNonCanonicallyCompared) xLink = xLink.GetPreviousKey();
-            while (yLink is IAssetKeyNonCanonicallyCompared) yLink = yLink.GetPreviousKey();
+            while (xLink != null && xLink is IAssetKeyCanonicallyCompared == false) xLink = xLink.GetPreviousKey();
+            while (yLink != null && yLink is IAssetKeyCanonicallyCompared == false) yLink = yLink.GetPreviousKey();
             if (xLink != null || yLink != null)
                 if (!CanonicalEquals(xLink, yLink)) return false;
 
@@ -145,15 +140,15 @@ namespace Lexical.Localization
             if (key == null) return 0;
             int result = FNVHashBasis;
 
-            /// Non-canonical hashing
+            // Non-canonical hashing
             foreach (var comparer in noncanonicalComparers)
             {
                 result ^= comparer.GetHashCode(key);
             }
 
-            /// Canonical hashing
+            // Canonical hashing
             for(IAssetKey k = key; k!=null; k=k.GetPreviousKey())
-                if (k is IAssetKeyNonCanonicallyCompared == false)
+                if (k is IAssetKeyCanonicallyCompared)
                     foreach (var comparer in canonicalComparers)
                     {
                         result ^= comparer.GetHashCode(k);
@@ -166,141 +161,110 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Compares one part instance against another. Does not iterate key links towards root. 
+    /// Compares key that implements <see cref="IAssetKeyParametrized"/> against another.
     /// </summary>
-    public class ParametrizerCanonicalComparer<T> : IEqualityComparer<T>
+    public class ParametrizedComparer : IEqualityComparer<IAssetKey>
     {
-        IAssetKeyParametrizer parametrizer;
+        private static ParametrizedComparer instance = new ParametrizedComparer();
+        public static ParametrizedComparer Instance => instance;
 
-        public ParametrizerCanonicalComparer(IAssetKeyParametrizer parametrizer)
+        public bool Equals(IAssetKey x, IAssetKey y)
         {
-            this.parametrizer = parametrizer ?? throw new ArgumentException(nameof(parametrizer));
-        }
+            IAssetKey xLink = x, yLink = y;
 
-        public bool Equals(T x, T y)
-        {
-            string[] x_parameters = parametrizer.GetPartParameters(x), y_parameters = parametrizer.GetPartParameters(y);
-            if (x_parameters == null && y_parameters == null) return true;
-            if (x_parameters == null || y_parameters == null) return false;
-            if (x_parameters.Length != y_parameters.Length) return false;
-            for (int i=0; i<x_parameters.Length; i++)
-            {
-                string x_parameter = x_parameters[i], y_parameter = y_parameters[i];
-                if (x_parameter != y_parameter) return false;
-                string x_value = parametrizer.GetPartValue(x, x_parameter), y_value = parametrizer.GetPartValue(y, y_parameter);
-                if (x_value != y_value) return false;
-            }
-            return true;
+            string x_parameter = x.GetParameterName();
+            string y_parameter = y.GetParameterName();
+            if (x_parameter == null && y_parameter == null) return true;
+            if (x_parameter == null || y_parameter == null) return false;
+            if (x_parameter != y_parameter) return false;
+            return x.Name == y.Name;
         }
 
         const int FNVHashBasis = unchecked((int)0x811C9DC5);
         const int FNVHashPrime = 0x1000193;
-        public int GetHashCode(T obj)
+        public int GetHashCode(IAssetKey key)
         {
-            if (obj == null) return 0;
-            string[] parameters = parametrizer.GetPartParameters(obj);
-            if (parameters == null || parameters.Length == 0) return 0;
+            string parameterName = key.GetParameterName();
+            if (parameterName == null) return 0;
             int hash = FNVHashBasis;
-            foreach(string parameter in parameters)
-            {
-                string value = parametrizer.GetPartValue(obj, parameter);
-                if (value==null) continue;
-                hash ^= parameter.GetHashCode();
-                hash ^= value.GetHashCode();
-                //hash *= FNVHashPrime;
-            }
+            hash ^= parameterName.GetHashCode();
+            hash ^= key.Name.GetHashCode();
             return hash;
         }
     }
 
     /// <summary>
-    /// Compares all non-canonical parameters.
+    /// Compares all non-canonical parameters keys agains each other.
+    /// These are keys that implement <see cref="IAssetKeyParametrized"/> and <see cref="IAssetKeyNonCanonicallyCompared"/>.
+    /// Root key is not compared.
     /// </summary>
-    public class ParametrizerNonCanonicalComparer : IEqualityComparer<IAssetKey>
+    public class ParametrizedNonCanonicalComparer : IEqualityComparer<IAssetKey>
     {
-        IAssetKeyParametrizer parametrizer;
-
-        public ParametrizerNonCanonicalComparer(IAssetKeyParametrizer parametrizer)
-        {
-            this.parametrizer = parametrizer ?? throw new ArgumentException(nameof(parametrizer));
-        }
+        private static ParametrizedNonCanonicalComparer instance = new ParametrizedNonCanonicalComparer();
+        public static ParametrizedNonCanonicalComparer Instance => instance;
 
         public bool Equals(IAssetKey x, IAssetKey y)
         {
             LazyList<(string, string)> x_parameters = new LazyList<(string, string)>();
 
             // Get x's (parameter, value) pairs
-            for (IAssetKey x_part = x; x_part != null; x_part = x_part.GetPreviousKey())
+            for (IAssetKey x_link = x; x_link != null; x_link = x_link.GetPreviousKey())
             {
-                // Get parameters
-                string[] x_part_parametres = parametrizer.GetPartParameters(x_part);
-                if (x_part_parametres == null || x_part_parametres.Length == 0) continue;
+                // Is non-canonical
+                if (x_link is IAssetKeyNonCanonicallyCompared == false) continue;
 
-                foreach(string x_part_parameter in x_part_parametres)
-                {
-                    // Is non-canonical
-                    if (parametrizer.IsCanonical(x_part, x_part_parameter)) continue;
+                // Get parameter
+                string x_parameter_name = x_link.GetParameterName(), x_parameter_value = x_link.Name;
+                if (x_parameter_name == null || x_parameter_value == null) continue;
 
-                    // Get value
-                    string x_part_parameter_value = parametrizer.GetPartValue(x_part, x_part_parameter);
-                    if (x_part_parameter_value == null) continue;
+                // Has this parameter been added already. 
+                int ix = -1;
+                for (int i = 0; i < x_parameters.Count; i++) if (x_parameters[i].Item1 == x_parameter_name) { ix = i; break; }
+                // Last value stands.
+                if (ix >= 0) break;
 
-                    // Has this parameter been added already. 
-                    int ix = -1;
-                    for (int i = 0; i < x_parameters.Count; i++) if (x_parameters[i].Item1 == x_part_parameter) { ix = i; break; }
-                    // Last value stands.
-                    if (ix >= 0) break;
-
-                    // Add to list
-                    x_parameters.Add((x_part_parameter, x_part_parameter_value));
-                }
+                // Add to list
+                x_parameters.Add((x_parameter_name, x_parameter_value));
             }
 
             // Match against y's
             int count = 0;
-            for (IAssetKey y_part = y; y_part != null; y_part = y_part.GetPreviousKey())
+            for (IAssetKey y_link = y; y_link != null; y_link = y_link.GetPreviousKey())
             {
-                // Get parameters
-                string[] y_part_parametres = parametrizer.GetPartParameters(y_part);
-                if (y_part_parametres == null || y_part_parametres.Length == 0) continue;
+                // Is non-canonical
+                if (y_link is IAssetKeyNonCanonicallyCompared == false) continue;
 
-                foreach(string y_part_parameter in y_part_parametres)
+                // Get parameter name
+                string y_parameter_name = y_link.GetParameterName(), y_parameter_value = y_link.Name;
+                if (y_parameter_name == null || y_parameter_value == null) continue;
+
+                // Test if x had one corresponding one
+                string x_value = null;
+                int ix = -1;
+                for (int i = 0; i < x_parameters.Count; i++)
                 {
-                    // Is non-canonical
-                    if (parametrizer.IsCanonical(y_part, y_part_parameter)) continue;
-
-                    // Get y value
-                    string y_value = parametrizer.GetPartValue(y_part, y_part_parameter);
-                    if (y_value == null) continue;
-
-                    // Test if x had one
-                    string x_value = null;
-                    int ix = -1;
-                    for (int i = 0; i < x_parameters.Count; i++)
+                    if (x_parameters[i].Item1 == y_parameter_name)
                     {
-                        if (x_parameters[i].Item1 == y_part_parameter)
-                        {
-                            x_value = x_parameters[i].Item2;
-                            ix = i;
-                            break;
-                        }
+                        x_value = x_parameters[i].Item2;
+                        ix = i;
+                        break;
                     }
-
-                    // Y has y_part_parameter that x doesn'y have a corresponding value
-                    if (ix < 0) return false;
-
-                    // y_part_parameter has already been matched. It was ok. 
-                    // This is second time for this parameter, the last in chain value only matters.
-                    // Thereok, we can ignore this
-                    if (x_value == null) continue;
-
-                    // Value differs
-                    if (x_value != y_value) return false;
-
-                    // Value is same. We null x_parameter[ix].value as a signal that the paramter name has already been checked.
-                    x_parameters[ix] = (y_part_parameter, null);
-                    count++;
                 }
+
+                // y has a y_parameter_name that doesn't have a corresponding equivalent in x
+                if (ix < 0) return false;
+
+                // y_parameter_name has already been matched. It was ok. 
+                // This is second time for this parameter, the last in chain value only matters.
+                // Thereok, we can ignore this
+                if (x_value == null) continue;
+
+                // Value differs
+                if (x_value != y_parameter_value) return false;
+
+                // Value is same. We null x_parameter[ix].value as a signal that the paramter name has already been checked.
+                x_parameters[ix] = (y_parameter_name, null);
+                count++;
             }
 
             // X had some values Y didn't
@@ -311,28 +275,24 @@ namespace Lexical.Localization
 
         const int FNVHashBasis = unchecked((int)0x811C9DC5);
         const int FNVHashPrime = 0x1000193;
-        public int GetHashCode(IAssetKey obj)
+        public int GetHashCode(IAssetKey key)
         {
             int hash = 0;
             // Get x's (parameter, value) pairs
-            for (IAssetKey part = obj; part != null; part = part.GetPreviousKey())
+            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
             {
-                // Get parameters
-                string[] part_parametres = parametrizer.GetPartParameters(part);
-                if (part_parametres == null || part_parametres.Length == 0) continue;
+                if (k is IAssetKeyNonCanonicallyCompared == false) continue;
 
-                foreach (string part_parameter in part_parametres)
-                {
-                    // Is non-canonical
-                    if (parametrizer.IsCanonical(part, part_parameter)) continue;
+                // Get parameters.
+                string parameterName = k.GetParameterName();
+                if (parameterName == null) continue;
 
-                    // Get value
-                    string part_parameter_value = parametrizer.GetPartValue(part, part_parameter);
-                    if (part_parameter_value == null) continue;
+                // Get value.
+                string parameter_value = k.Name;
+                if (parameter_value == null) continue;
 
-                    hash ^= part_parameter.GetHashCode();
-                    hash ^= part_parameter_value.GetHashCode();
-                }
+                hash ^= parameterName.GetHashCode();
+                hash ^= parameter_value.GetHashCode();
             }
             return hash;
         }

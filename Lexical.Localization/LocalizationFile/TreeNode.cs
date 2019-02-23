@@ -76,7 +76,7 @@ namespace Lexical.Localization.LocalizationFile
             IAssetKeyParametrizer compositeParametrizer = parametrizer is TreeNode.Parametrizer ? parametrizer :
                 new AssetKeyParametrizerComposite(parametrizer, TreeNode.Parametrizer.Instance);
             // Create comparer that can compare LocalizationKeyTree and argument's keys
-            ParametrizerCanonicalComparer<object> comparer = new ParametrizerCanonicalComparer<object>(compositeParametrizer);
+            ParametrizedComparer comparer = ParametrizedComparer.Instance;
 
             foreach (var kp in keyValues)
             {
@@ -88,7 +88,7 @@ namespace Lexical.Localization.LocalizationFile
                 IEnumerable<object> non_canonical = key_parts_enumr.Where(p => !parametrizer.IsCanonical(p)).OrderBy(p => parametrizer.GetPartParameters(p), PartComparer.Default);
 
                 // Filter out keys that are same as this (root)
-                non_canonical = non_canonical.Where(part=>!comparer.Equals(this, part));
+                non_canonical = non_canonical.Where(part=>!comparer.Equals(this.Parameter, (IAssetKey)part));
 
                 // Add non-canonical parts
                 IEnumerable<object> canonical = key_parts_enumr.Where(p => parametrizer.IsCanonical(p));

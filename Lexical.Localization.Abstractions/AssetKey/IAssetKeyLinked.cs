@@ -17,16 +17,6 @@ namespace Lexical.Localization
         IAssetKey PreviousKey { get; }
     }
 
-    /// <summary>
-    /// Signal for implementing class that this link is not to be canonically compared. 
-    /// Instead the comparer should jump to next key in the chain.
-    /// 
-    /// Some links, such as culture and inlining can be added anywhere and should be compared by their position.
-    /// </summary>
-    public interface IAssetKeyNonCanonicallyCompared
-    {
-    }
-
     public delegate void AssetKeyVisitor<T>(IAssetKey key, ref T data);
 
     public static partial class AssetKeyExtensions

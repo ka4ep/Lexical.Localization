@@ -182,7 +182,7 @@ namespace Lexical.Localization.LocalizationFile2
             // Create composite paramerizer
             IAssetKeyParametrizer compositeParametrizer = parametrizer is KeyTree.Parametrizer ? parametrizer : new AssetKeyParametrizerComposite(parametrizer, KeyTree.Parametrizer.Instance);
             // Create comparer that can compare TreeNode and argument's keys
-            ParametrizerCanonicalComparer<object> comparer = new ParametrizerCanonicalComparer<object>(compositeParametrizer);
+            ParametrizedComparer comparer = new ParametrizedComparer();
             // Create orderer
             PartComparer partComparer = new PartComparer().AddParametersToSortOrder("root");
             if (groupingRule != null)

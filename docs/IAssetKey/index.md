@@ -39,7 +39,7 @@ Non-canonical parts are typically hints, such as **.SetCulture(*string*)**.
 | root | canonical | IAssetRoot |  | Contains asset and culture policy. Keys are constructed from here. |
 | type | canonical | IAssetKeyTypeSection | .TypeSection(*Type*) | Type section for grouping by classes and interfaces. |
 | location | canonical | IAsseyKeyLocationSection | .Location(*string*) | Hint to asset for a directory to search from. |
-| assembly | canonical | IAssetKeyAssemblySection | .AssemblySection(*Assembly*) | Hint to asset for an assembly to search from. |
+| assembly | non-canonical | IAssetKeyAssemblySection | .AssemblySection(*Assembly*) | Hint to asset for an assembly to search from. |
 | resource | canonical | IAssetKeyResourceSection | .ResourceSection(*string*) | Hint to asset for an embedded resource path to search from. |
 | section | canonical | IAssetKeySection | .Section(*string*) | Generic section for grouping assets. |
 | key | canonical | IAssetKey | .Key(*string*) | Leaf key |

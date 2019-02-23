@@ -24,11 +24,11 @@ namespace Lexical.Localization.Ms.Extensions
     public partial class StringLocalizerRoot :
         StringLocalizerKey,
         IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicy, IAssetKeyAssetAssigned,
-        IStringLocalizer, IStringLocalizerFactory,
-        IAssetKeyNonCanonicallyCompared
+        IStringLocalizer, IStringLocalizerFactory, IAssetKeyParametrized
     {
         protected ICulturePolicy culturePolicy;
         protected IAsset localizationAsset;
+        String IAssetKeyParametrized.ParameterName => "root";
 
         public virtual ICulturePolicy CulturePolicy { get => culturePolicy; set { throw new InvalidOperationException(); } }
         public virtual IAsset Asset { get => localizationAsset; set { throw new InvalidOperationException(); } }

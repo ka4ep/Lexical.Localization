@@ -59,7 +59,7 @@ namespace Lexical.Localization.Ms.Extensions
         IAssetKeyAssigned IAssetKeyAssignable.Key(string subkey) => new _Key(this, subkey);
         public _Key Key(string subkey) => new _Key(this, subkey);
         [Serializable]
-        public class _Key : StringLocalizerKey, IAssetKeyAssigned, IAssetKeyParametrized
+        public class _Key : StringLocalizerKey, IAssetKeyAssigned, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
         {
             public _Key(IAssetKey prevKey, string name) : base(prevKey, name) { }
             public _Key(SerializationInfo info, StreamingContext context) : base(info, context) { }
@@ -83,7 +83,7 @@ namespace Lexical.Localization.Ms.Extensions
             }
         }
         [Serializable]
-        public class _Parametrized : StringLocalizerKey, IAssetKeyAssigned, IAssetKeyParametrized
+        public class _Parametrized : StringLocalizerKey, IAssetKeyAssigned, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
         {
             string parameterName;
             public _Parametrized(IAssetKey prevKey, string parameterName, string parameterValue) : base(prevKey, parameterValue)
@@ -175,7 +175,7 @@ namespace Lexical.Localization.Ms.Extensions
         IAssetKeySectionAssigned IAssetKeySectionAssignable.Section(string sectionName) => new _Section(this, sectionName);
         public _Section Section(string sectionName) => new _Section(this, sectionName);
         [Serializable]
-        public class _Section : StringLocalizerKey, IAssetKeySectionAssigned, IAssetKeyParametrized
+        public class _Section : StringLocalizerKey, IAssetKeySectionAssigned, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
         {
             public _Section(IAssetKey prevKey, string name) : base(prevKey, name) { }
             public _Section(SerializationInfo info, StreamingContext context) : base(info, context) { }
@@ -190,7 +190,7 @@ namespace Lexical.Localization.Ms.Extensions
         public _TypeSection TypeSection(Type t) => typeSectionConstructor.Create(t, this);
         public _TypeSection<T> TypeSection<T>() => new _TypeSection<T>(this);
         [Serializable]
-        public class _TypeSection : StringLocalizerKey, IAssetKeyTypeSection, IAssetKeyParametrized
+        public class _TypeSection : StringLocalizerKey, IAssetKeyTypeSection, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
         {
             protected Type type;
             public virtual Type Type => type;
@@ -222,7 +222,7 @@ namespace Lexical.Localization.Ms.Extensions
         public _AssemblySection AssemblySection(Assembly assembly) => new _AssemblySection(this, assembly);
         public _AssemblySection AssemblySection(String assemblyName) => new _AssemblySection(this, assemblyName);
         [Serializable]
-        public class _AssemblySection : StringLocalizerKey, IAssetKeyAssemblySection, IAssetKeyNonCanonicallyCompared, IAssetKeyParametrized
+        public class _AssemblySection : StringLocalizerKey, IAssetKeyAssemblySection, IAssetKeyNonCanonicallyCompared, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
         {
             protected Assembly assembly;
             public virtual Assembly Assembly => assembly;
@@ -244,7 +244,7 @@ namespace Lexical.Localization.Ms.Extensions
         IAssetKeyResourceSection IAssetKeyResourceSectionAssignable.ResourceSection(String resourceName) => new _ResourceSection(this, resourceName);
         public _ResourceSection ResourceSection(String resourceName) => new _ResourceSection(this, resourceName);
         [Serializable]
-        public class _ResourceSection : StringLocalizerKey, IAssetKeyResourceSection, IAssetKeyParametrized
+        public class _ResourceSection : StringLocalizerKey, IAssetKeyResourceSection, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
         {
             public _ResourceSection(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
             public _ResourceSection(SerializationInfo info, StreamingContext context) : base(info, context) {}
@@ -254,7 +254,7 @@ namespace Lexical.Localization.Ms.Extensions
         IAssetKeyLocationSection IAssetKeyLocationSectionAssignable.Location(String resourceName) => new _LocationSection(this, resourceName);
         public _LocationSection Location(String resourceName) => new _LocationSection(this, resourceName);
         [Serializable]
-        public class _LocationSection : StringLocalizerKey, IAssetKeyLocationSection, IAssetKeyParametrized
+        public class _LocationSection : StringLocalizerKey, IAssetKeyLocationSection, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
         {
             public _LocationSection(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
             public _LocationSection(SerializationInfo info, StreamingContext context) : base(info, context) { }
@@ -325,8 +325,8 @@ namespace Lexical.Localization.Ms.Extensions
         /// </summary>
         static IEqualityComparer<IAssetKey> comparer =
             new AssetKeyComparer()
-                .AddCanonicalParametrizerComparer(AssetKeyParametrizer.Singleton)
-                .AddNonCanonicalParametrizerComparer(AssetKeyParametrizer.Singleton)
+                .AddCanonicalParametrizedComparer()
+                .AddNonCanonicalParametrizedComparer()
                 .AddNonCanonicalComparer(new LocalizationKeyFormatArgsComparer());
                 //.AddNonCanonicalComparer(new LocalizationKeyCultureComparer()); // <- culture is already compared by parametrizer comparer.
 

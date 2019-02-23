@@ -24,7 +24,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key has <see cref="IAsset"/> hint assigned.
     /// </summary>
-    public interface IAssetKeyAssetAssigned : IAssetKeyNonCanonicallyCompared
+    public interface IAssetKeyAssetAssigned : IAssetKey
     {
         /// <summary>
         /// Object that contains localization assets.

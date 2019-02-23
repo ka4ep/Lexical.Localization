@@ -36,6 +36,14 @@ namespace Lexical.Localization
     public static partial class AssetKeyExtensions
     {
         /// <summary>
+        /// Get parameter name of the key link.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>name or null</returns>
+        public static string GetParameterName(this IAssetKey key)
+            => key is IAssetKeyParametrized parametrized ? parametrized.ParameterName : null;
+
+        /// <summary>
         /// Create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
         /// </summary>
         /// <param name="parameterName">parameter name describes the key type to be created</param>

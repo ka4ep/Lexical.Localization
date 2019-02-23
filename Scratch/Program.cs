@@ -18,11 +18,13 @@ namespace Scratch
             // TODO: Root shouldn't be hash-equal compared (??) //
 
             IAssetKeyParametrizer compositeParametrizer = Key.Parametrizer.Default.Concat(AssetKeyParametrizer.Singleton);
-            AssetKeyComparer comparer1 = new AssetKeyComparer().AddCanonicalParametrizerComparer(AssetKeyParametrizer.Singleton).AddNonCanonicalParametrizerComparer(AssetKeyParametrizer.Singleton);
-            AssetKeyComparer comparer2 = new AssetKeyComparer().AddCanonicalParametrizerComparer(Key.Parametrizer.Default).AddNonCanonicalParametrizerComparer(Key.Parametrizer.Default);
+            AssetKeyComparer comparer = AssetKeyComparer.Default;
 
-            Console.WriteLine(comparer1.GetHashCode(key));
-            Console.WriteLine(comparer2.GetHashCode(key2));
+            Console.WriteLine(comparer.GetHashCode(key));
+            Console.WriteLine(comparer.GetHashCode(key2));
+
+            Key key3 = key2.Append("culture", "en");
+            Console.WriteLine(key3);
 
             Console.WriteLine(key);
             Console.WriteLine(key.SetCulture("en"));

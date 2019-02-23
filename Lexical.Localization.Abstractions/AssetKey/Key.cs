@@ -18,7 +18,7 @@ namespace Lexical.Localization
     /// 
     /// This class has one parameter name and a value, and it can carry a link to previous node.
     /// </summary>
-    public partial class Key : IAssetKey, IAssetKeyLinked, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>
+    public partial class Key : IAssetKey, IAssetKeyLinked, IAssetKeyParametrized, IAssetKeyParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>
     {
         /// <summary>
         /// Parameter name, e.g. "culture"
@@ -36,7 +36,8 @@ namespace Lexical.Localization
         public Key Previous;
 
         IAssetKey IAssetKeyLinked.PreviousKey => Previous;
-        string IAssetKey.Name => Name;
+        string IAssetKey.Name => Value;
+        public string ParameterName => Name;
 
         /// <summary>
         /// Cached parameters array.
@@ -81,7 +82,18 @@ namespace Lexical.Localization
         /// <param name=""></param>
         /// <returns>new reference with a new key</returns>
         public Key Append(string parameterName, string parameterValue)
-            => new Key(this, parameterName, parameterValue);
+            => (Key)AppendParameter(parameterName, parameterValue);
+
+        public IAssetKeyParametrized AppendParameter(string parameterName, string parameterValue)
+        {
+            switch(parameterName)
+            {
+                case "root": return new Key(this, parameterName, parameterValue);
+                case "culture": 
+                case "assembly": return new Key.NonCanonical(this, parameterName, parameterValue);
+                default: return new Key.Canonical(this, parameterName, parameterValue);
+            }
+        }
 
         /// <summary>
         /// Concatenate two keys.
@@ -108,7 +120,16 @@ namespace Lexical.Localization
             public NonCanonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
         }
 
-        public static AssetKeyComparer ChainComparer = new AssetKeyComparer().AddCanonicalParametrizerComparer(Parametrizer.Default).AddNonCanonicalParametrizerComparer(Parametrizer.Default);
+        /// <summary>
+        /// Proxy implementation of non-canonical parameter. Implements <see cref="IAssetKeyCanonicallyCompared"/>.
+        /// </summary>
+        public class Canonical : Key, IAssetKeyCanonicallyCompared
+        {
+            public Canonical(string parameterName, string parameterValue) : base(parameterName, parameterValue) { }
+            public Canonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
+        }
+
+        public static AssetKeyComparer ChainComparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
 
         bool IEquatable<Key>.Equals(Key other)
             => ChainComparer.Equals(this, other);
@@ -222,18 +243,19 @@ namespace Lexical.Localization
                 => part is Key proxy ? proxy.Previous : null;
 
             public bool IsCanonical(object part, string parameterName)
-                => part is Key proxy && part is Key.NonCanonical == false;
+                => part is Key proxy && part is Key.Canonical == false;
             public bool IsNonCanonical(object part, string parameterName)
                 => part is Key proxy && part is Key.NonCanonical;
 
             public object TryCreatePart(object obj, string parameterName, string parameterValue)
             {
-                Key key = obj as Key;
-                //if (key == null) return null;
-
-                return nonCanonicalParameterNames.Contains(parameterName) ?
-                    new Key.NonCanonical(key, parameterName, parameterValue) :
-                    new Key(key, parameterName, parameterValue);
+                switch (parameterName)
+                {
+                    case "root": return new Key(obj as Key, parameterName, parameterValue);
+                    case "culture": 
+                    case "assembly": return new Key.NonCanonical(obj as Key, parameterName, parameterValue);
+                    default: return new Key.Canonical(obj as Key, parameterName, parameterValue);
+                }
             }
 
             public object TryCreatePart(object obj, string parameterName, string parameterValue, bool canonical)
@@ -270,22 +292,20 @@ namespace Lexical.Localization
         {
             // Count the number of keys
             int count = 0;
-            if (includeNonCanonical)
-                for (Key k = this; k != null; k = k.Previous) count++;
-            else
-                for (Key k = this; k != null; k = k.Previous)
-                    if (k is IAssetKeyNonCanonicallyCompared == false) count++;
+            for (Key k = this; k != null; k = k.Previous)
+            {
+                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                    count++;
+            }
 
             // Create result
             Key[] result = new Key[count];
-            int ix = count - 1;
-            if (includeNonCanonical)
-                for (Key k = this; k != null; k = k.Previous)
-                    result[ix--] = k;
-            else
-                for (Key k = this; k != null; k = k.Previous)
-                    if (k is IAssetKeyNonCanonicallyCompared == false)
-                        result[ix--] = k;
+            int ix = count;
+            for (Key k = this; k != null; k = k.Previous)
+            {
+                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                    result[--ix] = k;
+            }
 
             return result;
         }
@@ -307,7 +327,7 @@ namespace Lexical.Localization
         string[] cachedKeyArray;
 
         public string[] ToKeyArray()
-            => cachedKeyArray ?? (cachedKeyArray = ToKeyValueArray().Select(kv => kv.Key).ToArray());
+            => cachedKeyArray ?? (cachedKeyArray = _toKeyArray(true));
 
         public string[] ToKeyArray(bool includeNonCanonical)
             => includeNonCanonical ? ToKeyArray() : _toKeyArray(includeNonCanonical);
@@ -316,24 +336,22 @@ namespace Lexical.Localization
         {
             // Count the number of keys
             int count = 0;
-            if (includeNonCanonical)
-                for (Key k = this; k != null; k = k.Previous) count++;
-            else
-                for (Key k = this; k != null; k = k.Previous)
-                    if (k is IAssetKeyNonCanonicallyCompared == false) count++;
+            for (Key k = this; k != null; k = k.Previous)
+            {
+                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                    count++;
+            }
 
             if (count == 0) return empty;
 
             // Create result
             string[] result = new string[count];
-            int ix = count - 1;
-            if (includeNonCanonical)
-                for (Key k = this; k != null; k = k.Previous)
-                    result[ix--] = k.Name;
-            else
-                for (Key k = this; k != null; k = k.Previous)
-                    if (k is IAssetKeyNonCanonicallyCompared == false)
-                        result[ix--] = k.Name;
+            int ix = count;
+            for (Key k = this; k != null; k = k.Previous)
+            {
+                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                    result[--ix] = k.Name;
+            }
 
             return result;
         }
@@ -341,7 +359,7 @@ namespace Lexical.Localization
         KeyValuePair<string, string>[] cachedKeyValueArray;
 
         public KeyValuePair<string, string>[] ToKeyValueArray()
-            => cachedKeyValueArray ?? (cachedKeyValueArray = _toKeyValueArray(false));
+            => cachedKeyValueArray ?? (cachedKeyValueArray = _toKeyValueArray(true));
 
         public KeyValuePair<string, string>[] ToKeyValueArray(bool includeNonCanonical)
             => includeNonCanonical ? ToKeyValueArray() : _toKeyValueArray(includeNonCanonical);
@@ -350,22 +368,20 @@ namespace Lexical.Localization
         {
             // Count the number of keys
             int count = 0;
-            if (includeNonCanonical)
-                for (Key k = this; k != null; k = k.Previous) count++;
-            else
-                for (Key k = this; k != null; k = k.Previous)
-                    if (k is IAssetKeyNonCanonicallyCompared == false) count++;
+            for (Key k = this; k != null; k = k.Previous)
+            {
+                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                    count++;
+            }
 
             // Create result
             KeyValuePair<string, string>[] result = new KeyValuePair<string, string>[count];
-            int ix = count - 1;
-            if (includeNonCanonical)
-                for (Key k = this; k != null; k = k.Previous)
-                    result[ix--] = new KeyValuePair<string, string>(k.Name, k.Value);
-            else
-                for (Key k = this; k != null; k = k.Previous)
-                    if (k is IAssetKeyNonCanonicallyCompared == false)
-                        result[ix--] = new KeyValuePair<string, string>(k.Name, k.Value);
+            int ix = count;
+            for (Key k = this; k != null; k = k.Previous)
+            {
+                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                    result[--ix] = new KeyValuePair<string, string>(k.Name, k.Value);
+            }
 
             return result;
         }

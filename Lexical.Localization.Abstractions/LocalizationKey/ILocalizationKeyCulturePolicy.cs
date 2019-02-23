@@ -26,7 +26,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key has been set with <see cref="ICulturePolicy"/> hint.
     /// </summary>
-    public interface ILocalizationKeyCulturePolicy : IAssetKeyNonCanonicallyCompared, ILocalizationKey
+    public interface ILocalizationKeyCulturePolicy : ILocalizationKey
     {
         /// <summary>
         /// Selected culture policy, or null.

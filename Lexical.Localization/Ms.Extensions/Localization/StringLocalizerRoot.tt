@@ -42,8 +42,7 @@ namespace Lexical.Localization.Ms.Extensions
     public partial class StringLocalizerRoot :
         StringLocalizerKey,
         IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicy, IAssetKeyAssetAssigned,
-        IStringLocalizer, IStringLocalizerFactory,
-        IAssetKeyNonCanonicallyCompared
+        IStringLocalizer, IStringLocalizerFactory, IAssetKeyParametrized
     {
 <#= srcCode #>
      
