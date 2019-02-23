@@ -23,13 +23,6 @@ namespace docs
 
             {
                 #region Snippet_2
-                // Parametrizer for AssetKey
-                IAssetKeyParametrizer parametrizer = AssetKeyParametrizer.Singleton;
-                // Convert to context-dependent instance
-                object key = LocalizationRoot.Global;
-                foreach (var parameter in parameters) key = parametrizer.CreatePart(key, parameter.Key, parameter.Value);
-                // Type-cast
-                IAssetKey key_ = (IAssetKey)key;
                 #endregion Snippet_2
             }
             {

@@ -19,7 +19,7 @@ namespace Lexical.Localization
     [DebuggerDisplay("{DebugPrint()}")]
     public class AssetKey :
 #region Interfaces
-        IAssetKey, IAssetKeyLinked, IAssetKeyTypeSectionAssignable, IAssetKeyAssemblySectionAssignable, IAssetKeyResourceSectionAssignable, IAssetKeyLocationSectionAssignable, IAssetKeySectionAssignable, IAssetKeyAssignable, ISerializable, IDynamicMetaObjectProvider
+        IAssetKey, IAssetKeyLinked, IAssetKeyTypeSectionAssignable, IAssetKeyAssemblySectionAssignable, IAssetKeyResourceSectionAssignable, IAssetKeyLocationSectionAssignable, IAssetKeySectionAssignable, IAssetKeyAssignable, IAssetKeyParameterAssignable, ISerializable, IDynamicMetaObjectProvider
 #endregion Interfaces
     {
         #region Code
@@ -53,18 +53,56 @@ namespace Lexical.Localization
         IAssetKeyAssigned IAssetKeyAssignable.Key(string subkey) => new _Key(this, subkey);
         public virtual _Key Key(string subkey) => new _Key(this, subkey);
         [Serializable]
-        public class _Key : AssetKey, IAssetKeyAssigned
+        public class _Key : AssetKey, IAssetKeyAssigned, IAssetKeyParametrized
         {
             public _Key(IAssetKey prevKey, string name) : base(prevKey, name) { }
             public _Key(SerializationInfo info, StreamingContext context) : base(info, context) { }
+            public String ParameterName => "key";
         }
+
+        IAssetKeyParametrized IAssetKeyParameterAssignable.AppendParameter(string parameterName, string parameterValue)
+        {
+            if (parameterName == null) throw new ArgumentNullException(nameof(parameterName));
+            if (parameterValue == null) throw new ArgumentNullException(nameof(parameterValue));
+            switch (parameterName)
+            {
+                case "key": return new _Key(this, parameterValue);
+                case "type": return new _TypeSection(this, parameterValue);
+                case "section": return new _Section(this, parameterValue);
+                case "resource": return new _ResourceSection(this, parameterValue);
+                case "assembly": return new _AssemblySection(this, parameterValue);
+                case "location": return new _LocationSection(this, parameterValue);
+                default: return new _Parametrized(this, parameterName, parameterValue);
+            }
+        }
+        [Serializable]
+        public class _Parametrized : LocalizationKey, IAssetKeyAssigned, IAssetKeyParametrized
+        {
+            string parameterName;
+            public _Parametrized(IAssetKey prevKey, string parameterName, string parameterValue) : base(prevKey, parameterValue)
+            {
+                this.parameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
+            }
+            public _Parametrized(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+                this.parameterName = info.GetValue(nameof(ParameterName), typeof(string)) as string;
+            }
+            public override void GetObjectData(SerializationInfo info, StreamingContext context)
+            {
+                base.GetObjectData(info, context);
+                info.AddValue(nameof(ParameterName), parameterName);
+            }
+            public String ParameterName => parameterName;
+        }
+
 
         IAssetKeySectionAssigned IAssetKeySectionAssignable.Section(string sectionName) => new _Section(this, sectionName);
         [Serializable]
-        public class _Section : AssetKey, IAssetKeySectionAssigned
+        public class _Section : AssetKey, IAssetKeySectionAssigned, IAssetKeyParametrized
         {
             public _Section(IAssetKey prevKey, string name) : base(prevKey, name) { }
             public _Section(SerializationInfo info, StreamingContext context) : base(info, context) { }
+            public virtual String ParameterName => "section";
         }
 
         static RuntimeConstructor<IAssetKey, _TypeSection> typeSectionConstructor = new RuntimeConstructor<IAssetKey, _TypeSection>(typeof(_TypeSection<>));
@@ -72,7 +110,7 @@ namespace Lexical.Localization
         IAssetKeyTypeSection IAssetKeyTypeSectionAssignable.TypeSection(Type t) => typeSectionConstructor.Create(t, this);
         IAssetKey<T> IAssetKeyTypeSectionAssignable.TypeSection<T>() => new _TypeSection<T>(this);
         [Serializable]
-        public class _TypeSection : AssetKey, IAssetKeyTypeSection
+        public class _TypeSection : AssetKey, IAssetKeyTypeSection, IAssetKeyParametrized
         {
             protected Type type;
             public virtual Type Type => type;
@@ -88,6 +126,7 @@ namespace Lexical.Localization
                 if (t.IsSerializable) info.AddValue(nameof(Type), t);
                 base.GetObjectData(info, context);
             }
+            public String ParameterName => "type";
         }
         [Serializable]
         public class _TypeSection<T> : _TypeSection, IAssetKey<T>/**TypeSectionInterfaces**/
@@ -100,7 +139,7 @@ namespace Lexical.Localization
         IAssetKeyAssemblySection IAssetKeyAssemblySectionAssignable.AssemblySection(Assembly assembly) => new _AssemblySection(this, assembly);
         IAssetKeyAssemblySection IAssetKeyAssemblySectionAssignable.AssemblySection(String assemblyName) => new _AssemblySection(this, assemblyName);
         [Serializable]
-        public class _AssemblySection : AssetKey, IAssetKeyAssemblySection, IAssetKeyNonCanonicallyCompared
+        public class _AssemblySection : AssetKey, IAssetKeyAssemblySection, IAssetKeyNonCanonicallyCompared, IAssetKeyParametrized
         {
             protected Assembly assembly;
             public virtual Assembly Assembly => assembly;
@@ -116,22 +155,25 @@ namespace Lexical.Localization
                 info.AddValue(nameof(Assembly), a);
                 base.GetObjectData(info, context);
             }
+            public String ParameterName => "assembly";
         }
 
         IAssetKeyResourceSection IAssetKeyResourceSectionAssignable.ResourceSection(String resourceName) => new _ResourceSection(this, resourceName);
         [Serializable]
-        public class _ResourceSection : AssetKey, IAssetKeyResourceSection
+        public class _ResourceSection : AssetKey, IAssetKeyResourceSection, IAssetKeyParametrized
         {
             public _ResourceSection(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
             public _ResourceSection(SerializationInfo info, StreamingContext context) : base(info, context) {}
+            public String ParameterName => "resource";
         }
 
         IAssetKeyLocationSection IAssetKeyLocationSectionAssignable.Location(String resourceName) => new _LocationSection(this, resourceName);
         [Serializable]
-        public class _LocationSection : AssetKey, IAssetKeyLocationSection
+        public class _LocationSection : AssetKey, IAssetKeyLocationSection, IAssetKeyParametrized
         {
             public _LocationSection(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
             public _LocationSection(SerializationInfo info, StreamingContext context) : base(info, context) { }
+            public String ParameterName => "location";
         }
 
         /// <summary>

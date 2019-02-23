@@ -61,7 +61,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement ITypeAssignableLocalizationKey</exception>
+        /// <exception cref="AssetKeyException">If key doesn't implement IAssetKeyAssemblySectionAssignable</exception>
         public static IAssetKeyAssemblySection AssemblySection(this IAssetKey key, Assembly assembly)
         {
             if (key is IAssetKeyAssemblySectionAssignable casted) return casted.AssemblySection(assembly);
@@ -74,7 +74,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement ITypeAssignableLocalizationKey</exception>
+        /// <exception cref="AssetKeyException">If key doesn't implement IAssetKeyAssemblySectionAssignable</exception>
         public static IAssetKeyAssemblySection AssemblySection(this IAssetKey key, string assembly)
         {
             if (key is IAssetKeyAssemblySectionAssignable casted) return casted.AssemblySection(assembly);

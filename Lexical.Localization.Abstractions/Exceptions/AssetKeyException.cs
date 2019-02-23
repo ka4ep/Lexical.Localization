@@ -20,7 +20,7 @@ namespace Lexical.Localization
             this.Key = info.GetValue("Key", typeof(IAssetKey)) as IAssetKey;
         }
         public override string ToString()
-            => $"{base.ToString()} ({Key.Name})";
+            => Message == null ? $"{base.ToString()} ({Key.Name})" : $"{base.ToString()} ({Key.Name}: {Message})";
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
