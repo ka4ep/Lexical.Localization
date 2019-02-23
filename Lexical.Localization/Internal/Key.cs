@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Internal
 {
     /// <summary>
     /// This class is a context-free implementation of <see cref="IAssetKey"/>. 

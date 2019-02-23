@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lexical.Localization;
+using Lexical.Localization.Internal;
 using Lexical.Localization.LocalizationFile2;
 
 namespace Scratch

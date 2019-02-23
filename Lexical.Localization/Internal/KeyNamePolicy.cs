@@ -7,9 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using Lexical.Localization.Internal;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Internal
 {
     /// <summary>
     /// Context free format of asset key

@@ -3,6 +3,7 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -30,7 +31,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Cached queries where key is filter-criteria-key, and value is query result.
         /// </summary>
-        Dictionary<IAssetKey, Key[]> cachedQueries;
+        Dictionary<IAssetKey, IAssetKey[]> cachedQueries;
 
         public AssetCachePartKeys(IAsset source, AssetCacheOptions options, IAssetKeyParametrizer parametrizer = default)
         {
@@ -45,13 +46,13 @@ namespace Lexical.Localization
             IAssetKeyParametrizer compositeParametrizer = Key.Parametrizer.Default.Concat(parametrizer);
             this.comparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
 
-            this.cachedQueries = new Dictionary<IAssetKey, Key[]>(comparer);
+            this.cachedQueries = new Dictionary<IAssetKey, IAssetKey[]>(comparer);
         }
 
-        public IEnumerable<Key> GetAllKeys(IAssetKey key = null)
+        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey key = null)
         {
             int iter = iteration;
-            Key[] queryResult = null;
+            IAssetKey[] queryResult = null;
             m_lock.EnterReadLock();
             // Hash-Equals may throw exceptions, we need try-finally to release lock properly.
             try

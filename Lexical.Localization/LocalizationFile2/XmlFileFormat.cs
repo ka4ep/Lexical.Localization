@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lexical.Localization.Internal;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

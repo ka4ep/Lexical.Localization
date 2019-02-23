@@ -3,6 +3,7 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -84,7 +85,7 @@ namespace Lexical.Localization
             return result;
         }
 
-        public IEnumerable<Key> GetAllKeys(IAssetKey criteriaKey = null)
+        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey criteriaKey = null)
         {
             if (namePolicy is IAssetNamePattern pattern) return GetAllKeysWithPattern(pattern, criteriaKey);
 
@@ -92,13 +93,9 @@ namespace Lexical.Localization
             return null;
         }
 
-        IEnumerable<Key> GetAllKeysWithPattern(IAssetNamePattern pattern, IAssetKey criteriaKey)
+        IEnumerable<IAssetKey> GetAllKeysWithPattern(IAssetNamePattern pattern, IAssetKey criteriaKey)
         {
-            KeyValuePair<string, string>[] criteriaParams = 
-                criteriaKey == null ? null : (
-                    criteriaKey is Key _criteria_key ? _criteria_key.ToKeyValueArray() :
-                    AssetKeyParametrizer.Singleton.GetAllParameters(criteriaKey).ToArray()
-                );
+            KeyValuePair<string, string>[] criteriaParams = criteriaKey.GetParameters();
 
             foreach (var line in source)
             {
@@ -134,13 +131,13 @@ namespace Lexical.Localization
                 }
                 if (!ok) continue;
 
-                Key _key = null;
+                Key _key = Key.Root;
                 foreach (var part in pattern.CaptureParts)
                 {
                     string partValue = match[part.CaptureIndex];
                     if (partValue == null) continue;
 
-                    _key = new Key(_key, part.ParameterName, partValue);
+                    _key = _key.Append(part.ParameterName, partValue);
                 }
                 if (_key != null) yield return _key;
             }

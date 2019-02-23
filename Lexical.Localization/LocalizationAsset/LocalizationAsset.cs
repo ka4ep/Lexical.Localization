@@ -3,6 +3,7 @@
 // Date:           20.2.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -157,17 +158,17 @@ namespace Lexical.Localization
             return this;
         }
 
-        protected virtual IEnumerable<KeyValuePair<Key, string>> ConcatenateSources()
+        protected virtual IEnumerable<KeyValuePair<IAssetKey, string>> ConcatenateSources()
         {
             IEnumerable<KeyValuePair<Key, string>> result = null;
             foreach(var source in sources)
             {
                 result = result == null ? source : result.Concat(source);
             }
-            return result ?? new KeyValuePair<Key, string>[0];
+            return result?.Select(kp=>new KeyValuePair<IAssetKey, string>(kp.Key, kp.Value)) ?? new KeyValuePair<IAssetKey, string>[0];
         }
 
-        protected virtual void SetContent(IEnumerable<KeyValuePair<Key, string>> src)
+        protected virtual void SetContent(IEnumerable<KeyValuePair<IAssetKey, string>> src)
         {
             var newMap = new Dictionary<IAssetKey, string>(Comparer);
             foreach (var line in src)
@@ -197,38 +198,33 @@ namespace Lexical.Localization
             return result;
         }
 
-        public IEnumerable<Key> GetAllKeys(IAssetKey criteriaKey = null)
+        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey criteriaKey = null)
         {
-            IEnumerable<Key> keyEnumr = map.Keys.Cast<Key>();
+            IEnumerable<IAssetKey> keyEnumr = map.Keys;
             // Filter
             if (criteriaKey != null)
             {
-                KeyValuePair<string, string>[] filterParameters =
-                        criteriaKey is Key _criteria_key ? _criteria_key.ToKeyValueArray() :
-                        AssetKeyParametrizer.Singleton.GetAllParameters(criteriaKey).ToArray();
-
+                KeyValuePair<string, string>[] filterParameters = criteriaKey.GetParameters();
                 if (filterParameters.Length > 0) keyEnumr = FilterKeys(keyEnumr, filterParameters);
             }
             return keyEnumr.ToArray();
         }
 
-        IEnumerable<Key> FilterKeys(IEnumerable<Key> keys, KeyValuePair<string, string>[] filterParameters)
+        IEnumerable<IAssetKey> FilterKeys(IEnumerable<IAssetKey> keys, KeyValuePair<string, string>[] filterParameters)
         {
-            foreach (Key key in keys)
+            foreach (IAssetKey key in keys)
             {
                 // Filter by criteria key
                 bool ok = true;
                 // Iterate all criteria parameters (key,value)
                 foreach (var filterParameter in filterParameters)
                 {
-                    if (filterParameter.Key == "root") continue;
-
                     bool okk = false;
-                    for (Key k = key; k != null; k = k.Previous)
+                    for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
                     {
-                        if (k.Name == filterParameter.Key)
+                        if (k.GetParameterName() == filterParameter.Key)
                         {
-                            okk = k.Value == filterParameter.Value;
+                            okk = k.Name == filterParameter.Value;
                             break;
                         }
                     }

@@ -19,7 +19,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterCriteria">(optional) key criteria to match with</param>
         /// <returns>keys in context-free format, or null if not supported</returns>
-        IEnumerable<Key> GetAllKeys(IAssetKey filterCriteria = null);
+        IEnumerable<IAssetKey> GetAllKeys(IAssetKey filterCriteria = null);
     }
 
     public static partial class LocalizationAssetExtensions
@@ -33,15 +33,15 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="filterCriteria">(optional) key criteria to match with</param>
         /// <returns>resolved string or null</returns>
-        public static IEnumerable<Key> GetAllKeys(this IAsset asset, IAssetKey filterCriteria = null)
+        public static IEnumerable<IAssetKey> GetAllKeys(this IAsset asset, IAssetKey filterCriteria = null)
         {
-            IEnumerable<Key> result = null;
+            IEnumerable<IAssetKey> result = null;
             if (asset is IAssetKeyCollection casted) result = casted.GetAllKeys(filterCriteria);
             if (asset is IAssetComposition composition)
             {
                 foreach (IAssetKeyCollection strs in composition.GetComponents<IAssetKeyCollection>(true))
                 {
-                    IEnumerable<Key> _result = strs.GetAllKeys(filterCriteria);
+                    IEnumerable<IAssetKey> _result = strs.GetAllKeys(filterCriteria);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                 }
                 foreach (IAssetProvider _ in composition.GetComponents<IAssetProvider>(true))
@@ -51,7 +51,7 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            IEnumerable<Key> _result = loaded_asset.GetAllKeys(filterCriteria);
+                            IEnumerable<IAssetKey> _result = loaded_asset.GetAllKeys(filterCriteria);
                             if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                         }
                     }
@@ -64,7 +64,7 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in loaded_assets)
                     {
-                        IEnumerable<Key> _result = loaded_asset.GetAllKeys(filterCriteria);
+                        IEnumerable<IAssetKey> _result = loaded_asset.GetAllKeys(filterCriteria);
                         if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                     }
                 }
