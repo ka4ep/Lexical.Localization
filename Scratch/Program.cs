@@ -16,9 +16,6 @@ namespace Scratch
             IAssetKey key = LocalizationRoot.Global.TypeSection("ConsoleApp1.MyController").Key("Success");
             Key key2 = new Key("root", "").Append("type", "ConsoleApp1.MyController").Append("key", "Success");
 
-            // TODO: Root shouldn't be hash-equal compared (??) //
-
-            IAssetKeyParametrizer compositeParametrizer = Key.Parametrizer.Default.Concat(AssetKeyParametrizer.Singleton);
             AssetKeyComparer comparer = AssetKeyComparer.Default;
 
             Console.WriteLine(comparer.GetHashCode(key));

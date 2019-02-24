@@ -115,12 +115,12 @@ namespace Lexical.Localization
             {
                 adaptedSource = keyValueSource.Select(kp => new KeyValuePair<Key, string>(ConvertKey(kp.Key, patternPolicy), kp.Value)).Where(kp => kp.Key != null);
             }
-            else if (namePolicy is Key.NamePolicy parameterPolicy)
+            else if (namePolicy is ParameterNamePolicy parameterPolicy)
             {
-                adaptedSource = keyValueSource.Select(kp => new KeyValuePair<Key, string>(parameterPolicy.ParseKey(kp.Key), kp.Value)).Where(kp => kp.Key != null);
+                adaptedSource = keyValueSource.Select(kp => new KeyValuePair<Key, string>((Key)parameterPolicy.ParseKey(kp.Key, Key.Root), kp.Value)).Where(kp => kp.Key != null);
             }
             else {
-                throw new ArgumentException($"Cannot add strings to {nameof(LocalizationAsset)} with {nameof(namePolicy)} {namePolicy.GetType().FullName}. Please use either {nameof(LocalizationStringAsset)}, or another policy such as {nameof(AssetNamePattern)} or {nameof(Key.NamePolicy)}.");
+                throw new ArgumentException($"Cannot add strings to {nameof(LocalizationAsset)} with {nameof(namePolicy)} {namePolicy.GetType().FullName}. Please use either {nameof(LocalizationStringAsset)}, or another policy such as {nameof(AssetNamePattern)} or {nameof(ParameterNamePolicy)}.");
             }
 
             lock (sources) sources.Add(adaptedSource);

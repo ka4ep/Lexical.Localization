@@ -99,8 +99,8 @@ namespace Lexical.Localization.Tests
 
         public static void SerializeEqual(IAssetKey _x, IAssetKey _y)
         {
-            string xData = Key.NamePolicy.Instance.PrintAssetKey(_x), yData = Key.NamePolicy.Instance.PrintAssetKey(_y);
-            IAssetKey x = Key.NamePolicy.Instance.ParseKey(xData), y = Key.NamePolicy.Instance.ParseKey(yData);
+            string xData = ParameterNamePolicy.Instance.PrintKey(_x), yData = ParameterNamePolicy.Instance.PrintKey(_y);
+            IAssetKey x = ParameterNamePolicy.Instance.ParseKey(xData, Key.Root), y = ParameterNamePolicy.Instance.ParseKey(yData, Key.Root);
             Assert.AreEqual(_x, _y, "x.Equals(y) == false");
             Assert.AreEqual(_y, _x, "y.Equals(x) == false");
             Assert.IsTrue(_x.GetHashCode() == _y.GetHashCode(), "x.GetHashCode() != y.GetHashCode()");
@@ -108,10 +108,10 @@ namespace Lexical.Localization.Tests
 
         public static void SerializeEqual(IAssetKey _x, IAssetKey _y, IAssetKey _z)
         {
-            string xData = Key.NamePolicy.Instance.PrintAssetKey(_x);
-            string yData = Key.NamePolicy.Instance.PrintAssetKey(_y);
-            string zData = Key.NamePolicy.Instance.PrintAssetKey(_z);
-            IAssetKey x = Key.NamePolicy.Instance.ParseKey(xData), y = Key.NamePolicy.Instance.ParseKey(yData), z = Key.NamePolicy.Instance.ParseKey(zData);
+            string xData = ParameterNamePolicy.Instance.PrintKey(_x);
+            string yData = ParameterNamePolicy.Instance.PrintKey(_y);
+            string zData = ParameterNamePolicy.Instance.PrintKey(_z);
+            IAssetKey x = ParameterNamePolicy.Instance.ParseKey(xData, Key.Root), y = ParameterNamePolicy.Instance.ParseKey(yData, Key.Root), z = ParameterNamePolicy.Instance.ParseKey(zData, Key.Root);
             Assert.AreEqual(x, y, "x.Equals(y) == false");
             Assert.AreEqual(x, z, "x.Equals(z) == false");
             Assert.AreEqual(y, x, "y.Equals(x) == false");
@@ -125,8 +125,8 @@ namespace Lexical.Localization.Tests
 
         public static void SerializeNotEqual(IAssetKey _x, IAssetKey _y)
         {
-            string xData = Key.NamePolicy.Instance.PrintAssetKey(_x), yData = Key.NamePolicy.Instance.PrintAssetKey(_y);
-            IAssetKey x = Key.NamePolicy.Instance.ParseKey(xData), y = Key.NamePolicy.Instance.ParseKey(yData);
+            string xData = ParameterNamePolicy.Instance.PrintKey(_x), yData = ParameterNamePolicy.Instance.PrintKey(_y);
+            IAssetKey x = ParameterNamePolicy.Instance.ParseKey(xData, Key.Root), y = ParameterNamePolicy.Instance.ParseKey(yData, Key.Root);
             Assert.AreNotEqual(x, y, "x.Equals(y) == true");
             Assert.AreNotEqual(y, x, "y.Equals(x) == true");
             Assert.IsFalse(x.GetHashCode() == y.GetHashCode(), "x.GetHashCode() == y.GetHashCode()");
@@ -134,8 +134,8 @@ namespace Lexical.Localization.Tests
 
         public static void SerializeNotEqual(IAssetKey _x, IAssetKey _y, IAssetKey _z)
         {
-            string xData = Key.NamePolicy.Instance.PrintAssetKey(_x), yData = Key.NamePolicy.Instance.PrintAssetKey(_y), zData = Key.NamePolicy.Instance.PrintAssetKey(_z);
-            IAssetKey x = Key.NamePolicy.Instance.ParseKey(xData), y = Key.NamePolicy.Instance.ParseKey(yData), z = Key.NamePolicy.Instance.ParseKey(zData);
+            string xData = ParameterNamePolicy.Instance.PrintKey(_x), yData = ParameterNamePolicy.Instance.PrintKey(_y), zData = ParameterNamePolicy.Instance.PrintKey(_z);
+            IAssetKey x = ParameterNamePolicy.Instance.ParseKey(xData, Key.Root), y = ParameterNamePolicy.Instance.ParseKey(yData, Key.Root), z = ParameterNamePolicy.Instance.ParseKey(zData, Key.Root);
             Assert.AreNotEqual(x, y, "x.Equals(y) == true");
             Assert.AreNotEqual(x, z, "x.Equals(z) == true");
             Assert.AreNotEqual(y, x, "y.Equals(x) == true");

@@ -70,6 +70,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
         /// </summary>
+        /// <param name="key"></param>
         /// <param name="parameterName">parameter name describes the key type to be created</param>
         /// <param name="parameterValue">parameter value translates to <see cref="IAssetKey.Name"/>.</param>
         /// <returns>new key that is appended to this key</returns>
@@ -89,6 +90,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Try to create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
         /// </summary>
+        /// <param name="key"></param>
         /// <param name="parameterName">parameter name describes the key type to be created</param>
         /// <param name="parameterValue">parameter value translates to <see cref="IAssetKey.Name"/>.</param>
         /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
@@ -104,6 +106,33 @@ namespace Lexical.Localization
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Create a new key by appending an enumeration of parameters.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="parameters">enumeration of parameters to append</param>
+        /// <returns>new key that is appended to this key</returns>
+        /// <exception cref="AssetKeyException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
+        public static IAssetKey AppendParameters(this IAssetKey key, IEnumerable<KeyValuePair<string, string>> parameters)
+        {
+            foreach (var parameter in parameters)
+                key = key.AppendParameter(parameter.Key, parameter.Value);
+            return key;
+        }
+
+        /// <summary>
+        /// Try to create a new key by appending an enumeration of parameters.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="parameters"></param>
+        /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
+        public static IAssetKey TryAppendParameters(this IAssetKey key, IEnumerable<KeyValuePair<string, string>> parameters)
+        {
+            foreach (var parameter in parameters)
+                key = key.TryAppendParameters(parameters);
+            return key;
         }
 
         /// <summary>
