@@ -67,33 +67,6 @@ namespace Lexical.Localization.LocalizationFile
             throw new NotImplementedException("Deprecated and to be removed");
         }
 
-        void _add(object[] key_parts, int part_index, IAssetKeyParametrizer parametrizer, string value)
-        {
-            // Error
-            if (part_index >= key_parts.Length) return;
-
-            // Key part
-            object key_part = key_parts[part_index];
-
-            // Read parametrs
-            string[] parameters = parametrizer.GetPartParameters(key_part);
-
-            // Iterate parameters
-            if (parameters == null) return;
-            foreach (string parameterName in parameters)
-            {
-                // Parameter value
-                string parameterValue = parametrizer.GetPartValue(key_part, parameterName);
-                // Add-or-get section
-                TreeNode subsection = getOrCreateChild(parameterName, parameterValue);
-                // Add key=value
-                if (part_index == key_parts.Length - 1) subsection.Values.Add(value);
-                // Recurse
-                subsection._add(key_parts, part_index + 1, parametrizer, value);
-            }
-
-        }
-
         TreeNode getOrCreateChild(string parameterName, string parameterValue)
         {
             TreeNode subsection;

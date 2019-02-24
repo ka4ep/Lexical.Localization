@@ -66,19 +66,11 @@ namespace Lexical.Localization
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
         /// </summary>
         /// <param name="keyValueSource"></param>
-        /// <param name="parametrizer"></param>
         /// <param name="sourceHint">(optional) added to error message</param>
         /// <returns></returns>
-        public LocalizationAsset AddAssetKeySource(IEnumerable<KeyValuePair<IAssetKey, string>> keyValueSource, IAssetKeyParametrizer parametrizer = default, string sourceHint = null)
+        public LocalizationAsset AddAssetKeySource(IEnumerable<KeyValuePair<IAssetKey, string>> keyValueSource, string sourceHint = null)
         {
             if (keyValueSource == null) throw new ArgumentNullException(nameof(keyValueSource));
-
-            // No need for conversions
-            if (parametrizer == Key.Parametrizer.Default)
-            {
-                lock (sources) sources.Add(keyValueSource.Select(kp=>new KeyValuePair<Key, string>((Key)kp.Key, kp.Value)));
-                return this;
-            }
 
             AssetKeyCloner cloner = new AssetKeyCloner(Key.Root).AddParameterToExclude("root"); 
             IEnumerable<KeyValuePair<Key, string>> adaptedSource = keyValueSource.Select( kp=>new KeyValuePair<Key, string>((Key)cloner.Copy(kp.Key), kp.Value) ).Where(kp=>kp.Key!=null);

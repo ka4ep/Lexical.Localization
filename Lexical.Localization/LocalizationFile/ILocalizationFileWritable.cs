@@ -47,54 +47,10 @@ namespace Lexical.Localization.LocalizationFile
         /// Reorders non-canonical parts to be first, and "culture" to be very first.
         /// </summary>
         /// <param name="keyValues"></param>
-        /// <param name="parametrizer">(optional) code that extracts sections from keys</param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<object, string>> Convert(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues, IAssetKeyParametrizer parametrizer = default)
+        public static IEnumerable<KeyValuePair<object, string>> Convert(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
         {
-            if (parametrizer == null) parametrizer = AssetKeyParametrizer.Singleton;
-            List<Key> list = new List<Key>();
-            foreach (var kp in keyValues)
-            {
-                // Arrange
-                list.Clear();
-                object[] parts = parametrizer.Break(kp.Key)?.ToArray();
-                if (parts == null || parts.Length == 0) continue;
-
-                // Add non-canonical parts
-                foreach (var key_part in parts.Where(part=>part is IAssetKeyNonCanonicallyCompared))
-                {
-                    string[] parameters = parametrizer.GetPartParameters(key_part);
-                    if (parameters == null || parameters.Length == 0) continue;
-                    foreach (string parameter in parameters)
-                    {
-                        string value = parametrizer.GetPartValue(key_part, parameter);
-                        if (value == null) continue;
-                        list.Add(new Key.NonCanonical(parameter, value));
-                    }
-                }
-                // Sort non-canonicals by parameter names
-                list.Sort(Key.Comparer.Default);
-
-                // Add canonical parts
-                foreach (var key_part in parts.Where(part => part is IAssetKeyNonCanonicallyCompared == false))
-                {
-                    string[] parameters = parametrizer.GetPartParameters(key_part);
-                    if (parameters == null || parameters.Length == 0) continue;
-                    foreach (string parameter in parameters)
-                    {
-                        string value = parametrizer.GetPartValue(key_part, parameter);
-                        if (value == null) continue;
-                        list.Add(new Key(parameter, value));
-                    }
-                }
-
-                // Fix links
-                for (int i = 1; i < list.Count; i++)
-                    list[i].Previous = list[i - 1];
-
-                // Result
-                yield return new KeyValuePair<object, string>(list[list.Count-1], kp.Value);
-            }
+            throw new NotImplementedException("Deprecated and to be removed");
         }
     }
 

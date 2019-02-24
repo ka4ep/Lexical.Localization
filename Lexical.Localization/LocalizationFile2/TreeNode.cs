@@ -36,22 +36,10 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="keyValues"></param>
         /// <param name="parametrizer"></param>
         /// <returns>tree root ""</returns>
-        public static KeyTree Create(IEnumerable<KeyValuePair<object, string>> keyValues, IAssetKeyParametrizer parametrizer)
-        {
-            KeyTree root = new KeyTree(new Key.NonCanonical("root", ""), null);
-            root.AddRange(parametrizer, keyValues);
-            return root;
-        }
-
-        /// <summary>
-        /// Create tree structure from source of flat key values.
-        /// </summary>
-        /// <param name="keyValues"></param>
-        /// <returns></returns>
         public static KeyTree Create(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
         {
             KeyTree root = new KeyTree(new Key.NonCanonical("root", ""), null);
-            root.AddRange(AssetKeyParametrizer.Singleton, keyValues.Select(kp=>new KeyValuePair<object, string>(kp.Key, kp.Value)));
+            root.AddRange(keyValues);
             return root;
         }
 
@@ -141,21 +129,19 @@ namespace Lexical.Localization.LocalizationFile2
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
         /// </summary>
-        /// <param name="parametrizer"></param>
         /// <param name="keyValues"></param>
         /// <returns></returns>
-        public KeyTree AddRange(IAssetKeyParametrizer parametrizer, IEnumerable<KeyValuePair<object, string>> keyValues)
-            => AddRange(parametrizer, keyValues, groupingRule: null);
+        public KeyTree AddRange(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
+            => AddRange(keyValues, groupingRule: null);
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
         /// </summary>
-        /// <param name="parametrizer"></param>
         /// <param name="keyValues"></param>
         /// <param name="groupingPatternText"></param>
         /// <returns></returns>
-        public KeyTree AddRange(IAssetKeyParametrizer parametrizer, IEnumerable<KeyValuePair<object, string>> keyValues, string groupingPatternText)
-            => AddRange(parametrizer, keyValues, groupingRule: new AssetNamePattern(groupingPatternText));
+        public KeyTree AddRange(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues, string groupingPatternText)
+            => AddRange(keyValues, groupingRule: new AssetNamePattern(groupingPatternText));
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
@@ -178,10 +164,8 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="keyValues"></param>
         /// <param name="groupingRule">(optional)</param>
         /// <returns></returns>
-        public KeyTree AddRange(IAssetKeyParametrizer parametrizer, IEnumerable<KeyValuePair<object, string>> keyValues, IAssetNamePattern groupingRule)
+        public KeyTree AddRange(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues, IAssetNamePattern groupingRule) // TOdo separate to sortRule + groupingRule
         {
-            // Create composite paramerizer
-            IAssetKeyParametrizer compositeParametrizer = parametrizer is KeyTree.Parametrizer ? parametrizer : new AssetKeyParametrizerComposite(parametrizer, KeyTree.Parametrizer.Instance);
             // Create comparer that can compare TreeNode and argument's keys
             ParametrizedComparer comparer = new ParametrizedComparer();
             // Create orderer
@@ -199,21 +183,13 @@ namespace Lexical.Localization.LocalizationFile2
             List<Key> key_parts = new List<Key>();
             foreach (var kp in keyValues)
             {
-                // Break key into parts
-                IEnumerable<object> parts = parametrizer.Break(kp.Key);
-                if (parts != null)
+                foreach(IAssetKey part in kp.Key.ArrayFromRoot())
                 {
-                    foreach (object part in parts)
-                    {
-                        bool isCanonical = parametrizer.IsCanonical(part);
-                        foreach (string parameterName in parametrizer.GetPartParameters(part))
-                        {
-                            string value = parametrizer.GetPartValue(part, parameterName);
-                            if (value == null) continue;
-                            bool isNonCanonical = parametrizer.IsNonCanonical(part, parameterName);
-                            partList.Add(new PartComparer.Part(parameterName, value, isCanonical, isNonCanonical));
-                        }
-                    }
+                    string parameterName = part.GetParameterName(), parameterValue = part.Name;
+                    if (parameterName == null || parameterValue == null) continue;
+                    bool isCanonical = part is IAssetKeyCanonicallyCompared, isNonCanonical = part is IAssetKeyNonCanonicallyCompared;
+                    if (!isCanonical && !isNonCanonical) continue;
+                    partList.Add(new PartComparer.Part(parameterName, parameterValue, isCanonical, isNonCanonical));
                 }
                 // Reorder parts according to grouping rule
                 partList.Sort(partComparer);

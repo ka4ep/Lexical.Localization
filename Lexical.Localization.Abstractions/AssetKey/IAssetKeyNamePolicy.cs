@@ -57,7 +57,7 @@ namespace Lexical.Localization
     public interface IAssetKeyParameterDescription
     {
         /// <summary>
-        /// Identifier in <see cref="IAssetKeyParametrizer"/>, non-unique identifier.
+        /// Parameter identifier.
         /// </summary>
         string ParameterName { get; }
 
