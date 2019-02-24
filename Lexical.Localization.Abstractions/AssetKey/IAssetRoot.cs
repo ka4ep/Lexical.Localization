@@ -14,7 +14,6 @@ namespace Lexical.Localization
     /// 
     /// Name of localization root is "".
     /// </summary>
-    [AssetKeyParameter(parameterName: "root")]
     public interface IAssetRoot : IAssetKey
     {
     }

@@ -31,14 +31,12 @@ namespace Lexical.Localization
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
         /// <exception cref="CultureNotFoundException">if culture was not found</exception>
-        [AssetKeyConstructor("culture")]
         ILocalizationKeyCultured SetCulture(string cultureName);
     }
 
     /// <summary>
     /// Key (may have) has "culture" parameter assigned.
     /// </summary>
-    [AssetKeyParameter("culture")]
     public interface ILocalizationKeyCultured : IAssetKeyNonCanonicallyCompared, ILocalizationKey
     {
         /// <summary>

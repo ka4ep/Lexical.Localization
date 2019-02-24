@@ -26,7 +26,6 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="resource"></param>
         /// <returns>new key</returns>
-        [AssetKeyConstructor(parameterName: "resource")]
         IAssetKeyResourceSection ResourceSection(string resource);
     }
 
@@ -38,7 +37,6 @@ namespace Lexical.Localization
     /// 
     /// This parameter mainly used with IStringLocalization of Microsoft.Extensions.Localization.Abstractions to locate .resx files.
     /// </summary>
-    [AssetKeyParameter(parameterName: "resource")]
     public interface IAssetKeyResourceSection : IAssetKeySection
     {
     }

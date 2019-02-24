@@ -77,62 +77,6 @@ namespace Lexical.Localization.LocalizationFile
         public override string ToString()
             => $"{GetType().Name}({Parameter.Name}, {ParameterValue})";
 
-        public class Parametrizer : IAssetKeyParametrizer
-        {
-            static private Parametrizer instance = new Parametrizer();
-            public static Parametrizer Instance => instance;
-
-            public IEnumerable<object> Break(object obj)
-            {
-                TreeNode key = obj as TreeNode;
-                if (key == null) return null;
-
-                // Count
-                int count = 0;
-                for (TreeNode k = key; k != null; k = k.Parent)
-                    count++;
-
-                // Array from root to tail
-                object[] result = new object[count];
-                int ix = 0;
-                for (TreeNode k = key; k != null; k = k.Parent)
-                    result[ix++] = k;
-                return result;
-            }
-
-            public object GetPreviousPart(object part)
-                => part is TreeNode tree ? tree.Parent : null;
-
-            public object TryCreatePart(object obj, string parameterName, string parameterValue)
-                => (obj as TreeNode)?.getOrCreateChild(parameterName, parameterValue);
-
-            public bool IsCanonical(object part, string parameterName)
-                => part is TreeNode tree ? tree.Parameter is Key.NonCanonical == false : false;
-            public bool IsNonCanonical(object part, string parameterName)
-                => part is TreeNode tree ? tree.Parameter is Key.NonCanonical : false;
-
-            static string[] empty = new string[0];
-            public string[] GetPartParameters(object obj)
-                => obj is TreeNode tree ? tree.ParameterNames : empty;
-
-            public string GetPartValue(object obj, string parameter)
-                => obj is TreeNode tree && tree.Parameter!=null && tree.Parameter.Name==parameter ? tree.Parameter.Value : null;
-
-            public void VisitParts<T>(object obj, ParameterPartVisitor<T> visitor, ref T data)
-            {
-                TreeNode key = (obj as TreeNode);
-                if (key == null) return;
-
-                // Push to stack
-                TreeNode prevKey = key.Parent;
-                if (prevKey != null) VisitParts(prevKey, visitor, ref data);
-
-                // Pop from stack in reverse order
-                visitor(key, ref data);
-            }
-
-        }
-
         // LocalizationKeyTree is an intermediate model for writing text files
         // 
         // Add non-canonical parts

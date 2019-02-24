@@ -21,7 +21,6 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="sectionName">Name section.</param>
         /// <returns>new key</returns>
-        [AssetKeyConstructor(parameterName: "section")]
         IAssetKeySectionAssigned Section(string sectionName);
     }
 
@@ -30,7 +29,6 @@ namespace Lexical.Localization
     /// 
     /// Regular section as a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.
     /// </summary>
-    [AssetKeyParameter(parameterName: "section")]
     public interface IAssetKeySectionAssigned : IAssetKeySection, IAssetKey
     {
     }

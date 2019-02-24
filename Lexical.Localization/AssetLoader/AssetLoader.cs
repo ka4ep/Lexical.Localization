@@ -233,7 +233,7 @@ namespace Lexical.Localization
                         param[part.Identifier] = part_from_filename;
 
                         // Read same value from key
-                        string part_from_key = AssetKeyParametrizer.Singleton.ReadParameter(key, part.ParameterName);
+                        string part_from_key = key.GetParameterName();
 
                         // Test if key matches filename
                         if (part.Required && part_from_key != part_from_filename) {

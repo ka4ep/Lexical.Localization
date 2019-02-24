@@ -13,7 +13,6 @@ namespace Lexical.Localization.LocalizationFile2
         public const string URN = "urn:lexical.fi:";
         private readonly static XmlFileFormat instance = new XmlFileFormat();
         public static XmlFileFormat Instance => instance;
-        private Key.Parametrizer parametrizer = Key.Parametrizer.Default;
 
         public KeyTree ReadFile(string filename)
             => ReadTree(XDocument.Load(filename).Root);
@@ -24,7 +23,7 @@ namespace Lexical.Localization.LocalizationFile2
         public KeyTree ReadString(string xmlDocument)
             => ReadTree(XDocument.Load(new StringReader(xmlDocument)).Root);
         public KeyTree ReadTree(XElement element)
-            => ReadElement(element, new KeyTree(Key.Parametrizer.Default.TryCreatePart(null, "root", "") as Key));
+            => ReadElement(element, new KeyTree(Key.Root));
 
         /// <summary>
         /// Reads element, and adds as a subnode to parent node.
@@ -40,13 +39,13 @@ namespace Lexical.Localization.LocalizationFile2
             {
                 string parameterName = element.Name.NamespaceName.Substring(URN.Length);
                 string parameterValue = element.Name.LocalName;
-                key = parametrizer.CreatePart(key, parameterName, parameterValue) as Key;
+                key = Key.Create(key, parameterName, parameterValue);
 
                 if (element.HasAttributes)
                     foreach (XAttribute attribute in element.Attributes())
                     {
                         if (string.IsNullOrEmpty(attribute.Name.NamespaceName))
-                            key = parametrizer.CreatePart(key, attribute.Name.LocalName, attribute.Value) as Key;
+                            key = Key.Create(key, attribute.Name.LocalName, attribute.Value);
                     }
             }
 

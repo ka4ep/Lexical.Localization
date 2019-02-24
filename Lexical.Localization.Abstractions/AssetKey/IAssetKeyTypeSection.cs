@@ -21,7 +21,6 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="name">type</param>
         /// <returns>new key</returns>
-        [AssetKeyConstructor(parameterName: "type")]
         IAssetKeyTypeSection TypeSection(string name);
 
         /// <summary>
@@ -29,7 +28,6 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="type">type</param>
         /// <returns>new key</returns>
-        [AssetKeyConstructor(parameterName: "type")]
         IAssetKeyTypeSection TypeSection(Type type);
 
         /// <summary>
@@ -45,7 +43,6 @@ namespace Lexical.Localization
     /// 
     /// Type parameters are used with physical files and embedded resources.
     /// </summary>
-    [AssetKeyParameter(parameterName: "type")]
     public interface IAssetKeyTypeSection : IAssetKeySection
     {
         /// <summary>

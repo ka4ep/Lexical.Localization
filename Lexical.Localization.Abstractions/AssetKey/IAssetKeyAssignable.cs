@@ -23,7 +23,6 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="name">Name for new sub key.</param>
         /// <returns>new key</returns>
-        [AssetKeyConstructor(parameterName: "key")]
         IAssetKeyAssigned Key(string keyName);
     }
 
@@ -33,7 +32,6 @@ namespace Lexical.Localization
     /// Key is a leaf, or a tail part, of the identity. 
     /// Such as "Error" in key "ConsoleApp1:MyController:Error".
     /// </summary>
-    [AssetKeyParameter(parameterName: "key")]
     public interface IAssetKeyAssigned : IAssetKey
     {
     }

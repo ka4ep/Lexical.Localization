@@ -134,7 +134,7 @@ namespace Lexical.Localization
         /// <exception cref="AssetException">If failed to create part</exception>
         public static object CreatePart(this IAssetKeyParametrizer reader, object key, string parameterName, string parameterValue)
             => reader.TryCreatePart(key, parameterName, parameterValue) ??
-                throw new AssetException($"Could not append (ParameterName=\"{parameterName}\") to instance of {key.GetType().CanonicalName()}. Perhaps missing [{nameof(AssetKeyConstructorAttribute)}(\"{parameterName}\")] attribute?");
+                throw new AssetException($"Could not append (ParameterName=\"{parameterName}\") to instance of {key.GetType().CanonicalName()}.");
 
         /// <summary>
         /// Tests if part is canonical.

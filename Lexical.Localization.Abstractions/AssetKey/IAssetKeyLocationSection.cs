@@ -27,7 +27,6 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="location"></param>
         /// <returns>new key</returns>
-        [AssetKeyConstructor(parameterName: "location")]
         IAssetKeyLocationSection Location(string location);
     }
 
@@ -38,7 +37,6 @@ namespace Lexical.Localization
     /// 
     /// For example, key.Location("Assets/") would be put in place of "location" in following filen name pattern "{location/}{type/}{section.}{key}.ini".
     /// </summary>
-    [AssetKeyParameter(parameterName: "location")]
     public interface IAssetKeyLocationSection : IAssetKeySection
     {
     }

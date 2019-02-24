@@ -24,7 +24,6 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
-        [AssetKeyConstructor("assembly")]
         IAssetKeyAssemblySection AssemblySection(Assembly assembly);
 
         /// <summary>
@@ -32,7 +31,6 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
-        [AssetKeyConstructor(parameterName: "assembly")]
         IAssetKeyAssemblySection AssemblySection(string assembly);
     }
 
@@ -42,7 +40,6 @@ namespace Lexical.Localization
     /// Assembly hint is used when loading assets from embedded rsources.
     /// For instance, in a name pattern "[assembly.][resource.]{type.}{section.}{key}".
     /// </summary>
-    [AssetKeyParameter(parameterName: "assembly")]
     public interface IAssetKeyAssemblySection : IAssetKeySection
     {
         /// <summary>
