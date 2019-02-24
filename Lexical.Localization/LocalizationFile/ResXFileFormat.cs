@@ -148,7 +148,7 @@ namespace Lexical.Localization.LocalizationFile
                 // Write lines
                 foreach (string value in node.Values.OrderBy(n => n, AlphaNumericComparer.Default))
                 {
-                    string key = NamePolicy.BuildName(node, TreeNode.Parametrizer.Instance);
+                    string key = NamePolicy.BuildName(node.TreeKey);
                     string str = string.Format(template_keyvalue_formulation, HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(value));
                     writer.WriteLine(str);
                 }

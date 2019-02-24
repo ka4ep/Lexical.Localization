@@ -65,9 +65,8 @@ namespace Lexical.Localization
         /// Build path string from key.
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="parametrizer">(optional) how to extract parameters from key. If not set uses the default implementation <see cref="AssetKeyParametrizer"/></param>
         /// <returns>full name string</returns>
-        string IAssetKeyNameProvider.BuildName(object key, IAssetKeyParametrizer parametrizer)
+        string IAssetKeyNameProvider.BuildName(IAssetKey key)
             => PrintKey(key as IAssetKey);
 
         /// <summary>

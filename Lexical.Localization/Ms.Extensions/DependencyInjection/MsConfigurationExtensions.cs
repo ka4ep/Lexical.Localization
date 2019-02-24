@@ -40,10 +40,10 @@ namespace Lexical.Localization.Ms.Extensions
         /// <param name="namePolicy"></param>
         /// <param name="parametrizer"></param>
         /// <returns></returns>
-        public static IServiceCollection AddLocalizationAsset(this IServiceCollection serviceCollection, IConfiguration configuration, IAssetKeyNamePolicy namePolicy = default, IAssetKeyParametrizer parametrizer = default)
+        public static IServiceCollection AddLocalizationAsset(this IServiceCollection serviceCollection, IConfiguration configuration, IAssetKeyNamePolicy namePolicy = default)
         {
             serviceCollection.AddSingleton<IAssetSource>(
-                new ConfigurationLocalizationAsset(configuration, namePolicy, parametrizer).ToSource());
+                new ConfigurationLocalizationAsset(configuration, namePolicy).ToSource());
             return serviceCollection;
         }
 

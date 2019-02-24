@@ -88,10 +88,9 @@ namespace Lexical.Localization
         /// <summary>
         /// Match parameters from an object.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="parameterReader">object that extracts parameters from object</param>
+        /// <param name="key"></param>
         /// <returns></returns>
-        IAssetNamePatternMatch Match(object obj, IAssetKeyParametrizer parameterReader);
+        IAssetNamePatternMatch Match(IAssetKey obj);
 
         /// <summary>
         /// A regular expression pattern that captures same parts from a filename string.
@@ -127,7 +126,7 @@ namespace Lexical.Localization
         string PostfixSeparator { get; }
 
         /// <summary>
-        /// Identifier in <see cref="IAssetKeyParametrizer"/>, non-unique identifier.
+        /// Parameter identifier.
         /// </summary>
         string ParameterName { get; }
         /// <summary>
@@ -217,12 +216,11 @@ namespace Lexical.Localization
         /// Match parameters of an object and convert into a string.
         /// </summary>
         /// <param name="pattern"></param>
-        /// <param name="obj"></param>
-        /// <param name="parameterReader"></param>
+        /// <param name="key"></param>
         /// <returns>match as string or null</returns>
-        public static string MatchToString(this IAssetNamePattern pattern, object obj, IAssetKeyParametrizer parameterReader)
+        public static string MatchToString(this IAssetNamePattern pattern, IAssetKey key)
         {
-            IAssetNamePatternMatch match = pattern.Match(obj, parameterReader);
+            IAssetNamePatternMatch match = pattern.Match(key);
             return pattern.BuildName(match.PartValues);
         }
 

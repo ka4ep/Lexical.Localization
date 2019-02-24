@@ -206,7 +206,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-            => AssetKeyNameProvider.Default.BuildName(this, null);
+            => AssetKeyNameProvider.Default.BuildName(this);
 
         /// <summary>
         /// Cached dynamic object.

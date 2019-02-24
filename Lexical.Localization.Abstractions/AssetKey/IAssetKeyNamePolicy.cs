@@ -29,9 +29,8 @@ namespace Lexical.Localization
         /// Build path string from key.
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="parametrizer">(optional) how to extract parameters from key. If not set uses the default implementation <see cref="AssetKeyParametrizer"/></param>
         /// <returns>full name string</returns>
-        string BuildName(object key, IAssetKeyParametrizer parametrizer = default);
+        string BuildName(IAssetKey key);
     }
     #endregion IAssetKeyNameProvider
 
@@ -86,49 +85,24 @@ namespace Lexical.Localization
         /// This method completely ignores the selected culture in the key and uses the <paramref name="culture"/>.
         /// If <paramref name="culture"/> is null, then doesn't print any culture at all.
         /// </summary>
-        /// <param name="namePolicy"></param>
-        /// <param name="culture">culture to use</param>
+        /// <param name="key"></param>
+        /// <param name="policy"></param>
         /// <returns>full name string</returns>
-        public static string BuildName(this IAssetKeyNamePolicy policy, object key)
+        public static string BuildName(this IAssetKeyNamePolicy policy, IAssetKey key)
         {
             if (policy is IAssetKeyNameProvider provider)
             {
-                string name = provider.BuildName(key, AssetKeyParametrizer.Singleton);
+                string name = provider.BuildName(key);
                 if (name != null) return name;
             }
             if (policy is IAssetNamePattern pattern)
             {
-                IAssetNamePatternMatch match = pattern.Match(key, AssetKeyParametrizer.Singleton);
+                IAssetNamePatternMatch match = pattern.Match(key);
                 string name = AssetNamePatternExtensions.BuildName(pattern, match.PartValues);
                 if (name != null) return name;
             }
             return null;
         }
 
-        /// <summary>
-        /// Build name for key. 
-        /// 
-        /// This method completely ignores the selected culture in the key and uses the <paramref name="culture"/>.
-        /// If <paramref name="culture"/> is null, then doesn't print any culture at all.
-        /// </summary>
-        /// <param name="namePolicy"></param>
-        /// <param name="culture">culture to use</param>
-        /// <param name="parametrizer">(optional) how to extract parameters from key. If not set uses the default implementation <see cref="AssetKeyParametrizer"/></param>
-        /// <returns>full name string</returns>
-        public static string BuildName(this IAssetKeyNamePolicy policy, object key, IAssetKeyParametrizer parametrizer)
-        {
-            if (policy is IAssetKeyNameProvider provider)
-            {
-                string name = provider.BuildName(key, parametrizer ?? AssetKeyParametrizer.Singleton);
-                if (name!=null) return name;
-            }
-            if (policy is IAssetNamePattern pattern)
-            {
-                IAssetNamePatternMatch match = pattern.Match(key, parametrizer ?? AssetKeyParametrizer.Singleton);
-                string name = AssetNamePatternExtensions.BuildName(pattern, match.PartValues);
-                if (name != null) return name;
-            }
-            return null;
-        }
     }
 }

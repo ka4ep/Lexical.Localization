@@ -24,24 +24,18 @@ namespace Lexical.Localization
     {
         protected IReadOnlyDictionary<string, string> source;
         protected IAssetKeyNamePolicy namePolicy;
-        IAssetKeyParametrizer parametrizer;
 
         /// <summary>
         /// Create language string resolver that uses a dictionary as a source.
-        /// 
-        /// 
-        /// If <paramref name="parametrizer"/> is provided this implementation can provide values for
         /// <see cref="ILocalizationStringCollection.GetAllStrings(IAssetKey)"/> and 
         /// <see cref="IAssetKeyCollection.GetAllKeys(IAssetKey)"/> requests.         
         /// </summary>
         /// <param name="source">dictionary</param>
         /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
-        /// <param name="parametrizer">(optional) object that extracts parameters</param>
-        public LocalizationStringAsset(IReadOnlyDictionary<string, string> source, IAssetKeyNamePolicy namePolicy = default, IAssetKeyParametrizer parametrizer = default)
+        public LocalizationStringAsset(IReadOnlyDictionary<string, string> source, IAssetKeyNamePolicy namePolicy = default)
         {
             this.source = source ?? throw new ArgumentNullException(nameof(source));
             this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-            this.parametrizer = parametrizer ?? AssetKeyParametrizer.Singleton;
         }
 
         /// <summary>
@@ -49,12 +43,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="source">dictionary</param>
         /// <param name="namePattern">name patern</param>
-        /// <param name="parametrizer">(optional) object that extracts parameters</param>
-        public LocalizationStringAsset(IReadOnlyDictionary<string, string> source, string namePattern, IAssetKeyParametrizer parametrizer = default)
+        public LocalizationStringAsset(IReadOnlyDictionary<string, string> source, string namePattern)
         {
             this.source = source ?? throw new ArgumentNullException(nameof(source));
             this.namePolicy = new AssetNamePattern(namePattern);
-            this.parametrizer = parametrizer ?? AssetKeyParametrizer.Singleton;
         }
 
         public virtual IEnumerable<KeyValuePair<string, string>> GetAllStrings(IAssetKey key)
@@ -62,7 +54,7 @@ namespace Lexical.Localization
             if (key == null) return source;
             if (namePolicy is IAssetNamePattern pattern)
             {
-                IAssetNamePatternMatch match = pattern.Match(key, parametrizer);
+                IAssetNamePatternMatch match = pattern.Match(key);
                 return source.Where(kp => IsEqualOrSuperset(match, pattern.Match(kp.Key)));
             }
             else

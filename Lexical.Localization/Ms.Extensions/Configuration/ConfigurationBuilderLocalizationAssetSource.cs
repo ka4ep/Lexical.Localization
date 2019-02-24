@@ -17,19 +17,17 @@ namespace Lexical.Localization.Ms.Extensions
     {
         public readonly IConfigurationBuilder ConfigurationBuilder;
         public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly IAssetKeyParametrizer Parametrizer;
 
-        public ConfigurationBuilderLocalizationAssetSource(IConfigurationBuilder configurationBuilder, IAssetKeyNamePolicy namePolicy = null, IAssetKeyParametrizer parametrizer = null)
+        public ConfigurationBuilderLocalizationAssetSource(IConfigurationBuilder configurationBuilder, IAssetKeyNamePolicy namePolicy = null)
         {
             ConfigurationBuilder = configurationBuilder ?? throw new ArgumentNullException(nameof(configurationBuilder));
             this.NamePolicy = namePolicy;
-            this.Parametrizer = parametrizer;
         }
 
         public void Build(IList<IAsset> list)
         {
             IConfigurationRoot root = ConfigurationBuilder.Build();
-            IAsset asset = new ConfigurationLocalizationAsset(root, NamePolicy, Parametrizer);
+            IAsset asset = new ConfigurationLocalizationAsset(root, NamePolicy);
             list.Add(asset);
         }
 
@@ -39,9 +37,9 @@ namespace Lexical.Localization.Ms.Extensions
 
     public static partial class ConfigurationLocalizationExtensions
     {
-        public static IAssetBuilder AddConfigurationBuilder(this IAssetBuilder localizationBuilder, IConfigurationBuilder configurationBuilder, IAssetKeyNamePolicy namePolicy = null, IAssetKeyParametrizer parametrizer = null)
+        public static IAssetBuilder AddConfigurationBuilder(this IAssetBuilder localizationBuilder, IConfigurationBuilder configurationBuilder, IAssetKeyNamePolicy namePolicy = null)
         {
-            localizationBuilder.Sources.Add(new ConfigurationBuilderLocalizationAssetSource(configurationBuilder, namePolicy, parametrizer));
+            localizationBuilder.Sources.Add(new ConfigurationBuilderLocalizationAssetSource(configurationBuilder, namePolicy));
             return localizationBuilder;
         }
     }

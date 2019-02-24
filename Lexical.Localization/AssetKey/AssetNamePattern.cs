@@ -52,9 +52,9 @@ namespace Lexical.Localization
     public class AssetNamePattern : IAssetNamePattern
     {
         static Regex regex = new Regex(
-            @"(?<text>[^\[\{\}\]]+)|"+
+            @"(?<text>[^\[\{\}\]]+)|" +
             @"(?<o_patterntext>\{(?<o_prefix>[^\}a-zA-Z]*)(?<o_identifier>(?<o_keyreader_identifier>[a-zA-Z]+)(_(?<o_occurance_index>[0-9]+|n))?)(\<(?<o_pattern>([^\\\>\\<]|\\.)*)\>)?(?<o_postfix>[^\}a-zA-Z]*)\})|" +
-            @"(?<r_patterntext>\[(?<r_prefix>[^\]a-zA-Z]*)(?<r_identifier>(?<r_keyreader_identifier>[a-zA-Z]+)(_(?<r_occurance_index>[0-9]+|n))?)(\<(?<r_pattern>([^\\\>\\<]|\\.)*)\>)?(?<r_postfix>[^\]a-zA-Z]*)\])", 
+            @"(?<r_patterntext>\[(?<r_prefix>[^\]a-zA-Z]*)(?<r_identifier>(?<r_keyreader_identifier>[a-zA-Z]+)(_(?<r_occurance_index>[0-9]+|n))?)(\<(?<r_pattern>([^\\\>\\<]|\\.)*)\>)?(?<r_postfix>[^\]a-zA-Z]*)\])",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant);
 
         public string Pattern { get; internal set; }
@@ -107,7 +107,7 @@ namespace Lexical.Localization
 
             List<Part> list = new List<Part>(matches.Count);
             int ix = 0, matchIx = 0;
-            foreach(System.Text.RegularExpressions.Match match in matches)
+            foreach (System.Text.RegularExpressions.Match match in matches)
             {
                 if (!match.Success) throw new ArgumentException($"Failed to parse filename pattern \"{pattern}\"");
                 Group g_text = match.Groups["text"];
@@ -123,7 +123,8 @@ namespace Lexical.Localization
                     Group g_occurance = match.Groups["o_occurance_index"];
                     Group g_pattern = match.Groups["o_pattern"];
                     string part_pattern = g_pattern.Success ? g_pattern.Value : null;
-                    Part part = new Part {
+                    Part part = new Part
+                    {
                         PatternText = match.Groups["o_patterntext"].Value,
                         PrefixSeparator = match.Groups["o_prefix"].Value,
                         PostfixSeparator = match.Groups["o_postfix"].Value,
@@ -142,7 +143,8 @@ namespace Lexical.Localization
                     Group g_occurance = match.Groups["r_occurance_index"];
                     Group g_pattern = match.Groups["r_pattern"];
                     string part_pattern = g_pattern.Success ? g_pattern.Value : null;
-                    Part part = new Part {
+                    Part part = new Part
+                    {
                         PatternText = match.Groups["r_patterntext"].Value,
                         PrefixSeparator = match.Groups["r_prefix"].Value,
                         PostfixSeparator = match.Groups["r_postfix"].Value,
@@ -151,18 +153,18 @@ namespace Lexical.Localization
                         Required = true,
                         Index = ix++,
                         CaptureIndex = matchIx++,
-                        regex = part_pattern == null ? null : new Regex(part_pattern, RegexOptions.Compiled|RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture),
+                        regex = part_pattern == null ? null : new Regex(part_pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture),
                         OccuranceIndex = g_occurance.Success ? g_occurance.Value == "n" ? Int32.MaxValue : int.Parse(g_occurance.Value) : Int32.MaxValue
                     };
                     list.Add(part);
                 }
             }
             allParts = list.ToArray();
-            captureParts = list.Where(part=>part.Identifier!=null).ToArray();
+            captureParts = list.Where(part => part.Identifier != null).ToArray();
             PartMap = CaptureParts.ToDictionary(p => p.Identifier);
             _keyvisitor = KeyVisitor;
             ParameterNames = captureParts.Select(part => part.ParameterName).Distinct().ToArray();
-            ParameterMap = ParameterNames.ToDictionary(s=>s, parameterName => CaptureParts.Where(part => part.ParameterName == parameterName).OrderBy(p=>p.OccuranceIndex).ToArray());
+            ParameterMap = ParameterNames.ToDictionary(s => s, parameterName => CaptureParts.Where(part => part.ParameterName == parameterName).OrderBy(p => p.OccuranceIndex).ToArray());
         }
 
         public class Part : IAssetNamePatternPart
@@ -188,7 +190,7 @@ namespace Lexical.Localization
             public string Identifier { get; set; }
 
             /// <summary>
-            /// Identifier in <see cref="IAssetKeyParametrizer"/>, non-unique identifier.
+            /// Parameter identifier.
             /// </summary>
             public string ParameterName { get; set; }
 
@@ -241,75 +243,54 @@ namespace Lexical.Localization
             public override string ToString() => PatternText;
         }
 
-        class _NamePatternMatch : NamePatternMatch
+        public IAssetNamePatternMatch Match(IAssetKey key)
         {
-            public readonly IAssetKeyParametrizer parameterReader;
-            public _NamePatternMatch(IAssetNamePattern pattern, IAssetKeyParametrizer parameterReader) : base(pattern)
-            {
-                this.parameterReader = parameterReader;
-            }
-        }
-
-        public IAssetNamePatternMatch Match(Object key, IAssetKeyParametrizer parameterReader)
-        {
-            _NamePatternMatch match = new _NamePatternMatch(this, parameterReader);
-            parameterReader.VisitParts(key, _keyvisitor, ref match);
+            NamePatternMatch match = new NamePatternMatch(this);
+            key.VisitParameters(_keyvisitor, ref match);
             match._fixPartsWithOccurancesAndLastOccurance();
             return match;
         }
 
-        ParameterPartVisitor<_NamePatternMatch> _keyvisitor;
-        void KeyVisitor(object key_part, ref _NamePatternMatch match)
+        KeyParameterVisitor<NamePatternMatch> _keyvisitor;
+        void KeyVisitor(string parameterName, string parameterValue, ref NamePatternMatch match)
         {
-            string[] key_part_parameters = match.parameterReader.GetPartParameters(key_part);
-
-            // No parameters
-            if (key_part_parameters == null || key_part_parameters.Length == 0) return;
-
-            // Iterate each parameter (typically 0 or 1).
-            foreach(string parameterName in key_part_parameters)
+            // Search parts
+            IAssetNamePatternPart[] parts;
+            if (ParameterMap.TryGetValue(parameterName, out parts))
             {
-                // Search parts
-                IAssetNamePatternPart[] parts;
-                if (ParameterMap.TryGetValue(parameterName, out parts))
+                // Iterate each part
+                foreach (IAssetNamePatternPart part in parts)
                 {
-                    // Iterate each part
-                    foreach (IAssetNamePatternPart part in parts)
-                    {
-                        // Test if part is already filled
-                        if (match[part.CaptureIndex] != null) continue;
+                    // Test if part is already filled
+                    if (match[part.CaptureIndex] != null) continue;
 
-                        // Read value
-                        string value = match.parameterReader.GetPartValue(key_part, part.ParameterName);
-                        if (value == null) continue;
-                        if (!part.IsMatch(value)) continue;
+                    // Read value
+                    if (parameterValue == null) continue;
+                    if (!part.IsMatch(parameterValue)) continue;
 
-                        // Set value
-                        match.PartValues[part.CaptureIndex] = value;
-                        return;
-                    }
+                    // Set value
+                    match.PartValues[part.CaptureIndex] = parameterValue;
+                    return;
                 }
+            }
 
-                // "anysection"
-                if ((parameterName == "section" || parameterName == "location" || parameterName == "type" || parameterName == "resource" || parameterName == "assembly") && ParameterMap.TryGetValue("anysection", out parts))
+            // "anysection"
+            if ((parameterName == "section" || parameterName == "location" || parameterName == "type" || parameterName == "resource" || parameterName == "assembly") && ParameterMap.TryGetValue("anysection", out parts))
+            {
+                // Iterate each part
+                foreach (IAssetNamePatternPart part in parts)
                 {
-                    // Iterate each part
-                    foreach (IAssetNamePatternPart part in parts)
-                    {
-                        // Test if part is already filled
-                        if (match[part.CaptureIndex] != null) continue;
+                    // Test if part is already filled
+                    if (match[part.CaptureIndex] != null) continue;
 
-                        // Read value
-                        string value = match.parameterReader.GetPartValue(key_part, part.ParameterName);
-                        if (value == null) continue;
-                        if (!part.IsMatch(value)) continue;
+                    // Read value
+                    if (parameterValue == null) continue;
+                    if (!part.IsMatch(parameterValue)) continue;
 
-                        // Set value
-                        match.PartValues[part.CaptureIndex] = value;
-                        return;
-                    }
+                    // Set value
+                    match.PartValues[part.CaptureIndex] = parameterValue;
+                    return;
                 }
-
             }
         }
     }

@@ -80,7 +80,7 @@ namespace Lexical.Localization.LocalizationFile
                 // Write lines
                 foreach (string value in node.Values.OrderBy(n => n, AlphaNumericComparer.Default))
                 {
-                    string str = NamePolicy.BuildName(node, TreeNode.Parametrizer.Instance);
+                    string str = NamePolicy.BuildName(node.TreeKey);
                     writer.AddResource(str, value);
                 }
             }

@@ -34,6 +34,15 @@ namespace Lexical.Localization
         String ParameterName { get; }
     }
 
+    /// <summary>
+    /// Function that visits one parametrized key part.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="parameterName"></param>
+    /// <param name="parameterValue"></param>
+    /// <param name="data"></param>
+    public delegate void KeyParameterVisitor<T>(string parameterName, string parameterValue, ref T data);
+
     public static partial class AssetKeyExtensions
     {
         /// <summary>
@@ -65,6 +74,22 @@ namespace Lexical.Localization
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Visit parametrized keys from root towards key
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="visitor"></param>
+        public static void VisitParameters<T>(this IAssetKey key, KeyParameterVisitor<T> visitor, ref T data)
+        {
+            // Push to stack
+            IAssetKey prevKey = key.GetPreviousKey();
+            if (prevKey != null) VisitParameters(prevKey, visitor, ref data);
+
+            // Pop from stack in reverse order
+            if (key is IAssetKeyParametrized parameter && parameter.ParameterName!=null) visitor(parameter.ParameterName, parameter.Name, ref data);
         }
 
         /// <summary>

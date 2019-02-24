@@ -173,12 +173,9 @@ namespace Lexical.Localization
         /// Build key into a string.
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="parametrizer"></param>
         /// <returns></returns>
-        public string BuildName(object key, IAssetKeyParametrizer parametrizer = default)
+        public string BuildName(IAssetKey key)
         {
-            if (parametrizer == null) parametrizer = AssetKeyParametrizer.Singleton;
-
             // Build name without string builder, without reallocating buffers, and (most of the time) without any other heap objects.
             // A bit of performance makes it looks messy. Tradeoffs.
 
@@ -188,22 +185,18 @@ namespace Lexical.Localization
             string pendingSeparator = null;
             LazyList<string> noncanonicalParameters = new LazyList<string>();
             // Calculate canonicals
-            for (object part = key; part != null; part = parametrizer.GetPreviousPart(part))
+            for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
             {
-                // Read parameters
-                string[] part_parameters = parametrizer.GetPartParameters(part);
-                if (part_parameters == null || part_parameters.Length == 0) continue;
-                foreach (string parameter in part_parameters)
+                if (part is IAssetKeyCanonicallyCompared == false) continue;
+                if (part is IAssetKeyParametrized parametrized)
                 {
-                    if (!parametrizer.IsCanonical(part, parameter)) continue;
-
-                    // Read parameter value
-                    string value = parametrizer.GetPartValue(part, parameter);
-                    if (string.IsNullOrEmpty(value)) continue;
+                    // Read parameter name and value
+                    string parameterName = parametrized.ParameterName, parameterValue = part.Name;
+                    if (string.IsNullOrEmpty(parameterValue)) continue;
 
                     // Read description
                     AssetKeyParameterDescription desc = null;
-                    if (parameters.TryGetValue(parameter, out desc) && !desc.IsIncluded) continue;
+                    if (parameters.TryGetValue(parameterName, out desc) && !desc.IsIncluded) continue;
 
                     // Try default descriptions
                     if (desc == null) parameters.TryGetValue("canonical", out desc);
@@ -218,32 +211,28 @@ namespace Lexical.Localization
                     // Add to length
                     if (!string.IsNullOrEmpty(pendingSeparator) && length > 0) length += pendingSeparator.Length;
                     else if (!string.IsNullOrEmpty(desc.PostfixSeparator)) length += desc.PostfixSeparator.Length;
-                    length += value.Length;
+                    length += parameterValue.Length;
                     pendingSeparator = desc.PrefixSeparator;
                 }
             }
 
             // Append non-canonical
             noncanonicalParameters.Clear();
-            for (object part = key; part != null; part = parametrizer.GetPreviousPart(part))
+            for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
             {
-                // Read parameters
-                string[] part_parameters = parametrizer.GetPartParameters(part);
-                if (part_parameters == null || part_parameters.Length == 0) continue;
-                foreach (string parameter in part_parameters)
+                if (part is IAssetKeyNonCanonicallyCompared == false) continue;
+                if (part is IAssetKeyParametrized parametrized)
                 {
-                    if (!parametrizer.IsNonCanonical(part, parameter)) continue;
-
-                    // Read parameter value
-                    string value = parametrizer.GetPartValue(part, parameter);
-                    if (string.IsNullOrEmpty(value)) continue;
+                    // Read parameter name and value
+                    string parameterName = parametrized.ParameterName, parameterValue = part.Name;
+                    if (string.IsNullOrEmpty(parameterValue)) continue;
 
                     // parameter by this name has already been added
-                    if (noncanonicalParameters.Contains(parameter)) continue;
+                    if (noncanonicalParameters.Contains(parameterName)) continue;
 
                     // Is this parameter type included
                     AssetKeyParameterDescription desc = null;
-                    if (parameters.TryGetValue(parameter, out desc) && !desc.IsIncluded) continue;
+                    if (parameters.TryGetValue(parameterName, out desc) && !desc.IsIncluded) continue;
 
                     // Try default descriptions
                     if (desc == null) parameters.TryGetValue("noncanonical", out desc);
@@ -258,9 +247,9 @@ namespace Lexical.Localization
                     // Add to length
                     if (!string.IsNullOrEmpty(desc.PostfixSeparator) && length > 0) length += desc.PostfixSeparator.Length;
                     else if (!string.IsNullOrEmpty(pendingSeparator) && length > 0) length += pendingSeparator.Length;
-                    length += value.Length;
+                    length += parameterValue.Length;
                     pendingSeparator = desc.PrefixSeparator;
-                    noncanonicalParameters.Add(parameter);
+                    noncanonicalParameters.Add(parameterName);
                 }
             }
 
@@ -269,22 +258,18 @@ namespace Lexical.Localization
             int ix = length;
             pendingSeparator = null;
             // Append canonical
-            for (object part = key; part != null; part = parametrizer.GetPreviousPart(part))
+            for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
             {
-                // Read parameters
-                string[] part_parameters = parametrizer.GetPartParameters(part);
-                if (part_parameters == null || part_parameters.Length == 0) continue;
-                foreach (string parameter in part_parameters)
+                if (part is IAssetKeyCanonicallyCompared == false) continue;
+                if (part is IAssetKeyParametrized parametrized)
                 {
-                    if (!parametrizer.IsCanonical(part, parameter)) continue;
-
-                    // Read parameter value
-                    string value = parametrizer.GetPartValue(part, parameter);
-                    if (string.IsNullOrEmpty(value)) continue;
+                    // Read parameter name and value
+                    string parameterName = parametrized.ParameterName, parameterValue = part.Name;
+                    if (string.IsNullOrEmpty(parameterValue)) continue;
 
                     // Read description
                     AssetKeyParameterDescription desc = null;
-                    if (parameters.TryGetValue(parameter, out desc) && !desc.IsIncluded) continue;
+                    if (parameters.TryGetValue(parameterName, out desc) && !desc.IsIncluded) continue;
 
                     // Try default descriptions
                     if (desc == null) parameters.TryGetValue("canonical", out desc);
@@ -299,32 +284,28 @@ namespace Lexical.Localization
                     // Add to length
                     if (!string.IsNullOrEmpty(pendingSeparator) && ix<length) { ix -= pendingSeparator.Length; pendingSeparator.CopyTo(0, dst, ix, pendingSeparator.Length); }
                     else if (!string.IsNullOrEmpty(desc.PostfixSeparator)) { ix -= desc.PostfixSeparator.Length; desc.PostfixSeparator.CopyTo(0, dst, ix, desc.PostfixSeparator.Length); }
-                    ix -= value.Length; value.CopyTo(0, dst, ix, value.Length);
+                    ix -= parameterValue.Length; parameterValue.CopyTo(0, dst, ix, parameterValue.Length);
                     pendingSeparator = desc.PrefixSeparator;
                 }
             }
 
             // Append non-canonical
             noncanonicalParameters.Clear();
-            for (object part = key; part != null; part = parametrizer.GetPreviousPart(part))
+            for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
             {
-                // Read parameters
-                string[] part_parameters = parametrizer.GetPartParameters(part);
-                if (part_parameters == null || part_parameters.Length == 0) continue;
-                foreach (string parameter in part_parameters)
+                if (part is IAssetKeyNonCanonicallyCompared == false) continue;
+                if (part is IAssetKeyParametrized parametrized)
                 {
-                    if (!parametrizer.IsNonCanonical(part, parameter)) continue;
-
-                    // Read parameter value
-                    string value = parametrizer.GetPartValue(part, parameter);
-                    if (string.IsNullOrEmpty(value)) continue;
+                    // Read parameter name and value
+                    string parameterName = parametrized.ParameterName, parameterValue = part.Name;
+                    if (string.IsNullOrEmpty(parameterValue)) continue;
 
                     // parameter by this name has already been added
-                    if (noncanonicalParameters.Contains(parameter)) continue;
+                    if (noncanonicalParameters.Contains(parameterName)) continue;
 
                     // Is this parameter type included
                     AssetKeyParameterDescription desc = null;
-                    if (parameters.TryGetValue(parameter, out desc) && !desc.IsIncluded) continue;
+                    if (parameters.TryGetValue(parameterName, out desc) && !desc.IsIncluded) continue;
 
                     // Try default descriptions
                     if (desc == null) parameters.TryGetValue("noncanonical", out desc);
@@ -339,9 +320,9 @@ namespace Lexical.Localization
                     // Add to length
                     if (!string.IsNullOrEmpty(desc.PostfixSeparator) && ix<length) { ix -= desc.PostfixSeparator.Length; desc.PostfixSeparator.CopyTo(0, dst, ix, desc.PostfixSeparator.Length); }
                     else if (!string.IsNullOrEmpty(pendingSeparator)) { ix -= pendingSeparator.Length; pendingSeparator.CopyTo(0, dst, ix, pendingSeparator.Length); }
-                    ix -= value.Length; value.CopyTo(0, dst, ix, value.Length);
+                    ix -= parameterValue.Length; parameterValue.CopyTo(0, dst, ix, parameterValue.Length);
                     pendingSeparator = desc.PrefixSeparator;
-                    noncanonicalParameters.Add(parameter);
+                    noncanonicalParameters.Add(parameterName);
                 }
             }
 

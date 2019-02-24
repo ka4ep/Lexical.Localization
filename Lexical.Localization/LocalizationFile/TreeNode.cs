@@ -59,6 +59,9 @@ namespace Lexical.Localization.LocalizationFile
         public string ParameterValue => Parameter.Value;
         public string[] ParameterNames => parameters ?? (parameters = new string[] { ParameterName });
 
+        Key treeKey;
+        public Key TreeKey => treeKey ?? (treeKey = (Parent == null ? Key.Root : Parent.TreeKey).Append(ParameterName, ParameterValue));
+
         public bool HasChildren => children != null && children.Count > 0;
         public Dictionary<string, TreeNode> Children => children ?? (children = new Dictionary<string, TreeNode>(StringComparer.InvariantCulture));
 

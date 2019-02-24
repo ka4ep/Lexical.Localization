@@ -28,13 +28,11 @@ namespace Lexical.Localization.Ms.Extensions
         public readonly IConfiguration configuration;
         IDisposable observerHandle;
         IAssetKeyNamePolicy namePolicy;
-        IAssetKeyParametrizer parametrizer;
 
-        public ConfigurationLocalizationAsset(IConfiguration configuration, IAssetKeyNamePolicy namePolicy = default, IAssetKeyParametrizer parametrizer = default)
+        public ConfigurationLocalizationAsset(IConfiguration configuration, IAssetKeyNamePolicy namePolicy = default)
         {
             this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-            this.parametrizer = parametrizer ?? AssetKeyParametrizer.Singleton;
             this.observerHandle = this.configuration.GetReloadToken()?.RegisterChangeCallback(ConfigurationChanged, this);
         }
 
@@ -100,7 +98,7 @@ namespace Lexical.Localization.Ms.Extensions
         public string GetString(IAssetKey key)
         {
             if (key == null) return null;
-            string id = key.BuildName(namePolicy, parametrizer);
+            string id = key.BuildName(namePolicy);
             return configuration[id];
         }
 
@@ -149,9 +147,9 @@ namespace Lexical.Localization.Ms.Extensions
 
     public static partial class ConfigurationLocalizationExtensions
     {
-        public static IAssetComposition AddConfiguration(this IAssetComposition localizationComposition, IConfiguration configuration, IAssetKeyNamePolicy namePolicy = default, IAssetKeyParametrizer parametrizer = default)
+        public static IAssetComposition AddConfiguration(this IAssetComposition localizationComposition, IConfiguration configuration, IAssetKeyNamePolicy namePolicy = default)
         {
-            localizationComposition.Add(new ConfigurationLocalizationAsset(configuration, namePolicy, parametrizer));
+            localizationComposition.Add(new ConfigurationLocalizationAsset(configuration, namePolicy));
             return localizationComposition;
         }
     }

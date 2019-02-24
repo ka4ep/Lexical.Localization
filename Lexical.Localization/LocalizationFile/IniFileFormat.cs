@@ -178,7 +178,7 @@ namespace Lexical.Localization.LocalizationFile
             if (!node.HasValues) return 0;
 
             // Key string
-            string str = keyNamePolicy.BuildName(node, TreeNode.Parametrizer.Instance);
+            string str = keyNamePolicy.BuildName(node.TreeKey);
 
             // Write lines
             node.Values.Sort(AlphaNumericComparer.Default);

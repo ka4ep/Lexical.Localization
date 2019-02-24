@@ -175,27 +175,4 @@ namespace Lexical.Localization
         }
     }
 
-    public static class AssetKeyParameterKeyExtensions
-    {
-        /// <summary>
-        /// Matches parameters of <see cref="IAssetKey"/> against <see cref="IAssetNamePattern"/>.
-        /// </summary>
-        /// <param name="pattern"></param>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public static IAssetNamePatternMatch Match(this IAssetNamePattern pattern, IAssetKey key)
-            => pattern.Match(key, AssetKeyParametrizer.Singleton);
-
-        /// <summary>
-        /// Matches parameters of <see cref="IAssetKey"/> against <see cref="IAssetNamePattern"/> 
-        /// and converts to string.
-        /// </summary>
-        /// <param name="pattern"></param>
-        /// <param name="obj"></param>
-        /// <param name="parameterReader"></param>
-        /// <returns>match as string or null</returns>
-        public static string MatchToString(this IAssetNamePattern pattern, IAssetKey key)
-            => pattern.MatchToString(key, AssetKeyParametrizer.Singleton);
-    }
-
 }
