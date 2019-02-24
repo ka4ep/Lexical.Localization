@@ -90,6 +90,9 @@ namespace Lexical.Localization.Internal
         public IAssetKeyParametrized AppendParameter(string parameterName, string parameterValue)
             => Create(this, parameterName, parameterValue);
 
+        public static Key Create(string parameterName, string parameterValue)
+            => Create(null, parameterName, parameterValue);
+
         public static Key Create(Key prevKey, string parameterName, string parameterValue)
         {
             switch (parameterName)

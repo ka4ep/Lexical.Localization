@@ -14,7 +14,7 @@ namespace Scratch
 
             LocalizationRoot.Builder.AddAsset(asset).Build();
             IAssetKey key = LocalizationRoot.Global.TypeSection("ConsoleApp1.MyController").Key("Success");
-            Key key2 = new Key("root", "").Append("type", "ConsoleApp1.MyController").Append("key", "Success");
+            Key key2 = Key.Create("type", "ConsoleApp1.MyController").Append("key", "Success");
 
             AssetKeyComparer comparer = AssetKeyComparer.Default;
 
