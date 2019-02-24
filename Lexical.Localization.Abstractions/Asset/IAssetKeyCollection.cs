@@ -16,6 +16,11 @@ namespace Lexical.Localization
     {
         /// <summary>
         /// Gets all keys in the asset.
+        /// 
+        /// If <paramref name="filterCriteria"/> is provided, then the result will contain
+        /// all keys that contain the parameters in the <paramref name="filterCriteria"/>.
+        /// For example if there are "culture"="en" and "asset"="somelib.dll", then
+        /// keys from that lib and localization are returned.
         /// </summary>
         /// <param name="filterCriteria">(optional) key criteria to match with</param>
         /// <returns>keys in context-free format, or null if not supported</returns>
@@ -70,6 +75,57 @@ namespace Lexical.Localization
                 }
             }
             return result;
+        }
+
+        /// <summary>
+        /// This implementation can be used for filtering an enumerable of keys.
+        /// </summary>
+        /// <param name="keys">keys to filter</param>
+        /// <param name="criteriaKey">criteria key to use for filtering</param>
+        /// <returns>filtered keys</returns>
+        public static IEnumerable<IAssetKey> FilterKeys(this IEnumerable<IAssetKey> keys, IAssetKey criteriaKey = null)
+        {
+            // Filter
+            if (criteriaKey != null)
+            {
+                KeyValuePair<string, string>[] filterParameters = criteriaKey.GetParameters();
+                if (filterParameters.Length > 0) keys = FilterKeys(keys, filterParameters);
+            }
+            return keys;
+        }
+
+        /// <summary>
+        /// This implementation can be used for filtering an enumerable of keys.
+        /// </summary>
+        /// <param name="keys"></param>
+        /// <param name="filterParameters"></param>
+        /// <returns></returns>
+        public static IEnumerable<IAssetKey> FilterKeys(this IEnumerable<IAssetKey> keys, KeyValuePair<string, string>[] filterParameters)
+        {
+            foreach (IAssetKey key in keys)
+            {
+                // Filter by criteria key
+                bool ok = true;
+                // Iterate all criteria parameters (key,value)
+                foreach (var filterParameter in filterParameters)
+                {
+                    bool okk = false;
+                    for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+                    {
+                        if (k.GetParameterName() == filterParameter.Key)
+                        {
+                            okk = k.Name == filterParameter.Value;
+                            break;
+                        }
+                    }
+
+                    // criteria did not match, go to next line
+                    ok &= okk;
+                    if (!ok) break;
+                }
+
+                if (ok) yield return key;
+            }
         }
 
     }

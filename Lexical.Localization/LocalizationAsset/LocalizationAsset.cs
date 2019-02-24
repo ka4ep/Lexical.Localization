@@ -22,10 +22,10 @@ namespace Lexical.Localization
         /// <summary>
         /// List of source where values are read from when <see cref="Load"/> is called.
         /// </summary>
-        protected List<IEnumerable<KeyValuePair<Key, string>>> sources;
+        protected List<IEnumerable<KeyValuePair<IAssetKey, string>>> sources;
 
         /// <summary>
-        /// Values are copied here. Keys are context free instances of <see cref="Key"/>.
+        /// Active snapshot of key-values.
         /// </summary>
         protected Dictionary<IAssetKey, string> map;
 
@@ -42,7 +42,7 @@ namespace Lexical.Localization
         /// <param name="parametrizer">(optional) object that extracts parameters from source and the string requests</param>
         public LocalizationAsset()
         {
-            this.sources = new List<IEnumerable<KeyValuePair<Key, string>>>();
+            this.sources = new List<IEnumerable<KeyValuePair<IAssetKey, string>>>();
             this.Comparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
             Load();
         }
@@ -57,7 +57,7 @@ namespace Lexical.Localization
         public LocalizationAsset AddKeySource(IEnumerable<KeyValuePair<Key, string>> keyValueSource, string sourceHint = null)
         {
             if (keyValueSource == null) throw new ArgumentNullException(nameof(keyValueSource));
-            lock (sources) sources.Add(keyValueSource);
+            lock (sources) sources.Add(keyValueSource.Select(kp=>new KeyValuePair<IAssetKey, string>((IAssetKey)kp.Key, kp.Value)));
             return this;
         }
 
@@ -68,13 +68,10 @@ namespace Lexical.Localization
         /// <param name="keyValueSource"></param>
         /// <param name="sourceHint">(optional) added to error message</param>
         /// <returns></returns>
-        public LocalizationAsset AddAssetKeySource(IEnumerable<KeyValuePair<IAssetKey, string>> keyValueSource, string sourceHint = null)
+        public LocalizationAsset AddKeySource(IEnumerable<KeyValuePair<IAssetKey, string>> keyValueSource, string sourceHint = null)
         {
             if (keyValueSource == null) throw new ArgumentNullException(nameof(keyValueSource));
-
-            AssetKeyCloner cloner = new AssetKeyCloner(Key.Root).AddParameterToExclude("root"); 
-            IEnumerable<KeyValuePair<Key, string>> adaptedSource = keyValueSource.Select( kp=>new KeyValuePair<Key, string>((Key)cloner.Copy(kp.Key), kp.Value) ).Where(kp=>kp.Key!=null);
-            lock (sources) sources.Add(adaptedSource);
+            lock (sources) sources.Add(keyValueSource);
             return this;
         }
 
@@ -101,14 +98,14 @@ namespace Lexical.Localization
         {
             if (keyValueSource == null) throw new ArgumentNullException(nameof(keyValueSource));
             if (namePolicy == null) throw new ArgumentNullException(nameof(namePolicy));
-            IEnumerable<KeyValuePair<Key, string>> adaptedSource = null;
-            if (namePolicy is IAssetNamePattern patternPolicy)
+            IEnumerable<KeyValuePair<IAssetKey, string>> adaptedSource = null;
+            if (namePolicy is ParameterNamePolicy parameterPolicy)
             {
-                adaptedSource = keyValueSource.Select(kp => new KeyValuePair<Key, string>(ConvertKey(kp.Key, patternPolicy), kp.Value)).Where(kp => kp.Key != null);
+                adaptedSource = keyValueSource.Select(kp => new KeyValuePair<IAssetKey, string>(parameterPolicy.ParseKey(kp.Key, Key.Root), kp.Value)).Where(kp => kp.Key != null);
             }
-            else if (namePolicy is ParameterNamePolicy parameterPolicy)
+            else if (namePolicy is IAssetNamePattern patternPolicy)
             {
-                adaptedSource = keyValueSource.Select(kp => new KeyValuePair<Key, string>((Key)parameterPolicy.ParseKey(kp.Key, Key.Root), kp.Value)).Where(kp => kp.Key != null);
+                adaptedSource = keyValueSource.Select(kp => new KeyValuePair<IAssetKey, string>(ConvertKey(kp.Key, patternPolicy), kp.Value)).Where(kp => kp.Key != null);
             }
             else {
                 throw new ArgumentException($"Cannot add strings to {nameof(LocalizationAsset)} with {nameof(namePolicy)} {namePolicy.GetType().FullName}. Please use either {nameof(LocalizationStringAsset)}, or another policy such as {nameof(AssetNamePattern)} or {nameof(ParameterNamePolicy)}.");
@@ -133,7 +130,7 @@ namespace Lexical.Localization
             foreach (var kp in match)
             {
                 if (kp.Key == null || kp.Value == null) continue;
-                result = new Key(result, kp.Key, kp.Value);
+                result = Key.Create(result, kp.Key, kp.Value);
             }
             return result;
         }
@@ -151,7 +148,7 @@ namespace Lexical.Localization
 
         protected virtual IEnumerable<KeyValuePair<IAssetKey, string>> ConcatenateSources()
         {
-            IEnumerable<KeyValuePair<Key, string>> result = null;
+            IEnumerable<KeyValuePair<IAssetKey, string>> result = null;
             foreach(var source in sources)
             {
                 result = result == null ? source : result.Concat(source);
@@ -190,44 +187,7 @@ namespace Lexical.Localization
         }
 
         public IEnumerable<IAssetKey> GetAllKeys(IAssetKey criteriaKey = null)
-        {
-            IEnumerable<IAssetKey> keyEnumr = map.Keys;
-            // Filter
-            if (criteriaKey != null)
-            {
-                KeyValuePair<string, string>[] filterParameters = criteriaKey.GetParameters();
-                if (filterParameters.Length > 0) keyEnumr = FilterKeys(keyEnumr, filterParameters);
-            }
-            return keyEnumr.ToArray();
-        }
-
-        IEnumerable<IAssetKey> FilterKeys(IEnumerable<IAssetKey> keys, KeyValuePair<string, string>[] filterParameters)
-        {
-            foreach (IAssetKey key in keys)
-            {
-                // Filter by criteria key
-                bool ok = true;
-                // Iterate all criteria parameters (key,value)
-                foreach (var filterParameter in filterParameters)
-                {
-                    bool okk = false;
-                    for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
-                    {
-                        if (k.GetParameterName() == filterParameter.Key)
-                        {
-                            okk = k.Name == filterParameter.Value;
-                            break;
-                        }
-                    }
-
-                    // criteria did not match, go to next line
-                    ok &= okk;
-                    if (!ok) break;
-                }
-
-                if (ok) yield return key;
-            }
-        }
+            => map.Keys.FilterKeys(criteriaKey);
 
         protected virtual void ClearCache()
         {

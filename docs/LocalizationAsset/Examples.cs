@@ -59,7 +59,7 @@ namespace docs
                     { new LocalizationRoot().TypeSection("MyController").Key("hello").SetCulture("de"), "Hallo Welt!"  }
                 };
                 // Create asset with string source
-                IAsset asset = new LocalizationAsset().AddAssetKeySource(source).Load();
+                IAsset asset = new LocalizationAsset().AddKeySource(source).Load();
                 #endregion Snippet_1c
 
                 #region Snippet_2c

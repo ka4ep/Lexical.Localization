@@ -1,5 +1,11 @@
-﻿using Lexical.Localization.Internal;
+﻿// --------------------------------------------------------
+// Copyright:      Toni Kalajainen
+// Date:           20.2.2019
+// Url:            http://lexical.fi
+// --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,11 +14,11 @@ using System.Xml.Linq;
 
 namespace Lexical.Localization.LocalizationFile2
 {
-    public class XmlFileFormat
+    public class XmlLocalization
     {
         public const string URN = "urn:lexical.fi:";
-        private readonly static XmlFileFormat instance = new XmlFileFormat();
-        public static XmlFileFormat Instance => instance;
+        private readonly static XmlLocalization instance = new XmlLocalization();
+        public static XmlLocalization Instance => instance;
 
         public KeyTree ReadFile(string filename)
             => ReadTree(XDocument.Load(filename).Root);
@@ -75,17 +81,41 @@ namespace Lexical.Localization.LocalizationFile2
             return parent;
         }
 
+        public class Asset : LocalizationAsset
+        {
+            public Asset(string filename, bool reloadIfModified) : base()
+            {
+                KeyTree tree = XmlLocalization.Instance.ReadFile(filename);
+                IEnumerable<KeyValuePair<IAssetKey, string>> keyValues = tree.ToKeyValues(skipRoot: false).ToArray();
+                AddKeySource(keyValues, filename);
+                Load();
+            }
+        }
+
+        /// <summary>
+        /// Xml-file source that reads file into memory every time <see cref="IEnumerator{T}"/> is acquired.
+        /// </summary>
+        public class FileSource : IEnumerable<KeyValuePair<Key, string>>
+        {
+            /// <summary>
+            /// Xml file name
+            /// </summary>
+            public readonly string filename;
+
+            public FileSource(string filename)
+            {
+                this.filename = filename ?? throw new ArgumentNullException(nameof(filename));
+            }
+
+            public IEnumerator<KeyValuePair<Key, string>> GetEnumerator()
+                => ((IEnumerable<KeyValuePair<Key, string>>)XmlLocalization.Instance.ReadFile(filename).ToKeyValues(true)).GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator()
+                => XmlLocalization.Instance.ReadFile(filename).ToKeyValues(true).GetEnumerator();
+        }
+
     }
 
-    public class XmlAsset : LocalizationAsset
-    {
-        public XmlAsset(string filename, bool reloadIfModified) : base()
-        {
-            KeyTree tree = XmlFileFormat.Instance.ReadFile(filename);
-            IEnumerable<KeyValuePair<Key, string>> keyValues = tree.ToKeyValues(skipRoot: false).ToArray();
-            AddKeySource(keyValues, filename);
-            Load();
-        }
-    }
+
 
 }

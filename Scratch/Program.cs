@@ -10,7 +10,7 @@ namespace Scratch
     {
         static void Main(string[] args)
         {
-            XmlAsset asset = new XmlAsset("localization.xml", false);
+            XmlLocalization.Asset asset = new XmlLocalization.Asset("localization.xml", false);
 
             LocalizationRoot.Builder.AddAsset(asset).Build();
             IAssetKey key = LocalizationRoot.Global.TypeSection("ConsoleApp1.MyController").Key("Success");

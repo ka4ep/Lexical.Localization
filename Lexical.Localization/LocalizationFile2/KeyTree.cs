@@ -277,20 +277,20 @@ namespace Lexical.Localization.LocalizationFile2
             return subsection;
         }
 
-        public IEnumerable<KeyValuePair<Key, string>> ToKeyValues(bool skipRoot)
+        public IEnumerable<KeyValuePair<IAssetKey, string>> ToKeyValues(bool skipRoot)
         {
             Queue<(KeyTree, Key)> queue = new Queue<(KeyTree, Key)>();
             queue.Enqueue((this, skipRoot&&this.Key.Name=="root"?null:this.Key));
             while(queue.Count>0)
             {
-                // Dequue next element
+                // Next element
                 (KeyTree, Key) current = queue.Dequeue();
 
                 // Yield values
                 if (current.Item2 != null && current.Item1.HasValues)
                 {
                     foreach (string value in current.Item1.Values)
-                        yield return new KeyValuePair<Key, string>(current.Item2, value);
+                        yield return new KeyValuePair<IAssetKey, string>(current.Item2, value);
                 }
 
                 // Enqueue children
