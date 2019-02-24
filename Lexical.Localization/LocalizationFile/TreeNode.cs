@@ -22,22 +22,10 @@ namespace Lexical.Localization.LocalizationFile
         /// <param name="keyValues"></param>
         /// <param name="parametrizer"></param>
         /// <returns>tree root ""</returns>
-        public static TreeNode Create(IEnumerable<KeyValuePair<object, string>> keyValues, IAssetKeyParametrizer parametrizer)
-        {
-            TreeNode root = new TreeNode(new Key.NonCanonical("root", ""), null);
-            root.AddRange(parametrizer, keyValues);
-            return root;
-        }
-
-        /// <summary>
-        /// Create tree structure from source of flat key values.
-        /// </summary>
-        /// <param name="keyValues"></param>
-        /// <returns></returns>
         public static TreeNode Create(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
         {
             TreeNode root = new TreeNode(new Key.NonCanonical("root", ""), null);
-            root.AddRange(AssetKeyParametrizer.Singleton, keyValues.Select(kp=>new KeyValuePair<object, string>(kp.Key, kp.Value)));
+            root.AddRange(keyValues);
             return root;
         }
 
@@ -74,39 +62,10 @@ namespace Lexical.Localization.LocalizationFile
             this.Parent = parent;
         }
 
-        public TreeNode AddRange(IAssetKeyParametrizer parametrizer, IEnumerable<KeyValuePair<object, string>> keyValues)
+        public TreeNode AddRange(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
         {
-            // Create composite paramerizer
-            IAssetKeyParametrizer compositeParametrizer = parametrizer is TreeNode.Parametrizer ? parametrizer :
-                new AssetKeyParametrizerComposite(parametrizer, TreeNode.Parametrizer.Instance);
-            // Create comparer that can compare LocalizationKeyTree and argument's keys
-            ParametrizedComparer comparer = ParametrizedComparer.Instance;
-
-            foreach (var kp in keyValues)
-            {
-                // Break key into parts
-                IEnumerable<object> key_parts_enumr = parametrizer.Break(kp.Key);
-
-                // LocalizationKeyTree is an intermediate model for writing text files
-                // Reorganize parts so that non-canonicals are first, and in particular "root", then "culture", then others.
-                IEnumerable<object> non_canonical = key_parts_enumr.Where(p => !parametrizer.IsCanonical(p)).OrderBy(p => parametrizer.GetPartParameters(p), PartComparer.Default);
-
-                // Filter out keys that are same as this (root)
-                non_canonical = non_canonical.Where(part=>!comparer.Equals(this.Parameter, (IAssetKey)part));
-
-                // Add non-canonical parts
-                IEnumerable<object> canonical = key_parts_enumr.Where(p => parametrizer.IsCanonical(p));
-
-                // Into array
-                object[] key_parts = non_canonical.Concat(canonical).ToArray();
-
-                // Add recursively
-                _add(key_parts, 0, parametrizer, kp.Value);
-            }
-
-            return this;
+            throw new NotImplementedException("Deprecated and to be removed");
         }
-
 
         void _add(object[] key_parts, int part_index, IAssetKeyParametrizer parametrizer, string value)
         {

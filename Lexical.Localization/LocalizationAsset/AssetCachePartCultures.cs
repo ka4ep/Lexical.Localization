@@ -30,18 +30,11 @@ namespace Lexical.Localization
         CultureInfo[] cultures;
         bool culturesCached;
 
-        public AssetCachePartCultures(IAsset source, AssetCacheOptions options, IAssetKeyParametrizer parametrizer = default)
+        public AssetCachePartCultures(IAsset source, AssetCacheOptions options)
         {
-            if (parametrizer == null) parametrizer = AssetKeyParametrizer.Singleton;
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
-
-
-            // Create a cloner that reads values from IAssetKeys
             this.cloner = new AssetKeyCloner(Key.Root);
-
-            // Create parametrizer, comparer and cache that reads IAssetKeys and AssetKeyProxies interchangeably. ParameterKey.Parametrizer must be on the left side, or it won't work. (because ParameterKey : IAssetKey).
-            IAssetKeyParametrizer compositeParametrizer = Key.Parametrizer.Default.Concat(parametrizer);
             this.comparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
         }
 

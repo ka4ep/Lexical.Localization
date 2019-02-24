@@ -30,9 +30,8 @@ namespace Lexical.Localization
         string[] resourceNames;
         bool resourceNamesCached;
 
-        public AssetCachePartResources(IAsset source, AssetCacheOptions options, IAssetKeyParametrizer parametrizer = default)
+        public AssetCachePartResources(IAsset source, AssetCacheOptions options)
         {
-            if (parametrizer == null) parametrizer = AssetKeyParametrizer.Singleton;
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
 
@@ -40,7 +39,6 @@ namespace Lexical.Localization
             this.cloner = new AssetKeyCloner(Key.Root);
 
             // Create parametrizer, comparer and cache that reads IAssetKeys and AssetKeyProxies interchangeably. ParameterKey.Parametrizer must be on the left side, or it won't work. (because ParameterKey : IAssetKey).
-            IAssetKeyParametrizer compositeParametrizer = Key.Parametrizer.Default.Concat(parametrizer);
             this.comparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
             this.resourceCache = new Dictionary<IAssetKey, byte[]>(comparer);
         }

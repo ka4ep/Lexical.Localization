@@ -19,8 +19,6 @@ namespace Lexical.Localization
     /// Canonical parts are concatenated in canonical order from root to tail.
     /// Example: key.Key("x").Section("y").Key("z") builds into string "x:y:z".
     /// 
-    /// This implementation uses <see cref="IAssetKeyParametrizer"/> to extract parameters from key parts.
-    /// 
     /// If parameter value is "", then it is considered as non-existing and will not be appended.
     /// </summary>
     public class AssetKeyNameProvider : IAssetKeyNameDescription, IAssetKeyNameProvider, ICloneable

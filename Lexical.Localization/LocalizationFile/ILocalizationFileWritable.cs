@@ -39,14 +39,6 @@ namespace Lexical.Localization.LocalizationFile
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="keyValues"></param>
-        public static void Write(this ILocalizationFileWritable writer, IEnumerable<KeyValuePair<object, string>> keyValues, IAssetKeyParametrizer parametrizer = default)
-            => writer.Write( TreeNode.Create(keyValues, parametrizer) );
-
-        /// <summary>
-        /// Write using <see cref="IAssetKey"/> map.
-        /// </summary>
-        /// <param name="writer"></param>
-        /// <param name="keyValues"></param>
         public static void Write(this ILocalizationFileWritable writer, IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
             => writer.Write(TreeNode.Create(keyValues));
         /// <summary>

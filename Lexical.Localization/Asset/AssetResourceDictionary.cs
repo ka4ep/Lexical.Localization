@@ -17,7 +17,6 @@ namespace Lexical.Localization
     {
         protected IReadOnlyDictionary<string, byte[]> source;
 
-        IAssetKeyParametrizer parametrizer;
         IAssetKeyNamePolicy namePolicy;
 
         /// <summary>
@@ -26,11 +25,10 @@ namespace Lexical.Localization
         /// <param name="dictionary">dictionary</param>
         /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
         /// <param name="parametrizer">(optional) parametr reader</param>
-        public AssetResourceDictionary(IReadOnlyDictionary<string, byte[]> dictionary, IAssetKeyNamePolicy namePolicy = default, IAssetKeyParametrizer parametrizer = default)
+        public AssetResourceDictionary(IReadOnlyDictionary<string, byte[]> dictionary, IAssetKeyNamePolicy namePolicy = default)
         {
             this.source = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
             this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-            this.parametrizer = parametrizer ?? AssetKeyParametrizer.Singleton;
         }
 
         public IEnumerable<string> GetResourceNames(IAssetKey key)

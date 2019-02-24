@@ -43,7 +43,6 @@ namespace Lexical.Localization
         public LocalizationAsset()
         {
             this.sources = new List<IEnumerable<KeyValuePair<Key, string>>>();
-            IAssetKeyParametrizer compositeParametrizer = Key.Parametrizer.Default.Concat(AssetKeyParametrizer.Singleton);
             this.Comparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
             Load();
         }
