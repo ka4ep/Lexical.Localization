@@ -39,8 +39,8 @@ namespace Lexical.Localization.LocalizationFile2
         {
             if (fileFormat is ILocalizationLinesStreamReader r3) return r3.ReadLines(stream, namePolicy);
             if (fileFormat is ILocalizationTreeStreamReader r4) return r4.ReadTree(stream, namePolicy).ToLines(true);
-            if (fileFormat is ILocalizationLinesTextReader r1) return r1.ReadLines(stream.ToTextReader(), namePolicy);
-            if (fileFormat is ILocalizationTreeTextReader r2) return r2.ReadTree(stream.ToTextReader(), namePolicy).ToLines(true);
+            if (fileFormat is ILocalizationLinesTextReader r1) using (var txt = stream.ToTextReader()) return r1.ReadLines(txt, namePolicy);
+            if (fileFormat is ILocalizationTreeTextReader r2) using (var txt = stream.ToTextReader()) return r2.ReadTree(txt, namePolicy).ToLines(true);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
 
@@ -70,9 +70,9 @@ namespace Lexical.Localization.LocalizationFile2
         public static IKeyTree ReadTree(this ILocalizationFileFormat fileFormat, Stream stream, IAssetKeyNamePolicy namePolicy = default)
         {
             if (fileFormat is ILocalizationTreeStreamReader r4) return r4.ReadTree(stream, namePolicy);
-            if (fileFormat is ILocalizationTreeTextReader r2) return r2.ReadTree(stream.ToTextReader(), namePolicy);
+            if (fileFormat is ILocalizationTreeTextReader r2) using (var txt = stream.ToTextReader()) return r2.ReadTree(txt, namePolicy);
             if (fileFormat is ILocalizationLinesStreamReader r3) return KeyTree.Create(r3.ReadLines(stream, namePolicy));
-            if (fileFormat is ILocalizationLinesTextReader r1) return KeyTree.Create(r1.ReadLines(stream.ToTextReader(), namePolicy));
+            if (fileFormat is ILocalizationLinesTextReader r1) using (var txt = stream.ToTextReader()) return KeyTree.Create(r1.ReadLines(txt, namePolicy));
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
 
@@ -113,8 +113,8 @@ namespace Lexical.Localization.LocalizationFile2
         {
             if (fileFormat is ILocalizationLinesStreamWriter r3) { r3.WriteLines(lines, srcStream, dstStream, namePolicy, flags); return; }
             if (fileFormat is ILocalizationTreeStreamWriter r4) { r4.WriteTree(KeyTree.Create(lines), srcStream, dstStream, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationLinesTextWriter r1) { using (var tw = dstStream.ToTextWriter()) r1.WriteLines(lines, srcStream.ToTextReader(), tw, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationTreeTextWriter r2) { using (var tw = dstStream.ToTextWriter()) r2.WriteTree(KeyTree.Create(lines), srcStream.ToTextReader(), tw, namePolicy, flags); return; }
+            if (fileFormat is ILocalizationLinesTextWriter r1) { using (var srcTxt = srcStream.ToTextReader()) using (var tw = dstStream.ToTextWriter()) r1.WriteLines(lines, srcTxt, tw, namePolicy, flags); return; }
+            if (fileFormat is ILocalizationTreeTextWriter r2) { using (var srcTxt = srcStream.ToTextReader()) using (var tw = dstStream.ToTextWriter()) r2.WriteTree(KeyTree.Create(lines), srcTxt, tw, namePolicy, flags); return; }
             throw new FileLoadException($"Cannot write localization with {fileFormat.GetType().FullName}");
         }
 
@@ -154,9 +154,9 @@ namespace Lexical.Localization.LocalizationFile2
         public static void WriteTree(this ILocalizationFileFormat fileFormat, IKeyTree tree, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags)
         {
             if (fileFormat is ILocalizationTreeStreamWriter r4) { r4.WriteTree(tree, srcStream, dstStream, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationTreeTextWriter r2) { using (var tw = dstStream.ToTextWriter()) r2.WriteTree(tree, srcStream.ToTextReader(), tw, namePolicy, flags); return; }
+            if (fileFormat is ILocalizationTreeTextWriter r2) { using (var srcTxt = srcStream.ToTextReader()) using (var tw = dstStream.ToTextWriter()) r2.WriteTree(tree, srcTxt, tw, namePolicy, flags); return; }
             if (fileFormat is ILocalizationLinesStreamWriter r3) { r3.WriteLines(tree.ToLines(true), srcStream, dstStream, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationLinesTextWriter r1) { using (var tw = dstStream.ToTextWriter()) r1.WriteLines(tree.ToLines(true), srcStream.ToTextReader(), tw, namePolicy, flags); return; }
+            if (fileFormat is ILocalizationLinesTextWriter r1) { using (var srcTxt = srcStream.ToTextReader()) using (var tw = dstStream.ToTextWriter()) r1.WriteLines(tree.ToLines(true), srcTxt, tw, namePolicy, flags); return; }
             throw new FileLoadException($"Cannot write localization with {fileFormat.GetType().FullName}");
         }
 
@@ -180,16 +180,33 @@ namespace Lexical.Localization.LocalizationFile2
         /// Read content in <paramref name="s"/> and decode into string.
         /// </summary>
         /// <param name="s"></param>
-        /// <returns>string reader that doesn't need dispose</returns>
+        /// <returns>string reader that need to be disposed</returns>
         static internal TextReader ToTextReader(this Stream s)
-        {
-            long l = s.Length - s.Position;
-            if (l > Int32.MaxValue) throw new OutOfMemoryException();
-            byte[] data = new byte[l];
-            string str = Encoding.UTF8.GetString(data);
-            return new StringReader(str);
-        }
+            => new StreamReader(s, Encoding.UTF8, true, 32 * 1024);
 
+        internal static byte[] ReadFully(this Stream s)
+        {
+            if (s == null) return null;
+
+            // Try to read stream completely.
+            int len_ = (int)s.Length;
+            if (len_ > 2147483647) throw new IOException("File size over 2GB");
+            byte[] data = new byte[len_];
+
+            // Read chunks
+            int ix = 0;
+            while (ix < len_)
+            {
+                int count = s.Read(data, ix, len_ - ix);
+
+                // "returns zero (0) if the end of the stream has been reached."
+                if (count == 0) break;
+
+                ix += count;
+            }
+            if (ix == len_) return data;
+            throw new AssetException("Failed to read stream fully");
+        }
         /// <summary>
         /// Write contents in <paramref name="ms"/> into <paramref name="dstText"/>.
         /// </summary>

@@ -18,6 +18,7 @@
     </type:ConsoleApp1.MyController>
   </culture:fi>
 
-  <culture:se type="ConsoleApp1.MyController" key="Success">Det Funkar</culture:se>
-  
+  <culture:sv type="ConsoleApp1.MyController" key="Success">Det Funkar</culture:sv>
+  <culture:sv type="ConsoleApp1.MyController" key="Error">Det funkar inte (Kod=0x{0:X8})</culture:sv>
+
 </localization>

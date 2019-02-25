@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,10 +15,61 @@ using System.Xml.Linq;
 
 namespace Lexical.Localization.LocalizationFile2
 {
-    public class JsonFileFormat : ILocalizationFileFormat//, ILocalizationTreeStreamReader
+    public class JsonFileFormat : ILocalizationFileFormat, ILocalizationTreeTextReader
     {
         private readonly static JsonFileFormat instance = new JsonFileFormat();
         public static JsonFileFormat Instance => instance;
+
+        protected ParameterNamePolicy parser = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:\"");
+
+        public IKeyTree ReadTree(TextReader text, IAssetKeyNamePolicy namePolicy = default)
+        {
+            KeyTree root = new KeyTree(Key.Root);
+            KeyTree current = root;
+            List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
+            Stack<KeyTree> stack = new Stack<KeyTree>();
+            using (var json = new JsonTextReader(text))
+            {
+                while (json.Read())
+                {
+                    switch (json.TokenType)
+                    {
+                        case JsonToken.StartObject:
+                            stack.Push(current);
+                            break;
+                        case JsonToken.EndObject:
+                            current = stack.Pop();
+                            break;
+                        case JsonToken.PropertyName:
+                            Key key = null;
+                            parameters.Clear();
+                            if (parser.TryParseParameters(json.Value?.ToString(), parameters))
+                            {
+                                foreach(var parameter in parameters)
+                                    key = Key.Create(key, parameter.Key, parameter.Value);
+                                current = key == null ? null : stack.Peek()?.GetOrCreateChild(key);
+                            } else
+                            {
+                                current = null;
+                            }
+                            break;
+                        case JsonToken.Date:
+                        case JsonToken.String:
+                        case JsonToken.Boolean:
+                        case JsonToken.Float:
+                        case JsonToken.Integer:
+                            if (current != null)
+                            {
+                                string value = json.Value?.ToString();
+                                if (value != null && !current.Values.Contains(value))
+                                    current.Values.Add(value);
+                            }
+                            break;
+                    }
+                }
+            }
+            return root;
+        }
 
         public string Extension => "json";
     }

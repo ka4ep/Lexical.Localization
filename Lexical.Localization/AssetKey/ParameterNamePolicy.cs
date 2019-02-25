@@ -18,9 +18,7 @@ namespace Lexical.Localization
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
         static ParameterNamePolicy instance = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:");
-        static ParameterNamePolicy json = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:\"");
         static ParameterNamePolicy ini = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:=[]");
-        static ParameterNamePolicy xml = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:\"'&<>");
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
@@ -28,19 +26,9 @@ namespace Lexical.Localization
         public static ParameterNamePolicy Instance => instance;
 
         /// <summary>
-        /// String serializer for json literals
-        /// </summary>
-        public static ParameterNamePolicy Json => json;
-
-        /// <summary>
         /// String serializer for ini literals, where it's possible to use any char
         /// </summary>
         public static ParameterNamePolicy Ini => ini;
-
-        /// <summary>
-        /// String serializer for xml literals, where ambersands aren't needed 
-        /// </summary>
-        public static ParameterNamePolicy Xml => xml;
 
         Regex ParsePattern =
             new Regex(@"(?<key>([^:\\]|\\.)*)\:(?<value>([^:\\]|\\.)*)(\:|$)", opts);
@@ -203,6 +191,7 @@ namespace Lexical.Localization
         /// <returns>true if successful, if false then parse failed and <paramref name="result"/>is in undetermined state</returns>
         public bool TryParseParameters(string keyString, ICollection<KeyValuePair<string, string>> result)
         {
+            if (keyString == null) return false;
             MatchCollection matches = ParsePattern.Matches(keyString);
             foreach (Match m in matches)
             {
