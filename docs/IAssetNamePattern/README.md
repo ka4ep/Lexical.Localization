@@ -127,10 +127,9 @@ public interface IAssetNamePattern : IAssetKeyNamePolicy
     /// <summary>
     /// Match parameters from an object.
     /// </summary>
-    /// <param name="obj"></param>
-    /// <param name="parameterReader">object that extracts parameters from object</param>
+    /// <param name="key"></param>
     /// <returns></returns>
-    IAssetNamePatternMatch Match(object obj, IAssetKeyParametrizer parameterReader);
+    IAssetNamePatternMatch Match(IAssetKey obj);
 
     /// <summary>
     /// A regular expression pattern that captures same parts from a filename string.

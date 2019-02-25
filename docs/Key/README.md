@@ -12,7 +12,7 @@ Key can be converted to context dependent key IAssetKey with a parametrizer.
 // Create context-dependent key
 IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
 // Serialize to string
-string str = Key.NamePolicy.Instance.PrintAssetKey(key);
+string str = ParameterNamePolicy.Instance.PrintKey(key);
 ```
 
 # Key Name Policy
@@ -49,7 +49,7 @@ key:Success\:Plural
 // Create context-dependent key
 IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
 // Serialize to string
-string str = Key.NamePolicy.Instance.PrintAssetKey(key);
+string str = ParameterNamePolicy.Instance.PrintKey(key);
 ```
 
 And parses them back to IAssetKey.
@@ -58,7 +58,7 @@ And parses them back to IAssetKey.
 // Key in string format
 string str = "culture:en:type:MyLibrary.MyController:key:Success";
 // Parse string
-IAssetKey key = Key.NamePolicy.Instance.ParseAssetKey(str, LocalizationRoot.Global);
+IAssetKey key = ParameterNamePolicy.Instance.ParseKey(str, LocalizationRoot.Global);
 ```
 
 # Links

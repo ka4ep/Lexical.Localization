@@ -85,9 +85,20 @@ namespace Lexical.Localization.LocalizationFile2
     {
         public XmlFileAsset(string filename) : base()
         {
-            IKeyTree keyTree = XmlFileFormat.Instance.ReadFile(filename);
+            using (FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                IKeyTree keyTree = XmlFileFormat.Instance.ReadTree(stream, null);
+                var lines = keyTree.ToLines(true).ToArray();
+                AddKeySource(lines, filename);
+                Load();
+            }
+        }
+
+        public XmlFileAsset(Stream stream) : base()
+        {
+            IKeyTree keyTree = XmlFileFormat.Instance.ReadTree(stream, null);
             var lines = keyTree.ToLines(true).ToArray();
-            AddKeySource(lines, filename);
+            AddKeySource(lines);
             Load();
         }
     }

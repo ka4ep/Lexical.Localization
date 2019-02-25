@@ -14,7 +14,7 @@ namespace Lexical.Localization.LocalizationFile2
     /// </summary>
     public class LocalizationFileFormatMap : Dictionary<string, ILocalizationFileFormat>
     {
-        static LocalizationFileFormatMap singleton = new LocalizationFileFormatMap( XmlFileFormat.Instance );
+        static LocalizationFileFormatMap singleton = new LocalizationFileFormatMap( XmlFileFormat.Instance, ResXFileFormat.Instance, ResourcesFileFormat.Instance, JsonFileFormat.Instance, IniFileFormat.Instance );
 
         /// <summary>
         /// Global singleton instance.

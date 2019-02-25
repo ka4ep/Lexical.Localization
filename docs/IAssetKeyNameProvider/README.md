@@ -54,9 +54,8 @@ public interface IAssetKeyNameProvider : IAssetKeyNamePolicy
     /// Build path string from key.
     /// </summary>
     /// <param name="key"></param>
-    /// <param name="parametrizer">(optional) how to extract parameters from key. If not set uses the default implementation <see cref="AssetKeyParametrizer"/></param>
     /// <returns>full name string</returns>
-    string BuildName(object key, IAssetKeyParametrizer parametrizer = default);
+    string BuildName(IAssetKey key);
 }
 ```
 </details>

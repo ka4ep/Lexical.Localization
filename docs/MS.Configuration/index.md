@@ -25,6 +25,72 @@ There is an extension method **.AddConfigurationBuilder()** that adds IConfigura
 [!code-csharp[Snippet](Example2.cs)]
 ***
 
+<br/>
+Example of localization file when read with *IConfiguration*.
+
+# [Xml](#tab/xml)
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<localization>
+  <ConsoleApp1.MyController>
+    <Success>Success</Success>
+    <Error>Error (Code=0x{0:X8})</Error>
+  </ConsoleApp1.MyController>
+  <en>
+    <ConsoleApp1.MyController>
+      <Success>Success</Success>
+      <Error>Error (Code=0x{0:X8})</Error>
+    </ConsoleApp1.MyController>
+  </en>
+  <fi>
+    <ConsoleApp1.MyController>
+      <Success>Onnistui</Success>
+      <Error>Virhe (Koodi=0x{0:X8})</Error>
+    </ConsoleApp1.MyController>
+  </fi>
+</localization>
+```
+# [Ini](#tab/ini)
+
+```ini
+ConsoleApp1.MyController:Success      = Success
+ConsoleApp1.MyController:Error        = Error (Code=0x{0:X8})
+
+[en]
+ConsoleApp1.MyController:Success      = Success
+ConsoleApp1.MyController:Error        = Error (Code=0x{0:X8})
+
+[fi]
+ConsoleApp1.MyController:Success      = Onnistui
+ConsoleApp1.MyController:Error        = Virhe (Koodi=0x{0:X8})
+```
+
+# [Json](#tab/json)
+```json
+{
+  "ConsoleApp1.MyController": {
+      "Success": "Success",
+      "Error": "Error (Code=0x{0:X8})"
+  },
+  "en": {
+    "ConsoleApp1.MyController": {
+      "Success": "Success",
+      "Error": "Error (Code=0x{0:X8})"
+    }
+  },
+  "fi": {
+    "ConsoleApp1.MyController": {
+      "Success": "Onnistui",
+      "Error": "Virhe (Koodi=0x{0:X8})"
+    }
+  }
+}
+```
+
+***
+
+
 # Links
 * [Microsoft.Extensions.Configuration.Abstractions](https://github.com/aspnet/Extensions/tree/master/src/Configuration/Config.Abstractions/src) ([NuGet](https://www.nuget.org/packages/Microsoft.Extensions.Configuration.Abstractions/))
  * [IConfiguration](https://github.com/aspnet/Extensions/blob/master/src/Configuration/Config.Abstractions/src/IConfiguration.cs)
