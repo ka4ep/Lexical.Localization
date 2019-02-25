@@ -17,7 +17,7 @@ namespace Lexical.Localization
     /// </summary>
     public class LocalizationAsset :
         ILocalizationStringProvider, IAssetReloadable, IAssetKeyCollection,
-        ILocalizationAssetCultureCapabilities
+        ILocalizationAssetCultureCapabilities, IDisposable
     {
         /// <summary>
         /// List of source where values are read from when <see cref="Load"/> is called.
@@ -50,6 +50,8 @@ namespace Lexical.Localization
         /// <summary>
         /// Add language string key-value source. 
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
+        /// 
+        /// If <paramref name="keyValueSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
         /// </summary>
         /// <param name="keyValueSource"></param>
         /// <param name="sourceHint">(optional) added to error message</param>
@@ -64,6 +66,8 @@ namespace Lexical.Localization
         /// <summary>
         /// Add language string key-value source. 
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
+        /// 
+        /// If <paramref name="keyValueSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
         /// </summary>
         /// <param name="keyValueSource"></param>
         /// <param name="sourceHint">(optional) added to error message</param>
@@ -78,6 +82,8 @@ namespace Lexical.Localization
         /// <summary>
         /// Add language string key-value source. 
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
+        /// 
+        /// If <paramref name="keyValueSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
         /// </summary>
         /// <param name="keyValueSource"></param>
         /// <param name="namePattern"></param>
@@ -89,6 +95,8 @@ namespace Lexical.Localization
         /// <summary>
         /// Add language string key-value source. 
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
+        /// 
+        /// If <paramref name="keyValueSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
         /// </summary>
         /// <param name="keyValueSource"></param>
         /// <param name="namePolicy"></param>
@@ -140,10 +148,38 @@ namespace Lexical.Localization
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="AggregateException">If disposing of one of the sources failed</exception>
         public LocalizationAsset ClearSources()
         {
-            lock (sources) sources.Clear();
+            ClearCache();
+            IDisposable[] disposables;
+            lock (sources)
+            {
+                disposables = sources.Select(s => s as IDisposable).Where(s => s != null).ToArray();
+                sources.Clear();
+            }
+            LazyList<Exception> errors = new LazyList<Exception>();
+            foreach (IDisposable d in disposables)
+            {
+                try
+                {
+                    d.Dispose();
+                } catch (Exception e)
+                {
+                    errors.Add(e);
+                }
+            }
+            if (errors.Count > 0) throw new AggregateException(errors);
             return this;
+        }
+
+        /// <summary>
+        /// Dispose asset.
+        /// </summary>
+        /// <exception cref="AggregateException">If disposing of one of the sources failed</exception>
+        public virtual void Dispose()
+        {
+            ClearSources();
         }
 
         protected virtual IEnumerable<KeyValuePair<IAssetKey, string>> ConcatenateSources()
@@ -194,7 +230,10 @@ namespace Lexical.Localization
             cultures = null;
         }
 
-        CultureInfo[] cultures;
+        /// <summary>
+        /// Iterate content and get supported cultures.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<CultureInfo> GetSupportedCultures()
         {
             var _cultures = cultures;
@@ -213,6 +252,7 @@ namespace Lexical.Localization
             }
             return cultures = result.Values.ToArray();
         }
+        CultureInfo[] cultures;
 
         /// <summary>
         /// Comapres two matches for equality or being superset.
@@ -233,6 +273,10 @@ namespace Lexical.Localization
             return true;
         }
 
+        /// <summary>
+        /// Print name of the class.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString() => $"{GetType().Name}()";
     }
 

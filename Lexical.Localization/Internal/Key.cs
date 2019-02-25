@@ -3,11 +3,9 @@
 // Date:           26.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Internal;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lexical.Localization.Internal
 {
@@ -95,14 +93,39 @@ namespace Lexical.Localization.Internal
 
         public static Key Create(Key prevKey, string parameterName, string parameterValue)
         {
-            switch (parameterName)
-            {
-                case "root": return new Key(prevKey, parameterName, parameterValue);
-                case "culture":
-                case "assembly": return new Key.NonCanonical(prevKey, parameterName, parameterValue);
-                default: return new Key.Canonical(prevKey, parameterName, parameterValue);
-            }
+            ParameterFlags flag;
+            if (!ParameterInfo.TryGetValue(parameterName, out flag)) flag = ParameterFlags.CanonicalCompare;
+            if ((flag & ParameterFlags.NonCanonicalCompare) != 0) return new Key.NonCanonical(prevKey, parameterName, parameterValue);
+            if ((flag & ParameterFlags.CanonicalCompare) != 0) return new Key.Canonical(prevKey, parameterName, parameterValue);
+            return new Key(prevKey, parameterName, parameterValue);
         }
+
+        /// <summary>
+        /// Create by copying from a source key.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>key, new key, or null is <paramref name="key"/> contained no parameters</returns>
+        public static Key CreateFrom(IAssetKey key)
+        {
+            if (key is Key k) return k;
+            Key result = null;
+            key.VisitParameters(_copyVisitor, ref result);
+            return result;
+        }
+        static KeyParameterVisitor<Key> _copyVisitor = copyVisitor;
+        static void copyVisitor(string parameterName, string parameterValue, ref Key result)
+            => result = Key.Create(result, parameterName, parameterValue);
+
+        [Flags]
+        public enum ParameterFlags { None = 0, NonCanonicalCompare = 1, CanonicalCompare = 2 }
+
+        /// <summary>
+        /// Database on each parameter name. The default is CanonicalCompare.
+        /// </summary>
+        public static readonly Dictionary<string, ParameterFlags> ParameterInfo = new Dictionary<string, ParameterFlags>
+        {
+            { "root", ParameterFlags.None }, { "culture", ParameterFlags.NonCanonicalCompare }, { "assembly", ParameterFlags.NonCanonicalCompare }
+        };
 
         /// <summary>
         /// Concatenate two keys.

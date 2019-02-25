@@ -54,6 +54,19 @@ namespace Lexical.Localization
             => key is IAssetKeyParametrized parametrized ? parametrized.ParameterName : null;
 
         /// <summary>
+        /// Get the number of parameters.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>number of parameters</returns>
+        public static int GetParameterCount(this IAssetKey key)
+        {
+            int count = 0;
+            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+                if (k.GetParameterName() != null) count++;
+            return count;
+        }
+
+        /// <summary>
         /// Get all parameters as parameterName,parameterValue pairs.
         /// </summary>
         /// <param name="key"></param>

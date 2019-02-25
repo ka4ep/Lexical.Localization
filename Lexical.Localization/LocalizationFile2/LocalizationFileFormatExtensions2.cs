@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Lexical.Localization.LocalizationFile2
 {
-    public static class LocalizationFileExtensionMethods
+    public static partial class LocalizationFileFormatExtensions_
     {
         /// <summary>
         /// Create file source that reads file into memory every time <see cref="IEnumerator{T}"/> is acquired.
