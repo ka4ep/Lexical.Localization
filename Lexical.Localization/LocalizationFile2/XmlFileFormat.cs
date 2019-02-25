@@ -14,7 +14,7 @@ using System.Xml.Linq;
 
 namespace Lexical.Localization.LocalizationFile2
 {
-    public class XmlFileFormat : ILocalizationFileFormat, ILocalizationTreeStreamReader//, ILocalizationTreeStreamWriter
+    public class XmlFileFormat : ILocalizationFileFormat, ILocalizationTreeStreamReader
     {
         public const string URN = "urn:lexical.fi:";
         private readonly static XmlFileFormat instance = new XmlFileFormat();
@@ -28,13 +28,6 @@ namespace Lexical.Localization.LocalizationFile2
         public KeyTree ReadString(string xmlDocument) => ReadTree(XDocument.Load(new StringReader(xmlDocument)).Root);
         public KeyTree ReadTree(XElement element) => ReadElement(element, new KeyTree(Key.Root));
         public IKeyTree ReadTree(Stream stream, IAssetKeyNamePolicy namePolicy) => ReadElement(XDocument.Load(stream).Root, new KeyTree(Key.Root));
-        public void WriteTree(IKeyTree tree, Stream stream, IAssetKeyNamePolicy namePolicy)
-        {
-            XDocument doc = new XDocument();
-            doc.Root.Name = "localization";
-            //WriteElement(tree, doc.Root, doc.Root);
-            doc.Save(stream);
-        }
 
         /// <summary>
         /// Reads <paramref name="element"/>, and adds as a subnode to <paramref name="parent"/> node.
@@ -86,36 +79,15 @@ namespace Lexical.Localization.LocalizationFile2
             return parent;
         }
         
-        /// <summary>
-        /// Write or update contents of <paramref name="node"/> and its subtree.
-        /// 
-        /// </summary>
-        /// <param name="node">node and subtree to write</param>
-        /// <param name="parent">parent node under which <paramref name="node"/> is written to</param>
-        /// <param name="root">Root where namespaces are written</param>
-        /// <param name="touchedElements">(optional) if set, all nodes that were touched are added to this list</param>
-        public void UpdateElement(IKeyTree node, XElement parent, XElement root, ICollection<XNode> touchedElements)
-        {
-            int ix = 0;
-            XElement dst = new XElement("node");
-            foreach(var parameter in node.Key.GetParameters())
-            {
-                if (String.IsNullOrEmpty(parameter.Key) || parameter.Key == "root") continue;
-                if (ix++==0)
-                {
-                } else
-                {
-
-                }
-            }
-        }
     }
 
-    public class XmlAsset : LocalizationAsset
+    public class XmlFileAsset : LocalizationAsset
     {
-        public XmlAsset(string filename, bool reloadIfModified) : base()
+        public XmlFileAsset(string filename) : base()
         {
-            AddKeySource(XmlFileFormat.Instance.FileSource(filename), filename);
+            IKeyTree keyTree = XmlFileFormat.Instance.ReadFile(filename);
+            var lines = keyTree.ToLines(true).ToArray();
+            AddKeySource(lines, filename);
             Load();
         }
     }

@@ -81,6 +81,44 @@ namespace Lexical.Localization.LocalizationFile2
         }
 
         /// <summary>
+        /// Adds key and/or value.
+        /// 
+        /// If argument <paramref name="key"/> is given, then get-or-creates child node, otherwise uses <paramref name="node"/>.
+        /// If argument <paramref name="value"/> is given, then adds value.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="key">(optional) possible initial key to set.</param>
+        /// <param name="value">(optional) possible initial value to add</param>
+        /// <returns><param name="node"></returns>
+        public static IKeyTree Add(this IKeyTree node, IAssetKey key, string value)
+        {
+            IKeyTree n = node;
+            if (key != null) n = n.GetChild(key);
+            if (value != null && !n.Values.Contains(value)) n.Values.Add(value);
+            return node;
+        }
+
+        /// <summary>
+        /// Add key-value recursively
+        /// 
+        /// If argument <paramref name="key_parts"/> is given, then get-or-creates decendent node, otherwise uses <paramref name="node"/>.
+        /// If argument <paramref name="value"/> is given then adds value.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="key_parts">(optional) possible initial key to set.</param>
+        /// <param name="value">(optional) possible initial value to add</param>
+        /// <returns><param name="node"></returns>
+        public static IKeyTree AddRecursive(this IKeyTree node, IEnumerable<IAssetKey> key_parts, string value)
+        {
+            IKeyTree n = node;
+            // Add-or-get section
+            foreach (IAssetKey key in key_parts)
+                n = n.GetOrCreate(key);
+            if (value != null && !n.Values.Contains(value)) node.Values.Add(value);
+            return node;
+        }
+
+        /// <summary>
         /// Flatten tree as lines of key-value pairs.
         /// </summary>
         /// <param name="skipRoot"></param>
