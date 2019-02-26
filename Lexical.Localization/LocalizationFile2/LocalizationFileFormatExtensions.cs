@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -82,6 +83,36 @@ namespace Lexical.Localization.LocalizationFile2
             using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
                 return ReadStringLines(fileFormat, fs, namePolicy).ToArray();
         }
+
+        /// <summary>
+        /// Create reader that opens <paramref name="filename"/> when IEnumerator is requested.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="filename"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>lines</returns>
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> CreateFileReaderAsKeyLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
+            => new FileReaderKeyLines(fileFormat, filename, namePolicy);
+
+        /// <summary>
+        /// Create reader that opens <paramref name="filename"/> when IEnumerator is requested.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="srcText"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>tree</returns>
+        public static IEnumerable<IKeyTree> CreateFileReaderAsKeyTree(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
+            => new FileReaderKeyTree(fileFormat, filename, namePolicy);
+
+        /// <summary>
+        /// Create reader that opens <paramref name="filename"/> when IEnumerator is requested.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="filename"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>lines</returns>
+        public static IEnumerable<KeyValuePair<string, string>> CreateFileReaderAsStringLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
+            => new FileReaderStringLines(fileFormat, filename, namePolicy);
 
         /// <summary>
         /// Read lines from <paramref name="srcText"/> source. 
@@ -397,5 +428,84 @@ namespace Lexical.Localization.LocalizationFile2
             => KeyTree.Create(lines.ToKeyLines(policy));
 
     }
+
+    internal class FileReaderStringLines : IEnumerable<KeyValuePair<string, string>>
+    {
+        public readonly string Filename;
+        public readonly IAssetKeyNamePolicy NamePolicy;
+        public readonly ILocalizationFileFormat FileFormat;
+
+        public FileReaderStringLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy)
+        {
+            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
+            this.Filename = filename ?? throw new ArgumentNullException(nameof(Filename));
+            this.NamePolicy = namePolicy;
+        }
+
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        {
+            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileFormatExtensions_.ReadFileAsStringLines(FileFormat, Filename, NamePolicy);
+            return lines.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileFormatExtensions_.ReadFileAsStringLines(FileFormat, Filename, NamePolicy);
+            return lines.GetEnumerator();
+        }
+    }
+
+    internal class FileReaderKeyLines : IEnumerable<KeyValuePair<IAssetKey, string>>
+    {
+        public readonly string Filename;
+        public readonly IAssetKeyNamePolicy NamePolicy;
+        public readonly ILocalizationFileFormat FileFormat;
+
+        public FileReaderKeyLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy)
+        {
+            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
+            this.Filename = filename ?? throw new ArgumentNullException(nameof(Filename));
+            this.NamePolicy = namePolicy;
+        }
+
+        public IEnumerator<KeyValuePair<IAssetKey, string>> GetEnumerator()
+        {
+            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationFileFormatExtensions_.ReadFileAsKeyLines(FileFormat, Filename, NamePolicy);
+            return lines.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationFileFormatExtensions_.ReadFileAsKeyLines(FileFormat, Filename, NamePolicy);
+            return lines.GetEnumerator();
+        }
+    }
+
+    internal class FileReaderKeyTree : IEnumerable<IKeyTree>
+    {
+        public readonly string Filename;
+        public readonly IAssetKeyNamePolicy NamePolicy;
+        public readonly ILocalizationFileFormat FileFormat;
+
+        public FileReaderKeyTree(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy)
+        {
+            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
+            this.Filename = filename ?? throw new ArgumentNullException(nameof(Filename));
+            this.NamePolicy = namePolicy;
+        }
+
+        public IEnumerator<IKeyTree> GetEnumerator()
+        {
+            IKeyTree tree = LocalizationFileFormatExtensions_.ReadFileAsKeyTree(FileFormat, Filename, NamePolicy);
+            return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            IKeyTree tree = LocalizationFileFormatExtensions_.ReadFileAsKeyTree(FileFormat, Filename, NamePolicy);
+            return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
+        }
+    }
+
 
 }

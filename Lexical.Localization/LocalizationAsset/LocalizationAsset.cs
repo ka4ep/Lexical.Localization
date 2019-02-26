@@ -52,15 +52,15 @@ namespace Lexical.Localization
         /// Add language string key-value source. 
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
         /// 
-        /// If <paramref name="keyValueSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
+        /// If <paramref name="linesSourec"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
         /// </summary>
-        /// <param name="keyValueSource"></param>
+        /// <param name="linesSourec"></param>
         /// <param name="sourceHint">(optional) added to error message</param>
         /// <returns></returns>
-        public LocalizationAsset AddKeySource(IEnumerable<KeyValuePair<Key, string>> keyValueSource, string sourceHint = null)
+        public LocalizationAsset AddKeyLinesSource(IEnumerable<KeyValuePair<Key, string>> linesSourec, string sourceHint = null)
         {
-            if (keyValueSource == null) throw new ArgumentNullException(nameof(keyValueSource));
-            lock (sources) sources.Add(keyValueSource.Select(kp=>new KeyValuePair<IAssetKey, string>((IAssetKey)kp.Key, kp.Value)));
+            if (linesSourec == null) throw new ArgumentNullException(nameof(linesSourec));
+            lock (sources) sources.Add(linesSourec.Select(kp=>new KeyValuePair<IAssetKey, string>((IAssetKey)kp.Key, kp.Value)));
             return this;
         }
 
@@ -68,15 +68,15 @@ namespace Lexical.Localization
         /// Add language string key-value source. 
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
         /// 
-        /// If <paramref name="keyValueSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
+        /// If <paramref name="linesSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
         /// </summary>
-        /// <param name="keyValueSource"></param>
+        /// <param name="linesSource"></param>
         /// <param name="sourceHint">(optional) added to error message</param>
         /// <returns></returns>
-        public LocalizationAsset AddKeySource(IEnumerable<KeyValuePair<IAssetKey, string>> keyValueSource, string sourceHint = null)
+        public LocalizationAsset AddKeyLinesSource(IEnumerable<KeyValuePair<IAssetKey, string>> linesSource, string sourceHint = null)
         {
-            if (keyValueSource == null) throw new ArgumentNullException(nameof(keyValueSource));
-            lock (sources) sources.Add(keyValueSource);
+            if (linesSource == null) throw new ArgumentNullException(nameof(linesSource));
+            lock (sources) sources.Add(linesSource);
             return this;
         }
 
@@ -84,14 +84,14 @@ namespace Lexical.Localization
         /// Add language string key-value source. 
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
         /// 
-        /// If <paramref name="keyValueSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
+        /// If <paramref name="linesSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
         /// </summary>
-        /// <param name="keyValueSource"></param>
+        /// <param name="linesSource"></param>
         /// <param name="namePattern"></param>
         /// <param name="sourceHint">(optional) added to error message</param>
         /// <returns></returns>
-        public LocalizationAsset AddStringSource(IEnumerable<KeyValuePair<string, string>> keyValueSource, string namePattern, string sourceHint = null)
-            => AddStringSource(keyValueSource, new AssetNamePattern(namePattern), sourceHint);
+        public LocalizationAsset AddKeyStringSource(IEnumerable<KeyValuePair<string, string>> linesSource, string namePattern, string sourceHint = null)
+            => AddKeyStringSource(linesSource, new AssetNamePattern(namePattern), sourceHint);
 
         /// <summary>
         /// Add language string key-value source. 
@@ -103,11 +103,27 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="sourceHint">(optional) added to error message</param>
         /// <returns></returns>
-        public LocalizationAsset AddStringSource(IEnumerable<KeyValuePair<string, string>> stringLines, IAssetKeyNamePolicy namePolicy, string sourceHint = null)
+        public LocalizationAsset AddKeyStringSource(IEnumerable<KeyValuePair<string, string>> stringLines, IAssetKeyNamePolicy namePolicy, string sourceHint = null)
         {
             if (stringLines == null) throw new ArgumentNullException(nameof(stringLines));
-            if (namePolicy == null) throw new ArgumentNullException(nameof(namePolicy));
             IEnumerable<KeyValuePair<IAssetKey, string>> adaptedSource = stringLines.ToKeyLines(namePolicy);
+            lock (sources) sources.Add(adaptedSource);
+            return this;
+        }
+
+        /// <summary>
+        /// Add language string key-value source. 
+        /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
+        /// 
+        /// If <paramref name="treeSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
+        /// </summary>
+        /// <param name="treeSource"></param>
+        /// <param name="sourceHint">(optional) added to error message</param>
+        /// <returns></returns>
+        public LocalizationAsset AddKeyTreeSource(IEnumerable<IKeyTree> treeSource, string sourceHint = null)
+        {
+            if (treeSource == null) throw new ArgumentNullException(nameof(treeSource));
+            IEnumerable<KeyValuePair<IAssetKey, string>> adaptedSource = treeSource.SelectMany(tree => tree.ToKeyLines());
             lock (sources) sources.Add(adaptedSource);
             return this;
         }
@@ -158,7 +174,7 @@ namespace Lexical.Localization
             {
                 result = result == null ? source : result.Concat(source);
             }
-            return result?.Select(kp=>new KeyValuePair<IAssetKey, string>(kp.Key, kp.Value)) ?? new KeyValuePair<IAssetKey, string>[0];
+            return result ?? new KeyValuePair<IAssetKey, string>[0];
         }
 
         protected virtual void SetContent(IEnumerable<KeyValuePair<IAssetKey, string>> src)
@@ -259,7 +275,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetBuilder AddKeySource(this IAssetBuilder builder, IEnumerable<KeyValuePair<Key, string>> dictionary)
         {
-            builder.AddAsset(new LocalizationAsset().AddKeySource(dictionary).Load());
+            builder.AddAsset(new LocalizationAsset().AddKeyLinesSource(dictionary).Load());
             return builder;
         }
 
@@ -272,7 +288,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetComposition AddStrings(this IAssetComposition composition, IEnumerable<KeyValuePair<Key, string>> dictionary, IAssetKeyNamePolicy namePolicy)
         {
-            composition.Add(new LocalizationAsset().AddKeySource(dictionary).Load());
+            composition.Add(new LocalizationAsset().AddKeyLinesSource(dictionary).Load());
             return composition;
         }
     }
