@@ -92,22 +92,4 @@ namespace Lexical.Localization.LocalizationFile2
 
     }
 
-    public class JsonFileAsset : LocalizationAsset
-    {
-        public JsonFileAsset(string filename, string policy) : this(filename, new AssetNamePattern(policy)) { }
-        public JsonFileAsset(string filename, IAssetKeyNamePolicy policy = default) : base()
-        {
-            AddKeyTreeSource(JsonFileFormat.Instance.CreateFileReaderAsKeyTree(filename, policy), filename);
-            Load();
-        }
-
-        public JsonFileAsset(Stream stream, string policy) : this(stream, new AssetNamePattern(policy)) { }
-        public JsonFileAsset(Stream stream, IAssetKeyNamePolicy policy = default) : base()
-        {
-            IKeyTree tree = JsonFileFormat.Instance.ReadKeyTree(stream, policy);
-            AddKeyTreeSource(new IKeyTree[] { tree });
-            Load();
-        }
-    }
-
 }

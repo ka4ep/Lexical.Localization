@@ -50,14 +50,5 @@ namespace Lexical.Localization.LocalizationFile2
             }
         }
     }
-    
-    public class ResXFileAsset : LocalizationStringAsset
-    {
-        public ResXFileAsset(string filename, string policy) : this(filename, new AssetNamePattern(policy)) { }
-        public ResXFileAsset(string filename, IAssetKeyNamePolicy policy) : base(ResXFileFormat.Instance.CreateFileReaderAsStringLines(filename, policy).ToDictionary(line=>line.Key, line=>line.Value), policy) { }
-
-        public ResXFileAsset(Stream stream, string policy) : this(stream, new AssetNamePattern(policy)) { }
-        public ResXFileAsset(Stream stream, IAssetKeyNamePolicy policy) : base(ResXFileFormat.Instance.ReadStringLines(stream, policy).ToDictionary(line => line.Key, line => line.Value), policy) { }
-    }
 
 }

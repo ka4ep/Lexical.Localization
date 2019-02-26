@@ -115,6 +115,42 @@ namespace Lexical.Localization.LocalizationFile2
             => new FileReaderStringLines(fileFormat, filename, namePolicy);
 
         /// <summary>
+        /// Create localization asset that reads file <paramref name="filename"/>.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="filename"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns></returns>
+        public static IAsset CreateFileAsset(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
+        {
+            if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
+            {
+                return new LocalizationStringAsset(fileFormat.CreateFileReaderAsStringLines(filename, namePolicy), namePolicy);
+            }
+            else
+            if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
+            {
+                return new LocalizationAsset().AddKeyLinesSource(fileFormat.CreateFileReaderAsKeyLines(filename, namePolicy)).Load();
+            }
+            else
+            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            {
+                return new LocalizationAsset().AddKeyTreeSource(fileFormat.CreateFileReaderAsKeyTree(filename, namePolicy)).Load();
+            }
+            throw new ArgumentException($"Cannot create asset for {fileFormat}.");
+        }
+
+        /// <summary>
+        /// Create localization asset source that reads file <paramref name="filename"/>.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="filename"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns></returns>
+        public static IAssetSource CreateFileAssetSource(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
+            => new AssetFileSource(fileFormat, filename, namePolicy);
+
+        /// <summary>
         /// Read lines from <paramref name="srcText"/> source. 
         /// </summary>
         /// <param name="fileFormat"></param>
@@ -374,10 +410,17 @@ namespace Lexical.Localization.LocalizationFile2
         static internal TextWriter ToTextWriter(this Stream s)
             => new StreamWriter(s, Encoding.UTF8, 16 * 1024, true);
 
-        static IAssetKeyNamePolicy DefaultPolicy = AssetKeyNameProvider.Default;
-
-        public static IEnumerable<KeyValuePair<string, string>> ToStringLines(this IEnumerable<KeyValuePair<IAssetKey, string>> keyLines, IAssetKeyNamePolicy policy)
-            => keyLines.Select(line => new KeyValuePair<string, string>((policy?? DefaultPolicy).BuildName(line.Key), line.Value));
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
+        {
+            foreach(var line in lines)
+            {
+                IAssetKey kk;
+                if (policy.TryParse(line.Key, out kk))
+                    yield return new KeyValuePair<IAssetKey, string>(kk, line.Value);
+            }
+        }
+        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
+            => KeyTree.Create(lines.ToKeyLines(policy));
         public static IEnumerable<KeyValuePair<string, string>> ToStringLines(this IKeyTree keyTree, IAssetKeyNamePolicy policy)
             => keyTree.ToKeyLines(true).ToStringLines(policy);
 
@@ -413,19 +456,6 @@ namespace Lexical.Localization.LocalizationFile2
                 }
             }
         }
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
-        {
-            foreach(var line in lines)
-            {
-                IAssetKey kk;
-                if (policy.TryParse(line.Key, out kk))
-                    yield return new KeyValuePair<IAssetKey, string>(kk, line.Value);
-            }
-        }
-        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<IAssetKey, string>> lines)
-            => KeyTree.Create(lines);
-        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
-            => KeyTree.Create(lines.ToKeyLines(policy));
 
     }
 
@@ -507,5 +537,19 @@ namespace Lexical.Localization.LocalizationFile2
         }
     }
 
+    internal class AssetFileSource : IAssetSource
+    {
+        public readonly ILocalizationFileFormat FileFormat;
+        public readonly string Filename;
+        public readonly IAssetKeyNamePolicy NamePolicy;
+        public AssetFileSource(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy)
+        {
+            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
+            this.Filename = filename ?? throw new ArgumentNullException(nameof(filename));
+            this.NamePolicy = namePolicy;
+        }
+        public void Build(IList<IAsset> list) => list.Add(FileFormat.CreateFileAsset(Filename, NamePolicy));
+        public IAsset PostBuild(IAsset asset) => asset;
+    }
 
 }

@@ -87,23 +87,5 @@ namespace Lexical.Localization.LocalizationFile2
         }
     }
 
-    public class IniFileAsset : LocalizationAsset
-    {
-        public IniFileAsset(string filename, string policy) : this(filename, new AssetNamePattern(policy)) { }
-        public IniFileAsset(string filename, IAssetKeyNamePolicy policy = default) : base()
-        {
-            AddKeyTreeSource(IniFileFormat.Instance.CreateFileReaderAsKeyTree(filename, policy), filename);
-            Load();
-        }
-
-        public IniFileAsset(Stream stream, string policy) : this(stream, new AssetNamePattern(policy)) { }
-        public IniFileAsset(Stream stream, IAssetKeyNamePolicy policy = default) : base()
-        {
-            IKeyTree tree = IniFileFormat.Instance.ReadKeyTree(stream, policy);
-            AddKeyTreeSource(new IKeyTree[] { tree });
-            Load();
-        }
-
-    }
 
 }

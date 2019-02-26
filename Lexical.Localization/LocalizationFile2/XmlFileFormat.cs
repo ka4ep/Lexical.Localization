@@ -76,23 +76,4 @@ namespace Lexical.Localization.LocalizationFile2
         
     }
 
-    public class XmlFileAsset : LocalizationAsset
-    {
-        public XmlFileAsset(string filename, string policy) : this(filename, new AssetNamePattern(policy)) { }
-        public XmlFileAsset(string filename, IAssetKeyNamePolicy policy = default) : base()
-        {
-            AddKeyTreeSource( XmlFileFormat.Instance.CreateFileReaderAsKeyTree(filename, policy), filename );
-            Load();
-        }
-
-        public XmlFileAsset(Stream stream, string policy) : this(stream, new AssetNamePattern(policy)) { }
-        public XmlFileAsset(Stream stream, IAssetKeyNamePolicy policy = default) : base()
-        {
-            IKeyTree tree = XmlFileFormat.Instance.ReadKeyTree(stream, policy);
-            AddKeyTreeSource( new IKeyTree[] { tree } );
-            Load();
-        }
-    }
-
-
 }

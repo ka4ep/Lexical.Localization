@@ -43,13 +43,4 @@ namespace Lexical.Localization.LocalizationFile2
 
     }
 
-    public class ResourcesFileAsset : LocalizationStringAsset
-    {
-        public ResourcesFileAsset(string filename, string policy) : this(filename, new AssetNamePattern(policy)) { }
-        public ResourcesFileAsset(string filename, IAssetKeyNamePolicy policy) : base(ResourcesFileFormat.Instance.CreateFileReaderAsStringLines(filename, policy).ToDictionary(line => line.Key, line => line.Value), policy) { }
-
-        public ResourcesFileAsset(Stream stream, string policy) : this(stream, new AssetNamePattern(policy)) { }
-        public ResourcesFileAsset(Stream stream, IAssetKeyNamePolicy policy) : base(ResourcesFileFormat.Instance.ReadStringLines(stream, policy).ToDictionary(line => line.Key, line => line.Value), policy) { }
-    }
-
 }

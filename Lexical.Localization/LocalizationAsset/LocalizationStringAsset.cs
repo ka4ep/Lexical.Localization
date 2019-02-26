@@ -43,11 +43,29 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="source">dictionary</param>
         /// <param name="namePattern">name patern</param>
-        public LocalizationStringAsset(IReadOnlyDictionary<string, string> source, string namePattern)
+        public LocalizationStringAsset(IReadOnlyDictionary<string, string> source, string namePattern) : this(source, new AssetNamePattern(namePattern)) { }
+
+        /// <summary>
+        /// Create language string resolver that uses a dictionary as a source.
+        /// <see cref="ILocalizationStringCollection.GetAllStrings(IAssetKey)"/> and 
+        /// <see cref="IAssetKeyCollection.GetAllKeys(IAssetKey)"/> requests.         
+        /// </summary>
+        /// <param name="source">dictionary</param>
+        /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
+        public LocalizationStringAsset(IEnumerable<KeyValuePair<string, string>> source, IAssetKeyNamePolicy namePolicy = default)
         {
-            this.source = source ?? throw new ArgumentNullException(nameof(source));
-            this.namePolicy = new AssetNamePattern(namePattern);
+            this.source = source is IReadOnlyDictionary<string, string> map ? map : 
+                source?.ToDictionary(line=>line.Key, line=>line.Value)
+                ?? throw new ArgumentNullException(nameof(source));
+            this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
         }
+
+        /// <summary>
+        /// Create language string resolver that uses a dictionary as a source.
+        /// </summary>
+        /// <param name="source">dictionary</param>
+        /// <param name="namePattern">name patern</param>
+        public LocalizationStringAsset(IEnumerable<KeyValuePair<string, string>> source, string namePattern) : this(source, new AssetNamePattern(namePattern)) { }
 
         public virtual IEnumerable<KeyValuePair<string, string>> GetAllStrings(IAssetKey key)
         {
