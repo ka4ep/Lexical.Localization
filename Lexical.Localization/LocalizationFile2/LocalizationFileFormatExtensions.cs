@@ -54,7 +54,7 @@ namespace Lexical.Localization.LocalizationFile2
         public static IEnumerable<KeyValuePair<IAssetKey, string>> ReadFileAsKeyLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
         {
             using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
-                return ReadKeyLines(fileFormat, fs, namePolicy);
+                return ReadKeyLines(fileFormat, fs, namePolicy).ToArray();
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Lexical.Localization.LocalizationFile2
         public static IEnumerable<KeyValuePair<string, string>> ReadFileAsStringLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
         {
             using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
-                return ReadStringLines(fileFormat, fs, namePolicy);
+                return ReadStringLines(fileFormat, fs, namePolicy).ToArray();
         }
 
         /// <summary>

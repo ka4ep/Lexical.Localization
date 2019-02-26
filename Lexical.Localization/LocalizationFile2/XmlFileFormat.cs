@@ -9,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 
 namespace Lexical.Localization.LocalizationFile2
@@ -81,20 +80,13 @@ namespace Lexical.Localization.LocalizationFile2
     {
         public XmlFileAsset(string filename) : base()
         {
-            using (FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                IKeyTree keyTree = XmlFileFormat.Instance.ReadKeyTree(stream, null);
-                var lines = keyTree.ToKeyLines(true).ToArray();
-                AddKeySource(lines, filename);
-                Load();
-            }
+            AddKeySource( XmlFileFormat.Instance.ReadFileAsKeyTree(filename).ToKeyLines().ToArray() );
+            Load();
         }
 
         public XmlFileAsset(Stream stream) : base()
         {
-            IKeyTree keyTree = XmlFileFormat.Instance.ReadKeyTree(stream, null);
-            var lines = keyTree.ToKeyLines(true).ToArray();
-            AddKeySource(lines);
+            AddKeySource( XmlFileFormat.Instance.ReadKeyTree(stream).ToKeyLines().ToArray() );
             Load();
         }
     }

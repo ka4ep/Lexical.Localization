@@ -91,22 +91,16 @@ namespace Lexical.Localization.LocalizationFile2
     {
         public IniFileAsset(string filename) : base()
         {
-            using (FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                IKeyTree keyTree = IniFileFormat.Instance.ReadKeyTree(stream, null);
-                var lines = keyTree.ToKeyLines(true).ToArray();
-                AddKeySource(lines, filename);
-                Load();
-            }
+            AddKeySource(IniFileFormat.Instance.ReadFileAsKeyTree(filename).ToKeyLines().ToArray());
+            Load();
         }
 
         public IniFileAsset(Stream stream) : base()
         {
-            IKeyTree keyTree = IniFileFormat.Instance.ReadKeyTree(stream, null);
-            var lines = keyTree.ToKeyLines(true).ToArray();
-            AddKeySource(lines);
+            AddKeySource(IniFileFormat.Instance.ReadKeyTree(stream).ToKeyLines().ToArray());
             Load();
         }
+
     }
 
 }

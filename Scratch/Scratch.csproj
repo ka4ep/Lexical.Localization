@@ -21,16 +21,31 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="ConsoleApp1.MyController.fi.resx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ConsoleApp1.MyController.sv.resx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Update="localization.resx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="localization.en.resources">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="localization.fi.resources">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="localization.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="localization.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="localization.resources">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="localization.xml">

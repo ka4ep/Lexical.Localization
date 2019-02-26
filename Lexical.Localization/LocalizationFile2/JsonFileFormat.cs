@@ -96,20 +96,13 @@ namespace Lexical.Localization.LocalizationFile2
     {
         public JsonFileAsset(string filename) : base()
         {
-            using (FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                IKeyTree keyTree = JsonFileFormat.Instance.ReadKeyTree(stream, null);
-                var lines = keyTree.ToKeyLines(true).ToArray();
-                AddKeySource(lines, filename);
-                Load();
-            }
+            AddKeySource(JsonFileFormat.Instance.ReadFileAsKeyTree(filename).ToKeyLines().ToArray());
+            Load();
         }
 
         public JsonFileAsset(Stream stream) : base()
         {
-            IKeyTree keyTree = JsonFileFormat.Instance.ReadKeyTree(stream, null);
-            var lines = keyTree.ToKeyLines(true).ToArray();
-            AddKeySource(lines);
+            AddKeySource(JsonFileFormat.Instance.ReadKeyTree(stream).ToKeyLines().ToArray());
             Load();
         }
     }
