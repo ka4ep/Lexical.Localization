@@ -18,6 +18,8 @@ namespace Scratch
             asset = ResXFileFormat.Instance.CreateFileAsset("localization.resx", AssetKeyNameProvider.Colon_Dot_Dot);
             //LocalizationRoot.Builder.AddAsset(asset).Build();
 
+            // TODO : LocalizationAssetStringiin AddSource(enumerable) ja Load()+Reload()
+
             // Shorter
             LocalizationRoot.Builder.AddLocalizationFile("localization.xml").Build();
 

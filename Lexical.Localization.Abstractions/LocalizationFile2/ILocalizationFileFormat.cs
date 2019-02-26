@@ -144,7 +144,45 @@ namespace Lexical.Localization.LocalizationFile2
     /// <summary>
     /// Writer that can write localization key-values with text writers.
     /// </summary>
-    public interface ILocalizationLinesTextWriter : ILocalizationWriter
+    public interface ILocalizationStringLinesTextWriter : ILocalizationWriter
+    {
+        /// <summary>
+        /// Create a container where localization key-values can be written to.
+        /// 
+        /// If <paramref name="srcText"/> contains previous content, it is updated and rewritten to <paramref name="dstText"/> according to rules in <paramref name="flags"/>.
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="srcText">(optional) source text, used if previous content are updated.</param>
+        /// <param name="dstText"></param>
+        /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
+        /// <param name="flags"></param>
+        /// <exception cref="IOException"></exception>
+        void WriteStringLines(IEnumerable<KeyValuePair<string, string>> lines, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+    }
+
+    /// <summary>
+    /// Writer that can write localization key-values to streams.
+    /// </summary>
+    public interface ILocalizationStringLinesStreamWriter : ILocalizationWriter
+    {
+        /// <summary>
+        /// Write <paramref name="lines"/> to <paramref name="dstStream"/>.
+        /// 
+        /// If <paramref name="srcStream"/> contains previous content, it is updated and rewritten to <paramref name="dstStream"/> according to rules in <paramref name="flags"/>.
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
+        /// <param name="dstStream">stream to write to.</param>
+        /// <param name="namePolicy">(optional) name policy.</param>
+        /// <param name="flags"></param>
+        /// <exception cref="IOException"></exception>
+        void WriteStringLines(IEnumerable<KeyValuePair<string, string>> lines, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+    }
+
+    /// <summary>
+    /// Writer that can write localization key-values with text writers.
+    /// </summary>
+    public interface ILocalizationKeyLinesTextWriter : ILocalizationWriter
     {
         /// <summary>
         /// Create a container where localization key-values can be written to.
@@ -163,7 +201,7 @@ namespace Lexical.Localization.LocalizationFile2
     /// <summary>
     /// Writer that can write localization key-values to streams.
     /// </summary>
-    public interface ILocalizationLinesStreamWriter : ILocalizationWriter
+    public interface ILocalizationKeyLinesStreamWriter : ILocalizationWriter
     {
         /// <summary>
         /// Write <paramref name="lines"/> to <paramref name="dstStream"/>.
@@ -178,10 +216,11 @@ namespace Lexical.Localization.LocalizationFile2
         /// <exception cref="IOException"></exception>
         void WriteKeyLines(IEnumerable<KeyValuePair<IAssetKey, string>> lines, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
     }
+
     /// <summary>
     /// Writer that can write localization tree structure to streams.
     /// </summary>
-    public interface ILocalizationTreeStreamWriter : ILocalizationWriter
+    public interface ILocalizationKeyTreeStreamWriter : ILocalizationWriter
     {
         /// <summary>
         /// Write <paramref name="tree"/> to <paramref name="dstStream"/>.
@@ -200,7 +239,7 @@ namespace Lexical.Localization.LocalizationFile2
     /// <summary>
     /// Writer that can write localization tree structure to text writer.
     /// </summary>
-    public interface ILocalizationTreeTextWriter : ILocalizationWriter
+    public interface ILocalizationKeyTreeTextWriter : ILocalizationWriter
     {
         /// <summary>
         /// Create a container where localization key-values can be written to.

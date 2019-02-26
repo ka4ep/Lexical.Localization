@@ -38,7 +38,7 @@ namespace Lexical.Localization.LocalizationFile2
         /// <returns>tree root ""</returns>
         public static KeyTree Create(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
         {
-            KeyTree root = new KeyTree(new Key.NonCanonical("root", ""), null);
+            KeyTree root = new KeyTree(new Key("root", ""), null);
             root.AddRange(keyValues);
             return root;
         }

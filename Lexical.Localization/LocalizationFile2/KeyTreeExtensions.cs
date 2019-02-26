@@ -2,135 +2,53 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lexical.Localization.Internal;
+using Lexical.Localization.LocalizationFile2;
 
-namespace Lexical.Localization.LocalizationFile2
+namespace Lexical.Localization
 {
     public static class KeyTreeExtensions_
     {
         /// <summary>
-        /// Add an enumeration of key,value pairs. Each key will constructed a new node.
+        /// Flatten <paramref name="keyTree"/> to string lines.
         /// </summary>
-        /// <param name="node"></param>
-        /// <param name="keyValues"></param>
+        /// <param name="keyTree"></param>
+        /// <param name="policy"></param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
-            => AddRange(node, keyValues, groupingRule: null);
+        public static IEnumerable<KeyValuePair<string, string>> ToStringLines(this IKeyTree keyTree, IAssetKeyNamePolicy policy)
+            => keyTree.ToKeyLines(true).ToStringLines(policy);
 
         /// <summary>
-        /// Add an enumeration of key,value pairs. Each key will constructed a new node.
+        /// Flatten <paramref name="node"/> to key lines.
         /// </summary>
-        /// <param name="node"></param>
-        /// <param name="keyValues"></param>
-        /// <param name="groupingPatternText"></param>
+        /// <param name="skipRoot"></param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> keyValues, string groupingPatternText)
-            => AddRange(node, keyValues, groupingRule: new AssetNamePattern(groupingPatternText));
-
-        /// <summary>
-        /// Add an enumeration of key,value pairs. Each key will constructed a new node.
-        /// 
-        /// If <paramref name="groupingRule"/> the nodes are laid out in the order occurance of name pattern parts.
-        /// 
-        /// For example grouping pattern "{type}/{culture}{anysection}{key}" would order nodes as following:
-        /// <code>
-        ///  "type:MyController": {
-        ///      "key:Success": "Success",
-        ///      "culture:en:key:Success": "Success",
-        ///      "culture:fi:key:Success": "Onnistui"
-        ///  }
-        /// </code>
-        /// 
-        /// Non-capture parts such as "/" in pattern "{section}/{culture}", specify separator of tree node levels.
-        /// 
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="parametrizer"></param>
-        /// <param name="keyValues"></param>
-        /// <param name="groupingRule">(optional)</param>
-        /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> keyValues, IAssetNamePattern groupingRule) // TOdo separate to sortRule + groupingRule
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> ToKeyLines(this IKeyTree node, bool skipRoot = true)
         {
-            // Create comparer that can compare TreeNode and argument's keys
-            ParametrizedComparer comparer = new ParametrizedComparer();
-            // Create orderer
-            PartComparer partComparer = new PartComparer().AddParametersToSortOrder("root");
-            if (groupingRule != null)
+            Queue<(IKeyTree, IAssetKey)> queue = new Queue<(IKeyTree, IAssetKey)>();
+            queue.Enqueue((node, skipRoot && node.Key.Name == "root" ? null : node.Key));
+            while (queue.Count > 0)
             {
-                foreach (IAssetNamePatternPart part in groupingRule.CaptureParts)
-                    partComparer.AddParametersToSortOrder(part.ParameterName);
-            }
-            else
-            {
-                partComparer.AddParametersToSortOrder("culture");
-            }
+                // Next element
+                (IKeyTree, IAssetKey) current = queue.Dequeue();
 
-            List<PartComparer.Part> partList = new List<PartComparer.Part>(10);
-            List<IAssetKey> key_parts = new List<IAssetKey>();
-            foreach (var kp in keyValues)
-            {
-                foreach (IAssetKey part in kp.Key.ArrayFromRoot())
+                // Yield values
+                if (current.Item2 != null && current.Item1.HasValues)
                 {
-                    string parameterName = part.GetParameterName(), parameterValue = part.Name;
-                    if (parameterName == null || parameterValue == null) continue;
-                    bool isCanonical = part is IAssetKeyCanonicallyCompared, isNonCanonical = part is IAssetKeyNonCanonicallyCompared;
-                    if (!isCanonical && !isNonCanonical) continue;
-                    partList.Add(new PartComparer.Part(parameterName, parameterValue, isCanonical, isNonCanonical));
+                    foreach (string value in current.Item1.Values)
+                        yield return new KeyValuePair<IAssetKey, string>(current.Item2, value);
                 }
-                // Reorder parts according to grouping rule
-                partList.Sort(partComparer);
 
-                // Segment according to grouping rule
-                if (groupingRule == null)
+                // Enqueue children
+                if (current.Item1.HasChildren)
                 {
-                    key_parts.AddRange(partList.Select(p => p.CreateKey()));
-                }
-                else
-                {
-                    int part_ix = 0;
-                    Key constructedKey = null;
-                    foreach (var part in groupingRule.AllParts)
+                    foreach (IKeyTree child in current.Item1.Children)
                     {
-                        // yield constructedKey into the array due to separator
-                        if (constructedKey != null && part.PrefixSeparator.Contains("/")) { key_parts.Add(constructedKey); constructedKey = null; }
-
-                        // Is not a capture part
-                        if (part.CaptureIndex < 0) { if (constructedKey != null) { key_parts.Add(constructedKey); constructedKey = null; } continue; }
-
-                        // Look ahead to see if there is part for this parameter name
-                        int ixx = -1;
-                        for (int ix = part_ix; ix < partList.Count; ix++)
-                        {
-                            // Detected part
-                            if (partList[ix].name == part.ParameterName) { ixx = ix; break; }
-                        }
-
-                        // Detected part for parameter name in the grouping rule
-                        if (ixx >= 0) for (; part_ix <= ixx; part_ix++) constructedKey = new Key(constructedKey, partList[part_ix].name, partList[part_ix].value);
-
-                        // yield constructedKey into the array due to separator
-                        if (constructedKey != null && part.PrefixSeparator.Contains("/")) { key_parts.Add(constructedKey); constructedKey = null; }
+                        IAssetKey childKey = current.Item2 == null ? child.Key : current.Item2.Concat(child.Key);
+                        queue.Enqueue((child, childKey));
                     }
-
-                    // yield constructedKey into the array.
-                    if (constructedKey != null) { key_parts.Add(constructedKey); constructedKey = null; }
-
-                    // Add rest of the keys
-                    for (; part_ix <= partList.Count; part_ix++)
-                        key_parts.Add(partList[part_ix].CreateKey(constructedKey));
                 }
-
-                // Add recursively
-                node.AddRecursive(key_parts, kp.Value);
-
-                // Clear
-                partList.Clear();
-                key_parts.Clear();
             }
-
-            return node;
         }
-
-
 
     }
 

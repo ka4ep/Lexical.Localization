@@ -13,15 +13,15 @@ using Lexical.Localization.LocalizationFile2;
 
 namespace Lexical.Localization
 {
-    public static partial class LocalizationFileFormatExtensions___
+    public static partial class AssetBuilderExtensions__
     {
         /// <summary>
         /// Add localization file source.
         /// </summary>
         /// <param name="assetBuilder"></param>
         /// <param name="filename"></param>
-        /// <param name="namePolicy"></param>
-        /// <param name="fileFormat"></param>
+        /// <param name="namePolicy">(optional)</param>
+        /// <param name="fileFormat">(optional) overriding file format to use in case format cannot be infered from file extension</param>
         /// <returns></returns>
         public static IAssetBuilder AddLocalizationFile(this IAssetBuilder assetBuilder, string filename, IAssetKeyNamePolicy namePolicy = default, ILocalizationFileFormat fileFormat = null)
         {
@@ -34,12 +34,6 @@ namespace Lexical.Localization
             return assetBuilder;
         }
 
-        static IAssetKeyNamePolicy DefaultPolicy = AssetKeyNameProvider.Default;
-
-        public static IEnumerable<KeyValuePair<string, string>> ToStringLines(this IEnumerable<KeyValuePair<IAssetKey, string>> keyLines, IAssetKeyNamePolicy policy)
-            => keyLines.Select(line => new KeyValuePair<string, string>((policy?? DefaultPolicy).BuildName(line.Key), line.Value));
-        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<IAssetKey, string>> lines)
-            => KeyTree.Create(lines);
     }
 
 }
