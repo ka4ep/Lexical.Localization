@@ -17,9 +17,6 @@ namespace Lexical.Localization.Internal
 
     public class IniToken : ICloneable
     {
-        public static IniToken NewLine = IniToken.Text("\r\n");
-        public static IniToken[] NewLineArray = new IniToken[] { NewLine };
-
         /// <summary>
         /// Create a Commment-token. "; comment"
         /// </summary>
@@ -88,7 +85,7 @@ namespace Lexical.Localization.Internal
         /// </summary>
         /// <param name="newValue"></param>
         /// <returns>a new token with modified value</returns>
-        public IniToken SetValue(string newValue)
+        public IniToken CreateWithNewValue(string newValue)
         {
             if (Type == IniTokenType.Text) return Text(newValue);
 
@@ -123,9 +120,7 @@ namespace Lexical.Localization.Internal
         /// <param name="text">text</param>
         /// <returns></returns>
         public static IniToken Text(string text)
-        {
-            return new IniToken { Type = IniTokenType.Text, source = text, Index = 0, Length = text.Length, ValueIndex = 0, ValueLength = text.Length };
-        }
+            => new IniToken { Type = IniTokenType.Text, source = text, Index = 0, Length = text.Length, ValueIndex = 0, ValueLength = text.Length };
 
         /// <summary>
         /// Token Type
@@ -161,26 +156,29 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Value in escaped format.
         /// </summary>
-        public string ValueContent
+        public string ValueText
             => ValueIndex >= 0 && ValueLength >= 0 && source != null ? source.Substring(ValueIndex, ValueLength) : null;
 
         /// <summary>
         /// Value in unescaped format.
         /// </summary>
         public string Value
-            => IniEscape.Value.UnescapeLiteral(ValueContent);
+        {
+            get => IniEscape.Value.UnescapeLiteral(ValueText);
+            set => ReadFrom(CreateWithNewValue(value));
+        }
 
         /// <summary>
         /// Key in escaped format.
         /// </summary>
-        public string KeyContent
+        public string KeyText
             => KeyIndex >= 0 && KeyLength >= 0 ? source.Substring(KeyIndex, KeyLength) : null;
 
         /// <summary>
         /// Key in unescaped format.
         /// </summary>
         public string Key
-            => IniEscape.Key.UnescapeLiteral(KeyContent);
+            => IniEscape.Key.UnescapeLiteral(KeyText);
 
         public override string ToString()
             => Content;
@@ -198,6 +196,18 @@ namespace Lexical.Localization.Internal
                 KeyIndex = KeyIndex,
                 KeyLength = KeyLength
             };
+        }
+
+        public void ReadFrom(IniToken other)
+        {
+            this.source = other.source;
+            this.Type = other.Type;
+            this.Index = other.Index;
+            this.Length = other.Length;
+            this.ValueIndex = other.ValueIndex;
+            this.ValueLength = other.ValueLength;
+            this.KeyIndex = other.KeyIndex;
+            this.KeyLength = other.KeyLength;
         }
 
         public override bool Equals(object obj)

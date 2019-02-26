@@ -118,38 +118,6 @@ namespace Lexical.Localization.LocalizationFile2
             return node;
         }
 
-        /// <summary>
-        /// Flatten tree as lines of key-value pairs.
-        /// </summary>
-        /// <param name="skipRoot"></param>
-        /// <returns></returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> ToLines(this IKeyTree node, bool skipRoot)
-        {
-            Queue<(IKeyTree, IAssetKey)> queue = new Queue<(IKeyTree, IAssetKey)>();
-            queue.Enqueue((node, skipRoot && node.Key.Name == "root" ? null : node.Key));
-            while (queue.Count > 0)
-            {
-                // Next element
-                (IKeyTree, IAssetKey) current = queue.Dequeue();
-
-                // Yield values
-                if (current.Item2 != null && current.Item1.HasValues)
-                {
-                    foreach (string value in current.Item1.Values)
-                        yield return new KeyValuePair<IAssetKey, string>(current.Item2, value);
-                }
-
-                // Enqueue children
-                if (current.Item1.HasChildren)
-                {
-                    foreach (IKeyTree child in current.Item1.Children)
-                    {
-                        IAssetKey childKey = current.Item2 == null ? child.Key : current.Item2.Concat(child.Key);
-                        queue.Enqueue((child, childKey));
-                    }
-                }
-            }
-        }
 
     }
 }

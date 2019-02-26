@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Context free format of asset key
     /// </summary>
-    public class ParameterNamePolicy : IAssetKeyNameProvider
+    public class ParameterNamePolicy : IAssetKeyNameProvider, IAssetKeyNameParser
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
         static ParameterNamePolicy instance = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:");
@@ -121,9 +121,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="keyString"></param>
         /// <param name="rootKey">(optional) root key to span values from</param>
-        /// <returns>key</returns>
+        /// <returns>result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</returns>
         /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
-        public IAssetKey ParseKey(string keyString, IAssetKey rootKey)
+        public IAssetKey Parse(string keyString, IAssetKey rootKey = default)
         {
             IAssetKey result = rootKey;
             MatchCollection matches = ParsePattern.Matches(keyString);
@@ -135,7 +135,7 @@ namespace Lexical.Localization
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
                 if (key == "root") continue;
-                result = result.AppendParameter(key, value);
+                result = result == null ? Key.Create(key, value) : result.AppendParameter(key, value);
             }
             return result;
         }
@@ -144,23 +144,25 @@ namespace Lexical.Localization
         /// Try parse string into IAssetKey.
         /// </summary>
         /// <param name="keyString"></param>
-        /// <param name="rootKey">root key to span values from</param>
-        /// <returns>key or null</returns>
-        public IAssetKey TryParseKey(string keyString, IAssetKey rootKey)
+        /// <param name="resultKey">result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</param>
+        /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <returns>true if parse was successful</returns>
+        public bool TryParse(string keyString, out IAssetKey resultKey, IAssetKey rootKey = default)
         {
             IAssetKey result = rootKey;
             MatchCollection matches = ParsePattern.Matches(keyString);
             foreach (Match m in matches)
             {
-                if (!m.Success) throw new FormatException(keyString);
+                if (!m.Success) { resultKey = null; return false; }
                 Group k_key = m.Groups["key"], k_value = m.Groups["value"];
-                if (!k_key.Success || !k_value.Success) throw new FormatException(keyString);
+                if (!k_key.Success || !k_value.Success) { resultKey = null; return false; }
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
                 if (key == "root") continue;
-                result = result.AppendParameter(key, value);
+                result = result == null ? Key.Create(key, value) : result.AppendParameter(key, value);
             }
-            return result;
+            resultKey = result;
+            return true;
         }
 
         /// <summary>

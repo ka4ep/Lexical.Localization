@@ -28,7 +28,7 @@ namespace Lexical.Localization.LocalizationFile2
     /// <summary>
     /// Reader that can read localization lines from a <see cref="Stream"/>.
     /// </summary>
-    public interface ILocalizationLinesStreamReader : ILocalizationReader
+    public interface ILocalizationKeyLinesStreamReader : ILocalizationReader
     {
         /// <summary>
         /// Read <paramref name="stream"/> into lines.
@@ -37,13 +37,13 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="namePolicy">(optional) name policy. </param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<IAssetKey, string>> ReadLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
     }
 
     /// <summary>
     /// Reader that can read localization into tree format format a <see cref="Stream"/>.
     /// </summary>
-    public interface ILocalizationTreeStreamReader : ILocalizationReader
+    public interface ILocalizationKeyTreeStreamReader : ILocalizationReader
     {
         /// <summary>
         /// Read <paramref name="stream"/> into tree structuer.
@@ -52,13 +52,13 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        IKeyTree ReadTree(Stream stream, IAssetKeyNamePolicy namePolicy = default);
+        IKeyTree ReadKeyTree(Stream stream, IAssetKeyNamePolicy namePolicy = default);
     }
 
     /// <summary>
-    /// Reader that can open a read localization lines from a <see cref="TextReader"/>.
+    /// Reader that can read localization lines from a <see cref="TextReader"/>.
     /// </summary>
-    public interface ILocalizationLinesTextReader : ILocalizationReader
+    public interface ILocalizationKeyLinesTextReader : ILocalizationReader
     {
         /// <summary>
         /// Read <paramref name="text"/> into lines.
@@ -67,13 +67,13 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<IAssetKey, string>> ReadLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
     }
 
     /// <summary>
-    /// Reader that can open a read localization lines from a <see cref="TextReader"/>.
+    /// Reader that can read localization lines from a <see cref="TextReader"/>.
     /// </summary>
-    public interface ILocalizationTreeTextReader : ILocalizationReader
+    public interface ILocalizationKeyTreeTextReader : ILocalizationReader
     {
         /// <summary>
         /// Read <paramref name="text"/> into lines.
@@ -82,7 +82,37 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        IKeyTree ReadTree(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+        IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+    }
+
+    /// <summary>
+    /// Reader that can read string key-values from a <see cref="TextReader"/>.
+    /// </summary>
+    public interface ILocalizationStringLinesTextReader : ILocalizationReader
+    {
+        /// <summary>
+        /// Read <paramref name="text"/> into lines.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="namePolicy">(optional) name policy.</param>
+        /// <returns>the read string key-values</returns>
+        /// <exception cref="IOException"></exception>
+        IEnumerable<KeyValuePair<string, string>> ReadStringLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+    }
+
+    /// <summary>
+    /// Reader that can read string key-values from a <see cref="Stream"/>.
+    /// </summary>
+    public interface ILocalizationStringLinesStreamReader : ILocalizationReader
+    {
+        /// <summary>
+        /// Read <paramref name="stream"/> into lines.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="namePolicy">(optional) name policy.</param>
+        /// <returns>the read string key-values</returns>
+        /// <exception cref="IOException"></exception>
+        IEnumerable<KeyValuePair<string, string>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
     }
 
     [Flags]
@@ -127,7 +157,7 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteLines(IEnumerable<KeyValuePair<IAssetKey, string>> lines, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+        void WriteKeyLines(IEnumerable<KeyValuePair<IAssetKey, string>> lines, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
     }
 
     /// <summary>
@@ -146,7 +176,7 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteLines(IEnumerable<KeyValuePair<IAssetKey, string>> lines, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+        void WriteKeyLines(IEnumerable<KeyValuePair<IAssetKey, string>> lines, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
     }
     /// <summary>
     /// Writer that can write localization tree structure to streams.
@@ -164,7 +194,7 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteTree(IKeyTree tree, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+        void WriteKeyTree(IKeyTree tree, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
     }
 
     /// <summary>
@@ -183,7 +213,7 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteTree(IKeyTree tree, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+        void WriteKeyTree(IKeyTree tree, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
     }
 
     public static class LocalizationFileFormatExtensions

@@ -14,7 +14,7 @@ using System.Xml.Linq;
 
 namespace Lexical.Localization.LocalizationFile2
 {
-    public class IniFileFormat : ILocalizationFileFormat, ILocalizationTreeTextReader
+    public class IniFileFormat : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
     {
         private readonly static IniFileFormat instance = new IniFileFormat();
         public static IniFileFormat Instance => instance;
@@ -30,7 +30,7 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="text"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public IKeyTree ReadTree(TextReader text, IAssetKeyNamePolicy namePolicy = default)
+        public IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default)
         {
             KeyTree root = new KeyTree(Key.Root);
             using (var ini = new IniTokenReader(text.ReadToEnd()))
@@ -56,7 +56,7 @@ namespace Lexical.Localization.LocalizationFile2
                     case IniTokenType.Section:
                         Key key = null;
                         parameters.Clear();
-                        if (parser_section.TryParseParameters(token.ValueContent, parameters))
+                        if (parser_section.TryParseParameters(token.ValueText, parameters))
                         {
                             foreach (var parameter in parameters)
                                 key = Key.Create(key, parameter.Key, parameter.Value);
@@ -70,7 +70,7 @@ namespace Lexical.Localization.LocalizationFile2
                     case IniTokenType.KeyValue:
                         Key key_ = null;
                         parameters.Clear();
-                        if (parser_key.TryParseParameters(token.KeyContent, parameters))
+                        if (parser_key.TryParseParameters(token.KeyText, parameters))
                         {
                             foreach (var parameter in parameters)
                                 key_ = Key.Create(key_, parameter.Key, parameter.Value);
@@ -93,8 +93,8 @@ namespace Lexical.Localization.LocalizationFile2
         {
             using (FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                IKeyTree keyTree = IniFileFormat.Instance.ReadTree(stream, null);
-                var lines = keyTree.ToLines(true).ToArray();
+                IKeyTree keyTree = IniFileFormat.Instance.ReadKeyTree(stream, null);
+                var lines = keyTree.ToKeyLines(true).ToArray();
                 AddKeySource(lines, filename);
                 Load();
             }
@@ -102,8 +102,8 @@ namespace Lexical.Localization.LocalizationFile2
 
         public IniFileAsset(Stream stream) : base()
         {
-            IKeyTree keyTree = IniFileFormat.Instance.ReadTree(stream, null);
-            var lines = keyTree.ToLines(true).ToArray();
+            IKeyTree keyTree = IniFileFormat.Instance.ReadKeyTree(stream, null);
+            var lines = keyTree.ToKeyLines(true).ToArray();
             AddKeySource(lines);
             Load();
         }

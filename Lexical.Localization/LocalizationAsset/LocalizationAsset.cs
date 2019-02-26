@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Lexical.Localization.LocalizationFile2;
 
 namespace Lexical.Localization
 {
@@ -96,51 +97,19 @@ namespace Lexical.Localization
         /// Add language string key-value source. 
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
         /// 
-        /// If <paramref name="keyValueSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
+        /// If <paramref name="stringLines"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
         /// </summary>
-        /// <param name="keyValueSource"></param>
+        /// <param name="stringLines"></param>
         /// <param name="namePolicy"></param>
         /// <param name="sourceHint">(optional) added to error message</param>
         /// <returns></returns>
-        public LocalizationAsset AddStringSource(IEnumerable<KeyValuePair<string, string>> keyValueSource, IAssetKeyNamePolicy namePolicy, string sourceHint = null)
+        public LocalizationAsset AddStringSource(IEnumerable<KeyValuePair<string, string>> stringLines, IAssetKeyNamePolicy namePolicy, string sourceHint = null)
         {
-            if (keyValueSource == null) throw new ArgumentNullException(nameof(keyValueSource));
+            if (stringLines == null) throw new ArgumentNullException(nameof(stringLines));
             if (namePolicy == null) throw new ArgumentNullException(nameof(namePolicy));
-            IEnumerable<KeyValuePair<IAssetKey, string>> adaptedSource = null;
-            if (namePolicy is ParameterNamePolicy parameterPolicy)
-            {
-                adaptedSource = keyValueSource.Select(kp => new KeyValuePair<IAssetKey, string>(parameterPolicy.ParseKey(kp.Key, Key.Root), kp.Value)).Where(kp => kp.Key != null);
-            }
-            else if (namePolicy is IAssetNamePattern patternPolicy)
-            {
-                adaptedSource = keyValueSource.Select(kp => new KeyValuePair<IAssetKey, string>(ConvertKey(kp.Key, patternPolicy), kp.Value)).Where(kp => kp.Key != null);
-            }
-            else {
-                throw new ArgumentException($"Cannot add strings to {nameof(LocalizationAsset)} with {nameof(namePolicy)} {namePolicy.GetType().FullName}. Please use either {nameof(LocalizationStringAsset)}, or another policy such as {nameof(AssetNamePattern)} or {nameof(ParameterNamePolicy)}.");
-            }
-
+            IEnumerable<KeyValuePair<IAssetKey, string>> adaptedSource = stringLines.ToKeyLines(namePolicy);
             lock (sources) sources.Add(adaptedSource);
             return this;
-        }
-
-        /// <summary>
-        /// Convert string to <see cref="Key"/>.
-        /// The parameter for "root" is skipped.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="parametrizer"></param>
-        /// <returns>key or null if there were no parameters</returns>
-        Key ConvertKey(string key, IAssetNamePattern namePolicy)
-        {
-            IAssetNamePatternMatch match = namePolicy.Match(text: key, filledParameters: null);
-            if (!match.Success) return null;
-            Key result = null;
-            foreach (var kp in match)
-            {
-                if (kp.Key == null || kp.Value == null) continue;
-                result = Key.Create(result, kp.Key, kp.Value);
-            }
-            return result;
         }
 
         /// <summary>

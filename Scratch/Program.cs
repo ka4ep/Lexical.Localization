@@ -12,7 +12,8 @@ namespace Scratch
         {
             //XmlFileAsset asset = new XmlFileAsset("localization.xml");
             //JsonFileAsset asset = new JsonFileAsset("localization.json");
-            IniFileAsset asset = new IniFileAsset("localization.ini");
+            //IniFileAsset asset = new IniFileAsset("localization.ini");
+            ResXFileAsset asset = new ResXFileAsset("localization.resx", "[type].[key]");
 
             LocalizationRoot.Builder.AddAsset(asset).Build();
             IAssetKey key = LocalizationRoot.Global.TypeSection("ConsoleApp1.MyController").Key("Success");

@@ -49,7 +49,7 @@ namespace Lexical.Localization
     ///   "{culture.}{type.}{section_0.}{section_1.}{section_2.}{section_3.}{.key_0}{.key_1}{key}"
     /// 
     /// </summary>
-    public class AssetNamePattern : IAssetNamePattern
+    public class AssetNamePattern : IAssetNamePattern, IAssetKeyNameParser
     {
         static Regex regex = new Regex(
             @"(?<text>[^\[\{\}\]]+)|" +
@@ -293,6 +293,50 @@ namespace Lexical.Localization
                 }
             }
         }
+
+        /// <summary>
+        /// Parse string into key.
+        /// </summary>
+        /// <param name="str">key as string</param>
+        /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <returns>key result or null if contained no content</returns>
+        /// <exception cref="FormatException">If parse failed</exception>
+        /// <exception cref="ArgumentException">If <paramref name="policy"/> doesn't implement <see cref="IAssetKeyNameParser"/>.</exception>
+        public IAssetKey Parse(string str, IAssetKey rootKey = default)
+        {
+            IAssetNamePatternMatch match = this.Match(text: str, filledParameters: null);
+            if (!match.Success) throw new FormatException($"Key \"{str}\" did not match the pattern \"{Pattern}\"");
+
+            IAssetKey result = rootKey;
+            foreach (var kp in match)
+            {
+                if (kp.Key == null || kp.Value == null) continue;
+                result = result == null ? Key.Create(kp.Key, kp.Value) : result.AppendParameter(kp.Key, kp.Value);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Parse string into key.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="key">key result or null if contained no content</param>
+        /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <returns>true if parse was successful</returns>
+        public bool TryParse(string str, out IAssetKey key, IAssetKey rootKey = default)
+        {
+            IAssetNamePatternMatch match = this.Match(text: str, filledParameters: null);
+            if (!match.Success) { key = null; return false; }
+            IAssetKey result = rootKey;
+            foreach (var kp in match)
+            {
+                if (kp.Key == null || kp.Value == null) continue;
+                result = result == null ? Key.Create(kp.Key, kp.Value) : result.AppendParameter(kp.Key, kp.Value);
+            }
+            key = result;
+            return true;
+        }
+
     }
 
 }

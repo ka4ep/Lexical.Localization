@@ -14,20 +14,16 @@ using System.Xml.Linq;
 
 namespace Lexical.Localization.LocalizationFile2
 {
-    public class XmlFileFormat : ILocalizationFileFormat, ILocalizationTreeStreamReader
+    public class XmlFileFormat : ILocalizationFileFormat, ILocalizationKeyTreeStreamReader, ILocalizationKeyTreeTextReader
     {
         public const string URN = "urn:lexical.fi:";
         private readonly static XmlFileFormat instance = new XmlFileFormat();
         public static XmlFileFormat Instance => instance;
-
         public string Extension => "xml";
 
-        public KeyTree ReadFile(string filename) => ReadTree(XDocument.Load(filename).Root);
-        public KeyTree ReadStream(Stream stream) => ReadTree(XDocument.Load(stream).Root);
-        public KeyTree ReadText(TextReader reader)=> ReadTree(XDocument.Load(reader).Root);
-        public KeyTree ReadString(string xmlDocument) => ReadTree(XDocument.Load(new StringReader(xmlDocument)).Root);
-        public KeyTree ReadTree(XElement element) => ReadElement(element, new KeyTree(Key.Root));
-        public IKeyTree ReadTree(Stream stream, IAssetKeyNamePolicy namePolicy) => ReadElement(XDocument.Load(stream).Root, new KeyTree(Key.Root));
+        public IKeyTree ReadKeyTree(XElement element, IAssetKeyNamePolicy namePolicy = default) => ReadElement(element, new KeyTree(Key.Root));
+        public IKeyTree ReadKeyTree(Stream stream, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(stream).Root, new KeyTree(Key.Root));
+        public IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(text).Root, new KeyTree(Key.Root));
 
         /// <summary>
         /// Reads <paramref name="element"/>, and adds as a subnode to <paramref name="parent"/> node.
@@ -87,8 +83,8 @@ namespace Lexical.Localization.LocalizationFile2
         {
             using (FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                IKeyTree keyTree = XmlFileFormat.Instance.ReadTree(stream, null);
-                var lines = keyTree.ToLines(true).ToArray();
+                IKeyTree keyTree = XmlFileFormat.Instance.ReadKeyTree(stream, null);
+                var lines = keyTree.ToKeyLines(true).ToArray();
                 AddKeySource(lines, filename);
                 Load();
             }
@@ -96,8 +92,8 @@ namespace Lexical.Localization.LocalizationFile2
 
         public XmlFileAsset(Stream stream) : base()
         {
-            IKeyTree keyTree = XmlFileFormat.Instance.ReadTree(stream, null);
-            var lines = keyTree.ToLines(true).ToArray();
+            IKeyTree keyTree = XmlFileFormat.Instance.ReadKeyTree(stream, null);
+            var lines = keyTree.ToKeyLines(true).ToArray();
             AddKeySource(lines);
             Load();
         }

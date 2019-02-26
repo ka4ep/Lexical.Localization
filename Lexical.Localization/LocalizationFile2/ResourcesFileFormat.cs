@@ -28,7 +28,7 @@ namespace Lexical.Localization.LocalizationFile2
         {
             using (FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                var lines = ResXFileFormat.Instance.ReadLines(stream, null).ToArray();
+                var lines = ResXFileFormat.Instance.ReadKeyLines(stream, null).ToArray();
                 AddKeySource(lines, filename);
                 Load();
             }
@@ -36,7 +36,7 @@ namespace Lexical.Localization.LocalizationFile2
 
         public ResourcesFileAsset(Stream stream) : base()
         {
-            var lines = ResXFileFormat.Instance.ReadLines(stream, null).ToArray();
+            var lines = ResXFileFormat.Instance.ReadKeyLines(stream, null).ToArray();
             AddKeySource(lines);
             Load();
         }

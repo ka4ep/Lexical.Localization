@@ -15,7 +15,7 @@ using System.Xml.Linq;
 
 namespace Lexical.Localization.LocalizationFile2
 {
-    public class JsonFileFormat : ILocalizationFileFormat, ILocalizationTreeTextReader
+    public class JsonFileFormat : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
     {
         private readonly static JsonFileFormat instance = new JsonFileFormat();
         public static JsonFileFormat Instance => instance;
@@ -29,7 +29,7 @@ namespace Lexical.Localization.LocalizationFile2
         /// <param name="text"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public IKeyTree ReadTree(TextReader text, IAssetKeyNamePolicy namePolicy = default)
+        public IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default)
         {
             KeyTree root = new KeyTree(Key.Root);
             using (var json = new JsonTextReader(text))
@@ -98,8 +98,8 @@ namespace Lexical.Localization.LocalizationFile2
         {
             using (FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                IKeyTree keyTree = JsonFileFormat.Instance.ReadTree(stream, null);
-                var lines = keyTree.ToLines(true).ToArray();
+                IKeyTree keyTree = JsonFileFormat.Instance.ReadKeyTree(stream, null);
+                var lines = keyTree.ToKeyLines(true).ToArray();
                 AddKeySource(lines, filename);
                 Load();
             }
@@ -107,8 +107,8 @@ namespace Lexical.Localization.LocalizationFile2
 
         public JsonFileAsset(Stream stream) : base()
         {
-            IKeyTree keyTree = JsonFileFormat.Instance.ReadTree(stream, null);
-            var lines = keyTree.ToLines(true).ToArray();
+            IKeyTree keyTree = JsonFileFormat.Instance.ReadKeyTree(stream, null);
+            var lines = keyTree.ToKeyLines(true).ToArray();
             AddKeySource(lines);
             Load();
         }

@@ -70,7 +70,7 @@ namespace docs
                 // Key in string format
                 string str = "culture:en:type:MyLibrary.MyController:key:Success";
                 // Parse string
-                IAssetKey key = ParameterNamePolicy.Instance.ParseKey(str, LocalizationRoot.Global);
+                IAssetKey key = ParameterNamePolicy.Instance.Parse(str, LocalizationRoot.Global);
                 #endregion Snippet_6
             }
         }
