@@ -129,6 +129,23 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Add language string key-value source. 
+        /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
+        /// 
+        /// If <paramref name="treeSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
+        /// </summary>
+        /// <param name="treeSource"></param>
+        /// <param name="sourceHint">(optional) added to error message</param>
+        /// <returns></returns>
+        public LocalizationAsset AddKeyTreeSource(IKeyTree treeSource, string sourceHint = null)
+        {
+            if (treeSource == null) throw new ArgumentNullException(nameof(treeSource));
+            IEnumerable<KeyValuePair<IAssetKey, string>> adaptedSource = treeSource.ToKeyLines();
+            lock (sources) sources.Add(adaptedSource);
+            return this;
+        }
+
+        /// <summary>
         /// Clear all key-value sources.
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
         /// </summary>

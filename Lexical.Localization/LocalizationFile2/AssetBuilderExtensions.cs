@@ -4,15 +4,13 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using Lexical.Localization.LocalizationFile2;
 
 namespace Lexical.Localization
 {
+    /// <summary>
+    /// Extensions for <see cref="IAssetBuilder"/> that crosscut with <see cref="ILocalizationFileFormat"/>.
+    /// </summary>
     public static partial class AssetBuilderExtensions__
     {
         /// <summary>

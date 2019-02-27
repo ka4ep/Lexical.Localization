@@ -1,11 +1,17 @@
-﻿using System;
+﻿//---------------------------------------------------------
+// Copyright:      Toni Kalajainen
+// Date:           24.2.2019
+// Url:            http://lexical.fi
+// --------------------------------------------------------
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Lexical.Localization.Internal;
 using Lexical.Localization.LocalizationFile2;
 
 namespace Lexical.Localization
 {
+    /// <summary>
+    /// Extensions for <see cref="IKeyTree"/>.
+    /// </summary>
     public static class KeyTreeExtensions_
     {
         /// <summary>
@@ -50,70 +56,27 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Create an asset that uses <paramref name="tree"/>.
+        /// 
+        /// Trees are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="hintSource"></param>
+        /// <returns></returns>
+        public static IAsset ToAsset(this IKeyTree tree, string hintSource = null)
+            => new LocalizationAsset().AddKeyTreeSource(tree, hintSource).Load();
+
+        /// <summary>
+        /// Create an asset that uses <paramref name="trees"/>.
+        /// 
+        /// Trees are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
+        /// </summary>
+        /// <param name="trees"></param>
+        /// <param name="hintSource"></param>
+        /// <returns></returns>
+        public static IAsset ToAsset(this IEnumerable<IKeyTree> trees, string hintSource = null)
+            => new LocalizationAsset().AddKeyTreeSource(trees, hintSource).Load();
+
     }
-
-    /// <summary>
-    /// TreeNode is an intermediate model for writing text files
-    /// 
-    /// Reorganize parts so that non-canonicals parts, so that "root" is first, then "culture", and then others by parameter name.
-    /// </summary>
-    internal class PartComparer : IComparer<PartComparer.Part>
-    {
-        private static readonly PartComparer instance = new PartComparer().AddParametersToSortOrder("root", "culture");
-        public static PartComparer Default => instance;
-
-        public readonly List<string> order = new List<string>();
-
-        public PartComparer()
-        {
-        }
-
-        public PartComparer AddParametersToSortOrder(IEnumerable<string> parameters)
-        {
-            this.order.AddRange(parameters);
-            return this;
-        }
-
-        public PartComparer AddParametersToSortOrder(params string[] parameters)
-        {
-            this.order.AddRange(parameters);
-            return this;
-        }
-
-        public int Compare(Part x, Part y)
-        {
-            // canonical parts cannot be reordered between themselves.
-            if (x.isCanonical || y.isCanonical) return 0;
-            int xix = order.IndexOf(x.name);
-            int yix = order.IndexOf(y.name);
-            if (xix == yix) return 0;
-            if (xix < 0) xix = Int32.MaxValue;
-            if (yix < 0) yix = Int32.MaxValue;
-            return xix - yix;
-        }
-
-        public struct Part
-        {
-            public string name;
-            public string value;
-            public bool isCanonical;
-            public bool isNonCanonical;
-
-            public Part(string name, string value, bool isCanonical, bool isNonCanonical)
-            {
-                this.name = name;
-                this.value = value;
-                this.isCanonical = isCanonical;
-                this.isNonCanonical = isNonCanonical;
-            }
-
-            public Key CreateKey(Key prev = default)
-                => isCanonical ? new Key.Canonical(prev, name, value) :
-                   isNonCanonical ? new Key.NonCanonical(prev, name, value) :
-                   new Key(prev, name, value);
-        }
-    }
-
-
-
 }

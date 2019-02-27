@@ -14,7 +14,10 @@ using Lexical.Localization.Internal;
 
 namespace Lexical.Localization
 {
-    public static partial class AssetKeyExtensions__
+    /// <summary>
+    /// Extensions for <see cref="IEnumerable{KeyValuePair{IAssetKey, string}}"/>.
+    /// </summary>
+    public static partial class KeyLinesExtensions
     {
         static IAssetKeyNamePolicy DefaultPolicy = AssetKeyNameProvider.Default;
 
@@ -41,20 +44,20 @@ namespace Lexical.Localization
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
         /// </summary>
         /// <param name="node"></param>
-        /// <param name="keyValues"></param>
+        /// <param name="lines"></param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
-            => AddRange(node, keyValues, groupingRule: null);
+        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines)
+            => AddRange(node, lines, groupingRule: null);
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
         /// </summary>
         /// <param name="node"></param>
-        /// <param name="keyValues"></param>
+        /// <param name="lines"></param>
         /// <param name="groupingPatternText"></param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> keyValues, string groupingPatternText)
-            => AddRange(node, keyValues, groupingRule: new AssetNamePattern(groupingPatternText));
+        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines, string groupingPatternText)
+            => AddRange(node, lines, groupingRule: new AssetNamePattern(groupingPatternText));
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
@@ -74,11 +77,10 @@ namespace Lexical.Localization
         /// 
         /// </summary>
         /// <param name="node"></param>
-        /// <param name="parametrizer"></param>
-        /// <param name="keyValues"></param>
+        /// <param name="lines"></param>
         /// <param name="groupingRule">(optional)</param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> keyValues, IAssetNamePattern groupingRule) // TOdo separate to sortRule + groupingRule
+        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetNamePattern groupingRule) // TOdo separate to sortRule + groupingRule
         {
             // Create comparer that can compare TreeNode and argument's keys
             ParametrizedComparer comparer = new ParametrizedComparer();
@@ -96,7 +98,7 @@ namespace Lexical.Localization
 
             List<PartComparer.Part> partList = new List<PartComparer.Part>(10);
             List<IAssetKey> key_parts = new List<IAssetKey>();
-            foreach (var kp in keyValues)
+            foreach (var kp in lines)
             {
                 foreach (IAssetKey part in kp.Key.ArrayFromRoot())
                 {
@@ -160,6 +162,77 @@ namespace Lexical.Localization
             return node;
         }
 
+        /// <summary>
+        /// Create an asset that uses <paramref name="trees"/>.
+        /// 
+        /// Lines are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
+        /// </summary>
+        /// <param name="trees"></param>
+        /// <param name="hintSource"></param>
+        /// <returns></returns>
+        public static IAsset ToAsset(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, string hintSource = null)
+            => new LocalizationAsset().AddKeyLinesSource(lines, hintSource).Load();
+    }
 
+    /// <summary>
+    /// TreeNode is an intermediate model for writing text files
+    /// 
+    /// Reorganize parts so that non-canonicals parts, so that "root" is first, then "culture", and then others by parameter name.
+    /// </summary>
+    internal class PartComparer : IComparer<PartComparer.Part>
+    {
+        private static readonly PartComparer instance = new PartComparer().AddParametersToSortOrder("root", "culture");
+        public static PartComparer Default => instance;
+
+        public readonly List<string> order = new List<string>();
+
+        public PartComparer()
+        {
+        }
+
+        public PartComparer AddParametersToSortOrder(IEnumerable<string> parameters)
+        {
+            this.order.AddRange(parameters);
+            return this;
+        }
+
+        public PartComparer AddParametersToSortOrder(params string[] parameters)
+        {
+            this.order.AddRange(parameters);
+            return this;
+        }
+
+        public int Compare(Part x, Part y)
+        {
+            // canonical parts cannot be reordered between themselves.
+            if (x.isCanonical || y.isCanonical) return 0;
+            int xix = order.IndexOf(x.name);
+            int yix = order.IndexOf(y.name);
+            if (xix == yix) return 0;
+            if (xix < 0) xix = Int32.MaxValue;
+            if (yix < 0) yix = Int32.MaxValue;
+            return xix - yix;
+        }
+
+        public struct Part
+        {
+            public string name;
+            public string value;
+            public bool isCanonical;
+            public bool isNonCanonical;
+
+            public Part(string name, string value, bool isCanonical, bool isNonCanonical)
+            {
+                this.name = name;
+                this.value = value;
+                this.isCanonical = isCanonical;
+                this.isNonCanonical = isNonCanonical;
+            }
+
+            public Key CreateKey(Key prev = default)
+                => isCanonical ? new Key.Canonical(prev, name, value) :
+                   isNonCanonical ? new Key.NonCanonical(prev, name, value) :
+                   new Key(prev, name, value);
+        }
     }
 }

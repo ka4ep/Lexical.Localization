@@ -12,11 +12,11 @@ using System.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Contains localization key-value pairs. 
-    /// The key is in string format, and is matched by converting the requesting IAssetKey to identity string with
-    /// help of a <see cref="IAssetKeyNamePolicy"/>.
+    /// Language string container that reads key-value pairs from <see cref="IReadOnlyDictionary{string, string}"/> source.
     /// 
-    /// This class adapts IDictionary{string, string} to ILanguageStringResolver and ILanguageStringCollection.
+    /// Requesting <see cref="IAssetKey"/>s are converted to strings for key matching. 
+    /// <see cref="IAssetKeyNamePolicy"/> is used for converting <see cref="IAssetKey"/> to <see cref="string"/>.
+    /// This way the source file can have key notation where sections are not entirely distinguisable from each other.
     /// </summary>
     public class LocalizationStringAsset :
         ILocalizationStringProvider, ILocalizationStringCollection, IAssetReloadable, IAssetKeyCollection,
@@ -28,7 +28,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create language string resolver that uses a dictionary as a source.
         /// <see cref="ILocalizationStringCollection.GetAllStrings(IAssetKey)"/> and 
-        /// <see cref="IAssetKeyCollection.GetAllKeys(IAssetKey)"/> requests.         
+        /// <see cref="IAssetKeyCollection.GetAllKeys(IAssetKey)"/> requests.
         /// </summary>
         /// <param name="source">dictionary</param>
         /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
@@ -47,8 +47,6 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Create language string resolver that uses a dictionary as a source.
-        /// <see cref="ILocalizationStringCollection.GetAllStrings(IAssetKey)"/> and 
-        /// <see cref="IAssetKeyCollection.GetAllKeys(IAssetKey)"/> requests.         
         /// </summary>
         /// <param name="source">dictionary</param>
         /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
@@ -157,7 +155,7 @@ namespace Lexical.Localization
         {
             ClearCache();
             // If cultures is buing built, the cache becomes wrong, but 
-            // Reload() isn't intended for multi-thread use anyway. Only for initialization.
+            // Reload() isn't intended for initialization not concurrency.
             return this;
         }
 

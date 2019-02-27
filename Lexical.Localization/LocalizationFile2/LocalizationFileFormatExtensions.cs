@@ -9,9 +9,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Lexical.Localization.LocalizationFile.Internal;
 
 namespace Lexical.Localization.LocalizationFile2
 {
+    /// <summary>
+    /// Extensions for <see cref="ILocalizationFileFormat"/>.
+    /// </summary>
     public static partial class LocalizationFileFormatExtensions_
     {
         /// <summary>
@@ -45,7 +49,7 @@ namespace Lexical.Localization.LocalizationFile2
             => ReadStringLines(fileFormat, new StringReader(srcText), namePolicy);
 
         /// <summary>
-        /// Read lines from file.
+        /// Read file into assetkey lines.
         /// </summary>
         /// <param name="fileFormat"></param>
         /// <param name="filename"></param>
@@ -58,7 +62,7 @@ namespace Lexical.Localization.LocalizationFile2
         }
 
         /// <summary>
-        /// Read tree from file.
+        /// Read file into a tree format.
         /// </summary>
         /// <param name="fileFormat"></param>
         /// <param name="srcText"></param>
@@ -71,7 +75,7 @@ namespace Lexical.Localization.LocalizationFile2
         }
 
         /// <summary>
-        /// Read strings from file.
+        /// Read file into strings file.
         /// </summary>
         /// <param name="fileFormat"></param>
         /// <param name="filename"></param>
@@ -115,6 +119,8 @@ namespace Lexical.Localization.LocalizationFile2
 
         /// <summary>
         /// Create localization asset that reads file <paramref name="filename"/>.
+        /// 
+        /// File is reloaded if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="fileFormat"></param>
         /// <param name="filename"></param>
@@ -256,173 +262,6 @@ namespace Lexical.Localization.LocalizationFile2
             if (fileFormat is ILocalizationKeyTreeTextReader r2) using (var txt = stream.ToTextReader()) return r2.ReadKeyTree(txt, namePolicy).ToStringLines(namePolicy);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
-
-        /// <summary>
-        /// Create a container where localization key-values can be written to.
-        /// 
-        /// If <paramref name="srcText"/> contains previous content, it is updated and rewritten to <paramref name="dstText"/> according to rules in <paramref name="flags"/>.
-        /// </summary>
-        /// <param name="fileFormat"></param>
-        /// <param name="lines"></param>
-        /// <param name="srcText">(optional) source text, used if previous content are updated.</param>
-        /// <param name="dstText"></param>
-        /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
-        /// <param name="flags"></param>
-        /// <exception cref="IOException"></exception>
-        public static void WriteKeyLines(this ILocalizationFileFormat fileFormat, IEnumerable<KeyValuePair<IAssetKey, string>> lines, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, WriteFlags flags)
-        {
-            if (fileFormat is ILocalizationKeyLinesTextWriter r1) { r1.WriteKeyLines(lines, srcText, dstText, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationKeyTreeTextWriter r2) { r2.WriteKeyTree(KeyTree.Create(lines), srcText, dstText, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationKeyLinesStreamWriter r3) { MemoryStream ms = new MemoryStream(); r3.WriteKeyLines(lines, srcText.ToStream(), ms, namePolicy, flags); ms.WriteText(dstText); return; }
-            if (fileFormat is ILocalizationKeyTreeStreamWriter r4) { MemoryStream ms = new MemoryStream(); r4.WriteKeyTree(KeyTree.Create(lines), srcText.ToStream(), ms, namePolicy, flags); ms.WriteText(dstText); return; }
-            throw new FileLoadException($"Cannot write localization with {fileFormat.GetType().FullName}. Have you checked Lexical.Localization.Plus for writer class.");
-        }
-
-        /// <summary>
-        /// Write <paramref name="lines"/> to <paramref name="dstStream"/>.
-        /// 
-        /// If <paramref name="srcStream"/> contains previous content, it is updated and rewritten to <paramref name="dstStream"/> according to rules in <paramref name="flags"/>.
-        /// </summary>
-        /// <param name="fileFormat"></param>
-        /// <param name="lines"></param>
-        /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
-        /// <param name="dstStream">stream to write to.</param>
-        /// <param name="namePolicy">(optional) name policy.</param>
-        /// <param name="flags"></param>
-        /// <exception cref="IOException"></exception>
-        public static void WriteKeyLines(this ILocalizationFileFormat fileFormat, IEnumerable<KeyValuePair<IAssetKey, string>> lines, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags)
-        {
-            if (fileFormat is ILocalizationKeyLinesStreamWriter r3) { r3.WriteKeyLines(lines, srcStream, dstStream, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationKeyTreeStreamWriter r4) { r4.WriteKeyTree(KeyTree.Create(lines), srcStream, dstStream, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationKeyLinesTextWriter r1) { using (var srcTxt = srcStream.ToTextReader()) using (var tw = dstStream.ToTextWriter()) r1.WriteKeyLines(lines, srcTxt, tw, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationKeyTreeTextWriter r2) { using (var srcTxt = srcStream.ToTextReader()) using (var tw = dstStream.ToTextWriter()) r2.WriteKeyTree(KeyTree.Create(lines), srcTxt, tw, namePolicy, flags); return; }
-            throw new FileLoadException($"Cannot write localization with {fileFormat.GetType().FullName}. Have you checked Lexical.Localization.Plus for writer class.");
-        }
-
-        /// <summary>
-        /// Write lines from <<paramref name="stream"/> source. 
-        /// 
-        /// If <paramref name="srcText"/> contains previous content, it is updated and rewritten to <paramref name="dstText"/> according to rules in <paramref name="flags"/>.
-        /// </summary>
-        /// <param name="fileFormat"></param>
-        /// <param name="tree"></param>
-        /// <param name="srcText">(optional) source text, used if previous content is updated.</param>
-        /// <param name="dstText"></param>
-        /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
-        /// <param name="flags"></param>
-        /// <exception cref="IOException"></exception>
-        public static void WriteKeyTree(this ILocalizationFileFormat fileFormat, IKeyTree tree, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, WriteFlags flags)
-        {
-            if (fileFormat is ILocalizationKeyTreeTextWriter r2) { r2.WriteKeyTree(tree, srcText, dstText, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationKeyTreeStreamWriter r4) { MemoryStream ms = new MemoryStream(); r4.WriteKeyTree(tree, srcText.ToStream(), ms, namePolicy, flags); ms.WriteText(dstText); return; }
-            if (fileFormat is ILocalizationKeyLinesTextWriter r1) { r1.WriteKeyLines(tree.ToKeyLines(true), srcText, dstText, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationKeyLinesStreamWriter r3) { MemoryStream ms = new MemoryStream(); r3.WriteKeyLines(tree.ToKeyLines(true), srcText.ToStream(), ms, namePolicy, flags); ms.WriteText(dstText); return; }
-            throw new FileLoadException($"Cannot write localization with {fileFormat.GetType().FullName}. Have you checked Lexical.Localization.Plus for writer class.");
-        }
-
-        /// <summary>
-        /// Write lines from <<paramref name="text"/> source. 
-        /// 
-        /// If <paramref name="srcStream"/> contains previous content, it is updated and rewritten to <paramref name="dstStream"/> according to rules in <paramref name="flags"/>.
-        /// </summary>
-        /// <param name="fileFormat"></param>
-        /// <param name="tree"></param>
-        /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
-        /// <param name="dstStream"></param>
-        /// <param name="namePolicy">(optional) name policy.</param>
-        /// <param name="flags"></param>
-        /// <exception cref="IOException"></exception>
-        public static void WriteKeyTree(this ILocalizationFileFormat fileFormat, IKeyTree tree, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags)
-        {
-            if (fileFormat is ILocalizationKeyTreeStreamWriter r4) { r4.WriteKeyTree(tree, srcStream, dstStream, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationKeyTreeTextWriter r2) { using (var srcTxt = srcStream.ToTextReader()) using (var tw = dstStream.ToTextWriter()) r2.WriteKeyTree(tree, srcTxt, tw, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationKeyLinesStreamWriter r3) { r3.WriteKeyLines(tree.ToKeyLines(true), srcStream, dstStream, namePolicy, flags); return; }
-            if (fileFormat is ILocalizationKeyLinesTextWriter r1) { using (var srcTxt = srcStream.ToTextReader()) using (var tw = dstStream.ToTextWriter()) r1.WriteKeyLines(tree.ToKeyLines(true), srcTxt, tw, namePolicy, flags); return; }
-            throw new FileLoadException($"Cannot write localization with {fileFormat.GetType().FullName}. Have you checked Lexical.Localization.Plus for writer class.");
-        }
-
-        /// <summary>
-        /// Read content in <paramref name="srcText"/> and write to memory stream snapshot.
-        /// </summary>
-        /// <param name="srcText"></param>
-        /// <returns>stream that doesn't need dispose</returns>
-        static internal MemoryStream ToStream(this TextReader srcText)
-        {
-            if (srcText == null) return null;
-            byte[] data = Encoding.UTF8.GetBytes(srcText.ReadToEnd());
-            MemoryStream ms = new MemoryStream();
-            ms.Write(data, 0, data.Length);
-            ms.Flush();
-            ms.Position = 0L;
-            return ms;
-        }
-
-        /// <summary>
-        /// Read content in <paramref name="s"/> and decode into string.
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns>string reader that need to be disposed</returns>
-        static internal TextReader ToTextReader(this Stream s)
-            => new StreamReader(s, Encoding.UTF8, true, 32 * 1024);
-
-        internal static byte[] ReadFully(this Stream s)
-        {
-            if (s == null) return null;
-
-            // Try to read stream completely.
-            int len_ = (int)s.Length;
-            if (len_ > 2147483647) throw new IOException("File size over 2GB");
-            byte[] data = new byte[len_];
-
-            // Read chunks
-            int ix = 0;
-            while (ix < len_)
-            {
-                int count = s.Read(data, ix, len_ - ix);
-
-                // "returns zero (0) if the end of the stream has been reached."
-                if (count == 0) break;
-
-                ix += count;
-            }
-            if (ix == len_) return data;
-            throw new AssetException("Failed to read stream fully");
-        }
-        /// <summary>
-        /// Write contents in <paramref name="ms"/> into <paramref name="dstText"/>.
-        /// </summary>
-        /// <param name="ms"></param>
-        /// <param name="dstText"></param>
-        static internal void WriteText(this MemoryStream ms, TextWriter dstText)
-        {
-            ms.Position = 0L;
-            dstText.Write(Encoding.UTF8.GetString(ms.GetBuffer()));
-            dstText.Flush();
-        }
-
-        /// <summary>
-        /// Create writer that converts text to stream.
-        /// Result must be flushed and disposed.
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns>writer that must be disposed.</returns>
-        static internal TextWriter ToTextWriter(this Stream s)
-            => new StreamWriter(s, Encoding.UTF8, 16 * 1024, true);
-
-
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
-        {
-            foreach (var line in lines)
-            {
-                IAssetKey kk;
-                if (policy.TryParse(line.Key, out kk))
-                    yield return new KeyValuePair<IAssetKey, string>(kk, line.Value);
-            }
-        }
-        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
-            => KeyTree.Create(lines.ToKeyLines(policy));
-
-
 
     }
 
