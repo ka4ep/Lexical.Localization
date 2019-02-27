@@ -245,6 +245,7 @@ namespace Lexical.Localization
         {
             this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
             this.comparer = comparer ?? StringComparer.InvariantCulture;
+            this.sources = new List<IEnumerable<KeyValuePair<string, string>>>();
         }
 
         /// <summary>

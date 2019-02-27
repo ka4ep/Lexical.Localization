@@ -16,12 +16,10 @@ namespace Scratch
             asset = IniFileFormat.Instance.CreateFileAsset("localization.ini");
             asset = ResourcesFileFormat.Instance.CreateFileAsset("localization.resources", AssetKeyNameProvider.Colon_Dot_Dot);
             asset = ResXFileFormat.Instance.CreateFileAsset("localization.resx", AssetKeyNameProvider.Colon_Dot_Dot);
-            //LocalizationRoot.Builder.AddAsset(asset).Build();
-
-            // TODO : LocalizationAssetStringiin AddSource(enumerable) ja Load()+Reload()
+            LocalizationRoot.Builder.AddAsset(asset).Build();
 
             // Shorter
-            LocalizationRoot.Builder.AddLocalizationFile("localization.xml").Build();
+            //LocalizationRoot.Builder.AddLocalizationFile("localization.xml").Build();
 
             // Create key
             IAssetKey key = LocalizationRoot.Global.TypeSection("ConsoleApp1.MyController").Key("Success");
