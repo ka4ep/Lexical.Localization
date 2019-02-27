@@ -22,7 +22,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!"  }
                 };
                 // Create asset with string source
-                IAsset asset = new LocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{key}").Load();
+                IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{key}").Load();
                 #endregion Snippet_1a
                 IAssetKey key = new LocalizationRoot(asset).TypeSection("MyController").Key("hello");
                 Console.WriteLine(key);
@@ -39,7 +39,7 @@ namespace docs
                     { (Key)ParameterNamePolicy.Instance.Parse("culture:de:type:MyController:key:hello", Key.Root), "Hallo Welt!"  }
                 };
                 // Create asset with string source
-                IAsset asset = new LocalizationAsset().AddKeyLinesSource(source).Load();
+                IAsset asset = new LoadableLocalizationAsset().AddKeyLinesSource(source).Load();
                 #endregion Snippet_1b
 
                 #region Snippet_2b
@@ -59,7 +59,7 @@ namespace docs
                     { new LocalizationRoot().TypeSection("MyController").Key("hello").SetCulture("de"), "Hallo Welt!"  }
                 };
                 // Create asset with string source
-                IAsset asset = new LocalizationAsset().AddKeyLinesSource(source).Load();
+                IAsset asset = new LoadableLocalizationAsset().AddKeyLinesSource(source).Load();
                 #endregion Snippet_1c
 
                 #region Snippet_2c
@@ -77,7 +77,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!" }
                 };
                 // Create asset with string source
-                IAsset asset = new LocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{key}").Load();
+                IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{key}").Load();
                 #region Snippet_3a
                 // Extract all keys
                 foreach (Key _key in asset.GetAllKeys())

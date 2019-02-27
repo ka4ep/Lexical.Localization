@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using Lexical.Localization.LocalizationFile2;
 
-namespace Lexical.Localization.LocalizationFile.Internal
+namespace Lexical.Localization.LocalizationFile2.Internal
 {
     public static class UtilityExtensions
     {

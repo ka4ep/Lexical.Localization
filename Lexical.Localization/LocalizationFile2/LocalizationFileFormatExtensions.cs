@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Lexical.Localization.LocalizationFile.Internal;
+using Lexical.Localization.LocalizationFile2.Internal;
 
 namespace Lexical.Localization.LocalizationFile2
 {
@@ -130,17 +130,17 @@ namespace Lexical.Localization.LocalizationFile2
         {
             if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return new LocalizationStringAsset(fileFormat.CreateFileReaderAsStringLines(filename, namePolicy), namePolicy);
+                return new LoadableLocalizationStringAsset(namePolicy).AddKeyStringSource(fileFormat.CreateFileReaderAsStringLines(filename, namePolicy)).Load();
             }
             else
             if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return new LocalizationAsset().AddKeyLinesSource(fileFormat.CreateFileReaderAsKeyLines(filename, namePolicy)).Load();
+                return new LoadableLocalizationAsset().AddKeyLinesSource(fileFormat.CreateFileReaderAsKeyLines(filename, namePolicy)).Load();
             }
             else
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return new LocalizationAsset().AddKeyTreeSource(fileFormat.CreateFileReaderAsKeyTree(filename, namePolicy)).Load();
+                return new LoadableLocalizationAsset().AddKeyTreeSource(fileFormat.CreateFileReaderAsKeyTree(filename, namePolicy)).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }

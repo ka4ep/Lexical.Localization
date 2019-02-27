@@ -22,8 +22,10 @@ namespace Lexical.Localization
         ILocalizationStringProvider, ILocalizationStringCollection, IAssetReloadable, IAssetKeyCollection,
         ILocalizationAssetCultureCapabilities
     {
-        protected IReadOnlyDictionary<string, string> source;
+        protected IReadOnlyDictionary<string, string> dictionary;
         protected IAssetKeyNamePolicy namePolicy;
+
+        protected LocalizationStringAsset() { }
 
         /// <summary>
         /// Create language string resolver that uses a dictionary as a source.
@@ -34,7 +36,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
         public LocalizationStringAsset(IReadOnlyDictionary<string, string> source, IAssetKeyNamePolicy namePolicy = default)
         {
-            this.source = source ?? throw new ArgumentNullException(nameof(source));
+            this.dictionary = source ?? throw new ArgumentNullException(nameof(source));
             this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
         }
 
@@ -52,7 +54,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
         public LocalizationStringAsset(IEnumerable<KeyValuePair<string, string>> source, IAssetKeyNamePolicy namePolicy = default)
         {
-            this.source = source is IReadOnlyDictionary<string, string> map ? map : 
+            this.dictionary = source is IReadOnlyDictionary<string, string> map ? map : 
                 source?.ToDictionary(line=>line.Key, line=>line.Value)
                 ?? throw new ArgumentNullException(nameof(source));
             this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
@@ -67,21 +69,21 @@ namespace Lexical.Localization
 
         public virtual IEnumerable<KeyValuePair<string, string>> GetAllStrings(IAssetKey key)
         {
-            if (key == null) return source;
+            if (key == null) return dictionary;
             if (namePolicy is IAssetNamePattern pattern)
             {
                 IAssetNamePatternMatch match = pattern.Match(key);
-                return source.Where(kp => IsEqualOrSuperset(match, pattern.Match(kp.Key)));
+                return dictionary.Where(kp => IsEqualOrSuperset(match, pattern.Match(kp.Key)));
             }
             else
             {
                 string key_name = namePolicy.BuildName(key);
-                return source.Where(kp => kp.Key.Contains(key_name));
+                return dictionary.Where(kp => kp.Key.Contains(key_name));
             }
         }
 
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
-            => source.GetEnumerator();
+            => dictionary.GetEnumerator();
 
         public virtual string GetString(IAssetKey key)
         {
@@ -89,7 +91,7 @@ namespace Lexical.Localization
             string id = namePolicy.BuildName(key);
 
             // Search dictionary
-            source.TryGetValue(id, out result);
+            dictionary.TryGetValue(id, out result);
             return result;
         }
 
@@ -105,7 +107,7 @@ namespace Lexical.Localization
         {
             KeyValuePair<string, string>[] criteriaParams = criteriaKey.GetParameters();
 
-            foreach (var line in source)
+            foreach (var line in dictionary)
             {
                 IAssetNamePatternMatch match = pattern.Match(line.Key);
                 if (!match.Success) continue;
@@ -176,7 +178,7 @@ namespace Lexical.Localization
                 if (!pattern.PartMap.TryGetValue("culture", out culturePart)) return null;
 
                 Dictionary<string, CultureInfo> result = new Dictionary<string, CultureInfo>();
-                foreach (var kp in source)
+                foreach (var kp in dictionary)
                 {
                     IAssetNamePatternMatch match = pattern.Match(kp.Key);
                     if (!match.Success) continue;
@@ -215,6 +217,122 @@ namespace Lexical.Localization
         }
 
         public override string ToString() => $"{GetType().Name}()";
+    }
+
+    /// <summary>
+    /// This class contains key-value lines in format where the key is <see cref="string"/>.
+    /// 
+    /// The content is built from one or multiple configurable sources.    
+    /// </summary>
+    public class LoadableLocalizationStringAsset : LocalizationStringAsset, IDisposable
+    {
+        /// <summary>
+        /// List of source where values are read from when <see cref="Load"/> is called.
+        /// </summary>
+        protected List<IEnumerable<KeyValuePair<string, string>>> sources;
+
+        /// <summary>
+        /// Comparer that can compare instances of <see cref="string"/>.
+        /// </summary>
+        IEqualityComparer<string> comparer;
+
+        /// <summary>
+        /// Create new localization string asset.
+        /// </summary>
+        /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
+        /// <param name="comparer">(optional) string key comparer</param>
+        public LoadableLocalizationStringAsset(IAssetKeyNamePolicy namePolicy = default, IEqualityComparer<string> comparer = default) : base()
+        {
+            this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
+            this.comparer = comparer ?? StringComparer.InvariantCulture;
+        }
+
+        /// <summary>
+        /// Add language string key-value source. 
+        /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
+        /// 
+        /// If <paramref name="lines"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="sourceHint">(optional) added to error message</param>
+        /// <returns></returns>
+        public LoadableLocalizationStringAsset AddKeyStringSource(IEnumerable<KeyValuePair<string, string>> lines, string sourceHint = null)
+        {
+            if (lines == null) throw new ArgumentNullException(nameof(lines));
+            lock (sources) sources.Add(lines);
+            return this;
+        }
+
+        /// <summary>
+        /// Clear all key-value sources.
+        /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
+        /// </summary>
+        /// <returns></returns>
+        /// <param name="disposeSources">if true, sources are disposed</param>
+        /// <exception cref="AggregateException">If disposing of one of the sources failed</exception>
+        public LoadableLocalizationStringAsset ClearSources(bool disposeSources)
+        {
+            ClearCache();
+            IDisposable[] disposables = null;
+            lock (sources)
+            {
+                if (disposeSources) disposables = sources.Select(s => s as IDisposable).Where(s => s != null).ToArray();
+                sources.Clear();
+            }
+            LazyList<Exception> errors = new LazyList<Exception>();
+            if (disposeSources)
+                foreach (IDisposable d in disposables)
+                {
+                    try
+                    {
+                        d.Dispose();
+                    }
+                    catch (Exception e)
+                    {
+                        errors.Add(e);
+                    }
+                }
+            if (errors.Count > 0) throw new AggregateException(errors);
+            return this;
+        }
+
+        static KeyValuePair<string, string>[] no_lines = new KeyValuePair<string, string>[0];
+        protected virtual IEnumerable<KeyValuePair<string, string>> ConcatenateSources()
+        {
+            IEnumerable<KeyValuePair<string, string>> result = null;
+            foreach (var source in sources)
+            {
+                result = result == null ? source : result.Concat(source);
+            }
+            return result ?? no_lines;
+        }
+
+        protected virtual void SetContent(IEnumerable<KeyValuePair<string, string>> src)
+        {
+            var newMap = new Dictionary<string, string>(comparer);
+            foreach (var line in src)
+            {
+                if (line.Key == null) continue;
+                newMap[line.Key] = line.Value;
+            }
+            this.dictionary = newMap;
+        }
+
+        /// <summary>
+        /// Dispose asset.
+        /// </summary>
+        /// <exception cref="AggregateException">If disposing of one of the sources failed</exception>
+        public virtual void Dispose()
+        {
+            ClearSources(disposeSources: true);
+        }
+
+        public virtual LoadableLocalizationStringAsset Load()
+        {
+            base.Reload();
+            SetContent(ConcatenateSources());
+            return this;
+        }
     }
 
     public static partial class LocalizationAssetExtensions_

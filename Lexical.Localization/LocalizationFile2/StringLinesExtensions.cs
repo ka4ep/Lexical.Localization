@@ -53,7 +53,7 @@ namespace Lexical.Localization.LocalizationFile2
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, string>> lines)
-            => new LocalizationStringAsset(lines);
+        public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
+            => new LoadableLocalizationStringAsset(policy).AddKeyStringSource(lines).Load();
     }
 }
