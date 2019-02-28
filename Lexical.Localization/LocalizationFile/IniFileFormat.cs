@@ -1,209 +1,91 @@
-﻿//---------------------------------------------------------
+﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           25.10.2018
+// Date:           20.2.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
-namespace Lexical.Localization.LocalizationFile
+namespace Lexical.Localization
 {
-    public class IniFileFormat : ILocalizationFileTextReader, ILocalizationFileStreamReader, ILocalizationFileStreamWriter, ILocalizationFileTextWriter
+    public class IniFileFormat : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
     {
-        static readonly IniFileFormat singleton = new IniFileFormat();
-        public static IniFileFormat Singleton => singleton;
-
+        private readonly static IniFileFormat instance = new IniFileFormat();
+        public static IniFileFormat Instance => instance;
         public string Extension => "ini";
+        static ParameterNamePolicy parser_comment = new ParameterNamePolicy("\\\n\t\r\0\a\b\f");
+        static ParameterNamePolicy parser_section = new ParameterNamePolicy("\\\n\t\r\0\a\b\f[]");
+        static ParameterNamePolicy parser_key = new ParameterNamePolicy("\\\n\t\r\0\a\b\f=");
+        static ParameterNamePolicy parser_value = new ParameterNamePolicy("\\\n\t\r\0\a\b\f");
 
-        public ILocalizationFileWritable CreateStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
-            => new IniWritable(stream, namePolicy);
-
-        public ILocalizationFileWritable CreateText(TextWriter text, IAssetKeyNamePolicy namePolicy = default)
-            => new IniWritable(text, namePolicy);
-
-        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
-            => new IniReadable(stream, namePolicy);
-
-        public ILocalizationFileTokenizer OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
-            => new IniReadable(text, namePolicy);
-    }
-
-    public class IniReadable : ILocalizationFileTokenizer, IDisposable
-    {
-        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
-        TextReader textReader;
-
-        public IniReadable(TextReader textReader, IAssetKeyNamePolicy namePolicy = default)
+        /// <summary>
+        /// Json text into a tree.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns></returns>
+        public IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default)
         {
-            this.textReader = textReader;
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
+            KeyTree root = new KeyTree(Key.Root);
+            using (var ini = new IniTokenReader(text.ReadToEnd()))
+                ReadIniIntoTree(ini, root, namePolicy);
+            return root;
         }
 
-        public IniReadable(Stream stream, IAssetKeyNamePolicy namePolicy = default)
+        /// <summary>
+        /// Read ini token stream into <paramref name="node"/>
+        /// </summary>
+        /// <param name="ini"></param>
+        /// <param name="node">parent node to under which add nodes</param>
+        /// <param name="namePolicy"></param>
+        /// <returns><paramref name="node"/></returns>
+        public IKeyTree ReadIniIntoTree(IniTokenReader ini, KeyTree node, IAssetKeyNamePolicy namePolicy = default)
         {
-            this.textReader = new StreamReader(stream, true);
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-        }
-
-        public IEnumerable<Token> Read()
-        {
-            string currentSection = null;
-            while (textReader.Peek() >= 0)
+            List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
+            KeyTree section = null;
+            foreach(IniToken token in ini)
             {
-                // Read, trim
-                string line = textReader.ReadLine().Trim();
-                if (String.IsNullOrWhiteSpace(line)) continue;
-                char ch = line[0];
-
-                // Comment
-                if (ch == ';' || ch == '#' || ch == '/') continue;
-
-                // Section
-                if (ch == '[' && line[line.Length - 1] == ']')
+                switch (token.Type)
                 {
-                    if (currentSection != null) { yield return Token.End(); currentSection = null; }
-                    string sectionName = line.Substring(1, line.Length - 2).Trim();
-                    if (!string.IsNullOrEmpty(sectionName)) { yield return Token.Begin(sectionName); currentSection = sectionName; }
-                    continue;
-                }
-
-                // Key-Value
-                int ix = line.IndexOf('=');
-                if (ix >= 0)
-                {
-                    string key = line.Substring(0, ix).Trim(), value = line.Substring(ix + 1).Trim();
-                    yield return Token.KeyValue(key, value);
+                    case IniTokenType.Section:
+                        Key key = null;
+                        parameters.Clear();
+                        if (parser_section.TryParseParameters(token.ValueText, parameters))
+                        {
+                            foreach (var parameter in parameters)
+                                key = Key.Create(key, parameter.Key, parameter.Value);
+                            section = key == null ? null : node.GetOrCreateChild(key);
+                        }
+                        else
+                        {
+                            section = null;
+                        }
+                        break;
+                    case IniTokenType.KeyValue:
+                        Key key_ = null;
+                        parameters.Clear();
+                        if (parser_key.TryParseParameters(token.KeyText, parameters))
+                        {
+                            foreach (var parameter in parameters)
+                                key_ = Key.Create(key_, parameter.Key, parameter.Value);
+                            KeyTree current = key_ == null ? null : (section??node).GetOrCreateChild(key_);
+                            string value = token.Value;
+                            if (!current.Values.Contains(value)) current.Values.Add(value);
+                        }
+                        break;
+                    case IniTokenType.Comment: break;
+                    case IniTokenType.Text: break;
                 }
             }
-            if (currentSection != null) yield return Token.End();
-        }
-
-        public void Dispose()
-        {
-            textReader?.Dispose();
-            textReader = null;
+            return node;
         }
     }
 
-    public class IniWritable : ILocalizationFileWritable, IDisposable
-    {
-        protected TextWriter writer;
-
-        public IAssetKeyNamePolicy NamePolicy { get; internal set; }
-        IAssetKeyNamePolicy keyNamePolicy;
-
-        public IniWritable(Stream stream, IAssetKeyNamePolicy namePolicy) : this(new StreamWriter(stream, Encoding.UTF8), namePolicy) { }
-        public IniWritable(TextWriter writer, IAssetKeyNamePolicy namePolicy)
-        {
-            this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-
-            // Create keyNamePolicy where "culture" is not printed out second time.
-            if (NamePolicy is AssetKeyNameProvider provider)
-            {
-                var copy = provider.Clone() as AssetKeyNameProvider;
-                copy.SetParameter("culture", false);
-                this.keyNamePolicy = copy;
-            }
-            else if (NamePolicy is IAssetNamePattern pattern)
-            {
-                // namepolicy is pattern
-                if (pattern.ParameterMap.ContainsKey("culture"))
-                {
-                    // Create new pattern, remove one "culture" part
-                    StringBuilder sb = new StringBuilder();
-                    bool cultureRemoved = false;
-                    foreach (var part in pattern.AllParts)
-                    {
-                        if (!cultureRemoved && part.ParameterName == "culture") { cultureRemoved = true; continue; }
-                        sb.Append(part.PatternText);
-                    }
-                    this.keyNamePolicy = new AssetNamePattern(sb.ToString());
-                }
-                else
-                {
-                    // There is no "culture" part
-                    this.keyNamePolicy = pattern;
-                }
-            }
-            else
-            {
-                this.keyNamePolicy = NamePolicy;
-            }
-        }
-
-        public void Write(TreeNode root)
-        {
-            // Write root lines
-            int c = WriteLines(root);
-            if (c > 0) writer.WriteLine();
-
-            // Write all non-culture sections
-            foreach (var node in root.Children.Values.Where(node => node.Parameter.Name != "culture").OrderBy(node => node.Parameter, Key.Comparer.Default))
-            {
-                _writeRecusive(node);
-                writer.WriteLine();
-            }
-
-            // Write all culture sections.
-            foreach (var node in root.Children.Values.Where(node => node.Parameter.Name == "culture").OrderBy(node => node.Parameter, Key.Comparer.Default))
-            {
-                writer.Write("[");
-                writer.Write(node.ParameterValue);
-                writer.Write("]");
-                writer.WriteLine();
-
-                _writeRecusive(node);
-                writer.WriteLine();
-            }
-        }
-
-        void _writeRecusive(TreeNode node)
-        {
-            WriteLines(node);
-
-            // Children
-            foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Parameter, Key.Comparer.Default))
-            {
-                _writeRecusive(childNode);
-            }
-        }
-
-        int WriteLines(TreeNode node)
-        {
-            if (!node.HasValues) return 0;
-
-            // Key string
-            string str = keyNamePolicy.BuildName(node.TreeKey);
-
-            // Write lines
-            node.Values.Sort(AlphaNumericComparer.Default);
-            foreach (string value in node.Values)
-            {
-                writer.Write(str);
-                writer.Write(" = ");
-                writer.Write(value);
-                writer.WriteLine();
-            }
-            return node.Values.Count;
-        }
-
-        public void Dispose()
-        {
-            if (writer != null)
-            {
-                writer.Flush();
-                writer.Dispose();
-            }
-            writer = null;
-        }
-
-        public void Flush()
-            => writer?.Flush();
-    }
 
 }

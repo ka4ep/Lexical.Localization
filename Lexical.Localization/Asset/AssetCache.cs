@@ -52,6 +52,9 @@ namespace Lexical.Localization
             Options = new AssetCacheOptions();
             Source = source ?? throw new ArgumentNullException(nameof(source));
         }
+
+        public override string ToString()
+            => $"{GetType().Name}({Source.ToString()})";
     }
 
     /// <summary>

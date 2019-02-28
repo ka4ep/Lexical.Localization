@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Lexical.Localization
@@ -28,12 +29,58 @@ namespace Lexical.Localization
             return this;
         }
 
+        /// <summary>
+        /// Builds a list of assets. Adds the following:
+        ///   1. The list of <see cref="assets"/> as is
+        ///   2. Build from <see cref="sources"/> elements that dont' implement <see cref="ILocalizationSource"/>
+        ///   3. One asset for each <see cref="ILocalizationStringLinesSource"/> that share <see cref="IAssetKeyNamePolicy"/>.
+        ///   4. One asset for all <see cref="ILocalizationKeyLinesSource"/>.
+        ///   
+        /// </summary>
+        /// <returns></returns>
+        protected List<IAsset> BuildAssets()
+        {
+            // Result asset list
+            List<IAsset> list = new List<IAsset>();
+
+            // Add direct IAssets
+            list.AddRange(assets);
+
+            // Build IAssetSources
+            foreach (IAssetSource src in sources.Where(s => s is ILocalizationSource == false))
+                src.Build(list);
+
+            // Build one asset for each <see cref="ILocalizationStringLinesSource"/> that share <see cref="IAssetKeyNamePolicy"/>.
+            Dictionary<IAssetKeyNamePolicy, LoadableLocalizationStringAsset> keyLinesAssetMap = null;
+            foreach (IAssetSource src in sources.Where(s => s is ILocalizationStringLinesSource))
+            {
+                ILocalizationStringLinesSource lineSrc = (ILocalizationStringLinesSource)src;
+                if (keyLinesAssetMap == null) keyLinesAssetMap = new Dictionary<IAssetKeyNamePolicy, LoadableLocalizationStringAsset>();
+                LoadableLocalizationStringAsset _asset = null;
+                IAssetKeyNamePolicy policy = lineSrc.NamePolicy ?? LoadableLocalizationStringAsset.DefaultPolicy;
+                if (!keyLinesAssetMap.TryGetValue(policy, out _asset)) keyLinesAssetMap[policy] = _asset = new LoadableLocalizationStringAsset(policy);
+                _asset.AddLineStringSource(lineSrc, lineSrc.SourceHint);
+            }
+            if (keyLinesAssetMap != null)
+                foreach (var _asset in keyLinesAssetMap.Values)
+                    list.Add(_asset.Load());
+
+            // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, string>> sources
+            LoadableLocalizationAsset __asset = null;
+            foreach (IAssetSource src in sources.Where(s => s is ILocalizationKeyLinesSource))
+            {
+                if (__asset == null) __asset = new LoadableLocalizationAsset();
+                __asset.AddKeyLinesSource((ILocalizationKeyLinesSource)src);
+            }
+            if (__asset != null) list.Add(__asset.Load());
+
+            return list;
+        }
+
         public virtual IAsset Build()
         {
-            List<IAsset> list = new List<IAsset>(assets.Count + sources.Count);
-            list.AddRange(assets);
-            foreach (IAssetSource src in sources.ToArray())
-                src.Build(list);
+            // Create list of assets
+            List<IAsset> list = BuildAssets();
 
             // Build
             if (list.Count == 0) return new AssetComposition.Immutable();
@@ -68,10 +115,8 @@ namespace Lexical.Localization
 
             public override IAsset Build()
             {
-                List<IAsset> list = new List<IAsset>(assets.Count + sources.Count);
-                list.AddRange(assets);
-                foreach (IAssetSource src in sources.ToArray())
-                    src.Build(list);
+                // Create list of assets
+                List<IAsset> list = BuildAssets();
 
                 IAsset built_asset;
                 if (list.Count == 0) built_asset = new AssetComposition(); // Dummy
@@ -80,7 +125,7 @@ namespace Lexical.Localization
 
                 // Post-build
                 IAsset post_built_asset = built_asset;
-                foreach (IAssetSource src in sources.ToArray())
+                foreach (IAssetSource src in sources)
                 {
                     post_built_asset = src.PostBuild(post_built_asset);
                     if (post_built_asset == null) throw new AssetException($"{src.GetType().Name}.{nameof(IAssetSource.PostBuild)} returned null");

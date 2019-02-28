@@ -32,4 +32,29 @@ namespace Lexical.Localization
         IAsset PostBuild(IAsset asset);
     }
     #endregion interface
+
+    #region interface_2
+    /// <summary>
+    /// Signal for asset source that returns language strings
+    /// </summary>
+    public interface ILocalizationSource : IAssetSource
+    {
+        string SourceHint { get; }
+    }
+
+    /// <summary>
+    /// Source that provides string based key-value lines
+    /// </summary>
+    public interface ILocalizationStringLinesSource : ILocalizationSource, IEnumerable<KeyValuePair<string, string>>
+    {
+        IAssetKeyNamePolicy NamePolicy { get; }
+    }
+
+    /// <summary>
+    /// Source that provides <see cref="IAssetKey"/> based key-value lines.
+    /// </summary>
+    public interface ILocalizationKeyLinesSource : ILocalizationSource, IEnumerable<KeyValuePair<IAssetKey, string>>
+    {
+    }
+    #endregion interface_2
 }

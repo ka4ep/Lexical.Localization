@@ -1,6 +1,6 @@
 ﻿using Lexical.Localization;
+using Lexical.Localization.Internal;
 using Lexical.Localization.Ms.Extensions;
-using Lexical.Localization.LocalizationFile;
 using Microsoft.Extensions.FileProviders;
 using System.Collections.Generic;
 using System.IO;
@@ -9,22 +9,14 @@ using System.Reflection;
 
 namespace docs
 {
-    public class ILocalizationFileReader_Examples
+    public class ILocalizationFileReader2_Examples
     {
         // Rename to "Main", or run from Main.
         public static void Run(string[] args)
         {
             {
                 #region Snippet_1
-                using (FileStream fs = new FileStream("localization.ini", FileMode.Open))
-                {
-                    // Get .ext file format
-                    ILocalizationFileStreamReader fileFormat = LocalizationFileFormatMap.Singleton.TryGet("ini") as ILocalizationFileStreamReader;
-                    // Create reader
-                    ILocalizationFileTokenizer textReader = fileFormat.OpenStream(fs, AssetKeyNameProvider.Default);
-                    // Convert to asset
-                    IAsset asset = textReader.ToAssetAndClose();
-                }
+                IAsset asset = IniFileFormat.Instance.CreateFileAsset("localization.ini");
                 #endregion Snippet_1
             }
 
@@ -39,29 +31,13 @@ namespace docs
     }
 
     #region Snippet_3
-    class ExtFileFormat : ILocalizationFileFormat, ILocalizationFileStreamReader
+    class ExtFileFormat : ILocalizationKeyLinesStreamReader
     {
-        public string Extension 
-            => "ext";
-        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = null)
-            => new ExtReader(stream, namePolicy);
-    }
-
-    class ExtReader : ILocalizationFileTokenizer
-    {
-        public IAssetKeyNamePolicy NamePolicy => throw new System.NotImplementedException();
-        public ExtReader(Stream stream, IAssetKeyNamePolicy namePolicy)
+        public string Extension => "ext";
+        public IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(Stream stream, IAssetKeyNamePolicy namePolicy = default)
         {
-        }
-
-        public void Dispose()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IEnumerable<Token> Read()
-        {
-            throw new System.NotImplementedException();
+            IAssetKey key = Key.Create("section", "MyClass").Append("key", "HelloWorld").Append("culture", "en");
+            yield return new KeyValuePair<IAssetKey, string>(key, "Hello World!");
         }
     }
     #endregion Snippet_3

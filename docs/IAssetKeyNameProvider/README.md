@@ -53,9 +53,9 @@ public interface IAssetKeyNameProvider : IAssetKeyNamePolicy
     /// <summary>
     /// Build path string from key.
     /// </summary>
-    /// <param name="key"></param>
+    /// <param name="str"></param>
     /// <returns>full name string</returns>
-    string BuildName(IAssetKey key);
+    string BuildName(IAssetKey str);
 }
 ```
 </details>

@@ -18,17 +18,11 @@ namespace Lexical.Localization
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
         static ParameterNamePolicy instance = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:");
-        static ParameterNamePolicy ini = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:=[]");
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
         /// </summary>
         public static ParameterNamePolicy Instance => instance;
-
-        /// <summary>
-        /// String serializer for ini literals, where it's possible to use any char
-        /// </summary>
-        public static ParameterNamePolicy Ini => ini;
 
         Regex ParsePattern =
             new Regex(@"(?<key>([^:\\]|\\.)*)\:(?<value>([^:\\]|\\.)*)(\:|$)", opts);

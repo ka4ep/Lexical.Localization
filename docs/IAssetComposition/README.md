@@ -6,10 +6,9 @@
 // Create individual assets
 IAsset asset_1 = new LocalizationStringAsset(new Dictionary<string, string> { { "en:hello", "Hello World!" } });
 IAsset asset_2 = new AssetResourceDictionary(new Dictionary<string, byte[]> { { "en:Hello.Icon", new byte[] { 1, 2, 3 } } });
-IAsset asset_3 = new AssetLoader().Add( new AssetLoaderPartEmbeddedStrings("[assembly.]localization{-culture}.ini", AssetKeyNameProvider.Default ).AddAssembly(Assembly.GetExecutingAssembly()).AddMatchParameters("assembly"));
 
 // Create composition asset
-IAssetComposition asset_composition = new AssetComposition(asset_1, asset_2, asset_3);
+IAssetComposition asset_composition = new AssetComposition(asset_1, asset_2);
 
 // Assign the composition to root
 IAssetRoot root = new LocalizationRoot(asset_composition, new CulturePolicy());

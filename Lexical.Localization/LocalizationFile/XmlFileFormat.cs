@@ -1,162 +1,79 @@
-﻿//---------------------------------------------------------
+﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           25.10.2018
+// Date:           20.2.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Web;
-using System.Xml;
+using System.Xml.Linq;
 
-namespace Lexical.Localization.LocalizationFile
+namespace Lexical.Localization
 {
-    public class XmlFileFormat : ILocalizationFileTextReader, ILocalizationFileStreamReader, ILocalizationFileStreamWriter, ILocalizationFileTextWriter
+    public class XmlFileFormat : ILocalizationFileFormat, ILocalizationKeyTreeStreamReader, ILocalizationKeyTreeTextReader
     {
-        static readonly XmlFileFormat singleton = new XmlFileFormat();
-        public static XmlFileFormat Singleton => singleton;
-
+        public const string URN = "urn:lexical.fi:";
+        private readonly static XmlFileFormat instance = new XmlFileFormat();
+        public static XmlFileFormat Instance => instance;
         public string Extension => "xml";
 
-        public ILocalizationFileWritable CreateStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
-            => new XmlWritable(stream, namePolicy);
+        public IKeyTree ReadKeyTree(XElement element, IAssetKeyNamePolicy namePolicy = default) => ReadElement(element, new KeyTree(Key.Root));
+        public IKeyTree ReadKeyTree(Stream stream, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(stream).Root, new KeyTree(Key.Root));
+        public IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(text).Root, new KeyTree(Key.Root));
 
-        public ILocalizationFileWritable CreateText(TextWriter text, IAssetKeyNamePolicy namePolicy = default)
-            => new XmlWritable(text, namePolicy);
+        /// <summary>
+        /// Reads <paramref name="element"/>, and adds as a subnode to <paramref name="parent"/> node.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="parent"></param>
+        /// <returns>parent</returns>
+        public KeyTree ReadElement(XElement element, KeyTree parent)
+        {            
+            Key key = null;
 
-        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
-            => new XmlReadable(stream, namePolicy);
-
-        public ILocalizationFileTokenizer OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
-            => new XmlReadable(text, namePolicy);
-    }
-
-    public class XmlReadable : ILocalizationFileTokenizer, IDisposable
-    {
-        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
-        TextReader textReader;
-
-        public XmlReadable(Stream stream, IAssetKeyNamePolicy namePolicy) : this(new StreamReader(stream, true), namePolicy) { }
-        public XmlReadable(TextReader textReader, IAssetKeyNamePolicy namePolicy = default)
-        {
-            this.textReader = textReader;
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-        }
-
-        public IEnumerable<Token> Read()
-        {
-            using (var xml = System.Xml.XmlReader.Create(textReader))
+            if (element.Name.NamespaceName != null && element.Name.NamespaceName.StartsWith(URN))
             {
-                xml.MoveToContent();
-                string section = null;
-                while (xml.Read())
-                {
-                    switch (xml.NodeType)
+                string parameterName = element.Name.NamespaceName.Substring(URN.Length);
+                string parameterValue = element.Name.LocalName;
+                key = Key.Create(key, parameterName, parameterValue);
+
+                if (element.HasAttributes)
+                    foreach (XAttribute attribute in element.Attributes())
                     {
-                        case XmlNodeType.Element: yield return Token.Begin(xml.Name); break;
-                        case XmlNodeType.EndElement: yield return Token.End(); break;
-                        case XmlNodeType.Text: yield return Token.KeyValue(section, xml.Value); break;
+                        if (string.IsNullOrEmpty(attribute.Name.NamespaceName))
+                            key = Key.Create(key, attribute.Name.LocalName, attribute.Value);
                     }
-                }
             }
-        }
 
-        public void Dispose()
-        {
-            textReader?.Dispose();
-            textReader = null;
-        }
-    }
-
-    public class XmlWritable : ILocalizationFileWritable, IDisposable
-    {
-        protected TextWriter writer;
-
-        public IAssetKeyNamePolicy NamePolicy { get; internal set; }
-
-        public XmlWritable(TextWriter writer, IAssetKeyNamePolicy namePolicy)
-        {
-            this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-        }
-
-        public XmlWritable(Stream stream, IAssetKeyNamePolicy namePolicy)
-        {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));
-            this.writer = new StreamWriter(stream, Encoding.UTF8);
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-        }
-
-        public void Write(TreeNode root)
-        {
-            writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            writer.WriteLine();
-            _writeRecusive(root, 0);
-            writer.WriteLine();
-        }
-
-        void _writeRecusive(TreeNode node, int indent)
-        {
-            bool isRoot = node.Parent == null;
-            string name = isRoot ? "configuration" : node.ParameterValue;
-            string _name = HttpUtility.HtmlEncode(name);
-
-            // Values
-            if (node.HasValues)
+            if (key != null)
             {
-                // Write lines
-                foreach (string value in node.Values.OrderBy(l => l, AlphaNumericComparer.Default).Distinct().ToArray())
+                KeyTree node = parent.GetOrCreateChild(key);
+                foreach (XNode nn in element.Nodes())
                 {
-                    Indent(indent);
-                    writer.Write('<');
-                    writer.Write(_name);
-                    writer.Write('>');
-                    writer.Write(HttpUtility.HtmlEncode(value));
-                    writer.Write("</");
-                    writer.Write(_name);
-                    writer.Write('>');
-                    writer.WriteLine();
+                    if (nn is XText text) node.Values.Add(text.Value);
+                }
+
+                if (element.HasElements)
+                {
+                    foreach (XElement e in element.Elements())
+                        ReadElement(e, node);
+                }
+            }
+            else
+            {
+                if (element.HasElements)
+                {
+                    foreach (XElement e in element.Elements())
+                        ReadElement(e, parent);
                 }
             }
 
-            // Children
-            if (node.HasChildren)
-            {
-                Indent(indent);
-                writer.Write('<');
-                writer.Write(_name);
-                writer.Write('>');
-                writer.WriteLine();
-                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Parameter, Key.Comparer.Default))
-                    _writeRecusive(childNode, indent + 2);
-                Indent(indent);
-                writer.Write("</");
-                writer.Write(_name);
-                writer.Write('>');
-                writer.WriteLine();
-            }
+            return parent;
         }
-
-        void Indent(int indentCount)
-        {
-            for (int i = 0; i < indentCount; i++) writer.Write(' ');
-        }
-
-        public void Dispose()
-        {
-            if (writer != null)
-            {
-                writer.Flush();
-                writer.Dispose();
-            }
-            writer = null;
-        }
-
-        public void Flush()
-            => writer?.Flush();
+        
     }
 
 }

@@ -6,12 +6,12 @@
 ```csharp
 // Create localization source
 var source = new Dictionary<Key, string> {
-    { (Key)ParameterNamePolicy.Instance.ParseKey("type:MyController:key:hello", Key.Root),            "Hello World!" },
-    { (Key)ParameterNamePolicy.Instance.ParseKey("culture:en:type:MyController:key:hello", Key.Root), "Hello World!" },
-    { (Key)ParameterNamePolicy.Instance.ParseKey("culture:de:type:MyController:key:hello", Key.Root), "Hallo Welt!"  }
+    { (Key)ParameterNamePolicy.Instance.Parse("type:MyController:key:hello", Key.Root),            "Hello World!" },
+    { (Key)ParameterNamePolicy.Instance.Parse("culture:en:type:MyController:key:hello", Key.Root), "Hello World!" },
+    { (Key)ParameterNamePolicy.Instance.Parse("culture:de:type:MyController:key:hello", Key.Root), "Hallo Welt!"  }
 };
 // Create asset with string source
-IAsset asset = new LocalizationAsset().AddKeySource(source).Load();
+IAsset asset = new LoadableLocalizationAsset().AddKeyLinesSource(source).Load();
 ```
 
 Language strings can now be queried from the asset.
@@ -35,7 +35,7 @@ var source = new Dictionary<string, string> {
     { "de:MyController:hello", "Hallo Welt!"  }
 };
 // Create asset with string source
-IAsset asset = new LocalizationAsset().AddStringSource(source, "{culture:}{type:}{key}").Load();
+IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{key}").Load();
 ```
 </details>
 
@@ -51,7 +51,7 @@ var source = new Dictionary<IAssetKey, string> {
     { new LocalizationRoot().TypeSection("MyController").Key("hello").SetCulture("de"), "Hallo Welt!"  }
 };
 // Create asset with string source
-IAsset asset = new LocalizationAsset().AddKeySource(source).Load();
+IAsset asset = new LoadableLocalizationAsset().AddKeyLinesSource(source).Load();
 ```
 </details>
 <br/>

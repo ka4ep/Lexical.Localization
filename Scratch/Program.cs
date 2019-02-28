@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Lexical.Localization;
 using Lexical.Localization.Internal;
-using Lexical.Localization.LocalizationFile2;
 
 namespace Scratch
 {
@@ -23,15 +22,12 @@ namespace Scratch
 
             // Create key
             IAssetKey key = LocalizationRoot.Global.TypeSection("ConsoleApp1.MyController").Key("Success");
-            Key key2 = Key.Create("type", "ConsoleApp1.MyController").Append("key", "Success");
+            Key key2 = Key.Create("type", "ConsoleApp1.MyController").Append("key", "Success").Append("culture", "en");
 
             AssetKeyComparer comparer = AssetKeyComparer.Default;
 
-            Console.WriteLine(comparer.GetHashCode(key));
+            Console.WriteLine(comparer.GetHashCode(key.SetCulture("en")));
             Console.WriteLine(comparer.GetHashCode(key2));
-
-            Key key3 = key2.Append("culture", "en");
-            Console.WriteLine(key3);
 
             Console.WriteLine(key);
             Console.WriteLine(key.SetCulture("en"));

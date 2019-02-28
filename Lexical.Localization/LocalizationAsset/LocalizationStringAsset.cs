@@ -22,6 +22,11 @@ namespace Lexical.Localization
         ILocalizationStringProvider, ILocalizationStringCollection, IAssetReloadable, IAssetKeyCollection,
         ILocalizationAssetCultureCapabilities
     {
+        /// <summary>
+        /// The default policy this asset uses.
+        /// </summary>
+        public static readonly IAssetKeyNamePolicy DefaultPolicy = AssetKeyNameProvider.Default;
+
         protected IReadOnlyDictionary<string, string> dictionary;
         protected IAssetKeyNamePolicy namePolicy;
 
@@ -37,7 +42,7 @@ namespace Lexical.Localization
         public LocalizationStringAsset(IReadOnlyDictionary<string, string> source, IAssetKeyNamePolicy namePolicy = default)
         {
             this.dictionary = source ?? throw new ArgumentNullException(nameof(source));
-            this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
+            this.namePolicy = namePolicy ?? DefaultPolicy;
         }
 
         /// <summary>
@@ -243,7 +248,7 @@ namespace Lexical.Localization
         /// <param name="comparer">(optional) string key comparer</param>
         public LoadableLocalizationStringAsset(IAssetKeyNamePolicy namePolicy = default, IEqualityComparer<string> comparer = default) : base()
         {
-            this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
+            this.namePolicy = namePolicy ?? DefaultPolicy;
             this.comparer = comparer ?? StringComparer.InvariantCulture;
             this.sources = new List<IEnumerable<KeyValuePair<string, string>>>();
         }
@@ -257,7 +262,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="sourceHint">(optional) added to error message</param>
         /// <returns></returns>
-        public LoadableLocalizationStringAsset AddKeyStringSource(IEnumerable<KeyValuePair<string, string>> lines, string sourceHint = null)
+        public LoadableLocalizationStringAsset AddLineStringSource(IEnumerable<KeyValuePair<string, string>> lines, string sourceHint = null)
         {
             if (lines == null) throw new ArgumentNullException(nameof(lines));
             lock (sources) sources.Add(lines);

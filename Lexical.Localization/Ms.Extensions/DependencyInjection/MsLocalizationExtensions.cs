@@ -32,7 +32,7 @@ namespace Lexical.Localization.Ms.Extensions
         /// 
         /// After this call, the <paramref name="serviceCollection"/> still needs to be populated with 
         /// instances of <see cref="IAssetSource"/>, such as:
-        ///     <see cref="ConfigurationBuilderLocalizationAssetSource"/>
+        ///     <see cref="ConfigurationAssetSource"/>
         ///     <see cref="AssetResourceDictionary"/>
         ///     <see cref="LocalizationStringAsset"/>
         /// 

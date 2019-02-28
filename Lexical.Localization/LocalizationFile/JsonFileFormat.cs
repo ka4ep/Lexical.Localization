@@ -1,197 +1,95 @@
-﻿//---------------------------------------------------------
+﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           25.10.2018
+// Date:           20.2.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
+using System.Xml.Linq;
 
-namespace Lexical.Localization.LocalizationFile
+namespace Lexical.Localization
 {
-    public class JsonFileFormat : ILocalizationFileTextReader, ILocalizationFileStreamReader, ILocalizationFileStreamWriter, ILocalizationFileTextWriter
+    public class JsonFileFormat : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
     {
-        static readonly JsonFileFormat singleton = new JsonFileFormat();
-        public static JsonFileFormat Singleton => singleton;
+        private readonly static JsonFileFormat instance = new JsonFileFormat();
+        public static JsonFileFormat Instance => instance;
 
         public string Extension => "json";
+        protected ParameterNamePolicy parser = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:\"");
 
-        public ILocalizationFileWritable CreateStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
-            => new JsonWritable(stream, namePolicy);
+        /// <summary>
+        /// Json text into a tree.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns></returns>
+        public IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default)
+        {
+            KeyTree root = new KeyTree(Key.Root);
+            using (var json = new JsonTextReader(text))
+                ReadJsonIntoTree(json, root, namePolicy);
+            return root;
+        }
 
-        public ILocalizationFileWritable CreateText(TextWriter text, IAssetKeyNamePolicy namePolicy = default)
-            => new JsonWritable(text, namePolicy);
-
-        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
-            => new JsonReader(stream, namePolicy);
-
-        public ILocalizationFileTokenizer OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
-            => new JsonReader(text, namePolicy);
+        /// <summary>
+        /// Read json token stream into <paramref name="node"/>
+        /// </summary>
+        /// <param name="json"></param>
+        /// <param name="node">parent node to under which add nodes</param>
+        /// <param name="namePolicy"></param>
+        /// <returns></returns>
+        public IKeyTree ReadJsonIntoTree(JsonTextReader json, KeyTree node, IAssetKeyNamePolicy namePolicy = default)
+        {
+            KeyTree current = node;
+            List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
+            Stack<KeyTree> stack = new Stack<KeyTree>();
+            while (json.Read())
+            {
+                switch (json.TokenType)
+                {
+                    case JsonToken.StartObject:
+                        stack.Push(current);
+                        break;
+                    case JsonToken.EndObject:
+                        current = stack.Pop();
+                        break;
+                    case JsonToken.PropertyName:
+                        Key key = null;
+                        parameters.Clear();
+                        if (parser.TryParseParameters(json.Value?.ToString(), parameters))
+                        {
+                            foreach (var parameter in parameters)
+                                key = Key.Create(key, parameter.Key, parameter.Value);
+                            current = key == null ? null : stack.Peek()?.GetOrCreateChild(key);
+                        }
+                        else
+                        {
+                            current = null;
+                        }
+                        break;
+                    case JsonToken.Date:
+                    case JsonToken.String:
+                    case JsonToken.Boolean:
+                    case JsonToken.Float:
+                    case JsonToken.Integer:
+                        if (current != null)
+                        {
+                            string value = json.Value?.ToString();
+                            if (value != null && !current.Values.Contains(value))
+                                current.Values.Add(value);
+                        }
+                        break;
+                }
+            }
+            return node;
+        }
 
     }
-
-    public class JsonReader : ILocalizationFileTokenizer
-    {
-        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
-        TextReader textReader;
-
-        public JsonReader(TextReader textReader, IAssetKeyNamePolicy namePolicy = default)
-        {
-            this.textReader = textReader;
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-        }
-
-        public JsonReader(Stream stream, IAssetKeyNamePolicy namePolicy = default)
-        {
-            this.textReader = new StreamReader(stream, true);
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-        }
-
-        public IEnumerable<Token> Read()
-        {
-            using (var json = new JsonTextReader(textReader))
-            {
-                string section = null;
-                while (json.Read())
-                {
-                    switch (json.TokenType)
-                    {
-                        case JsonToken.StartObject:
-                            if (section != null) yield return Token.Begin(section);
-                            section = null;
-                            break;
-                        case JsonToken.EndObject:
-                            yield return Token.End();
-                            break;
-                        case JsonToken.PropertyName: section = json.Value?.ToString(); break;
-                        case JsonToken.Date:
-                        case JsonToken.String:
-                        case JsonToken.Boolean:
-                        case JsonToken.Float:
-                        case JsonToken.Integer:
-                            if (section != null) yield return Token.KeyValue(section, json.Value?.ToString());
-                            section = null;
-                            break;
-                    }
-                }
-            }
-        }
-        public void Dispose()
-        {
-            textReader?.Dispose();
-            textReader = null;
-        }
-    }
-
-    public class JsonWritable : ILocalizationFileWritable, IDisposable
-    {
-        protected TextWriter writer;
-
-        public IAssetKeyNamePolicy NamePolicy { get; internal set; }
-
-        public JsonWritable(TextWriter writer, IAssetKeyNamePolicy namePolicy)
-        {
-            this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-        }
-
-        public JsonWritable(Stream stream, IAssetKeyNamePolicy namePolicy)
-        {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));
-            this.writer = new StreamWriter(stream, Encoding.UTF8);
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Default;
-        }
-
-        public void Write(TreeNode root)
-        {
-            _writeRecusive(root, 0, false);
-        }
-
-        void _writeRecusive(TreeNode node, int indent, bool continues)
-        {
-            // Test if is root
-            bool isRoot = node.Parent == null;
-
-            // Write name: "key": 
-            Indent(indent);
-            if (!isRoot)
-            {
-                writer.Write('"');
-                writer.Write(HttpUtility.JavaScriptStringEncode(node.ParameterValue));
-                writer.Write("\": ");
-            }
-
-            if (isRoot || node.HasChildren)
-            {
-                // Begin section: {
-                writer.Write("{");
-                writer.WriteLine();
-
-                // Children
-                int count = node.Children.Count;
-                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Parameter, Key.Comparer.Default))
-                    _writeRecusive(childNode, indent + 2, --count > 0);
-
-                // End section: }\n
-                Indent(indent);
-                writer.Write('}');
-            }
-            else
-            {
-                // Write one value: "value",
-                if (node.HasValues && node.Values.Count == 0)
-                {
-                    // ""
-                    writer.Write("\"\"");
-                }
-                else if (node.Values.Count == 1)
-                {
-                    // "value"
-                    writer.Write('\"');
-                    writer.Write(HttpUtility.JavaScriptStringEncode(node.Values[0]));
-                    writer.Write('\"');
-                }
-                else
-                {
-                    // Write Json array: [ "", "" ]
-                    writer.Write("[ ");
-                    for (int i = 0; i < node.Values.Count; i++)
-                    {
-                        if (i > 0) writer.Write(", ");
-                        writer.Write('\"');
-                        writer.Write(HttpUtility.JavaScriptStringEncode(node.Values[i]));
-                        writer.Write('\"');
-                    }
-                    writer.Write(" ]");
-                }
-            }
-            if (continues) writer.Write(",");
-            writer.WriteLine();
-        }
-
-        void Indent(int indentCount)
-        {
-            for (int i = 0; i < indentCount; i++) writer.Write(' ');
-        }
-
-        public void Dispose()
-        {
-            if (writer != null)
-            {
-                writer.Flush();
-                writer.Dispose();
-            }
-            writer = null;
-        }
-
-        public void Flush()
-            => writer?.Flush();
-    }
-
 
 }

@@ -15,15 +15,7 @@ Example of **.resx** localization file.
 Files can then be loaded with a constructor.
 
 ```csharp
-using (FileStream fs = new FileStream("localization.ini", FileMode.Open))
-{
-    // Get .ext file format
-    ILocalizationFileStreamReader fileFormat = LocalizationFileFormatMap.Singleton.TryGet("ini") as ILocalizationFileStreamReader;
-    // Create reader
-    ILocalizationFileTokenizer textReader = fileFormat.OpenStream(fs, AssetKeyNameProvider.Default);
-    // Convert to asset
-    IAsset asset = textReader.ToAssetAndClose();
-}
+IAsset asset = IniFileFormat.Instance.CreateFileAsset("localization.ini");
 ```
 
 # Implementing
@@ -49,29 +41,13 @@ Non-hierarchical formats can be implemented by implementing IAsset that reads th
   <summary>Example implementation ExtFileFormat. (<u>Click here</u>)</summary>
 
 ```csharp
-class ExtFileFormat : ILocalizationFileFormat, ILocalizationFileStreamReader
+class ExtFileFormat : ILocalizationKeyLinesStreamReader
 {
-    public string Extension 
-        => "ext";
-    public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = null)
-        => new ExtReader(stream, namePolicy);
-}
-
-class ExtReader : ILocalizationFileTokenizer
-{
-    public IAssetKeyNamePolicy NamePolicy => throw new System.NotImplementedException();
-    public ExtReader(Stream stream, IAssetKeyNamePolicy namePolicy)
+    public string Extension => "ext";
+    public IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(Stream stream, IAssetKeyNamePolicy namePolicy = default)
     {
-    }
-
-    public void Dispose()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public IEnumerable<Token> Read()
-    {
-        throw new System.NotImplementedException();
+        IAssetKey key = Key.Create("section", "MyClass").Append("key", "HelloWorld").Append("culture", "en");
+        yield return new KeyValuePair<IAssetKey, string>(key, "Hello World!");
     }
 }
 ```

@@ -20,7 +20,8 @@ namespace Lexical.Localization.Tests
             List<Case> runCases = new List<Case>();
 
             // Search cases from assembly
-            foreach (Type type in GetType().Assembly.GetTypes())
+            Type[] anchors = new Type[] { typeof(Anchor) };
+            foreach (Type type in anchors.SelectMany(t => t.Assembly.GetTypes()))
             {
                 Case @case = Case.ReadAnnotated(type);
                 if (@case == null) continue;

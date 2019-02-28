@@ -1,113 +1,46 @@
-﻿using Lexical.Localization.Internal;
+﻿// --------------------------------------------------------
+// Copyright:      Toni Kalajainen
+// Date:           20.2.2019
+// Url:            http://lexical.fi
+// --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Resources;
 
-namespace Lexical.Localization.LocalizationFile
+namespace Lexical.Localization
 {
-    public class ResourcesFileFormat : ILocalizationFileStreamReader, ILocalizationFileStreamWriter
+    public class ResourcesFileFormat : ILocalizationFileFormat, ILocalizationStringLinesStreamReader
     {
-        static readonly ResourcesFileFormat singleton = new ResourcesFileFormat();
-        public static ResourcesFileFormat Singleton => singleton;
-
+        private readonly static ResourcesFileFormat instance = new ResourcesFileFormat();
+        public static ResourcesFileFormat Instance => instance;
         public string Extension => "resources";
 
-        public ILocalizationFileWritable CreateStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
-            => new ResourcesWritable(stream, namePolicy);
+        public IEnumerable<KeyValuePair<string, string>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default)
+        {
+            using (var reader = new System.Resources.ResourceReader(stream))
+            {
+                IDictionaryEnumerator dict = reader.GetEnumerator();
+                while (dict.MoveNext())
+                {
+                    string key = null, value = null;
+                    try
+                    {
+                        if (dict.Key is string _key && dict.Value is string _value)
+                        { key = _key; value = _value; }
+                    }
+                    catch (Exception e)
+                    {
+                        throw new LocalizationException("Failed to read .resources file", e);
+                    }
+                    if (key != null && value != null)
+                        yield return new KeyValuePair<string, string>(key, value);
+                }
+            }
+        }
 
-        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
-            => new ResourcesReadable(stream, namePolicy);
     }
-
-    public class ResourcesReadable : ILocalizationFileTokenizer, IDisposable
-    {
-        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
-        System.Resources.ResourceReader reader;
-
-        public ResourcesReadable(Stream stream, IAssetKeyNamePolicy namePolicy = null)
-        {
-            this.reader = new System.Resources.ResourceReader(stream);
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Colon_Dot_Dot;
-        }
-
-        public IEnumerable<Token> Read()
-        {
-            IDictionaryEnumerator dict = reader.GetEnumerator();
-            while (dict.MoveNext())
-            {
-                string key = null, value = null;
-                try
-                {
-                    if (dict.Key is string _key && dict.Value is string _value)
-                    { key = _key; value = _value; }
-                }
-                catch (Exception e)
-                {
-                    throw new LocalizationException("Failed to read .resources file", e);
-                }
-                if (key!=null && value != null)
-                    yield return Token.KeyValue(key, value);
-            }
-        }
-
-        public void Dispose()
-        {
-            reader?.Dispose();
-            reader = null;
-        }
-    }
-
-    public class ResourcesWritable : ILocalizationFileWritable, IDisposable
-    {
-        protected ResourceWriter writer;
-
-        public IAssetKeyNamePolicy NamePolicy { get; internal set; }
-
-        public ResourcesWritable(Stream stream, IAssetKeyNamePolicy namePolicy)
-        {
-            if (stream == null) throw new ArgumentNullException(nameof(stream));
-            this.writer = new ResourceWriter(stream);
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Colon_Dot_Dot;
-        }
-
-        public void Write(TreeNode node)
-        {
-            if (node.HasValues)
-            {
-                // Write lines
-                foreach (string value in node.Values.OrderBy(n => n, AlphaNumericComparer.Default))
-                {
-                    string str = NamePolicy.BuildName(node.TreeKey);
-                    writer.AddResource(str, value);
-                }
-            }
-
-            // Children
-            if (node.HasChildren)
-            {
-                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Parameter, Key.Comparer.Default))
-                {
-                    Write(childNode);
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            if (writer != null)
-            {
-                writer.Close();
-                writer.Dispose();
-            }
-            writer = null;
-        }
-
-        public void Flush()
-            => writer?.Generate();
-    }
-
 
 }

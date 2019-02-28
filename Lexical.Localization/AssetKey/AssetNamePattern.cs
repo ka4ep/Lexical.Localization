@@ -339,4 +339,101 @@ namespace Lexical.Localization
 
     }
 
+    public static partial class AssetNamePatternExtensions_
+    {
+        /// <summary>
+        /// Convert <paramref name="match"/> into an asset key that contains the captured parameters.
+        /// </summary>
+        /// <param name="match"></param>
+        /// <returns>key or null if <paramref name="match"/> contained no values</returns>
+        public static IAssetKey ToKey(this IAssetNamePatternMatch match)
+        {
+            Key result = null;
+            foreach(IAssetNamePatternPart part in match.Pattern.CaptureParts)
+            {
+                string value = match[part.CaptureIndex];
+                if (value == null) continue;
+                result = Key.Create(result, part.ParameterName, value);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Convert <paramref name="match"/> into an enumeration of parameter names and values.
+        /// </summary>
+        /// <param name="match">(optional)</param>
+        /// <returns>parameter names and values</returns>
+        public static IEnumerable<KeyValuePair<string, string>> ToParameters(this IAssetNamePatternMatch match)
+        {
+            if (match == null) yield break;
+            foreach (IAssetNamePatternPart part in match.Pattern.CaptureParts)
+            {
+                string value = match[part.CaptureIndex];
+                if (value == null) continue;
+                yield return new KeyValuePair<string, string>(part.ParameterName, value);
+            }
+        }
+
+        /// <summary>
+        /// Convert "match" parameters into an array of "non-match" parameters.
+        /// 
+        /// "match" parameter is a parameter in the format of <see cref="IAssetNamePattern"/>, where match contains
+        /// capture index "_#". For example "section_0", "section_1". The capture index is removed from the result of 
+        /// this function. Keys are orderd by this index.
+        /// 
+        /// "non-match" parameter does not have "anysection" nor capture index "_#".
+        /// 
+        /// "anysection" is converted to "section".
+        /// 
+        /// Parameters are returned in the following order:
+        ///  "root", "culture", "assembly", "location", "resource", "type", "section", other parts here in alphabetical order, "key".
+        ///  
+        /// This is workaround as the order information is lost in the dictionary format.
+        /// </summary>
+        /// <param name="matchParameters">(optional) </param>
+        /// <returns>converted parameters</returns>
+        public static IEnumerable<KeyValuePair<string, string>> ConvertMatchParametersToNonMatchParameters(IReadOnlyDictionary<string, string> matchParameters)
+        {
+            if (matchParameters == null) return new KeyValuePair<string, string>[0];
+            if (matchParameters is IAssetNamePatternMatch match) return ToParameters(match);
+
+            // (parameter name, parameter value, sorting value)
+            List<(string, string, int)> list = new List<(string, string, int)>();
+
+            foreach(var matchParameter in matchParameters)
+            {
+                // Parse
+                if (String.IsNullOrEmpty(matchParameter.Key)) continue;
+                Match m = occuranceIndexParser.Match(matchParameter.Key);
+                if (!m.Success) continue;
+                Group g_name = m.Groups["name"], g_index = m.Groups["index"];
+
+                // Sorting index
+                int ix = 0;
+
+                // Get name
+                string name = g_name.Value;
+                if (name == "anysection") name = "section";
+                if (!ConvertPriority.TryGetValue(name, out ix)) ix = 0;
+
+                // Occurance index "_#"
+                if (g_index.Success) ix += Int32.Parse(g_index.Value);
+
+                list.Add((name, matchParameter.Value, ix));
+            }
+
+            // Sort 
+            var result = list.OrderBy(l => l.Item3).Select(l => new KeyValuePair<string, string>(l.Item1, l.Item2)).ToArray();
+            // return result as array
+            return result;
+        }
+        static Regex occuranceIndexParser = new Regex("(?<name>.*)(_(?<index>\\d+))?$", RegexOptions.Compiled|RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture);
+
+        /// <summary>
+        /// Sorting priority for <see cref="ConvertMatchParametersToNonMatchParameters(IReadOnlyDictionary{string, string})"/>
+        /// </summary>
+        public static Dictionary<string, int> ConvertPriority = new Dictionary<string, int> { { "root", -8000 }, { "culture", -7000 }, { "assembly", -6000 }, { "location", -5000 }, { "resource", -4000 }, { "type", -3000 }, { "section", -2000 }, { "key", 1000} };
+
+    }
+
 }

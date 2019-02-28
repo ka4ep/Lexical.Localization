@@ -48,7 +48,7 @@ namespace Lexical.Localization
             this.prevKey = prevKey;
         }
 
-        public string DebugPrint() => AssetKeyNameProvider.Default.BuildName(this);
+        public string DebugPrint() => ParameterNamePolicy.Instance.BuildName(this); //AssetKeyNameProvider.Default.BuildName(this);
 
         IAssetKeyAssigned IAssetKeyAssignable.Key(string subkey) => new _Key(this, subkey);
         public virtual _Key Key(string subkey) => new _Key(this, subkey);

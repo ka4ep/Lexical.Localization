@@ -2,21 +2,23 @@
 Example of **.json** localization file.
 ```
 {
-  "ConsoleApp1.MyController": {
-      "Success": "Success",
-      "Error": "Error (Code=0x{0:X8})"
+  "type:ConsoleApp1.MyController": {
+    "key:Success": "Success",
+    "key:Error": "Error (Code=0x{0:X8})"
   },
-  "en": {
-    "ConsoleApp1.MyController": {
-      "Success": "Success",
-      "Error": "Error (Code=0x{0:X8})"
+  "culture:en": {
+    "type:ConsoleApp1.MyController": {
+      "key:Success": "Success",
+      "key:Error": "Error (Code=0x{0:X8})"
     }
   },
-  "fi": {
-    "ConsoleApp1.MyController": {
-      "Success": "Onnistui",
-      "Error": "Virhe (Koodi=0x{0:X8})"
+  "culture:fi": {
+    "type:ConsoleApp1.MyController": {
+      "key:Success": "Onnistui",
+      "key:Error": "Virhe (Koodi=0x{0:X8})"
     }
-  }
+  },
+  "culture:sv:type:ConsoleApp1.MyController:key:Success": "Det funkar",
+  "culture:sv:type:ConsoleApp1.MyController:key:Error": "Det funkar inte (Kod=0x{0:X8})"
 }
 ```

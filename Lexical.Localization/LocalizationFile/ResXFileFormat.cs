@@ -1,182 +1,54 @@
-﻿//---------------------------------------------------------
+﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           25.10.2018
+// Date:           20.2.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Web;
-using System.Xml;
+using System.Xml.Linq;
 
-namespace Lexical.Localization.LocalizationFile
+namespace Lexical.Localization
 {
-    public class ResXFileFormat : ILocalizationFileTextReader, ILocalizationFileStreamReader, ILocalizationFileStreamWriter, ILocalizationFileTextWriter
+    public class ResXFileFormat : ILocalizationFileFormat, ILocalizationStringLinesStreamReader, ILocalizationStringLinesTextReader
     {
-        static readonly ResXFileFormat singleton = new ResXFileFormat();
-        public static ResXFileFormat Singleton => singleton;
-
+        private readonly static ResXFileFormat instance = new ResXFileFormat();
+        public static ResXFileFormat Instance => instance;
         public string Extension => "resx";
 
-        public ILocalizationFileWritable CreateStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
-            => new ResXWritable(stream, namePolicy);
+        public IEnumerable<KeyValuePair<string, string>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(stream).Root, namePolicy);
+        public IEnumerable<KeyValuePair<string, string>> ReadStringLines(TextReader text, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(text).Root, namePolicy);
 
-        public ILocalizationFileWritable CreateText(TextWriter text, IAssetKeyNamePolicy namePolicy = default)
-            => new ResXWritable(text, namePolicy);
-
-        public ILocalizationFileTokenizer OpenStream(Stream stream, IAssetKeyNamePolicy namePolicy = default)
-            => new ResXReadable(stream, namePolicy);
-
-        public ILocalizationFileTokenizer OpenText(TextReader text, IAssetKeyNamePolicy namePolicy = default)
-            => new ResXReadable(text, namePolicy);
-    }
-
-    public class ResXReadable : ILocalizationFileTokenizer, IDisposable
-    {
-        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
-        TextReader textReader;
-
-        public ResXReadable(Stream stream, IAssetKeyNamePolicy namePolicy = default) : this(new StreamReader(stream, true), namePolicy) { }
-        public ResXReadable(TextReader textReader, IAssetKeyNamePolicy namePolicy = default)
+        /// <summary>
+        /// Reads lines from xml element.
+        /// </summary>
+        /// <param name="element">parent element that contains data elements</param>
+        /// <returns>lines</returns>
+        public IEnumerable<KeyValuePair<string, string>> ReadElement(XElement element, IAssetKeyNamePolicy namePolicy)
         {
-            this.textReader = textReader;
-            this.NamePolicy = namePolicy ?? AssetKeyNameProvider.Colon_Dot_Dot;
-        }
-
-        public IEnumerable<Token> Read()
-        {
-            using (var xml = System.Xml.XmlReader.Create(textReader))
+            foreach(XElement dataNode in element.Elements("data"))
             {
-                string key_name = null, key_type = null;
-                bool in_value = false, in_data = false;
-                while (xml.Read())
+                XAttribute name = dataNode.Attribute("name");
+                string key = name?.Value;
+                if (key == null) continue;
+                foreach(XElement valueNode in dataNode.Elements("value"))
                 {
-                    switch (xml.NodeType)
+                    foreach (XNode textNode in valueNode.Nodes())
                     {
-                        case XmlNodeType.Element:
-                            if (xml.Name == "data") { in_data = true; key_name = xml.GetAttribute("name"); key_type = xml.GetAttribute("type"); }
-                            else if (in_data && xml.Name == "value") in_value = true;
-                            break;
-                        case XmlNodeType.EndElement:
-                            if (xml.Name == "data") { in_data = false; key_name = null; key_type = null; }
-                            else if (in_data && xml.Name == "value") in_value = false;
-                            break;
-                        case XmlNodeType.Text:
-                            if (in_value && key_name != null && xml.Value != null)
-                            {
-                                //if (key_type == null)
-                                yield return Token.KeyValue(key_name, xml.Value);
-                            }
-                            break;
-                    }
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            textReader?.Dispose();
-            textReader = null;
-        }
-    }
-
-    /// <summary>
-    /// Writes .resx files.
-    /// 
-    /// Uses template because ResXWriter is not available in .NET Core.
-    /// </summary>
-    public class ResXWritable : ILocalizationFileWritable, IDisposable
-    {
-        public IAssetKeyNamePolicy NamePolicy { get; internal set; }
-        TextWriter writer;
-        string template_header, template_footer, template_keyvalue_formulation, template_binary_keyvalue_formulation;
-
-        public ResXWritable(Stream stream, IAssetKeyNamePolicy namePolicy) : this(new StreamWriter(stream, Encoding.UTF8), namePolicy) { }
-        public ResXWritable(TextWriter writer, IAssetKeyNamePolicy namePolicy)
-        {
-            this.writer = writer ?? throw new ArgumentNullException(nameof(writer));
-            this.NamePolicy = namePolicy;
-
-            string embedded_name = typeof(ResXWritable).Assembly.GetName().Name + ".LocalizationFile.ResXFileFormat.txt";
-            using (Stream s = typeof(ResXWritable).Assembly.GetManifestResourceStream(embedded_name))
-            {
-                if (s == null) throw new InvalidOperationException("Could not find embedded resources " + embedded_name);
-
-                TextReader reader = new StreamReader(s, true);
-                StringBuilder sb = new StringBuilder((int)s.Length);
-                for (string line = reader.ReadLine(); line != null; line = reader.ReadLine())
-                {
-                    if (line.Contains("TEMPLATE_KEY"))
-                    {
-                        if (sb.Length > 0)
+                        if (textNode is XText text)
                         {
-                            template_header = sb.ToString();
-                            sb.Clear();
+                            string value = text?.Value;
+                            if (value != null)
+                                yield return new KeyValuePair<string, string>(key, value);
                         }
-                        template_keyvalue_formulation = line.Replace("TEMPLATE_KEY", "{0}").Replace("TEMPLATE_VALUE", "{1}");
-                    }
-                    else if (line.Contains("TEMPLATE_BINARY_KEY"))
-                    {
-                        template_binary_keyvalue_formulation = line.Replace("TEMPLATE_BINARY_KEY", "{0}").Replace("TEMPLATE_BINARY_VALUE_REFERENCE", "{1}");
-                    }
-                    else
-                    {
-                        sb.Append(line);
-                        sb.Append("\r\n");
                     }
                 }
-                template_footer = sb.ToString();
-
-                if (template_keyvalue_formulation == null) throw new InvalidOperationException("Could not find TEMPLATE_KEY in .resx template file");
             }
         }
-
-        public void Write(TreeNode root)
-        {
-            writer.WriteLine(template_header);
-            _writeRecusive(root);
-            writer.WriteLine(template_footer);
-        }
-
-        void _writeRecusive(TreeNode node)
-        {
-            if (node.HasValues)
-            {
-                // Write lines
-                foreach (string value in node.Values.OrderBy(n => n, AlphaNumericComparer.Default))
-                {
-                    string key = NamePolicy.BuildName(node.TreeKey);
-                    string str = string.Format(template_keyvalue_formulation, HttpUtility.HtmlEncode(key), HttpUtility.HtmlEncode(value));
-                    writer.WriteLine(str);
-                }
-            }
-
-            // Children
-            if (node.HasChildren)
-            {
-                foreach (TreeNode childNode in node.Children.Values.OrderBy(n => n.Parameter, Key.Comparer.Default))
-                {
-                    _writeRecusive(childNode);
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            if (writer != null)
-            {
-                writer.Close();
-                writer.Dispose();
-            }
-            writer = null;
-        }
-
-        public void Flush()
-            => writer?.Flush();
     }
-
 
 }

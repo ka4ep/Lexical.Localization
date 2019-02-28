@@ -8,9 +8,7 @@ Lexical.Localization is a localization class library for .NET.
 
 **Interoperability**
 * Microsoft.Extensions.Localization.Abstractions
-* Microsoft.Extensions.Configuration.Abstractions
 * Microsoft.Extensions.DependencyInjection.Abstractions
-* Microsoft.Extensions.FileProvider.Abstractions
 * ResourceManager
 
 **File types**

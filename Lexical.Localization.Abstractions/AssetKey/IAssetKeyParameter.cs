@@ -56,10 +56,11 @@ namespace Lexical.Localization
         /// <summary>
         /// Get the number of parameters.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">(optional) key to count parameter count</param>
         /// <returns>number of parameters</returns>
         public static int GetParameterCount(this IAssetKey key)
         {
+            if (key == null) return 0;
             int count = 0;
             for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
                 if (k.GetParameterName() != null) count++;
@@ -67,15 +68,29 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Find key in the linked list by <paramref name="parameterName"/>.
+        /// Starts search from the tail and goes toward root.
+        /// </summary>
+        /// <param name="key">(optional)</param>
+        /// <param name="parameterName">(optional)</param>
+        /// <returns>key or null</returns>
+        public static IAssetKey FindKeyByParameterName(this IAssetKey key, string parameterName)
+        {
+            if (key == null || parameterName == null) return null;
+            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+                if (k.GetParameterName() == parameterName) return k;
+            return null;
+        }
+
+        /// <summary>
         /// Get all parameters as parameterName,parameterValue pairs.
         /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="key">(optional) key to read parameters of</param>
+        /// <returns>array of parameters</returns>
         public static KeyValuePair<string, string>[] GetParameters(this IAssetKey key)
         {
-            int count = 0;
-            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
-                if (k.GetParameterName() != null) count++;
+            int count = key.GetParameterCount();
+            if (count == 0) return no_parameters;
 
             KeyValuePair<string, string>[] result = new KeyValuePair<string, string>[count];
             int ix = count;
@@ -88,6 +103,7 @@ namespace Lexical.Localization
 
             return result;
         }
+        static KeyValuePair<string, string>[] no_parameters = new KeyValuePair<string, string>[0];
 
         /// <summary>
         /// Visit parametrized keys from root towards key
@@ -158,6 +174,36 @@ namespace Lexical.Localization
             foreach (var parameter in parameters)
                 key = key.AppendParameter(parameter.Key, parameter.Value);
             return key;
+        }
+
+        /// <summary>
+        /// Create a new key by appending an enumeration of parameters.
+        /// 
+        /// If non-canonical parameter is already in the <paramref name="left"/>, then its not appended.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right">enumeration of parameters to append</param>
+        /// <returns>new key that is appended to this key</returns>
+        /// <exception cref="AssetKeyException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
+        public static IAssetKey ConcatIfNew(this IAssetKey left, IAssetKey right)
+        {
+            if (right == null) return left;
+            if (left == null) return right;
+            IAssetKey result = left;
+            foreach (IAssetKey k in right.ArrayFromRoot(includeNonCanonical: true))
+            {
+                if (k is IAssetKeyParametrized parameter)
+                {
+                    string parameterName = parameter.ParameterName, parameterValue = k.Name;
+                    if (string.IsNullOrEmpty(parameterName) || parameterValue == null || parameterName == "root") continue;
+
+                    // Check if parameterName of k already exists in "result"/"left".
+                    if (k is IAssetKeyNonCanonicallyCompared && left.FindKeyByParameterName(parameterName) != null) continue;
+
+                    result = result.AppendParameter(parameterName, parameterValue);
+                }
+            }
+            return result;
         }
 
         /// <summary>

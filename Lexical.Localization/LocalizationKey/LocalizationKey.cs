@@ -36,7 +36,7 @@ namespace Lexical.Localization
 
         public virtual String Name => name;
         public virtual IAssetKey PreviousKey => prevKey;
-        public string DebugPrint() => AssetKeyNameProvider.Default.BuildName(this);
+        public string DebugPrint() => ParameterNamePolicy.Instance.BuildName(this); // AssetKeyNameProvider.Default.BuildName(this);
 
         public LocalizationKey(string name)
         {

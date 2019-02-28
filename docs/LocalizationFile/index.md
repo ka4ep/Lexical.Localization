@@ -18,7 +18,7 @@ Files can then be loaded with a constructor.
 # Implementing
 <details>
   <summary><b>ILocalizationFileFormat</b> is interface for classes that tokenize text file formats, and any hierarchical formats. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization/LocalizationFile/ILocalizationFileFormat.cs#ILocalizationFileReader)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/LocalizationFile/ILocalizationFileFormat.cs#ILocalizationFileReader)]
 </details>
 
 <p/>

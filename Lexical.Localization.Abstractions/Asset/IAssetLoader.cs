@@ -37,15 +37,7 @@ namespace Lexical.Localization
         IAssetLoader AddRange(IEnumerable<IAssetLoaderPart> part);
     }
     #endregion interface
-
-    /// <summary>
-    /// Function that constructs an asset from an open stream. 
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <param name="parameters">(optional) key parameters</param>
-    /// <returns>Asset</returns>
-    public delegate IAsset AssetFileConstructor(Stream stream, IReadOnlyDictionary<string, string> parameters);
-
+ 
     public static partial class AssetLoaderExtensions
     { 
         /// <summary>

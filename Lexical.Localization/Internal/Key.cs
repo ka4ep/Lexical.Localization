@@ -101,6 +101,21 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Convert parameters to key.
+        /// </summary>
+        /// <param name="parameters">(optional) parameters</param>
+        /// <returns>key or null if contained no parameters</returns>
+        public static Key CreateFromParameters(IEnumerable<KeyValuePair<string, string>> parameters)
+        {
+            if (parameters == null) return null;
+            Key result = null;
+            // Convert "match" parameters to key
+            foreach (var parameter in parameters)
+                result = Key.Create(result, parameter.Key, parameter.Value);
+            return result;
+        }
+
+        /// <summary>
         /// Create by copying from a source key.
         /// </summary>
         /// <param name="key"></param>
