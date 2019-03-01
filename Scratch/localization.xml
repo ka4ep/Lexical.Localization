@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<localization xmlns:culture="urn:lexical.fi:culture" xmlns:type="urn:lexical.fi:type" 
-               xmlns:key="urn:lexical.fi:key">
+<localization xmlns:culture="urn:lexical.fi:culture"
+              xmlns:type="urn:lexical.fi:type"
+              xmlns:key="urn:lexical.fi:key"
+              xmlns="urn:lexical.fi">
+  
   <type:ConsoleApp1.MyController>
     <key:Success>Success</key:Success>
     <key:Error>Error (Code=0x{0:X8})</key:Error>
@@ -17,6 +20,9 @@
       <key:Error>Virhe (Koodi=0x{0:X8})</key:Error>
     </type:ConsoleApp1.MyController>
   </culture:fi>
+  
+  <line culture="de" type="ConsoleApp1.MyController" key="Success">Erfolg</line>
+  <line culture="de" type="ConsoleApp1.MyController" key="Error">Fehler (Kod=0x{0:X8})</line>
 
   <culture:sv type="ConsoleApp1.MyController" key="Success">Det Funkar</culture:sv>
   <culture:sv type="ConsoleApp1.MyController" key="Error">Det funkar inte (Kod=0x{0:X8})</culture:sv>

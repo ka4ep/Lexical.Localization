@@ -10,6 +10,7 @@ namespace Lexical.Localization.Internal
     public class MapList<Key, Value> : Dictionary<Key, List<Value>>
     {
         public MapList() : base() { }
+        public MapList(IEqualityComparer<Key> comparer) : base(comparer) { }
         public MapList(IEnumerable<KeyValuePair<Key, Value>> enumr) : base() { AddRange(enumr); }
         public MapList(IEnumerable<KeyValuePair<Key, List<Value>>> enumr) : base() { AddRange(enumr); }
 

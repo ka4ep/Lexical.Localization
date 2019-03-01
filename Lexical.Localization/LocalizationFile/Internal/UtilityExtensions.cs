@@ -14,15 +14,17 @@ namespace Lexical.Localization.Internal
 {
     public static class UtilityExtensions
     {
+        public static Encoding Encoding = new UTF8Encoding(false);
+
         /// <summary>
         /// Read content in <paramref name="srcText"/> and write to memory stream snapshot.
         /// </summary>
         /// <param name="srcText"></param>
-        /// <returns>stream that doesn't need dispose</returns>
+        /// <returns>stream that doesn't need to be disposed</returns>
         public static MemoryStream ToStream(this TextReader srcText)
         {
             if (srcText == null) return null;
-            byte[] data = Encoding.UTF8.GetBytes(srcText.ReadToEnd());
+            byte[] data = Encoding.GetBytes(srcText.ReadToEnd());
             MemoryStream ms = new MemoryStream();
             ms.Write(data, 0, data.Length);
             ms.Flush();
@@ -36,7 +38,7 @@ namespace Lexical.Localization.Internal
         /// <param name="s"></param>
         /// <returns>string reader that need to be disposed</returns>
         public static TextReader ToTextReader(this Stream s)
-            => new StreamReader(s, Encoding.UTF8, true, 32 * 1024);
+            => new StreamReader(s, Encoding, true, 32 * 1024);
 
         public static byte[] ReadFully(this Stream s)
         {
@@ -69,7 +71,7 @@ namespace Lexical.Localization.Internal
         public static void WriteText(this MemoryStream ms, TextWriter dstText)
         {
             ms.Position = 0L;
-            dstText.Write(Encoding.UTF8.GetString(ms.GetBuffer()));
+            dstText.Write(Encoding.GetString(ms.GetBuffer()));
             dstText.Flush();
         }
 
@@ -80,7 +82,7 @@ namespace Lexical.Localization.Internal
         /// <param name="s"></param>
         /// <returns>writer that must be disposed.</returns>
         public static TextWriter ToTextWriter(this Stream s)
-            => new StreamWriter(s, Encoding.UTF8, 16 * 1024, true);
+            => new StreamWriter(s, Encoding, 16 * 1024, true);
     }
 
     internal class FileReaderStringLines : IEnumerable<KeyValuePair<string, string>>

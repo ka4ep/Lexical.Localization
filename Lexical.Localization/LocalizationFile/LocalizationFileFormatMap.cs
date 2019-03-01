@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Collection of file formats
     /// </summary>
-    public class LocalizationFileFormatMap : Dictionary<string, ILocalizationFileFormat>
+    public class LocalizationFileFormatMap : ConcurrentDictionary<string, ILocalizationFileFormat>
     {
         static LocalizationFileFormatMap singleton = new LocalizationFileFormatMap( XmlFileFormat.Instance, ResXFileFormat.Instance, ResourcesFileFormat.Instance, JsonFileFormat.Instance, IniFileFormat.Instance );
 

@@ -116,7 +116,13 @@ namespace Lexical.Localization
     }
 
     [Flags]
-    public enum WriteFlags {
+    public enum WriteFlags
+    {
+        /// <summary>
+        /// No action.
+        /// </summary>
+        None = 0,
+
         /// <summary>
         /// Adds entries that didn't exist
         /// </summary>
@@ -129,11 +135,10 @@ namespace Lexical.Localization
         /// Removes entires that no longer exist.
         /// </summary>
         UpdateRemove = 4,
-        
         /// <summary>
-        /// Replace previous content.
+        /// Delete or overwrite previous file. Do not use any previous content.
         /// </summary>
-        Overwrite = UpdateAdd | UpdateModify | UpdateRemove,
+        Overwrite = 8
     }
 
     /// <summary>
