@@ -3,6 +3,7 @@ using Lexical.Localization.Internal;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
+using Lexical.Localization.Utils;
 
 namespace Lexical.Localization.Tests
 {

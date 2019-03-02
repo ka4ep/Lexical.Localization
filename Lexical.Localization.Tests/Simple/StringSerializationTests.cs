@@ -2,7 +2,7 @@
 using Lexical.Localization.Ms.Extensions;
 using ConsoleApp1;
 using Lexical.Localization;
-using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 
 namespace Lexical.Localization.Tests
 {
