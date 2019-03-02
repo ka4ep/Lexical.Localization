@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Utils
 {
     /// <summary>
     /// Keys organized into a tree structure.
@@ -65,7 +65,7 @@ namespace Lexical.Localization
                 key = Key.CreateFrom(value);
 
                 // Update parent's lookup table
-                if (Parent != null && oldKey != null && !Lexical.Localization.Internal.Key.Comparer.Default.Equals(oldKey, value))
+                if (Parent != null && oldKey != null && !Key.Comparer.Default.Equals(oldKey, value))
                 {
                     if (oldKey != null && Parent.ChildLookup.ContainsKey(oldKey)) Parent.ChildLookup.Remove(oldKey);
                     Parent.ChildLookup[this.Key] = this;
@@ -171,6 +171,22 @@ namespace Lexical.Localization
             return child;
         }
 
+        /// <summary>
+        /// Remove self from parent
+        /// </summary>
+        public void Remove()
+        {
+            if (Parent == null) throw new InvalidOperationException("Cannot remove root");
+            Parent.Children.Remove(this);
+            KeyTree lookupTarget;
+            if (Parent.childLookup != null && Parent.childLookup.TryGetValue(key, out lookupTarget) && lookupTarget == this)
+            {
+                // Find new target
+                lookupTarget = Parent.Children.Where(c => c.Key.Equals(this.Key)).FirstOrDefault();
+                // Update lookup table
+                Parent.childLookup[this.Key] = lookupTarget;
+            }
+        }
 
         IKeyTree IKeyTree.Parent => Parent;
         IAssetKey IKeyTree.Key

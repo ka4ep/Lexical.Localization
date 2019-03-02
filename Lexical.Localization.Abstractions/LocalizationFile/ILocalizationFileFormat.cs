@@ -116,29 +116,33 @@ namespace Lexical.Localization
     }
 
     [Flags]
-    public enum WriteFlags
+    public enum WriteFlags : UInt32
     {
         /// <summary>
         /// No action.
         /// </summary>
         None = 0,
+        /// <summary>
+        /// Allow to adds new entries.
+        /// </summary>
+        Add = 1,
+        /// <summary>
+        /// Allow to removes entires that no longer exist.
+        /// </summary>
+        Remove = 2,
+        /// <summary>
+        /// Allow to modify values of existing entries.
+        /// </summary>
+        Modify = 4,
+        /// <summary>
+        /// Synchronize contents with previous content.
+        /// </summary>
+        Synchronize = 8,
 
         /// <summary>
-        /// Adds entries that didn't exist
+        /// All fags
         /// </summary>
-        UpdateAdd = 1,
-        /// <summary>
-        /// Modifies entries that existed previously
-        /// </summary>
-        UpdateModify = 2,
-        /// <summary>
-        /// Removes entires that no longer exist.
-        /// </summary>
-        UpdateRemove = 4,
-        /// <summary>
-        /// Delete or overwrite previous file. Do not use any previous content.
-        /// </summary>
-        Overwrite = 8
+        All = 0xffffffff
     }
 
     /// <summary>

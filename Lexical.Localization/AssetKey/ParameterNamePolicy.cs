@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {

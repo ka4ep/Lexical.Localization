@@ -44,7 +44,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Add new child to the key tree.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>new child</returns>
         IKeyTree CreateChild();
 
         /// <summary>
@@ -53,6 +53,11 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>child node or null if was not found</returns>
         IKeyTree GetChild(IAssetKey key);
+
+        /// <summary>
+        /// Remove self from parent.
+        /// </summary>
+        void Remove();
     }
 
     public static class KeyTreeExtensions

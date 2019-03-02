@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {

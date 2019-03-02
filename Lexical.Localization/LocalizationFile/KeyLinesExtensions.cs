@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {

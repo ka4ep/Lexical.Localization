@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Lexical.Localization
     public class XmlFileFormat : ILocalizationFileFormat, ILocalizationKeyTreeStreamReader, ILocalizationKeyTreeTextReader
     {
         public static readonly XNamespace NsDefault = "urn:lexical.fi";
-        public static readonly XName NameLine = NsDefault + "Line";
+        public static readonly XName NameLine = NsDefault + "line";
         public const string URN_ = "urn:lexical.fi:";
 
         private readonly static XmlFileFormat instance = new XmlFileFormat();
@@ -97,7 +98,7 @@ namespace Lexical.Localization
             {
                 foreach (XAttribute attribute in element.Attributes())
                 {
-                    if (attribute.Name.Namespace == null)
+                    if (string.IsNullOrEmpty(attribute.Name.NamespaceName))
                     {
                         string parameterName = attribute.Name.LocalName;
                         string parameterValue = attribute.Value;

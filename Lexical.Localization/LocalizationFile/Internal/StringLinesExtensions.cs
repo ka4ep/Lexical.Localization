@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System.Collections.Generic;
 using System.Linq;
+using Lexical.Localization.Utils;
 
 namespace Lexical.Localization.Internal
 {
