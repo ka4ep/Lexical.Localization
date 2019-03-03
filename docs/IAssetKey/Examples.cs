@@ -84,8 +84,8 @@ namespace docs
             {
                 #region Snippet_4b
                 // Add canonical parts, and non-canonical culture
-                IAssetKey key1 = new LocalizationRoot().Section("Section").Key("Key").SetCulture("en");
-                IAssetKey key2 = new LocalizationRoot().SetCulture("en").Section("Section").Key("Key");
+                IAssetKey key1 = new LocalizationRoot().Section("Section").Key("Key").Culture("en");
+                IAssetKey key2 = new LocalizationRoot().Culture("en").Section("Section").Key("Key");
 
                 // "en:Section1:Section2:Key"
                 string id1 = AssetKeyNameProvider.Colon_Colon_Colon.BuildName(key1);
@@ -169,7 +169,7 @@ namespace docs
             {
                 #region Snippet_8a
                 // Assign key to localization of type "MyController"
-                IAssetKey key = new LocalizationRoot().TypeSection(typeof(MyController));
+                IAssetKey key = new LocalizationRoot().Type(typeof(MyController));
                 // Search "MyController:Success"
                 string str = key.Key("Success").ToString();
                 #endregion Snippet_8a
@@ -178,14 +178,14 @@ namespace docs
             {
                 #region Snippet_8b
                 // Assign key to localization of type "MyController"
-                IAssetKey<MyController> key = new LocalizationRoot().TypeSection<MyController>();
+                IAssetKey<MyController> key = new LocalizationRoot().Type<MyController>();
                 #endregion Snippet_8b
             }
 
             {
                 #region Snippet_9a
                 // Create root that matches only to english strings
-                IAssetKey root_en = new LocalizationRoot().SetCulture("en");
+                IAssetKey root_en = new LocalizationRoot().Culture("en");
                 // Create key
                 IAssetKey key = root_en.Section("Section").Key("Key");
                 #endregion Snippet_9a
@@ -226,7 +226,7 @@ namespace docs
         #region Snippet_11b
         class MyControllerB
         {
-            static IAssetKey localization = LocalizationRoot.Global.TypeSection<MyControllerB>();
+            static IAssetKey localization = LocalizationRoot.Global.Type<MyControllerB>();
 
             public void Do()
             {

@@ -15,10 +15,10 @@ namespace docs
                 // Let's create an example key
                 IAssetKey key = new LocalizationRoot()
                         .Location("Patches")
-                        .TypeSection("MyController")
+                        .Type("MyController")
                         .Section("Errors")
                         .Key("InvalidState")
-                        .SetCulture("en");
+                        .Culture("en");
                 #endregion Snippet_1
 
                 {
@@ -43,7 +43,7 @@ namespace docs
                     // Create name pattern
                     IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{location_0/}{location_1/}{location_n/}{Section}{-key}{-culture}.png");
                     // Create key
-                    IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").SetCulture("de");
+                    IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
                     string str = myPolicy.BuildName(key2);
                     #endregion Snippet_4

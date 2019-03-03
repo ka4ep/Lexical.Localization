@@ -37,13 +37,13 @@ Non-canonical parts are typically hints, such as **.SetCulture(*string*)**.
 | Parameter | Canonical | Interface | Extension Method | Description |
 |:---------|:-------|:--------|:---------|:---------|
 | Root | canonical | IAssetRoot |  | Contains asset and culture policy. Keys are constructed from here. |
-| Type | canonical | IAssetKeyType | .Type(*Type*) | Type section for grouping by classes and interfaces. |
-| Location | canonical | IAsseyKeyLocation | .Location(*string*) | Hint to asset for a directory to search from. |
-| Assembly | non-canonical | IAssetKeyAssembly | .Assembly(*Assembly*) | Hint to asset for an assembly to search from. |
-| Resource | canonical | IAssetKeyResource | .Resource(*string*) | Hint to asset for an embedded resource path to search from. |
-| Section | canonical | IAssetKeySection | .Section(*string*) | Generic section for grouping assets. |
-| Key | canonical | IAssetKey | .Key(*string*) | Leaf key |
-| Culture | non-canonical | ILocalizationKeyCulture | .Culture(*CultureInfo*) | Parameter to override current culture. |
+| Type | canonical | IAssetKeyTypeAssignable | .Type(*Type*) | Type section for grouping by classes and interfaces. |
+| Location | canonical | IAsseyKeyLocationAssignable | .Location(*string*) | Hint to asset for a directory to search from. |
+| Assembly | non-canonical | IAssetKeyAssemblyAssignable | .Assembly(*Assembly*) | Hint to asset for an assembly to search from. |
+| Resource | canonical | IAssetKeyResourceAssignable | .Resource(*string*) | Hint to asset for an embedded resource path to search from. |
+| Section | canonical | IAssetKeySectionAssignable | .Section(*string*) | Generic section for grouping assets. |
+| Key | canonical | IAssetKeyAssignable | .Key(*string*) | Leaf key |
+| Culture | non-canonical | ILocalizationKeyCultureAssignable | .Culture(*CultureInfo*) | Parameter to override current culture. |
 |  | non-canonical | ILocalizationKeyFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
 |  | non-canonical | ILocalizationKeyInlined | .Inline(*string*, *string*) | Hint for default culture specific string values. |
 
@@ -51,7 +51,7 @@ Non-canonical parts are typically hints, such as **.SetCulture(*string*)**.
 Type section is a key that narrows down the scope of localization to a specific class, interface or structure.
 [!code-csharp[Snippet](Examples.cs#Snippet_8a)]
 
-There is another way with the generic method **.TypeSection&lt;T&gt;()**. 
+There is another way with the generic method **.Type&lt;T&gt;()**. 
 [!code-csharp[Snippet](Examples.cs#Snippet_8b)]
 
 ## Culture Key

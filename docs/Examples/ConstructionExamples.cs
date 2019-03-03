@@ -79,7 +79,7 @@ namespace docs
                 var myControllerLocalization = LocalizationRoot.Global.Section("ConsoleApp1.MyController");
                 Console.WriteLine(myControllerLocalization.Key("Error"));
                 Console.WriteLine(myControllerLocalization.Key("Error").Format(0xBAADF00D));
-                Console.WriteLine(myControllerLocalization.Key("Error").Format(0xBAADF00D).SetCulture("fi"));
+                Console.WriteLine(myControllerLocalization.Key("Error").Format(0xBAADF00D).Culture("fi"));
                 Console.WriteLine(myControllerLocalization.Key("Error").sv("Sönder (kod=0x{0:X8})").Culture("sv").Format(0xBAADF00D));
                 #endregion Snippet_Singleton
             }

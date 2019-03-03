@@ -58,7 +58,7 @@ namespace TutorialProject
             IAssetRoot root = LocalizationRoot.Global;
 
             // Create key
-            IAssetKey key = root.TypeSection<Program>().Key("Hello").Inline("Hello World!");
+            IAssetKey key = root.Type<Program>().Key("Hello").Inline("Hello World!");
 
             // Print with current culture
             Console.WriteLine(key);

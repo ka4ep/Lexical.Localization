@@ -34,10 +34,10 @@ namespace docs
                 // Let's create an example key
                 IAssetKey key = new LocalizationRoot()
                         .Location("Patches")
-                        .TypeSection("MyController")
+                        .Type("MyController")
                         .Section("Errors")
                         .Key("InvalidState")
-                        .SetCulture("en");
+                        .Culture("en");
                 #endregion Snippet_1
 
                 {

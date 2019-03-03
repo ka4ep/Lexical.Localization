@@ -57,9 +57,9 @@ namespace Lexical.Localization.Ms.Extensions
         /// <summary>
         /// Creates <see cref="ResourceManagerStringLocalizerFactory"/> and then adapts it into <see cref="IAsset"/>.
         /// 
-        /// This asset serves keys that have AssemblySection and ResourceSection hints, or TypeSection{T}() hint.
+        /// This asset serves keys that have Assembly and Resource hints, or Type{T}() hint.
         /// <code>
-        ///  var resx_key = root.AssemblySection("MyAssembly").ResourceSection("Resources").TypeSection("localization");
+        ///  var resx_key = root.Assembly("MyAssembly").Resource("Resources").Type("localization");
         ///  var key = resx_key["Success"];
         /// </code>
         /// 

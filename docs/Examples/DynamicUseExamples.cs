@@ -26,18 +26,18 @@ namespace docs
                 languageStrings["fi-Savo:ConsoleApp1:MyController:Error"] = "Epäonnistuepa (Koodi=0x{0:X8})";
 
                 dynamic myLocalization = new LocalizationRoot(new LocalizationStringAsset(languageStrings, AssetKeyNameProvider.Default), new CulturePolicy());
-                //dynamic x = myLocalization.SetCulture("fi");
+                //dynamic x = myLocalization.Culture("fi");
                 dynamic mySection1 = myLocalization.Section("ConsoleApp1");
                 IAssetKey k = mySection1.Section("MyController");
                 dynamic mySection = myLocalization.Section("ConsoleApp1").Section("MyController");
-                dynamic inlined = mySection.Success.fi_Savo("Onnistuepi").SetCulture("fi-Savo");
+                dynamic inlined = mySection.Success.fi_Savo("Onnistuepi").Culture("fi-Savo");
                 object inlines = inlined.Inlines;
                 byte[] icon = mySection.Success.Icon;
                 
                 Console.WriteLine(mySection.Success);
                 Console.WriteLine(mySection.Error);
                 Console.WriteLine(mySection.Error.Format(0xCafeBabe));
-                Console.WriteLine(mySection.Error.SetCulture("sv").sv("Sönder (kod=0x{0:X8})").Format(0xCafeBabe));
+                Console.WriteLine(mySection.Error.Culture("sv").sv("Sönder (kod=0x{0:X8})").Format(0xCafeBabe));
                 #endregion Snippet_0
             }
 

@@ -19,7 +19,7 @@ Further keys are constructed from root.
 
 ```csharp
 // Construct key
-IAssetKey key = root.TypeSection("MyController").Key("Hello");
+IAssetKey key = root.Type("MyController").Key("Hello");
 ```
 
 Now that key is associated with an asset and a culture provider, it can provide strings and resources.
@@ -78,12 +78,12 @@ IStringLocalizer<MyController> stringLocalizer2 =
 ```
 
 <br/>
-Key can be assigned for a type **.TypeSection(*Type*)** and then casted to **IStringLocalizer&lt;*Type*&gt;**.
+Key can be assigned for a type **.Type(*Type*)** and then casted to **IStringLocalizer&lt;*Type*&gt;**.
 
 ```csharp
 // Assign to IStringLocalizer for the class MyController
 IStringLocalizer<MyController> stringLocalizer = 
-    root.TypeSection(typeof(MyController)) 
+    root.Type(typeof(MyController)) 
     as IStringLocalizer<MyController>;
 ```
 Also after type casting to IStringLocalizerFactory with **.Create(*Type*)**.
@@ -98,12 +98,12 @@ IStringLocalizer<MyController> stringLocalizer =
 ```
 
 <br/>
-Culture can be locked in with **.SetCulture(*string*)**.
+Culture can be locked in with **.Culture(*string*)**.
 
 ```csharp
 // Create IStringLocalizer and assign culture
 IStringLocalizer stringLocalizer = 
-    root.SetCulture("en").TypeSection<MyController>() 
+    root.Culture("en").Type<MyController>() 
     as IStringLocalizer<MyController>;
 ```
 And also after type casting to IStringLocalizer with **.WithCulture(*CultureInfo*)**.
@@ -126,7 +126,7 @@ Lexical.Localization introduces a global static root **LocalizationRoot.Global**
 
 ```csharp
 // Create key from global root
-IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Hello");
+IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Hello");
 ```
 
 Assets are added to the global root with **LocalizationRoot.Builder**.
@@ -161,7 +161,7 @@ They share the same assets, and the root instances are interchangeable. Assets c
 ```csharp
 // LocalizationRoot and StringLocalizerRoot are interchangeable. They share the same asset(s).
 LocalizationRoot.Builder.AddAsset(asset).Build();
-IStringLocalizer stringLocalizer = StringLocalizerRoot.Global.TypeSection<MyController>();
+IStringLocalizer stringLocalizer = StringLocalizerRoot.Global.Type<MyController>();
 ```
 
 **LocalizationRoot.GlobalDynamic** returns dynamic instance for the static root.

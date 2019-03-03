@@ -18,7 +18,7 @@ namespace docs
 
                 #region Snippet_2
                 // Create key
-                IAssetKey key = new LocalizationRoot().Key("hello").SetCulture("en");
+                IAssetKey key = new LocalizationRoot().Key("hello").Culture("en");
                 // Resolve string - Call to LocalizationAssetExtensions.GetString()
                 string str = asset.GetString(key);
                 #endregion Snippet_2

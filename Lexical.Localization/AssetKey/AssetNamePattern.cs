@@ -17,12 +17,12 @@ namespace Lexical.Localization
     /// Is a sequence of parameter and text parts.
     /// 
     /// Parameter parts:
-    ///  {Culture}           - Matches to key.SetCulture("en")
-    ///  {Assembly}          - Matches to key.AssemblySection(asm).
-    ///  {Resource}          - Matches to key.ResourceSection("xx").
-    ///  {Type}              - Matches to key.TypeSection(type)
+    ///  {Culture}           - Matches to key.Culture("en")
+    ///  {Assembly}          - Matches to key.Assembly(asm).
+    ///  {Resource}          - Matches to key.Resource("xx").
+    ///  {Type}              - Matches to key.Type(type)
     ///  {Section}           - Matches to key.Section("xx")
-    ///  {Location}          - Matches to key.LocationSection("xx") and a physical folder, separator is '/'.
+    ///  {Location}          - Matches to key.Location("xx") and a physical folder, separator is '/'.
     ///  {anysection}        - Matches to assembly, type and section.
     ///  {Key}               - Matches to key key.Key("x")
     /// 
@@ -36,7 +36,7 @@ namespace Lexical.Localization
     ///  "localization{-Key_0}{-Key_1}.ini"  - Matches to key.Key("x").Key("x");
     /// 
     /// Suffix "_n" refers to the last occurance. This is also the case without an occurance number.
-    ///  "{Culture.}localization.ini"        - Matches to "fi" in: key.SetCulture("en").SetCulture("de").SetCulture("fi");
+    ///  "{Culture.}localization.ini"        - Matches to "fi" in: key.Culture("en").Culture("de").Culture("fi");
     ///  "{Location_0/}{Location_1/}{Location_2/}{Location_n/}location.ini 
     ///  
     /// Regular expressions can be written between &lt; and &gt; characters to specify match criteria. \ escapes \, *, +, ?, |, {, [, (,), &lt;, &gr; ^, $,., #, and white space.

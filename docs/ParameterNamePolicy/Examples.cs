@@ -27,7 +27,7 @@ namespace docs
             {
                 #region Snippet_3a
                 // Create context-dependent key
-                IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
+                IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
                 // Serialize to string
                 string str = ParameterNamePolicy.Instance.PrintKey(key);
                 #endregion Snippet_3a
@@ -35,7 +35,7 @@ namespace docs
             {
                 #region Snippet_3b
                 // Create context-dependent key
-                IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
+                IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
                 // Convert to context-free parameters
                 IEnumerable<KeyValuePair<string, string>> parameters = key.GetParameters();
                 // Serialize to string
@@ -57,7 +57,7 @@ namespace docs
             {
                 #region Snippet_5
                 // Create context-dependent key
-                IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
+                IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
                 // Serialize to string
                 string str = ParameterNamePolicy.Instance.PrintKey(key);
                 #endregion Snippet_5

@@ -33,7 +33,7 @@ namespace docs
                 IAsset asset = serviceScope.GetService<IAsset>();
 
                 // Create string key
-                IAssetKey key = new LocalizationRoot().Key("hello").SetCulture("en");
+                IAssetKey key = new LocalizationRoot().Key("hello").Culture("en");
                 // Request string
                 string str = asset.GetString(key);
                 // Print result

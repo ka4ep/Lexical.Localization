@@ -24,14 +24,14 @@ Some of the parameters are well-known, and they also have a respective method th
 
 | Parameter | Key Method  | Description |
 |----------|:--------|:------------|
-| assembly | .AssemblySection(*string*) | Assembly name |
-| location | .Location(*string*) | Subdirectory in local files |
-| resource | .Resource(*string*) | Subdirectory in embedded resources |
-| type | .TypeSection(*string*) | Class name |
-| section | .Section(*string*) | Generic section, used for grouping |
+| Assembly | .Assembly(*string*) | Assembly name |
+| Location | .Location(*string*) | Subdirectory in local files |
+| Resource | .Resource(*string*) | Subdirectory in embedded resources |
+| Type | .Type(*string*) | Class name |
+| Section | .Section(*string*) | Generic section, used for grouping |
 | anysection | *all above* | Matches to any section above. |
-| culture  | .SetCulture(*string*) | Culture |
-| key | .Key(*string*) | Key name |
+| Culture  | .Culture(*string*) | Culture |
+| Key | .Key(*string*) | Key name |
 
 <br/>
 Custom parameters can be created. Parameter key object should implement IAssetKey, have [AssetKeyParameter] attribute and [AssetKeyConstructor] in the method that creates it.

@@ -8,10 +8,10 @@ Let's create an example key.
 // Let's create an example key
 IAssetKey key = new LocalizationRoot()
         .Location("Patches")
-        .TypeSection("MyController")
+        .Type("MyController")
         .Section("Errors")
         .Key("InvalidState")
-        .SetCulture("en");
+        .Culture("en");
 ```
 And now, let's try out different policies to see how they look.
 

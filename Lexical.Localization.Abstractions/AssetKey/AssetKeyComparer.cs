@@ -29,10 +29,10 @@ namespace Lexical.Localization
         /// This comparer uses the following pattern for comparisons:
         ///    Key                      canonical compare
         ///    Section                  canonical compare
-        ///    TypeSection              canonical compare
+        ///    Type                     canonical compare
         ///    Resource                 canonical compare
-        ///    LocationSection          canonical compare
-        ///    AssemblySection          non-canonical compare
+        ///    Location                 canonical compare
+        ///    Assembly                 non-canonical compare
         ///    Culture                  non-canonical compare
         ///    Format Args              non-canonical compare
         ///    Inlining                 non-canonical compare

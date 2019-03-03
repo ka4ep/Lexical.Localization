@@ -19,7 +19,7 @@ IAssetBuilder builder = new AssetBuilder(assetSource_0, assetSource_1);
 IAsset asset = builder.Build();
 
 // Create string key
-IAssetKey key = new LocalizationRoot().Key("hello").SetCulture("en");
+IAssetKey key = new LocalizationRoot().Key("hello").Culture("en");
 // Request string
 string str = asset.GetString( key );
 // Print result
@@ -65,7 +65,7 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     IAsset asset = serviceScope.GetService<IAsset>();
 
     // Create string key
-    IAssetKey key = new LocalizationRoot().Key("hello").SetCulture("en");
+    IAssetKey key = new LocalizationRoot().Key("hello").Culture("en");
     // Request string
     string str = asset.GetString(key);
     // Print result
@@ -97,7 +97,7 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     IAsset asset = serviceScope.GetService<IAsset>();
 
     // Create string key
-    IAssetKey key = new LocalizationRoot().Key("hello").SetCulture("en");
+    IAssetKey key = new LocalizationRoot().Key("hello").Culture("en");
     // Request string
     string str = asset.GetString(key);
     // Print result

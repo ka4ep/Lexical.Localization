@@ -17,12 +17,12 @@ namespace Lexical.Localization
     /// Is a sequence of parameter and text parts.
     /// 
     /// Parameter parts:
-    ///  {Culture}           - Matches to key.SetCulture("en")
-    ///  {Assembly}          - Matches to key.AssemblySection(asm).
-    ///  {Resource}          - Matches to key.ResourceSection("xx").
-    ///  {Type}              - Matches to key.TypeSection(type)
+    ///  {Culture}           - Matches to key.Culture("en")
+    ///  {Assembly}          - Matches to key.Assembly(asm).
+    ///  {Resource}          - Matches to key.Resource("xx").
+    ///  {Type}              - Matches to key.Type(type)
     ///  {Section}           - Matches to key.Section("xx")
-    ///  {Location}          - Matches to key.LocationSection("xx") and a physical folder, separator is '/'.
+    ///  {Location}          - Matches to key.Location("xx") and a physical folder, separator is '/'.
     ///  {anysection}        - Matches to assembly, type and section.
     ///  {Key}               - Matches to key key.Key("x")
     /// 

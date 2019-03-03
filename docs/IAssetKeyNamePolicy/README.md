@@ -14,14 +14,14 @@ IAsset asset = new LocalizationStringAsset(source, policy);
 // Create key
 IAssetKey key = new LocalizationRoot(asset).Section("MyController").Key("Hello");
 // Retrieve string
-string str = key.SetCulture("en").ResolveFormulatedString();
+string str = key.Culture("en").ResolveFormulatedString();
 ```
 
 Extension method **.Build(*IAssetKey*)** can be used to test the conversion from key to identity. It forwards the method call to correct sub-interface.
 
 ```csharp
 // Test if key converted correctly to expected identity "en/Section/Key"
-string id = policy.BuildName(key.SetCulture("en"));
+string id = policy.BuildName(key.Culture("en"));
 ```
 
 <details>

@@ -41,7 +41,7 @@ namespace Lexical.Localization.Ms.Extensions
     [DebuggerDisplay("{DebugPrint()}")]
     public partial class StringLocalizerRoot :
         StringLocalizerKey,
-        IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicy, IAssetKeyAssetAssigned,
+        IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned,
         IStringLocalizer, IStringLocalizerFactory, IAssetKeyParameterAssigned
     {
 <#= srcCode #>

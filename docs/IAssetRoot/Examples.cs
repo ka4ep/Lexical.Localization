@@ -51,7 +51,7 @@ namespace docs
             {
                 #region Snippet_2a
                 // Create key from global root
-                IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Hello");
+                IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Hello");
                 #endregion Snippet_2a
 
                 #region Snippet_2b
@@ -76,7 +76,7 @@ namespace docs
                 #region Snippet_2e
                 // LocalizationRoot and StringLocalizerRoot are interchangeable. They share the same asset(s).
                 LocalizationRoot.Builder.AddAsset(asset).Build();
-                IStringLocalizer stringLocalizer = StringLocalizerRoot.Global.TypeSection<MyController>();
+                IStringLocalizer stringLocalizer = StringLocalizerRoot.Global.Type<MyController>();
                 #endregion Snippet_2e
 
                 #region Snippet_2f

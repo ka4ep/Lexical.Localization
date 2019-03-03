@@ -75,14 +75,14 @@ namespace Lexical.Localization.Ms.Extensions
             // ILocalizationAsset
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAsset>(s => s.GetService<IAssetBuilder>().Build()));
             // ILocalizationKey<>
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IAssetKey<>), typeof(StringLocalizerKey._TypeSection<>)));
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IAssetKey<>), typeof(StringLocalizerKey._Type<>)));
 
             // IStringLocalizer<>
             // IStringLocalizerFactory
             if (addStringLocalizerService)
             {
                 // Service request for IStringLocalizer<> instances
-                serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IStringLocalizer<>), typeof(StringLocalizerKey._TypeSection<>)));
+                serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IStringLocalizer<>), typeof(StringLocalizerKey._Type<>)));
                 // Service reqeust for IStringLocalizerFactory
                 serviceCollection.TryAdd(ServiceDescriptor.Singleton<IStringLocalizerFactory>(s =>
                 {

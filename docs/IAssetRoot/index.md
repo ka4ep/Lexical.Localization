@@ -30,13 +30,13 @@ And to **IStringLocalizerFactory**.
 [!code-csharp[Snippet](Examples_StringLocalizer.cs#Snippet_3)]
 
 <br/>
-Key can be assigned for a type **.TypeSection(*Type*)** and then casted to **IStringLocalizer&lt;*Type*&gt;**.
+Key can be assigned for a type **.Type(*Type*)** and then casted to **IStringLocalizer&lt;*Type*&gt;**.
 [!code-csharp[Snippet](Examples_StringLocalizer.cs#Snippet_4a)]
 Also after type casting to IStringLocalizerFactory with **.Create(*Type*)**.
 [!code-csharp[Snippet](Examples_StringLocalizer.cs#Snippet_4b)]
 
 <br/>
-Culture can be locked in with **.SetCulture(*string*)**.
+Culture can be locked in with **.Culture(*string*)**.
 [!code-csharp[Snippet](Examples_StringLocalizer.cs#Snippet_5a)]
 And also after type casting to IStringLocalizer with **.WithCulture(*CultureInfo*)**.
 [!code-csharp[Snippet](Examples_StringLocalizer.cs#Snippet_5b)]

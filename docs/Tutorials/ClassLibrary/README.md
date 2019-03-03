@@ -31,7 +31,7 @@ namespace TutorialLibrary
     public class MyController1
     {
         // Use this reference 
-        static IAssetKey localization = LocalizationRoot.Global.TypeSection(typeof(MyController1));
+        static IAssetKey localization = LocalizationRoot.Global.Type(typeof(MyController1));
 
         public string Do()
         {
@@ -99,7 +99,7 @@ namespace TutorialLibrary
 
         public MyController2(IAssetRoot root)
         {
-            this.localization = root.TypeSection(GetType());
+            this.localization = root.Type(GetType());
         }
 
         public MyController2(IAssetKey<MyController2> localization)

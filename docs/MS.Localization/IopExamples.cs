@@ -32,7 +32,7 @@ namespace docs
                 IAssetKey key = root
                     .Assembly(Assembly.GetExecutingAssembly())
                     .Resource("ConsoleApp1.MyController")
-                    //.TypeSection(typeof(ConsoleApp1.MyController1))
+                    //.Type(typeof(ConsoleApp1.MyController1))
                     .Key("Success")
                     .Culture("sv");
 

@@ -17,9 +17,9 @@ namespace Lexical.Localization.Tests
             AssetNamePattern pattern4 = new AssetNamePattern("Assets/{Assembly/}{Type/}{Section.}localization{-Culture}.ini");
             AssetNamePattern pattern5 = new AssetNamePattern("Assets/{anysection_0/}{anysection_1/}localization{-Culture}.ini");
 
-            IAssetKey key1 = LocalizationRoot.Global.Section("Section1").Section("Section2").Key("Key1").SetCulture("fi");
+            IAssetKey key1 = LocalizationRoot.Global.Section("Section1").Section("Section2").Key("Key1").Culture("fi");
             IAssetKey key2 = LocalizationRoot.Global.Section("Section1").Section("Section2").Key("Key1");
-            IAssetKey key3 = LocalizationRoot.Global.AssemblySection(GetType().Assembly).TypeSection(GetType()).Key("Key1").SetCulture("fi");
+            IAssetKey key3 = LocalizationRoot.Global.Assembly(GetType().Assembly).Type(GetType()).Key("Key1").Culture("fi");
 
             Assert.AreEqual("Resources.localization-fi.json", pattern1.MatchToString(key1));
             Assert.AreEqual("Resources.localization.json", pattern1.MatchToString(key2));

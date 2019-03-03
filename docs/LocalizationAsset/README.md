@@ -17,10 +17,10 @@ IAsset asset = new LoadableLocalizationAsset().AddKeyLinesSource(source).Load();
 Language strings can now be queried from the asset.
 
 ```csharp
-IAssetKey key = new LocalizationRoot(asset).TypeSection("MyController").Key("hello");
+IAssetKey key = new LocalizationRoot(asset).Type("MyController").Key("hello");
 Console.WriteLine(key);
-Console.WriteLine(key.SetCulture("en"));
-Console.WriteLine(key.SetCulture("de"));
+Console.WriteLine(key.Culture("en"));
+Console.WriteLine(key.Culture("de"));
 ```
 
 <details>
@@ -46,9 +46,9 @@ These keys are converted to Key internally when <b>.Load()</b> is called.
 ```csharp
 // Create localization source
 var source = new Dictionary<IAssetKey, string> {
-    { new LocalizationRoot().TypeSection("MyController").Key("hello"),                  "Hello World!" },
-    { new LocalizationRoot().TypeSection("MyController").Key("hello").SetCulture("en"), "Hello World!" },
-    { new LocalizationRoot().TypeSection("MyController").Key("hello").SetCulture("de"), "Hallo Welt!"  }
+    { new LocalizationRoot().Type("MyController").Key("hello"),                  "Hello World!" },
+    { new LocalizationRoot().Type("MyController").Key("hello").Culture("en"), "Hello World!" },
+    { new LocalizationRoot().Type("MyController").Key("hello").Culture("de"), "Hallo Welt!"  }
 };
 // Create asset with string source
 IAsset asset = new LoadableLocalizationAsset().AddKeyLinesSource(source).Load();
@@ -68,6 +68,6 @@ The query can be filtered with a criteria key. It returns only keys that have eq
 
 ```csharp
 // Keys can be filtered
-foreach (Key _key in asset.GetAllKeys(LocalizationRoot.Global.SetCulture("de")))
+foreach (Key _key in asset.GetAllKeys(LocalizationRoot.Global.Culture("de")))
     Console.WriteLine(_key);
 ```

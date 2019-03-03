@@ -16,7 +16,7 @@ namespace Lexical.Localization.Tests
             // Arrange
             ILocalizationFileFormat fileformat = IniFileFormat.Instance;
             string filename = "Lexical.Localization.Tests.localization.ini";
-            IAssetKey key = LocalizationRoot.Global.SetCulture("en").TypeSection("ConsoleApp1.MyController").Key("Success");
+            IAssetKey key = AssetKeyExtensions.Type(LocalizationRoot.Global.Culture("en"), "ConsoleApp1.MyController").Key("Success");
 
             // Act
             Stream s = GetType().Assembly.GetManifestResourceStream(filename);
@@ -33,7 +33,7 @@ namespace Lexical.Localization.Tests
             // Arrange
             ILocalizationFileFormat fileformat = JsonFileFormat.Instance;
             string filename = "Lexical.Localization.Tests.localization.json";
-            IAssetKey key = LocalizationRoot.Global.SetCulture("en").TypeSection("ConsoleApp1.MyController").Key("Success");
+            IAssetKey key = LocalizationRoot.Global.Culture("en").Type("ConsoleApp1.MyController").Key("Success");
 
             // Act
             Stream s = GetType().Assembly.GetManifestResourceStream(filename);
@@ -50,7 +50,7 @@ namespace Lexical.Localization.Tests
             // Arrange
             ILocalizationFileFormat fileformat = XmlFileFormat.Instance;
             string filename = "Lexical.Localization.Tests.localization.xml";
-            IAssetKey key = LocalizationRoot.Global.SetCulture("en").TypeSection("ConsoleApp1.MyController").Key("Success");
+            IAssetKey key = LocalizationRoot.Global.Culture("en").Type("ConsoleApp1.MyController").Key("Success");
 
             // Act
             Stream s = GetType().Assembly.GetManifestResourceStream(filename);
@@ -70,7 +70,7 @@ namespace Lexical.Localization.Tests
 
             // .resx file property must be set to "Copy to output directory" = "Copy Always"
             string filename = "Resources/localization.en.resx";
-            IAssetKey key = LocalizationRoot.Global.SetCulture("en").TypeSection("ConsoleApp1.MyController").Key("Success");
+            IAssetKey key = LocalizationRoot.Global.Culture("en").Type("ConsoleApp1.MyController").Key("Success");
 
             // Act
             Stream s = new FileStream(filename, FileMode.Open);

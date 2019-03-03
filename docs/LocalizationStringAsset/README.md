@@ -21,7 +21,7 @@ If the provided key name policy is *AssetKeyNameProvider.Default*, then identity
 // Create root 
 IAssetRoot root = new LocalizationRoot(asset);
 // Create key. Name policy converts to .
-IAssetKey key = root.Section("MyController").Key("hello").SetCulture("de");
+IAssetKey key = root.Section("MyController").Key("hello").Culture("de");
 // Test what identity is produced, "de:MyController:hello"
 string id = AssetKeyNameProvider.Default.BuildName(key);
 // Query language string
@@ -47,6 +47,6 @@ foreach (IAssetKey key in asset.GetAllKeys())
 
 ```csharp
 // Keys can be filtered
-foreach (IAssetKey key in asset.GetAllKeys(LocalizationRoot.Global.SetCulture("de")))
+foreach (IAssetKey key in asset.GetAllKeys(LocalizationRoot.Global.Culture("de")))
     Console.WriteLine(key);
 ```

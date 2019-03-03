@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// A name policy implementation that builds names of <see cref="IAssetKey"/>. 
     /// 
     /// Non-canonical parts are appended in the beginning of the string. Order of non-canonical parameters uses string ordinal comparer, making "Culture" parameter typically first.
-    /// Example: key.Section("x").Key("y").SetCulture("fi") builds into string "fi:x:y".
+    /// Example: key.Section("x").Key("y").Culture("fi") builds into string "fi:x:y".
     /// 
     /// Canonical parts are concatenated in canonical order from root to tail.
     /// Example: key.Key("x").Section("y").Key("z") builds into string "x:y:z".

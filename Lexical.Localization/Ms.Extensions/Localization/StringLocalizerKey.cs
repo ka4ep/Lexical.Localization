@@ -102,15 +102,15 @@ namespace Lexical.Localization.Ms.Extensions
             public String ParameterName => parameterName;
         }
 
-        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.SetCulture(CultureInfo culture) => new _Culture(this, null, culture);
-        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.SetCulture(string cultureName) => new _Culture(this, cultureName, null);
-        public _Culture SetCulture(CultureInfo culture) => new _Culture(this, null, culture);
-        public _Culture SetCulture(string cultureName) => new _Culture(this, cultureName, null);
+        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.Culture(CultureInfo culture) => new _Culture(this, null, culture);
+        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.Culture(string cultureName) => new _Culture(this, cultureName, null);
+        public _Culture Culture(CultureInfo culture) => new _Culture(this, null, culture);
+        public _Culture Culture(string cultureName) => new _Culture(this, cultureName, null);
         [Serializable]
         public class _Culture : StringLocalizerKey, ILocalizationKeyCultureAssigned, IAssetKeyNonCanonicallyCompared, IAssetKeyParameterAssigned
         {
             protected CultureInfo culture;
-            public CultureInfo Culture => culture;
+            CultureInfo ILocalizationKeyCultureAssigned.Culture => culture;
             public _Culture(IAssetKey prevKey, string cultureName, CultureInfo culture) : base(prevKey, cultureName ?? culture.Name)
             {
                 try
@@ -182,18 +182,18 @@ namespace Lexical.Localization.Ms.Extensions
             public virtual String ParameterName => "Section";
         }
 
-        static RuntimeConstructor<IAssetKey, _Type> typeSectionConstructor = new RuntimeConstructor<IAssetKey, _Type>(typeof(_TypeSection<>));
+        static RuntimeConstructor<IAssetKey, _Type> typeConstructor = new RuntimeConstructor<IAssetKey, _Type>(typeof(_Type<>));
         IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(string typename) => new _Type(this, typename);
-        IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(Type t) => typeSectionConstructor.Create(t, this);
-        IAssetKey<T> IAssetKeyTypeAssignable.Type<T>() => new _TypeSection<T>(this);
-        public _Type TypeSection(string typename) => new _Type(this, typename);
-        public _Type TypeSection(Type t) => typeSectionConstructor.Create(t, this);
-        public _TypeSection<T> TypeSection<T>() => new _TypeSection<T>(this);
+        IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(Type t) => typeConstructor.Create(t, this);
+        IAssetKey<T> IAssetKeyTypeAssignable.Type<T>() => new _Type<T>(this);
+        public _Type Type(string typename) => new _Type(this, typename);
+        public _Type Type(Type t) => typeConstructor.Create(t, this);
+        public _Type<T> Type<T>() => new _Type<T>(this);
         [Serializable]
         public class _Type : StringLocalizerKey, IAssetKeyTypeAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
             protected Type type;
-            public virtual Type Type => type;
+            Type IAssetKeyTypeAssigned.Type => type;
             public _Type(IAssetKey prevKey, Type type) : base(prevKey, type.FullName) { this.type = type; }
             public _Type(IAssetKey prevKey, String name) : base(prevKey, name) { this.name = name; }
             public _Type(SerializationInfo info, StreamingContext context) : base(info, context) {
@@ -201,8 +201,8 @@ namespace Lexical.Localization.Ms.Extensions
             }
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
             {
-                var t = Type;
-                // .NET Core can't serialize TypeSection<T> if T isn't [Serializable]
+                var t = type;
+                // .NET Core can't serialize Type<T> if T isn't [Serializable]
                 if (t == null) info.AddValue(nameof(Type), name); 
                 else if (t.IsSerializable) info.AddValue(nameof(Type), t);
                 base.GetObjectData(info, context);
@@ -210,22 +210,22 @@ namespace Lexical.Localization.Ms.Extensions
             public String ParameterName => "Type";
         }
         [Serializable]
-        public class _TypeSection<T> : _Type, IAssetKey<T>, IStringLocalizer<T>
+        public class _Type<T> : _Type, IAssetKey<T>, IStringLocalizer<T>
         {
-            public _TypeSection(IAssetKey prevKey) : base(prevKey, typeof(T)) {}
-            public _TypeSection(IAssetRoot root) : base(root, typeof(T)) { }
-            public _TypeSection(SerializationInfo info, StreamingContext context) : base(info, context) { }
+            public _Type(IAssetKey prevKey) : base(prevKey, typeof(T)) {}
+            public _Type(IAssetRoot root) : base(root, typeof(T)) { }
+            public _Type(SerializationInfo info, StreamingContext context) : base(info, context) { }
         }
 
         IAssetKeyAssemblyAssigned IAssetKeyAssemblyAssignable.Assembly(Assembly assembly) => new _Assembly(this, assembly);
         IAssetKeyAssemblyAssigned IAssetKeyAssemblyAssignable.Assembly(String assemblyName) => new _Assembly(this, assemblyName);
-        public _Assembly AssemblySection(Assembly assembly) => new _Assembly(this, assembly);
-        public _Assembly AssemblySection(String assemblyName) => new _Assembly(this, assemblyName);
+        public _Assembly Assembly(Assembly assembly) => new _Assembly(this, assembly);
+        public _Assembly Assembly(String assemblyName) => new _Assembly(this, assemblyName);
         [Serializable]
         public class _Assembly : StringLocalizerKey, IAssetKeyAssemblyAssigned, IAssetKeyNonCanonicallyCompared, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
             protected Assembly assembly;
-            public virtual Assembly Assembly => assembly;
+            Assembly IAssetKeyAssemblyAssigned.Assembly => assembly;
             public _Assembly(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
             public _Assembly(IAssetKey prevKey, Assembly assembly) : base(prevKey, assembly.GetName().Name) { this.assembly = assembly; }
             public _Assembly(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -234,7 +234,7 @@ namespace Lexical.Localization.Ms.Extensions
             }
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
             {
-                var a = Assembly;
+                var a = assembly;
                 info.AddValue(nameof(Assembly), a);
                 base.GetObjectData(info, context);
             }
@@ -242,7 +242,7 @@ namespace Lexical.Localization.Ms.Extensions
         }
 
         IAssetKeyResourceAssigned IAssetKeyResourceAssignable.Resource(String resourceName) => new _Resource(this, resourceName);
-        public _Resource ResourceSection(String resourceName) => new _Resource(this, resourceName);
+        public _Resource Resource(String resourceName) => new _Resource(this, resourceName);
         [Serializable]
         public class _Resource : StringLocalizerKey, IAssetKeyResourceAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
@@ -350,7 +350,7 @@ namespace Lexical.Localization.Ms.Extensions
         }
 
         public IStringLocalizer Create(string basename, string location) => new _Resource(new _Assembly(this, location), basename);
-        public IStringLocalizer Create(Type type) => typeSectionConstructor.Create(type, this);
+        public IStringLocalizer Create(Type type) => typeConstructor.Create(type, this);
         public IStringLocalizer WithCulture(CultureInfo culture) => new _Culture(this, null, culture);
         public LocalizedString this[string name] 
         { 

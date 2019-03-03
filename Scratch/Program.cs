@@ -21,7 +21,7 @@ namespace Scratch
             //LocalizationRoot.Builder.AddLocalizationFile("localization.xml").Build();
 
             // Create key
-            IAssetKey key = LocalizationRoot.Global.TypeSection("ConsoleApp1.MyController").Key("Success");
+            IAssetKey key = LocalizationRoot.Global.Type("ConsoleApp1.MyController").Key("Success");
             Key key2 = Key.Create("Type", "ConsoleApp1.MyController").Append("Key", "Success").Append("Culture", "en");
 
             AssetKeyComparer comparer = AssetKeyComparer.Default;

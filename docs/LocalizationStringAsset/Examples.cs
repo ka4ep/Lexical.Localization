@@ -53,7 +53,7 @@ namespace docs
 
                 #region Snippet_3
                 // Keys can be filtered
-                foreach (IAssetKey key in asset.GetAllKeys(LocalizationRoot.Global.SetCulture("de")))
+                foreach (IAssetKey key in asset.GetAllKeys(LocalizationRoot.Global.Culture("de")))
                     Console.WriteLine(key);
                 #endregion Snippet_3
 

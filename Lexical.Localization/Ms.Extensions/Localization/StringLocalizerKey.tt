@@ -56,7 +56,7 @@ namespace Lexical.Localization.Ms.Extensions
 <#= srcCode #>
 
         public IStringLocalizer Create(string basename, string location) => new _Resource(new _Assembly(this, location), basename);
-        public IStringLocalizer Create(Type type) => typeSectionConstructor.Create(type, this);
+        public IStringLocalizer Create(Type type) => typeConstructor.Create(type, this);
         public IStringLocalizer WithCulture(CultureInfo culture) => new _Culture(this, null, culture);
         public LocalizedString this[string name] 
         { 

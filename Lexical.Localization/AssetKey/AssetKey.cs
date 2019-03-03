@@ -122,7 +122,7 @@ namespace Lexical.Localization
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
             {
                 var t = Type;
-                // .NET Core can't serialize TypeSection<T> if T isn't [Serializable]
+                // .NET Core can't serialize Type<T> if T isn't [Serializable]
                 if (t.IsSerializable) info.AddValue(nameof(Type), t);
                 base.GetObjectData(info, context);
             }

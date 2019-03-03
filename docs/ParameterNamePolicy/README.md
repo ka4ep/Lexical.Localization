@@ -1,6 +1,6 @@
 # Parameter Name Policy
 **ParameterNamePolicy** is an *IAssetNameKeyPolicy* implementation that uses context free string format. 
-Keys that are written in this format do not need contextual information about the notation of each line as the notatin contains both parameter name and value.
+Keys that are written in this format do not need contextual information about the format of each key.
 
 ```none
 parameterName:parameterValue:parameterName:parameterValue:...
@@ -31,7 +31,7 @@ key:Success\:Plural
 
 ```csharp
 // Create context-dependent key
-IAssetKey key = LocalizationRoot.Global.TypeSection("MyController").Key("Success").SetCulture("en");
+IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
 // Serialize to string
 string str = ParameterNamePolicy.Instance.PrintKey(key);
 ```
