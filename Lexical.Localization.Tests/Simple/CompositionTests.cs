@@ -33,7 +33,7 @@ namespace Lexical.Localization.Tests
             IAsset asset = new AssetComposition(map1, map2, map3, map4);
             IAssetKey root = LocalizationRoot.Global;
             IAssetKey section = root.Section("ConsoleApp1").Section("MyController");
-            IAssetKey fi = section.SetCulture("fi"), en = section.SetCulture("en"), fi_savo = section.SetCulture("fi-Savo");
+            IAssetKey fi = section.Culture("fi"), en = section.Culture("en"), fi_savo = section.Culture("fi-Savo");
             IAssetKey success = section.Key("Success"), fi_success = fi.Key("Success"), en_success = en.Key("Success");
 
             // Assert

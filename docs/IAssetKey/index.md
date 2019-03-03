@@ -37,13 +37,13 @@ Non-canonical parts are typically hints, such as **.SetCulture(*string*)**.
 | Parameter | Canonical | Interface | Extension Method | Description |
 |:---------|:-------|:--------|:---------|:---------|
 | Root | canonical | IAssetRoot |  | Contains asset and culture policy. Keys are constructed from here. |
-| Type | canonical | IAssetKeyTypeSection | .TypeSection(*Type*) | Type section for grouping by classes and interfaces. |
-| Location | canonical | IAsseyKeyLocationSection | .Location(*string*) | Hint to asset for a directory to search from. |
-| Assembly | non-canonical | IAssetKeyAssemblySection | .AssemblySection(*Assembly*) | Hint to asset for an assembly to search from. |
-| Resource | canonical | IAssetKeyResourceSection | .ResourceSection(*string*) | Hint to asset for an embedded resource path to search from. |
+| Type | canonical | IAssetKeyType | .Type(*Type*) | Type section for grouping by classes and interfaces. |
+| Location | canonical | IAsseyKeyLocation | .Location(*string*) | Hint to asset for a directory to search from. |
+| Assembly | non-canonical | IAssetKeyAssembly | .Assembly(*Assembly*) | Hint to asset for an assembly to search from. |
+| Resource | canonical | IAssetKeyResource | .Resource(*string*) | Hint to asset for an embedded resource path to search from. |
 | Section | canonical | IAssetKeySection | .Section(*string*) | Generic section for grouping assets. |
 | Key | canonical | IAssetKey | .Key(*string*) | Leaf key |
-| Culture | non-canonical | ILocalizationKeyCultured | .SetCulture(*CultureInfo*) | Parameter to override current culture. |
+| Culture | non-canonical | ILocalizationKeyCulture | .Culture(*CultureInfo*) | Parameter to override current culture. |
 |  | non-canonical | ILocalizationKeyFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
 |  | non-canonical | ILocalizationKeyInlined | .Inline(*string*, *string*) | Hint for default culture specific string values. |
 

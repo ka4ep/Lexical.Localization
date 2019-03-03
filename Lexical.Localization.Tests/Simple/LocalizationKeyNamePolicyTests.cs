@@ -17,7 +17,7 @@ namespace Lexical.Localization.Tests
             IAssetKey root = LocalizationRoot.Global;
             IAssetKey section = root.Section("ConsoleApp1").Section("MyController");
             IAssetKey key = section.Key("Success");
-            IAssetKey key_en = key.SetCulture("en");
+            IAssetKey key_en = key.Culture("en");
             CultureInfo en = CultureInfo.GetCultureInfo("en");
 
             // Act

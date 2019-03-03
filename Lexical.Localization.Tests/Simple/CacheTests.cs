@@ -28,8 +28,8 @@ namespace Lexical.Localization.Tests
             IAssetCache asset = new AssetCache(map).AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache();
             LocalizationRoot.Global.SetAsset(asset);
             IAssetKey root = LocalizationRoot.Global;
-            IAssetKey section = root.TypeSection("ConsoleApp1.MyController");
-            IAssetKey fi = section.SetCulture("fi"), en = section.SetCulture("en"), fi_savo = section.SetCulture("fi-Savo");
+            IAssetKey section = root.Type("ConsoleApp1.MyController");
+            IAssetKey fi = section.Culture("fi"), en = section.Culture("en"), fi_savo = section.Culture("fi-Savo");
             IAssetKey success = section.Key("Success"), fi_success = fi.Key("Success"), en_success = en.Key("Success");
 
             // Assert

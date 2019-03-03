@@ -28,7 +28,7 @@ namespace Lexical.Localization.Ms.Extensions
     [DebuggerDisplay("{DebugPrint()}")]
     [Serializable]
     public class StringLocalizerKey :  
-        ILocalizationKey, IAssetKeyAssignable, ILocalizationKeyInlineAssignable, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, IAssetKeyLinked, IAssetKeyTypeSectionAssignable, IAssetKeyAssemblySectionAssignable, IAssetKeyResourceSectionAssignable, IAssetKeyLocationSectionAssignable, IAssetKeySectionAssignable, IAssetKeyParameterAssignable, ISerializable, IDynamicMetaObjectProvider,
+        ILocalizationKey, IAssetKeyAssignable, ILocalizationKeyInlineAssignable, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyParameterAssignable, ISerializable, IDynamicMetaObjectProvider,
         IStringLocalizer, IStringLocalizerFactory
     {
         /// <summary>
@@ -59,38 +59,38 @@ namespace Lexical.Localization.Ms.Extensions
         IAssetKeyAssigned IAssetKeyAssignable.Key(string subkey) => new _Key(this, subkey);
         public _Key Key(string subkey) => new _Key(this, subkey);
         [Serializable]
-        public class _Key : StringLocalizerKey, IAssetKeyAssigned, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
+        public class _Key : StringLocalizerKey, IAssetKeyAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
             public _Key(IAssetKey prevKey, string name) : base(prevKey, name) { }
             public _Key(SerializationInfo info, StreamingContext context) : base(info, context) { }
             public String ParameterName => "Key";
         }
 
-        IAssetKeyParametrized IAssetKeyParameterAssignable.AppendParameter(string parameterName, string parameterValue)
+        IAssetKeyParameterAssigned IAssetKeyParameterAssignable.AppendParameter(string parameterName, string parameterValue)
         {
             if (parameterName == null) throw new ArgumentNullException(nameof(parameterName));
             if (parameterValue == null) throw new ArgumentNullException(nameof(parameterValue));
             switch (parameterName)
             {
                 case "Key": return new _Key(this, parameterValue);
-                case "Culture": return new _Cultured(this, parameterValue, null);
-                case "Type": return new _TypeSection(this, parameterValue);
+                case "Culture": return new _Culture(this, parameterValue, null);
+                case "Type": return new _Type(this, parameterValue);
                 case "Section": return new _Section(this, parameterValue);
-                case "Resource": return new _ResourceSection(this, parameterValue);
-                case "Assembly": return new _AssemblySection(this, parameterValue);
-                case "Location": return new _LocationSection(this, parameterValue);
-                default: return new _Parametrized(this, parameterName, parameterValue);
+                case "Resource": return new _Resource(this, parameterValue);
+                case "Assembly": return new _Assembly(this, parameterValue);
+                case "Location": return new _Location(this, parameterValue);
+                default: return new _Parameter(this, parameterName, parameterValue);
             }
         }
         [Serializable]
-        public class _Parametrized : StringLocalizerKey, IAssetKeyAssigned, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
+        public class _Parameter : StringLocalizerKey, IAssetKeyAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
             string parameterName;
-            public _Parametrized(IAssetKey prevKey, string parameterName, string parameterValue) : base(prevKey, parameterValue)
+            public _Parameter(IAssetKey prevKey, string parameterName, string parameterValue) : base(prevKey, parameterValue)
             {
                 this.parameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
             }
-            public _Parametrized(SerializationInfo info, StreamingContext context) : base(info, context)
+            public _Parameter(SerializationInfo info, StreamingContext context) : base(info, context)
             {
                 this.parameterName = info.GetValue(nameof(ParameterName), typeof(string)) as string;
             }
@@ -102,16 +102,16 @@ namespace Lexical.Localization.Ms.Extensions
             public String ParameterName => parameterName;
         }
 
-        ILocalizationKeyCultured ILocalizationKeyCultureAssignable.SetCulture(CultureInfo culture) => new _Cultured(this, null, culture);
-        ILocalizationKeyCultured ILocalizationKeyCultureAssignable.SetCulture(string cultureName) => new _Cultured(this, cultureName, null);
-        public _Cultured SetCulture(CultureInfo culture) => new _Cultured(this, null, culture);
-        public _Cultured SetCulture(string cultureName) => new _Cultured(this, cultureName, null);
+        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.SetCulture(CultureInfo culture) => new _Culture(this, null, culture);
+        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.SetCulture(string cultureName) => new _Culture(this, cultureName, null);
+        public _Culture SetCulture(CultureInfo culture) => new _Culture(this, null, culture);
+        public _Culture SetCulture(string cultureName) => new _Culture(this, cultureName, null);
         [Serializable]
-        public class _Cultured : StringLocalizerKey, ILocalizationKeyCultured, IAssetKeyNonCanonicallyCompared, IAssetKeyParametrized
+        public class _Culture : StringLocalizerKey, ILocalizationKeyCultureAssigned, IAssetKeyNonCanonicallyCompared, IAssetKeyParameterAssigned
         {
             protected CultureInfo culture;
             public CultureInfo Culture => culture;
-            public _Cultured(IAssetKey prevKey, string cultureName, CultureInfo culture) : base(prevKey, cultureName ?? culture.Name)
+            public _Culture(IAssetKey prevKey, string cultureName, CultureInfo culture) : base(prevKey, cultureName ?? culture.Name)
             {
                 try
                 {
@@ -119,7 +119,7 @@ namespace Lexical.Localization.Ms.Extensions
                 }
                 catch (Exception) { }
             }
-            public _Cultured(SerializationInfo info, StreamingContext context) : base(info, context) { this.culture = info.GetValue(nameof(Culture), typeof(CultureInfo)) as CultureInfo; }
+            public _Culture(SerializationInfo info, StreamingContext context) : base(info, context) { this.culture = info.GetValue(nameof(Culture), typeof(CultureInfo)) as CultureInfo; }
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
             {
                 base.GetObjectData(info, context);
@@ -175,28 +175,28 @@ namespace Lexical.Localization.Ms.Extensions
         IAssetKeySectionAssigned IAssetKeySectionAssignable.Section(string sectionName) => new _Section(this, sectionName);
         public _Section Section(string sectionName) => new _Section(this, sectionName);
         [Serializable]
-        public class _Section : StringLocalizerKey, IAssetKeySectionAssigned, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
+        public class _Section : StringLocalizerKey, IAssetKeySectionAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
             public _Section(IAssetKey prevKey, string name) : base(prevKey, name) { }
             public _Section(SerializationInfo info, StreamingContext context) : base(info, context) { }
             public virtual String ParameterName => "Section";
         }
 
-        static RuntimeConstructor<IAssetKey, _TypeSection> typeSectionConstructor = new RuntimeConstructor<IAssetKey, _TypeSection>(typeof(_TypeSection<>));
-        IAssetKeyTypeSection IAssetKeyTypeSectionAssignable.TypeSection(string typename) => new _TypeSection(this, typename);
-        IAssetKeyTypeSection IAssetKeyTypeSectionAssignable.TypeSection(Type t) => typeSectionConstructor.Create(t, this);
-        IAssetKey<T> IAssetKeyTypeSectionAssignable.TypeSection<T>() => new _TypeSection<T>(this);
-        public _TypeSection TypeSection(string typename) => new _TypeSection(this, typename);
-        public _TypeSection TypeSection(Type t) => typeSectionConstructor.Create(t, this);
+        static RuntimeConstructor<IAssetKey, _Type> typeSectionConstructor = new RuntimeConstructor<IAssetKey, _Type>(typeof(_TypeSection<>));
+        IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(string typename) => new _Type(this, typename);
+        IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(Type t) => typeSectionConstructor.Create(t, this);
+        IAssetKey<T> IAssetKeyTypeAssignable.Type<T>() => new _TypeSection<T>(this);
+        public _Type TypeSection(string typename) => new _Type(this, typename);
+        public _Type TypeSection(Type t) => typeSectionConstructor.Create(t, this);
         public _TypeSection<T> TypeSection<T>() => new _TypeSection<T>(this);
         [Serializable]
-        public class _TypeSection : StringLocalizerKey, IAssetKeyTypeSection, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
+        public class _Type : StringLocalizerKey, IAssetKeyTypeAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
             protected Type type;
             public virtual Type Type => type;
-            public _TypeSection(IAssetKey prevKey, Type type) : base(prevKey, type.FullName) { this.type = type; }
-            public _TypeSection(IAssetKey prevKey, String name) : base(prevKey, name) { this.name = name; }
-            public _TypeSection(SerializationInfo info, StreamingContext context) : base(info, context) {
+            public _Type(IAssetKey prevKey, Type type) : base(prevKey, type.FullName) { this.type = type; }
+            public _Type(IAssetKey prevKey, String name) : base(prevKey, name) { this.name = name; }
+            public _Type(SerializationInfo info, StreamingContext context) : base(info, context) {
                 this.type = info.GetValue(nameof(Type), typeof(Type)) as Type;
             }
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -210,25 +210,25 @@ namespace Lexical.Localization.Ms.Extensions
             public String ParameterName => "Type";
         }
         [Serializable]
-        public class _TypeSection<T> : _TypeSection, IAssetKey<T>, IStringLocalizer<T>
+        public class _TypeSection<T> : _Type, IAssetKey<T>, IStringLocalizer<T>
         {
             public _TypeSection(IAssetKey prevKey) : base(prevKey, typeof(T)) {}
             public _TypeSection(IAssetRoot root) : base(root, typeof(T)) { }
             public _TypeSection(SerializationInfo info, StreamingContext context) : base(info, context) { }
         }
 
-        IAssetKeyAssemblySection IAssetKeyAssemblySectionAssignable.AssemblySection(Assembly assembly) => new _AssemblySection(this, assembly);
-        IAssetKeyAssemblySection IAssetKeyAssemblySectionAssignable.AssemblySection(String assemblyName) => new _AssemblySection(this, assemblyName);
-        public _AssemblySection AssemblySection(Assembly assembly) => new _AssemblySection(this, assembly);
-        public _AssemblySection AssemblySection(String assemblyName) => new _AssemblySection(this, assemblyName);
+        IAssetKeyAssemblyAssigned IAssetKeyAssemblyAssignable.Assembly(Assembly assembly) => new _Assembly(this, assembly);
+        IAssetKeyAssemblyAssigned IAssetKeyAssemblyAssignable.Assembly(String assemblyName) => new _Assembly(this, assemblyName);
+        public _Assembly AssemblySection(Assembly assembly) => new _Assembly(this, assembly);
+        public _Assembly AssemblySection(String assemblyName) => new _Assembly(this, assemblyName);
         [Serializable]
-        public class _AssemblySection : StringLocalizerKey, IAssetKeyAssemblySection, IAssetKeyNonCanonicallyCompared, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
+        public class _Assembly : StringLocalizerKey, IAssetKeyAssemblyAssigned, IAssetKeyNonCanonicallyCompared, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
             protected Assembly assembly;
             public virtual Assembly Assembly => assembly;
-            public _AssemblySection(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
-            public _AssemblySection(IAssetKey prevKey, Assembly assembly) : base(prevKey, assembly.GetName().Name) { this.assembly = assembly; }
-            public _AssemblySection(SerializationInfo info, StreamingContext context) : base(info, context)
+            public _Assembly(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
+            public _Assembly(IAssetKey prevKey, Assembly assembly) : base(prevKey, assembly.GetName().Name) { this.assembly = assembly; }
+            public _Assembly(SerializationInfo info, StreamingContext context) : base(info, context)
             {
                 this.assembly = info.GetValue(nameof(Assembly), typeof(Assembly)) as Assembly;
             }
@@ -241,23 +241,23 @@ namespace Lexical.Localization.Ms.Extensions
             public String ParameterName => "Assembly";
         }
 
-        IAssetKeyResourceSection IAssetKeyResourceSectionAssignable.ResourceSection(String resourceName) => new _ResourceSection(this, resourceName);
-        public _ResourceSection ResourceSection(String resourceName) => new _ResourceSection(this, resourceName);
+        IAssetKeyResourceAssigned IAssetKeyResourceAssignable.Resource(String resourceName) => new _Resource(this, resourceName);
+        public _Resource ResourceSection(String resourceName) => new _Resource(this, resourceName);
         [Serializable]
-        public class _ResourceSection : StringLocalizerKey, IAssetKeyResourceSection, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
+        public class _Resource : StringLocalizerKey, IAssetKeyResourceAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
-            public _ResourceSection(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
-            public _ResourceSection(SerializationInfo info, StreamingContext context) : base(info, context) {}
+            public _Resource(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
+            public _Resource(SerializationInfo info, StreamingContext context) : base(info, context) {}
             public String ParameterName => "Resource";
         }
 
-        IAssetKeyLocationSection IAssetKeyLocationSectionAssignable.Location(String resourceName) => new _LocationSection(this, resourceName);
-        public _LocationSection Location(String resourceName) => new _LocationSection(this, resourceName);
+        IAssetKeyLocationAssigned IAssetKeyLocationAssignable.Location(String resourceName) => new _Location(this, resourceName);
+        public _Location Location(String resourceName) => new _Location(this, resourceName);
         [Serializable]
-        public class _LocationSection : StringLocalizerKey, IAssetKeyLocationSection, IAssetKeyParametrized, IAssetKeyCanonicallyCompared
+        public class _Location : StringLocalizerKey, IAssetKeyLocationAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
-            public _LocationSection(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
-            public _LocationSection(SerializationInfo info, StreamingContext context) : base(info, context) { }
+            public _Location(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
+            public _Location(SerializationInfo info, StreamingContext context) : base(info, context) { }
             public String ParameterName => "Location";
         }
 
@@ -349,9 +349,9 @@ namespace Lexical.Localization.Ms.Extensions
             return hashcode;
         }
 
-        public IStringLocalizer Create(string basename, string location) => new _ResourceSection(new _AssemblySection(this, location), basename);
+        public IStringLocalizer Create(string basename, string location) => new _Resource(new _Assembly(this, location), basename);
         public IStringLocalizer Create(Type type) => typeSectionConstructor.Create(type, this);
-        public IStringLocalizer WithCulture(CultureInfo culture) => new _Cultured(this, null, culture);
+        public IStringLocalizer WithCulture(CultureInfo culture) => new _Culture(this, null, culture);
         public LocalizedString this[string name] 
         { 
             get {

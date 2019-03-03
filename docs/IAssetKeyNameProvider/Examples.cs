@@ -20,12 +20,12 @@ namespace docs
                 // Create key
                 IAssetKey key = new LocalizationRoot(asset).Section("MyController").Key("Hello");
                 // Retrieve string
-                string str = key.SetCulture("en").ResolveFormulatedString();
+                string str = key.Culture("en").ResolveFormulatedString();
                 #endregion Snippet_0a
 
                 #region Snippet_0b
                 // Test if key converted correctly to expected identity "en/Section/Key"
-                string id = policy.BuildName(key.SetCulture("en"));
+                string id = policy.BuildName(key.Culture("en"));
                 #endregion Snippet_0b
             }
 

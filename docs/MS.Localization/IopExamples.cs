@@ -30,11 +30,11 @@ namespace docs
 
                 // There are .resx files in "Resources/ConsoleApp1.MyController" with keys "Success" and "Error"
                 IAssetKey key = root
-                    .AssemblySection(Assembly.GetExecutingAssembly())
-                    .ResourceSection("ConsoleApp1.MyController")
+                    .Assembly(Assembly.GetExecutingAssembly())
+                    .Resource("ConsoleApp1.MyController")
                     //.TypeSection(typeof(ConsoleApp1.MyController1))
                     .Key("Success")
-                    .SetCulture("sv");
+                    .Culture("sv");
 
                 // Retrieve string from IStringLocalizerFactory
                 string str = key.ToString();
@@ -86,7 +86,7 @@ namespace docs
                 IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());
 
                 // Set key
-                IAssetKey key = root.SetCulture("fi").TypeSection(typeof(ConsoleApp1.MyController));
+                IAssetKey key = root.Culture("fi").Type(typeof(ConsoleApp1.MyController));
 
                 // Type cast key to IStringLocalizer
                 IStringLocalizer stringLocalizer = key as IStringLocalizer;

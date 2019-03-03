@@ -20,13 +20,13 @@ namespace Lexical.Localization
         /// <param name=""></param>
         /// <returns>a key with a culture policy. (most likely the same key)</returns>
         /// <exception cref="InvalidOperationException">If object is read-only</exception>
-        ILocalizationKeyCulturePolicy SetCulturePolicy(ICulturePolicy culturePolicy);
+        ILocalizationKeyCulturePolicyAssigned CulturePolicy(ICulturePolicy culturePolicy);
     }
 
     /// <summary>
     /// Key has been set with <see cref="ICulturePolicy"/> hint.
     /// </summary>
-    public interface ILocalizationKeyCulturePolicy : ILocalizationKey
+    public interface ILocalizationKeyCulturePolicyAssigned : ILocalizationKey
     {
         /// <summary>
         /// Selected culture policy, or null.
@@ -42,11 +42,11 @@ namespace Lexical.Localization
         /// <param name="key">(optional) key </param>
         /// <param name="culturePolicy"></param>
         /// <returns>key or null</returns>
-        public static ILocalizationKeyCulturePolicy TrySetCulturePolicy(this ILocalizationKeyCulturePolicyAssignable key, ICulturePolicy culturePolicy)
+        public static ILocalizationKeyCulturePolicyAssigned TrySetCulturePolicy(this ILocalizationKeyCulturePolicyAssignable key, ICulturePolicy culturePolicy)
         {
             try
             {
-                return key.SetCulturePolicy(culturePolicy);
+                return key.CulturePolicy(culturePolicy);
             } catch (InvalidOperationException)
             {
                 return null;
@@ -68,13 +68,13 @@ namespace Lexical.Localization
         public static ICulturePolicy FindCulturePolicy(this IAssetKey key)
         {
             for (;key!=null; key=key.GetPreviousKey())
-                if (key is ILocalizationKeyCulturePolicy cultureKey && cultureKey.CulturePolicy != null) return cultureKey.CulturePolicy;
+                if (key is ILocalizationKeyCulturePolicyAssigned cultureKey && cultureKey.CulturePolicy != null) return cultureKey.CulturePolicy;
             return null;
         }
     }
 
     /// <summary>
-    /// Non-canonical comparer that compares <see cref="ILocalizationKeyCulturePolicy"/> values of keys.
+    /// Non-canonical comparer that compares <see cref="ILocalizationKeyCulturePolicyAssigned"/> values of keys.
     /// </summary>
     public class LocalizationKeyCulturePolicyComparer : IEqualityComparer<IAssetKey>
     {

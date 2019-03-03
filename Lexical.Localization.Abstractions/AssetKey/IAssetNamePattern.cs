@@ -17,40 +17,40 @@ namespace Lexical.Localization
     /// Is a sequence of parameter and text parts.
     /// 
     /// Parameter parts:
-    ///  {culture}           - Matches to key.SetCulture("en")
-    ///  {assembly}          - Matches to key.AssemblySection(asm).
-    ///  {resource}          - Matches to key.ResourceSection("xx").
-    ///  {type}              - Matches to key.TypeSection(type)
-    ///  {section}           - Matches to key.Section("xx")
-    ///  {location}          - Matches to key.LocationSection("xx") and a physical folder, separator is '/'.
+    ///  {Culture}           - Matches to key.SetCulture("en")
+    ///  {Assembly}          - Matches to key.AssemblySection(asm).
+    ///  {Resource}          - Matches to key.ResourceSection("xx").
+    ///  {Type}              - Matches to key.TypeSection(type)
+    ///  {Section}           - Matches to key.Section("xx")
+    ///  {Location}          - Matches to key.LocationSection("xx") and a physical folder, separator is '/'.
     ///  {anysection}        - Matches to assembly, type and section.
-    ///  {key}               - Matches to key key.Key("x")
+    ///  {Key}               - Matches to key key.Key("x")
     /// 
     /// Before and after the part pre- and postfix separator characters can be added:
-    ///  {/culture.}
+    ///  {/Culture.}
     ///  
     /// Parts can be optional in curly braces {} and required in brackets [].
-    ///  [culture]
+    ///  [Culture]
     /// 
     /// Part can be added multiple times, which matches when part has identifier secion multiple times. Latter part names must be suffixed with "_number".
-    ///  "localization{-key_0}{-key_1}.ini"  - Matches to key.Key("x").Key("x");
+    ///  "localization{-Key_0}{-Key_1}.ini"  - Matches to key.Key("x").Key("x");
     /// 
     /// Suffix "_n" refers to the last occurance. This is also the case without an occurance number.
-    ///  "{culture.}localization.ini"        - Matches to "fi" in: key.SetCulture("en").SetCulture("de").SetCulture("fi");
-    ///  "{location_0/}{location_1/}{location_2/}{location_n/}location.ini 
+    ///  "{Culture.}localization.ini"        - Matches to "fi" in: key.SetCulture("en").SetCulture("de").SetCulture("fi");
+    ///  "{Location_0/}{Location_1/}{Location_2/}{Location_n/}location.ini 
     ///  
     /// Regular expressions can be written between &lt; and &gt; characters to specify match criteria. \ escapes \, *, +, ?, |, {, [, (,), &lt;, &gr; ^, $,., #, and white space.
-    ///  "{section&lt;[^:]*&gt;.}"
+    ///  "{Section&lt;[^:]*&gt;.}"
     /// 
     /// Regular expressions can be used for greedy match when matching against filenames and embedded resources.
-    ///  "{assembly.}{resource&lt;.*&gt;.}{type.}{section.}{key}"
+    ///  "{Assembly.}{Resource&lt;.*&gt;.}{Type.}{Section.}{Key}"
     /// 
     /// Examples:
-    ///   "[assembly.]Resources.localization{-culture}.json"
-    ///   "[assembly.]Resources.{type.}localization[-culture].json"
-    ///   "Assets/{type/}localization{-culture}.ini"
-    ///   "Assets/{assembly/}{type/}{section.}localization{-culture}.ini"
-    ///   "{culture.}{type.}{section_0.}{section_1.}{section_2.}[section_n]{.key_0}{.key_1}{.key_n}"
+    ///   "[Assembly.]Resources.localization{-Culture}.json"
+    ///   "[Assembly.]Resources.{Type.}localization[-Culture].json"
+    ///   "Assets/{Type/}localization{-Culture}.ini"
+    ///   "Assets/{Assembly/}{Type/}{Section.}localization{-Culture}.ini"
+    ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
     /// 
     /// </summary>
     public interface IAssetNamePattern : IAssetKeyNamePolicy
@@ -152,10 +152,10 @@ namespace Lexical.Localization
         /// <summary>
         /// The order of occurance to capture against.
         /// 
-        /// As special case Int32.MaxValue means the last occurance "{.section}"
+        /// As special case Int32.MaxValue means the last occurance "{.Section}"
         /// 
-        /// For example "{.section_0}" captures first occurance, and the part's OccuranceIndex = 0.
-        ///             "{.section}" captures the last occurance overriding possible ordered occurance if there is only one match.
+        /// For example "{.Section_0}" captures first occurance, and the part's OccuranceIndex = 0.
+        ///             "{.Section}" captures the last occurance overriding possible ordered occurance if there is only one match.
         /// </summary>
         int OccuranceIndex { get; }
 
@@ -348,7 +348,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Build regex pattern that captures same parts from filename string.
         /// 
-        /// For example "localization{-culture}.ini" translates to regex "localization(-(?&lt;culture&gt;.*))?.ini".
+        /// For example "localization{-Culture}.ini" translates to regex "localization(-(?&lt;Culture&gt;.*))?.ini".
         /// This can be matched against filename "localization-en.ini" with group m.Group["Culture"].Value == "en".
         /// </summary>
         /// <paramref name="pattern"/>

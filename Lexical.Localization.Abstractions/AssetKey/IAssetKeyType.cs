@@ -12,30 +12,30 @@ namespace Lexical.Localization
     /// 
     /// Type parameters are used with physical files and embedded resources.
     /// 
-    /// Consumers of this interface should use the extension method <see cref="AssetKeyExtensions.TypeSection(IAssetKey, string)"/> and others.
+    /// Consumers of this interface should use the extension method <see cref="AssetKeyExtensions.Type(IAssetKey, string)"/> and others.
     /// </summary>
-    public interface IAssetKeyTypeSectionAssignable : IAssetKey
+    public interface IAssetKeyTypeAssignable : IAssetKey
     {
         /// <summary>
         /// Create type section key for specific type.
         /// </summary>
         /// <param name="name">type</param>
         /// <returns>new key</returns>
-        IAssetKeyTypeSection TypeSection(string name);
+        IAssetKeyTypeAssigned Type(string name);
 
         /// <summary>
         /// Create type section key for specific type.
         /// </summary>
         /// <param name="type">type</param>
         /// <returns>new key</returns>
-        IAssetKeyTypeSection TypeSection(Type type);
+        IAssetKeyTypeAssigned Type(Type type);
 
         /// <summary>
         /// Create type section for specific type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>new key</returns>
-        IAssetKey<T> TypeSection<T>();
+        IAssetKey<T> Type<T>();
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ namespace Lexical.Localization
     /// 
     /// Type parameters are used with physical files and embedded resources.
     /// </summary>
-    public interface IAssetKeyTypeSection : IAssetKeySection
+    public interface IAssetKeyTypeAssigned : IAssetKeySection
     {
         /// <summary>
         /// Type, or null.
@@ -55,108 +55,108 @@ namespace Lexical.Localization
     /// Type section for <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IAssetKey<T> : IAssetKeyTypeSection
+    public interface IAssetKey<T> : IAssetKeyTypeAssigned
     {
     }
 
     public static partial class AssetKeyExtensions
     {
         /// <summary>
-        /// Add <see cref="IAssetKeyTypeSection"/> section.
+        /// Add <see cref="IAssetKeyTypeAssigned"/> section.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type"></param>
         /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement <see cref="IAssetKeyTypeSectionAssignable"/></exception>
-        public static IAssetKeyTypeSection TypeSection(this IAssetKey key, string name)
+        /// <exception cref="AssetKeyException">If key doesn't implement <see cref="IAssetKeyTypeAssignable"/></exception>
+        public static IAssetKeyTypeAssigned Type(this IAssetKey key, string name)
         {
-            if (key is IAssetKeyTypeSectionAssignable casted) return casted.TypeSection(name);
-            throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyTypeSectionAssignable)}.");
+            if (key is IAssetKeyTypeAssignable casted) return casted.Type(name);
+            throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyTypeAssignable)}.");
         }
 
         /// <summary>
-        /// Add <see cref="IAssetKeyTypeSection"/> section.
+        /// Add <see cref="IAssetKeyTypeAssigned"/> section.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type"></param>
         /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement <see cref="IAssetKeyTypeSectionAssignable"/></exception>
-        public static IAssetKeyTypeSection TypeSection(this IAssetKey key, Type type)
+        /// <exception cref="AssetKeyException">If key doesn't implement <see cref="IAssetKeyTypeAssignable"/></exception>
+        public static IAssetKeyTypeAssigned Type(this IAssetKey key, Type type)
         {
-            if (key is IAssetKeyTypeSectionAssignable casted) return casted.TypeSection(type);
-            throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyTypeSectionAssignable)}.");
+            if (key is IAssetKeyTypeAssignable casted) return casted.Type(type);
+            throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyTypeAssignable)}.");
         }
 
         /// <summary>
-        /// Add <see cref="IAssetKeyTypeSection"/> section.
+        /// Add <see cref="IAssetKeyTypeAssigned"/> section.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type"></param>
         /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement <see cref="IAssetKeyTypeSectionAssignable"/></exception>
-        public static IAssetKey<T> TypeSection<T>(this IAssetKey key)
+        /// <exception cref="AssetKeyException">If key doesn't implement <see cref="IAssetKeyTypeAssignable"/></exception>
+        public static IAssetKey<T> Type<T>(this IAssetKey key)
         {
-            if (key is IAssetKeyTypeSectionAssignable casted) return casted.TypeSection<T>();
-            throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyTypeSectionAssignable)}.");
+            if (key is IAssetKeyTypeAssignable casted) return casted.Type<T>();
+            throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyTypeAssignable)}.");
         }
 
         /// <summary>
-        /// Try to add <see cref="IAssetKeyTypeSection"/> section.
+        /// Try to add <see cref="IAssetKeyTypeAssigned"/> section.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeyTypeSection TryCreateTypeSection(this IAssetKey key, Type type)
+        public static IAssetKeyTypeAssigned TrySetType(this IAssetKey key, Type type)
         {
-            if (key is IAssetKeyTypeSectionAssignable casted) return casted.TypeSection(type);
+            if (key is IAssetKeyTypeAssignable casted) return casted.Type(type);
             return null;
         }
 
         /// <summary>
-        /// Try to add <see cref="IAssetKeyTypeSection"/> section.
+        /// Try to add <see cref="IAssetKeyTypeAssigned"/> section.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeyTypeSection TryCreateTypeSection(this IAssetKey key, string type)
+        public static IAssetKeyTypeAssigned TrySetType(this IAssetKey key, string type)
         {
-            if (key is IAssetKeyTypeSectionAssignable casted) return casted.TypeSection(type);
+            if (key is IAssetKeyTypeAssignable casted) return casted.Type(type);
             return null;
         }
 
         /// <summary>
-        /// Get previous <see cref="IAssetKeyTypeSection"/>.
+        /// Get previous <see cref="IAssetKeyTypeAssigned"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>type key with type or null</returns>
-        public static IAssetKeyTypeSection FindTypeSection(this IAssetKey key)
+        public static IAssetKeyTypeAssigned FindTypeKey(this IAssetKey key)
         {
             while (key != null)
             {
-                if (key is IAssetKeyTypeSection typeKey && typeKey.Type != null) return typeKey;
+                if (key is IAssetKeyTypeAssigned typeKey && typeKey.Type != null) return typeKey;
                 key = key.GetPreviousKey();
             }
             return null;
         }
 
         /// <summary>
-        /// Get previous <see cref="IAssetKeyTypeSection"/>.
+        /// Get previous <see cref="IAssetKeyTypeAssigned"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>type key with type or null</returns>
-        public static IAssetKeyTypeSection FindTypeSection(this IAssetKey key, Type type)
+        public static IAssetKeyTypeAssigned FindTypeKey(this IAssetKey key, Type type)
         {
             while (key != null)
             {
-                if (key is IAssetKeyTypeSection typeKey && typeKey.Type == type) return typeKey;
+                if (key is IAssetKeyTypeAssigned typeKey && typeKey.Type == type) return typeKey;
                 key = key.GetPreviousKey();
             }
             return null;
         }
 
         /// <summary>
-        /// Get first <see cref="IAssetKeyTypeSection"/> key that has a Type.
+        /// Get first <see cref="IAssetKeyTypeAssigned"/> key that has a Type.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>type or null</returns>
@@ -164,7 +164,7 @@ namespace Lexical.Localization
         {
             while (key != null)
             {
-                if (key is IAssetKeyTypeSection typeKey && typeKey.Type != null) return typeKey.Type;
+                if (key is IAssetKeyTypeAssigned typeKey && typeKey.Type != null) return typeKey.Type;
                 key = key.GetPreviousKey();
             }
             return null;

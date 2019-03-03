@@ -186,7 +186,7 @@ namespace Lexical.Localization
             for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
             {
                 if (part is IAssetKeyCanonicallyCompared == false) continue;
-                if (part is IAssetKeyParametrized parametrized)
+                if (part is IAssetKeyParameterAssigned parametrized)
                 {
                     // Read parameter name and value
                     string parameterName = parametrized.ParameterName, parameterValue = part.Name;
@@ -219,7 +219,7 @@ namespace Lexical.Localization
             for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
             {
                 if (part is IAssetKeyNonCanonicallyCompared == false) continue;
-                if (part is IAssetKeyParametrized parametrized)
+                if (part is IAssetKeyParameterAssigned parametrized)
                 {
                     // Read parameter name and value
                     string parameterName = parametrized.ParameterName, parameterValue = part.Name;
@@ -259,7 +259,7 @@ namespace Lexical.Localization
             for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
             {
                 if (part is IAssetKeyCanonicallyCompared == false) continue;
-                if (part is IAssetKeyParametrized parametrized)
+                if (part is IAssetKeyParameterAssigned parametrized)
                 {
                     // Read parameter name and value
                     string parameterName = parametrized.ParameterName, parameterValue = part.Name;
@@ -292,7 +292,7 @@ namespace Lexical.Localization
             for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
             {
                 if (part is IAssetKeyNonCanonicallyCompared == false) continue;
-                if (part is IAssetKeyParametrized parametrized)
+                if (part is IAssetKeyParameterAssigned parametrized)
                 {
                     // Read parameter name and value
                     string parameterName = parametrized.ParameterName, parameterValue = part.Name;

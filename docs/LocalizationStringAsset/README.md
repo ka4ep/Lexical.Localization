@@ -32,7 +32,7 @@ If LocalizationStringAsset was constructed with a [IAssetNamePattern](../IAssetK
 
 ```csharp
 // Create asset with name pattern
-IAsset asset = new LocalizationStringAsset(source, "{culture:}{type:}{key}");
+IAsset asset = new LocalizationStringAsset(source, "{culture:}{type:}{Key}");
 ```
 
 Also keys can be enumerated from the asset.

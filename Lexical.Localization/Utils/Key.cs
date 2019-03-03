@@ -17,7 +17,7 @@ namespace Lexical.Localization.Utils
     /// 
     /// This class has one parameter name and a value, and it can carry a link to previous node.
     /// </summary>
-    public partial class Key : IAssetKey, IAssetKeyLinked, IAssetKeyParametrized, IAssetKeyParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>
+    public partial class Key : IAssetKey, IAssetKeyLinked, IAssetKeyParameterAssigned, IAssetKeyParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>
     {
         private static readonly Key root = new Key("Root", "");
         public static Key Root => root;
@@ -86,7 +86,7 @@ namespace Lexical.Localization.Utils
         public Key Append(string parameterName, string parameterValue)
             => Create(this, parameterName, parameterValue);
 
-        public IAssetKeyParametrized AppendParameter(string parameterName, string parameterValue)
+        public IAssetKeyParameterAssigned AppendParameter(string parameterName, string parameterValue)
             => Create(this, parameterName, parameterValue);
 
         public static Key Create(string parameterName, string parameterValue)

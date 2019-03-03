@@ -28,7 +28,7 @@ namespace docs
                 // Create root 
                 IAssetRoot root = new LocalizationRoot(asset);
                 // Create key. Name policy converts to .
-                IAssetKey key = root.Section("MyController").Key("hello").SetCulture("de");
+                IAssetKey key = root.Section("MyController").Key("hello").Culture("de");
                 // Test what identity is produced, "de:MyController:hello"
                 string id = AssetKeyNameProvider.Default.BuildName(key);
                 // Query language string
@@ -43,7 +43,7 @@ namespace docs
                 };
                 #region Snippet_2a
                 // Create asset with name pattern
-                IAsset asset = new LocalizationStringAsset(source, "{culture:}{type:}{key}");
+                IAsset asset = new LocalizationStringAsset(source, "{culture:}{type:}{Key}");
                 #endregion Snippet_2a
                 #region Snippet_2b
                 // Extract all keys

@@ -44,7 +44,7 @@ namespace docs
                 #region Snippet_4a
                 // Assign to IStringLocalizer for the class MyController
                 IStringLocalizer<MyController> stringLocalizer = 
-                    root.TypeSection(typeof(MyController)) 
+                    root.Type(typeof(MyController)) 
                     as IStringLocalizer<MyController>;
                 #endregion Snippet_4a
             }
@@ -63,7 +63,7 @@ namespace docs
                 #region Snippet_5a            
                 // Create IStringLocalizer and assign culture
                 IStringLocalizer stringLocalizer = 
-                    root.SetCulture("en").TypeSection<MyController>() 
+                    root.Culture("en").Type<MyController>() 
                     as IStringLocalizer<MyController>;
                 #endregion Snippet_5a
             }

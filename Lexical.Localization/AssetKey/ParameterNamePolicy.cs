@@ -75,7 +75,7 @@ namespace Lexical.Localization
         AssetKeyVisitor<StringBuilder> _parameterVisitor;
         void parameterVisitor(IAssetKey key, ref StringBuilder sb)
         {
-            if (key is IAssetKeyParametrized parameter && parameter.ParameterName != "Root")
+            if (key is IAssetKeyParameterAssigned parameter && parameter.ParameterName != "Root")
             {
                 if (sb.Length > 0) sb.Append(':');
                 sb.Append(EscapeLiteral(parameter.ParameterName));

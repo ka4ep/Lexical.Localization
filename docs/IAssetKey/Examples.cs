@@ -45,10 +45,10 @@ namespace docs
                 IAssetKey key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
 
                 // Retrieve string with a reference
-                string str = asset.GetString(key.SetCulture("en"));
+                string str = asset.GetString(key.Culture("en"));
 
                 // Retrieve binary resource with a reference
-                byte[] data = asset.GetResource(key.SetCulture("en"));
+                byte[] data = asset.GetResource(key.Culture("en"));
                 #endregion Snippet_3a
             }
             {
@@ -108,7 +108,7 @@ namespace docs
 
                 #region Snippet_6b
                 // Create key "Error"
-                IAssetKey key = root.TypeSection("ConsoleApp1.MyController").Key("Error");
+                IAssetKey key = root.Type("ConsoleApp1.MyController").Key("Error");
                 // Formulate key
                 IAssetKey key_formulated = key.Format(0xFeedF00d);
                 #endregion Snippet_6b
@@ -138,7 +138,7 @@ namespace docs
                     .Inline("sv", "Det funkar");                       // Add inlining to culture "sv"
 
                 // Resolve string from inlined key "Success"
-                string str = key.SetCulture("en").ToString();
+                string str = key.Culture("en").ToString();
                 #endregion Snippet_7a
             }
 
@@ -213,7 +213,7 @@ namespace docs
 
             public MyController(IAssetRoot localizationRoot)
             {
-                this.localization = localizationRoot.TypeSection<MyController>();
+                this.localization = localizationRoot.Type<MyController>();
             }
 
             public void Do()

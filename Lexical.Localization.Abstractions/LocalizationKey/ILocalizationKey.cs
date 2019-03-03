@@ -13,12 +13,12 @@ namespace Lexical.Localization
     /// Signals that the class gives localizations specific parameters, hints or capabilities.
     /// 
     /// Parameters:
-    ///     <see cref="ILocalizationKeyCultured"/>
+    ///     <see cref="ILocalizationKeyCultureAssigned"/>
     ///     <see cref="ILocalizationKeyInlined"/>
     ///     <see cref="ILocalizationKeyFormatArgs"/>
     ///     
     /// Hints:
-    ///     <see cref="ILocalizationKeyCulturePolicy"/>
+    ///     <see cref="ILocalizationKeyCulturePolicyAssigned"/>
     ///     
     /// Capabilities:
     ///     <see cref="ILocalizationKeyCultureAssignable"/>

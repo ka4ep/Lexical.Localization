@@ -11,10 +11,10 @@ namespace Lexical.Localization
     /// Signals that the class gives asset specific parameters, hints or capabilities.
     /// 
     /// Parameters:
-    ///     <see cref="IAssetKeyAssemblySection"/>
-    ///     <see cref="IAssetKeyLocationSection"/>
-    ///     <see cref="IAssetKeyResourceSection"/>
-    ///     <see cref="IAssetKeyTypeSection"/>
+    ///     <see cref="IAssetKeyAssemblyAssigned"/>
+    ///     <see cref="IAssetKeyLocationAssigned"/>
+    ///     <see cref="IAssetKeyResourceAssigned"/>
+    ///     <see cref="IAssetKeyTypeAssigned"/>
     ///     <see cref="IAssetKeySectionAssigned"/>
     ///     <see cref="IAssetKeyAssigned"/>
     ///     
@@ -22,13 +22,13 @@ namespace Lexical.Localization
     ///     <see cref="IAssetKeyAssetAssigned"/>
     ///     
     /// Capabilities:
-    ///     <see cref="IAssetKeyAssemblySectionAssignable"/>
+    ///     <see cref="IAssetKeyAssemblyAssignable"/>
     ///     <see cref="IAssetKeyAssetAssignable"/>
     ///     <see cref="IAssetKeyAssignable"/>
-    ///     <see cref="IAssetKeyLocationSectionAssignable"/>
-    ///     <see cref="IAssetKeyResourceSectionAssignable"/>
+    ///     <see cref="IAssetKeyLocationAssignable"/>
+    ///     <see cref="IAssetKeyResourceAssignable"/>
     ///     <see cref="IAssetKeySectionAssignable"/>
-    ///     <see cref="IAssetKeyTypeSectionAssignable"/>
+    ///     <see cref="IAssetKeyTypeAssignable"/>
     ///  
     /// Others:
     ///     <see cref="IAssetRoot"/>

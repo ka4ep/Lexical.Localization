@@ -165,7 +165,7 @@ namespace Lexical.Localization.Utils
             if (!ChildLookup.TryGetValue(key, out child))
             {
                 child = child = new KeyTree(this, key);
-                if (!ChildLookup.ContainsKey(key)) ChildLookup[key] = child;
+                if (!ChildLookup.ContainsKey(key)) ChildLookup[Key] = child;
                 Children.Add(child);
             }
             return child;

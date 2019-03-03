@@ -40,7 +40,7 @@ namespace Lexical.Localization.Internal
         public static IEnumerable<IniToken> Comments(IEnumerable<string> comments) => comments.Select(c => Comment(c));
 
         /// <summary>
-        /// Create a Section-token. "[section]"
+        /// Create a Section-token. "[Section]"
         /// </summary>
         /// <param name="section">Raw unescaped value. Use any characters.</param>
         /// <returns>token</returns>

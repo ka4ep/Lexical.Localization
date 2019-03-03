@@ -35,7 +35,7 @@ var source = new Dictionary<string, string> {
     { "de:MyController:hello", "Hallo Welt!"  }
 };
 // Create asset with string source
-IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{key}").Load();
+IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{Key}").Load();
 ```
 </details>
 

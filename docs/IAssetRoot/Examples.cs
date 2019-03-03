@@ -24,7 +24,7 @@ namespace docs
 
                 #region Snippet_1b
                 // Construct key
-                IAssetKey key = root.TypeSection("MyController").Key("Hello");
+                IAssetKey key = root.Type("MyController").Key("Hello");
                 #endregion Snippet_1b
 
                 #region Snippet_1c

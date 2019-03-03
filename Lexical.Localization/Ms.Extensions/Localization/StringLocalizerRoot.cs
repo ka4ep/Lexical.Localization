@@ -23,12 +23,12 @@ namespace Lexical.Localization.Ms.Extensions
     [DebuggerDisplay("{DebugPrint()}")]
     public partial class StringLocalizerRoot :
         StringLocalizerKey,
-        IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicy, IAssetKeyAssetAssigned,
-        IStringLocalizer, IStringLocalizerFactory, IAssetKeyParametrized
+        IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned,
+        IStringLocalizer, IStringLocalizerFactory, IAssetKeyParameterAssigned
     {
         protected ICulturePolicy culturePolicy;
         protected IAsset localizationAsset;
-        String IAssetKeyParametrized.ParameterName => "Root";
+        String IAssetKeyParameterAssigned.ParameterName => "Root";
 
         public virtual ICulturePolicy CulturePolicy { get => culturePolicy; set { throw new InvalidOperationException(); } }
         public virtual IAsset Asset { get => localizationAsset; set { throw new InvalidOperationException(); } }
@@ -50,14 +50,17 @@ namespace Lexical.Localization.Ms.Extensions
         [Serializable]
         public class Mutable : StringLocalizerRoot, IAssetKeyAssetAssignable, ILocalizationKeyCulturePolicyAssignable
         {
-            public override ICulturePolicy CulturePolicy { get => culturePolicy; set { SetCulturePolicy(value); } }
+            public override ICulturePolicy CulturePolicy { get => culturePolicy; set => SetCulturePolicy(culturePolicy); }
             public override IAsset Asset { get => localizationAsset; set { SetAsset(value); } }
             public Mutable() : base(null, null) { }
             public Mutable(IAsset languageStrings) : base(languageStrings, null) { }
             public Mutable(IAsset languageStrings, ICulturePolicy culturePolicy) : base(languageStrings, culturePolicy) { }
             public Mutable(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
-            public virtual ILocalizationKeyCulturePolicy SetCulturePolicy(ICulturePolicy culturePolicy)
+            ILocalizationKeyCulturePolicyAssigned ILocalizationKeyCulturePolicyAssignable.CulturePolicy(ICulturePolicy culturePolicy)
+                => SetCulturePolicy(culturePolicy);
+
+            public virtual ILocalizationKeyCulturePolicyAssigned SetCulturePolicy(ICulturePolicy culturePolicy)
             {
                 this.culturePolicy = culturePolicy;
                 return this;
@@ -76,13 +79,13 @@ namespace Lexical.Localization.Ms.Extensions
         [Serializable]
         public class LinkedTo : StringLocalizerRoot, 
             IAssetKeyAssignable, IAssetKeyAssetAssigned,
-            ILocalizationKeyCulturePolicyAssignable, ILocalizationKeyCulturePolicy
+            ILocalizationKeyCulturePolicyAssignable, ILocalizationKeyCulturePolicyAssigned
         {
             public readonly IAssetRoot link;
             IAssetKeyAssetAssignable linkLocalizationAssetAssignable;
             IAssetKeyAssetAssigned linkLocalizationAsset;
             ILocalizationKeyCulturePolicyAssignable linkCulturePolicyAssignable;
-            ILocalizationKeyCulturePolicy linkCulturePolicy;
+            ILocalizationKeyCulturePolicyAssigned linkCulturePolicy;
 
             public override ICulturePolicy CulturePolicy { get => linkCulturePolicy != null ? linkCulturePolicy.CulturePolicy : link.FindCulturePolicy(); set { SetCulturePolicy(value); } }
             public override IAsset Asset { get => linkLocalizationAsset != null ? linkLocalizationAsset.Asset : link.FindAsset(); set { SetAsset(value); } }
@@ -92,16 +95,19 @@ namespace Lexical.Localization.Ms.Extensions
                 this.link = link ?? throw new ArgumentNullException(nameof(link));
                 this.linkLocalizationAsset = link as IAssetKeyAssetAssigned;
                 this.linkLocalizationAssetAssignable = link as IAssetKeyAssetAssignable;
-                this.linkCulturePolicy = link as ILocalizationKeyCulturePolicy;
+                this.linkCulturePolicy = link as ILocalizationKeyCulturePolicyAssigned;
                 this.linkCulturePolicyAssignable = link as ILocalizationKeyCulturePolicyAssignable;
             }
 
-            public virtual ILocalizationKeyCulturePolicy SetCulturePolicy(ICulturePolicy culturePolicy)
+            public virtual ILocalizationKeyCulturePolicyAssigned SetCulturePolicy(ICulturePolicy culturePolicy)
             {
                 ILocalizationKeyCulturePolicyAssignable a = linkCulturePolicyAssignable != null ? linkCulturePolicyAssignable : link.Get<ILocalizationKeyCulturePolicyAssignable>();
-                a.SetCulturePolicy(culturePolicy);
+                a.CulturePolicy(culturePolicy);
                 return this;
             }
+
+            ILocalizationKeyCulturePolicyAssigned ILocalizationKeyCulturePolicyAssignable.CulturePolicy(ICulturePolicy culturePolicy)
+                => SetCulturePolicy(culturePolicy);
 
             public IAssetKeyAssetAssigned SetAsset(IAsset asset)
             {

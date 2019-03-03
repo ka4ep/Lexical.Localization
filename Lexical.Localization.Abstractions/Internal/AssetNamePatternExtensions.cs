@@ -8,7 +8,7 @@ namespace Lexical.Localization
     public static partial class AssetNamePatternExtensions
     {
         /// <summary>
-        /// A name pattern such as "{section_0/}{section_1/}{section_n/}{key}" is matched to occurance indexes 0 first, then 1 and then 'n'.
+        /// A name pattern such as "{section_0/}{section_1/}{section_n/}{Key}" is matched to occurance indexes 0 first, then 1 and then 'n'.
         /// This method moves last numeric match, for example '1' to 'n'. 
         /// </summary>
         /// <param name="match"></param>

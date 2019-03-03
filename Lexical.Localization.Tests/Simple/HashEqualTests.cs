@@ -22,10 +22,10 @@ namespace Lexical.Localization.Tests
 
             /// Section-1
             // Arrange
-            IAssetKey section1 = root1.TypeSection(typeof(HashEqualTests).CanonicalName());
-            IAssetKey section2 = root2.TypeSection(typeof(HashEqualTests));
-            IAssetKey section3 = root3.TypeSection<HashEqualTests>();
-            IAssetKey section4 = new LocalizationKey._TypeSection(new LocalizationRoot(), typeof(HashEqualTests).CanonicalName());
+            IAssetKey section1 = root1.Type(typeof(HashEqualTests).CanonicalName());
+            IAssetKey section2 = root2.Type(typeof(HashEqualTests));
+            IAssetKey section3 = root3.Type<HashEqualTests>();
+            IAssetKey section4 = new LocalizationKey._Type(new LocalizationRoot(), typeof(HashEqualTests).CanonicalName());
             IAssetKey sectionX = root1.Section("MySection");
             // Assert
             AreEqual(section1, section2, section3);
@@ -41,10 +41,10 @@ namespace Lexical.Localization.Tests
 
             /// Section-2
             // Arrange
-            IAssetKey subSection1 = section1.TypeSection(typeof(HashEqualTests).CanonicalName());
-            IAssetKey subSection2 = section2.TypeSection(typeof(HashEqualTests));
-            IAssetKey subSection3 = section3.TypeSection<HashEqualTests>();
-            IAssetKey subSectionX = section1.TypeSection("MySubSection");
+            IAssetKey subSection1 = section1.Type(typeof(HashEqualTests).CanonicalName());
+            IAssetKey subSection2 = section2.Type(typeof(HashEqualTests));
+            IAssetKey subSection3 = section3.Type<HashEqualTests>();
+            IAssetKey subSectionX = section1.Type("MySubSection");
             // Assert
             AreEqual(subSection1, subSection2, subSection3);
             AreNotEqual(subSection1, subSectionX);
@@ -68,10 +68,10 @@ namespace Lexical.Localization.Tests
 
             /// Culture
             // Arrange
-            IAssetKey ckey1 = root1.Section("MySection").Section("MySubsection").Key("Key").SetCulture("fi");
-            IAssetKey ckey2 = root1.Section("MySection").Section("MySubsection").SetCulture("fi").Key("Key");
-            IAssetKey ckey3 = root1.Section("MySection").SetCulture("fi").Section("MySubsection").Key("Key");
-            IAssetKey ckey4 = root1.SetCulture("fi").Section("MySection").Section("MySubsection").Key("Key");
+            IAssetKey ckey1 = root1.Section("MySection").Section("MySubsection").Key("Key").Culture("fi");
+            IAssetKey ckey2 = root1.Section("MySection").Section("MySubsection").Culture("fi").Key("Key");
+            IAssetKey ckey3 = root1.Section("MySection").Culture("fi").Section("MySubsection").Key("Key");
+            IAssetKey ckey4 = root1.Culture("fi").Section("MySection").Section("MySubsection").Key("Key");
             IAssetKey ckeyX = root1.Section("MySection").Section("MySubsection").Key("Key");
             // Assert
             AreEqual(ckey1, ckey2, ckey3);

@@ -161,7 +161,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Compares key that implements <see cref="IAssetKeyParametrized"/> against another.
+    /// Compares key that implements <see cref="IAssetKeyParameterAssigned"/> against another.
     /// </summary>
     public class ParametrizedComparer : IEqualityComparer<IAssetKey>
     {
@@ -195,7 +195,7 @@ namespace Lexical.Localization
 
     /// <summary>
     /// Compares all non-canonical parameters keys agains each other.
-    /// These are keys that implement <see cref="IAssetKeyParametrized"/> and <see cref="IAssetKeyNonCanonicallyCompared"/>.
+    /// These are keys that implement <see cref="IAssetKeyParameterAssigned"/> and <see cref="IAssetKeyNonCanonicallyCompared"/>.
     /// Root key is not compared.
     /// </summary>
     public class ParametrizedNonCanonicalComparer : IEqualityComparer<IAssetKey>

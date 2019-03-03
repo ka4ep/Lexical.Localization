@@ -13,41 +13,44 @@ using System.Text.RegularExpressions;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Pattern that can be matched against localization keys and asset filenames.
+    /// A name pattern, akin to regular expression, that can be matched against filenames and <see cref="IAssetKey"/> instances.
+    /// Is a sequence of parameter and text parts.
     /// 
-    /// Pattern is an enumeration of parts:
-    ///  {culture}           - Matches to key.SetCulture("en")
-    ///  {assembly}          - Matches to key.AssemblySection(asm)
-    ///  {resource}          - Matches to key.ResourceSection("xx")
-    ///  {type}              - Matches to key.TypeSection(type)
-    ///  {section}           - Matches to key.Section("xx")
+    /// Parameter parts:
+    ///  {Culture}           - Matches to key.SetCulture("en")
+    ///  {Assembly}          - Matches to key.AssemblySection(asm).
+    ///  {Resource}          - Matches to key.ResourceSection("xx").
+    ///  {Type}              - Matches to key.TypeSection(type)
+    ///  {Section}           - Matches to key.Section("xx")
+    ///  {Location}          - Matches to key.LocationSection("xx") and a physical folder, separator is '/'.
     ///  {anysection}        - Matches to assembly, type and section.
-    ///  {key}               - Matches to regular key key.Key("x") and key["x"]
+    ///  {Key}               - Matches to key key.Key("x")
+    /// 
+    /// Before and after the part pre- and postfix separator characters can be added:
+    ///  {/Culture.}
     ///  
     /// Parts can be optional in curly braces {} and required in brackets [].
-    ///  [culture]
+    ///  [Culture]
     /// 
     /// Part can be added multiple times, which matches when part has identifier secion multiple times. Latter part names must be suffixed with "_number".
-    ///  "localization{-key_0}{-key_1}.ini"  - Matches to key.Key("x").Key("x");
-    ///  
-    /// Without a number, matches to last occurance of identifier
-    ///  "{culture.}localization.ini"        - Matches to "fi" in: key.SetCulture("en").SetCulture("de").SetCulture("fi");
+    ///  "localization{-Key_0}{-Key_1}.ini"  - Matches to key.Key("x").Key("x");
     /// 
-    /// Before and after the pattern identifier pre- and postfix separator characters can be added:
-    ///  {/culture.}
+    /// Suffix "_n" refers to the last occurance. This is also the case without an occurance number.
+    ///  "{Culture.}localization.ini"        - Matches to "fi" in: key.SetCulture("en").SetCulture("de").SetCulture("fi");
+    ///  "{Location_0/}{Location_1/}{Location_2/}{Location_n/}location.ini 
     ///  
-    ///  
-    /// If part identifier has ! at the end of name, then the part is matched with greedy quantified when matched against filenames.
-    ///  {anysection!.}
-    ///  
-    /// There is no escaping for {, [, ] and } characters.
+    /// Regular expressions can be written between &lt; and &gt; characters to specify match criteria. \ escapes \, *, +, ?, |, {, [, (,), &lt;, &gr; ^, $,., #, and white space.
+    ///  "{Section&lt;[^:]*&gt;.}"
+    /// 
+    /// Regular expressions can be used for greedy match when matching against filenames and embedded resources.
+    ///  "{Assembly.}{Resource&lt;.*&gt;.}{Type.}{Section.}{Key}"
     /// 
     /// Examples:
-    ///   "Resources.localization{-culture}.json"
-    ///   "Resources.localization[-culture].json"
-    ///   "Assets/{type/}localization{-culture}.ini"
-    ///   "Assets/{assembly/}{type/}{section.}localization{-culture}.ini"
-    ///   "{culture.}{type.}{section_0.}{section_1.}{section_2.}{section_3.}{.key_0}{.key_1}{key}"
+    ///   "[Assembly.]Resources.localization{-Culture}.json"
+    ///   "[Assembly.]Resources.{Type.}localization[-Culture].json"
+    ///   "Assets/{Type/}localization{-Culture}.ini"
+    ///   "Assets/{Assembly/}{Type/}{Section.}localization{-Culture}.ini"
+    ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
     /// 
     /// </summary>
     public class AssetNamePattern : IAssetNamePattern, IAssetKeyNameParser

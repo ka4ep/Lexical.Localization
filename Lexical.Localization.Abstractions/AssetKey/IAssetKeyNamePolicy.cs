@@ -35,6 +35,7 @@ namespace Lexical.Localization
     }
     #endregion IAssetKeyNameProvider
 
+    #region IAssetKeyNameParser
     public interface IAssetKeyNameParser : IAssetKeyNamePolicy
     {
         /// <summary>
@@ -55,6 +56,7 @@ namespace Lexical.Localization
         /// <returns>true if parse was successful</returns>
         bool TryParse(string str, out IAssetKey key, IAssetKey rootKey = default);
     }
+    #endregion IAssetKeyNameParser
 
     /// <summary>
     /// Converts localization key to a strings that identifies a language string.

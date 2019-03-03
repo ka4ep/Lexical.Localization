@@ -17,11 +17,11 @@ namespace Lexical.Localization
         /// <summary>
         /// Select a specific culture. 
         /// 
-        /// Adds <see cref="ILocalizationKeyCultured"/> link.
+        /// Adds <see cref="ILocalizationKeyCultureAssigned"/> link.
         /// </summary>
         /// <param name="subkey">Name for new sub key.</param>
         /// <returns>new key</returns>
-        ILocalizationKeyCultured SetCulture(CultureInfo culture);
+        ILocalizationKeyCultureAssigned SetCulture(CultureInfo culture);
 
         /// <summary>
         /// Set to a specific culture
@@ -31,13 +31,13 @@ namespace Lexical.Localization
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
         /// <exception cref="CultureNotFoundException">if culture was not found</exception>
-        ILocalizationKeyCultured SetCulture(string cultureName);
+        ILocalizationKeyCultureAssigned SetCulture(string cultureName);
     }
 
     /// <summary>
     /// Key (may have) has "Culture" parameter assigned.
     /// </summary>
-    public interface ILocalizationKeyCultured : IAssetKeyNonCanonicallyCompared, ILocalizationKey
+    public interface ILocalizationKeyCultureAssigned : IAssetKeyNonCanonicallyCompared, ILocalizationKey
     {
         /// <summary>
         /// Selected culture, or null.
@@ -54,7 +54,7 @@ namespace Lexical.Localization
         /// <param name="culture"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
-        public static ILocalizationKeyCultured SetCulture(this IAssetKey key, CultureInfo culture)
+        public static ILocalizationKeyCultureAssigned Culture(this IAssetKey key, CultureInfo culture)
         {
             if (key is ILocalizationKeyCultureAssignable casted) return casted.SetCulture(culture);
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyCultureAssignable)}.");
@@ -67,7 +67,7 @@ namespace Lexical.Localization
         /// <param name="cultureName"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
-        public static ILocalizationKeyCultured SetCulture(this IAssetKey key, string cultureName)
+        public static ILocalizationKeyCultureAssigned Culture(this IAssetKey key, string cultureName)
         {
             if (key is ILocalizationKeyCultureAssignable casted) return casted.SetCulture(cultureName);
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyCultureAssignable)}.");
@@ -79,7 +79,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="cultureName"></param>
         /// <returns>new key or null</returns>
-        public static ILocalizationKeyCultured TrySetCulture(this IAssetKey key, string cultureName)
+        public static ILocalizationKeyCultureAssigned TrySetCulture(this IAssetKey key, string cultureName)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="culture"></param>
         /// <returns>new key or null</returns>
-        public static ILocalizationKeyCultured TrySetCulture(this IAssetKey key, CultureInfo culture)
+        public static ILocalizationKeyCultureAssigned TrySetCulture(this IAssetKey key, CultureInfo culture)
         {
             if (key is ILocalizationKeyCultureAssignable casted) return casted.SetCulture(culture);
             return null;
@@ -110,7 +110,7 @@ namespace Lexical.Localization
         public static CultureInfo FindCulture(this IAssetKey key)
         {
             for (; key != null; key = key.GetPreviousKey())
-                if (key is ILocalizationKeyCultured cultureKey && cultureKey.Culture != null) return cultureKey.Culture;
+                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.Culture != null) return cultureKey.Culture;
             return null;
         }
 
@@ -119,10 +119,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>culture policy or null</returns>
-        public static ILocalizationKeyCultured FindCulturedKey(this IAssetKey key)
+        public static ILocalizationKeyCultureAssigned FindCultureKey(this IAssetKey key)
         {
             for (; key != null; key = key.GetPreviousKey())
-                if (key is ILocalizationKeyCultured cultureKey && cultureKey.Name != null) return cultureKey;
+                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.Name != null) return cultureKey;
             return null;
         }
 
@@ -187,7 +187,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Non-canonical comparer that compares <see cref="ILocalizationKeyCultured"/> values of keys.
+    /// Non-canonical comparer that compares <see cref="ILocalizationKeyCultureAssigned"/> values of keys.
     /// </summary>
     public class LocalizationKeyCultureComparer : IEqualityComparer<IAssetKey>
     {

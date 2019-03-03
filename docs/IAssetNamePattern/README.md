@@ -13,7 +13,7 @@ IAssetKey key = new LocalizationRoot()
 
 ```csharp
 // Create similiar policy with AssetNamePattern
-IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{culture/}{location/}{type/}{section/}[key].txt");
+IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{culture/}{location/}{type/}{section/}[Key].txt");
 // "en/Patches/MyController/Errors/InvalidState.txt"
 string str = myPolicy.BuildName(key);
 ```
@@ -23,14 +23,14 @@ Parameter is optional when it's written inside braces "{parameter/}" and require
 
 ```csharp
 // Create name pattern
-IAssetKeyNamePolicy myPolicy = new AssetNamePattern("Patches/{section}[-key]{-culture}.png");
+IAssetKeyNamePolicy myPolicy = new AssetNamePattern("Patches/{Section}[-key]{-culture}.png");
 ```
 
 Parameter can be added multiple times by adding suffix "_#". Replace # with the occurance index. "_n" represents the last occurance.
 
 ```csharp
 // Create name pattern
-IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{location_0/}{location_1/}{location_n/}{section}{-key}{-culture}.png");
+IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{location_0/}{location_1/}{location_n/}{Section}{-key}{-culture}.png");
 // Create key
 IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").SetCulture("de");
 // Converts to "Patches/20181130/icons-ok-de.png"
@@ -42,7 +42,7 @@ Expressions give more control when name pattern is used for matching against fil
 
 ```csharp
 // Create name pattern with regular expression detail
-IAssetNamePattern myPolicy = new AssetNamePattern("{location<[^/]+>/}{section}{-key}{-culture}.png");
+IAssetNamePattern myPolicy = new AssetNamePattern("{location<[^/]+>/}{Section}{-key}{-culture}.png");
 // Use its regular expression
 Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");
 ```
@@ -56,20 +56,20 @@ Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");
 /// Is a sequence of parameter and text parts.
 /// 
 /// Parameter parts:
-///  {culture}           - Matches to key.SetCulture("en")
-///  {assembly}          - Matches to key.AssemblySection(asm).
-///  {resource}          - Matches to key.ResourceSection("xx").
-///  {type}              - Matches to key.TypeSection(type)
-///  {section}           - Matches to key.Section("xx")
-///  {location}          - Matches to key.LocationSection("xx") and a physical folder, separator is '/'.
+///  {Culture}           - Matches to key.SetCulture("en")
+///  {Assembly}          - Matches to key.AssemblySection(asm).
+///  {Resource}          - Matches to key.ResourceSection("xx").
+///  {Type}              - Matches to key.TypeSection(type)
+///  {Section}           - Matches to key.Section("xx")
+///  {Location}          - Matches to key.LocationSection("xx") and a physical folder, separator is '/'.
 ///  {anysection}        - Matches to assembly, type and section.
-///  {key}               - Matches to key key.Key("x")
+///  {Key}               - Matches to key key.Key("x")
 /// 
 /// Before and after the part pre- and postfix separator characters can be added:
 ///  {/culture.}
 ///  
 /// Parts can be optional in curly braces {} and required in brackets [].
-///  [culture]
+///  [Culture]
 /// 
 /// Part can be added multiple times, which matches when part has identifier secion multiple times. Latter part names must be suffixed with "_number".
 ///  "localization{-key_0}{-key_1}.ini"  - Matches to key.Key("x").Key("x");
@@ -82,7 +82,7 @@ Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");
 ///  "{section&lt;[^:]*&gt;.}"
 /// 
 /// Regular expressions can be used for greedy match when matching against filenames and embedded resources.
-///  "{assembly.}{resource&lt;.*&gt;.}{type.}{section.}{key}"
+///  "{assembly.}{resource&lt;.*&gt;.}{type.}{section.}{Key}"
 /// 
 /// Examples:
 ///   "[assembly.]Resources.localization{-culture}.json"

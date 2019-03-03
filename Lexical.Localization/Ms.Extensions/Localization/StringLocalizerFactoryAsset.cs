@@ -40,10 +40,10 @@ namespace Lexical.Localization.Ms.Extensions
 
         public StringLocalizerAsset GetHandlingAsset(IAssetKey key)
         {
-            IAssetKeyAssemblySection asmSection;
-            IAssetKeyResourceSection resSection;
-            IAssetKeyTypeSection typeSection;
-            int x = key.FindResourceSections(out asmSection, out resSection, out typeSection);
+            IAssetKeyAssemblyAssigned asmSection;
+            IAssetKeyResourceAssigned resSection;
+            IAssetKeyTypeAssigned typeSection;
+            int x = key.FindResourceKeys(out asmSection, out resSection, out typeSection);
             return
                 x == 1 ? map_by_type.GetOrAdd(typeSection.Type, createByTypeFunc) :
                 x == 2 ? (StringLocalizerAsset)map_by_location.GetOrAdd(new Pair<string, string>(resSection.Name, asmSection.Name), createByLocationFunc) :
@@ -67,8 +67,8 @@ namespace Lexical.Localization.Ms.Extensions
         /// Adapts <see cref="IStringLocalizerFactory"/> into an <see cref="IAsset" />.
         /// 
         /// Notice, that using asset that is converted this way, requres that keys have 
-        /// <see cref="IAssetKeyTypeSection"/> hint, or
-        /// <see cref="IAssetKeyAssemblySection"/>+<see cref="IAssetKeyResourceSection"/> hints.
+        /// <see cref="IAssetKeyTypeAssigned"/> hint, or
+        /// <see cref="IAssetKeyAssemblyAssigned"/>+<see cref="IAssetKeyResourceAssigned"/> hints.
         /// </summary>
         /// <param name="stringLocalizerFactory"></param>
         /// <returns></returns>
@@ -79,8 +79,8 @@ namespace Lexical.Localization.Ms.Extensions
         /// Adapts <see cref="IStringLocalizerFactory"/> into an <see cref="IAssetSource" />.
         /// 
         /// Notice, that using asset that is converted this way, requres that keys have 
-        /// <see cref="IAssetKeyTypeSection"/> hint, or
-        /// <see cref="IAssetKeyAssemblySection"/>+<see cref="IAssetKeyResourceSection"/> hints.
+        /// <see cref="IAssetKeyTypeAssigned"/> hint, or
+        /// <see cref="IAssetKeyAssemblyAssigned"/>+<see cref="IAssetKeyResourceAssigned"/> hints.
         /// </summary>
         /// <param name="stringLocalizerFactory"></param>
         /// <returns></returns>

@@ -19,7 +19,7 @@ namespace docs
 
             // Issue a request which will be cached.
             IAssetKey key = new LocalizationRoot().Key("hello");
-            string str = asset.GetString( key.SetCulture("en") );
+            string str = asset.GetString( key.Culture("en") );
             Console.WriteLine(str);
 
             // Clear cache

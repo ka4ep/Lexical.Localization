@@ -12,22 +12,22 @@ namespace Lexical.Localization
     /// 
     /// Location is hint that adds physical directory to search assets from to a given key.
     /// <see cref="IAsset"/> implementation may use this hint to search assets from. 
-    /// This hint can be provided multiple times, for example: key = key.Location("Assets/").Location("Icons/");
-    /// If <see cref="IAsset"/> implementation uses name pattern, the hint in key reflects to "location_0", "location_1", etc§ parts in name pattern. Part "Location" reflects to the last hint.
-    /// For example, location hints would reflect to respective parts in the following name pattern: "{location_0/}{location_1/}{type/}{section.}{key}.ini".
+    /// This hint can be provided multiple times, for example: key = key.Location("Assets").Location("Icons");
+    /// If <see cref="IAsset"/> implementation uses name pattern, the hint in key reflects to "Location_0", "Location_1", etc parts in name pattern. Part "Location" reflects to the last hint.
+    /// For example, location hints would reflect to respective parts in the following name pattern: "{Location_0/}{Location_1/}{Type/}{Section.}{Key}.ini".
     /// 
     /// Consumers of this interface should call the extension method <see cref="AssetKeyExtensions.Location(IAssetKey, string)"/>.
     /// </summary>
-    public interface IAssetKeyLocationSectionAssignable : IAssetKey
+    public interface IAssetKeyLocationAssignable : IAssetKey
     {
         /// <summary>
-        /// Add location to the key.
+        /// Create a new key with "Location" added.
         /// 
         /// Location location is a hint that describes the location embedded locations of localization files.
         /// </summary>
         /// <param name="location"></param>
         /// <returns>new key</returns>
-        IAssetKeyLocationSection Location(string location);
+        IAssetKeyLocationAssigned Location(string location);
     }
 
     /// <summary>
@@ -35,16 +35,16 @@ namespace Lexical.Localization
     /// 
     /// Location means physical directory to search assets from.
     /// 
-    /// For example, key.Location("Assets/") would be put in place of "Location" in following filen name pattern "{location/}{type/}{section.}{key}.ini".
+    /// For example, key.Location("Assets") would be put in place of "Location" in following filen name pattern "{Location/}{Type/}{Section.}{Key}.ini".
     /// </summary>
-    public interface IAssetKeyLocationSection : IAssetKeySection
+    public interface IAssetKeyLocationAssigned : IAssetKeySection
     {
     }
 
     public static partial class AssetKeyExtensions
     {
         /// <summary>
-        /// Add <see cref="IAssetKeyLocationSection"/> section.
+        /// Add <see cref="IAssetKeyLocationAssigned"/> section.
         /// 
         /// Location section is a hint that points to folder where asset is to be loaded.
         /// For example adding "Icons" location section, would mean that when key is matched to file assets, only "Icons" folder is used.
@@ -53,14 +53,14 @@ namespace Lexical.Localization
         /// <param name="location"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement ITypeAssignableLocalizationKey</exception>
-        public static IAssetKeyLocationSection Location(this IAssetKey key, string location)
+        public static IAssetKeyLocationAssigned Location(this IAssetKey key, string location)
         {
-            if (key is IAssetKeyLocationSectionAssignable casted) return casted.Location(location);
-            throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyLocationSectionAssignable)}.");
+            if (key is IAssetKeyLocationAssignable casted) return casted.Location(location);
+            throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyLocationAssignable)}.");
         }
 
         /// <summary>
-        /// Try to add <see cref="IAssetKeyLocationSection"/> section.
+        /// Try to add <see cref="IAssetKeyLocationAssigned"/> section.
         /// 
         /// Location section is a hint that points to folder where asset is to be loaded.
         /// For example adding "Icons" location section, would mean that when key is matched to file assets, only "Icons" folder is used.
@@ -68,30 +68,30 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="location"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeyLocationSection TryAddLocation(this IAssetKey key, String location)
+        public static IAssetKeyLocationAssigned TryAddLocation(this IAssetKey key, string location)
         {
-            if (key is IAssetKeyLocationSectionAssignable casted) return casted.Location(location);
+            if (key is IAssetKeyLocationAssignable casted) return casted.Location(location);
             return null;
         }
 
         /// <summary>
-        /// Get previous <see cref="IAssetKeyLocationSection"/>.
+        /// Get previous <see cref="IAssetKeyLocationAssigned"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>type key with type or null</returns>
-        public static IAssetKeyLocationSection FindLocationSection(this IAssetKey key)
+        public static IAssetKeyLocationAssigned FindLocationKey(this IAssetKey key)
         {
             while (key != null)
             {
-                if (key is IAssetKeyLocationSection locationKey && !string.IsNullOrEmpty(key.Name)) return locationKey;
+                if (key is IAssetKeyLocationAssigned locationKey && !string.IsNullOrEmpty(key.Name)) return locationKey;
                 key = key.GetPreviousKey();
             }
             return null;
         }
 
         /// <summary>
-        /// Get previous <see cref="IAssetKeyLocationSection"/> that has a resolved Assembky.
+        /// Get previous <see cref="IAssetKeyLocationAssigned"/> that has a resolved Assembky.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
@@ -100,7 +100,7 @@ namespace Lexical.Localization
         {
             while (key != null)
             {
-                if (key is IAssetKeyLocationSection locationKey && locationKey.Name != null) return locationKey.Name;
+                if (key is IAssetKeyLocationAssigned locationKey && locationKey.Name != null) return locationKey.Name;
                 key = key.GetPreviousKey();
             }
             return null;

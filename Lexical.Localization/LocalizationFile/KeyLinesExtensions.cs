@@ -64,7 +64,7 @@ namespace Lexical.Localization
         /// 
         /// If <paramref name="groupingRule"/> the nodes are laid out in the order occurance of name pattern parts.
         /// 
-        /// For example grouping pattern "{type}/{culture}{anysection}{key}" would order nodes as following:
+        /// For example grouping pattern "{Type}/{Culture}{anysection}{Key}" would order nodes as following:
         /// <code>
         ///  "type:MyController": {
         ///      "key:Success": "Success",
@@ -73,7 +73,7 @@ namespace Lexical.Localization
         ///  }
         /// </code>
         /// 
-        /// Non-capture parts such as "/" in pattern "{section}/{culture}", specify separator of tree node levels.
+        /// Non-capture parts such as "/" in pattern "{Section}/{Culture}", specify separator of tree node levels.
         /// 
         /// </summary>
         /// <param name="node"></param>

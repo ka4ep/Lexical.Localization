@@ -20,13 +20,13 @@ namespace Lexical.Localization
         /// <param name="parameterValue">parameter value translates to <see cref="IAssetKey.Name"/>.</param>
         /// <returns>new key that is appended to this key</returns>
         /// <exception cref="AssetKeyException">If append failed</exception>
-        IAssetKeyParametrized AppendParameter(string parameterName, string parameterValue);
+        IAssetKeyParameterAssigned AppendParameter(string parameterName, string parameterValue);
     }
 
     /// <summary>
     /// Key node that has parametrizable name.
     /// </summary>
-    public interface IAssetKeyParametrized : IAssetKeySection
+    public interface IAssetKeyParameterAssigned : IAssetKeySection
     {
         /// <summary>
         /// Parameter name.
@@ -51,7 +51,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>name or null</returns>
         public static string GetParameterName(this IAssetKey key)
-            => key is IAssetKeyParametrized parametrized ? parametrized.ParameterName : null;
+            => key is IAssetKeyParameterAssigned parametrized ? parametrized.ParameterName : null;
 
         /// <summary>
         /// Get the number of parameters.
@@ -120,7 +120,7 @@ namespace Lexical.Localization
             if (prevKey != null) VisitParameters(prevKey, visitor, ref data);
 
             // Pop from stack in reverse order
-            if (key is IAssetKeyParametrized parameter && parameter.ParameterName!=null) visitor(parameter.ParameterName, parameter.Name, ref data);
+            if (key is IAssetKeyParameterAssigned parameter && parameter.ParameterName!=null) visitor(parameter.ParameterName, parameter.Name, ref data);
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace Lexical.Localization
             IAssetKey result = left;
             foreach (IAssetKey k in right.ArrayFromRoot(includeNonCanonical: true))
             {
-                if (k is IAssetKeyParametrized parameter)
+                if (k is IAssetKeyParameterAssigned parameter)
                 {
                     string parameterName = parameter.ParameterName, parameterValue = k.Name;
                     if (string.IsNullOrEmpty(parameterName) || parameterValue == null || parameterName == "Root") continue;
@@ -266,7 +266,7 @@ namespace Lexical.Localization
         static AssetKeyVisitor<IAssetKey> _concatVisitor = concatVisitor, _tryConcatVisitor = tryConcatVisitor;
         private static void concatVisitor(IAssetKey key, ref IAssetKey result)
         {
-            if (key is IAssetKeyParametrized keyParametrized)
+            if (key is IAssetKeyParameterAssigned keyParametrized)
             {
                 if (result is IAssetKeyParameterAssignable assignable)
                     result = assignable.AppendParameter(keyParametrized.ParameterName, key.Name);
@@ -276,7 +276,7 @@ namespace Lexical.Localization
         }
         private static void tryConcatVisitor(IAssetKey key, ref IAssetKey result)
         {
-            if (key is IAssetKeyParametrized keyParametrized)
+            if (key is IAssetKeyParameterAssigned keyParametrized)
             {
                 result = result?.TryAppendParameter(keyParametrized.ParameterName, key.Name);
             }

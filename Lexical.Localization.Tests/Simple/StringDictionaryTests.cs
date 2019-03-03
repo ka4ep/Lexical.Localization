@@ -25,7 +25,7 @@ namespace Lexical.Localization.Tests
             IAsset asset = new LocalizationStringAsset(languageStrings, "{Culture:}{anysection_0:}{anysection_1:}{anysection_2:}{anysection_3:}{anysection_4:}{anysection_n:}{Key_0:}{Key_1:}{Key_n}");
             IAssetKey root = LocalizationRoot.Global;
             IAssetKey section = root.Section("ConsoleApp1").Section("MyController");
-            IAssetKey fi = section.SetCulture("fi"), en = section.SetCulture("en"), fi_savo = section.SetCulture("fi-Savo");
+            IAssetKey fi = section.Culture("fi"), en = section.Culture("en"), fi_savo = section.Culture("fi-Savo");
             IAssetKey success = section.Key("Success"), fi_success = fi.Key("Success"), en_success = en.Key("Success");
 
             // Assert
@@ -60,7 +60,7 @@ namespace Lexical.Localization.Tests
             IAsset asset = new LocalizationStringAsset(languageStrings, AssetKeyNameProvider.Default);
             IAssetKey root = LocalizationRoot.Global;
             IAssetKey section = root.Section("ConsoleApp1").Section("MyController");
-            IAssetKey fi = section.SetCulture("fi"), en = section.SetCulture("en"), fi_savo = section.SetCulture("fi-Savo");
+            IAssetKey fi = section.Culture("fi"), en = section.Culture("en"), fi_savo = section.Culture("fi-Savo");
             IAssetKey success = section.Key("Success"), fi_success = fi.Key("Success"), en_success = en.Key("Success");
 
             // Assert

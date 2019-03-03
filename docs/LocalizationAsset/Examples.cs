@@ -22,12 +22,12 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!"  }
                 };
                 // Create asset with string source
-                IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{key}").Load();
+                IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{Key}").Load();
                 #endregion Snippet_1a
                 IAssetKey key = new LocalizationRoot(asset).TypeSection("MyController").Key("hello");
                 Console.WriteLine(key);
-                Console.WriteLine(key.SetCulture("en"));
-                Console.WriteLine(key.SetCulture("de"));
+                Console.WriteLine(key.Culture("en"));
+                Console.WriteLine(key.Culture("de"));
             }
 
             {
@@ -45,8 +45,8 @@ namespace docs
                 #region Snippet_2b
                 IAssetKey key = new LocalizationRoot(asset).TypeSection("MyController").Key("hello");
                 Console.WriteLine(key);
-                Console.WriteLine(key.SetCulture("en"));
-                Console.WriteLine(key.SetCulture("de"));
+                Console.WriteLine(key.Culture("en"));
+                Console.WriteLine(key.Culture("de"));
                 #endregion Snippet_2b
             }
 
@@ -65,8 +65,8 @@ namespace docs
                 #region Snippet_2c
                 IAssetKey key = new LocalizationRoot(asset).TypeSection("MyController").Key("hello");
                 Console.WriteLine(key);
-                Console.WriteLine(key.SetCulture("en"));
-                Console.WriteLine(key.SetCulture("de"));
+                Console.WriteLine(key.Culture("en"));
+                Console.WriteLine(key.Culture("de"));
                 #endregion Snippet_2c
             }
 
@@ -77,7 +77,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!" }
                 };
                 // Create asset with string source
-                IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{key}").Load();
+                IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{Key}").Load();
                 #region Snippet_3a
                 // Extract all keys
                 foreach (Key _key in asset.GetAllKeys())

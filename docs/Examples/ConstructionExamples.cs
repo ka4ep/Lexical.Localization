@@ -48,17 +48,17 @@ namespace docs
                 // Try it out
                 //Console.WriteLine(myLocalization["ConsoleApp1.MyController"].Key("Success").BuildName());
                 Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Success").BuildName());
-                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Success").SetCulture("fi").BuildName());
+                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Success").Culture("fi").BuildName());
                 Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").BuildName());
                 Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Success"));
                 Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error"));
                 Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").Format(0xBAADF00D));
-                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").sv("Sönder (kod=0x{0:X8})").SetCulture("sv").Format(0xBAADF00D));
-                Console.WriteLine(myLocalization.TypeSection(typeof(ConstructionExamples)).Key("Success"));
-                Console.WriteLine(myLocalization.TypeSection<ConstructionExamples>().Key("Success"));
+                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").sv("Sönder (kod=0x{0:X8})").Culture("sv").Format(0xBAADF00D));
+                Console.WriteLine(myLocalization.Type(typeof(ConstructionExamples)).Key("Success"));
+                Console.WriteLine(myLocalization.Type<ConstructionExamples>().Key("Success"));
 
-                var key1 = myLocalization.TypeSection<ConstructionExamples>().SetCulture("en").Key("Success");
-                var key2 = myLocalization.TypeSection(typeof(ConstructionExamples)).Key("Success").SetCulture("en");
+                var key1 = myLocalization.Type<ConstructionExamples>().Culture("en").Key("Success");
+                var key2 = myLocalization.Type(typeof(ConstructionExamples)).Key("Success").Culture("en");
                 Console.WriteLine($"{key2.Equals(key1)} {key1.GetHashCode()}=={key2.GetHashCode()}");
                 Console.WriteLine($"{key1.Equals(key2)} {key1.GetHashCode()}=={key2.GetHashCode()}");
             }
@@ -80,7 +80,7 @@ namespace docs
                 Console.WriteLine(myControllerLocalization.Key("Error"));
                 Console.WriteLine(myControllerLocalization.Key("Error").Format(0xBAADF00D));
                 Console.WriteLine(myControllerLocalization.Key("Error").Format(0xBAADF00D).SetCulture("fi"));
-                Console.WriteLine(myControllerLocalization.Key("Error").sv("Sönder (kod=0x{0:X8})").SetCulture("sv").Format(0xBAADF00D));
+                Console.WriteLine(myControllerLocalization.Key("Error").sv("Sönder (kod=0x{0:X8})").Culture("sv").Format(0xBAADF00D));
                 #endregion Snippet_Singleton
             }
 

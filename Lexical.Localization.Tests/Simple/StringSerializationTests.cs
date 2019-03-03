@@ -24,11 +24,11 @@ namespace Lexical.Localization.Tests
 
             /// Section-1
             // Arrange
-            IAssetKey section1 = root1.TypeSection(typeof(MyController).FullName);
-            IAssetKey section2 = root2.TypeSection(typeof(MyController));
-            IAssetKey section3 = root3.TypeSection<MyController>();
-            IAssetKey section4 = new LocalizationKey._TypeSection(new LocalizationRoot(), typeof(MyController).FullName);
-            IAssetKey sectionX = root1.TypeSection("MySection");
+            IAssetKey section1 = root1.Type(typeof(MyController).FullName);
+            IAssetKey section2 = root2.Type(typeof(MyController));
+            IAssetKey section3 = root3.Type<MyController>();
+            IAssetKey section4 = new LocalizationKey._Type(new LocalizationRoot(), typeof(MyController).FullName);
+            IAssetKey sectionX = root1.Type("MySection");
             // Assert
             SerializeEqual(section1, section2, section3);
             SerializeEqual(section1, section4);
@@ -43,9 +43,9 @@ namespace Lexical.Localization.Tests
 
             /// Section-2
             // Arrange
-            IAssetKey subSection1 = section1.TypeSection(typeof(MyController).FullName);
-            IAssetKey subSection2 = section2.TypeSection(typeof(MyController));
-            IAssetKey subSection3 = section3.TypeSection<MyController>();
+            IAssetKey subSection1 = section1.Type(typeof(MyController).FullName);
+            IAssetKey subSection2 = section2.Type(typeof(MyController));
+            IAssetKey subSection3 = section3.Type<MyController>();
             IAssetKey subSectionX = section1.Section("MySubSection");
             // Assert
             SerializeEqual(subSection1, subSection2, subSection3);
@@ -70,10 +70,10 @@ namespace Lexical.Localization.Tests
 
             /// Culture
             // Arrange
-            IAssetKey ckey1 = root1.Section("MySection").Section("MySubsection").Key("Key").SetCulture("fi");
-            IAssetKey ckey2 = root1.Section("MySection").Section("MySubsection").SetCulture("fi").Key("Key");
-            IAssetKey ckey3 = root1.Section("MySection").SetCulture("fi").Section("MySubsection").Key("Key");
-            IAssetKey ckey4 = root1.SetCulture("fi").Section("MySection").Section("MySubsection").Key("Key");
+            IAssetKey ckey1 = root1.Section("MySection").Section("MySubsection").Key("Key").Culture("fi");
+            IAssetKey ckey2 = root1.Section("MySection").Section("MySubsection").Culture("fi").Key("Key");
+            IAssetKey ckey3 = root1.Section("MySection").Culture("fi").Section("MySubsection").Key("Key");
+            IAssetKey ckey4 = root1.Culture("fi").Section("MySection").Section("MySubsection").Key("Key");
             IAssetKey ckeyX = root1.Section("MySection").Section("MySubsection").Key("Key");
             // Assert
             SerializeEqual(ckey1, ckey2, ckey3);

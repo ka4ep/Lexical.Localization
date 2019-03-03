@@ -17,16 +17,16 @@ namespace Lexical.Localization.Tests
         public void Run(Run run)
         {
             IAssetRoot root = run.Get<IAssetRoot>();
-            IAssetKey controller = root.TypeSection<MyController>();
+            IAssetKey controller = root.Type<MyController>();
 
             // Test strings
             if (run.Get<bool>("strings"))
             {
                 IAssetKey section = controller;
-                IAssetKey fi = section.SetCulture("fi"), en = section.SetCulture("en"), fi_savo = section.SetCulture("fi-Savo");
+                IAssetKey fi = section.Culture("fi"), en = section.Culture("en"), fi_savo = section.Culture("fi-Savo");
                 IAssetKey success = section.Key("Success"), fi_success = fi.Key("Success"), en_success = en.Key("Success");
                 IAsset asset = run.Get<IAsset>();
-                dynamic d_section = root.TypeSection<MyController>();
+                dynamic d_section = root.Type<MyController>();
 
                 var string_enumeration_is_supported = asset.GetAllStrings() != null;
                 var culture_enumeration_is_supported = asset.GetSupportedCultures() != null;
@@ -55,7 +55,7 @@ namespace Lexical.Localization.Tests
                 Assert.AreEqual("Onnistui", fi_success.ToString());
                 Assert.AreEqual("Success", en_success.ToString());
                 Assert.AreEqual("Virhe (Koodi=0xFEEDF00D)", fi.Key("Error").Format(0xFeedF00d).ToString());
-                Assert.AreEqual("Erfolg", section.SetCulture("de").de("Erfolg").ToString());
+                Assert.AreEqual("Erfolg", section.Culture("de").de("Erfolg").ToString());
                 Assert.AreEqual("Onnistui", (string)d_section.Success.SetCulture("fi"));
                 Assert.AreEqual(null, d_section.Inlines);
                 Assert.AreEqual(null, d_section.Args);
@@ -84,7 +84,7 @@ namespace Lexical.Localization.Tests
                 Assert.AreEqual("Onnistui", fi_success.ToString());
                 Assert.AreEqual("Success", en_success.ToString());
                 Assert.AreEqual("Virhe (Koodi=0xFEEDF00D)", fi.Key("Error").Format(0xFeedF00d).ToString());
-                Assert.AreEqual("Erfolg", section.SetCulture("de").de("Erfolg").ToString());
+                Assert.AreEqual("Erfolg", section.Culture("de").de("Erfolg").ToString());
 
                 // Reload and try again.
                 if (asset is IAssetReloadable reloadable)
@@ -111,7 +111,7 @@ namespace Lexical.Localization.Tests
                     Assert.AreEqual("Onnistui", fi_success.ToString());
                     Assert.AreEqual("Success", en_success.ToString());
                     Assert.AreEqual("Virhe (Koodi=0xFEEDF00D)", fi.Key("Error").Format(0xFeedF00d).ToString());
-                    Assert.AreEqual("Erfolg", section.SetCulture("de").de("Erfolg").ToString());
+                    Assert.AreEqual("Erfolg", section.Culture("de").de("Erfolg").ToString());
                 }
 
                 // Modify, Reload, Test
@@ -144,22 +144,22 @@ namespace Lexical.Localization.Tests
         public void Run(Run run)
         {
             IAssetRoot root = run.Get<IAssetRoot>();
-            IAssetKey controller = root.TypeSection<MyController>();
+            IAssetKey controller = root.Type<MyController>();
 
             // Test resources
             if (run.Get<bool>("resources"))
             {
                 IAssetKey section = controller.Section("Icon");
-                IAssetKey fi = section.SetCulture("fi");
-                IAssetKey en = section.SetCulture("en");
-                IAssetKey fi_savo = section.SetCulture("fi-Savo");
+                IAssetKey fi = section.Culture("fi");
+                IAssetKey en = section.Culture("en");
+                IAssetKey fi_savo = section.Culture("fi-Savo");
 
                 IAssetKey success = controller.Section("Icon").Key("Success");
-                IAssetKey fi_success = controller.Section("Icon").Key("Success").SetCulture("fi");
-                IAssetKey en_success = controller.Section("Icon").Key("Success").SetCulture("en");
+                IAssetKey fi_success = controller.Section("Icon").Key("Success").Culture("fi");
+                IAssetKey en_success = controller.Section("Icon").Key("Success").Culture("en");
 
                 IAsset asset = run.Get<IAsset>();
-                dynamic d_section = root.TypeSection<MyController>().Section("Icon");
+                dynamic d_section = root.Type<MyController>().Section("Icon");
                 var resource_enumeration_is_supported = asset.GetResourceNames() != null;
                 var culture_enumeration_is_supported = asset.GetSupportedCultures() != null;
 

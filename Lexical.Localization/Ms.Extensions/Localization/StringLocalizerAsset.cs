@@ -134,10 +134,10 @@ namespace Lexical.Localization.Ms.Extensions
             }
 
             // Parse basename/location/type from key
-            IAssetKeyAssemblySection asmSectionToStrip;
-            IAssetKeyResourceSection resSectionToStrip;
-            IAssetKeyTypeSection typeSectionToStrip;
-            int x = key.FindResourceSections(out asmSectionToStrip, out resSectionToStrip, out typeSectionToStrip);
+            IAssetKeyAssemblyAssigned asmSectionToStrip;
+            IAssetKeyResourceAssigned resSectionToStrip;
+            IAssetKeyTypeAssigned typeSectionToStrip;
+            int x = key.FindResourceKeys(out asmSectionToStrip, out resSectionToStrip, out typeSectionToStrip);
 
             // If key has type, and this handler is also assigned to type, but they mismatch, don't strip the type name from key (below)
             if (x == 1)
@@ -182,7 +182,7 @@ namespace Lexical.Localization.Ms.Extensions
             for(IAssetKey k = key; k!=null; k=k.GetPreviousKey())
             {
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILocalizationKeyCultured || k is IAssetKeyNonCanonicallyCompared || string.IsNullOrEmpty(k.Name)) continue;
+                if (k is ILocalizationKeyCultureAssigned || k is IAssetKeyNonCanonicallyCompared || string.IsNullOrEmpty(k.Name)) continue;
                 if (length > 0) length++;
                 length += k.Name.Length;
             }
@@ -191,7 +191,7 @@ namespace Lexical.Localization.Ms.Extensions
             for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
             {
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILocalizationKeyCultured || k is IAssetKeyNonCanonicallyCompared || string.IsNullOrEmpty(k.Name)) continue;
+                if (k is ILocalizationKeyCultureAssigned || k is IAssetKeyNonCanonicallyCompared || string.IsNullOrEmpty(k.Name)) continue;
                 if (ix < length) chars[--ix] = '.';
                 ix -= k.Name.Length;
                 k.Name.CopyTo(0, chars, ix, k.Name.Length);

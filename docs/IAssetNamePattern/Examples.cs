@@ -24,7 +24,7 @@ namespace docs
                 {
                     #region Snippet_2
                     // Create similiar policy with AssetNamePattern
-                    IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{culture/}{location/}{type/}{section/}[key].txt");
+                    IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{culture/}{location/}{type/}{section/}[Key].txt");
                     // "en/Patches/MyController/Errors/InvalidState.txt"
                     string str = myPolicy.BuildName(key);
                     #endregion Snippet_2
@@ -33,7 +33,7 @@ namespace docs
                 {
                     #region Snippet_3
                     // Create name pattern
-                    IAssetKeyNamePolicy myPolicy = new AssetNamePattern("Patches/{section}[-key]{-culture}.png");
+                    IAssetKeyNamePolicy myPolicy = new AssetNamePattern("Patches/{Section}[-key]{-culture}.png");
                     #endregion Snippet_3
                     // "Patches/icons-ok-de.png"
                     string str = myPolicy.BuildName(key);
@@ -41,7 +41,7 @@ namespace docs
                 {
                     #region Snippet_4
                     // Create name pattern
-                    IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{location_0/}{location_1/}{location_n/}{section}{-key}{-culture}.png");
+                    IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{location_0/}{location_1/}{location_n/}{Section}{-key}{-culture}.png");
                     // Create key
                     IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").SetCulture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
@@ -51,7 +51,7 @@ namespace docs
                 {
                     #region Snippet_5
                     // Create name pattern with regular expression detail
-                    IAssetNamePattern myPolicy = new AssetNamePattern("{location<[^/]+>/}{section}{-key}{-culture}.png");
+                    IAssetNamePattern myPolicy = new AssetNamePattern("{location<[^/]+>/}{Section}{-key}{-culture}.png");
                     // Use its regular expression
                     Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");
                     #endregion Snippet_5

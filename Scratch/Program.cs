@@ -10,11 +10,11 @@ namespace Scratch
         static void Main(string[] args)
         {
             IAsset asset;
-            asset = XmlFileFormat.Instance.CreateFileAsset("localization.xml");
             asset = JsonFileFormat.Instance.CreateFileAsset("localization.json");
             asset = IniFileFormat.Instance.CreateFileAsset("localization.ini");
             asset = ResourcesFileFormat.Instance.CreateFileAsset("localization.resources", AssetKeyNameProvider.Colon_Dot_Dot);
             asset = ResXFileFormat.Instance.CreateFileAsset("localization.resx", AssetKeyNameProvider.Colon_Dot_Dot);
+            asset = XmlFileFormat.Instance.CreateFileAsset("localization.xml");
             LocalizationRoot.Builder.AddAsset(asset).Build();
 
             // Shorter
@@ -26,13 +26,13 @@ namespace Scratch
 
             AssetKeyComparer comparer = AssetKeyComparer.Default;
 
-            Console.WriteLine(comparer.GetHashCode(key.SetCulture("en")));
+            Console.WriteLine(comparer.GetHashCode(key.Culture("en")));
             Console.WriteLine(comparer.GetHashCode(key2));
 
             Console.WriteLine(key);
-            Console.WriteLine(key.SetCulture("en"));
-            Console.WriteLine(key.SetCulture("fi"));
-            Console.WriteLine(key.SetCulture("sv"));
+            Console.WriteLine(key.Culture("en"));
+            Console.WriteLine(key.Culture("fi"));
+            Console.WriteLine(key.Culture("sv"));
 
             Console.ReadKey();
         }

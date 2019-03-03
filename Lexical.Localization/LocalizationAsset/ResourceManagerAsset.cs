@@ -48,7 +48,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create resource manager that is assigned to a specific type.
         /// 
-        /// In these .resx language string files, the key of each line uses name policy "{section.}{key}".
+        /// In these .resx language string files, the key of each line uses name policy "{section.}{Key}".
         /// </summary>
         /// <param name="resourceManager"></param>
         /// <param name="type"></param>
@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create resource manager that is assigned to a specific type.
         /// 
-        /// In these .resx language string files, the key of each line uses name policy "{section.}{key}".
+        /// In these .resx language string files, the key of each line uses name policy "{section.}{Key}".
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -69,7 +69,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create resource manager that is assigned to a specific embedded resource location.
         /// 
-        /// In these .resx language string files, the key of each line uses name policy "{section.}{key}".
+        /// In these .resx language string files, the key of each line uses name policy "{section.}{Key}".
         /// </summary>
         /// <param name="resourceManager"></param>
         /// <param name="assembly"></param>

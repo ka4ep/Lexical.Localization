@@ -45,7 +45,7 @@ namespace docs
                 IAssetKey typeKey = serviceProvider.GetService<IAssetKey<ConsoleApp1.MyController>>();
 
                 // Get "Hello World!"
-                string str = typeKey.Key("Hello").SetCulture("en").ToString();
+                string str = typeKey.Key("Hello").Culture("en").ToString();
             }
             #endregion Snippet_3
         }

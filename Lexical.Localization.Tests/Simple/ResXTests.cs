@@ -24,10 +24,10 @@ namespace Lexical.Localization.Tests
             asset = asset.CreateCache(_ => _.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache());
             ICulturePolicy culturePolicy = new CulturePolicy();
             IAssetRoot root = new StringLocalizerRoot(asset, culturePolicy);
-            IAssetKey key_resx = root.AssemblySection(typeof(ResXTests).Assembly).ResourceSection("localization");
-            IAssetKey key = key_resx.TypeSection<MyController>().Key("Success");
-            Assert.AreEqual("Onnistui", key.SetCulture("fi").ToString());
-            Assert.AreEqual("Success", key.SetCulture("en").ToString());
+            IAssetKey key_resx = root.Assembly(typeof(ResXTests).Assembly).Resource("localization");
+            IAssetKey key = key_resx.Type<MyController>().Key("Success");
+            Assert.AreEqual("Onnistui", key.Culture("fi").ToString());
+            Assert.AreEqual("Success", key.Culture("en").ToString());
         }
 
         [TestMethod]
@@ -39,10 +39,10 @@ namespace Lexical.Localization.Tests
             ICulturePolicy culturePolicy = new CulturePolicy();
             IAssetRoot root = new StringLocalizerRoot(asset.CreateCache(_ => _.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache()), culturePolicy);
 
-            Assert.AreEqual("Onnistui", root.TypeSection<MyController>().Key("Success").SetCulture("fi").ToString());
-            Assert.AreEqual("Success", root.TypeSection<MyController>().Key("Success").SetCulture("en").ToString());
-            Assert.AreEqual("Virhe (Koodi=0x{0:X8})", root.TypeSection<MyController>().Key("Error").SetCulture("fi").ToString());
-            Assert.AreEqual("Virhe (Koodi=0xCAFEBABE)", root.TypeSection<MyController>().Key("Error").SetCulture("fi").Format(0xCAFEBABE).ToString());
+            Assert.AreEqual("Onnistui", root.Type<MyController>().Key("Success").Culture("fi").ToString());
+            Assert.AreEqual("Success", root.Type<MyController>().Key("Success").Culture("en").ToString());
+            Assert.AreEqual("Virhe (Koodi=0x{0:X8})", root.Type<MyController>().Key("Error").Culture("fi").ToString());
+            Assert.AreEqual("Virhe (Koodi=0xCAFEBABE)", root.Type<MyController>().Key("Error").Culture("fi").Format(0xCAFEBABE).ToString());
         }
     }
 }
