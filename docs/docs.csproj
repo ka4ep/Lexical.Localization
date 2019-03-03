@@ -86,6 +86,9 @@
     <None Update="Assets\localization.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Plurality\localization.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="README.md">
       <DependentUpon>README.tt</DependentUpon>
       <DesignTime>True</DesignTime>

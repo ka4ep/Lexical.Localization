@@ -76,7 +76,7 @@ namespace Lexical.Localization.Tests
             init["resources"] = false;
 
             ILoggerFactory loggerFactory = new LoggerFactory();
-            IAsset asset = ResourceManagerStringLocalizerAsset.Create("Lexical.Localization.Tests", "Resources", "localization", loggerFactory);
+            IAsset asset = ResourceManagerStringLocalizerAsset.Create("Lexical.Localization.Tests", "Resources", "Localization", loggerFactory);
             return asset;
         }
     }
@@ -124,7 +124,7 @@ namespace Lexical.Localization.Tests
                 // Initialize service collection
                 IServiceCollection serviceCollection = new ServiceCollection();
 
-                // Add lexical localizations
+                // Add lexical Localizations
                 serviceCollection.AddLexicalLocalization(
                     false, false, false, false);
 

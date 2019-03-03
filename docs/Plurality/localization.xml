@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Key="urn:lexical.fi:Key"
+              xmlns:N="urn:lexical.fi:N"
+              xmlns="urn:lexical.fi">
+  
+ <Key:Cats>
+    {0} cat(s)
+    <N:Zero>no cats</N:Zero>
+    <N:One>a cat</N:One>
+    <N:Plural>{0} cats</N:Plural>
+ </Key:Cats>
+
+</Localization>

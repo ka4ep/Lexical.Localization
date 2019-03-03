@@ -28,7 +28,7 @@ namespace Lexical.Localization.Ms.Extensions
     [DebuggerDisplay("{DebugPrint()}")]
     [Serializable]
     public class StringLocalizerKey :  
-        ILocalizationKey, IAssetKeyAssignable, ILocalizationKeyInlineAssignable, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyParameterAssignable, ISerializable, IDynamicMetaObjectProvider,
+        ILocalizationKey, IAssetKeyAssignable, ILocalizationKeyInlineAssignable, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyParameterAssignable, ILocalizationKeyPluralityAssignable, ISerializable, IDynamicMetaObjectProvider,
         IStringLocalizer, IStringLocalizerFactory
     {
         /// <summary>
@@ -169,6 +169,42 @@ namespace Lexical.Localization.Ms.Extensions
             {
                 base.GetObjectData(info, context);
                 info.AddValue(nameof(Args), Args);
+            }
+        }
+
+        ILocalizationKeyPluralityAssigned ILocalizationKeyPluralityAssignable.N(int argumentIndex, string pluralityKind) => new _N(_N.BackUp(this, argumentIndex), argumentIndex, pluralityKind);
+        public _N N(int argumentIndex, string pluralityKind) => new _N(_N.BackUp(this, argumentIndex), argumentIndex, pluralityKind);
+        [Serializable]
+        public class _N : StringLocalizerKey, IAssetKeySectionAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared, ILocalizationKeyPluralityAssigned
+        {
+            int argumentIndex;
+            int ILocalizationKeyPluralityAssigned.ArgumentIndex => argumentIndex;
+            public _N(IAssetKey prevKey, int argumentIndex, string pluralityKind) : base(prevKey, pluralityKind)
+            {
+                if (argumentIndex < 0) throw new ArgumentException(nameof(argumentIndex));
+                this.argumentIndex = argumentIndex;
+            }
+            public _N(SerializationInfo info, StreamingContext context) : base(info, context) {
+                this.argumentIndex = info.GetInt32("ArgumentIndex");
+            }
+            public override void GetObjectData(SerializationInfo info, StreamingContext context)
+            {                
+                info.AddValue("ArgumentIndex", argumentIndex);
+                base.GetObjectData(info, context);
+            }
+            public virtual String ParameterName => GetParameterName(argumentIndex);
+            private static string[] ParameterNames = new string[] { "N", "N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N9" };
+            public static string GetParameterName(int argumentIndex) => argumentIndex < ParameterNames.Length ? ParameterNames[argumentIndex] : "N" + argumentIndex;
+            internal static IAssetKey BackUp(IAssetKey key, int argumentIndex)
+            {
+                string parameterNameToSearch = _N.GetParameterName(argumentIndex);
+                IAssetKey result = null;
+                for (IAssetKey k = key; k!=null; k=k.GetPreviousKey())
+                {
+                    if (k.GetParameterName() == parameterNameToSearch) result = k;
+                }
+                result = result?.GetPreviousKey();
+                return result ?? key;
             }
         }
 

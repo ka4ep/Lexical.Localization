@@ -6,6 +6,7 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            Plurality_Examples.Run(args);
             ParameterNamePolicy_Examples.Run(args);
             LocalizationAsset_Examples.Run(args);
             LocalizationStringAsset_Examples.Run(args);

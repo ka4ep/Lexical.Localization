@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<localization xmlns:Culture="urn:lexical.fi:Culture" xmlns:Type="urn:lexical.fi:Type"
+<Localization xmlns:Culture="urn:lexical.fi:Culture" xmlns:Type="urn:lexical.fi:Type"
               xmlns:Key="urn:lexical.fi:Key">
   <Type:ConsoleApp1.MyController>
     <Key:Success>Success</Key:Success>
@@ -23,4 +23,4 @@
       <Key:Error>Epäonnistuepa (Koodi=0x{0:X8})</Key:Error>
     </Type:ConsoleApp1.MyController>
   </Culture:fi-Savo>
-</localization>
+</Localization>
