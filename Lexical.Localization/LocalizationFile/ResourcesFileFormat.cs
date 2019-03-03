@@ -16,7 +16,14 @@ namespace Lexical.Localization
     {
         private readonly static ResourcesFileFormat instance = new ResourcesFileFormat();
         public static ResourcesFileFormat Instance => instance;
-        public string Extension => "resources";
+
+        public string Extension { get; protected set; }
+
+        public ResourcesFileFormat() : this("resources") { }
+        public ResourcesFileFormat(string ext)
+        {
+            this.Extension = ext;
+        }
 
         public IEnumerable<KeyValuePair<string, string>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default)
         {

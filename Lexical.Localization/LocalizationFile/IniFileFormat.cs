@@ -19,11 +19,18 @@ namespace Lexical.Localization
     {
         private readonly static IniFileFormat instance = new IniFileFormat();
         public static IniFileFormat Instance => instance;
-        public string Extension => "ini";
         static ParameterNamePolicy parser_comment = new ParameterNamePolicy("\\\n\t\r\0\a\b\f");
         static ParameterNamePolicy parser_section = new ParameterNamePolicy("\\\n\t\r\0\a\b\f[]");
         static ParameterNamePolicy parser_key = new ParameterNamePolicy("\\\n\t\r\0\a\b\f=");
         static ParameterNamePolicy parser_value = new ParameterNamePolicy("\\\n\t\r\0\a\b\f");
+
+        public string Extension { get; protected set; }
+
+        public IniFileFormat() : this("ini") { }
+        public IniFileFormat(string ext)
+        {
+            this.Extension = ext;
+        }
 
         /// <summary>
         /// Json text into a tree.

@@ -21,8 +21,15 @@ namespace Lexical.Localization
         private readonly static JsonFileFormat instance = new JsonFileFormat();
         public static JsonFileFormat Instance => instance;
 
-        public string Extension => "json";
         protected ParameterNamePolicy parser = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:\"");
+
+        public string Extension { get; protected set; }
+
+        public JsonFileFormat() : this("json") { }
+        public JsonFileFormat(string ext)
+        {
+            this.Extension = ext;
+        }
 
         /// <summary>
         /// Json text into a tree.

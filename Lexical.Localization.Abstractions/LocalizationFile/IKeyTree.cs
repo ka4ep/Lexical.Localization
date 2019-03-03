@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Lexical.Localization
@@ -142,6 +143,77 @@ namespace Lexical.Localization
                 if (n.HasChildren)
                     foreach (IKeyTree child in n.Children)
                         queue.Enqueue(child);
+            }
+        }
+
+        /// <summary>
+        /// List parameters from root to tail.
+        /// </summary>
+        /// <param name="skipRoot">should "root" parameter be skipped</param>
+        /// <returns>parameters</returns>
+        public static IEnumerable<KeyValuePair<string, string>> GetConcatenatedParameters(this IKeyTree node, bool skipRoot)
+        {
+            IEnumerable<KeyValuePair<string, string>> result = null;
+            if (node.Parent != null) result = node.Parent.GetConcatenatedParameters(skipRoot);
+            IEnumerable<KeyValuePair<string, string>> key = node.Key.GetParameters(skipRoot);
+            result = result == null ? key : result.Concat(key);
+            return result;
+        }
+
+        /// <summary>
+        /// Get concatenated key from root to <paramref name="node"/>.
+        /// </summary>
+        /// <returns>key</returns>
+        public static IAssetKey GetConcatenatedKey(this IKeyTree node)
+             => node.Parent != null ? node.Parent.GetConcatenatedKey().Concat(node.Key) : node.Key;
+
+        /// <summary>
+        /// Search decendents for tree nodes that have matching key. 
+        /// </summary>
+        /// <param name="node">node to start search.</param>
+        /// <param name="searchKey">key to search</param>
+        /// <returns>nodes that have matching key</returns>
+        public static IEnumerable<IKeyTree> Search(this IKeyTree node, IAssetKey searchKey)
+        {
+            List<IKeyTree> result = new List<IKeyTree>();
+            _search(node, searchKey, node.Key, result);
+            return result;
+        }
+
+        static void _search(IKeyTree node, IAssetKey searchKey, IAssetKey concatenatedKeyOfNode, List<IKeyTree> result)
+        {
+            // Check for mismatch
+            for(IAssetKey k = concatenatedKeyOfNode; k!=null; k=k.GetPreviousKey())
+            {
+                string parameterName = k.GetParameterName();
+                if (parameterName == null || parameterName == "root") continue;
+                string parameterValue = k.Name;
+
+                bool parameterDetectedInSearchKey = false;
+                for (IAssetKey sk = searchKey; sk != null; sk = sk.GetPreviousKey())
+                {
+                    string _parameterName = sk.GetParameterName();
+                    if (_parameterName == null || _parameterName == "root") continue;
+                    string _parameterValue = sk.Name;
+                    parameterDetectedInSearchKey |= _parameterValue == parameterValue;
+                    if (parameterDetectedInSearchKey) break;
+                }
+
+                // node has a parameter that was not found in search key. This is wrong branch
+                if (!parameterDetectedInSearchKey) return;
+            }
+
+            // Key match
+            if (AssetKeyComparer.Default.Equals(concatenatedKeyOfNode, searchKey)) { result.Add(node); return; }
+
+            // Recurse
+            if (node.HasChildren)
+            {
+                foreach(IKeyTree child in node.Children)
+                {
+                    IAssetKey newConcatenatedKey = concatenatedKeyOfNode.Concat(child.Key);
+                    _search(child, searchKey, newConcatenatedKey, result);
+                }
             }
         }
     }

@@ -21,11 +21,12 @@ namespace Lexical.Localization
         public static readonly XName NameLine = NsDefault + "line";
         public const string URN_ = "urn:lexical.fi:";
 
-        private readonly static XmlFileFormat instance = new XmlFileFormat();
+        private readonly static XmlFileFormat instance = new XmlFileFormat("xml");
         public static XmlFileFormat Instance => instance;
         public string Extension { get; protected set; }
 
         public XmlFileFormat() : this("xml") { }
+
         public XmlFileFormat(string extension)
         {
             this.Extension = extension;

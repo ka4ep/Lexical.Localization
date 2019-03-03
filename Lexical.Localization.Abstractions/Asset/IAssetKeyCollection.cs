@@ -88,7 +88,7 @@ namespace Lexical.Localization
             // Filter
             if (criteriaKey != null)
             {
-                KeyValuePair<string, string>[] filterParameters = criteriaKey.GetParameters();
+                KeyValuePair<string, string>[] filterParameters = criteriaKey.GetParameters(true);
                 if (filterParameters.Length > 0) keys = FilterKeys(keys, filterParameters);
             }
             return keys;

@@ -18,7 +18,12 @@ namespace Lexical.Localization
     {
         private readonly static ResXFileFormat instance = new ResXFileFormat();
         public static ResXFileFormat Instance => instance;
-        public string Extension => "resx";
+        public string Extension { get; protected set; }
+
+        public ResXFileFormat() : this("resx") { }
+        public ResXFileFormat(string ext) {
+            this.Extension = ext;
+        }
 
         public IEnumerable<KeyValuePair<string, string>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(stream).Root, namePolicy);
         public IEnumerable<KeyValuePair<string, string>> ReadStringLines(TextReader text, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(text).Root, namePolicy);
