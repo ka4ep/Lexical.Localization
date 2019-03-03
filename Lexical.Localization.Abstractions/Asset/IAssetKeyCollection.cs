@@ -19,7 +19,7 @@ namespace Lexical.Localization
         /// 
         /// If <paramref name="filterCriteria"/> is provided, then the result will contain
         /// all keys that contain the parameters in the <paramref name="filterCriteria"/>.
-        /// For example if there are "culture"="en" and "asset"="somelib.dll", then
+        /// For example if there are "Culture"="en" and "asset"="somelib.dll", then
         /// keys from that lib and localization are returned.
         /// </summary>
         /// <param name="filterCriteria">(optional) key criteria to match with</param>

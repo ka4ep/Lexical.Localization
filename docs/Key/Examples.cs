@@ -18,7 +18,7 @@ namespace docs
         {
             {
                 #region Snippet_1
-                Key key = new Key("culture", "en").Append("type", "MyController").Append("key", "Success");
+                Key key = new Key("Culture", "en").Append("Type", "MyController").Append("Key", "Success");
                 #endregion Snippet_1
             }
 

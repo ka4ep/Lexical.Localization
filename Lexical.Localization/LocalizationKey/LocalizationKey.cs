@@ -56,7 +56,7 @@ namespace Lexical.Localization
         {
             public _Key(IAssetKey prevKey, string name) : base(prevKey, name) { }
             public _Key(SerializationInfo info, StreamingContext context) : base(info, context) { }
-            public String ParameterName => "key";
+            public String ParameterName => "Key";
         }
 
         IAssetKeyParametrized IAssetKeyParameterAssignable.AppendParameter(string parameterName, string parameterValue)
@@ -65,13 +65,13 @@ namespace Lexical.Localization
             if (parameterValue == null) throw new ArgumentNullException(nameof(parameterValue));
             switch (parameterName)
             {
-                case "key": return new _Key(this, parameterValue);
-                case "culture": return new _Cultured(this, parameterValue, null);
-                case "type": return new _TypeSection(this, parameterValue);
-                case "section": return new _Section(this, parameterValue);
-                case "resource": return new _ResourceSection(this, parameterValue);
-                case "assembly": return new _AssemblySection(this, parameterValue);
-                case "location": return new _LocationSection(this, parameterValue);
+                case "Key": return new _Key(this, parameterValue);
+                case "Culture": return new _Cultured(this, parameterValue, null);
+                case "Type": return new _TypeSection(this, parameterValue);
+                case "Section": return new _Section(this, parameterValue);
+                case "Resource": return new _ResourceSection(this, parameterValue);
+                case "Assembly": return new _AssemblySection(this, parameterValue);
+                case "Location": return new _LocationSection(this, parameterValue);
                 default: return new _Parametrized(this, parameterName, parameterValue);
             }
         }
@@ -118,7 +118,7 @@ namespace Lexical.Localization
                 base.GetObjectData(info, context);
                 info.AddValue(nameof(Culture), culture);
             }
-            public String ParameterName => "culture";
+            public String ParameterName => "Culture";
         }
 
         ILocalizationKeyInlined ILocalizationKeyInlineAssignable.Inline(string culture, string text) => _inline(culture, text);
@@ -172,7 +172,7 @@ namespace Lexical.Localization
         {
             public _Section(IAssetKey prevKey, string name) : base(prevKey, name) { }
             public _Section(SerializationInfo info, StreamingContext context) : base(info, context) { }
-            public virtual String ParameterName => "section";
+            public virtual String ParameterName => "Section";
         }
 
         static RuntimeConstructor<IAssetKey, _TypeSection> typeSectionConstructor = new RuntimeConstructor<IAssetKey, _TypeSection>(typeof(_TypeSection<>));
@@ -200,7 +200,7 @@ namespace Lexical.Localization
                 else if (t.IsSerializable) info.AddValue(nameof(Type), t);
                 base.GetObjectData(info, context);
             }
-            public String ParameterName => "type";
+            public String ParameterName => "Type";
         }
         [Serializable]
         public class _TypeSection<T> : _TypeSection, IAssetKey<T>/**TypeSectionInterfaces**/
@@ -231,7 +231,7 @@ namespace Lexical.Localization
                 info.AddValue(nameof(Assembly), a);
                 base.GetObjectData(info, context);
             }
-            public String ParameterName => "assembly";
+            public String ParameterName => "Assembly";
         }
 
         IAssetKeyResourceSection IAssetKeyResourceSectionAssignable.ResourceSection(String resourceName) => new _ResourceSection(this, resourceName);
@@ -241,7 +241,7 @@ namespace Lexical.Localization
         {
             public _ResourceSection(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
             public _ResourceSection(SerializationInfo info, StreamingContext context) : base(info, context) {}
-            public String ParameterName => "resource";
+            public String ParameterName => "Resource";
         }
 
         IAssetKeyLocationSection IAssetKeyLocationSectionAssignable.Location(String resourceName) => new _LocationSection(this, resourceName);
@@ -251,7 +251,7 @@ namespace Lexical.Localization
         {
             public _LocationSection(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
             public _LocationSection(SerializationInfo info, StreamingContext context) : base(info, context) { }
-            public String ParameterName => "location";
+            public String ParameterName => "Location";
         }
 
         /// <summary>

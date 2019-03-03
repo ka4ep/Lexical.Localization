@@ -75,7 +75,7 @@ namespace Lexical.Localization
         AssetKeyVisitor<StringBuilder> _parameterVisitor;
         void parameterVisitor(IAssetKey key, ref StringBuilder sb)
         {
-            if (key is IAssetKeyParametrized parameter && parameter.ParameterName != "root")
+            if (key is IAssetKeyParametrized parameter && parameter.ParameterName != "Root")
             {
                 if (sb.Length > 0) sb.Append(':');
                 sb.Append(EscapeLiteral(parameter.ParameterName));
@@ -129,7 +129,7 @@ namespace Lexical.Localization
                 if (!k_key.Success || !k_value.Success) throw new FormatException(keyString);
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                if (key == "root") continue;
+                if (key == "Root") continue;
                 result = result == null ? Key.Create(key, value) : result.AppendParameter(key, value);
             }
             return result;
@@ -153,7 +153,7 @@ namespace Lexical.Localization
                 if (!k_key.Success || !k_value.Success) { resultKey = null; return false; }
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                if (key == "root") continue;
+                if (key == "Root") continue;
                 result = result == null ? Key.Create(key, value) : result.AppendParameter(key, value);
             }
             resultKey = result;

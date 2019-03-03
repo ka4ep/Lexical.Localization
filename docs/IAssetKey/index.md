@@ -36,14 +36,14 @@ Non-canonical parts are typically hints, such as **.SetCulture(*string*)**.
 ## Key Parts
 | Parameter | Canonical | Interface | Extension Method | Description |
 |:---------|:-------|:--------|:---------|:---------|
-| root | canonical | IAssetRoot |  | Contains asset and culture policy. Keys are constructed from here. |
-| type | canonical | IAssetKeyTypeSection | .TypeSection(*Type*) | Type section for grouping by classes and interfaces. |
-| location | canonical | IAsseyKeyLocationSection | .Location(*string*) | Hint to asset for a directory to search from. |
-| assembly | non-canonical | IAssetKeyAssemblySection | .AssemblySection(*Assembly*) | Hint to asset for an assembly to search from. |
-| resource | canonical | IAssetKeyResourceSection | .ResourceSection(*string*) | Hint to asset for an embedded resource path to search from. |
-| section | canonical | IAssetKeySection | .Section(*string*) | Generic section for grouping assets. |
-| key | canonical | IAssetKey | .Key(*string*) | Leaf key |
-| culture | non-canonical | ILocalizationKeyCultured | .SetCulture(*CultureInfo*) | Parameter to override current culture. |
+| Root | canonical | IAssetRoot |  | Contains asset and culture policy. Keys are constructed from here. |
+| Type | canonical | IAssetKeyTypeSection | .TypeSection(*Type*) | Type section for grouping by classes and interfaces. |
+| Location | canonical | IAsseyKeyLocationSection | .Location(*string*) | Hint to asset for a directory to search from. |
+| Assembly | non-canonical | IAssetKeyAssemblySection | .AssemblySection(*Assembly*) | Hint to asset for an assembly to search from. |
+| Resource | canonical | IAssetKeyResourceSection | .ResourceSection(*string*) | Hint to asset for an embedded resource path to search from. |
+| Section | canonical | IAssetKeySection | .Section(*string*) | Generic section for grouping assets. |
+| Key | canonical | IAssetKey | .Key(*string*) | Leaf key |
+| Culture | non-canonical | ILocalizationKeyCultured | .SetCulture(*CultureInfo*) | Parameter to override current culture. |
 |  | non-canonical | ILocalizationKeyFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
 |  | non-canonical | ILocalizationKeyInlined | .Inline(*string*, *string*) | Hint for default culture specific string values. |
 
@@ -63,9 +63,9 @@ Formattable language strings are written in format of "**{#}**", where # is repl
 
 Let's have an example file *localization.ini*.
 ```None
-[en]
-ConsoleApp1.MyController:Success      = Success
-ConsoleApp1.MyController:Error        = Error (Code=0x{0:X8})
+[Culture:en]
+Type:ConsoleApp1.MyController:Key:Success      = Success
+Type:ConsoleApp1.MyController:Key:Error        = Error (Code=0x{0:X8})
 ```
 
 The key assigned with a format argument by **.Format(*Object[]* args)** call.

@@ -86,7 +86,7 @@ namespace Lexical.Localization
         /// Get all parameters as parameterName,parameterValue pairs.
         /// </summary>
         /// <param name="key">(optional) key to read parameters of</param>
-        /// <param name="skipRoot">if true then "root" parameter is omited</param>
+        /// <param name="skipRoot">if true then "Root" parameter is omited</param>
         /// <returns>array of parameters</returns>
         public static KeyValuePair<string, string>[] GetParameters(this IAssetKey key, bool skipRoot = false)
         {
@@ -99,7 +99,7 @@ namespace Lexical.Localization
             {
                 string parameterName = k.GetParameterName();
                 if (parameterName == null) continue;
-                if (skipRoot && parameterName == "root") continue;
+                if (skipRoot && parameterName == "Root") continue;
                 result[--ix] = new KeyValuePair<string, string>(parameterName, k.Name);
             }
 
@@ -197,7 +197,7 @@ namespace Lexical.Localization
                 if (k is IAssetKeyParametrized parameter)
                 {
                     string parameterName = parameter.ParameterName, parameterValue = k.Name;
-                    if (string.IsNullOrEmpty(parameterName) || parameterValue == null || parameterName == "root") continue;
+                    if (string.IsNullOrEmpty(parameterName) || parameterValue == null || parameterName == "Root") continue;
 
                     // Check if parameterName of k already exists in "result"/"left".
                     if (k is IAssetKeyNonCanonicallyCompared && left.FindKeyByParameterName(parameterName) != null) continue;

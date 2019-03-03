@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A name policy implementation that builds names of <see cref="IAssetKey"/>. 
     /// 
-    /// Non-canonical parts are appended in the beginning of the string. Order of non-canonical parameters uses string ordinal comparer, making "culture" parameter typically first.
+    /// Non-canonical parts are appended in the beginning of the string. Order of non-canonical parameters uses string ordinal comparer, making "Culture" parameter typically first.
     /// Example: key.Section("x").Key("y").SetCulture("fi") builds into string "fi:x:y".
     /// 
     /// Canonical parts are concatenated in canonical order from root to tail.
@@ -24,12 +24,12 @@ namespace Lexical.Localization
     public class AssetKeyNameProvider : IAssetKeyNameDescription, IAssetKeyNameProvider, ICloneable
     {
         private static readonly AssetKeyNameProvider colon_colon_colon = new AssetKeyNameProvider().SetDefault(true, ":", "");
-        private static readonly AssetKeyNameProvider colon_colon_dot = new AssetKeyNameProvider().SetDefault(true, ":", "").SetParameter("key", true, ".", "");
+        private static readonly AssetKeyNameProvider colon_colon_dot = new AssetKeyNameProvider().SetDefault(true, ":", "").SetParameter("Key", true, ".", "");
         private static readonly AssetKeyNameProvider none_colon_colon = new AssetKeyNameProvider().SetDefault(true, ":", "").SetNonCanonicalDefault(false);
         private static readonly AssetKeyNameProvider dot_dot_dot = new AssetKeyNameProvider().SetDefault(true, ".", "");
         private static readonly AssetKeyNameProvider colon_dot_dot = new AssetKeyNameProvider().SetNonCanonicalDefault(true, "", ":").SetCanonicalDefault(true, ".", "");
         private static readonly AssetKeyNameProvider none_dot_dot = new AssetKeyNameProvider().SetNonCanonicalDefault(false).SetCanonicalDefault(true, ".", "");
-        private static readonly AssetKeyNameProvider _default = new AssetKeyNameProvider().SetParameter("culture", true, "", ":").SetNonCanonicalDefault(false).SetDefault(true, ":", "");
+        private static readonly AssetKeyNameProvider _default = new AssetKeyNameProvider().SetParameter("Culture", true, "", ":").SetNonCanonicalDefault(false).SetDefault(true, ":", "");
 
         /// <summary>
         /// Default name policy for language strings matching. Suitable for language strings policy of asset loader, but not suitable for filename matching.
@@ -54,7 +54,7 @@ namespace Lexical.Localization
         /// </summary>
         public static AssetKeyNameProvider None_Colon_Colon => none_colon_colon;
 
-        /// Name policy where every separator is ":", except for "key" that has "." separtor.
+        /// Name policy where every separator is ":", except for "Key" that has "." separtor.
         /// 
         /// Example "en:ConsoleApp1:MyController.Success".
         /// </summary>
@@ -104,7 +104,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Set rule to not include a specific type of parameter, for example "culture".
+        /// Set rule to not include a specific type of parameter, for example "Culture".
         /// </summary>
         /// <param name="parameterName"></param>
         /// <returns>this</returns>
@@ -117,7 +117,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Set rule for a parameter type.
         /// </summary>
-        /// <param name="parameterName">parameter name, for example "culture", "section", "key", etc</param>
+        /// <param name="parameterName">parameter name, for example "Culture", "Section", "Key", etc</param>
         /// <param name="isIncluded">true, parameter is included in name. False, parameter is not to be included. </param>
         /// <param name="prefixSeparator"></param>
         /// <param name="postfixSeparator"></param>

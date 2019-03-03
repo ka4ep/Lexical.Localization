@@ -15,7 +15,7 @@ var source = new Dictionary<string, string> {
 IAsset asset = new LocalizationStringAsset(source, AssetKeyNameProvider.Default);
 ```
 
-If the provided key name policy is *AssetKeyNameProvider.Default*, then identity string is constructed by concatenating parameters from requesting key in the order of appearance. Non-canonical parameter "culture" is, however, appended first.
+If the provided key name policy is *AssetKeyNameProvider.Default*, then identity string is constructed by concatenating parameters from requesting key in the order of appearance. Non-canonical parameter "Culture" is, however, appended first.
 
 ```csharp
 // Create root 

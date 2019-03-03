@@ -18,7 +18,7 @@ namespace Lexical.Localization.Ms.Extensions
         /// 
         /// Search path = Assembly.RootNameSpace + [.resourcesPath] + filename + [.culture] + ".resx"
         /// </summary>
-        /// <param name="asmRef">"location" assembly name, short name or full name.</param>
+        /// <param name="asmRef">"Location" assembly name, short name or full name.</param>
         /// <param name="resourcePath">(optional) embedded resource folder, e.g. "Resources"</param>
         /// <param name="filename">"basename" name of the resx file, e.g. "localization", searches for "localization.xx.resx"</param>
         /// <param name="loggerFactory"></param>

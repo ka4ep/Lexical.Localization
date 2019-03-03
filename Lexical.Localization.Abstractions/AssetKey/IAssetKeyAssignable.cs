@@ -6,7 +6,7 @@
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of "key" parameter assignment.
+    /// Key has capability of "Key" parameter assignment.
     /// 
     /// Key is a leaf, or a tail part, of the identity. 
     /// Such as "Error" in key "ConsoleApp1:MyController:Error".
@@ -27,7 +27,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Key (may have) has a "key" parameter assignment.
+    /// Key (may have) has a "Key" parameter assignment.
     /// 
     /// Key is a leaf, or a tail part, of the identity. 
     /// Such as "Error" in key "ConsoleApp1:MyController:Error".

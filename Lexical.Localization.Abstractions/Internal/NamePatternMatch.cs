@@ -30,7 +30,7 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Get part value by part identifier.
         /// </summary>
-        /// <param name="identifier">identifier, e.g. "culture", "type"</param>
+        /// <param name="identifier">identifier, e.g. "Culture", "Type"</param>
         /// <returns>value or null</returns>
         public string this[string identifier] { get { IAssetNamePatternPart part; if (Pattern.PartMap.TryGetValue(identifier, out part)) return PartValues[part.CaptureIndex]; return null; } }
 

@@ -149,7 +149,7 @@ namespace Lexical.Localization
         /// <summary>
         /// List parameters from root to tail.
         /// </summary>
-        /// <param name="skipRoot">should "root" parameter be skipped</param>
+        /// <param name="skipRoot">should "Root" parameter be skipped</param>
         /// <returns>parameters</returns>
         public static IEnumerable<KeyValuePair<string, string>> GetConcatenatedParameters(this IKeyTree node, bool skipRoot)
         {
@@ -186,14 +186,14 @@ namespace Lexical.Localization
             for(IAssetKey k = concatenatedKeyOfNode; k!=null; k=k.GetPreviousKey())
             {
                 string parameterName = k.GetParameterName();
-                if (parameterName == null || parameterName == "root") continue;
+                if (parameterName == null || parameterName == "Root") continue;
                 string parameterValue = k.Name;
 
                 bool parameterDetectedInSearchKey = false;
                 for (IAssetKey sk = searchKey; sk != null; sk = sk.GetPreviousKey())
                 {
                     string _parameterName = sk.GetParameterName();
-                    if (_parameterName == null || _parameterName == "root") continue;
+                    if (_parameterName == null || _parameterName == "Root") continue;
                     string _parameterValue = sk.Name;
                     parameterDetectedInSearchKey |= _parameterValue == parameterValue;
                     if (parameterDetectedInSearchKey) break;

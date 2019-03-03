@@ -8,14 +8,14 @@ namespace Lexical.Localization.Tests
         [TestMethod]
         public void TestMethod1()
         {
-            Assert.IsTrue(new AssetNamePattern(@"{culture}{section<\<.*\>>}{key}").Match("en<mysection>mykey").Success);
-            Assert.IsTrue(new AssetNamePattern(@"{culture}{section<\d+>}{key}").Match("en01234mykey").Success);
+            Assert.IsTrue(new AssetNamePattern(@"{Culture}{Section<\<.*\>>}{Key}").Match("en<mysection>mykey").Success);
+            Assert.IsTrue(new AssetNamePattern(@"{Culture}{Section<\d+>}{Key}").Match("en01234mykey").Success);
 
-            AssetNamePattern pattern1 = new AssetNamePattern("Resources.localization{-culture}.json");
-            AssetNamePattern pattern2 = new AssetNamePattern("Resources.localization[-culture].json");
-            AssetNamePattern pattern3 = new AssetNamePattern("Assets/{type/}localization{-culture}.ini");
-            AssetNamePattern pattern4 = new AssetNamePattern("Assets/{assembly/}{type/}{section.}localization{-culture}.ini");
-            AssetNamePattern pattern5 = new AssetNamePattern("Assets/{anysection_0/}{anysection_1/}localization{-culture}.ini");
+            AssetNamePattern pattern1 = new AssetNamePattern("Resources.localization{-Culture}.json");
+            AssetNamePattern pattern2 = new AssetNamePattern("Resources.localization[-Culture].json");
+            AssetNamePattern pattern3 = new AssetNamePattern("Assets/{Type/}localization{-Culture}.ini");
+            AssetNamePattern pattern4 = new AssetNamePattern("Assets/{Assembly/}{Type/}{Section.}localization{-Culture}.ini");
+            AssetNamePattern pattern5 = new AssetNamePattern("Assets/{anysection_0/}{anysection_1/}localization{-Culture}.ini");
 
             IAssetKey key1 = LocalizationRoot.Global.Section("Section1").Section("Section2").Key("Key1").SetCulture("fi");
             IAssetKey key2 = LocalizationRoot.Global.Section("Section1").Section("Section2").Key("Key1");

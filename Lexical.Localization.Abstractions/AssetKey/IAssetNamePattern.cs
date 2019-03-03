@@ -199,7 +199,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Get part value by part identifier.
         /// </summary>
-        /// <param name="identifier">identifier, e.g. "culture", "type"</param>
+        /// <param name="identifier">identifier, e.g. "Culture", "Type"</param>
         /// <returns>value or null</returns>
         new string this[string identifier] { get; }
 
@@ -349,7 +349,7 @@ namespace Lexical.Localization
         /// Build regex pattern that captures same parts from filename string.
         /// 
         /// For example "localization{-culture}.ini" translates to regex "localization(-(?&lt;culture&gt;.*))?.ini".
-        /// This can be matched against filename "localization-en.ini" with group m.Group["culture"].Value == "en".
+        /// This can be matched against filename "localization-en.ini" with group m.Group["Culture"].Value == "en".
         /// </summary>
         /// <paramref name="pattern"/>
         /// <paramref name="filledParameters"/>>
@@ -448,8 +448,8 @@ namespace Lexical.Localization
         {
             var map = new Dictionary<string, Regex>();
             default_parameter_patterns = map;
-            map["culture"] = new Regex(@"^([a-z]{2,5})(-([A-Za-z]{2,7}))?$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
-            map["type"] = new Regex("[^:0-9][^:]*", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+            map["Culture"] = new Regex(@"^([a-z]{2,5})(-([A-Za-z]{2,7}))?$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+            map["Type"] = new Regex("[^:0-9][^:]*", RegexOptions.CultureInvariant | RegexOptions.Compiled);
         }
 
         /// <summary>

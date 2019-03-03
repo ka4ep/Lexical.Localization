@@ -31,14 +31,14 @@ Custom policies can be created by instantiating AssetKeyNameProvider and adding 
 ```csharp
 // Create a custom policy 
 IAssetKeyNamePolicy myPolicy = new AssetKeyNameProvider()
-    // Enable non-canonical "culture" parameter with "/" separator
-    .SetParameter("culture", true, "", "/")
+    // Enable non-canonical "Culture" parameter with "/" separator
+    .SetParameter("Culture", true, "", "/")
     // Disable other non-canonical parts
     .SetNonCanonicalDefault(false)
     // Enable canonical all parts with "/" separator
     .SetCanonicalDefault(true, "/", "")
-    // Set "key" parameter's prefix to "/" and postfix to ".txt".
-    .SetParameter("key", true, "/", ".txt");
+    // Set "Key" parameter's prefix to "/" and postfix to ".txt".
+    .SetParameter("Key", true, "/", ".txt");
 
 // "en/Patches/MyController/Errors/InvalidState.txt"
 string str = myPolicy.BuildName(key);

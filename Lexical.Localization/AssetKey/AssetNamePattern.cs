@@ -276,7 +276,7 @@ namespace Lexical.Localization
             }
 
             // "anysection"
-            if ((parameterName == "section" || parameterName == "location" || parameterName == "type" || parameterName == "resource" || parameterName == "assembly") && ParameterMap.TryGetValue("anysection", out parts))
+            if ((parameterName == "Section" || parameterName == "Location" || parameterName == "Type" || parameterName == "Resource" || parameterName == "Assembly") && ParameterMap.TryGetValue("anysection", out parts))
             {
                 // Iterate each part
                 foreach (IAssetNamePatternPart part in parts)
@@ -384,10 +384,10 @@ namespace Lexical.Localization
         /// 
         /// "non-match" parameter does not have "anysection" nor capture index "_#".
         /// 
-        /// "anysection" is converted to "section".
+        /// "anysection" is converted to "Section".
         /// 
         /// Parameters are returned in the following order:
-        ///  "root", "culture", "assembly", "location", "resource", "type", "section", other parts here in alphabetical order, "key".
+        ///  "Root", "Culture", "Assembly", "Location", "Resource", "Type", "Section", other parts here in alphabetical order, "Key", "N", "N1", "N2", "N3", "N4", "N5", "N6", ....
         ///  
         /// This is workaround as the order information is lost in the dictionary format.
         /// </summary>
@@ -414,7 +414,7 @@ namespace Lexical.Localization
 
                 // Get name
                 string name = g_name.Value;
-                if (name == "anysection") name = "section";
+                if (name == "anysection") name = "Section";
                 if (!ConvertPriority.TryGetValue(name, out ix)) ix = 0;
 
                 // Occurance index "_#"
@@ -433,7 +433,10 @@ namespace Lexical.Localization
         /// <summary>
         /// Sorting priority for <see cref="ConvertMatchParametersToNonMatchParameters(IReadOnlyDictionary{string, string})"/>
         /// </summary>
-        public static Dictionary<string, int> ConvertPriority = new Dictionary<string, int> { { "root", -8000 }, { "culture", -7000 }, { "assembly", -6000 }, { "location", -5000 }, { "resource", -4000 }, { "type", -3000 }, { "section", -2000 }, { "key", 1000} };
+        public static Dictionary<string, int> ConvertPriority = new Dictionary<string, int> {
+            { "Root", -8000 }, { "Culture", -7000 }, { "Assembly", -6000 }, { "Location", -5000 }, { "Resource", -4000 }, { "Type", -3000 }, { "Section", -2000 }, { "Key", 1000 },
+            { "N", 10000 }, { "N1", 11000 }, { "N2", 12000 }, { "N3", 13000 }, { "N4", 14000 }, { "N5", 15000 }, { "N6", 16000 }, { "N7", 17000 }, { "N8", 18000 }, { "N9", 19000 }, { "N10", 20000 },
+        };
 
     }
 

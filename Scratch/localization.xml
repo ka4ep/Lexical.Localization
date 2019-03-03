@@ -1,30 +1,30 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<localization xmlns:culture="urn:lexical.fi:culture"
-              xmlns:type="urn:lexical.fi:type"
-              xmlns:key="urn:lexical.fi:key"
+<localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Type="urn:lexical.fi:Type"
+              xmlns:Key="urn:lexical.fi:Key"
               xmlns="urn:lexical.fi">
   
-  <type:ConsoleApp1.MyController>
-    <key:Success>Success</key:Success>
-    <key:Error>Error (Code=0x{0:X8})</key:Error>
-  </type:ConsoleApp1.MyController>
-  <culture:en>
-    <type:ConsoleApp1.MyController>
-      <key:Success>Success</key:Success>
-      <key:Error>Error (Code=0x{0:X8})</key:Error>
-    </type:ConsoleApp1.MyController>
-  </culture:en>
-  <culture:fi>
-    <type:ConsoleApp1.MyController>
-      <key:Success>Onnistui</key:Success>
-      <key:Error>Virhe (Koodi=0x{0:X8})</key:Error>
-    </type:ConsoleApp1.MyController>
-  </culture:fi>
+  <Type:ConsoleApp1.MyController>
+    <Key:Success>Success</Key:Success>
+    <Key:Error>Error (Code=0x{0:X8})</Key:Error>
+  </Type:ConsoleApp1.MyController>
+  <Culture:en>
+    <Type:ConsoleApp1.MyController>
+      <Key:Success>Success</Key:Success>
+      <Key:Error>Error (Code=0x{0:X8})</Key:Error>
+    </Type:ConsoleApp1.MyController>
+  </Culture:en>
+  <Culture:fi>
+    <Type:ConsoleApp1.MyController>
+      <Key:Success>Onnistui</Key:Success>
+      <Key:Error>Virhe (Koodi=0x{0:X8})</Key:Error>
+    </Type:ConsoleApp1.MyController>
+  </Culture:fi>
   
-  <line culture="de" type="ConsoleApp1.MyController" key="Success">Erfolg</line>
-  <line culture="de" type="ConsoleApp1.MyController" key="Error">Fehler (Kod=0x{0:X8})</line>
+  <Line Culture="de" Type="ConsoleApp1.MyController" Key="Success">Erfolg</Line>
+  <Line Culture="de" Type="ConsoleApp1.MyController" Key="Error">Fehler (Kod=0x{0:X8})</Line>
 
-  <culture:sv type="ConsoleApp1.MyController" key="Success">Det Funkar</culture:sv>
-  <culture:sv type="ConsoleApp1.MyController" key="Error">Det funkar inte (Kod=0x{0:X8})</culture:sv>
+  <Culture:sv Type="ConsoleApp1.MyController" Key="Success">Det Funkar</Culture:sv>
+  <Culture:sv Type="ConsoleApp1.MyController" Key="Error">Det funkar inte (Kod=0x{0:X8})</Culture:sv>
 
 </localization>

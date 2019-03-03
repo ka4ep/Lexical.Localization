@@ -9,7 +9,7 @@ using System.Reflection;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of "assembly" parameter assignment.
+    /// Key has capability of "Assembly" parameter assignment.
     /// 
     /// Assembly is a hint that is used when assets are loaded from embedded rsources.
     /// For instance, assembly hint matches in a name pattern such as "[assembly.][resource.]{type.}{section.}{key}".
@@ -35,7 +35,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Key that (may have) has been assigned with a "assembly" parameter.
+    /// Key that (may have) has been assigned with a "Assembly" parameter.
     /// 
     /// Assembly hint is used when loading assets from embedded rsources.
     /// For instance, in a name pattern "[assembly.][resource.]{type.}{section.}{key}".

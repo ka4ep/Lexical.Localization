@@ -10,7 +10,7 @@ using System.Globalization;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of "culture" parameter assignment.
+    /// Key has capability of "Culture" parameter assignment.
     /// </summary>
     public interface ILocalizationKeyCultureAssignable : IAssetKey
     {
@@ -35,7 +35,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Key (may have) has "culture" parameter assigned.
+    /// Key (may have) has "Culture" parameter assigned.
     /// </summary>
     public interface ILocalizationKeyCultured : IAssetKeyNonCanonicallyCompared, ILocalizationKey
     {

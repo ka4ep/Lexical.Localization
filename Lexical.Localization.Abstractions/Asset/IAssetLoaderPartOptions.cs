@@ -24,11 +24,11 @@ namespace Lexical.Localization
         /// This option determines whether to fill missing parameters of a key from filenames of existing files.
         /// 
         /// For example, if pattern is "[assembly.][resource.]localization{-culture}.ini", and
-        /// the requested <see cref="IAssetKey"/> does not have the required parameters "assembly" and "resource",
+        /// the requested <see cref="IAssetKey"/> does not have the required parameters "Assembly" and "Resource",
         /// then if this option is configured with those parameters, all the files that match the criteria are searched.
         /// 
         /// For example, if there is a file "MyAssembly.Resources.localization-en.ini", and <see cref="AddMatchParameters"/>
-        /// contains "assembly" and "resource" then "assembly"="MyAssembly." and "resource"="Resources." are matched for 
+        /// contains "Assembly" and "Resource" then "Assembly"="MyAssembly." and "Resource"="Resources." are matched for 
         /// the key.
         /// 
         /// Use this option, only for files that contain generic values.

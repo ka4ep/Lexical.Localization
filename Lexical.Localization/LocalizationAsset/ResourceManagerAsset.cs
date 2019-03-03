@@ -23,27 +23,27 @@ namespace Lexical.Localization
         public readonly IAssetKeyNamePolicy namePolicy;
 
         /// <summary>
-        /// Name policy where only "section" and "key" parameters are written out when creating key identifier to match against .resx.
+        /// Name policy where only "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
         /// 
         /// Separator character is '.'.
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public  static readonly IAssetKeyNamePolicy namepolicy_for_type_resourcemanager = new AssetKeyNameProvider().SetParameter("section", true, ".").SetParameter("key", true, ".").SetDefault(false);
+        public  static readonly IAssetKeyNamePolicy namepolicy_for_type_resourcemanager = new AssetKeyNameProvider().SetParameter("Section", true, ".").SetParameter("Key", true, ".").SetDefault(false);
 
         /// <summary>
-        /// Name policy where "type", "section" and "key" parameters are written out when creating key identifier to match against .resx.
+        /// Name policy where "Type", "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static readonly IAssetKeyNamePolicy namepolicy_for_location_resourcemanager = new AssetKeyNameProvider().SetParameter("type", true, ".").SetParameter("section", true, ".").SetParameter("key", true, ".").SetDefault(false);
+        public static readonly IAssetKeyNamePolicy namepolicy_for_location_resourcemanager = new AssetKeyNameProvider().SetParameter("Type", true, ".").SetParameter("Section", true, ".").SetParameter("Key", true, ".").SetDefault(false);
 
         /// <summary>
-        /// Name policy where "resource", "type", "section" and "key" parameters are written out when creating key identifier to match against .resx.
+        /// Name policy where "Resource", "Type", "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static readonly IAssetKeyNamePolicy namepolicy_for_root_resourcemanager = new AssetKeyNameProvider().SetParameter("resource", true, ".").SetParameter("type", true, ".").SetParameter("section", true, ".").SetParameter("key", true, ".").SetDefault(false);
+        public static readonly IAssetKeyNamePolicy namepolicy_for_root_resourcemanager = new AssetKeyNameProvider().SetParameter("Resource", true, ".").SetParameter("Type", true, ".").SetParameter("Section", true, ".").SetParameter("Key", true, ".").SetDefault(false);
 
         /// <summary>
         /// Create resource manager that is assigned to a specific type.
@@ -73,7 +73,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="resourceManager"></param>
         /// <param name="assembly"></param>
-        /// <param name="baseName">embedded resources location within assembly, corresponds to "resource" parameter in <see cref="IAssetKey"/>.</param>
+        /// <param name="baseName">embedded resources location within assembly, corresponds to "Resource" parameter in <see cref="IAssetKey"/>.</param>
         /// <returns></returns>
         public static ResourceManagerAsset CreateLocation(ResourceManager resourceManager, string baseName, Assembly assembly)
             => new ResourceManagerAsset(resourceManager, namepolicy_for_location_resourcemanager);
@@ -82,7 +82,7 @@ namespace Lexical.Localization
         /// Create resource manager that is assigned to a specific embedded resource location.
         /// </summary>
         /// <param name="assembly"></param>
-        /// <param name="baseName">embedded resources location within assembly, corresponds to "resource" parameter in <see cref="IAssetKey"/>.</param>
+        /// <param name="baseName">embedded resources location within assembly, corresponds to "Resource" parameter in <see cref="IAssetKey"/>.</param>
         /// <returns></returns>
         public static ResourceManagerAsset CreateLocation(string baseName, Assembly assembly)
             => new ResourceManagerAsset(new ResourceManager(baseName, assembly), namepolicy_for_location_resourcemanager);

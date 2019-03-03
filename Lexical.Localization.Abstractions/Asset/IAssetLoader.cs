@@ -23,7 +23,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Add new loader function.
         /// </summary>
-        /// <param name="part">Object that loads assets based on the parameters, such as "culture"</param>
+        /// <param name="part">Object that loads assets based on the parameters, such as "Culture"</param>
         /// <exception cref="ArgumentException">If there was a problem parsing the filename pattern</exception>
         /// <returns>this</returns>
         IAssetLoader Add(IAssetLoaderPart part);

@@ -125,7 +125,7 @@ namespace Lexical.Localization
                     // Iterate all criteria parameters (key,value)
                     foreach (var criteriaParameter in criteriaParams)
                     {
-                        if (criteriaParameter.Key == "root") continue;
+                        if (criteriaParameter.Key == "Root") continue;
                         // Search key in our pattern.
                         IAssetNamePatternPart[] parts;
                         // If criteria has a parameter that is not in the pattern, then exit, no values can be provided.
@@ -181,7 +181,7 @@ namespace Lexical.Localization
             if (namePolicy is IAssetNamePattern pattern)
             {
                 IAssetNamePatternPart culturePart;
-                if (!pattern.PartMap.TryGetValue("culture", out culturePart)) return null;
+                if (!pattern.PartMap.TryGetValue("Culture", out culturePart)) return null;
 
                 Dictionary<string, CultureInfo> result = new Dictionary<string, CultureInfo>();
                 foreach (var kp in dictionary)

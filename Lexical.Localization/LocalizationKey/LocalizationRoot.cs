@@ -19,7 +19,7 @@ namespace Lexical.Localization
         #region Code
         protected ICulturePolicy culturePolicy;
         protected IAsset localizationAsset;
-        String IAssetKeyParametrized.ParameterName => "root";
+        String IAssetKeyParametrized.ParameterName => "Root";
 
         public virtual ICulturePolicy CulturePolicy { get => culturePolicy; set { throw new InvalidOperationException(); } }
         public virtual IAsset Asset { get => localizationAsset; set { throw new InvalidOperationException(); } }

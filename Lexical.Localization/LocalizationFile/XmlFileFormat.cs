@@ -18,7 +18,8 @@ namespace Lexical.Localization
     public class XmlFileFormat : ILocalizationFileFormat, ILocalizationKeyTreeStreamReader, ILocalizationKeyTreeTextReader
     {
         public static readonly XNamespace NsDefault = "urn:lexical.fi";
-        public static readonly XName NameLine = NsDefault + "line";
+        public static readonly XName NameLine = NsDefault + "Line";
+        public static readonly XName NameRoot = NsDefault + "Localization";
         public const string URN_ = "urn:lexical.fi:";
 
         private readonly static XmlFileFormat instance = new XmlFileFormat("xml");
@@ -117,7 +118,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Parser that extracts name from occurance index "key_2" -> "key", "2".
+        /// Parser that extracts name from occurance index "Key_2" -> "Key", "2".
         /// </summary>
         static Regex occuranceIndexParser = new Regex("(?<name>.*)(_(?<index>\\d+))?$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 

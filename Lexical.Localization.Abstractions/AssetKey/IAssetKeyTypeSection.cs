@@ -8,7 +8,7 @@ using System;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of "type" parameter assignment.
+    /// Key has capability of "Type" parameter assignment.
     /// 
     /// Type parameters are used with physical files and embedded resources.
     /// 
@@ -39,7 +39,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Key (may have) has "type" parameter assignment.
+    /// Key (may have) has "Type" parameter assignment.
     /// 
     /// Type parameters are used with physical files and embedded resources.
     /// </summary>

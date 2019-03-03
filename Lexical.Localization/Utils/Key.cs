@@ -19,11 +19,11 @@ namespace Lexical.Localization.Utils
     /// </summary>
     public partial class Key : IAssetKey, IAssetKeyLinked, IAssetKeyParametrized, IAssetKeyParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>
     {
-        private static readonly Key root = new Key("root", "");
+        private static readonly Key root = new Key("Root", "");
         public static Key Root => root;
 
         /// <summary>
-        /// Parameter name, e.g. "culture"
+        /// Parameter name, e.g. "Culture"
         /// </summary>
         public readonly string Name;
 
@@ -140,7 +140,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         public static readonly Dictionary<string, ParameterFlags> ParameterInfo = new Dictionary<string, ParameterFlags>
         {
-            { "root", ParameterFlags.None }, { "culture", ParameterFlags.NonCanonicalCompare }, { "assembly", ParameterFlags.NonCanonicalCompare }
+            { "Root", ParameterFlags.None }, { "Culture", ParameterFlags.NonCanonicalCompare }, { "Assembly", ParameterFlags.NonCanonicalCompare }
         };
 
         /// <summary>

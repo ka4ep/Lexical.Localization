@@ -8,7 +8,7 @@ using System;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of "section" parameter assignment.
+    /// Key has capability of "Section" parameter assignment.
     /// 
     /// Regular section as a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.
     /// 
@@ -25,7 +25,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Key (may have) has been "section" parameter assignment.
+    /// Key (may have) has been "Section" parameter assignment.
     /// 
     /// Regular section as a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.
     /// </summary>

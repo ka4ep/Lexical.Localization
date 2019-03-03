@@ -81,7 +81,7 @@ namespace Lexical.Localization
             foreach (Key key in dictionary.Keys)
             {
                 for(Key k=key; k!=null; k=k.Previous)
-                    if (k.Name=="culture")
+                    if (k.Name=="Culture")
                     {
                         string culture = k.Value ?? "";
                         if (result.ContainsKey(culture)) continue;

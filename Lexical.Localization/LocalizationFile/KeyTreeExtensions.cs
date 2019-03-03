@@ -31,7 +31,7 @@ namespace Lexical.Localization
         public static IEnumerable<KeyValuePair<IAssetKey, string>> ToKeyLines(this IKeyTree node, bool skipRoot = true)
         {
             Queue<(IKeyTree, IAssetKey)> queue = new Queue<(IKeyTree, IAssetKey)>();
-            queue.Enqueue((node, skipRoot && node.Key.Name == "root" ? null : node.Key));
+            queue.Enqueue((node, skipRoot && node.Key.Name == "Root" ? null : node.Key));
             while (queue.Count > 0)
             {
                 // Next element

@@ -66,7 +66,7 @@ namespace Lexical.Localization.Tests
         {
             // Arrange
             ILocalizationFileFormat fileformat = ResXFileFormat.Instance;
-            Dictionary<string, string> param = new Dictionary<string, string> { { "culture", "en" } };  
+            Dictionary<string, string> param = new Dictionary<string, string> { { "Culture", "en" } };  
 
             // .resx file property must be set to "Copy to output directory" = "Copy Always"
             string filename = "Resources/localization.en.resx";
@@ -74,7 +74,7 @@ namespace Lexical.Localization.Tests
 
             // Act
             Stream s = new FileStream(filename, FileMode.Open);
-            IAsset asset = fileformat.CreateAsset(s, new AssetNamePattern("{culture.}[anysection.][key]"), Key.CreateFromParameters(param));
+            IAsset asset = fileformat.CreateAsset(s, new AssetNamePattern("{Culture.}[anysection.][Key]"), Key.CreateFromParameters(param));
             s.Dispose();
 
             // Assert

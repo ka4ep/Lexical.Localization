@@ -14,7 +14,7 @@ namespace Lexical.Localization.Utils
     /// <summary>
     /// Keys organized into a tree structure.
     /// 
-    /// The root key has single key Key("root", "").
+    /// The root key has single key Key("Root", "").
     /// 
     /// Sub-nodes have one or more keys. For example an .ini file
     /// <code>
@@ -23,9 +23,9 @@ namespace Lexical.Localization.Utils
     /// </code>
     /// 
     /// Would be parsed into a tree of following structure.
-    ///   KeyTree(Key("root", ""))
-    ///       KeyTree(Key("culture", "en).Append("type", "MyController"))
-    ///           KeyTree(Key("key", "Success")
+    ///   KeyTree(Key("Root", ""))
+    ///       KeyTree(Key("Culture", "en).Append("Type", "MyController"))
+    ///           KeyTree(Key("Key", "Success")
     ///           
     /// </summary>
     public class KeyTree : IKeyTree
@@ -38,7 +38,7 @@ namespace Lexical.Localization.Utils
         /// <returns>tree root ""</returns>
         public static KeyTree Create(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
         {
-            KeyTree root = new KeyTree(new Key("root", ""), null);
+            KeyTree root = new KeyTree(new Key("Root", ""), null);
             root.AddRange(keyValues);
             return root;
         }

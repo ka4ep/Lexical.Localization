@@ -8,10 +8,10 @@ using System;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of "resource" parameter assignment. "resource" describes a part of a path to assembly's embedded resource.
+    /// Key has capability of "Resource" parameter assignment. "Resource" describes a part of a path to assembly's embedded resource.
     /// This corresponds to "baseName" argument of System.Resources.ResourceManager.
     /// 
-    /// For example, instances of this interface match to "resource" part in the following name pattern "[assembly.][resource.]{type.}{section.}{key}".
+    /// For example, instances of this interface match to "Resource" part in the following name pattern "[assembly.][resource.]{type.}{section.}{key}".
     /// 
     /// This parameter is mostly used with IStringLocalization of Microsoft.Extensions.Localization.Abstractions.
     /// 
@@ -30,7 +30,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// This key is assigned with a "resource" parameter section.
+    /// This key is assigned with a "Resource" parameter section.
     /// 
     /// Resource in this context means a part of a path to assembly's embedded resource.
     /// For instance, resource hint matches in name pattern "[assembly.][resource.]{type.}{section.}{key}".

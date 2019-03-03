@@ -37,8 +37,8 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetKeyNamePolicy namePolicy)
             => namePolicy is IAssetNamePattern pattern ?
-                new KeyTree(new Key("root", ""), null).AddRange(lines, pattern) :
-                new KeyTree(new Key("root", ""), null).AddRange(lines);
+                new KeyTree(new Key("Root", ""), null).AddRange(lines, pattern) :
+                new KeyTree(new Key("Root", ""), null).AddRange(lines);
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
@@ -85,7 +85,7 @@ namespace Lexical.Localization
             // Create comparer that can compare TreeNode and argument's keys
             ParametrizedComparer comparer = new ParametrizedComparer();
             // Create orderer
-            PartComparer partComparer = new PartComparer().AddParametersToSortOrder("root");
+            PartComparer partComparer = new PartComparer().AddParametersToSortOrder("Root");
             if (groupingRule != null)
             {
                 foreach (IAssetNamePatternPart part in groupingRule.CaptureParts)
@@ -93,7 +93,7 @@ namespace Lexical.Localization
             }
             else
             {
-                partComparer.AddParametersToSortOrder("culture");
+                partComparer.AddParametersToSortOrder("Culture");
             }
 
             List<PartComparer.Part> partList = new List<PartComparer.Part>(10);
@@ -224,11 +224,11 @@ namespace Lexical.Localization
     /// <summary>
     /// TreeNode is an intermediate model for writing text files
     /// 
-    /// Reorganize parts so that non-canonicals parts, so that "root" is first, then "culture", and then others by parameter name.
+    /// Reorganize parts so that non-canonicals parts, so that "Root" is first, then "Culture", and then others by parameter name.
     /// </summary>
     internal class PartComparer : IComparer<PartComparer.Part>
     {
-        private static readonly PartComparer instance = new PartComparer().AddParametersToSortOrder("root", "culture");
+        private static readonly PartComparer instance = new PartComparer().AddParametersToSortOrder("Root", "Culture");
         public static PartComparer Default => instance;
 
         public readonly List<string> order = new List<string>();

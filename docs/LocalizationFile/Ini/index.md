@@ -1,15 +1,15 @@
 ﻿# Ini
 Example of **.ini** localization file.
 ```none
-[type:ConsoleApp1.MyController]
-key:Success      = Success
-key:Error        = Error (Code=0x{0:X8})
+[Type:ConsoleApp1.MyController]
+Key:Success      = Success
+Key:Error        = Error (Code=0x{0:X8})
 
-[culture:en:type:ConsoleApp1.MyController]
-key:Success      = Success
-key:Error        = Error (Code=0x{0:X8})
+[Culture:en:Type:ConsoleApp1.MyController]
+Key:Success      = Success
+Key:Error        = Error (Code=0x{0:X8})
 
-[culture:fi:type:ConsoleApp1.MyController]
-key:Success      = Onnistui
-key:Error        = Virhe (Koodi=0x{0:X8})
+[Culture:fi:Type:ConsoleApp1.MyController]
+Key:Success      = Onnistui
+Key:Error        = Virhe (Koodi=0x{0:X8})
 ```

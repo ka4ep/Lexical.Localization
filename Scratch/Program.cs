@@ -22,7 +22,7 @@ namespace Scratch
 
             // Create key
             IAssetKey key = LocalizationRoot.Global.TypeSection("ConsoleApp1.MyController").Key("Success");
-            Key key2 = Key.Create("type", "ConsoleApp1.MyController").Append("key", "Success").Append("culture", "en");
+            Key key2 = Key.Create("Type", "ConsoleApp1.MyController").Append("Key", "Success").Append("Culture", "en");
 
             AssetKeyComparer comparer = AssetKeyComparer.Default;
 

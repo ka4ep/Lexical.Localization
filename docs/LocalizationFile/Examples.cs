@@ -37,7 +37,7 @@ namespace docs
         public string Extension => "ext";
         public IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(Stream stream, IAssetKeyNamePolicy namePolicy = default)
         {
-            IAssetKey key = Key.Create("section", "MyClass").Append("key", "HelloWorld").Append("culture", "en");
+            IAssetKey key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
             yield return new KeyValuePair<IAssetKey, string>(key, "Hello World!");
         }
     }

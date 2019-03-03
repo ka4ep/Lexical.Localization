@@ -8,12 +8,12 @@ using System;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of "location" parameter assignment.
+    /// Key has capability of "Location" parameter assignment.
     /// 
     /// Location is hint that adds physical directory to search assets from to a given key.
     /// <see cref="IAsset"/> implementation may use this hint to search assets from. 
     /// This hint can be provided multiple times, for example: key = key.Location("Assets/").Location("Icons/");
-    /// If <see cref="IAsset"/> implementation uses name pattern, the hint in key reflects to "location_0", "location_1", etc§ parts in name pattern. Part "location" reflects to the last hint.
+    /// If <see cref="IAsset"/> implementation uses name pattern, the hint in key reflects to "location_0", "location_1", etc§ parts in name pattern. Part "Location" reflects to the last hint.
     /// For example, location hints would reflect to respective parts in the following name pattern: "{location_0/}{location_1/}{type/}{section.}{key}.ini".
     /// 
     /// Consumers of this interface should call the extension method <see cref="AssetKeyExtensions.Location(IAssetKey, string)"/>.
@@ -31,11 +31,11 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Key that (may have) has been assigned with a "location" parameter.
+    /// Key that (may have) has been assigned with a "Location" parameter.
     /// 
     /// Location means physical directory to search assets from.
     /// 
-    /// For example, key.Location("Assets/") would be put in place of "location" in following filen name pattern "{location/}{type/}{section.}{key}.ini".
+    /// For example, key.Location("Assets/") would be put in place of "Location" in following filen name pattern "{location/}{type/}{section.}{key}.ini".
     /// </summary>
     public interface IAssetKeyLocationSection : IAssetKeySection
     {
