@@ -156,7 +156,7 @@ namespace Lexical.Localization
                     else
                     {
                         pluralityKey = null;
-                        pluralityKeys = CreatePluralityKeyPermutations(key: key, maxArgumentCount: 2, args: format_args); // 2^5 = 32 keys
+                        pluralityKeys = CreatePluralityKeyPermutations(key: key, maxArgumentCount: Plurality.MAX_NUMERIC_ARGUMENTS_TO_PERMUTATE, args: format_args); // 2^5 = 32 keys
                         break;
                     }
                 }

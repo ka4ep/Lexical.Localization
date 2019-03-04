@@ -14,6 +14,8 @@ namespace Lexical.Localization
     /// </summary>
     public static class Plurality 
     {
+        public const int MAX_NUMERIC_ARGUMENTS_TO_PERMUTATE = 2;
+
         public const string Zero = "Zero";
         public const string One = "One";
         public const string Plural = "Plural";

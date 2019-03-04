@@ -2,14 +2,14 @@
 This tutorial shows how to load language strings from an external file.
 <br/>
 
-Add new text file **"localization.ini"** into the C# project.
+Add new text file **"HelloWorld.ini"** into the C# project.
 
 ![Add new](img6.png)
 
 ![new .ini](img10.png)
 
 <br/>
-Paste the following text to the **localization.ini**, and then save the document.
+Paste the following text to the **HelloWorld.ini**, and then save the document.
 
 
 ```ini
@@ -30,7 +30,7 @@ Type:TutorialProject.Program:Key:Hello = Hallo Welt!
 ```
 
 <br/>
-Go to properties of **localization.ini** and change **Copy to Output Directory** to **Copy always**. Now the file will be copied to the .exe folder.
+Go to properties of **HelloWorld.ini** and change **Copy to Output Directory** to **Copy always**. Now the file will be copied to the .exe folder.
 
 ![Copy always](img11.png)
 
@@ -50,7 +50,7 @@ namespace TutorialProject
         public static void Main(string[] args)
         {
             // Create a loader
-            IAsset asset = IniFileFormat.Instance.CreateFileAsset("localization.ini");
+            IAsset asset = IniFileFormat.Instance.CreateFileAsset("HelloWorld.ini");
 
             // Add asset to global singleton instance
             LocalizationRoot.Builder.AddAsset(asset);

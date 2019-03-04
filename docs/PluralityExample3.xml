@@ -4,7 +4,7 @@
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1"
               xmlns="urn:lexical.fi">
 
-  <!-- Plurality permutations for numeric argument 0 and numeric argument 1 -->
+  <!-- Example: Plurality for permutations of arguments {0} and {1} -->
   <Key:CatsDogs3>
     {0} cat(s) and {1} dog(s)
     <N:Zero>
