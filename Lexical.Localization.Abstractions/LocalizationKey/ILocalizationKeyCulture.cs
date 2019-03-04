@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -118,6 +119,18 @@ namespace Lexical.Localization
         /// Search linked list and find selected culture.
         /// </summary>
         /// <param name="key"></param>
+        /// <returns>culture name or null</returns>
+        public static string FindCultureByName(this IAssetKey key)
+        {
+            for (; key != null; key = key.GetPreviousKey())
+                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.Name != null) return cultureKey.Name;
+            return null;
+        }
+
+        /// <summary>
+        /// Search linked list and find selected culture.
+        /// </summary>
+        /// <param name="key"></param>
         /// <returns>culture policy or null</returns>
         public static ILocalizationKeyCultureAssigned FindCultureKey(this IAssetKey key)
         {
@@ -188,14 +201,32 @@ namespace Lexical.Localization
 
     /// <summary>
     /// Non-canonical comparer that compares <see cref="ILocalizationKeyCultureAssigned"/> values of keys.
+    /// 
+    /// This comparer regards null and "" non-equivalent. 
     /// </summary>
     public class LocalizationKeyCultureComparer : IEqualityComparer<IAssetKey>
     {
-        static IEqualityComparer<CultureInfo> comparer = new EqualsComparer<CultureInfo>();
+        //static IEqualityComparer<CultureInfo> culture_comparer = new EqualsComparer<CultureInfo>();
+        static IEqualityComparer<string> string_comparer = StringComparer.InvariantCulture;
         public bool Equals(IAssetKey x, IAssetKey y)
-            => comparer.Equals(x?.FindCulture(), y?.FindCulture());
+            => string_comparer.Equals(x?.FindCultureByName(), y?.FindCultureByName());
         public int GetHashCode(IAssetKey obj)
-            => comparer.GetHashCode(obj?.FindCulture());
+            => string_comparer.GetHashCode(obj?.FindCultureByName());
+    }
+
+    /// <summary>
+    /// Non-canonical comparer that compares <see cref="ILocalizationKeyCultureAssigned"/> values of keys.
+    /// 
+    /// This comparer regards null and "" equivalent. 
+    /// </summary>
+    public class LocalizationKeyCultureComparer2 : IEqualityComparer<IAssetKey>
+    {
+        //static IEqualityComparer<CultureInfo> culture_comparer = new EqualsComparer<CultureInfo>();
+        static IEqualityComparer<string> string_comparer = StringComparer.InvariantCulture;
+        public bool Equals(IAssetKey x, IAssetKey y)
+            => string_comparer.Equals(x?.FindCultureByName() ?? "", y?.FindCultureByName() ?? "");
+        public int GetHashCode(IAssetKey obj)
+            => string_comparer.GetHashCode(obj?.FindCultureByName() ?? "");
     }
 
 }

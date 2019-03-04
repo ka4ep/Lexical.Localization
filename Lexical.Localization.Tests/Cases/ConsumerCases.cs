@@ -55,12 +55,13 @@ namespace Lexical.Localization.Tests
                 Assert.AreEqual("Onnistui", fi_success.ToString());
                 Assert.AreEqual("Success", en_success.ToString());
                 Assert.AreEqual("Virhe (Koodi=0xFEEDF00D)", fi.Key("Error").Format(0xFeedF00d).ToString());
-                Assert.AreEqual("Erfolg", section.Culture("de").de("Erfolg").ToString());
+                //Assert.AreEqual("Erfolg", section.Culture("de").de("Erfolg").ToString()); // <- not addressed atm
+                Assert.AreEqual("Erfolg", section.Culture("de").Inline("Erfolg").ToString());
                 Assert.AreEqual("Onnistui", (string)d_section.Success.Culture("fi"));
                 Assert.AreEqual(null, d_section.Inlines);
                 Assert.AreEqual(null, d_section.Args);
                 Assert.IsTrue((int)((object[])d_section.Error.Format(0xBADF00D).Args)[0] == 0xBADF00D);
-                IAssetKey _key = d_section.Error.Culture("sv-SE").sv_SE("Sönder (kod=0x{0:X8})").Format(0xCafeBabe);
+                IAssetKey _key = d_section.Error.Culture("sv-SE").Inline("Sönder (kod=0x{0:X8})").Format(0xCafeBabe);
                 Assert.AreEqual("Sönder (kod=0xCAFEBABE)", _key.ToString());
 
                 // Again this time from cache
@@ -84,7 +85,7 @@ namespace Lexical.Localization.Tests
                 Assert.AreEqual("Onnistui", fi_success.ToString());
                 Assert.AreEqual("Success", en_success.ToString());
                 Assert.AreEqual("Virhe (Koodi=0xFEEDF00D)", fi.Key("Error").Format(0xFeedF00d).ToString());
-                Assert.AreEqual("Erfolg", section.Culture("de").de("Erfolg").ToString());
+                Assert.AreEqual("Erfolg", section.Culture("de").Inline("Erfolg").ToString());
 
                 // Reload and try again.
                 if (asset is IAssetReloadable reloadable)
@@ -111,7 +112,7 @@ namespace Lexical.Localization.Tests
                     Assert.AreEqual("Onnistui", fi_success.ToString());
                     Assert.AreEqual("Success", en_success.ToString());
                     Assert.AreEqual("Virhe (Koodi=0xFEEDF00D)", fi.Key("Error").Format(0xFeedF00d).ToString());
-                    Assert.AreEqual("Erfolg", section.Culture("de").de("Erfolg").ToString());
+                    Assert.AreEqual("Erfolg", section.Culture("de").Inline("Erfolg").ToString());
                 }
 
                 // Modify, Reload, Test

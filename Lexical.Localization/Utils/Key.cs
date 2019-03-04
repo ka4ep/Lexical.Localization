@@ -13,7 +13,7 @@ namespace Lexical.Localization.Utils
     /// <summary>
     /// This class is a context-free implementation of <see cref="IAssetKey"/>. 
     /// It can be used as a reference, but not as a provider of localization content.
-    /// It is used for purposes of persisting and comparing keys.
+    /// It is used as a key for persisting and comparison.
     /// 
     /// This class has one parameter name and a value, and it can carry a link to previous node.
     /// </summary>

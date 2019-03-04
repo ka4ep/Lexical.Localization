@@ -45,7 +45,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILocalizationKey <#= funcName #>(this IAssetKey key, string text) => key.Inline("<#= code #>", text);
+        public static IAssetKey <#= funcName #>(this IAssetKey key, string text) => key.Inline("Culture:<#= code #>", text);
         
 <# } #>
     }

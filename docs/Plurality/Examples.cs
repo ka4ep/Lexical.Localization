@@ -10,20 +10,19 @@ namespace docs
         // Rename to "Main", or run from Main.
         public static void Run(string[] args)
         {
-            /*
-            // XXX: Inlines must be redesigned due to the plurality model
             {
                 #region Snippet_0
-                IAssetKey key = LocalizationRoot.Global.Key("Cats").Inline("{0} cats")
-                        .N(Plurality.Zero).Inline("no cats")
-                        .N(Plurality.One).Inline("a cat")
-                        .N(Plurality.Plural).Inline("{0} cats");
+                IAssetKey key = LocalizationRoot.Global.Key("Cats")
+                        .Inline("{0} cats")
+                        .Inline("N:Zero", "no cats")
+                        .Inline("N:One", "a cat")
+                        .Inline("N:Plural", "{0} cats");
 
                 Console.WriteLine(key.Format(0));
                 Console.WriteLine(key.Format(1));
                 Console.WriteLine(key.Format(2));
                 #endregion Snippet_0
-            }*/
+            }
 
             {
                 #region Snippet_1

@@ -128,31 +128,26 @@ namespace Lexical.Localization.Ms.Extensions
             public String ParameterName => "Culture";
         }
 
-        ILocalizationKeyInlined ILocalizationKeyInlineAssignable.Inline(string culture, string text) => _inline(culture, text);
-        public virtual _Inlined Inline(string culture, string text) => _inline(culture, text);
-        protected virtual _Inlined _inline(string culture, string text)
-        {
-            var inlines = new Dictionary<string, string>(3);
-            if (text == null) inlines.Remove(culture); else inlines[culture] = text;
-            return new _Inlined(this, inlines);
-        }
+        ILocalizationKeyInlined ILocalizationKeyInlineAssignable.AddInlines() => _addinlines();
+        public _Inlined AddInlines() => _addinlines();
+        protected virtual _Inlined _addinlines() => new _Inlined(this);
         [Serializable]
         public class _Inlined : StringLocalizerKey, ILocalizationKeyInlined, IAssetKeyNonCanonicallyCompared
         {
-            protected IDictionary<string, string> inlines;
-            public virtual IDictionary<string, string> Inlines => inlines;
-            public _Inlined(IAssetKey prevKey, IDictionary<string, string> inlines) : base(prevKey, "") { this.inlines = inlines; }
-            public _Inlined(SerializationInfo info, StreamingContext context) : base(info, context) { this.inlines = info.GetValue(nameof(Inlines), typeof(IDictionary<string, string>)) as IDictionary<string, string>; }
-            protected override _Inlined _inline(string culture, string text)
+            protected IDictionary<IAssetKey, string> inlines;
+            public virtual IDictionary<IAssetKey, string> Inlines => inlines;
+            public _Inlined(IAssetKey prevKey) : this(prevKey, new Dictionary<IAssetKey, string>(AssetKeyComparer.Default)) { }
+            public _Inlined(IAssetKey prevKey, IDictionary<IAssetKey, string> inlines) :base(prevKey, "") { this.inlines = inlines ?? throw new ArgumentNullException(nameof(inlines)); }
+            public _Inlined(SerializationInfo info, StreamingContext context) : base(info, context)
             {
-                if (inlines == null) inlines = new Dictionary<string, string>();
-                if (text == null) inlines.Remove(culture); else inlines[culture] = text;
-                return this;
+                IDictionary<string, string> stringLines = info.GetValue(nameof(Inlines), typeof(IDictionary<string, string>)) as IDictionary<string, string>;
+                this.inlines = stringLines.ToKeyLines(ParameterNamePolicy.Instance).ToDictionary(AssetKeyComparer.Default);
             }
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
             {
                 base.GetObjectData(info, context);
-                info.AddValue(nameof(Inlines), Inlines);
+                Dictionary<string, string> stringLines = inlines.ToStringLines(ParameterNamePolicy.Instance).ToDictionary(line=>line.Key, line=>line.Value);
+                info.AddValue(nameof(Inlines), stringLines);
             }
         }
 

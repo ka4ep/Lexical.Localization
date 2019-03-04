@@ -123,12 +123,12 @@ namespace Lexical.Localization
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns>T</returns>
-        /// <exception cref="AssetException">if T is not found</exception>
+        /// <exception cref="AssetKeyException">if T is not found</exception>
         public static T Get<T>(this IAssetKey key) where T : IAssetKey
         {
             for (; key != null; key = key.GetPreviousKey())
                 if (key is T casted) return casted;
-            throw new AssetException($"{typeof(T).CanonicalName()} is not found.");
+            throw new AssetKeyException(key, $"{typeof(T).CanonicalName()} is not found.");
         }
 
         /// <summary>

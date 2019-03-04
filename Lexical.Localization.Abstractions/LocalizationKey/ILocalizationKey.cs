@@ -66,66 +66,46 @@ namespace Lexical.Localization
             => key.FindAsset()?.GetString(key);
 
         /// <summary>
-        /// Resolve language string using the active culture. Uses the following algorithm:
-        ///   1. If key has a selected culture, try that
-        ///      a) from inlines
-        ///      b) from Asset
-        ///   2. If key has <see cref="ICulturePolicy"/>, iterate the cultures.
-        ///      a) Try inlined strings.
-        ///      b) Try asset
-        ///   3. Try to read value for key from asset as is
-        ///   4. Return null
+        /// Resolve the formulation string. 
+        /// 
+        /// Uses the following algorithm:
+        ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="LocalizationKeyExtensions.FindCulturePolicy(IAssetKey)"/>.
+        ///   2. Try key as is.
         ///   
-        /// Does not formulate string, returns the formulation string, e.g. "Error (Code=0x{0:X8})".
+        ///      a. Search inlines with culture
+        ///      b. Search asset with culture
         /// </summary>
         /// <param name="key"></param>
         /// <returns>formulation string (without formulating it) or null</returns>
         public static string ResolveString(this IAssetKey key)
         {
-            // Try with the culture that is explicitly assigned to the key
-            CultureInfo explicitCulture = key.FindCulture();
-            if (explicitCulture != null)
+            // If there is no explicitly assigned culture in the key, try cultures from culture policy
+            string explicitCulture = key.FindCultureByName();
+            IEnumerable<CultureInfo> cultures = null;
+            if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
             {
-                // XXX: Inlines must be redesigned due to the plurality model
                 string languageString = null;
                 // Get inlines
-                IDictionary<string, string> inlines = key.FindInlines();
-                // Try inlines
-                if (languageString == null && inlines != null) inlines.TryGetValue(explicitCulture?.Name ?? "", out languageString);
-                // Try key
-                if (languageString == null) languageString = key.TryGetString();
-                // Return
-                if (languageString != null) return languageString;
-            }
-            else
-            {
-                // Use culture policy
-                IEnumerable<CultureInfo> cultures = key.FindCulturePolicy()?.Cultures;
-                if (cultures != null)
+                IDictionary<IAssetKey, string> inlines = key.FindInlines();
+                foreach (CultureInfo culture in cultures)
                 {
-                    string languageString = null;
-                    // Get inlines
-                    IDictionary<string, string> inlines = key.FindInlines();
-                    foreach (CultureInfo culture in cultures)
-                    {
-                        // Try inlines
-                        if (languageString == null && inlines != null) inlines.TryGetValue(culture?.Name ?? "", out languageString);
-                        // Try key
-                        if (languageString == null) languageString = key.Culture(culture).TryGetString();
-                        // Return
-                        if (languageString != null) return languageString;
-                    }
+                    IAssetKey culture_key = key.Culture(culture);
+                    // Try inlines
+                    if (languageString == null && inlines != null) inlines.TryGetValue(culture_key, out languageString);
+                    // Try key
+                    if (languageString == null) languageString = culture_key.TryGetString();
+                    // Return
+                    if (languageString != null) return languageString;
                 }
             }
 
             {
-                // No explicit culture and culture policy didn't help. 
                 string languageString = null;
                 // Get inlines
-                IDictionary<string, string> inlines = key.FindInlines();
-                // Try inlines
-                if (languageString == null && inlines != null) inlines.TryGetValue("", out languageString);
-                // Try key
+                IDictionary<IAssetKey, string> inlines = key.FindInlines();
+                // Try inlines with key
+                if (languageString == null && inlines != null) inlines.TryGetValue(key, out languageString);
+                // Try asset with key
                 if (languageString == null) languageString = key.TryGetString();
                 // Return
                 if (languageString != null) return languageString;
@@ -135,12 +115,18 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Resolve language string, by using the following algorithm:
-        ///   1. Use explicit culture
-        ///   2. Use cultures from use <see cref="ICulturePolicy"/> from <see cref="LocalizationKeyExtensions.FindCulturePolicy(IAssetKey)"/>.
-        ///   3. Use key as is
+        /// Resolve language string. 
+        /// 
+        /// Uses the following algorithm:
+        ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="LocalizationKeyExtensions.FindCulturePolicy(IAssetKey)"/>.
+        ///   2. Try key as is.
         ///   
-        /// Then try to formulate the string, e.g. "Error (Code=0xFEEDF00D)".
+        ///      a. Search inlines with plurality and culture
+        ///      b. Search inlines with culture
+        ///      c. Search asset with plurality and culture
+        ///      d. Search asset with culture
+        ///   
+        ///   3. Then try to formulate the string with assigned arguments, e.g. "Error (Code=0xFEEDF00D)"
         /// </summary>
         /// <param name="key"></param>
         /// <returns>If key has <see cref="ILocalizationKeyFormatArgs"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
@@ -164,62 +150,47 @@ namespace Lexical.Localization
                 }
             }
 
-            // Try with the culture that is explicitly assigned to the key
-            CultureInfo explicitCulture = key.FindCulture();
-            if (explicitCulture != null)
+            // If there is no explicitly assigned culture in the key, try cultures from culture policy
+            string explicitCulture = key.FindCultureByName();
+            IEnumerable<CultureInfo> cultures = null;
+            if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
             {
-                // XXX: Inlines must be redesigned due to the plurality model
                 string languageString = null;
                 // Get inlines
-                IDictionary<string, string> inlines = key.FindInlines();
-                // Try inlines
-                if (languageString == null && inlines != null) inlines.TryGetValue(explicitCulture?.Name ?? "", out languageString);
-                // Try cardinality key
-                if (languageString == null && pluralityKey != null) languageString = pluralityKey.TryGetString();
-                // Try key
-                if (languageString == null) languageString = key.TryGetString();
-                // Formulate language string
-                if (languageString != null && format_args != null) languageString = string.Format(languageString, format_args);
-                // Return
-                if (languageString != null) return languageString;
-            }
-            else
-            {
-                // Use culture policy
-                IEnumerable<CultureInfo> cultures = key.FindCulturePolicy()?.Cultures;
-                if (cultures != null)
+                IDictionary<IAssetKey, string> inlines = key.FindInlines();
+                foreach (CultureInfo culture in cultures)
                 {
-                    string languageString = null;
-                    // Get inlines
-                    IDictionary<string, string> inlines = key.FindInlines();
-                    foreach (CultureInfo culture in cultures)
-                    {
-                        // Try inlines
-                        if (languageString == null && inlines != null) inlines.TryGetValue(culture?.Name ?? "", out languageString);
-                        // Try cardinality key
-                        if (languageString == null && pluralityKey != null) languageString = pluralityKey.Culture(culture).TryGetString();
-                        // Try key
-                        if (languageString == null) languageString = key.Culture(culture).TryGetString();
-                        // Resolve to language string
-                        if (languageString == null && pluralityKey != null) languageString = pluralityKey.Culture(culture).TryGetString();
-                        // Formulate language string
-                        if (languageString != null && format_args != null) languageString = string.Format(languageString, format_args);
-                        // Return
-                        if (languageString != null) return languageString;
-                    }
+                    // Append culture
+                    IAssetKey pluralityKey_with_culture = pluralityKey?.Culture(culture);
+                    // Try inlines with plurality key
+                    if (languageString == null && inlines != null && pluralityKey_with_culture != null) inlines.TryGetValue(pluralityKey_with_culture, out languageString);
+                    // Append culture
+                    IAssetKey key_with_culture = key.Culture(culture);
+                    // Try inlines with fallback key
+                    if (languageString == null && inlines != null) inlines.TryGetValue(key_with_culture, out languageString);
+                    // Try asset with plurality key
+                    if (languageString == null && pluralityKey_with_culture != null) languageString = pluralityKey_with_culture.TryGetString();
+                    // Try asset with fallback key
+                    if (languageString == null) languageString = key_with_culture.TryGetString();
+                    // Formulate language string
+                    if (languageString != null && format_args != null) languageString = string.Format(languageString, format_args);
+                    // Return
+                    if (languageString != null) return languageString;
                 }
             }
 
+            // Try key as is
             {
-                // No explicit culture and culture policy didn't help. 
                 string languageString = null;
                 // Get inlines
-                IDictionary<string, string> inlines = key.FindInlines();
-                // Try inlines
-                if (languageString == null && inlines != null) inlines.TryGetValue("", out languageString);
-                // Try cardinality key
+                IDictionary<IAssetKey, string> inlines = key.FindInlines();
+                // Try inlines with plurality key
+                if (languageString == null && inlines != null && pluralityKey != null) inlines.TryGetValue(pluralityKey, out languageString);
+                // Try inlines with fallback key
+                if (languageString == null && inlines != null) inlines.TryGetValue(key, out languageString);
+                // Try asset with plurality key
                 if (languageString == null && pluralityKey != null) languageString = pluralityKey.TryGetString();
-                // Try key
+                // Try asset with fallback key
                 if (languageString == null) languageString = key.TryGetString();
                 // Formulate language string
                 if (languageString != null && format_args != null) languageString = string.Format(languageString, format_args);
