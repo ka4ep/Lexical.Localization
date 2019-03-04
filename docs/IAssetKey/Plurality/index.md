@@ -81,16 +81,16 @@ If the argument is "{1}" is to be declinated for pluralization, then the paramet
 </details>
 
 <br/>
-For two numeric arguments, all permutations can also be supplied. All cases of "Zero", "One" and "Plural" must be provided.
+For two numeric arguments all permutations can be supplied. All cases of "Zero", "One" and "Plural" must be provided.
 [!code-xml[Snippet](../../PluralityExample3.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_5)]
 <details>
   <summary>The result (<u>click here</u>)</summary>
 <pre>
 no cats and no dogs
-no cats but a dog
+no cats but one dog
 no cats but 2 dogs
-a cat but no dogs
+one cat but no dogs
 a cat and a dog
 a cat and 2 dogs
 2 cats but no dogs

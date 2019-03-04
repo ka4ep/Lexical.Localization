@@ -4,16 +4,16 @@
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1"
               xmlns="urn:lexical.fi">
 
-  <!-- Example: Plurality for permutations of arguments {0} and {1} -->
+  <!-- Example: Plurality for numeric arguments {0} and {1} -->
   <Key:CatsDogs3>
     {0} cat(s) and {1} dog(s)
     <N:Zero>
       <N1:Zero>no cats and no dogs</N1:Zero>
-      <N1:One>no cats but a dog</N1:One>
+      <N1:One>no cats but one dog</N1:One>
       <N1:Plural>no cats but {1} dogs</N1:Plural>
     </N:Zero>
     <N:One>
-      <N1:Zero>a cat but no dogs</N1:Zero>
+      <N1:Zero>one cat but no dogs</N1:Zero>
       <N1:One>a cat and a dog</N1:One>
       <N1:Plural>a cat and {1} dogs</N1:Plural>
     </N:One>

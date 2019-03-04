@@ -3,7 +3,8 @@
               xmlns:Key="urn:lexical.fi:Key"
               xmlns:N="urn:lexical.fi:N"
               xmlns="urn:lexical.fi">
-  
+
+  <!-- Example: Plurality for one numeric argument {0} -->
   <Key:Cats>
     {0} cat(s)
     <N:Zero>no cats</N:Zero>

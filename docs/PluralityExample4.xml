@@ -4,7 +4,7 @@
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1" xmlns:N2="urn:lexical.fi:N2" xmlns:N3="urn:lexical.fi:N3"
               xmlns="urn:lexical.fi">
 
-  <!-- Example: Plurality for argument {3} only -->
+  <!-- Example: Plurality for one numeric argument {3} -->
   <Key:CatsDogsPoniesHorses>
     {0} cat(s), {1} dog(s), {2} pony(es) and {3} horse(s)
     

@@ -30,7 +30,8 @@ Pluralized language strings can be read from an xml file.
               xmlns:Key="urn:lexical.fi:Key"
               xmlns:N="urn:lexical.fi:N"
               xmlns="urn:lexical.fi">
-  
+
+  <!-- Example: Plurality for one numeric argument {0} -->
   <Key:Cats>
     {0} cat(s)
     <N:Zero>no cats</N:Zero>
@@ -97,7 +98,7 @@ Same from an xml file.
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1"
               xmlns="urn:lexical.fi">
 
-  <!-- Example: Plurality for argument {0} only -->
+  <!-- Example: Plurality for numeric argument {0} only -->
   <Key:CatsDogs1>
     {0} cat(s) and {1} dog(s)
     <N:Zero>no cats and {1} dog(s)</N:Zero>
@@ -142,7 +143,7 @@ If the argument is "{1}" is to be declinated for pluralization, then the paramet
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1"
               xmlns="urn:lexical.fi">
 
-  <!-- Example: Plurality for argument {1} only -->
+  <!-- Example: Plurality for numeric argument {1} only -->
   <Key:CatsDogs2>
     {0} cat(s) and {1} dog(s)
     <N1:Zero>{0} cat(s) and no dogs</N1:Zero>
@@ -178,7 +179,7 @@ for (int cats = 0; cats <= 2; cats++)
 </details>
 
 <br/>
-For two numeric arguments, all permutations can also be supplied. All cases of "Zero", "One" and "Plural" must be provided.
+For two numeric arguments all permutations can be supplied. All cases of "Zero", "One" and "Plural" must be provided.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -187,16 +188,16 @@ For two numeric arguments, all permutations can also be supplied. All cases of "
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1"
               xmlns="urn:lexical.fi">
 
-  <!-- Example: Plurality for permutations of arguments {0} and {1} -->
+  <!-- Example: Plurality for numeric arguments {0} and {1} -->
   <Key:CatsDogs3>
     {0} cat(s) and {1} dog(s)
     <N:Zero>
       <N1:Zero>no cats and no dogs</N1:Zero>
-      <N1:One>no cats but a dog</N1:One>
+      <N1:One>no cats but one dog</N1:One>
       <N1:Plural>no cats but {1} dogs</N1:Plural>
     </N:Zero>
     <N:One>
-      <N1:Zero>a cat but no dogs</N1:Zero>
+      <N1:Zero>one cat but no dogs</N1:Zero>
       <N1:One>a cat and a dog</N1:One>
       <N1:Plural>a cat and {1} dogs</N1:Plural>
     </N:One>
@@ -223,9 +224,9 @@ for (int cats = 0; cats <= 2; cats++)
   <summary>The result (<u>click here</u>)</summary>
 <pre>
 no cats and no dogs
-no cats but a dog
+no cats but one dog
 no cats but 2 dogs
-a cat but no dogs
+one cat but no dogs
 a cat and a dog
 a cat and 2 dogs
 2 cats but no dogs
@@ -244,7 +245,7 @@ If there are more than two numeric arguments, pluralization can be used for one 
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1" xmlns:N2="urn:lexical.fi:N2" xmlns:N3="urn:lexical.fi:N3"
               xmlns="urn:lexical.fi">
 
-  <!-- Example: Plurality for argument {3} only -->
+  <!-- Example: Plurality for one numeric argument {3} -->
   <Key:CatsDogsPoniesHorses>
     {0} cat(s), {1} dog(s), {2} pony(es) and {3} horse(s)
     
