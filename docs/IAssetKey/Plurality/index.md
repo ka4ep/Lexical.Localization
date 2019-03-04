@@ -56,7 +56,7 @@ a cat and 2 dog(s)
 </details>
 <br/>
 
-Xml file with plurality for numeric argument {0} only.
+Xml file with plurality for the numeric argument {0}.
 [!code-xml[Snippet](../../PluralityExample1.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_3)]
 <details>

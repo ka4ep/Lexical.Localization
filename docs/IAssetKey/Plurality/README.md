@@ -130,7 +130,7 @@ a cat and 2 dog(s)
 </details>
 <br/>
 
-Xml file with plurality for numeric argument {0} only.
+Xml file with plurality for the numeric argument {0}.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -286,7 +286,7 @@ If there are more than two numeric arguments, pluralization can be used for one 
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1" xmlns:N2="urn:lexical.fi:N2" xmlns:N3="urn:lexical.fi:N3"
               xmlns="urn:lexical.fi">
 
-  <!-- Example: Plurality for one numeric argument {3} -->
+  <!-- Example: Plurality for one numeric argument {2} -->
   <Key:CatsDogsPoniesHorses>
     {0} cat(s), {1} dog(s), {2} pony(es) and {3} horse(s)
     
