@@ -6,12 +6,12 @@
 
   <!-- Plurality for four numeric arguments. No permutations after two numeric arguments, but lines can be written for one argument -->
   <Key:CatsDogsPoniesHorses>
-    {0} cat(s), {1} dog(s), {2} ponies(s) and {3} horse(s)
+    {0} cat(s), {1} dog(s), {2} pony(es) and {3} horse(s)
     
-    <N3:Zero>{0} cat(s), {1} dog(s), {2} ponies(s) and no horses</N3:Zero>
-    <N3:One>{0} cat(s), {1} dog(s), {2} ponies(s) and a horse</N3:One>
-    <N3:Plural>{0} cat(s), {1} dog(s), {2} ponies(s) and {3} horses</N3:Plural>
-
+    <N2:Zero>{0} cat(s), {1} dog(s), no ponies and {3} horse(s)</N2:Zero>
+    <N2:One>{0} cat(s), {1} dog(s), a pony and {3} horse(s)</N2:One>
+    <N2:Plural>{0} cat(s), {1} dog(s), {2} ponies and {3} horse(s)</N2:Plural>
+    
   </Key:CatsDogsPoniesHorses>
 
 </Localization>

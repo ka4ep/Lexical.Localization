@@ -35,7 +35,7 @@ namespace docs
             {
                 // Plurality permutations for argument 0
                 #region Snippet_2
-                IAssetKey key = LocalizationRoot.Global.Key("CatsAndDogs")
+                IAssetKey key = LocalizationRoot.Global.Key("CatsDogs")
                         .Inline("{0} cats and {1} dog(s)")
                         .Inline("N:Zero", "no cats and {1} dog(s)")
                         .Inline("N:One", "a cat and {1} dog(s)")
@@ -51,7 +51,7 @@ namespace docs
                 // Plurality permutations for argument 0
                 #region Snippet_3
                 IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample1.xml");
-                IAssetKey key = new LocalizationRoot(asset).Key("CatsAndDogs1");
+                IAssetKey key = new LocalizationRoot(asset).Key("CatsDogs1");
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)
@@ -62,7 +62,7 @@ namespace docs
                 // Plurality permutations for argument 1
                 #region Snippet_4
                 IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample2.xml");
-                IAssetKey key = new LocalizationRoot(asset).Key("CatsAndDogs2");
+                IAssetKey key = new LocalizationRoot(asset).Key("CatsDogs2");
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)
@@ -73,7 +73,7 @@ namespace docs
                 // Plurality permutations for argument 0 and argument 1
                 #region Snippet_5
                 IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample3.xml");
-                IAssetKey key = new LocalizationRoot(asset).Key("CatsAndDogs3");
+                IAssetKey key = new LocalizationRoot(asset).Key("CatsDogs3");
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)

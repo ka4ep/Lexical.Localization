@@ -5,11 +5,11 @@
               xmlns="urn:lexical.fi">
 
   <!-- Plurality permutations for argument 1 only -->
-  <Key:CatsAndDogs2>
+  <Key:CatsDogs2>
     {0} cat(s) and {1} dog(s)
     <N1:Zero>{0} cat(s) and no dogs</N1:Zero>
     <N1:One>{0} cat(s) and a dog</N1:One>
     <N1:Plural>{0} cat(s) and {1} dogs</N1:Plural>
-  </Key:CatsAndDogs2>
+  </Key:CatsDogs2>
 
 </Localization>
