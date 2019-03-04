@@ -25,7 +25,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Active dictionary of key-values.
         /// </summary>
-        protected IReadOnlyDictionary<IAssetKey, string> dictionary;
+        protected IDictionary<IAssetKey, string> dictionary;
 
         protected LocalizationAsset() { }
 
@@ -33,7 +33,7 @@ namespace Lexical.Localization
         /// Create localization asset that uses <paramref name="lines"/> as source of key-values.
         /// </summary>
         /// <param name="lines">reference to use as key-value source</param>
-        public LocalizationAsset(IReadOnlyDictionary<IAssetKey, string> lines) : this()
+        public LocalizationAsset(IDictionary<IAssetKey, string> lines) : this()
         {
             this.dictionary = lines ?? throw new ArgumentNullException(nameof(lines));
         }

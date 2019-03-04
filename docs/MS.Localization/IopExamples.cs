@@ -11,8 +11,7 @@ namespace docs
 {
     public class Ms_Localization_IopExamples
     {
-        // Rename to "Main", or run from Main.
-        public static void Run(string[] args)
+        public static void Main(string[] args)
         {
             {
                 #region Snippet_0a

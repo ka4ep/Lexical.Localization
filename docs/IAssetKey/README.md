@@ -175,9 +175,9 @@ This way the templates don't need to be manually updated as the code evolves.
 IAssetRoot root = new LocalizationRoot();
 // Create key and add default strings
 IAssetKey key = root.Section("Section").Key("Success")                    
-    .Inline("en", "Success")                           // Add inlining to the root culture ""
-    .Inline("fi", "Onnistui")                          // Add inlining to culture "fi"
-    .Inline("sv", "Det funkar");                       // Add inlining to culture "sv"
+    .Inline("Culture:en", "Success")                           // Add inlining to the root culture ""
+    .Inline("Culture:fi", "Onnistui")                          // Add inlining to culture "fi"
+    .Inline("Culture:sv", "Det funkar");                       // Add inlining to culture "sv"
 
 // Resolve string from inlined key "Success"
 string str = key.Culture("en").ToString();

@@ -9,8 +9,7 @@ namespace docs
 {
     public class Ms_DependencyInjection_Example2
     {
-        // Rename to "Main", or run from Main.
-        public static void Run(string[] args)
+        public static void Main(string[] args)
         {
             #region Snippet
             // Create service collection

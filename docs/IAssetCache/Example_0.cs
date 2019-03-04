@@ -5,8 +5,7 @@ namespace docs
 {
     public class IAssetCache_Example_0
     {
-        // Rename to "Main", or run from Main.
-        public static void Run(string[] args)
+        public static void Main(string[] args)
         {
             #region Snippet
             // Create asset

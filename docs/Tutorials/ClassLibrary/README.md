@@ -22,8 +22,8 @@ First, Add NuGet reference to **Lexical.Localization**.
 
 Then, write this example class **MyController1.cs** that uses the static instance **LocalizationRoot.Global**.
 
-```C#
-using Lexical.Localization;
+
+```csharp
 using Lexical.Localization;
 
 namespace TutorialLibrary
@@ -43,36 +43,6 @@ namespace TutorialLibrary
 
 Localization strings can now be provided in the startup of the application by adding IAssets to the static instance.
 
-```C#
-using Lexical.Localization;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using TutorialLibrary;
-
-namespace TutorialTest
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            // Create asset
-            Dictionary<string, string> strs = new Dictionary<string, string>();
-            strs["fi:TutorialLibrary.MyController1:OK"] = "Toiminto onnistui";
-            IAsset asset = new LocalizationStringAsset(strs, AssetKeyNameProvider.Default);
-
-            // Add asset to global singleton instance
-            LocalizationRoot.Builder.AddSource(asset);
-            LocalizationRoot.Builder.Build();
-
-            // Call Controller
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
-            MyController1 controller1 = new MyController1();
-            Console.WriteLine(controller1.Do());
-        }
-    }
-}
-```
 
 ## Method B: Lexical.Localization.Abstractions
 If class library supports Inversion of Control (IoC), then **Lexical.Localization.Abstractions** can be used for localization.
@@ -88,7 +58,8 @@ First, add NuGet reference to **Lexical.Localization.Abstractions**.
 
 Then write this example code **MyController2.cs**
 
-```C#
+
+```csharp
 using Lexical.Localization;
 
 namespace TutorialLibrary
@@ -117,36 +88,39 @@ namespace TutorialLibrary
 
 In the setup of the application IAssetRoot needs to be provided for the class.
 
-```c#
+
+```csharp
 using Lexical.Localization;
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using TutorialLibrary;
 
-namespace TutorialTest
+namespace TutorialProject
 {
-    class Program
+    public class ExampleB
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             // Create asset
             Dictionary<string, string> strs = new Dictionary<string, string>();
-            strs["fi:TutorialLibrary.MyController2:OK"] = "Toiminto onnistui";
-            IAsset asset = new LocalizationStringAsset(strs, AssetKeyNameProvider.Default);
+            strs["Culture:fi:Type:TutorialLibrary.MyController2:Key:OK"] = "Toiminto onnistui";
+            IAsset asset = new LoadableLocalizationAsset()
+                    .AddKeyStringSource(strs, ParameterNamePolicy.Instance)
+                    .Load();
 
             // Create asset root
             IAssetRoot root = new LocalizationRoot(asset, new CulturePolicy());
 
             // Call Controller
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
-            MyController2 controller2 = new MyController2(root); 
-            Console.WriteLine( controller2.Do() );
+            MyController2 controller2 = new MyController2(root);
+            Console.WriteLine(controller2.Do());
         }
     }
 }
 ```
-
 
 ## Method C: Microsoft.Extensions.Localization.Abstractions
 
@@ -161,7 +135,8 @@ First, add NuGet reference to **Microsoft.Extensions.Localization.Abstractions**
 
 Then write this example code **MyController3.cs**
 
-```C#
+
+```csharp
 using Microsoft.Extensions.Localization;
 
 namespace TutorialLibrary
@@ -187,11 +162,13 @@ namespace TutorialLibrary
     }
 
 }
+
 ```
 
 In the setup of the application IStringLocalizerFactory or IStringLocalizer&lt;Type&gt; needs to be provided for the class.
 
-```c#
+
+```csharp
 using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;
@@ -200,24 +177,26 @@ using System.Collections.Generic;
 using System.Globalization;
 using TutorialLibrary;
 
-namespace TutorialTest
+namespace TutorialProject
 {
-    class Program
+    public class ExampleC
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             // Create asset
             Dictionary<string, string> strs = new Dictionary<string, string>();
-            strs["fi:TutorialLibrary.MyController3:OK"] = "Toiminto onnistui";
-            IAsset asset = new LocalizationStringAsset(strs, AssetKeyNameProvider.Default);
+            strs["Culture:fi:Type:TutorialLibrary.MyController3:Key:OK"] = "Toiminto onnistui";
+            IAsset asset = new LoadableLocalizationAsset()
+                    .AddKeyStringSource(strs , ParameterNamePolicy.Instance)
+                    .Load();
 
             // Create asset root
             IStringLocalizerFactory root = new StringLocalizerRoot(asset, new CulturePolicy());
 
             // Call Controller
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
-            MyController3 controller3 = new MyController3(root); 
-            Console.WriteLine( controller3.Do() );
+            MyController3 controller3 = new MyController3(root);
+            Console.WriteLine(controller3.Do());
         }
     }
 }

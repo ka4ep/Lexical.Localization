@@ -6,16 +6,18 @@ namespace docs
     {
         static void Main(string[] args)
         {
-            Plurality_Examples.Run(args);
-            ParameterNamePolicy_Examples.Run(args);
-            LocalizationAsset_Examples.Run(args);
-            LocalizationStringAsset_Examples.Run(args);
-            Ms_DependencyInjection_Example0.Run(args);
-            Ms_DependencyInjection_Example1.Run(args);
-            Ms_DependencyInjection_Example2.Run(args);
-            Ms_Localization_IopExamples.Run(args);
-            ICulturePolicy_Examples.Run(args);
-            IAssetKeyNamePolicy_Examples.Run(args);
+            TutorialProject.ExampleB.Main(args);
+            TutorialProject.ExampleC.Main(args);
+            Plurality_Examples.Main(args);
+            ParameterNamePolicy_Examples.Main(args);
+            LocalizationAsset_Examples.Main(args);
+            LocalizationStringAsset_Examples.Main(args);
+            Ms_DependencyInjection_Example0.Main(args);
+            Ms_DependencyInjection_Example1.Main(args);
+            Ms_DependencyInjection_Example2.Main(args);
+            Ms_Localization_IopExamples.Main(args);
+            ICulturePolicy_Examples.Main(args);
+            IAssetKeyNamePolicy_Examples.Main(args);
             Console.ReadKey();
         }
     }

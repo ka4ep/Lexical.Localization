@@ -6,8 +6,7 @@ namespace docs
 {
     public class IAssetComposition_Example
     {
-        // Rename to "Main", or run from Main.
-        public static void Run(string[] args)
+        public static void Main(string[] args)
         {
             #region Snippet
             // Create individual assets

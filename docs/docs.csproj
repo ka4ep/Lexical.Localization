@@ -3,7 +3,12 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>7.2</LangVersion>
+    <StartupObject>docs.Program</StartupObject>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -84,6 +89,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Assets\localization.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="localization.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Plurality\localization.xml">

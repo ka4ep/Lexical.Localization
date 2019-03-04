@@ -5,8 +5,7 @@ namespace docs
 {
     public class IAssetCache_Example_2
     {
-        // Rename to "Main", or run from Main.
-        public static void Run(string[] args)
+        public static void Main(string[] args)
         {
             // Create asset
             var source = new Dictionary<string, string> { { "en:hello", "Hello World!" } };

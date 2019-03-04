@@ -11,8 +11,7 @@ namespace docs
 {
     public class DynamicUseExamples
     {
-        // Rename to "Main", or run from Main.
-        public static void Run(string[] args)
+        public static void Main(string[] args)
         {
             // For testing
             {

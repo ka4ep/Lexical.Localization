@@ -9,8 +9,7 @@ namespace docs
 {
     public class IAssetKey_Examples
     {
-        // Rename to "Main", or run from Main.
-        public static void Run(string[] args)
+        public static void Main(string[] args)
         {
             {
                 IAsset asset = new LocalizationStringAsset(new Dictionary<string, string> { { "en:hello", "Hello World!" } });

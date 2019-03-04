@@ -6,8 +6,7 @@ namespace docs
 {
     public class IAssetBuilder_Example_1
     {
-        // Rename to "Main", or run from Main.
-        public static void Run(string[] args)
+        public static void Main(string[] args)
         {
             // Create dictionary of strings
             Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };

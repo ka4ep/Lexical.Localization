@@ -7,8 +7,7 @@ namespace docs
 {
     public class IAssetRoot_Examples
     {
-        // Rename to "Main", or run from Main.
-        public static void Run(string[] args)
+        public static void Main(string[] args)
         {
             {
                 #region Snippet_1a

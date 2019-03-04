@@ -8,13 +8,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
     /// <summary>
-    /// This namepolicy prints and parses asset keys into string following format "ParameterName:ParameterValue:ParameterName:ParameterValue:..."
-    /// 
-    /// Backslash is used for escaping colon (:).
+    /// Context free format of asset key
     /// </summary>
     public class ParameterNamePolicy : IAssetKeyNameProvider, IAssetKeyNameParser
     {
@@ -26,7 +25,8 @@ namespace Lexical.Localization
         /// </summary>
         public static ParameterNamePolicy Instance => instance;
 
-        public static readonly Regex ParsePattern = new Regex(@"(?<key>([^:\\]|\\.)*)\:(?<value>([^:\\]|\\.)*)(\:|$)", opts);
+        Regex ParsePattern =
+            new Regex(@"(?<key>([^:\\]|\\.)*)\:(?<value>([^:\\]|\\.)*)(\:|$)", opts);
 
         Regex LiteralEscape;
         Regex LiteralUnescape = new Regex(@"\\.", opts);
@@ -115,10 +115,10 @@ namespace Lexical.Localization
         /// Parse string into IAssetKey.
         /// </summary>
         /// <param name="keyString"></param>
-        /// <param name="rootKey">root key to span values from</param>
+        /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</returns>
         /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
-        public IAssetKey Parse(string keyString, IAssetKey rootKey)
+        public IAssetKey Parse(string keyString, IAssetKey rootKey = default)
         {
             IAssetKey result = rootKey;
             MatchCollection matches = ParsePattern.Matches(keyString);
@@ -130,7 +130,7 @@ namespace Lexical.Localization
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
                 if (key == "Root") continue;
-                result = result.AppendParameter(key, value);
+                result = result == null ? Key.Create(key, value) : result.AppendParameter(key, value);
             }
             return result;
         }
@@ -140,9 +140,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="keyString"></param>
         /// <param name="resultKey">result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</param>
-        /// <param name="rootKey">root key to span values from</param>
+        /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>true if parse was successful</returns>
-        public bool TryParse(string keyString, out IAssetKey resultKey, IAssetKey rootKey)
+        public bool TryParse(string keyString, out IAssetKey resultKey, IAssetKey rootKey = default)
         {
             IAssetKey result = rootKey;
             MatchCollection matches = ParsePattern.Matches(keyString);
@@ -154,7 +154,7 @@ namespace Lexical.Localization
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
                 if (key == "Root") continue;
-                result = result.AppendParameter(key, value);
+                result = result == null ? Key.Create(key, value) : result.AppendParameter(key, value);
             }
             resultKey = result;
             return true;

@@ -19,8 +19,7 @@ namespace docs
 {
     public class ConstructionExamples
     {
-        // Rename to "Main", or run from Main.
-        public static void Run(string[] args)
+        public static void Main(string[] args)
         {
             #region Snippet_0
             // Create language strings

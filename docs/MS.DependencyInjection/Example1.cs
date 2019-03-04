@@ -7,8 +7,7 @@ namespace docs
 {
     public class Ms_DependencyInjection_Example1
     {
-        // Rename to "Main", or run from Main.
-        public static void Run(string[] args)
+        public static void Main(string[] args)
         {
             // Create service collection
             IServiceCollection serviceCollection = new ServiceCollection();
