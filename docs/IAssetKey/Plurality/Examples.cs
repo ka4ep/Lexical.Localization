@@ -81,7 +81,16 @@ namespace docs
                 #endregion Snippet_5
             }
             {
+                // Plurality for 4 arguments
                 #region Snippet_6
+                IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample4.xml");
+                IAssetKey key = new LocalizationRoot(asset).Key("CatsDogsPoniesHorses");
+
+                for (int cats = 0; cats <= 2; cats++)
+                    for (int dogs = 0; dogs <= 2; dogs++)
+                        for (int ponies = 0; ponies <= 2; ponies++)
+                            for (int horses = 0; horses <= 2; horses++)
+                                Console.WriteLine(key.Format(cats, dogs, ponies, horses));
                 #endregion Snippet_6
             }
             {

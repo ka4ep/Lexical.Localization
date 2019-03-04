@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Key="urn:lexical.fi:Key"
+              xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1" xmlns:N2="urn:lexical.fi:N2" xmlns:N3="urn:lexical.fi:N3"
+              xmlns="urn:lexical.fi">
+
+  <!-- Plurality for four numeric arguments. No permutations after two numeric arguments, but lines can be written for one argument -->
+  <Key:CatsDogsPoniesHorses>
+    {0} cat(s), {1} dog(s), {2} ponies(s) and {3} horse(s)
+    
+    <N3:Zero>{0} cat(s), {1} dog(s), {2} ponies(s) and no horses</N3:Zero>
+    <N3:One>{0} cat(s), {1} dog(s), {2} ponies(s) and a horse</N3:One>
+    <N3:Plural>{0} cat(s), {1} dog(s), {2} ponies(s) and {3} horses</N3:Plural>
+
+  </Key:CatsDogsPoniesHorses>
+
+</Localization>

@@ -156,7 +156,7 @@ namespace Lexical.Localization
                     else
                     {
                         pluralityKey = null;
-                        pluralityKeys = CreatePluralityKeyPermutations(key: key, maxArgumentCount: 5, args: format_args); // 2^5 = 32 keys
+                        pluralityKeys = CreatePluralityKeyPermutations(key: key, maxArgumentCount: 2, args: format_args); // 2^5 = 32 keys
                         break;
                     }
                 }
@@ -327,7 +327,11 @@ namespace Lexical.Localization
         /// <summary>
         /// Create plurality key permutations. 
         /// 
-        /// If argument count exceeds <paramref name="maxArgumentCount"/> then null array is returned.
+        /// If argument count exceeds <paramref name="maxArgumentCount"/> then returns single arguments only:
+        ///   :N:(Zero/One/Plural)
+        ///   :N1:(Zero/One/Plural)
+        ///   :N2:(Zero/One/Plural)
+        ///   :N3:(Zero/One/Plural)
         /// 
         /// Result for two arguments:
         /// 
@@ -354,9 +358,8 @@ namespace Lexical.Localization
         private static IEnumerable<IAssetKey> CreatePluralityKeyPermutations(IAssetKey key, int maxArgumentCount, object[] args)
         {
             if (maxArgumentCount <= 0) return null;
-            if (maxArgumentCount > 16) throw new ArgumentException($"{nameof(maxArgumentCount)}={maxArgumentCount} is too high.");
             // Gather info: (argumentIndex, pluralityKind)
-            (int, string)[] argInfos = new (int, string)[maxArgumentCount];
+            (int, string)[] argInfos = new (int, string)[32];
             int argumentCount = 0;
             for (int argumentIndex = 0; argumentIndex < args.Length; argumentIndex++)
             {
@@ -366,10 +369,14 @@ namespace Lexical.Localization
                 if (pluralityKind == null) continue;
                 argInfos[argumentCount] = (argumentIndex, pluralityKind);
                 argumentCount++;
-                if (argumentCount > maxArgumentCount) return null;
+                if (argumentCount >= 32) return null;
             }
             if (argumentCount == 0) return null;
 
+            // Return single numeric argument keys only
+            if (argumentCount > maxArgumentCount) return _CreatePluralityKeysSingleArgumentOnly(key, argInfos, argumentCount);
+
+            // Return all permutations for numeric arguments
             return _CreatePluralityKeyPermutations(key, argInfos, argumentCount);
         }
 
@@ -387,5 +394,14 @@ namespace Lexical.Localization
                 yield return pluralityKey;
             }
         }
+
+        private static IEnumerable<IAssetKey> _CreatePluralityKeysSingleArgumentOnly(IAssetKey key, (int, string)[] argInfos, int argumentCount)
+        {
+            for (int argumentIndex = 0; argumentIndex < argumentCount; argumentIndex++)
+            {
+                yield return key.N(argumentIndex, argInfos[argumentIndex].Item2);
+            }
+        }
+
     }
 }
