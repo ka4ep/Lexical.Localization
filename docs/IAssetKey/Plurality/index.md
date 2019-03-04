@@ -62,7 +62,7 @@ a cat and 2 dog(s)
 </details>
 
 <br/>
-If the pluralized argument is "{1}", then the parameter name is **N1**.
+If the argument is "{1}" is to be declinated for pluralization, then the parameter name is **N1**.
 [!code-xml[Snippet](../../PluralityExample2.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_4)]
 <details>
@@ -81,19 +81,19 @@ If the pluralized argument is "{1}", then the parameter name is **N1**.
 </details>
 
 <br/>
-All permutations can also be supplied, but only if there are two numeric arguments. All cases "Zero", "One" and "Plural" must be supplied.
+For two numeric arguments, all permutations can also be supplied. All cases of "Zero", "One" and "Plural" must be provided.
 [!code-xml[Snippet](../../PluralityExample3.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_5)]
 <details>
   <summary>The result (<u>click here</u>)</summary>
 <pre>
 no cats and no dogs
-no cats and a dog
-no cats and 2 dogs
-a cat and no dogs
+no cats but a dog
+no cats but 2 dogs
+a cat but no dogs
 a cat and a dog
 a cat and 2 dogs
-2 cats and no dogs
+2 cats but no dogs
 2 cats and a dog
 2 cats and 2 dogs
 </pre>

@@ -133,7 +133,7 @@ a cat and 2 dog(s)
 </details>
 
 <br/>
-If the pluralized argument is "{1}", then the parameter name is **N1**.
+If the argument is "{1}" is to be declinated for pluralization, then the parameter name is **N1**.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -178,7 +178,7 @@ for (int cats = 0; cats <= 2; cats++)
 </details>
 
 <br/>
-All permutations can also be supplied, but only if there are two numeric arguments. All cases "Zero", "One" and "Plural" must be supplied.
+For two numeric arguments, all permutations can also be supplied. All cases of "Zero", "One" and "Plural" must be provided.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -192,16 +192,16 @@ All permutations can also be supplied, but only if there are two numeric argumen
     {0} cat(s) and {1} dog(s)
     <N:Zero>
       <N1:Zero>no cats and no dogs</N1:Zero>
-      <N1:One>no cats and a dog</N1:One>
-      <N1:Plural>no cats and {1} dogs</N1:Plural>
+      <N1:One>no cats but a dog</N1:One>
+      <N1:Plural>no cats but {1} dogs</N1:Plural>
     </N:Zero>
     <N:One>
-      <N1:Zero>a cat and no dogs</N1:Zero>
+      <N1:Zero>a cat but no dogs</N1:Zero>
       <N1:One>a cat and a dog</N1:One>
       <N1:Plural>a cat and {1} dogs</N1:Plural>
     </N:One>
     <N:Plural>
-      <N1:Zero>{0} cats and no dogs</N1:Zero>
+      <N1:Zero>{0} cats but no dogs</N1:Zero>
       <N1:One>{0} cats and a dog</N1:One>
       <N1:Plural>{0} cats and {1} dogs</N1:Plural>
     </N:Plural>
@@ -223,12 +223,12 @@ for (int cats = 0; cats <= 2; cats++)
   <summary>The result (<u>click here</u>)</summary>
 <pre>
 no cats and no dogs
-no cats and a dog
-no cats and 2 dogs
-a cat and no dogs
+no cats but a dog
+no cats but 2 dogs
+a cat but no dogs
 a cat and a dog
 a cat and 2 dogs
-2 cats and no dogs
+2 cats but no dogs
 2 cats and a dog
 2 cats and 2 dogs
 </pre>
