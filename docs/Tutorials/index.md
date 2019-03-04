@@ -3,7 +3,7 @@ This sections contains hands-on tutorials for a novice developer to setup test e
 These tutorials demonstrate bulk of the features, but not all of the features and not comprehensively. 
 
 ## Assemblies
-There are four class libraries. They can all be imported from NuGet package management system.
+There are two class libraries. They can all be imported from NuGet package management system.
 
 *Lexical.Localization* contains feature for setting up localization assets, and feature for acquiring binary resources from assets.
 Resources such as sounds, icons and other graphics. *Lexical.Localization.Abstractions* contains the abstractions.

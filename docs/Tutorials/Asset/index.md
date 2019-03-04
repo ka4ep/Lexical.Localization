@@ -2,19 +2,19 @@
 This tutorial shows how to load language strings from an external file.
 <br/>
 
-Add new text file **"localization.ini"** into the C# project.
+Add new text file **"HelloWorld.ini"** into the C# project.
 
 ![Add new](img6.png)
 
 ![new .ini](img10.png)
 
 <br/>
-Paste the following text to the **localization.ini**, and then save the document.
+Paste the following text to the **HelloWorld.ini**, and then save the document.
 
-[!code-ini[ini](../../localization.ini)]
+[!code-ini[ini](../../HelloWorld.ini)]
 
 <br/>
-Go to properties of **localization.ini** and change **Copy to Output Directory** to **Copy always**. Now the file will be copied to the .exe folder.
+Go to properties of **HelloWorld.ini** and change **Copy to Output Directory** to **Copy always**. Now the file will be copied to the .exe folder.
 
 ![Copy always](img11.png)
 

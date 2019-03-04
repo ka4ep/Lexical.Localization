@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Key="urn:lexical.fi:Key"
+              xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1"
+              xmlns="urn:lexical.fi">
+
+  <!-- Plurality permutations for argument 1 only -->
+  <Key:CatsAndDogs2>
+    {0} cat(s) and {1} dog(s)
+    <N1:Zero>{0} cat(s) and no dogs</N1:Zero>
+    <N1:One>{0} cat(s) and a dog</N1:One>
+    <N1:Plural>{0} cat(s) and {1} dogs</N1:Plural>
+  </Key:CatsAndDogs2>
+
+</Localization>

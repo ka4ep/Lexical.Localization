@@ -137,8 +137,10 @@ namespace Lexical.Localization
             // Get args
             object[] format_args = key.FindFormatArgs();
 
-            // Plurality key, e.g. "Key:N:One"
+            // Plurality key when there is only one numeric argument. e.g. "Key:N:One"
             IAssetKey pluralityKey = null;
+            // Pluarlity key for all argument permutations (whether argument is provided or not)
+            IEnumerable<IAssetKey> pluralityKeys = null;
             if (format_args != null)
             {
                 for (int argumentIndex = 0; argumentIndex < format_args.Length; argumentIndex++)
@@ -146,7 +148,17 @@ namespace Lexical.Localization
                     object o = format_args[argumentIndex];
                     if (o == null) continue;
                     string pluralityKind = GetPluralityKind(o);
-                    if (pluralityKind != null) pluralityKey = (pluralityKey ?? key).N(argumentIndex, pluralityKind);
+                    if (pluralityKind == null) continue;
+                    if (pluralityKey == null)
+                    {
+                        pluralityKey = key.N(argumentIndex, pluralityKind);
+                    }
+                    else
+                    {
+                        pluralityKey = null;
+                        pluralityKeys = CreatePluralityKeyPermutations(key: key, maxArgumentCount: 5, args: format_args); // 2^5 = 32 keys
+                        break;
+                    }
                 }
             }
 
@@ -164,12 +176,27 @@ namespace Lexical.Localization
                     IAssetKey pluralityKey_with_culture = pluralityKey?.Culture(culture);
                     // Try inlines with plurality key
                     if (languageString == null && inlines != null && pluralityKey_with_culture != null) inlines.TryGetValue(pluralityKey_with_culture, out languageString);
+                    // Try inlines with plurality key permutations
+                    if (languageString == null && inlines != null && pluralityKeys != null)
+                    {
+                        foreach (IAssetKey _pluralityKey in pluralityKeys)
+                            if (inlines.TryGetValue(_pluralityKey.Culture(culture), out languageString) && languageString != null) break;
+                    }
                     // Append culture
                     IAssetKey key_with_culture = key.Culture(culture);
                     // Try inlines with fallback key
                     if (languageString == null && inlines != null) inlines.TryGetValue(key_with_culture, out languageString);
                     // Try asset with plurality key
                     if (languageString == null && pluralityKey_with_culture != null) languageString = pluralityKey_with_culture.TryGetString();
+                    // Try asset with plurality key permutations
+                    if (languageString == null && pluralityKeys != null)
+                    {
+                        foreach (IAssetKey _pluralityKey in pluralityKeys)
+                        {
+                            languageString = _pluralityKey.TryGetString();
+                            if (languageString != null) break;
+                        }
+                    }
                     // Try asset with fallback key
                     if (languageString == null) languageString = key_with_culture.TryGetString();
                     // Formulate language string
@@ -186,10 +213,25 @@ namespace Lexical.Localization
                 IDictionary<IAssetKey, string> inlines = key.FindInlines();
                 // Try inlines with plurality key
                 if (languageString == null && inlines != null && pluralityKey != null) inlines.TryGetValue(pluralityKey, out languageString);
+                // Try inlines with plurality key permutations
+                if (languageString == null && inlines != null && pluralityKeys != null)
+                {
+                    foreach (IAssetKey _pluralityKey in pluralityKeys)
+                        if (inlines.TryGetValue(_pluralityKey, out languageString) && languageString != null) break;
+                }
                 // Try inlines with fallback key
                 if (languageString == null && inlines != null) inlines.TryGetValue(key, out languageString);
                 // Try asset with plurality key
                 if (languageString == null && pluralityKey != null) languageString = pluralityKey.TryGetString();
+                // Try asset with plurality key permutations
+                if (languageString == null && pluralityKeys != null)
+                {
+                    foreach (IAssetKey _pluralityKey in pluralityKeys)
+                    {
+                        languageString = _pluralityKey.TryGetString();
+                        if (languageString != null) break;
+                    }
+                }
                 // Try asset with fallback key
                 if (languageString == null) languageString = key.TryGetString();
                 // Formulate language string
@@ -282,5 +324,68 @@ namespace Lexical.Localization
         private static string GetPluralityKind<T>()
             => GetPluralityKind(typeof(T));
 
+        /// <summary>
+        /// Create plurality key permutations. 
+        /// 
+        /// If argument count exceeds <paramref name="maxArgumentCount"/> then null array is returned.
+        /// 
+        /// Result for two arguments:
+        /// 
+        ///   :N:(Zero/One/Plural):N1:(Zero/One/Plural)
+        ///   :N:(Zero/One/Plural)
+        ///   :N1:(Zero/One/Plural)
+        ///   
+        /// Result for three arguments:
+        /// 
+        ///   :N:(Zero/One/Plural):N1:(Zero/One/Plural):N2:(Zero/One/Plural)
+        ///   :N:(Zero/One/Plural):N1:(Zero/One/Plural)
+        ///   :N:(Zero/One/Plural):N2:(Zero/One/Plural)
+        ///   :N:(Zero/One/Plural)
+        ///   :N1:(Zero/One/Plural):N2:(Zero/One/Plural)
+        ///   :N1:(Zero/One/Plural)
+        ///   :N2:(Zero/One/Plural)
+        /// 
+        /// Number of elements: n = numbericArguments ^ 2 - 1
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="maxArgumentCount"></param>
+        /// <param name="args">arguments, only numberic arguments are used</param>
+        /// <returns>all permutation keys or null</returns>
+        private static IEnumerable<IAssetKey> CreatePluralityKeyPermutations(IAssetKey key, int maxArgumentCount, object[] args)
+        {
+            if (maxArgumentCount <= 0) return null;
+            if (maxArgumentCount > 16) throw new ArgumentException($"{nameof(maxArgumentCount)}={maxArgumentCount} is too high.");
+            // Gather info: (argumentIndex, pluralityKind)
+            (int, string)[] argInfos = new (int, string)[maxArgumentCount];
+            int argumentCount = 0;
+            for (int argumentIndex = 0; argumentIndex < args.Length; argumentIndex++)
+            {
+                object o = args[argumentIndex];
+                if (o == null) continue;
+                string pluralityKind = GetPluralityKind(o);
+                if (pluralityKind == null) continue;
+                argInfos[argumentCount] = (argumentIndex, pluralityKind);
+                argumentCount++;
+                if (argumentCount > maxArgumentCount) return null;
+            }
+            if (argumentCount == 0) return null;
+
+            return _CreatePluralityKeyPermutations(key, argInfos, argumentCount);
+        }
+
+        private static IEnumerable<IAssetKey> _CreatePluralityKeyPermutations(IAssetKey key, (int, string)[] argInfos, int argumentCount)
+        {            
+            int allBits = (int)(1 << argumentCount) - 1;
+            for (int bits = allBits; bits > 0; bits--)
+            {
+                IAssetKey pluralityKey = key;
+                for (int argumentIndex = 0; argumentIndex < argumentCount; argumentIndex++)
+                {
+                    if ((bits & (1 << argumentIndex)) == 0) continue;
+                    pluralityKey = pluralityKey.N(argumentIndex, argInfos[argumentIndex].Item2);
+                }
+                yield return pluralityKey;
+            }
+        }
     }
 }

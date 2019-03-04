@@ -6,9 +6,9 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            Plurality_Examples.Main(args);
             TutorialProject.ExampleB.Main(args);
             TutorialProject.ExampleC.Main(args);
-            Plurality_Examples.Main(args);
             ParameterNamePolicy_Examples.Main(args);
             LocalizationAsset_Examples.Main(args);
             LocalizationStringAsset_Examples.Main(args);

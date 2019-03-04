@@ -52,7 +52,12 @@ namespace Lexical.Localization
                 IKeyTree node = parent.GetOrCreate(key);
                 foreach (XNode nn in element.Nodes())
                 {
-                    if (nn is XText text) node.Values.Add(text.Value);
+                    if (nn is XText text)
+                    {
+                        string trimmedXmlValue = text?.Value?.Trim();
+                        if (!string.IsNullOrEmpty(trimmedXmlValue))
+                            node.Values.Add(trimmedXmlValue);
+                    }
                 }
 
                 if (element.HasElements)
