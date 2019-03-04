@@ -20,8 +20,8 @@ a cat
 2 cats
 </pre>
 </details>
-
 <br/>
+
 Pluralized language strings can be read from an xml file.
 
 ```xml
@@ -60,6 +60,47 @@ a cat
 </details>
 <br/>
 
+The decision whether to use pluralization is left for the translator.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Key="urn:lexical.fi:Key"
+              xmlns:N="urn:lexical.fi:N"
+              xmlns="urn:lexical.fi">
+
+  <!-- Default string from inline scanner -->
+  <Key:Cats>{0} cat(s)</Key:Cats>
+
+  <!-- Tranlator added strings -->
+  <Key:Cats Culture="fi">
+    <N:Zero>ei kissoja</N:Zero>
+    <N:One>yksi kissa</N:One>
+    <N:Plural>{0} kissaa</N:Plural>
+  </Key:Cats>
+
+</Localization>
+
+```
+
+```csharp
+IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0.xml");
+IAsset asset_fi = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0-fi.xml");
+IAssetKey key = new LocalizationRoot( new AssetComposition(asset, asset_fi) ).Key("Cats");
+
+for (int cats = 0; cats <= 2; cats++)
+    Console.WriteLine(key.Culture("fi").Format(cats));
+```
+<details>
+  <summary>The result (<u>click here</u>)</summary>
+<pre>
+ei kissoja
+yksi kissa
+2 kissaa
+</pre>
+</details>
+<br/>
+
 If there are two numeric arguments in a formulation string, then plurality keys can be added to one of them.
 
 ```csharp
@@ -87,9 +128,9 @@ a cat and 2 dog(s)
 2 cats and 2 dog(s)
 </pre>
 </details>
-
 <br/>
-Same from an xml file.
+
+Xml file with plurality for numeric argument {0} only.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -132,8 +173,8 @@ a cat and 2 dog(s)
 2 cats and 2 dog(s)
 </pre>
 </details>
-
 <br/>
+
 If the argument is "{1}" is to be declinated for pluralization, then the parameter name is **N1**.
 
 ```xml
@@ -177,8 +218,8 @@ for (int cats = 0; cats <= 2; cats++)
 2 cat(s) and 2 dogs
 </pre>
 </details>
-
 <br/>
+
 For two numeric arguments all permutations can be supplied. All cases of "Zero", "One" and "Plural" must be provided.
 
 ```xml
@@ -234,8 +275,8 @@ a cat and 2 dogs
 2 cats and 2 dogs
 </pre>
 </details>
-
 <br/>
+
 If there are more than two numeric arguments, pluralization can be used for one argument. Again, all cases "Zero", "One" and "Plural" must be supplied.
 
 ```xml

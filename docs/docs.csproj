@@ -94,6 +94,9 @@
     <None Update="HelloWorld.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="PluralityExample0-fi.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="PluralityExample1.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

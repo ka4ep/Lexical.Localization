@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Key="urn:lexical.fi:Key"
+              xmlns:N="urn:lexical.fi:N"
+              xmlns="urn:lexical.fi">
+
+  <!-- Default string from inline scanner -->
+  <Key:Cats>{0} cat(s)</Key:Cats>
+
+  <!-- Tranlator added strings -->
+  <Key:Cats Culture="fi">
+    <N:Zero>ei kissoja</N:Zero>
+    <N:One>yksi kissa</N:One>
+    <N:Plural>{0} kissaa</N:Plural>
+  </Key:Cats>
+
+</Localization>

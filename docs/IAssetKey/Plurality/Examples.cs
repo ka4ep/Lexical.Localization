@@ -23,14 +23,26 @@ namespace docs
             }
 
             {
-                #region Snippet_1
+                #region Snippet_1a
                 IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0.xml");
                 IAssetKey key = new LocalizationRoot(asset).Key("Cats");
 
                 for (int cats = 0; cats<=2; cats++)
                     Console.WriteLine(key.Format(cats));
-                #endregion Snippet_1
+                #endregion Snippet_1a
             }
+
+            {
+                #region Snippet_1b
+                IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0.xml");
+                IAsset asset_fi = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0-fi.xml");
+                IAssetKey key = new LocalizationRoot( new AssetComposition(asset, asset_fi) ).Key("Cats");
+
+                for (int cats = 0; cats <= 2; cats++)
+                    Console.WriteLine(key.Culture("fi").Format(cats));
+                #endregion Snippet_1b
+            }
+
 
             {
                 // Plurality permutations for argument 0

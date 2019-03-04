@@ -10,17 +10,30 @@ a cat
 2 cats
 </pre>
 </details>
-
 <br/>
+
 Pluralized language strings can be read from an xml file.
 [!code-xml[Snippet](../../PluralityExample0.xml)]
-[!code-csharp[Snippet](Examples.cs#Snippet_1)]
+[!code-csharp[Snippet](Examples.cs#Snippet_1a)]
 <details>
   <summary>The result (<u>click here</u>)</summary>
 <pre>
 no cats
 a cat
 2 cats
+</pre>
+</details>
+<br/>
+
+The decision whether to use pluralization is left for the translator.
+[!code-xml[Snippet](../../PluralityExample0-fi.xml)]
+[!code-csharp[Snippet](Examples.cs#Snippet_1b)]
+<details>
+  <summary>The result (<u>click here</u>)</summary>
+<pre>
+ei kissoja
+yksi kissa
+2 kissaa
 </pre>
 </details>
 <br/>
@@ -41,9 +54,9 @@ a cat and 2 dog(s)
 2 cats and 2 dog(s)
 </pre>
 </details>
-
 <br/>
-Same from an xml file.
+
+Xml file with plurality for numeric argument {0} only.
 [!code-xml[Snippet](../../PluralityExample1.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_3)]
 <details>
@@ -60,8 +73,8 @@ a cat and 2 dog(s)
 2 cats and 2 dog(s)
 </pre>
 </details>
-
 <br/>
+
 If the argument is "{1}" is to be declinated for pluralization, then the parameter name is **N1**.
 [!code-xml[Snippet](../../PluralityExample2.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_4)]
@@ -79,8 +92,8 @@ If the argument is "{1}" is to be declinated for pluralization, then the paramet
 2 cat(s) and 2 dogs
 </pre>
 </details>
-
 <br/>
+
 For two numeric arguments all permutations can be supplied. All cases of "Zero", "One" and "Plural" must be provided.
 [!code-xml[Snippet](../../PluralityExample3.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_5)]
@@ -98,8 +111,8 @@ a cat and 2 dogs
 2 cats and 2 dogs
 </pre>
 </details>
-
 <br/>
+
 If there are more than two numeric arguments, pluralization can be used for one argument. Again, all cases "Zero", "One" and "Plural" must be supplied.
 [!code-xml[Snippet](../../PluralityExample4.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_6)]
