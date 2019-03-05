@@ -16,7 +16,7 @@ namespace TutorialProject
             // Install localization libraries that are available in the TutorialLibrary.
             // Search for classes with [AssetSources] attribute.
             Assembly library = typeof(TutorialLibrary.MyClass2).Assembly;
-            StringLocalizerRoot.Builder.AddLibrarySources(library);
+            StringLocalizerRoot.Builder.AddLibraryAssetSources(library);
 
             #region Snippet
             // Install additional localization that was not available in the TutorialLibrary.

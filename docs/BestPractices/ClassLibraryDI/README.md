@@ -107,7 +107,7 @@ namespace TutorialLibrary
 <br/>
 
 The deploying application must include the library's internal localizations into its localization implementation.
-**<i>IAssetBuilder</i>.AddLibrarySources(*Assembly*)** searches for **[AssetSources]** and adds them as *IAssetSource*s.
+**<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** searches for **[AssetSources]** and adds them as *IAssetSource*s.
 If implementation is not Lexical.Localization based, then the library localizations must be adapted.
 # [Snippet](#tab/snippet-3)
 
@@ -115,7 +115,7 @@ If implementation is not Lexical.Localization based, then the library localizati
 // Install localization libraries that are available in the TutorialLibrary.
 // Search for classes with [AssetSources] attribute.
 Assembly library = typeof(TutorialLibrary.MyClass2).Assembly;
-StringLocalizerRoot.Builder.AddLibrarySources(library);
+StringLocalizerRoot.Builder.AddLibraryAssetSources(library);
 
 // Apply sources
 StringLocalizerRoot.Builder.Build();
@@ -155,7 +155,7 @@ namespace TutorialProject
             // Install localization libraries that are available in the TutorialLibrary.
             // Search for classes with [AssetSources] attribute.
             Assembly library = typeof(TutorialLibrary.MyClass2).Assembly;
-            StringLocalizerRoot.Builder.AddLibrarySources(library);
+            StringLocalizerRoot.Builder.AddLibraryAssetSources(library);
 
             // Apply sources
             StringLocalizerRoot.Builder.Build();
@@ -212,7 +212,7 @@ namespace TutorialProject
             // Install localization libraries that are available in the TutorialLibrary.
             // Search for classes with [AssetSources] attribute.
             Assembly library = typeof(TutorialLibrary.MyClass2).Assembly;
-            StringLocalizerRoot.Builder.AddLibrarySources(library);
+            StringLocalizerRoot.Builder.AddLibraryAssetSources(library);
 
             #region Snippet
             // Install additional localization that was not available in the TutorialLibrary.
@@ -284,7 +284,7 @@ services.AddLexicalLocalization(
 
 // Install Library's [AssetSources].
 Assembly library = typeof(TutorialLibrary.MyClass2).Assembly;
-services.AddLibrarySources(library);
+services.AddAssetLibrarySources(library);
 
 // Install additional localization that was not available in the TutorialLibrary.
 services.AddSingleton<IAssetSource>(XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization-fi.xml"));
@@ -336,7 +336,7 @@ namespace TutorialProject
 
             // Install Library's [AssetSources].
             Assembly library = typeof(TutorialLibrary.MyClass2).Assembly;
-            services.AddLibrarySources(library);
+            services.AddAssetLibrarySources(library);
 
             // Install additional localization that was not available in the TutorialLibrary.
             services.AddSingleton<IAssetSource>(XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization-fi.xml"));

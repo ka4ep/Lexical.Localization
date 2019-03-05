@@ -65,7 +65,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="assetBuilder"></param>
         /// <param name="library"></param>
-        public static IAssetBuilder AddLibrarySources(this IAssetBuilder assetBuilder, Assembly library)
+        public static IAssetBuilder AddLibraryAssetSources(this IAssetBuilder assetBuilder, Assembly library)
         {
             if (library == null) return assetBuilder;
 

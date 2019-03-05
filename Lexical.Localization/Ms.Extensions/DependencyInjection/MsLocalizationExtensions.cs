@@ -148,7 +148,7 @@ namespace Lexical.Localization.Ms.Extensions
         /// </summary>
         /// <param name="services"></param>
         /// <param name="library"></param>
-        public static IServiceCollection AddLibrarySources(this IServiceCollection services, Assembly library)
+        public static IServiceCollection AddAssetLibrarySources(this IServiceCollection services, Assembly library)
         {
             if (library == null) return services;
 

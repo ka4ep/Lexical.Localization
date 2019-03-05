@@ -22,7 +22,7 @@ For inversion of control, the the class library must use IStringLocalizer abstra
 <br/>
 
 The deploying application must include the library's internal localizations into its localization implementation.
-**<i>IAssetBuilder</i>.AddLibrarySources(*Assembly*)** searches for **[AssetSources]** and adds them as *IAssetSource*s.
+**<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** searches for **[AssetSources]** and adds them as *IAssetSource*s.
 If implementation is not Lexical.Localization based, then the library localizations must be adapted.
 # [Snippet](#tab/snippet-3)
 [!code-csharp[Snippet](LibraryConsumer3.cs#Snippet)]

@@ -24,7 +24,7 @@ namespace TutorialProject
 
             // Install Library's [AssetSources].
             Assembly library = typeof(TutorialLibrary.MyClass2).Assembly;
-            services.AddLibrarySources(library);
+            services.AddAssetLibrarySources(library);
 
             // Install additional localization that was not available in the TutorialLibrary.
             services.AddSingleton<IAssetSource>(XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization-fi.xml"));
