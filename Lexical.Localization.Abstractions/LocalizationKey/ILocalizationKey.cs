@@ -82,6 +82,7 @@ namespace Lexical.Localization
             // If there is no explicitly assigned culture in the key, try cultures from culture policy
             string explicitCulture = key.FindCultureByName();
             IEnumerable<CultureInfo> cultures = null;
+            bool rootCultureTried = false;
             if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
             {
                 string languageString = null;
@@ -89,7 +90,10 @@ namespace Lexical.Localization
                 IDictionary<IAssetKey, string> inlines = key.FindInlines();
                 foreach (CultureInfo culture in cultures)
                 {
-                    IAssetKey culture_key = key.Culture(culture);
+                    bool rootCulture = culture.Name == "";
+                    rootCultureTried |= rootCulture;
+                    // 
+                    IAssetKey culture_key = rootCulture ? key : key.Culture(culture);
                     // Try inlines
                     if (languageString == null && inlines != null) inlines.TryGetValue(culture_key, out languageString);
                     // Try key
@@ -99,6 +103,7 @@ namespace Lexical.Localization
                 }
             }
 
+            if (!rootCultureTried)
             {
                 string languageString = null;
                 // Get inlines
@@ -163,6 +168,7 @@ namespace Lexical.Localization
             }
 
             // If there is no explicitly assigned culture in the key, try cultures from culture policy
+            bool rootCultureTried = false;
             string explicitCulture = key.FindCultureByName();
             IEnumerable<CultureInfo> cultures = null;
             if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
@@ -172,8 +178,10 @@ namespace Lexical.Localization
                 IDictionary<IAssetKey, string> inlines = key.FindInlines();
                 foreach (CultureInfo culture in cultures)
                 {
+                    bool rootCulture = culture.Name == "";
+                    rootCultureTried |= rootCulture;
                     // Append culture
-                    IAssetKey pluralityKey_with_culture = pluralityKey?.Culture(culture);
+                    IAssetKey pluralityKey_with_culture = rootCulture ? pluralityKey : pluralityKey?.Culture(culture);
                     // Try inlines with plurality key
                     if (languageString == null && inlines != null && pluralityKey_with_culture != null) inlines.TryGetValue(pluralityKey_with_culture, out languageString);
                     // Try inlines with plurality key permutations
@@ -183,7 +191,7 @@ namespace Lexical.Localization
                             if (inlines.TryGetValue(_pluralityKey.Culture(culture), out languageString) && languageString != null) break;
                     }
                     // Append culture
-                    IAssetKey key_with_culture = key.Culture(culture);
+                    IAssetKey key_with_culture = rootCulture ? key : key.Culture(culture);
                     // Try inlines with fallback key
                     if (languageString == null && inlines != null) inlines.TryGetValue(key_with_culture, out languageString);
                     // Try asset with plurality key
@@ -207,6 +215,7 @@ namespace Lexical.Localization
             }
 
             // Try key as is
+            if (!rootCultureTried)
             {
                 string languageString = null;
                 // Get inlines

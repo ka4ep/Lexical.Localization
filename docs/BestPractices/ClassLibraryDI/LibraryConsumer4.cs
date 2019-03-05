@@ -29,7 +29,7 @@ namespace TutorialProject
             // Install additional localization that was not available in the TutorialLibrary.
             services.AddSingleton<IAssetSource>(XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization-fi.xml"));
 
-            // Service for MyClass2
+            // Service MyClass2
             services.AddTransient<TutorialLibrary.MyClass2, TutorialLibrary.MyClass2>();
 
             // Create instance container

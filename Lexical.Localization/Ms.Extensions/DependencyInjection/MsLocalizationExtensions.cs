@@ -60,7 +60,7 @@ namespace Lexical.Localization.Ms.Extensions
                 serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetRoot>(
                     s=>
                     {
-                        IAsset asset = s.GetService<IAsset>();
+                        IAsset asset = s.GetService<IAsset>(); // DO NOT REMOVE
                         ICulturePolicy culturePolicy = s.GetService<ICulturePolicy>();
                         if (culturePolicy != null) StringLocalizerRoot.Global.CulturePolicy = culturePolicy;
                         return StringLocalizerRoot.Global;

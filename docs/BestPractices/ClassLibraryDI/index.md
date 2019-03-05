@@ -1,4 +1,4 @@
-﻿# Dependency Injection Class Library with 
+﻿# Dependency Injection Class Library
 
 This article describes recommended practice for writing a localized class library that uses inversion of control.
 
@@ -14,7 +14,7 @@ Internal localization files are typically added built-in as embedded resources.
 </details>
 <br/>
 
-For inversion of control, the the class library must use IStringLocalizer abstractions
+For inversion of control, the the class library can use IStringLocalizer abstractions
 [!code-csharp[Snippet](MyClass2.cs)]
 
 ... or alternatively Lexical.Localization.Abstractions.
@@ -23,7 +23,6 @@ For inversion of control, the the class library must use IStringLocalizer abstra
 
 The deploying application must include the library's internal localizations into its localization implementation.
 **<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** searches for **[AssetSources]** and adds them as *IAssetSource*s.
-If implementation is not Lexical.Localization based, then the library localizations must be adapted.
 # [Snippet](#tab/snippet-3)
 [!code-csharp[Snippet](LibraryConsumer3.cs#Snippet)]
 # [Full Code](#tab/full-3)

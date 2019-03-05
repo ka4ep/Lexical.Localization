@@ -12,10 +12,33 @@ namespace Lexical.Localization.Utils
     /// <summary>
     /// Information about parameters.
     /// </summary>
-    public class ParameterInfos
+    public class ParameterInfos : Dictionary<string, ParameterInfo>
     {
-        private static ParameterInfos instance = new ParameterInfos();
+        private static ParameterInfos instance;
         public static ParameterInfos Instance => instance;
 
+        static ParameterInfos()
+        {
+            instance = new ParameterInfos();
+
+        }
+    }
+
+    public class ParameterInfo
+    {
+        public readonly string ParameterName;
+        public readonly bool IsCanonical;
+        public readonly bool IsNonCanonical;
+        public readonly bool IsSection;
+        public readonly int PreferredSortIndex;
+
+        public ParameterInfo(string parameterName, bool isCanonical, bool isNonCanonical, bool isSection, int preferredSortIndex)
+        {
+            ParameterName = parameterName;
+            IsCanonical = isCanonical;
+            IsNonCanonical = isNonCanonical;
+            IsSection = isSection;
+            PreferredSortIndex = preferredSortIndex;
+        }
     }
 }
