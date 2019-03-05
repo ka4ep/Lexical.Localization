@@ -5,11 +5,11 @@
               xmlns="urn:lexical.fi">
 
   <!-- Example: Plurality for numeric argument {1} only -->
-  <Key:CatsDogs2>
+  <Key:CatsDogs>
     {0} cat(s) and {1} dog(s)
     <N1:Zero>{0} cat(s) and no dogs</N1:Zero>
     <N1:One>{0} cat(s) and a dog</N1:One>
     <N1:Plural>{0} cat(s) and {1} dogs</N1:Plural>
-  </Key:CatsDogs2>
+  </Key:CatsDogs>
 
 </Localization>

@@ -4,8 +4,8 @@
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1"
               xmlns="urn:lexical.fi">
 
-  <!-- Example: Plurality for numeric arguments {0} and {1} -->
-  <Key:CatsDogs3>
+  <!-- Example: Plurality for two numeric arguments {0} and {1} -->
+  <Key:CatsDogs Culture="en">
     {0} cat(s) and {1} dog(s)
     <N:Zero>
       <N1:Zero>no cats and no dogs</N1:Zero>
@@ -22,6 +22,6 @@
       <N1:One>{0} cats and a dog</N1:One>
       <N1:Plural>{0} cats and {1} dogs</N1:Plural>
     </N:Plural>
-  </Key:CatsDogs3>
+  </Key:CatsDogs>
 
 </Localization>

@@ -4,14 +4,10 @@
               xmlns:N="urn:lexical.fi:N"
               xmlns="urn:lexical.fi">
 
-  <!-- Default string from inline scanner -->
-  <Key:Cats>{0} cat(s)</Key:Cats>
-
-  <!-- Tranlator added strings -->
-  <Key:Cats Culture="fi">
-    <N:Zero>ei kissoja</N:Zero>
-    <N:One>yksi kissa</N:One>
-    <N:Plural>{0} kissaa</N:Plural>
+  <!-- Example: One plurality case for one numeric argument {0} -->
+  <Key:Cats>
+    {0} cats
+    <N:One>a cat</N:One>
   </Key:Cats>
 
 </Localization>

@@ -1,19 +1,8 @@
 ﻿# Plurality
-Language strings with numeric arguments can be customized for declination.
-Inlining must provide a sub-key with parameter name **N** for argument "{0}" with value for each of "Zero", "One", "Plural".
-[!code-csharp[Snippet](Examples.cs#Snippet_0)]
-<details>
-  <summary>The result (<u>click here</u>)</summary>
-<pre>
-no cats
-a cat
-2 cats
-</pre>
-</details>
-<br/>
+Language strings with numeric arguments can be customized for declination of pluralized nouns.
+The parameter name for pluralization of argument "{0}" is **N**, and cases are "Zero", "One", "Plural".
+[!code-xml[Snippet](../../PluralityExample0b.xml)]
 
-Pluralized language strings can be read from an xml file.
-[!code-xml[Snippet](../../PluralityExample0.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_1a)]
 <details>
   <summary>The result (<u>click here</u>)</summary>
@@ -23,14 +12,26 @@ a cat
 2 cats
 </pre>
 </details>
-<br/>
 
-The decision whether to use pluralization is left for the translator.
-[!code-xml[Snippet](../../PluralityExample0-fi.xml)]
-[!code-csharp[Snippet](Examples.cs#Snippet_1b)]
+<br/>
+If pluralized string is not found then default string is used.
+[!code-xml[Snippet](../../PluralityExample0c.xml)]
+
+<br/>
+Inlined strings are picked up by inline scanner and placed to a localization file.
+Translator adds localized strings for different cultures.
+The decision whether to use pluralization is left for the translator. The file is read into the application. 
+[!code-csharp[Snippet](Examples.cs#Snippet_0a)]
+[!code-xml[Snippet](../../PluralityExample0a.xml)]
 <details>
   <summary>The result (<u>click here</u>)</summary>
 <pre>
+0 cat(s)
+1 cat(s)
+2 cat(s)
+no cats
+a cat
+2 cats
 ei kissoja
 yksi kissa
 2 kissaa
@@ -38,44 +39,14 @@ yksi kissa
 </details>
 <br/>
 
-If there are two numeric arguments in a formulation string, then plurality keys can be added to one of them.
-[!code-csharp[Snippet](Examples.cs#Snippet_2)]
-<details>
-  <summary>The result (<u>click here</u>)</summary>
-<pre>
-no cats and 0 dog(s)
-no cats and 1 dog(s)
-no cats and 2 dog(s)
-a cat and 0 dog(s)
-a cat and 1 dog(s)
-a cat and 2 dog(s)
-2 cats and 0 dog(s)
-2 cats and 1 dog(s)
-2 cats and 2 dog(s)
-</pre>
-</details>
-<br/>
+Pluralization can be added to inlining too. Add sub-key with parameter name **N** for argument "{0}" and value for each of "Zero", "One", "Plural".
+[!code-csharp[Snippet](Examples.cs#Snippet_0b)]
 
-Xml file with plurality for the numeric argument {0}.
-[!code-xml[Snippet](../../PluralityExample1.xml)]
-[!code-csharp[Snippet](Examples.cs#Snippet_3)]
-<details>
-  <summary>The result (<u>click here</u>)</summary>
-<pre>
-no cats and 0 dog(s)
-no cats and 1 dog(s)
-no cats and 2 dog(s)
-a cat and 0 dog(s)
-a cat and 1 dog(s)
-a cat and 2 dog(s)
-2 cats and 0 dog(s)
-2 cats and 1 dog(s)
-2 cats and 2 dog(s)
-</pre>
-</details>
-<br/>
+And inlining for specific cultures too with subkey "Culture:*culture*:N:*case*".
+[!code-csharp[Snippet](Examples.cs#Snippet_0c)]
 
-If the argument is "{1}" is to be declinated for pluralization, then the parameter name is **N1**.
+
+If language string has two numeric arguments, then plurality keys can be added to one or both of them. The parameter name for argument "{1}" is **N1**. 
 [!code-xml[Snippet](../../PluralityExample2.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_4)]
 <details>
@@ -94,8 +65,8 @@ If the argument is "{1}" is to be declinated for pluralization, then the paramet
 </details>
 <br/>
 
-For two numeric arguments all permutations can be supplied. All cases of "Zero", "One" and "Plural" must be provided.
-[!code-xml[Snippet](../../PluralityExample3.xml)]
+If translator wants to supply plurality for two numeric arguments, then all permutations of cases "Zero", "One" and "Plural" for both arguments must be covered.
+[!code-xml[Snippet](../../PluralityExample2-en.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_5)]
 <details>
   <summary>The result (<u>click here</u>)</summary>
@@ -113,7 +84,7 @@ a cat and 2 dogs
 </details>
 <br/>
 
-If there are more than two numeric arguments, pluralization can be used for one argument. Again, all cases "Zero", "One" and "Plural" must be supplied.
+If there are more than two numeric arguments, pluralization can be provided for one argument, but not for any permutation of two or more arguments.
 [!code-xml[Snippet](../../PluralityExample4.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_6)]
 <details>

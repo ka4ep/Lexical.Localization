@@ -1,28 +1,6 @@
 # Plurality
-Language strings with numeric arguments can be customized for declination.
-Inlining must provide a sub-key with parameter name **N** for argument "{0}" with value for each of "Zero", "One", "Plural".
-
-```csharp
-IAssetKey key = LocalizationRoot.Global.Key("Cats")
-        .Inline("{0} cat(s)")
-        .Inline("N:Zero", "no cats")
-        .Inline("N:One", "a cat")
-        .Inline("N:Plural", "{0} cats");
-
-for (int cats = 0; cats <= 2; cats++)
-    Console.WriteLine(key.Format(cats));
-```
-<details>
-  <summary>The result (<u>click here</u>)</summary>
-<pre>
-no cats
-a cat
-2 cats
-</pre>
-</details>
-<br/>
-
-Pluralized language strings can be read from an xml file.
+Language strings with numeric arguments can be customized for declination of pluralized nouns.
+The parameter name for pluralization of argument "{0}" is **N**, and cases are "Zero", "One", "Plural".
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -43,8 +21,9 @@ Pluralized language strings can be read from an xml file.
 
 ```
 
+
 ```csharp
-IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0.xml");
+IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0b.xml");
 IAssetKey key = new LocalizationRoot(asset).Key("Cats");
 
 for (int cats = 0; cats<=2; cats++)
@@ -58,9 +37,49 @@ a cat
 2 cats
 </pre>
 </details>
-<br/>
 
-The decision whether to use pluralization is left for the translator.
+<br/>
+If pluralized string is not found then default string is used.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Key="urn:lexical.fi:Key"
+              xmlns:N="urn:lexical.fi:N"
+              xmlns="urn:lexical.fi">
+
+  <!-- Example: One plurality case for one numeric argument {0} -->
+  <Key:Cats>
+    {0} cats
+    <N:One>a cat</N:One>
+  </Key:Cats>
+
+</Localization>
+
+```
+
+<br/>
+Inlined strings are picked up by inline scanner and placed to a localization file.
+Translator adds localized strings for different cultures.
+The decision whether to use pluralization is left for the translator. The file is read into the application. 
+
+```csharp
+IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0a.xml");
+IAssetRoot root = new LocalizationRoot(asset);
+IAssetKey key = root.Key("Cats").Inline("{0} cat(s)");
+
+// Print with the default string (without culture policy)
+for (int cats = 0; cats <= 2; cats++)
+    Console.WriteLine(key.Format(cats));
+
+// Print Culture "en"
+for (int cats = 0; cats <= 2; cats++)
+    Console.WriteLine(key.Culture("en").Format(cats));
+
+// Print Culture "fi"
+for (int cats = 0; cats <= 2; cats++)
+    Console.WriteLine(key.Culture("fi").Format(cats));
+```
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -72,7 +91,15 @@ The decision whether to use pluralization is left for the translator.
   <!-- Default string from inline scanner -->
   <Key:Cats>{0} cat(s)</Key:Cats>
 
-  <!-- Tranlator added strings -->
+  <!-- Translator added strings for "en" -->
+  <Key:Cats Culture="en">
+    {0} cat(s)
+    <N:Zero>no cats</N:Zero>
+    <N:One>a cat</N:One>
+    <N:Plural>{0} cats</N:Plural>
+  </Key:Cats>
+  
+  <!-- Translator added strings for "fi" -->
   <Key:Cats Culture="fi">
     <N:Zero>ei kissoja</N:Zero>
     <N:One>yksi kissa</N:One>
@@ -82,18 +109,15 @@ The decision whether to use pluralization is left for the translator.
 </Localization>
 
 ```
-
-```csharp
-IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0.xml");
-IAsset asset_fi = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0-fi.xml");
-IAssetKey key = new LocalizationRoot( new AssetComposition(asset, asset_fi) ).Key("Cats");
-
-for (int cats = 0; cats <= 2; cats++)
-    Console.WriteLine(key.Culture("fi").Format(cats));
-```
 <details>
   <summary>The result (<u>click here</u>)</summary>
 <pre>
+0 cat(s)
+1 cat(s)
+2 cat(s)
+no cats
+a cat
+2 cats
 ei kissoja
 yksi kissa
 2 kissaa
@@ -101,81 +125,33 @@ yksi kissa
 </details>
 <br/>
 
-If there are two numeric arguments in a formulation string, then plurality keys can be added to one of them.
+Pluralization can be added to inlining too. Add sub-key with parameter name **N** for argument "{0}" and value for each of "Zero", "One", "Plural".
 
 ```csharp
-IAssetKey key = LocalizationRoot.Global.Key("CatsDogs")
-        .Inline("{0} cats and {1} dog(s)")
-        .Inline("N:Zero", "no cats and {1} dog(s)")
-        .Inline("N:One", "a cat and {1} dog(s)")
-        .Inline("N:Plural", "{0} cats and {1} dog(s)");
-
-for (int cats = 0; cats <= 2; cats++)
-    for (int dogs = 0; dogs <= 2; dogs++)
-        Console.WriteLine(key.Format(cats, dogs));
+IAssetRoot root = new LocalizationRoot();
+IAssetKey key = root.Key("Cats")
+        .Inline("{0} cat(s)")  // Default string
+        .Inline("N:Zero", "no cats")
+        .Inline("N:One", "a cat")
+        .Inline("N:Plural", "{0} cats");
 ```
-<details>
-  <summary>The result (<u>click here</u>)</summary>
-<pre>
-no cats and 0 dog(s)
-no cats and 1 dog(s)
-no cats and 2 dog(s)
-a cat and 0 dog(s)
-a cat and 1 dog(s)
-a cat and 2 dog(s)
-2 cats and 0 dog(s)
-2 cats and 1 dog(s)
-2 cats and 2 dog(s)
-</pre>
-</details>
-<br/>
 
-Xml file with plurality for the numeric argument {0}.
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Localization xmlns:Culture="urn:lexical.fi:Culture"
-              xmlns:Key="urn:lexical.fi:Key"
-              xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1"
-              xmlns="urn:lexical.fi">
-
-  <!-- Example: Plurality for numeric argument {0} only -->
-  <Key:CatsDogs1>
-    {0} cat(s) and {1} dog(s)
-    <N:Zero>no cats and {1} dog(s)</N:Zero>
-    <N:One>a cat and {1} dog(s)</N:One>
-    <N:Plural>{0} cats and {1} dog(s)</N:Plural>
-  </Key:CatsDogs1>
-
-</Localization>
-
-```
+And inlining for specific cultures too with subkey "Culture:*culture*:N:*case*".
 
 ```csharp
-IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample1.xml");
-IAssetKey key = new LocalizationRoot(asset).Key("CatsDogs1");
-
-for (int cats = 0; cats <= 2; cats++)
-    for (int dogs = 0; dogs <= 2; dogs++)
-        Console.WriteLine(key.Format(cats, dogs));
+IAssetRoot root = new LocalizationRoot();
+IAssetKey key = root.Key("Cats")
+        .Inline("{0} cat(s)")   // Default string
+        .Inline("Culture:en:N:Zero", "no cats")
+        .Inline("Culture:en:N:One", "a cat")
+        .Inline("Culture:en:N:Plural", "{0} cats")
+        .Inline("Culture:fi:N:Zero", "ei kissoja")
+        .Inline("Culture:fi:N:One", "yksi kissa")
+        .Inline("Culture:fi:N:Plural", "{0} kissaa");
 ```
-<details>
-  <summary>The result (<u>click here</u>)</summary>
-<pre>
-no cats and 0 dog(s)
-no cats and 1 dog(s)
-no cats and 2 dog(s)
-a cat and 0 dog(s)
-a cat and 1 dog(s)
-a cat and 2 dog(s)
-2 cats and 0 dog(s)
-2 cats and 1 dog(s)
-2 cats and 2 dog(s)
-</pre>
-</details>
-<br/>
 
-If the argument is "{1}" is to be declinated for pluralization, then the parameter name is **N1**.
+
+If language string has two numeric arguments, then plurality keys can be added to one or both of them. The parameter name for argument "{1}" is **N1**. 
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -185,12 +161,12 @@ If the argument is "{1}" is to be declinated for pluralization, then the paramet
               xmlns="urn:lexical.fi">
 
   <!-- Example: Plurality for numeric argument {1} only -->
-  <Key:CatsDogs2>
+  <Key:CatsDogs>
     {0} cat(s) and {1} dog(s)
     <N1:Zero>{0} cat(s) and no dogs</N1:Zero>
     <N1:One>{0} cat(s) and a dog</N1:One>
     <N1:Plural>{0} cat(s) and {1} dogs</N1:Plural>
-  </Key:CatsDogs2>
+  </Key:CatsDogs>
 
 </Localization>
 
@@ -198,7 +174,7 @@ If the argument is "{1}" is to be declinated for pluralization, then the paramet
 
 ```csharp
 IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample2.xml");
-IAssetKey key = new LocalizationRoot(asset).Key("CatsDogs2");
+IAssetKey key = new LocalizationRoot(asset).Key("CatsDogs");
 
 for (int cats = 0; cats <= 2; cats++)
     for (int dogs = 0; dogs <= 2; dogs++)
@@ -220,7 +196,7 @@ for (int cats = 0; cats <= 2; cats++)
 </details>
 <br/>
 
-For two numeric arguments all permutations can be supplied. All cases of "Zero", "One" and "Plural" must be provided.
+If translator wants to supply plurality for two numeric arguments, then all permutations of cases "Zero", "One" and "Plural" for both arguments must be covered.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -229,8 +205,8 @@ For two numeric arguments all permutations can be supplied. All cases of "Zero",
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1"
               xmlns="urn:lexical.fi">
 
-  <!-- Example: Plurality for numeric arguments {0} and {1} -->
-  <Key:CatsDogs3>
+  <!-- Example: Plurality for two numeric arguments {0} and {1} -->
+  <Key:CatsDogs Culture="en">
     {0} cat(s) and {1} dog(s)
     <N:Zero>
       <N1:Zero>no cats and no dogs</N1:Zero>
@@ -247,19 +223,20 @@ For two numeric arguments all permutations can be supplied. All cases of "Zero",
       <N1:One>{0} cats and a dog</N1:One>
       <N1:Plural>{0} cats and {1} dogs</N1:Plural>
     </N:Plural>
-  </Key:CatsDogs3>
+  </Key:CatsDogs>
 
 </Localization>
 
 ```
 
 ```csharp
-IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample3.xml");
-IAssetKey key = new LocalizationRoot(asset).Key("CatsDogs3");
+IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample2-en.xml");
+IAssetRoot root = new LocalizationRoot(asset);
+IAssetKey key = root.Key("CatsDogs").Inline("{0} cat(s) and {1} dog(s)");
 
 for (int cats = 0; cats <= 2; cats++)
     for (int dogs = 0; dogs <= 2; dogs++)
-        Console.WriteLine(key.Format(cats, dogs));
+        Console.WriteLine(key.Culture("en").Format(cats, dogs));
 ```
 <details>
   <summary>The result (<u>click here</u>)</summary>
@@ -277,18 +254,19 @@ a cat and 2 dogs
 </details>
 <br/>
 
-If there are more than two numeric arguments, pluralization can be used for one argument. Again, all cases "Zero", "One" and "Plural" must be supplied.
+If there are more than two numeric arguments, pluralization can be provided for one argument, but not for any permutation of two or more arguments.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Localization xmlns:Culture="urn:lexical.fi:Culture"
               xmlns:Key="urn:lexical.fi:Key"
-              xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1" xmlns:N2="urn:lexical.fi:N2" xmlns:N3="urn:lexical.fi:N3"
+              xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1" 
+              xmlns:N2="urn:lexical.fi:N2" xmlns:N3="urn:lexical.fi:N3"
               xmlns="urn:lexical.fi">
 
   <!-- Example: Plurality for one numeric argument {2} -->
   <Key:CatsDogsPoniesHorses>
-    {0} cat(s), {1} dog(s), {2} pony(es) and {3} horse(s)
+    {0} cat(s), {1} dog(s), {2} poni(es) and {3} horse(s)
     
     <N2:Zero>{0} cat(s), {1} dog(s), no ponies and {3} horse(s)</N2:Zero>
     <N2:One>{0} cat(s), {1} dog(s), a pony and {3} horse(s)</N2:One>
