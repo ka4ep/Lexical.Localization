@@ -59,7 +59,7 @@ If pluralized string is not found then default string is used.
 ```
 
 <br/>
-Inlined strings are picked up by inline scanner and placed to a localization file.
+Inlined strings are picked up by [inline scanner](~/sdk/Localization/docs/Tool/index.html) and placed to a localization file.
 Translator adds localized strings for different cultures.
 The decision whether to use pluralization is left for the translator. The file is read into the application. 
 
@@ -88,7 +88,7 @@ for (int cats = 0; cats <= 2; cats++)
               xmlns:N="urn:lexical.fi:N"
               xmlns="urn:lexical.fi">
 
-  <!-- Default string from inline scanner -->
+  <!-- Default string from Inline scanned by Lexical.Localization.Tool -->
   <Key:Cats>{0} cat(s)</Key:Cats>
 
   <!-- Translator added strings for "en" -->

@@ -163,19 +163,4 @@ namespace Lexical.Localization.Internal
         }
     }
 
-    internal class AssetFileSource : IAssetSource
-    {
-        public readonly ILocalizationFileFormat FileFormat;
-        public readonly string Filename;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public AssetFileSource(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Filename = filename ?? throw new ArgumentNullException(nameof(filename));
-            this.NamePolicy = namePolicy;
-        }
-        public void Build(IList<IAsset> list) => list.Add(FileFormat.CreateFileAsset(Filename, NamePolicy));
-        public IAsset PostBuild(IAsset asset) => asset;
-    }
-
 }

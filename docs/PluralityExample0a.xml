@@ -4,7 +4,7 @@
               xmlns:N="urn:lexical.fi:N"
               xmlns="urn:lexical.fi">
 
-  <!-- Default string from inline scanner -->
+  <!-- Default string from Inline scanned by Lexical.Localization.Tool -->
   <Key:Cats>{0} cat(s)</Key:Cats>
 
   <!-- Translator added strings for "en" -->

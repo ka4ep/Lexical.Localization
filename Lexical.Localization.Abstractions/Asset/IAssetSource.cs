@@ -57,4 +57,16 @@ namespace Lexical.Localization
     {
     }
     #endregion interface_2
+
+    #region attribute
+    /// <summary>
+    /// This attribute is used to signal that the class provides
+    /// asset sources for the class library.
+    /// 
+    /// The class with this attribute must implement <see cref="IEnumerable{IAssetSource}"/>.
+    /// </summary>
+    public class AssetSourcesAttribute : Attribute
+    {
+    }
+    #endregion attribute
 }

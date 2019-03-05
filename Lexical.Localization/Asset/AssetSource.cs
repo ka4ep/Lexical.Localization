@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
+using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -126,5 +127,22 @@ namespace Lexical.Localization
             assetBuilder.AddSource( fileFormat.CreateFileAssetSource(filename, namePolicy) );
             return assetBuilder;
         }
+
+        /// <summary>
+        /// Add localization file source.
+        /// </summary>
+        /// <param name="assetBuilder"></param>
+        /// <param name="resourceName"></param>
+        /// <param name="namePolicy">(optional)</param>
+        /// <param name="fileFormat">(optional) overriding file format to use in case format cannot be infered from file extension</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">thrown if fileformat was not found</exception>
+        public static IAssetBuilder AddEmbeddedLocalizationFile(this IAssetBuilder assetBuilder, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default, ILocalizationFileFormat fileFormat = null)
+        {
+            if (fileFormat == null) fileFormat = LocalizationFileFormatMap.Singleton.GetFormatByFilename(resourceName);
+            assetBuilder.AddSource( fileFormat.CreateEmbeddedAssetSource(asm, resourceName, namePolicy) );
+            return assetBuilder;
+        }
+
     }
 }

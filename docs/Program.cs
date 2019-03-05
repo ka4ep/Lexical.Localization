@@ -6,6 +6,11 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            TutorialProject.Program4.Main(args);
+            TutorialProject.Program3.Main(args);
+            TutorialProject.Program3b.Main(args);
+            TutorialProject.Program2.Main(args);
+            TutorialProject.Program2b.Main(args);
             Plurality_Examples.Main(args);
             TutorialProject.ExampleB.Main(args);
             TutorialProject.ExampleC.Main(args);

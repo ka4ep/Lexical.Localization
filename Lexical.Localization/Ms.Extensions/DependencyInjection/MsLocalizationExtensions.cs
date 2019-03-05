@@ -3,6 +3,10 @@
 // Date:           18.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
@@ -52,30 +56,63 @@ namespace Lexical.Localization.Ms.Extensions
         {
             if (useGlobalInstance)
             {
-                // Use StringLocalizerRoot as ILocalizationRoot
-                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetRoot>(StringLocalizerRoot.Global));
+                // Use StringLocalizerRoot as IAssetRoot
+                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetRoot>(
+                    s=>
+                    {
+                        IAsset asset = s.GetService<IAsset>();
+                        ICulturePolicy culturePolicy = s.GetService<ICulturePolicy>();
+                        if (culturePolicy != null) StringLocalizerRoot.Global.CulturePolicy = culturePolicy;
+                        return StringLocalizerRoot.Global;
+                    }
+                    ));
             }
             else
             {
                 serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetRoot, StringLocalizerRoot>());
             }
 
-            // ICulturePolicy
-            if (addCulturePolicyService) serviceCollection.TryAdd(ServiceDescriptor.Singleton<ICulturePolicy, CulturePolicy>());
+            // IAssetKeyAssetAssigned
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetKeyAssetAssigned>(s => s.GetService<IAssetRoot>() as IAssetKeyAssetAssigned));
 
-            // ILocalizationAssetBuilder
-            if (useGlobalInstance)
+            // ICulturePolicy
+            if (addCulturePolicyService)
             {
-                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetBuilder>(StringLocalizerRoot.Builder));
-            } else
-            {
-                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetBuilder, AssetBuilder.OneBuildInstance>());
+                if (useGlobalInstance)
+                {
+                    serviceCollection.TryAdd(ServiceDescriptor.Singleton<ICulturePolicy>( StringLocalizerRoot.Global.CulturePolicy ));
+                }
+                else
+                {
+                    serviceCollection.TryAdd(ServiceDescriptor.Singleton<ICulturePolicy, CulturePolicy>());
+                }
             }
 
-            // ILocalizationAsset
+            // IAssetBuilder
+            if (useGlobalInstance)
+            {
+                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetBuilder>(s=>
+                {
+                    IEnumerable<IAssetSource> assetSources = s.GetServices<IAssetSource>();
+                    IAssetBuilder builder = StringLocalizerRoot.Builder;
+                    builder.AddSources( assetSources );
+                    return builder;
+                }));
+            } else
+            {
+                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetBuilder>(s=>
+                {
+                    IEnumerable<IAssetSource> assetSources = s.GetServices<IAssetSource>();
+                    AssetBuilder.OneBuildInstance builder = new AssetBuilder.OneBuildInstance(assetSources);
+                    return builder;
+                }));
+            }
+
+            // IAsset
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAsset>(s => s.GetService<IAssetBuilder>().Build()));
-            // ILocalizationKey<>
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IAssetKey<>), typeof(StringLocalizerKey._Type<>)));
+
+            // IAssetKey<>
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IAssetKey<>), typeof(StringLocalizerKey._Type<>)));             
 
             // IStringLocalizer<>
             // IStringLocalizerFactory
@@ -102,6 +139,28 @@ namespace Lexical.Localization.Ms.Extensions
             }
 
             return serviceCollection;
+        }
+
+        /// <summary>
+        /// Search for classes with [AssetSources] in <paramref name="library"/>.
+        /// Instantiates them and adds as <see cref="IEnumerable{IAssetSource}"/>.
+        /// 
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="library"></param>
+        public static IServiceCollection AddLibrarySources(this IServiceCollection services, Assembly library)
+        {
+            if (library == null) return services;
+
+            IEnumerable<IAssetSource> librarysAssetSources =
+                    library.GetExportedTypes()
+                    .Where(t => t.GetCustomAttributes(typeof(AssetSourcesAttribute)).FirstOrDefault() != null)
+                    .SelectMany(t => (IEnumerable<IAssetSource>)Activator.CreateInstance(t));
+
+            foreach (IAssetSource src in librarysAssetSources)
+                services.AddSingleton<IAssetSource>(src);
+
+            return services;
         }
     }
 }

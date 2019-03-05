@@ -4,6 +4,9 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
+using System;
 
 namespace Lexical.Localization
 {
@@ -40,5 +43,42 @@ namespace Lexical.Localization
             assetBuilder.Sources.Add(assetSource);
             return assetBuilder;
         }
+
+        /// <summary>
+        /// Add <paramref name="assetSources"/> to sources.
+        /// </summary>
+        /// <param name="assetBuilder"></param>
+        /// <param name="assetSources"></param>
+        public static IAssetBuilder AddSources(this IAssetBuilder assetBuilder, IEnumerable<IAssetSource> assetSources)
+        {
+            if (assetSources == null) return assetBuilder;
+            foreach(IAssetSource src in assetSources)
+                assetBuilder.Sources.Add(src);
+            return assetBuilder;
+        }
+
+
+        /// <summary>
+        /// Search for classes with [AssetSources] in <paramref name="library"/>.
+        /// Instantiates them and adds as <see cref="IEnumerable{IAssetSource}"/>.
+        /// 
+        /// </summary>
+        /// <param name="assetBuilder"></param>
+        /// <param name="library"></param>
+        public static IAssetBuilder AddLibrarySources(this IAssetBuilder assetBuilder, Assembly library)
+        {
+            if (library == null) return assetBuilder;
+
+            IEnumerable<IAssetSource> librarysAssetSources =
+                    library.GetExportedTypes()
+                    .Where(t => t.GetCustomAttributes(typeof(AssetSourcesAttribute)).FirstOrDefault() != null)
+                    .SelectMany(t => (IEnumerable<IAssetSource>)Activator.CreateInstance(t));
+
+            foreach (IAssetSource src in librarysAssetSources)
+                assetBuilder.Sources.Add(src);
+
+            return assetBuilder;
+        }
+
     }
 }

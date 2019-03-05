@@ -18,7 +18,7 @@ If pluralized string is not found then default string is used.
 [!code-xml[Snippet](../../PluralityExample0c.xml)]
 
 <br/>
-Inlined strings are picked up by inline scanner and placed to a localization file.
+Inlined strings are picked up by [inline scanner](~/sdk/Localization/docs/Tool/index.html) and placed to a localization file.
 Translator adds localized strings for different cultures.
 The decision whether to use pluralization is left for the translator. The file is read into the application. 
 [!code-csharp[Snippet](Examples.cs#Snippet_0a)]
