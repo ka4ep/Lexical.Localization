@@ -14,7 +14,7 @@ Internal localization files are typically added built-in as embedded resources.
 </details>
 <br/>
 
-For inversion of control, the class library can use IStringLocalizer abstractions. The non-depenency injection instance is acquired from *LibraryLocalization* if *localizer* is null.
+For inversion of control, the class library can use IStringLocalizer abstractions. The non-dependency injection instance is acquired from *LibraryLocalization* if *localizer* is null.
 [!code-csharp[Snippet](MyClass.cs)]
 
 ... or alternatively Lexical.Localization.Abstractions.

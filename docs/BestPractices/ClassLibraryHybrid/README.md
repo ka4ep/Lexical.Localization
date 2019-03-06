@@ -50,7 +50,7 @@ namespace TutorialLibrary3
 </details>
 <br/>
 
-For inversion of control, the class library can use IStringLocalizer abstractions. The non-depenency injection instance is acquired from *LibraryLocalization* if *localizer* is null.
+For inversion of control, the class library can use IStringLocalizer abstractions. The non-dependency injection instance is acquired from *LibraryLocalization* if *localizer* is null.
 
 ```csharp
 using Microsoft.Extensions.Localization;
@@ -185,11 +185,16 @@ Console.WriteLine(myClass1.Do());
 
 // Install additional localization that was not available in the TutorialLibrary.
 IAssetSource assetSource = XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization3-fi.xml");
+// Add to global localizer instance for the non-DI case
 StringLocalizerRoot.Builder.AddSource(assetSource).Build();
+// Add to local localizer instance for the DI case.
+builder.AddSource(assetSource).Build();
 
 // Use the culture that we just supplied
 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
 Console.WriteLine(myClass1.Do());
+MyClass myClass2 = new MyClass(localizer.Type<MyClass>());
+Console.WriteLine(myClass2.Do());
 ```
 # [Full Code](#tab/full-2)
 
@@ -208,11 +213,13 @@ namespace TutorialProject3
     {
         public static void Main(string[] args)
         {
-            // Install localization libraries that are available in the TutorialLibrary.
-            // Search for classes with [AssetSources] attribute.
+            // Create IStringLocalizerFactory
+            AssetBuilder builder = new AssetBuilder.OneBuildInstance();
+            IAsset asset = builder.Build();
+            StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
+            // Install library's [AssetSources]
             Assembly library = typeof(MyClass).Assembly;
-            StringLocalizerRoot.Builder.AddLibraryAssetSources(library);
-
+            builder.AddLibraryAssetSources(library).Build();
             #region Snippet
             /// Create class without localizer
             MyClass myClass1 = new MyClass();
@@ -223,25 +230,17 @@ namespace TutorialProject3
 
             // Install additional localization that was not available in the TutorialLibrary.
             IAssetSource assetSource = XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization3-fi.xml");
+            // Add to global localizer instance for the non-DI case
             StringLocalizerRoot.Builder.AddSource(assetSource).Build();
+            // Add to local localizer instance for the DI case.
+            builder.AddSource(assetSource).Build();
 
             // Use the culture that we just supplied
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
             Console.WriteLine(myClass1.Do());
+            MyClass myClass2 = new MyClass(localizer.Type<MyClass>());
+            Console.WriteLine(myClass2.Do());
             #endregion Snippet
-
-            /// Create class with localizer
-            IStringLocalizerFactory factory = StringLocalizerRoot.Global;
-            IStringLocalizer<MyClass> localizer = StringLocalizerRoot.Global.Type<MyClass>();
-            MyClass myClass2 = new MyClass( localizer );
-
-            // Use culture that was provided with the class library
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
-            Console.WriteLine(myClass2.Do());
-
-            // Use culture that was supplied by this application
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
-            Console.WriteLine(myClass2.Do());
         }
     }
 }
