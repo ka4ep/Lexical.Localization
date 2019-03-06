@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Localization;
 
-namespace TutorialLibrary
+namespace TutorialLibrary2
 {
-    public class MyClass2
+    public class MyClass
     {
-        IStringLocalizer localization;
+        IStringLocalizer<MyClass> localization;
 
-        public MyClass2(IStringLocalizer<MyClass2> localization)
+        public MyClass(IStringLocalizer<MyClass> localization)
         {
             this.localization = localization;
         }

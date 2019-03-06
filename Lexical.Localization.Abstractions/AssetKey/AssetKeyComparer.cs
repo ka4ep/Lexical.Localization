@@ -196,7 +196,8 @@ namespace Lexical.Localization
     /// <summary>
     /// Compares all non-canonical parameters keys agains each other.
     /// These are keys that implement <see cref="IAssetKeyParameterAssigned"/> and <see cref="IAssetKeyNonCanonicallyCompared"/>.
-    /// Root key is not compared.
+    /// 
+    /// If <see cref="IAssetKeyNonCanonicallyCompared"/> occurs more than once, only the left-most is effective for compare purposes.
     /// </summary>
     public class ParametrizedNonCanonicalComparer : IEqualityComparer<IAssetKey>
     {
@@ -208,35 +209,53 @@ namespace Lexical.Localization
             LazyList<(string, string)> x_parameters = new LazyList<(string, string)>();
 
             // Get x's (parameter, value) pairs
-            for (IAssetKey x_link = x; x_link != null; x_link = x_link.GetPreviousKey())
+            for (IAssetKey x_node = x; x_node != null; x_node = x_node.GetPreviousKey())
             {
                 // Is non-canonical
-                if (x_link is IAssetKeyNonCanonicallyCompared == false) continue;
+                if (x_node is IAssetKeyNonCanonicallyCompared == false) continue;
 
                 // Get parameter
-                string x_parameter_name = x_link.GetParameterName(), x_parameter_value = x_link.Name;
+                string x_parameter_name = x_node.GetParameterName(), x_parameter_value = x_node.Name;
                 if (x_parameter_name == null || x_parameter_value == null) continue;
 
-                // Has this parameter been added already. 
+                // Previous occurance x_parameters table index
                 int ix = -1;
+                // Has this parameter been added already. 
                 for (int i = 0; i < x_parameters.Count; i++) if (x_parameters[i].Item1 == x_parameter_name) { ix = i; break; }
-                // Last value stands.
-                if (ix >= 0) break;
-
-                // Add to list
-                x_parameters.Add((x_parameter_name, x_parameter_value));
+                // Left-most value stands.
+                if (ix >= 0)
+                {
+                    // Update table
+                    x_parameters[ix] = (x_parameter_name, x_parameter_value);
+                }
+                else
+                {
+                    // Add to list
+                    x_parameters.Add((x_parameter_name, x_parameter_value));
+                }
             }
 
             // Match against y's
             int count = 0;
-            for (IAssetKey y_link = y; y_link != null; y_link = y_link.GetPreviousKey())
+            for (IAssetKey y_node = y; y_node != null; y_node = y_node.GetPreviousKey())
             {
                 // Is non-canonical
-                if (y_link is IAssetKeyNonCanonicallyCompared == false) continue;
+                if (y_node is IAssetKeyNonCanonicallyCompared == false) continue;
 
                 // Get parameter name
-                string y_parameter_name = y_link.GetParameterName(), y_parameter_value = y_link.Name;
+                string y_parameter_name = y_node.GetParameterName(), y_parameter_value = y_node.Name;
                 if (y_parameter_name == null || y_parameter_value == null) continue;
+
+                // Test if this parameter is yet to occure again towards left of the key
+                bool firstOccurance = true;
+                for (IAssetKey kk = y_node.GetPreviousKey(); kk != null; kk = kk.GetPreviousKey())
+                    if (kk is IAssetKeyNonCanonicallyCompared && kk.GetParameterName() == y_parameter_name)
+                    {
+                        firstOccurance = false;
+                        break;
+                    }
+                // Ignore this occurance as this non-canonical part occurs again.
+                if (!firstOccurance) continue;
 
                 // Test if x had one corresponding one
                 string x_value = null;
@@ -290,6 +309,17 @@ namespace Lexical.Localization
                 // Get value.
                 string parameter_value = k.Name;
                 if (parameter_value == null) continue;
+
+                // Test if this parameter is yet to occure again towards left of the key
+                bool firstOccurance = true;
+                for (IAssetKey kk = k.GetPreviousKey(); kk != null; kk = kk.GetPreviousKey())
+                    if (kk is IAssetKeyNonCanonicallyCompared && kk.GetParameterName() == parameterName)
+                    {
+                        firstOccurance = false;
+                        break;
+                    }
+                // Ignore this occurance as this non-canonical part occurs again.
+                if (!firstOccurance) continue;
 
                 hash ^= parameterName.GetHashCode();
                 hash ^= parameter_value.GetHashCode();

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Type="urn:lexical.fi:Type"
+              xmlns:Key="urn:lexical.fi:Key"
+              xmlns="urn:lexical.fi">
+
+  <!-- Example: Localization string for Culture "de" -->
+  <Type:TutorialLibrary1.MyClass Culture="de">
+    <Key:OK>Erfolgreich!</Key:OK>
+  </Type:TutorialLibrary1.MyClass>
+
+</Localization>

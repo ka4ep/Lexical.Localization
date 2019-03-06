@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lexical.Localization.Internal
 {
@@ -63,6 +64,13 @@ namespace Lexical.Localization.Internal
             foreach(var pair in values)
                 GetOrCreateList(pair.Key).Add(pair.Value);
             return this;
+        }
+
+        public IEnumerable<KeyValuePair<Key, Value>> Lines()
+        {
+            foreach (var line in this)
+                foreach (var item in line.Value)
+                    yield return new KeyValuePair<Key, Value>(line.Key, item);
         }
     }
 

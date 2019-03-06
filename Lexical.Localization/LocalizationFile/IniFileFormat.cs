@@ -41,7 +41,7 @@ namespace Lexical.Localization
         public IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default)
         {
             KeyTree root = new KeyTree(Key.Root);
-            using (var ini = new IniTokenReader(text.ReadToEnd()))
+            using (var ini = new IniTokenizer(text.ReadToEnd()))
                 ReadIniIntoTree(ini, root, namePolicy);
             return root;
         }
@@ -53,7 +53,7 @@ namespace Lexical.Localization
         /// <param name="node">parent node to under which add nodes</param>
         /// <param name="namePolicy"></param>
         /// <returns><paramref name="node"/></returns>
-        public IKeyTree ReadIniIntoTree(IniTokenReader ini, KeyTree node, IAssetKeyNamePolicy namePolicy = default)
+        public IKeyTree ReadIniIntoTree(IniTokenizer ini, KeyTree node, IAssetKeyNamePolicy namePolicy = default)
         {
             List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
             KeyTree section = null;

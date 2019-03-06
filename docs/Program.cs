@@ -6,11 +6,15 @@ namespace docs
     {
         static void Main(string[] args)
         {
-            TutorialProject.Program4.Main(args);
-            TutorialProject.Program3.Main(args);
-            TutorialProject.Program3b.Main(args);
-            TutorialProject.Program2.Main(args);
-            TutorialProject.Program2b.Main(args);
+            TutorialProject1.Program1.Main(args);
+            TutorialProject1.Program2.Main(args);
+            TutorialProject2.Program1.Main(args);
+            TutorialProject2.Program2.Main(args);
+            TutorialProject2.Program3.Main(args);
+            TutorialProject3.Program1.Main(args);
+            TutorialProject3.Program2.Main(args);
+            TutorialProject3.Program3.Main(args);
+            AssetKeyComparer_Examples.Main(args);
             Plurality_Examples.Main(args);
             TutorialProject.ExampleB.Main(args);
             TutorialProject.ExampleC.Main(args);

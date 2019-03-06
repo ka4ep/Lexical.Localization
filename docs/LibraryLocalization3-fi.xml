@@ -5,12 +5,8 @@
               xmlns="urn:lexical.fi">
 
   <!-- Example: Localization string for Culture "fi" -->
-  <Type:TutorialLibrary.MyClass Culture="fi">
+  <Type:TutorialLibrary3.MyClass Culture="fi">
     <Key:OK>Toiminto onnistui!</Key:OK>
-  </Type:TutorialLibrary.MyClass>
-
-  <Type:TutorialLibrary.MyClass2 Culture="fi">
-    <Key:OK>Toiminto onnistui!</Key:OK>
-  </Type:TutorialLibrary.MyClass2>
+  </Type:TutorialLibrary3.MyClass>
 
 </Localization>

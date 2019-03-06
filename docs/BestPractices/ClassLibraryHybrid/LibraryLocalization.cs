@@ -1,8 +1,9 @@
 ﻿using Lexical.Localization;
+using Lexical.Localization.Ms.Extensions;
 
-namespace TutorialLibrary1
+namespace TutorialLibrary3
 {
-    internal class LibraryLocalization : LocalizationRoot.LinkedTo
+    internal class LibraryLocalization : StringLocalizerRoot.LinkedTo
     {
         private static readonly LibraryLocalization instance = new LibraryLocalization(LocalizationRoot.Global);
 

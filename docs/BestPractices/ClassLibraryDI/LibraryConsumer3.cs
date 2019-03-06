@@ -1,42 +1,52 @@
 ﻿using Lexical.Localization;
 using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 
-namespace TutorialProject
+namespace TutorialProject2
 {
     public class Program3
     {
         public static void Main(string[] args)
         {
             #region Snippet
-            // Install localization libraries that are available in the TutorialLibrary.
-            // Search for classes with [AssetSources] attribute.
-            Assembly library = typeof(TutorialLibrary.MyClass2).Assembly;
-            StringLocalizerRoot.Builder.AddLibraryAssetSources(library);
+            IServiceCollection services = new ServiceCollection();
 
-            // Apply sources
-            StringLocalizerRoot.Builder.Build();
+            // Install default IStringLocalizerFactory
+            services.AddLexicalLocalization(
+                addStringLocalizerService: true,
+                addCulturePolicyService: true,
+                useGlobalInstance: true,
+                addCache: false);
 
-            // Create class
-            IStringLocalizerFactory factory = StringLocalizerRoot.Global;
-            IStringLocalizer<TutorialLibrary.MyClass2> localizer = StringLocalizerRoot.Global.Type<TutorialLibrary.MyClass2>();
-            TutorialLibrary.MyClass2 myClass = new TutorialLibrary.MyClass2( localizer );
+            // Install Library's [AssetSources].
+            Assembly library = typeof(TutorialLibrary2.MyClass).Assembly;
+            services.AddAssetLibrarySources(library);
 
-            // Use culture that was provided with the class library
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
-            Console.WriteLine(myClass.Do());
+            // Install additional localization that was not available in the TutorialLibrary.
+            services.AddSingleton<IAssetSource>(XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization2-fi.xml"));
 
-            // Use culture that was supplied by this application
-            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
-            Console.WriteLine(myClass.Do());
+            // Service MyClass2
+            services.AddTransient<TutorialLibrary2.MyClass, TutorialLibrary2.MyClass>();
+
+            // Create instance container
+            using (var provider = services.BuildServiceProvider())
+            {
+                // Create class
+                TutorialLibrary2.MyClass myClass = provider.GetService<TutorialLibrary2.MyClass>();
+
+                // Use culture that was provided with the class library
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
+                Console.WriteLine(myClass.Do());
+
+                // Use culture that was supplied by this application
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
+                Console.WriteLine(myClass.Do());
+            }
             #endregion Snippet
-
-            Console.ReadKey();
         }
     }
 }

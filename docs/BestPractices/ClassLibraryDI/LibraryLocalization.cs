@@ -1,6 +1,6 @@
 ﻿using Lexical.Localization;
 
-namespace TutorialLibrary1
+namespace TutorialLibrary2
 {
     internal class LibraryLocalization : LocalizationRoot.LinkedTo
     {

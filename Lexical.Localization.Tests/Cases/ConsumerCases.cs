@@ -55,7 +55,7 @@ namespace Lexical.Localization.Tests
                 Assert.AreEqual("Onnistui", fi_success.ToString());
                 Assert.AreEqual("Success", en_success.ToString());
                 Assert.AreEqual("Virhe (Koodi=0xFEEDF00D)", fi.Key("Error").Format(0xFeedF00d).ToString());
-                //Assert.AreEqual("Erfolg", section.Culture("de").de("Erfolg").ToString()); // <- not addressed atm
+                Assert.AreEqual("Erfolg", section.Culture("de").de("Erfolg").ToString());
                 Assert.AreEqual("Erfolg", section.Culture("de").Inline("Erfolg").ToString());
                 Assert.AreEqual("Onnistui", (string)d_section.Success.Culture("fi"));
                 Assert.AreEqual(null, d_section.Inlines);

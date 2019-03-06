@@ -1,12 +1,12 @@
 ﻿using Lexical.Localization;
 
-namespace TutorialLibrary
+namespace TutorialLibrary2
 {
-    public class MyClass2b
+    public class MyClassB
     {
-        IAssetKey localization;
+        IAssetKey<MyClass> localization;
 
-        public MyClass2b(IAssetKey<MyClass2> localization)
+        public MyClassB(IAssetKey<MyClass> localization)
         {
             this.localization = localization;
         }

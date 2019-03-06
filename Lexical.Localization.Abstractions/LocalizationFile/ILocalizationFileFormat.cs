@@ -135,14 +135,19 @@ namespace Lexical.Localization
         /// </summary>
         Modify = 4,
         /// <summary>
-        /// Synchronize contents with previous content.
+        /// Overwrite contents of previous content.
         /// </summary>
-        Synchronize = 8,
+        Overwrite = 8,
 
         /// <summary>
-        /// All fags
+        /// Update-add, but doesn't remove
         /// </summary>
-        All = 0xffffffff
+        Update = Add|Modify,
+
+        /// <summary>
+        /// Synchronize one file to another
+        /// </summary>
+        Synchronize = Add | Modify | Remove,
     }
 
     /// <summary>

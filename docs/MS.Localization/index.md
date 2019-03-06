@@ -13,7 +13,7 @@ And **StringLocalizerAsset** adapts *IStringLocalizer* implementations to *IAsse
 [!code-csharp[Snippet](IopExamples.cs#Snippet_0c)]
 
 ## Lexical.Localization to Ms.Localization
-**StringLocalizerRoot** adapts *IAsset* implementations to *IStringLocalizerFactory*. [Read more.](../IAssetRoot/#string-localizer)
+**StringLocalizerRoot** adapts *IAsset* implementations to *IStringLocalizerFactory*. [Read more.](../IAssetKey/IAssetRoot/#string-localizer)
 [!code-csharp[Snippet](IopExamples.cs#Snippet_4a)]
 
 And to *IStringLocalizer*.

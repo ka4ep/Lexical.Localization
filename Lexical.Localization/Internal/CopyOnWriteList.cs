@@ -18,23 +18,40 @@ namespace Lexical.Localization.Internal
     /// </summary>
     public class CopyOnWriteList<T> : IList<T>
     {
-        public T this[int index] { get => Array[index]; set { lock (m_lock) { list[index] = value; cow = null; } } }
+        /// <summary>
+        /// Get or set an element at <paramref name="index"/>.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public T this[int index] {
+            get => Array[index];
+            set { lock (m_lock) { list[index] = value; snapshot = null; } }
+        }
 
-        public int Count => Array.Length;
+        public int Count
+        {
+            get
+            {
+                var _snaphost = snapshot;
+                if (_snaphost != null) return _snaphost.Length;
+                lock (m_lock) return list.Count;
+            }
+        }
 
         public virtual bool IsReadOnly => false;
 
         protected internal object m_lock = new object();
 
         /// <summary>
-        /// Copy-on-write snapshot. 
+        /// a snapshot. 
         /// </summary>
-        protected T[] cow;
+        protected T[] snapshot;
 
         /// <summary>
-        /// Get-or-create copy-on-write snapshot.
+        /// Get-or-create a snapshot. Make a new copy if write has occured.
         /// </summary>
-        public T[] Array => cow ?? BuildCow();
+        public T[] Array 
+            => snapshot ?? BuildCow();
 
         protected List<T> list;
 
@@ -65,11 +82,11 @@ namespace Lexical.Localization.Internal
 
         protected virtual T[] BuildCow()
         {
-            lock (m_lock) return cow = list.ToArray();
+            lock (m_lock) return snapshot = list.ToArray();
         }
         protected virtual void ClearCache()
         {
-            this.cow = null;
+            this.snapshot = null;
         }
 
         public virtual void Add(T item)
@@ -165,14 +182,16 @@ namespace Lexical.Localization.Internal
         /// Therefore it can't throw ConcurrentModicationException.
         /// </summary>
         /// <returns></returns>
-        IEnumerator IEnumerable.GetEnumerator() => Array.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() 
+            => Array.GetEnumerator();
 
         /// <summary>
         /// Returns an enumerator to a copy-on-write list. 
         /// Therefore it can't throw ConcurrentModicationException.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)Array).GetEnumerator();
+        public IEnumerator<T> GetEnumerator() 
+            => ((IEnumerable<T>)Array).GetEnumerator();
 
     }
 }

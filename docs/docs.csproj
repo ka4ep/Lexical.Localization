@@ -12,8 +12,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="LibraryLocalization-de.xml" />
-    <None Remove="LibraryLocalization-en.xml" />
+    <None Remove="LibraryLocalization1-de.xml" />
+    <None Remove="LibraryLocalization1-en.xml" />
+    <None Remove="LibraryLocalization2-de.xml" />
+    <None Remove="LibraryLocalization2-en.xml" />
+    <None Remove="LibraryLocalization3-de.xml" />
+    <None Remove="LibraryLocalization3-en.xml" />
     <None Remove="Resources\res.ConsoleApp1.MyController.Icon.Error" />
     <None Remove="Resources\res.ConsoleApp1.MyController.Icon.Success" />
     <None Remove="Resources\res.en.ConsoleApp1.MyController.Icon.Error" />
@@ -27,10 +31,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="LibraryLocalization-de.xml">
+    <EmbeddedResource Include="LibraryLocalization3-en.xml" />
+    <EmbeddedResource Include="LibraryLocalization2-en.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="LibraryLocalization-en.xml">
+    <EmbeddedResource Include="LibraryLocalization2-de.xml" />
+    <EmbeddedResource Include="LibraryLocalization3-de.xml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LibraryLocalization1-de.xml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LibraryLocalization1-en.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\res.ConsoleApp1.MyController.Icon.Error">
@@ -102,7 +114,13 @@
     <None Update="HelloWorld.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="LibraryLocalization-fi.xml">
+    <None Update="LibraryLocalization2-fi.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="LibraryLocalization3-fi.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="LibraryLocalization1-fi.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="PluralityExample0-fi.xml">
@@ -145,6 +163,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="LibraryLocalization3-en.xml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Update="LibraryLocalization2-de.xml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\ConsoleApp1.MyController.en.resx">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>

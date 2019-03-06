@@ -45,7 +45,7 @@ asset = new StringLocalizerAsset(stringLocalizer);
 ```
 
 ## Lexical.Localization to Ms.Localization
-**StringLocalizerRoot** adapts *IAsset* implementations to *IStringLocalizerFactory*. [Read more.](../IAssetRoot/#string-localizer)
+**StringLocalizerRoot** adapts *IAsset* implementations to *IStringLocalizerFactory*. [Read more.](../IAssetKey/IAssetRoot/#string-localizer)
 
 ```csharp
 // Create asset

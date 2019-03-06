@@ -36,7 +36,18 @@ namespace Lexical.Localization.Internal
             };
         }
 
+        /// <summary>
+        /// Create a list of tokens from an array of <paramref name="comments"/>.
+        /// </summary>
+        /// <param name="comments"></param>
+        /// <returns>tokens</returns>
         public static IEnumerable<IniToken> Comments(params string[] comments) => comments.Select(c => Comment(c));
+
+        /// <summary>
+        /// Create a list of tokens from an enumeration of <paramref name="comments"/>.
+        /// </summary>
+        /// <param name="comments"></param>
+        /// <returns>tokens</returns>
         public static IEnumerable<IniToken> Comments(IEnumerable<string> comments) => comments.Select(c => Comment(c));
 
         /// <summary>
@@ -126,6 +137,16 @@ namespace Lexical.Localization.Internal
         /// Token Type
         /// </summary>
         public IniTokenType Type = IniTokenType.Text;
+
+        /// <summary>
+        /// Previous token node in linked list.
+        /// </summary>
+        public IniToken Previous;
+
+        /// <summary>
+        /// Next token node in linked list.
+        /// </summary>
+        public IniToken Next;
 
         /// <summary>
         /// Content start index and length in iniString.
@@ -229,17 +250,41 @@ namespace Lexical.Localization.Internal
             hash = hash * 999961 + KeyLength;
             return hash;
         }
+
+        /// <summary>
+        /// If tokens are built as linked list, returns an <see cref="IEnumerable{IniToken}"/> that lists
+        /// this and other succeeding nodes.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IniToken> LinkedList()
+        {
+            for (IniToken t = this; t != null; t = t.Next)
+                yield return t;
+        }
     }
 
-    public class IniTokenReader : IEnumerable<IniToken>, IDisposable
+    public class IniTokenizer : IEnumerable<IniToken>, IDisposable
     {
+        /// <summary>
+        /// Read tokenizer from a text file.
+        /// </summary>
+        /// <param name="filepath"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static IniTokenizer ReadTextFile(string filepath, Encoding encoding = default)
+        {
+            using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var sr = new StreamReader(fs, encoding ?? Encoding.UTF8, true, 32 * 1024))
+                return new IniTokenizer(sr.ReadToEnd());
+        }
+
         static Regex parser = new Regex(
             @"(\[(?<section>(\\[^\r\n]|[^\]\n\r\\])*)\])|((;|#|//)(?<comment>[^\r\n]*))|((?<key>(\\[^\r\n]|[^;#=\\ \t\x0B\f\r\n])+)[ \t\x0B\f]*=[ \t\x0B\f]*(?<value>(\\[^\r\n]|[^\\\n\r])*))|(?<text>.+?)",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture);
         protected MatchCollection matches;
         protected string text;
 
-        public IniTokenReader(string text)
+        public IniTokenizer(string text)
         {
             matches = parser.Matches(text);
             this.text = text;
@@ -250,23 +295,39 @@ namespace Lexical.Localization.Internal
             matches = null;
         }
 
+        /// <summary>
+        /// Reads all tokens into an separate instance. 
+        /// </summary>
+        /// <returns>Head token or null if contained no tokens</returns>
+        public IniToken ToLinkedList()
+        {
+            IniToken head = null, prev = null;
+            foreach (IniToken t in this)
+            {
+                // Clone single instance
+                IniToken token = t.Clone() as IniToken;
+                // Set head
+                if (head == null) head = token;
+                // Set link
+                if (prev != null) { prev.Next = token; token.Previous = prev; }
+            }
+            return head;
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates tokens but uses only one <see cref="IniToken"/> instance.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<IniToken> GetEnumerator()
         {
-            if (matches == null) throw new ObjectDisposedException(nameof(IniTokenReader));
+            if (matches == null) throw new ObjectDisposedException(nameof(IniTokenizer));
             return new IniTokenEnumerator(text, matches);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            if (matches == null) throw new ObjectDisposedException(nameof(IniTokenReader));
+            if (matches == null) throw new ObjectDisposedException(nameof(IniTokenizer));
             return new IniTokenEnumerator(text, matches);
-        }
-
-        public static IniTokenReader ReadTextFile(string filepath, Encoding encoding = default)
-        {
-            using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var sr = new StreamReader(fs, encoding ?? Encoding.UTF8, true, 32 * 1024))
-                return new IniTokenReader(sr.ReadToEnd());
         }
 
         public override string ToString()
@@ -275,7 +336,7 @@ namespace Lexical.Localization.Internal
         }
     }
 
-    public class IniTokenEnumerator : IEnumerator, IEnumerator<IniToken>
+    class IniTokenEnumerator : IEnumerator, IEnumerator<IniToken>
     {
         /// <summary>
         /// Source text
@@ -469,7 +530,6 @@ namespace Lexical.Localization.Internal
                     return new string(_ch, 1);
             }
         }
-
     }
 
 

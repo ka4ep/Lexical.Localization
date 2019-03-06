@@ -1,6 +1,6 @@
-﻿# Class Library with Dependency Injection
+﻿# Class Library with compability to Dependency Injection
 
-This article describes recommended practice for writing a localized class library that uses inversion of control.
+This article describes recommended practice for writing a class library that, for purposes of localization, is compatible with and without Dependency Injection.
 
 The developer of class library may want to provide its own builtin localizations. 
 The recommended practice is to create a class **LibraryAssets** into the class library.
@@ -9,12 +9,12 @@ It should use **[AssetSources]** attribute to a signal that this class provides 
 Internal localization files are typically added built-in as embedded resources.
 [!code-csharp[Snippet](LibraryAssets.cs)]
 <details>
-  <summary>The example localization file *LibraryLocalization2-de.xml*.  (<u>click here</u>)</summary>
-[!code-xml[Snippet](../../LibraryLocalization2-de.xml)]
+  <summary>The example localization file *LibraryLocalization3-de.xml*.  (<u>click here</u>)</summary>
+[!code-xml[Snippet](../../LibraryLocalization3-de.xml)]
 </details>
 <br/>
 
-For inversion of control, the class library can use IStringLocalizer abstractions
+For inversion of control, the class library can use IStringLocalizer abstractions. The non-depenency injection instance is acquired from *LibraryLocalization* if *localizer* is null.
 [!code-csharp[Snippet](MyClass.cs)]
 
 ... or alternatively Lexical.Localization.Abstractions.
@@ -37,8 +37,8 @@ The application can supply additional localization sources with **<i>IAssetBuild
 [!code-csharp[Snippet](LibraryConsumer2.cs)]
 ***
 <details>
-  <summary>The example localization file *LibraryLocalization2-fi.xml*.  (<u>click here</u>)</summary>
-[!code-xml[Snippet](../../LibraryLocalization2-fi.xml)]
+  <summary>The example localization file *LibraryLocalization3-fi.xml*.  (<u>click here</u>)</summary>
+[!code-xml[Snippet](../../LibraryLocalization3-fi.xml)]
 </details>
 <br/>
 

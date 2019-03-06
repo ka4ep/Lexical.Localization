@@ -1,6 +1,6 @@
 ﻿using Lexical.Localization;
 
-namespace TutorialLibrary
+namespace TutorialLibrary1
 {
     public class MyClass
     {
