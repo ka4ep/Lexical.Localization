@@ -50,6 +50,42 @@ namespace TutorialLibrary3
 </details>
 <br/>
 
+There should be another class called **LibraryLocalization** that is used as the *IAssetRoot* for the classes that use localization.
+This root is linked to the global static root and shares its assets.
+
+```csharp
+using Lexical.Localization;
+using Lexical.Localization.Ms.Extensions;
+
+namespace TutorialLibrary3
+{
+    internal class LibraryLocalization : StringLocalizerRoot.LinkedTo
+    {
+        private static readonly LibraryLocalization instance = new LibraryLocalization(LocalizationRoot.Global);
+
+        /// <summary>
+        /// Singleton instance to localization root for this class library.
+        /// </summary>
+        public static LibraryLocalization Root => instance;
+
+        /// <summary>
+        /// Add asset sources here. Then call <see cref="IAssetBuilder.Build"/> to make effective.
+        /// </summary>
+        public new static IAssetBuilder Builder => LocalizationRoot.Builder;
+
+        LibraryLocalization(IAssetRoot linkedTo) : base(linkedTo)
+        {
+            // Add library's internal assets here
+            Builder.AddSources(new LibraryAssets());
+            // Apply changes
+            Builder.Build();
+        }
+    }
+}
+
+```
+<br/> 
+
 For inversion of control, the class library can use IStringLocalizer abstractions. The non-dependency injection instance is acquired from *LibraryLocalization* if *localizer* is null.
 
 ```csharp
