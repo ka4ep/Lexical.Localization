@@ -14,7 +14,7 @@ namespace TutorialProject1
             // Use default string
             Console.WriteLine(myClass.Do());
 
-            // Use culture that was provided with the class library
+            // Use the culture that was provided with the class library (LibraryAssets)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass.Do());
             #endregion Snippet

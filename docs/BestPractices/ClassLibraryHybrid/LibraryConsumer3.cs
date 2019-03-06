@@ -38,11 +38,11 @@ namespace TutorialProject3
                 // Create class
                 MyClass myClass = provider.GetService<MyClass>();
 
-                // Use culture that was provided with the class library
+                // Use the culture that was provided by with the class library (LibraryAssets)
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
                 Console.WriteLine(myClass.Do());
 
-                // Use culture that was supplied by this application
+                // Use the culture that was supplied above
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
                 Console.WriteLine(myClass.Do());
             }

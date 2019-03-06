@@ -3,7 +3,7 @@
 **AssetKeyComparer.Default** is the default **<i>IEqualityComparer&lt;IAssetKey&gt;</i>** comparer.
 
 ```csharp
-AssetKeyComparer comparer = AssetKeyComparer.Default;
+IEqualityComparer<IAssetKey> comparer = AssetKeyComparer.Default;
 ```
 
 It compares parts that implement *IAssetKeyParameterAssigned* and either *IAssetKeyCanonicallyCompared* or *IAssetKeyNonCanonicallyCompared*.

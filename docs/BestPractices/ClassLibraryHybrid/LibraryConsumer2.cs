@@ -18,10 +18,10 @@ namespace TutorialProject3
             StringLocalizerRoot.Builder.AddLibraryAssetSources(library);
 
             #region Snippet
-            // Create class without localizer
+            /// Create class without localizer
             MyClass myClass1 = new MyClass();
 
-            // Use culture that was provided with the class library
+            // Use the culture that was provided by with the class library (LibraryAssets)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass1.Do());
 
@@ -29,12 +29,12 @@ namespace TutorialProject3
             IAssetSource assetSource = XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization3-fi.xml");
             StringLocalizerRoot.Builder.AddSource(assetSource).Build();
 
-            // Use culture that we just supplied
+            // Use the culture that we just supplied
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
             Console.WriteLine(myClass1.Do());
             #endregion Snippet
 
-            // Create class with localizer
+            /// Create class with localizer
             IStringLocalizerFactory factory = StringLocalizerRoot.Global;
             IStringLocalizer<MyClass> localizer = StringLocalizerRoot.Global.Type<MyClass>();
             MyClass myClass2 = new MyClass( localizer );

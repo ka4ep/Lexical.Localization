@@ -30,11 +30,11 @@ namespace TutorialProject2
             IAssetKey<MyClass> classLocalizer = localizer.Type<MyClass>();
             MyClassB myClass = new MyClassB(classLocalizer);
 
-            // Use culture that was provided with the class library
+            // Use the culture that was provided with the class library (LibraryAssets)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass.Do());
 
-            // Use culture that was supplied above
+            // Use the culture that was supplied above
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
             Console.WriteLine(myClass.Do());
         }

@@ -114,16 +114,14 @@ MyClass myClass1 = new MyClass();
 AssetBuilder builder = new AssetBuilder.OneBuildInstance();
 IAsset asset = builder.Build();
 StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
-
 // Install library's [AssetSources]
 Assembly library = typeof(MyClass).Assembly;
 builder.AddLibraryAssetSources(library).Build();
-
-// Create class with localizer
+// Instantiate the class
 IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>();
 MyClass myClass2 = new MyClass(classLocalizer);
 
-// Use culture that was provided with the class library
+/// Use culture that was provided with the class library
 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
 Console.WriteLine(myClass1.Do());
 Console.WriteLine(myClass2.Do());
@@ -154,16 +152,14 @@ namespace TutorialProject3
             AssetBuilder builder = new AssetBuilder.OneBuildInstance();
             IAsset asset = builder.Build();
             StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
-
             // Install library's [AssetSources]
             Assembly library = typeof(MyClass).Assembly;
             builder.AddLibraryAssetSources(library).Build();
-
-            // Create class with localizer
+            // Instantiate the class
             IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>();
             MyClass myClass2 = new MyClass(classLocalizer);
 
-            // Use culture that was provided with the class library
+            /// Use culture that was provided with the class library
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass1.Do());
             Console.WriteLine(myClass2.Do());
@@ -180,10 +176,10 @@ The application can supply additional localization sources with **<i>IAssetBuild
 # [Snippet](#tab/snippet-2)
 
 ```csharp
-// Create class without localizer
+/// Create class without localizer
 MyClass myClass1 = new MyClass();
 
-// Use culture that was provided with the class library
+// Use the culture that was provided by with the class library (LibraryAssets)
 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
 Console.WriteLine(myClass1.Do());
 
@@ -191,7 +187,7 @@ Console.WriteLine(myClass1.Do());
 IAssetSource assetSource = XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization3-fi.xml");
 StringLocalizerRoot.Builder.AddSource(assetSource).Build();
 
-// Use culture that we just supplied
+// Use the culture that we just supplied
 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
 Console.WriteLine(myClass1.Do());
 ```
@@ -218,10 +214,10 @@ namespace TutorialProject3
             StringLocalizerRoot.Builder.AddLibraryAssetSources(library);
 
             #region Snippet
-            // Create class without localizer
+            /// Create class without localizer
             MyClass myClass1 = new MyClass();
 
-            // Use culture that was provided with the class library
+            // Use the culture that was provided by with the class library (LibraryAssets)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass1.Do());
 
@@ -229,12 +225,12 @@ namespace TutorialProject3
             IAssetSource assetSource = XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization3-fi.xml");
             StringLocalizerRoot.Builder.AddSource(assetSource).Build();
 
-            // Use culture that we just supplied
+            // Use the culture that we just supplied
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
             Console.WriteLine(myClass1.Do());
             #endregion Snippet
 
-            // Create class with localizer
+            /// Create class with localizer
             IStringLocalizerFactory factory = StringLocalizerRoot.Global;
             IStringLocalizer<MyClass> localizer = StringLocalizerRoot.Global.Type<MyClass>();
             MyClass myClass2 = new MyClass( localizer );
@@ -284,7 +280,7 @@ IServiceCollection services = new ServiceCollection();
 services.AddLexicalLocalization(
     addStringLocalizerService: true,
     addCulturePolicyService: true,
-    useGlobalInstance: true,
+    useGlobalInstance: false,
     addCache: false);
 
 // Install Library's [AssetSources].
@@ -294,7 +290,7 @@ services.AddAssetLibrarySources(library);
 // Install additional localization that was not available in the TutorialLibrary.
 services.AddSingleton<IAssetSource>(XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization3-fi.xml"));
 
-// Service MyClass2
+// Service MyClass
 services.AddTransient<MyClass, MyClass>();
 
 // Create instance container
@@ -303,11 +299,11 @@ using (var provider = services.BuildServiceProvider())
     // Create class
     MyClass myClass = provider.GetService<MyClass>();
 
-    // Use culture that was provided with the class library
+    // Use the culture that was provided by with the class library (LibraryAssets)
     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
     Console.WriteLine(myClass.Do());
 
-    // Use culture that was supplied by this application
+    // Use the culture that was supplied above
     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
     Console.WriteLine(myClass.Do());
 }
@@ -336,7 +332,7 @@ namespace TutorialProject3
             services.AddLexicalLocalization(
                 addStringLocalizerService: true,
                 addCulturePolicyService: true,
-                useGlobalInstance: true,
+                useGlobalInstance: false,
                 addCache: false);
 
             // Install Library's [AssetSources].
@@ -346,7 +342,7 @@ namespace TutorialProject3
             // Install additional localization that was not available in the TutorialLibrary.
             services.AddSingleton<IAssetSource>(XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization3-fi.xml"));
 
-            // Service MyClass2
+            // Service MyClass
             services.AddTransient<MyClass, MyClass>();
 
             // Create instance container
@@ -355,11 +351,11 @@ namespace TutorialProject3
                 // Create class
                 MyClass myClass = provider.GetService<MyClass>();
 
-                // Use culture that was provided with the class library
+                // Use the culture that was provided by with the class library (LibraryAssets)
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
                 Console.WriteLine(myClass.Do());
 
-                // Use culture that was supplied by this application
+                // Use the culture that was supplied above
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
                 Console.WriteLine(myClass.Do());
             }
