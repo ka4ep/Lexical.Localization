@@ -84,7 +84,9 @@ namespace Lexical.Localization.Ms.Extensions
                 }
                 else
                 {
-                    serviceCollection.TryAdd(ServiceDescriptor.Singleton<ICulturePolicy, CulturePolicy>());
+                    serviceCollection.TryAdd(ServiceDescriptor.Singleton<ICulturePolicy>(
+                        s => new CulturePolicy().SetToCurrentCulture()
+                        ));
                 }
             }
 
@@ -127,7 +129,7 @@ namespace Lexical.Localization.Ms.Extensions
                     // Use the StringLocalizerKey or StringLocalizerRoot implementation from th service.
                     if (localizationRoot is StringLocalizerKey casted) return casted;
                     // Create new root that implements IStringLocalizerFactory and acquires asset and policy with delegate
-                    return new StringLocalizerRoot.Mutable(new LocalizationAssetFunc(() => localizationRoot.FindAsset()), new CulturePolicy().SetSourceFunc(() => localizationRoot.FindCulturePolicy()));
+                    return new StringLocalizerRoot.LinkedTo(localizationRoot);
                 }));
             }
 

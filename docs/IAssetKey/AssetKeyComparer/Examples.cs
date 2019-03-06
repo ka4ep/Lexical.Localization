@@ -13,7 +13,7 @@ namespace docs
         {
             {
                 #region Snippet_0
-                AssetKeyComparer comparer = AssetKeyComparer.Default;
+                IEqualityComparer<IAssetKey> comparer = AssetKeyComparer.Default;
                 #endregion Snippet_0
             }
             {

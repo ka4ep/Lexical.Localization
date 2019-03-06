@@ -19,7 +19,7 @@ namespace TutorialProject3
             services.AddLexicalLocalization(
                 addStringLocalizerService: true,
                 addCulturePolicyService: true,
-                useGlobalInstance: true,
+                useGlobalInstance: false,
                 addCache: false);
 
             // Install Library's [AssetSources].
@@ -29,7 +29,7 @@ namespace TutorialProject3
             // Install additional localization that was not available in the TutorialLibrary.
             services.AddSingleton<IAssetSource>(XmlFileFormat.Instance.CreateFileAssetSource("LibraryLocalization3-fi.xml"));
 
-            // Service MyClass2
+            // Service MyClass
             services.AddTransient<MyClass, MyClass>();
 
             // Create instance container
