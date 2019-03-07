@@ -50,7 +50,7 @@ namespace Lexical.Localization.Internal
             => MapB2A.GetList((b)b);
     }
 
-    public class CorrespondenceMap<a, b> : _CorrespondenceContext<a, b>
+    public class CorrespondenceMap<a, b> : _CorrespondenceContext<a, b> where a : class where b : class
     {
         public CorrespondenceMap<a, b> Map(a a, b b)
         {
@@ -59,10 +59,49 @@ namespace Lexical.Localization.Internal
             return this;
         }
 
+        static b[] no_b = new b[0];
+        static a[] no_a = new a[0];
+
         public IList<b> GetListOfB(a a)
-            => MapA2B.GetList((a)a);
+            => MapA2B.GetList((a)a) ?? (IList<b>)no_b;
         public IList<a> GetListOfA(b b)
-            => MapB2A.GetList((b)b);
+            => MapB2A.GetList((b)b) ?? (IList<a>)no_a;
+        public bool IsAMappedToB(a a, b b)
+        {
+            List<b> b_list = MapA2B.GetList(a);
+            if (b_list == null) return false;
+            return b_list.Contains(b);
+        }
+
+        /// <summary>
+        /// Test if <paramref name="a"/>'s mappings list is empty, or that contains only <paramref name="b"/>.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns>true if <paramref name="a"/>'s mappings is empty, or contains only <paramref name="b"/></returns>
+        public bool HasNoMappingOfAOrOnlyToB(a a, b b)
+        {
+            List<b> b_list = MapA2B.GetList(a);
+            if (b_list == null) return true;
+            foreach (b _b in b_list)
+                if (_b != b) return false;
+            return true;
+        }
+
+        /// <summary>
+        /// Test if <paramref name="b"/>'s mapping list is empty, or that contains only <paramref name="a"/>.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns>true if <paramref name="b"/>'s mappings is empty, or contains only <paramref name="a"/></returns>
+        public bool HasNoMappingOfBOrOnlyToA(a a, b b)
+        {
+            List<b> b_list = MapA2B.GetList(a);
+            if (b_list == null) return true;
+            foreach (b _b in b_list)
+                if (_b != b) return false;
+            return true;
+        }
     }
 
 }

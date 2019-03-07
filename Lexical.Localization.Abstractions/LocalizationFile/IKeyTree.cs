@@ -72,6 +72,38 @@ namespace Lexical.Localization
             => tree.GetChildren(key)?.FirstOrDefault();
 
         /// <summary>
+        /// Tests if <paramref name="tree"/> has a child with key <paramref name="key"/>.
+        /// 
+        /// If <paramref name="key"/> is null, then returns always false.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool HasChild(this IKeyTree tree, IAssetKey key)
+        {
+            if (key == null) return false;
+            if (!tree.HasChildren) return false;
+            IEnumerable<IKeyTree> children = tree.GetChildren(key);
+            if (children == null) return false;
+            return children.Count() > 0;
+        }
+
+        /// <summary>
+        /// Tests if <paramref name="tree"/> has a <paramref name="value"/>.
+        /// 
+        /// If <paramref name="value"/> is null, then returns always false.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool HasValue(this IKeyTree tree, string value)
+        {
+            if (value == null) return false;
+            if (!tree.HasValues) return false;
+            return tree.Values.Contains(value);
+        }
+
+        /// <summary>
         /// Get or create node by parameters in <paramref name="key"/>.
         /// 
         /// If <paramref name="key"/> contains no parameters, returns <paramref name="node"/>.
@@ -174,6 +206,22 @@ namespace Lexical.Localization
         /// <returns>key</returns>
         public static IAssetKey GetConcatenatedKey(this IKeyTree node)
              => node.Parent != null ? node.Parent.GetConcatenatedKey().Concat(node.Key) : node.Key;
+
+        /// <summary>
+        /// Get value count
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static int ValueCount(this IKeyTree node)
+            => node.HasValues ? 0 : node.Values.Count();
+
+        /// <summary>
+        /// Get child count.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static int ChildCount(this IKeyTree node)
+            => node.HasChildren ? 0 : node.Children.Count();
 
         /// <summary>
         /// Search decendents for tree nodes that have matching key. 

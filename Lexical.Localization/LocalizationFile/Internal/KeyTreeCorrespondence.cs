@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Lexical.Localization.Internal;
 using Lexical.Localization.Utils;
 
 namespace Lexical.Localization.Internal
@@ -23,7 +24,7 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Reference to a value in a <see cref="IKeyTree"/>.
     /// </summary>
-    public struct KeyTreeValue // todo hashequals
+    public class KeyTreeValue // todo hashequals
     {
         public IKeyTree keyTree;
         public string value;
