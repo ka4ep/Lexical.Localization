@@ -101,7 +101,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Cached queries where key is filter-criteria-key, and value is query result.
         /// </summary>
-        Dictionary<IAssetKey, IAssetKey[]> allKeyQueries;
+        Dictionary<IAssetKey, IAssetKey[]> allKeyQueries, keyQueries;
 
         public AssetCachePartKeys(IAsset source, AssetCacheOptions options)
         {
@@ -114,6 +114,7 @@ namespace Lexical.Localization
             // Create parametrizer, comparer and cache that reads IAssetKeys and AssetKeyProxies interchangeably. ParameterKey.Parametrizer must be on the left side, or it won't work. (because ParameterKey : IAssetKey).
             this.comparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
 
+            this.keyQueries = new Dictionary<IAssetKey, IAssetKey[]>(comparer);
             this.allKeyQueries = new Dictionary<IAssetKey, IAssetKey[]>(comparer);
         }
 
@@ -125,7 +126,7 @@ namespace Lexical.Localization
             // Hash-Equals may throw exceptions, we need try-finally to release lock properly.
             try
             {
-                if (allKeyQueries.TryGetValue(key ?? cloner.Root, out queryResult)) return queryResult;
+                if (keyQueries.TryGetValue(key ?? cloner.Root, out queryResult)) return queryResult;
             }
             finally
             {
@@ -133,7 +134,7 @@ namespace Lexical.Localization
             }
 
             // Read from backend and write to cache
-            queryResult = Source.GetAllKeys(key)?.ToArray();
+            queryResult = Source.GetKeys(key)?.ToArray();
 
             // Write to cache, be that null or not
             IAssetKey cacheKey = (Options.GetCloneKeys() ? cloner.Copy(key) : key) ?? cloner.Root;
@@ -142,7 +143,7 @@ namespace Lexical.Localization
             {
                 // The caller has flushed the cache, so let's not cache the data.
                 if (iter != iteration) return queryResult;
-                allKeyQueries[cacheKey] = queryResult;
+                keyQueries[cacheKey] = queryResult;
             }
             finally
             {
@@ -195,6 +196,7 @@ namespace Lexical.Localization
             m_lock.EnterWriteLock();
             try
             {
+                keyQueries.Clear();
                 allKeyQueries.Clear();
             }
             finally

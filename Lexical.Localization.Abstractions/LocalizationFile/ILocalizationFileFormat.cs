@@ -116,7 +116,7 @@ namespace Lexical.Localization
     }
 
     [Flags]
-    public enum WriteFlags : UInt32
+    public enum LocalizationFileWriteFlags : UInt32
     {
         /// <summary>
         /// No action.
@@ -134,8 +134,12 @@ namespace Lexical.Localization
         /// Allow to modify values of existing entries.
         /// </summary>
         Modify = 4,
+
         /// <summary>
         /// Overwrite contents of previous content.
+        /// <see cref="Add"/> must be set with this flag of else creates an empty document.
+        /// 
+        /// Flags <see cref="Remove"/> and <see cref="Modify"/> have no effect with this flag.
         /// </summary>
         Overwrite = 8,
 
@@ -171,7 +175,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, string>> lines, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+        void WriteStringLines(IEnumerable<KeyValuePair<string, string>> lines, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, LocalizationFileWriteFlags flags);
     }
 
     /// <summary>
@@ -190,7 +194,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, string>> lines, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+        void WriteStringLines(IEnumerable<KeyValuePair<string, string>> lines, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, LocalizationFileWriteFlags flags);
     }
 
     /// <summary>
@@ -209,7 +213,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyLines(IEnumerable<KeyValuePair<IAssetKey, string>> lines, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+        void WriteKeyLines(IEnumerable<KeyValuePair<IAssetKey, string>> lines, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, LocalizationFileWriteFlags flags);
     }
 
     /// <summary>
@@ -228,7 +232,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyLines(IEnumerable<KeyValuePair<IAssetKey, string>> lines, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+        void WriteKeyLines(IEnumerable<KeyValuePair<IAssetKey, string>> lines, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, LocalizationFileWriteFlags flags);
     }
 
     /// <summary>
@@ -247,7 +251,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyTree(IKeyTree tree, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+        void WriteKeyTree(IKeyTree tree, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, LocalizationFileWriteFlags flags);
     }
 
     /// <summary>
@@ -266,7 +270,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyTree(IKeyTree tree, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, WriteFlags flags);
+        void WriteKeyTree(IKeyTree tree, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, LocalizationFileWriteFlags flags);
     }
 
     public static class LocalizationFileFormatExtensions

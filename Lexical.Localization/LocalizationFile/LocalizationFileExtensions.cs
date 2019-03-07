@@ -175,6 +175,36 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Create localization asset from embedded resource<paramref name="resourceName"/>.
+        /// 
+        /// File is reloaded if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="asm"></param>
+        /// <param name="resourceName"></param>
+        /// <param name="namePolicy">(optional) </param>
+        /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
+        /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
+        /// <returns>reloadable localization asset</returns>
+        public static IAsset CreateEmbeddedResourceAsset(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
+        {
+            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            {
+                return new LoadableLocalizationAsset().AddKeyTreeSource(fileFormat.CreateEmbeddedReaderAsKeyTree(asm, resourceName, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix)).Load();
+            }
+            else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
+            {
+                return new LoadableLocalizationAsset().AddKeyLinesSource(fileFormat.CreateEmbeddedReaderAsKeyLines(asm, resourceName, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix)).Load();
+            }
+            else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
+            {
+                return new LoadableLocalizationStringAsset(namePolicy).AddLineStringSource(fileFormat.CreateEmbeddedReaderAsStringLines(asm, resourceName, namePolicy).AddKeyPrefix(prefix, namePolicy).AddKeySuffix(suffix, namePolicy)).Load();
+            }
+            throw new ArgumentException($"Cannot create asset for {fileFormat}.");
+        }
+
+
+        /// <summary>
         /// Create localization asset source that reads embedded resource <paramref name="resourceName"/>.
         /// </summary>
         /// <param name="fileFormat"></param>
@@ -246,7 +276,7 @@ namespace Lexical.Localization
             => new StreamProviderAssetSource(fileFormat, streamSource, namePolicy, prefix, suffix);
 
     }
-    
+
 }
 
 namespace Lexical.Localization.Ms.Extensions
@@ -300,6 +330,33 @@ namespace Lexical.Localization.Ms.Extensions
         /// <param name="namePolicy">(optional) </param>
         /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
         /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
+        /// <returns>asset</returns>
+        public static IAsset CreateFileProviderAsset(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
+        {
+            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            {
+                return new LoadableLocalizationAsset().AddKeyTreeSource(fileFormat.CreateFileProviderReaderAsKeyTree(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix)).Load();
+            }
+            else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
+            {
+                return new LoadableLocalizationAsset().AddKeyLinesSource(fileFormat.CreateFileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix)).Load();
+            }
+            else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
+            {
+                return new LoadableLocalizationStringAsset(namePolicy).AddLineStringSource(fileFormat.CreateFileProviderReaderAsStringLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix, namePolicy).AddKeySuffix(suffix, namePolicy)).Load();
+            }
+            throw new ArgumentException($"Cannot create asset for {fileFormat}.");
+        }
+
+        /// <summary>
+        /// Create localization asset that reads from FileProvider.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="filepath"></param>
+        /// <param name="namePolicy">(optional) </param>
+        /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
+        /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
         /// <returns>asset source</returns>
         public static IAssetSource CreateFileProviderAssetSource(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
         {
@@ -318,5 +375,4 @@ namespace Lexical.Localization.Ms.Extensions
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
     }
-
 }

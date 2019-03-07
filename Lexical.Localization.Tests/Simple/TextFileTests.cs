@@ -14,14 +14,11 @@ namespace Lexical.Localization.Tests
         public void ReadIniFile()
         {
             // Arrange
-            ILocalizationFileFormat fileformat = IniFileFormat.Instance;
             string filename = "Lexical.Localization.Tests.localization.ini";
-            IAssetKey key = AssetKeyExtensions.Type(LocalizationRoot.Global.Culture("en"), "ConsoleApp1.MyController").Key("Success");
+            IAssetKey key = LocalizationRoot.Global.Culture("en").Type("ConsoleApp1.MyController").Key("Success");
 
             // Act
-            Stream s = GetType().Assembly.GetManifestResourceStream(filename);
-            IAsset asset = fileformat.CreateAsset(s, null);
-            s.Dispose();
+            IAsset asset = IniFileFormat.Instance.CreateEmbeddedResourceAsset(GetType().Assembly, filename);
 
             // Assert
             Assert.AreEqual("Success", asset.GetString(key));

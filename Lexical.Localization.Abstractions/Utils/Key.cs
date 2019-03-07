@@ -119,10 +119,11 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Create by copying from a source key.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="key">(optional) key to copy</param>
         /// <returns>key, new key, or null is <paramref name="key"/> contained no parameters</returns>
         public static Key CreateFrom(IAssetKey key)
         {
+            if (key == null) return null;
             if (key is Key k) return k;
             Key result = null;
             key.VisitParameters(_copyVisitor, ref result);

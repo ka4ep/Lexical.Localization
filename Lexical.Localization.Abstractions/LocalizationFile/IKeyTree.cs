@@ -49,11 +49,11 @@ namespace Lexical.Localization
         IKeyTree CreateChild();
 
         /// <summary>
-        /// Search child by key.
+        /// Search children by key.
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>child node or null if was not found</returns>
-        IKeyTree GetChild(IAssetKey key);
+        /// <returns>child nodes or null if none was found</returns>
+        IEnumerable<IKeyTree> GetChildren(IAssetKey key);
 
         /// <summary>
         /// Remove self from parent.
@@ -63,6 +63,14 @@ namespace Lexical.Localization
 
     public static class KeyTreeExtensions
     {
+        /// <summary>
+        /// Search child by key.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>child node or null if was not found</returns>
+        public static IKeyTree GetChild(this IKeyTree tree, IAssetKey key)
+            => tree.GetChildren(key)?.FirstOrDefault();
+
         /// <summary>
         /// Get or create node by parameters in <paramref name="key"/>.
         /// 

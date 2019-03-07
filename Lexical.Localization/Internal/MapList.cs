@@ -25,6 +25,18 @@ namespace Lexical.Localization.Internal
             return this;
         }
 
+        public MapList<Key, Value> Remove(Key key, Value value)
+        {
+            List<Value> list = null;
+            if (TryGetValue(key, out list))
+            {
+                list.Remove(value);
+                if (list.Count == 0) Remove(key);
+            }
+            return this;
+
+        }
+
         public IEnumerable<Value> GetEnumerable(Key key)
         {
             List<Value> values;

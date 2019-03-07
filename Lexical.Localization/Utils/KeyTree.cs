@@ -58,18 +58,46 @@ namespace Lexical.Localization.Utils
             get => key;
             set
             {
+                //if (value == null) throw new ArgumentNullException(nameof(Key));
                 if (key == value) return;
 
                 // Copy key into Key
                 Key oldKey = key;
-                key = Key.CreateFrom(value);
-
-                // Update parent's lookup table
-                if (Parent != null && oldKey != null && !Key.Comparer.Default.Equals(oldKey, value))
+                if (oldKey != null)
                 {
-                    if (oldKey != null && Parent.ChildLookup.ContainsKey(oldKey)) Parent.ChildLookup.Remove(oldKey);
-                    Parent.ChildLookup[this.Key] = this;
+                    if (oldKey.Equals(value)) return;
+
+                    // Update parent's lookup table
+                    if (Parent != null && oldKey != null && !Key.Comparer.Default.Equals(oldKey, value))
+                    {
+                        if (oldKey != null && Parent.ChildrenLookup.ContainsKey(oldKey)) Parent.ChildrenLookup.Remove(oldKey, this);
+                        Parent.ChildrenLookup.Add(value, this);
+                    }
                 }
+                this.key = value;
+            }
+        }
+
+        IAssetKey IKeyTree.Key
+        {
+            get => key;
+            set
+            {
+                //if (value == null) throw new ArgumentNullException(nameof(Key));
+
+                Key oldKey = key;
+                if (oldKey != null && oldKey.Equals(value)) return;
+                Key newKey = value is Key _key ? _key : Key.CreateFrom(value);
+                if (oldKey != null)
+                {
+                    // Update parent's lookup table
+                    if (Parent != null && oldKey != null && !Key.Comparer.Default.Equals(oldKey, newKey))
+                    {
+                        if (oldKey != null && Parent.ChildrenLookup.ContainsKey(oldKey)) Parent.ChildrenLookup.Remove(oldKey, this);
+                        Parent.ChildrenLookup.Add(newKey, this);
+                    }
+                }
+                this.key = newKey;
             }
         }
 
@@ -83,7 +111,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         List<KeyTree> children;
 
-        Dictionary<IAssetKey, KeyTree> childLookup;
+        MapList<IAssetKey, KeyTree> childLookup;
 
         /// <summary>
         /// Test if has child nodes.
@@ -98,7 +126,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Get-or-create child nodes
         /// </summary>
-        public Dictionary<IAssetKey, KeyTree> ChildLookup => childLookup ?? (childLookup = new Dictionary<IAssetKey, KeyTree>(AssetKeyComparer.Default));
+        public MapList<IAssetKey, KeyTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<IAssetKey, KeyTree>(AssetKeyComparer.Default).AddRange(Children.Select(c=>new KeyValuePair<IAssetKey, KeyTree>(c.Key, c))));
 
         /// <summary>
         /// Test if has values.
@@ -161,13 +189,13 @@ namespace Lexical.Localization.Utils
         /// <returns></returns>
         public KeyTree GetOrCreateChild(Key key)
         {
-            KeyTree child;
-            if (!ChildLookup.TryGetValue(key, out child))
-            {
-                child = child = new KeyTree(this, key);
-                if (!ChildLookup.ContainsKey(key)) ChildLookup[Key] = child;
-                Children.Add(child);
-            }
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            List<KeyTree> children;
+            if (ChildrenLookup.TryGetValue(key, out children) && children.Count > 0) return children.First();
+
+            KeyTree child = new KeyTree(this, key);
+            ChildrenLookup.Add(key, child);
+            Children.Add(child);
             return child;
         }
 
@@ -178,52 +206,29 @@ namespace Lexical.Localization.Utils
         {
             if (Parent == null) throw new InvalidOperationException("Cannot remove root");
             Parent.Children.Remove(this);
-            KeyTree lookupTarget;
-            if (Parent.childLookup != null && Parent.childLookup.TryGetValue(key, out lookupTarget) && lookupTarget == this)
-            {
-                // Find new target
-                lookupTarget = Parent.Children.Where(c => c.Key.Equals(this.Key)).FirstOrDefault();
-                // Update lookup table
-                Parent.childLookup[this.Key] = lookupTarget;
-            }
+            List<KeyTree> lookupTarget;
+            if (Parent.childLookup != null && Parent.childLookup.TryGetValue(key, out lookupTarget)) lookupTarget.Remove(this);
+            if (Parent.children != null) Parent.children.Remove(this);
         }
 
         IKeyTree IKeyTree.Parent => Parent;
-        IAssetKey IKeyTree.Key
-        {
-            get => key;
-            set
-            {
-                if (this.key == value) return;
-                Key oldKey = this.key;
-                // Copy key into Key
-                this.key = Key.CreateFrom(value);
-                // Update parent's lookup table
-                if (Parent != null && !AssetKeyComparer.Default.Equals(oldKey, value))
-                {
-                    if (oldKey != null && Parent.ChildLookup.ContainsKey(oldKey)) Parent.ChildLookup.Remove(oldKey);
-                    Parent.ChildLookup[this.Key] = this;
-                }
-            }
-        }
+
         ICollection<string> IKeyTree.Values => this.Values;
         IReadOnlyCollection<IKeyTree> IKeyTree.Children => this.Children;
         IKeyTree IKeyTree.CreateChild() => this.CreateChild();
-        IKeyTree IKeyTree.GetChild(IAssetKey key) => this.GetChild(key);
+        static IKeyTree[] empty = new IKeyTree[0];
+        IEnumerable<IKeyTree> IKeyTree.GetChildren(IAssetKey key)
+        {
+            if (!HasChildren) return empty;
+            IEnumerable<IKeyTree> children = ChildrenLookup.TryGetList(key);
+            return children ?? (IEnumerable<IKeyTree>) empty;
+        }
 
         KeyTree CreateChild()
         {
             KeyTree result = new KeyTree(this, null);
             Children.Add(result);
             return result;
-        }
-
-        KeyTree GetChild(IAssetKey key)
-        {
-            if (!HasChildren) return null;
-            KeyTree child;
-            if (ChildLookup.TryGetValue(key, out child)) return child;
-            return null;
         }
 
         public override string ToString()
