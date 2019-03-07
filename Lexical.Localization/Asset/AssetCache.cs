@@ -101,7 +101,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Cached queries where key is filter-criteria-key, and value is query result.
         /// </summary>
-        Dictionary<IAssetKey, IAssetKey[]> cachedQueries;
+        Dictionary<IAssetKey, IAssetKey[]> allKeyQueries;
 
         public AssetCachePartKeys(IAsset source, AssetCacheOptions options)
         {
@@ -114,10 +114,10 @@ namespace Lexical.Localization
             // Create parametrizer, comparer and cache that reads IAssetKeys and AssetKeyProxies interchangeably. ParameterKey.Parametrizer must be on the left side, or it won't work. (because ParameterKey : IAssetKey).
             this.comparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
 
-            this.cachedQueries = new Dictionary<IAssetKey, IAssetKey[]>(comparer);
+            this.allKeyQueries = new Dictionary<IAssetKey, IAssetKey[]>(comparer);
         }
 
-        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey key = null)
+        public IEnumerable<IAssetKey> GetKeys(IAssetKey key = null)
         {
             int iter = iteration;
             IAssetKey[] queryResult = null;
@@ -125,7 +125,7 @@ namespace Lexical.Localization
             // Hash-Equals may throw exceptions, we need try-finally to release lock properly.
             try
             {
-                if (cachedQueries.TryGetValue(key ?? cloner.Root, out queryResult)) return queryResult;
+                if (allKeyQueries.TryGetValue(key ?? cloner.Root, out queryResult)) return queryResult;
             }
             finally
             {
@@ -142,7 +142,42 @@ namespace Lexical.Localization
             {
                 // The caller has flushed the cache, so let's not cache the data.
                 if (iter != iteration) return queryResult;
-                cachedQueries[cacheKey] = queryResult;
+                allKeyQueries[cacheKey] = queryResult;
+            }
+            finally
+            {
+                m_lock.ExitWriteLock();
+            }
+
+            return queryResult;
+        }
+
+        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey key = null)
+        {
+            int iter = iteration;
+            IAssetKey[] queryResult = null;
+            m_lock.EnterReadLock();
+            // Hash-Equals may throw exceptions, we need try-finally to release lock properly.
+            try
+            {
+                if (allKeyQueries.TryGetValue(key ?? cloner.Root, out queryResult)) return queryResult;
+            }
+            finally
+            {
+                m_lock.ExitReadLock();
+            }
+
+            // Read from backend and write to cache
+            queryResult = Source.GetAllKeys(key)?.ToArray();
+
+            // Write to cache, be that null or not
+            IAssetKey cacheKey = (Options.GetCloneKeys() ? cloner.Copy(key) : key) ?? cloner.Root;
+            m_lock.EnterWriteLock();
+            try
+            {
+                // The caller has flushed the cache, so let's not cache the data.
+                if (iter != iteration) return queryResult;
+                allKeyQueries[cacheKey] = queryResult;
             }
             finally
             {
@@ -160,7 +195,7 @@ namespace Lexical.Localization
             m_lock.EnterWriteLock();
             try
             {
-                cachedQueries.Clear();
+                allKeyQueries.Clear();
             }
             finally
             {

@@ -60,8 +60,10 @@ namespace Lexical.Localization
             return result;
         }
 
+        public IEnumerable<IAssetKey> GetKeys(IAssetKey criteriaKey = null)
+            => dictionary.Keys.FilterKeys(criteriaKey); // TODO Optimize this with KeyTree
         public IEnumerable<IAssetKey> GetAllKeys(IAssetKey criteriaKey = null)
-            => dictionary.Keys.FilterKeys(criteriaKey);
+            => dictionary.Keys.FilterKeys(criteriaKey); // TODO Optimize this with KeyTree
 
         protected virtual void ClearCache()
         {

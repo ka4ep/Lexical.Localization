@@ -33,37 +33,52 @@ namespace Lexical.Localization
             this.Extension = extension;
         }
 
-        public IKeyTree ReadKeyTree(XElement element, IAssetKeyNamePolicy namePolicy = default) => ReadElement(element, new KeyTree(Key.Root));
-        public IKeyTree ReadKeyTree(Stream stream, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(stream).Root, new KeyTree(Key.Root));
-        public IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(text).Root, new KeyTree(Key.Root));
+        public IKeyTree ReadKeyTree(XElement element, IAssetKeyNamePolicy namePolicy = default) 
+            => ReadElement(element, new KeyTree(Key.Root), null);
+
+        public IKeyTree ReadKeyTree(Stream stream, IAssetKeyNamePolicy namePolicy = default) 
+            => ReadElement(XDocument.Load(stream).Root, new KeyTree(Key.Root), null);
+
+        public IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default) 
+            => ReadElement(XDocument.Load(text).Root, new KeyTree(Key.Root), null);
 
         /// <summary>
         /// Reads <paramref name="element"/>, and adds as a subnode to <paramref name="parent"/> node.
         /// </summary>
         /// <param name="element"></param>
         /// <param name="parent"></param>
+        /// <param name="correspondenceContext">(optional) Correspondence context</param>
         /// <returns>parent</returns>
-        public IKeyTree ReadElement(XElement element, IKeyTree parent)
+        public IKeyTree ReadElement(XElement element, IKeyTree parent, KeyTreeXmlCorrespondence correspondenceContext)
         {
             IAssetKey key = ReadKey(element);
 
             if (key != null)
             {
                 IKeyTree node = parent.GetOrCreate(key);
+
+                if (correspondenceContext != null)
+                    correspondenceContext.Nodes.Map(node, element);
+
                 foreach (XNode nn in element.Nodes())
                 {
                     if (nn is XText text)
                     {
                         string trimmedXmlValue = text?.Value?.Trim();
                         if (!string.IsNullOrEmpty(trimmedXmlValue))
+                        {
                             node.Values.Add(trimmedXmlValue);
+
+                            if (correspondenceContext!=null)
+                                correspondenceContext.Values.Map(new KeyTreeValue { keyTree = node, valueIndex = node.Values.Count - 1, value = trimmedXmlValue }, text);
+                        }
                     }
                 }
 
                 if (element.HasElements)
                 {
                     foreach (XElement e in element.Elements())
-                        ReadElement(e, node);
+                        ReadElement(e, node, correspondenceContext);
                 }
             }
             else
@@ -71,7 +86,7 @@ namespace Lexical.Localization
                 if (element.HasElements)
                 {
                     foreach (XElement e in element.Elements())
-                        ReadElement(e, parent);
+                        ReadElement(e, parent, correspondenceContext);
                 }
             }
 

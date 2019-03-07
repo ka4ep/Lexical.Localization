@@ -101,9 +101,26 @@ namespace Lexical.Localization
             return result;
         }
 
-        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey criteriaKey = null)
+        public IEnumerable<IAssetKey> GetKeys(IAssetKey criteriaKey = null)
         {
             if (namePolicy is IAssetNamePattern pattern) return GetAllKeysWithPattern(pattern, criteriaKey);
+
+            // Cannot provide keys
+            return null;
+        }
+
+        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey criteriaKey = null)
+        {
+            if (namePolicy is IAssetNamePattern pattern)
+            {
+                List<IAssetKey> list = new List<IAssetKey>(dictionary.Count *2);
+                foreach(IAssetKey key in GetAllKeysWithPattern(pattern, criteriaKey))
+                {
+                    if (key == null) return null;
+                    list.Add(key);
+                }
+                return list;
+            }
 
             // Cannot provide keys
             return null;
@@ -112,11 +129,15 @@ namespace Lexical.Localization
         IEnumerable<IAssetKey> GetAllKeysWithPattern(IAssetNamePattern pattern, IAssetKey criteriaKey)
         {
             KeyValuePair<string, string>[] criteriaParams = criteriaKey.GetParameters();
-
+            
             foreach (var line in dictionary)
             {
                 IAssetNamePatternMatch match = pattern.Match(line.Key);
-                if (!match.Success) continue;
+                if (!match.Success)
+                {
+                    yield return null;
+                    continue;
+                }
 
                 // Filter by criteria key
                 bool ok = true;
