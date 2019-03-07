@@ -11,31 +11,64 @@ using System.Reflection;
 
 namespace Lexical.Localization.Internal
 {
-    /// <summary>
-    /// Reader that opens a file and reads as <see cref="IEnumerable{KeyValuePair{string, string}}"/>.
-    /// </summary>
-    public class FileReaderStringLines : IEnumerable<KeyValuePair<string, string>>
+    public abstract class LocalizationReader : IEnumerable
     {
-        public readonly string Filename;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
+        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
+        public ILocalizationFileFormat FileFormat { get; protected set; }
 
-        public FileReaderStringLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy)
+        public LocalizationReader(ILocalizationFileFormat fileFormat, IAssetKeyNamePolicy namePolicy)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Filename = filename ?? throw new ArgumentNullException(nameof(Filename));
             this.NamePolicy = namePolicy;
         }
 
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        public abstract IEnumerator GetEnumerator();
+    }
+
+    public abstract class LocalizationFileReader : LocalizationReader
+    {
+        public string FileName { get; protected set; }
+
+        public LocalizationFileReader(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy) : base(fileFormat, namePolicy)
         {
-            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileExtensions_.ReadFileAsStringLines(FileFormat, Filename, NamePolicy);
+            this.FileName = filename ?? throw new ArgumentNullException(nameof(FileName));
+        }
+
+        public override string ToString()
+            => FileName;
+    }
+
+    public abstract class LocalizationEmbeddedReader : LocalizationReader
+    {
+        public string ResourceName { get; protected set; }
+        public Assembly Asm { get; protected set; }
+
+        public LocalizationEmbeddedReader(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy) : base(fileFormat, namePolicy)
+        {
+            this.Asm = asm ?? throw new ArgumentNullException(nameof(asm));
+            this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
+        }
+
+        public override string ToString()
+            => ResourceName;
+    }
+
+    /// <summary>
+    /// Reader that opens a file and reads as <see cref="IEnumerable{KeyValuePair{string, string}}"/>.
+    /// </summary>
+    public class LocalizationFileReaderStringLines : LocalizationFileReader, IEnumerable<KeyValuePair<string, string>>
+    {
+        public LocalizationFileReaderStringLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy) : base(fileFormat, filename, namePolicy) { }
+
+        IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
+        {
+            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileExtensions_.ReadFileAsStringLines(FileFormat, FileName, NamePolicy);
             return lines.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override IEnumerator GetEnumerator()
         {
-            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileExtensions_.ReadFileAsStringLines(FileFormat, Filename, NamePolicy);
+            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileExtensions_.ReadFileAsStringLines(FileFormat, FileName, NamePolicy);
             return lines.GetEnumerator();
         }
     }
@@ -43,142 +76,103 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Reader that opens a file and reads as <see cref="IEnumerable{KeyValuePair{IAssetKey, string}}"/>.
     /// </summary>
-    public class FileReaderKeyLines : IEnumerable<KeyValuePair<IAssetKey, string>>
+    public class LocalizationFileReaderKeyLines : LocalizationFileReader, IEnumerable<KeyValuePair<IAssetKey, string>>
     {
-        public readonly string Filename;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
+        public LocalizationFileReaderKeyLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy) : base(fileFormat, filename, namePolicy) { }
 
-        public FileReaderKeyLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy)
+        IEnumerator<KeyValuePair<IAssetKey, string>> IEnumerable<KeyValuePair<IAssetKey, string>>.GetEnumerator()
         {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Filename = filename ?? throw new ArgumentNullException(nameof(Filename));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<KeyValuePair<IAssetKey, string>> GetEnumerator()
-        {
-            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationFileExtensions_.ReadFileAsKeyLines(FileFormat, Filename, NamePolicy);
+            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationFileExtensions_.ReadFileAsKeyLines(FileFormat, FileName, NamePolicy);
             return lines.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override IEnumerator GetEnumerator()
         {
-            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationFileExtensions_.ReadFileAsKeyLines(FileFormat, Filename, NamePolicy);
+            IEnumerable lines = LocalizationFileExtensions_.ReadFileAsKeyLines(FileFormat, FileName, NamePolicy);
             return lines.GetEnumerator();
         }
+
+        public override string ToString()
+            => FileName;
     }
 
     /// <summary>
     /// Reader that opens a file and reads as <see cref="IEnumerable{KeyValuePair{IKeyTree, string}}"/>.
     /// </summary>
-    public class FileReaderKeyTree : IEnumerable<IKeyTree>
+    public class LocalizationFileReaderKeyTree : LocalizationFileReader, IEnumerable<IKeyTree>
     {
-        public readonly string Filename;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
+        public LocalizationFileReaderKeyTree(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy) : base(fileFormat, filename, namePolicy) { }
 
-        public FileReaderKeyTree(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy)
+        IEnumerator<IKeyTree> IEnumerable<IKeyTree>.GetEnumerator()
         {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Filename = filename ?? throw new ArgumentNullException(nameof(Filename));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<IKeyTree> GetEnumerator()
-        {
-            IKeyTree tree = LocalizationFileExtensions_.ReadFileAsKeyTree(FileFormat, Filename, NamePolicy);
+            IKeyTree tree = LocalizationFileExtensions_.ReadFileAsKeyTree(FileFormat, FileName, NamePolicy);
             return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override IEnumerator GetEnumerator()
         {
-            IKeyTree tree = LocalizationFileExtensions_.ReadFileAsKeyTree(FileFormat, Filename, NamePolicy);
-            return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
+            IKeyTree tree = LocalizationFileExtensions_.ReadFileAsKeyTree(FileFormat, FileName, NamePolicy);
+            return new IKeyTree[] { tree }.GetEnumerator();
         }
+
+        public override string ToString()
+            => FileName;
     }
 
     /// <summary>
     /// Reader that opens an embedded resource and reads as <see cref="IEnumerable{KeyValuePair{string, string}}"/>.
     /// </summary>
-    public class EmbeddedReaderStringLines : IEnumerable<KeyValuePair<string, string>>
+    public class LocalizationEmbeddedReaderStringLines : LocalizationEmbeddedReader, IEnumerable<KeyValuePair<string, string>>
     {
-        public readonly string ResourceName;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
-        public readonly Assembly Asm;
+        public LocalizationEmbeddedReaderStringLines(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy) : base(fileFormat, asm, resourceName, namePolicy) { }
 
-        public EmbeddedReaderStringLines(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Asm = asm ?? throw new ArgumentNullException(nameof(asm));
-            this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
         {
             using (Stream s = Asm.GetManifestResourceStream(ResourceName))
                 return FileFormat.ReadStringLines(s, NamePolicy).GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override IEnumerator GetEnumerator()
         {
             using (Stream s = Asm.GetManifestResourceStream(ResourceName))
                 return FileFormat.ReadStringLines(s, NamePolicy).GetEnumerator();
         }
+
+        public override string ToString()
+            => ResourceName;
     }
 
     /// <summary>
     /// Reader that opens an embedded resource and reads as <see cref="IEnumerable{KeyValuePair{IAssetKey, string}}"/>.
     /// </summary>
-    public class EmbeddedReaderKeyLines : IEnumerable<KeyValuePair<IAssetKey, string>>
+    public class LocalizationEmbeddedReaderKeyLines : LocalizationEmbeddedReader, IEnumerable<KeyValuePair<IAssetKey, string>>
     {
-        public readonly string ResourceName;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
-        public readonly Assembly Asm;
+        public LocalizationEmbeddedReaderKeyLines(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy) : base(fileFormat, asm, resourceName, namePolicy) { }
 
-        public EmbeddedReaderKeyLines(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Asm = asm ?? throw new ArgumentNullException(nameof(asm));
-            this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<KeyValuePair<IAssetKey, string>> GetEnumerator()
+        IEnumerator<KeyValuePair<IAssetKey, string>> IEnumerable<KeyValuePair<IAssetKey, string>>.GetEnumerator()
         {
             using (Stream s = Asm.GetManifestResourceStream(ResourceName))
                 return FileFormat.ReadKeyLines(s, NamePolicy).GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override IEnumerator GetEnumerator()
         {
             using (Stream s = Asm.GetManifestResourceStream(ResourceName))
                 return FileFormat.ReadKeyLines(s, NamePolicy).GetEnumerator();
         }
+
+        public override string ToString()
+            => ResourceName;
     }
 
     /// <summary>
     /// Reader that opens an embedded resource and reads as <see cref="IEnumerable{IKeyTree}"/>.
     /// </summary>
-    public class EmbeddedReaderKeyTree : IEnumerable<IKeyTree>
+    public class LocalizationEmbeddedReaderKeyTree : LocalizationEmbeddedReader, IEnumerable<IKeyTree>
     {
-        public readonly string ResourceName;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
-        public readonly Assembly Asm;
+        public LocalizationEmbeddedReaderKeyTree(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy) : base(fileFormat, asm, resourceName, namePolicy) { }
 
-        public EmbeddedReaderKeyTree(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Asm = asm ?? throw new ArgumentNullException(nameof(asm));
-            this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<IKeyTree> GetEnumerator()
+        IEnumerator<IKeyTree> IEnumerable<IKeyTree>.GetEnumerator()
         {
             using (Stream s = Asm.GetManifestResourceStream(ResourceName))
             {
@@ -187,7 +181,7 @@ namespace Lexical.Localization.Internal
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override IEnumerator GetEnumerator()
         {
             using (Stream s = Asm.GetManifestResourceStream(ResourceName))
             {
@@ -195,6 +189,9 @@ namespace Lexical.Localization.Internal
                 return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
             }
         }
+
+        public override string ToString()
+            => ResourceName;
     }
 
 }
@@ -202,88 +199,76 @@ namespace Lexical.Localization.Internal
 namespace Lexical.Localization.Ms.Extensions
 {
     using Microsoft.Extensions.FileProviders;
+    using Lexical.Localization.Internal;
 
+    public abstract class LocalizationFileProviderReader : LocalizationReader
+    {
+        public string FilePath { get; protected set; }
+        public IFileProvider FileProvider { get; protected set; }
+
+        public LocalizationFileProviderReader(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy) : base(fileFormat, namePolicy)
+        {
+            this.FilePath = filepath ?? throw new ArgumentNullException(nameof(filepath));
+            this.FileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
+        }
+
+        public override string ToString()
+            => FilePath;
+    }
     /// <summary>
     /// Reader that opens an embedded resource and reads as <see cref="IEnumerable{KeyValuePair{string, string}}"/>.
     /// </summary>
-    public class FileProviderReaderStringLines : IEnumerable<KeyValuePair<string, string>>
+    public class LocalizationFileProviderReaderStringLines : LocalizationFileProviderReader, IEnumerable<KeyValuePair<string, string>>
     {
-        public readonly string FilePath;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
-        public readonly IFileProvider FileProvider;
+        public LocalizationFileProviderReaderStringLines(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy) : base(fileFormat, fileProvider, filepath, namePolicy) { }
 
-        public FileProviderReaderStringLines(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.FileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
-            this.FilePath = filepath ?? throw new ArgumentNullException(nameof(filepath));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+        IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
         {
             using (Stream s = FileProvider.GetFileInfo(FilePath).CreateReadStream())
                 return FileFormat.ReadStringLines(s, NamePolicy).GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override IEnumerator GetEnumerator()
         {
             using (Stream s = FileProvider.GetFileInfo(FilePath).CreateReadStream())
                 return FileFormat.ReadStringLines(s, NamePolicy).GetEnumerator();
         }
+
+        public override string ToString()
+            => FilePath;
     }
 
     /// <summary>
     /// Reader that opens an embedded resource and reads as <see cref="IEnumerable{KeyValuePair{IAssetKey, string}}"/>.
     /// </summary>
-    public class FileProviderReaderKeyLines : IEnumerable<KeyValuePair<IAssetKey, string>>
+    public class LocalizationFileProviderReaderKeyLines : LocalizationFileProviderReader, IEnumerable<KeyValuePair<IAssetKey, string>>
     {
-        public readonly string FilePath;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
-        public readonly IFileProvider FileProvider;
+        public LocalizationFileProviderReaderKeyLines(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy) : base(fileFormat, fileProvider, filepath, namePolicy) { }
 
-        public FileProviderReaderKeyLines(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.FileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
-            this.FilePath = filepath ?? throw new ArgumentNullException(nameof(filepath));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<KeyValuePair<IAssetKey, string>> GetEnumerator()
+        IEnumerator<KeyValuePair<IAssetKey, string>> IEnumerable<KeyValuePair<IAssetKey, string>>.GetEnumerator()
         {
             using (Stream s = FileProvider.GetFileInfo(FilePath).CreateReadStream())
                 return FileFormat.ReadKeyLines(s, NamePolicy).GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override IEnumerator GetEnumerator()
         {
             using (Stream s = FileProvider.GetFileInfo(FilePath).CreateReadStream())
                 return FileFormat.ReadKeyLines(s, NamePolicy).GetEnumerator();
         }
+
+        public override string ToString()
+            => FilePath;
     }
 
     /// <summary>
     /// Reader that opens an embedded resource and reads as <see cref="IEnumerable{IKeyTree}"/>.
     /// </summary>
-    public class FileProviderReaderKeyTree : IEnumerable<IKeyTree>
+    public class LocalizationFileProviderReaderKeyTree : LocalizationFileProviderReader, IEnumerable<IKeyTree>
     {
-        public readonly string FilePath;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
-        public readonly IFileProvider FileProvider;
+        public LocalizationFileProviderReaderKeyTree(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy) : base(fileFormat, fileProvider, filepath, namePolicy) { }
 
-        public FileProviderReaderKeyTree(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.FileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
-            this.FilePath = filepath ?? throw new ArgumentNullException(nameof(filepath));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<IKeyTree> GetEnumerator()
+        IEnumerator<IKeyTree> IEnumerable<IKeyTree>.GetEnumerator()
         {
             using (Stream s = FileProvider.GetFileInfo(FilePath).CreateReadStream())
             {
@@ -292,7 +277,7 @@ namespace Lexical.Localization.Ms.Extensions
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override IEnumerator GetEnumerator()
         {
             using (Stream s = FileProvider.GetFileInfo(FilePath).CreateReadStream())
             {
@@ -300,6 +285,9 @@ namespace Lexical.Localization.Ms.Extensions
                 return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
             }
         }
+
+        public override string ToString()
+            => FilePath;
     }
 
 }

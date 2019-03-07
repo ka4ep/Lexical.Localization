@@ -65,7 +65,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
         public static IEnumerable<KeyValuePair<IAssetKey, string>> CreateFileReaderAsKeyLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
-            => new FileReaderKeyLines(fileFormat, filename, namePolicy);
+            => new LocalizationFileReaderKeyLines(fileFormat, filename, namePolicy);
 
         /// <summary>
         /// Create reader that opens <paramref name="filename"/> when IEnumerator is requested.
@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <returns>tree</returns>
         public static IEnumerable<IKeyTree> CreateFileReaderAsKeyTree(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
-            => new FileReaderKeyTree(fileFormat, filename, namePolicy);
+            => new LocalizationFileReaderKeyTree(fileFormat, filename, namePolicy);
 
         /// <summary>
         /// Create reader that opens <paramref name="filename"/> when IEnumerator is requested.
@@ -85,7 +85,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
         public static IEnumerable<KeyValuePair<string, string>> CreateFileReaderAsStringLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
-            => new FileReaderStringLines(fileFormat, filename, namePolicy);
+            => new LocalizationFileReaderStringLines(fileFormat, filename, namePolicy);
 
         /// <summary>
         /// Create reader that opens embedded <paramref name="resourceName"/> from <paramref name="asm"/> when IEnumerator is requested.
@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
         public static IEnumerable<KeyValuePair<IAssetKey, string>> CreateEmbeddedReaderAsKeyLines(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default)
-            => new EmbeddedReaderKeyLines(fileFormat, asm, resourceName, namePolicy);
+            => new LocalizationEmbeddedReaderKeyLines(fileFormat, asm, resourceName, namePolicy);
 
         /// <summary>
         /// Create reader that opens embedded <paramref name="resourceName"/> from <paramref name="asm"/> when IEnumerator is requested.
@@ -107,7 +107,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <returns>tree</returns>
         public static IEnumerable<IKeyTree> CreateEmbeddedReaderAsKeyTree(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default)
-            => new EmbeddedReaderKeyTree(fileFormat, asm, resourceName, namePolicy);
+            => new LocalizationEmbeddedReaderKeyTree(fileFormat, asm, resourceName, namePolicy);
 
         /// <summary>
         /// Create reader that opens embedded <paramref name="resourceName"/> from <paramref name="asm"/> when IEnumerator is requested.
@@ -118,7 +118,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
         public static IEnumerable<KeyValuePair<string, string>> CreateEmbeddedReaderAsStringLines(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default)
-            => new EmbeddedReaderStringLines(fileFormat, asm, resourceName, namePolicy);
+            => new LocalizationEmbeddedReaderStringLines(fileFormat, asm, resourceName, namePolicy);
 
         /// <summary>
         /// Create localization asset that reads file <paramref name="filename"/>.
@@ -267,7 +267,7 @@ namespace Lexical.Localization.Ms.Extensions
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
         public static IEnumerable<KeyValuePair<IAssetKey, string>> CreateFileProviderReaderAsKeyLines(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
-            => new FileProviderReaderKeyLines(fileFormat, fileProvider, filepath, namePolicy);
+            => new LocalizationFileProviderReaderKeyLines(fileFormat, fileProvider, filepath, namePolicy);
 
         /// <summary>
         /// Create reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> when IEnumerator is requested.
@@ -278,7 +278,7 @@ namespace Lexical.Localization.Ms.Extensions
         /// <param name="namePolicy"></param>
         /// <returns>tree</returns>
         public static IEnumerable<IKeyTree> CreateFileProviderReaderAsKeyTree(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
-            => new FileProviderReaderKeyTree(fileFormat, fileProvider, filepath, namePolicy);
+            => new LocalizationFileProviderReaderKeyTree(fileFormat, fileProvider, filepath, namePolicy);
 
         /// <summary>
         /// Create reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> when IEnumerator is requested.
@@ -289,7 +289,7 @@ namespace Lexical.Localization.Ms.Extensions
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
         public static IEnumerable<KeyValuePair<string, string>> CreateFileProviderReaderAsStringLines(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
-            => new FileProviderReaderStringLines(fileFormat, fileProvider, filepath, namePolicy);
+            => new LocalizationFileProviderReaderStringLines(fileFormat, fileProvider, filepath, namePolicy);
 
         /// <summary>
         /// Create localization asset source that reads FileProvider resource at <paramref name="filepath"/>.
