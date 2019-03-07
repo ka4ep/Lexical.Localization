@@ -59,16 +59,16 @@ namespace TutorialLibrary2
 {
     public class MyClass
     {
-        IStringLocalizer<MyClass> localization;
+        IStringLocalizer<MyClass> localizer;
 
-        public MyClass(IStringLocalizer<MyClass> localization)
+        public MyClass(IStringLocalizer<MyClass> localizer)
         {
-            this.localization = localization;
+            this.localizer = localizer;
         }
 
         public string Do()
         {
-            return localization["OK"];
+            return localizer["OK"];
         }
     }
 }
@@ -84,16 +84,16 @@ namespace TutorialLibrary2
 {
     public class MyClassB
     {
-        IAssetKey<MyClass> localization;
+        IAssetKey<MyClass> localizer;
 
-        public MyClassB(IAssetKey<MyClass> localization)
+        public MyClassB(IAssetKey<MyClass> localizer)
         {
-            this.localization = localization;
+            this.localizer = localizer;
         }
 
         public string Do()
         {
-            return localization.Key("OK").Inline("Operation Successful").ToString();
+            return localizer.Key("OK").Inline("Operation Successful").ToString();
         }
     }
 }
@@ -101,17 +101,17 @@ namespace TutorialLibrary2
 ```
 <br/>
 
-An application that deploys with its own localization provider, can include the library's internal localizations with 
+Application that deploys with its localizer can include its depending libraries internal localizations with 
 **<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** which searches for **[AssetSources]** and adds them as *IAssetSource*s.
 # [Snippet](#tab/snippet-1)
 
 ```csharp
-// Create IStringLocalizerFactory
-AssetBuilder builder = new AssetBuilder.OneBuildInstance();
+// Create localizer
+IAssetBuilder builder = new AssetBuilder.OneBuildInstance();
 IAsset asset = builder.Build();
 StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
 
-// Install library's [AssetSources]
+// Install TutorialLibrary's [AssetSources]
 Assembly library = typeof(MyClass).Assembly;
 builder.AddLibraryAssetSources(library).Build();
 
@@ -141,12 +141,12 @@ namespace TutorialProject2
         public static void Main(string[] args)
         {
             #region Snippet
-            // Create IStringLocalizerFactory
-            AssetBuilder builder = new AssetBuilder.OneBuildInstance();
+            // Create localizer
+            IAssetBuilder builder = new AssetBuilder.OneBuildInstance();
             IAsset asset = builder.Build();
             StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
 
-            // Install library's [AssetSources]
+            // Install TutorialLibrary's [AssetSources]
             Assembly library = typeof(MyClass).Assembly;
             builder.AddLibraryAssetSources(library).Build();
 
@@ -190,12 +190,12 @@ namespace TutorialProject2
     {
         public static void Main(string[] args)
         {
-            // Create IStringLocalizerFactory
-            AssetBuilder builder = new AssetBuilder.OneBuildInstance();
+            // Create localizer
+            IAssetBuilder builder = new AssetBuilder.OneBuildInstance();
             IAsset asset = builder.Build();
             StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
 
-            // Install library's [AssetSources]
+            // Install TutorialLibrary's [AssetSources]
             Assembly library = typeof(MyClass).Assembly;
             builder.AddLibraryAssetSources(library).Build();
 
@@ -257,7 +257,7 @@ services.AddLexicalLocalization(
     useGlobalInstance: false,
     addCache: false);
 
-// Install Library's [AssetSources].
+// Install TutorialLibrary's [AssetSources].
 Assembly library = typeof(MyClass).Assembly;
 services.AddAssetLibrarySources(library);
 
@@ -310,7 +310,7 @@ namespace TutorialProject2
                 useGlobalInstance: false,
                 addCache: false);
 
-            // Install Library's [AssetSources].
+            // Install TutorialLibrary's [AssetSources].
             Assembly library = typeof(MyClass).Assembly;
             services.AddAssetLibrarySources(library);
 

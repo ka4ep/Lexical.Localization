@@ -4,16 +4,16 @@ namespace TutorialLibrary2
 {
     public class MyClassB
     {
-        IAssetKey<MyClass> localization;
+        IAssetKey<MyClass> localizer;
 
-        public MyClassB(IAssetKey<MyClass> localization)
+        public MyClassB(IAssetKey<MyClass> localizer)
         {
-            this.localization = localization;
+            this.localizer = localizer;
         }
 
         public string Do()
         {
-            return localization.Key("OK").Inline("Operation Successful").ToString();
+            return localizer.Key("OK").Inline("Operation Successful").ToString();
         }
     }
 }

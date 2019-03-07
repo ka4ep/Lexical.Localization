@@ -13,19 +13,20 @@ namespace TutorialProject3
         public static void Main(string[] args)
         {
             #region Snippet
-            /// Create class without localizer
-            MyClass myClass1 = new MyClass();
-
-            /// Now with localizer
-            // Create IStringLocalizerFactory
-            AssetBuilder builder = new AssetBuilder.OneBuildInstance();
+            // Create class without localizer
+            MyClass myClass1 = new MyClass(default);
+            
+            // Create localizer
+            IAssetBuilder builder = new AssetBuilder.OneBuildInstance();
             IAsset asset = builder.Build();
-            StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
-            // Install library's [AssetSources]
+            IStringLocalizerFactory localizer = new StringLocalizerRoot(asset, new CulturePolicy());
+
+            // Install TutorialLibrary's [AssetSources]
             Assembly library = typeof(MyClass).Assembly;
             builder.AddLibraryAssetSources(library).Build();
-            // Instantiate the class
-            IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>();
+
+            // Create class with localizer
+            IStringLocalizer<MyClass> classLocalizer = localizer.Create(typeof(MyClass)) as IStringLocalizer<MyClass>;
             MyClass myClass2 = new MyClass(classLocalizer);
 
             /// Use culture that was provided with the class library

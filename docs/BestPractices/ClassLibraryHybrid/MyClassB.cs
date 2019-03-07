@@ -4,16 +4,16 @@ namespace TutorialLibrary3
 {
     public class MyClassB
     {
-        IAssetKey<MyClass> localization;
+        IAssetKey<MyClass> localizer;
 
-        public MyClassB(IAssetKey<MyClass> localization = default)
+        public MyClassB(IAssetKey<MyClass> localizer = default)
         {
-            this.localization = localization ?? LibraryLocalization.Root.Type<MyClass>();
+            this.localizer = localizer ?? LibraryLocalization.Root.Type<MyClass>();
         }
 
         public string Do()
         {
-            return localization.Key("OK").Inline("Operation Successful").ToString();
+            return localizer.Key("OK").Inline("Operation Successful").ToString();
         }
     }
 }

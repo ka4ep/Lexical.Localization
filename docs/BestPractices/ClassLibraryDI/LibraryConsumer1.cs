@@ -13,12 +13,12 @@ namespace TutorialProject2
         public static void Main(string[] args)
         {
             #region Snippet
-            // Create IStringLocalizerFactory
-            AssetBuilder builder = new AssetBuilder.OneBuildInstance();
+            // Create localizer
+            IAssetBuilder builder = new AssetBuilder.OneBuildInstance();
             IAsset asset = builder.Build();
             StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
 
-            // Install library's [AssetSources]
+            // Install TutorialLibrary's [AssetSources]
             Assembly library = typeof(MyClass).Assembly;
             builder.AddLibraryAssetSources(library).Build();
 

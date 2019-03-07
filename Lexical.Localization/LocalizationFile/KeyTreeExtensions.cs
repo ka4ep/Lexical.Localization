@@ -6,6 +6,7 @@
 using Lexical.Localization.Utils;
 using System.Linq;
 using System.Collections.Generic;
+using Lexical.Localization.Internal;
 
 namespace Lexical.Localization
 {

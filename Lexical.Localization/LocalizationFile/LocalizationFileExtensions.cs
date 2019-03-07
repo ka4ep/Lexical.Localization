@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Contains extensions that help instantiating <see cref="IAsset"/> from intermediate key-value formats, and <see cref="ILocalizationFileFormat"/>.
     /// </summary>
-    public static class LocalizationFileExtensions
+    public static class LocalizationFileExtensions_
     {
         /// <summary>
         /// Read file into assetkey lines.
@@ -243,221 +243,80 @@ namespace Lexical.Localization
         /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
         /// <returns>localization asset</returns>
         public static IAssetSource CreateAssetSource(this ILocalizationFileFormat fileFormat, Func<Stream> streamSource, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
-            => new AssetDelegateSource(fileFormat, streamSource, namePolicy, prefix, suffix);
+            => new StreamProviderAssetSource(fileFormat, streamSource, namePolicy, prefix, suffix);
 
     }
+    
+}
 
-    internal class FileReaderStringLines : IEnumerable<KeyValuePair<string, string>>
+namespace Lexical.Localization.Ms.Extensions
+{
+    using Microsoft.Extensions.FileProviders;
+
+    /// <summary>
+    /// Contains extensions that help instantiating <see cref="IAsset"/> from intermediate key-value formats, and <see cref="ILocalizationFileFormat"/>.
+    /// </summary>
+    public static class LocalizationFileExtensions_
     {
-        public readonly string Filename;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
+        /// <summary>
+        /// Create reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> when IEnumerator is requested.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="filepath"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>lines</returns>
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> CreateFileProviderReaderAsKeyLines(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
+            => new FileProviderReaderKeyLines(fileFormat, fileProvider, filepath, namePolicy);
 
-        public FileReaderStringLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy)
+        /// <summary>
+        /// Create reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> when IEnumerator is requested.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="filepath"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>tree</returns>
+        public static IEnumerable<IKeyTree> CreateFileProviderReaderAsKeyTree(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
+            => new FileProviderReaderKeyTree(fileFormat, fileProvider, filepath, namePolicy);
+
+        /// <summary>
+        /// Create reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> when IEnumerator is requested.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="filepath"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>lines</returns>
+        public static IEnumerable<KeyValuePair<string, string>> CreateFileProviderReaderAsStringLines(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
+            => new FileProviderReaderStringLines(fileFormat, fileProvider, filepath, namePolicy);
+
+        /// <summary>
+        /// Create localization asset source that reads FileProvider resource at <paramref name="filepath"/>.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="filepath"></param>
+        /// <param name="namePolicy">(optional) </param>
+        /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
+        /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
+        /// <returns>asset source</returns>
+        public static IAssetSource CreateFileProviderAssetSource(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
         {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Filename = filename ?? throw new ArgumentNullException(nameof(Filename));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
-        {
-            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileExtensions.ReadFileAsStringLines(FileFormat, Filename, NamePolicy);
-            return lines.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileExtensions.ReadFileAsStringLines(FileFormat, Filename, NamePolicy);
-            return lines.GetEnumerator();
-        }
-    }
-
-    internal class FileReaderKeyLines : IEnumerable<KeyValuePair<IAssetKey, string>>
-    {
-        public readonly string Filename;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
-
-        public FileReaderKeyLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Filename = filename ?? throw new ArgumentNullException(nameof(Filename));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<KeyValuePair<IAssetKey, string>> GetEnumerator()
-        {
-            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationFileExtensions.ReadFileAsKeyLines(FileFormat, Filename, NamePolicy);
-            return lines.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationFileExtensions.ReadFileAsKeyLines(FileFormat, Filename, NamePolicy);
-            return lines.GetEnumerator();
-        }
-    }
-
-    internal class FileReaderKeyTree : IEnumerable<IKeyTree>
-    {
-        public readonly string Filename;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
-
-        public FileReaderKeyTree(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Filename = filename ?? throw new ArgumentNullException(nameof(Filename));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<IKeyTree> GetEnumerator()
-        {
-            IKeyTree tree = LocalizationFileExtensions.ReadFileAsKeyTree(FileFormat, Filename, NamePolicy);
-            return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            IKeyTree tree = LocalizationFileExtensions.ReadFileAsKeyTree(FileFormat, Filename, NamePolicy);
-            return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
-        }
-    }
-
-    internal class EmbeddedReaderStringLines : IEnumerable<KeyValuePair<string, string>>
-    {
-        public readonly string ResourceName;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
-        public readonly Assembly Asm;
-
-        public EmbeddedReaderStringLines(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Asm = asm ?? throw new ArgumentNullException(nameof(asm));
-            this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
-        {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
-                return FileFormat.ReadStringLines(s, NamePolicy).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
-                return FileFormat.ReadStringLines(s, NamePolicy).GetEnumerator();
-        }
-    }
-
-    internal class EmbeddedReaderKeyLines : IEnumerable<KeyValuePair<IAssetKey, string>>
-    {
-        public readonly string ResourceName;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
-        public readonly Assembly Asm;
-
-        public EmbeddedReaderKeyLines(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Asm = asm ?? throw new ArgumentNullException(nameof(asm));
-            this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<KeyValuePair<IAssetKey, string>> GetEnumerator()
-        {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
-                return FileFormat.ReadKeyLines(s, NamePolicy).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
-                return FileFormat.ReadKeyLines(s, NamePolicy).GetEnumerator();
-        }
-    }
-
-    internal class EmbeddedReaderKeyTree : IEnumerable<IKeyTree>
-    {
-        public readonly string ResourceName;
-        public readonly IAssetKeyNamePolicy NamePolicy;
-        public readonly ILocalizationFileFormat FileFormat;
-        public readonly Assembly Asm;
-
-        public EmbeddedReaderKeyTree(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy)
-        {
-            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.Asm = asm ?? throw new ArgumentNullException(nameof(asm));
-            this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
-            this.NamePolicy = namePolicy;
-        }
-
-        public IEnumerator<IKeyTree> GetEnumerator()
-        {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
+            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                IKeyTree tree = FileFormat.ReadKeyTree(s, NamePolicy);
-                return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
+                return fileFormat.CreateFileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix).ToAssetSource(filepath);
             }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
+            else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                IKeyTree tree = FileFormat.ReadKeyTree(s, NamePolicy);
-                return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
+                return fileFormat.CreateFileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix).ToAssetSource(filepath);
             }
+            else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
+            {
+                return fileFormat.CreateFileProviderReaderAsStringLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix, namePolicy).AddKeySuffix(suffix, namePolicy).ToAssetSource(namePolicy, filepath);
+            }
+            throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
-    }
-
-    internal class AssetFileSource : IAssetSource
-    {
-        ILocalizationFileFormat fileFormat;
-        string fileName;
-        IAssetKeyNamePolicy namePolicy;
-        IAssetKey prefix;
-        IAssetKey suffix;
-
-        public AssetFileSource(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy, IAssetKey prefix = null, IAssetKey suffix = null)
-        {
-            this.fileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.fileName = filename ?? throw new ArgumentNullException(nameof(filename));
-            this.namePolicy = namePolicy;
-            this.prefix = prefix;
-            this.suffix = suffix;
-        }
-        public void Build(IList<IAsset> list) 
-            => list.Add(fileFormat.CreateFileAsset(fileName, namePolicy, prefix, suffix));
-        public IAsset PostBuild(IAsset asset) 
-            => asset;
-    }
-
-    internal class AssetDelegateSource : IAssetSource
-    {
-        ILocalizationFileFormat fileFormat;
-        Func<Stream> streamSource;
-        IAssetKeyNamePolicy namePolicy;
-        IAssetKey prefix;
-        IAssetKey suffix;
-
-        public AssetDelegateSource(ILocalizationFileFormat fileFormat, Func<Stream> streamSource, IAssetKeyNamePolicy namePolicy, IAssetKey prefix = null, IAssetKey suffix = null)
-        {
-            this.fileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.streamSource = streamSource ?? throw new ArgumentNullException(nameof(streamSource));
-            this.namePolicy = namePolicy;
-            this.prefix = prefix;
-            this.suffix = suffix;
-        }
-        public void Build(IList<IAsset> list) 
-            => list.Add(fileFormat.CreateAsset(streamSource(), namePolicy, prefix, suffix));
-
-        public IAsset PostBuild(IAsset asset) 
-            => asset;
     }
 
 }

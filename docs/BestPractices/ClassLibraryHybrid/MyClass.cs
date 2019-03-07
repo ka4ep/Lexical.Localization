@@ -4,16 +4,16 @@ namespace TutorialLibrary3
 {
     public class MyClass
     {
-        IStringLocalizer<MyClass> localization;
+        IStringLocalizer<MyClass> localizer;
 
-        public MyClass(IStringLocalizer<MyClass> localization = default)
+        public MyClass(IStringLocalizer<MyClass> localizer = default)
         {
-            this.localization = localization ?? LibraryLocalization.Root.Type<MyClass>();
+            this.localizer = localizer ?? LibraryLocalization.Root.Type<MyClass>();
         }
 
         public string Do()
         {
-            return localization["OK"];
+            return localizer["OK"];
         }
     }
 }
