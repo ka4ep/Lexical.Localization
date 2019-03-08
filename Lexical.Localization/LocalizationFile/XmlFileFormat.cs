@@ -58,7 +58,7 @@ namespace Lexical.Localization
                 IKeyTree node = parent.GetOrCreate(key);
 
                 if (correspondenceContext != null)
-                    correspondenceContext.Nodes.Map(node, element);
+                    correspondenceContext.Nodes.Put(node, element);
 
                 foreach (XNode nn in element.Nodes())
                 {
@@ -70,7 +70,7 @@ namespace Lexical.Localization
                             node.Values.Add(trimmedXmlValue);
 
                             if (correspondenceContext!=null)
-                                correspondenceContext.Values.Map(new KeyTreeValue { keyTree = node, valueIndex = node.Values.Count - 1, value = trimmedXmlValue }, text);
+                                correspondenceContext.Values.Put(new KeyTreeValue { keyTree = node, valueIndex = node.Values.Count - 1, value = trimmedXmlValue }, text);
                         }
                     }
                 }

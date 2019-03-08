@@ -175,7 +175,7 @@ namespace Lexical.Localization
 
             Queue<IKeyTree> queue = new Queue<IKeyTree>();
             queue.Enqueue(node);
-            while(queue.Count>0)
+            while (queue.Count > 0)
             {
                 IKeyTree n = queue.Dequeue();
                 if (n != node) yield return n;
@@ -183,6 +183,28 @@ namespace Lexical.Localization
                 if (n.HasChildren)
                     foreach (IKeyTree child in n.Children)
                         queue.Enqueue(child);
+            }
+        }
+
+        /// <summary>
+        /// Visit every decendent node and return node + concatenated key.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns>nodes and keys</returns>
+        public static IEnumerable<KeyValuePair<IKeyTree, IAssetKey>> DecendentsWithConcatenatedKeys(this IKeyTree node)
+        {
+            if (node == null) yield break;
+
+            Queue<(IKeyTree, IAssetKey)> queue = new Queue<(IKeyTree, IAssetKey)>();
+            queue.Enqueue((node, node.GetConcatenatedKey()));
+            while (queue.Count > 0)
+            {
+                (IKeyTree n, IAssetKey key) = queue.Dequeue();
+                if (n != node) yield return new KeyValuePair<IKeyTree, IAssetKey>(n, key);
+
+                if (n.HasChildren)
+                    foreach (IKeyTree child in n.Children)
+                        queue.Enqueue((child, key.Concat(child.Key)));
             }
         }
 
