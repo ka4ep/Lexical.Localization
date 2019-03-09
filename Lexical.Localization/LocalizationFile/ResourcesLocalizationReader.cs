@@ -12,15 +12,15 @@ using System.Linq;
 
 namespace Lexical.Localization
 {
-    public class ResourcesFileFormat : ILocalizationFileFormat, ILocalizationStringLinesStreamReader
+    public class ResourcesLocalizationReader : ILocalizationFileFormat, ILocalizationStringLinesStreamReader
     {
-        private readonly static ResourcesFileFormat instance = new ResourcesFileFormat();
-        public static ResourcesFileFormat Instance => instance;
+        private readonly static ResourcesLocalizationReader instance = new ResourcesLocalizationReader();
+        public static ResourcesLocalizationReader Instance => instance;
 
         public string Extension { get; protected set; }
 
-        public ResourcesFileFormat() : this("resources") { }
-        public ResourcesFileFormat(string ext)
+        public ResourcesLocalizationReader() : this("resources") { }
+        public ResourcesLocalizationReader(string ext)
         {
             this.Extension = ext;
         }

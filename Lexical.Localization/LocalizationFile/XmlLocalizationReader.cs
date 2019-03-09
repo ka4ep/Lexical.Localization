@@ -15,20 +15,20 @@ using System.Xml.Linq;
 
 namespace Lexical.Localization
 {
-    public class XmlFileFormat : ILocalizationFileFormat, ILocalizationKeyTreeStreamReader, ILocalizationKeyTreeTextReader
+    public class XmlLocalizationReader : ILocalizationFileFormat, ILocalizationKeyTreeStreamReader, ILocalizationKeyTreeTextReader
     {
         public static readonly XNamespace NsDefault = "urn:lexical.fi";
         public static readonly XName NameLine = NsDefault + "Line";
         public static readonly XName NameRoot = NsDefault + "Localization";
         public const string URN_ = "urn:lexical.fi:";
 
-        private readonly static XmlFileFormat instance = new XmlFileFormat("xml");
-        public static XmlFileFormat Instance => instance;
+        private readonly static XmlLocalizationReader instance = new XmlLocalizationReader("xml");
+        public static XmlLocalizationReader Instance => instance;
         public string Extension { get; protected set; }
 
-        public XmlFileFormat() : this("xml") { }
+        public XmlLocalizationReader() : this("xml") { }
 
-        public XmlFileFormat(string extension)
+        public XmlLocalizationReader(string extension)
         {
             this.Extension = extension;
         }
@@ -55,7 +55,8 @@ namespace Lexical.Localization
 
             if (key != null)
             {
-                IKeyTree node = parent.GetOrCreate(key);
+                IKeyTree node = parent.CreateChild();
+                node.Key = key;
 
                 if (correspondenceContext != null)
                     correspondenceContext.Nodes.Put(node, element);
@@ -70,7 +71,7 @@ namespace Lexical.Localization
                             node.Values.Add(trimmedXmlValue);
 
                             if (correspondenceContext!=null)
-                                correspondenceContext.Values.Put(new KeyTreeValue { keyTree = node, valueIndex = node.Values.Count - 1, value = trimmedXmlValue }, text);
+                                correspondenceContext.Values.Put(new KeyTreeValue(node, trimmedXmlValue, node.Values.Count - 1), text);
                         }
                     }
                 }

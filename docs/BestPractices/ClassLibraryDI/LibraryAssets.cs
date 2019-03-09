@@ -9,7 +9,7 @@ namespace TutorialLibrary2
         public LibraryAssets() : base()
         {
             // Asset sources are added here
-            Add(XmlFileFormat.Instance.CreateEmbeddedAssetSource(
+            Add(XmlLocalizationReader.Instance.CreateEmbeddedAssetSource(
                     asm: GetType().Assembly, 
                     resourceName: "docs.LibraryLocalization2-de.xml")
             );

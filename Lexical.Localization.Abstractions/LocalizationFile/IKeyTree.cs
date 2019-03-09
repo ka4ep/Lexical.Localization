@@ -165,7 +165,14 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Visit every decendent node.
+        /// Visit every decendent node in level-order.
+        /// 
+        /// Example:
+        ///   .child1
+        ///   .child2
+        ///   .child1.child1
+        ///   .child1.child2
+        ///   .child2.child1
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
@@ -187,7 +194,15 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Visit every decendent node and return node + concatenated key.
+        /// Visit every decendent node and concatenated key in level-order.
+        /// 
+        /// 
+        /// Example:
+        ///   .child1
+        ///   .child2
+        ///   .child1.child1
+        ///   .child1.child2
+        ///   .child2.child1
         /// </summary>
         /// <param name="node"></param>
         /// <returns>nodes and keys</returns>

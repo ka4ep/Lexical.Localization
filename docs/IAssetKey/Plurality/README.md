@@ -23,7 +23,7 @@ The parameter name for pluralization of argument "{0}" is **N**, and cases are "
 
 
 ```csharp
-IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0b.xml");
+IAsset asset = XmlLocalizationReader.Instance.CreateFileAsset("PluralityExample0b.xml");
 IAssetKey key = new LocalizationRoot(asset).Key("Cats");
 
 for (int cats = 0; cats<=2; cats++)
@@ -64,7 +64,7 @@ Translator adds localized strings for different cultures.
 The decision whether to use pluralization is left for the translator. The file is read into the application. 
 
 ```csharp
-IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample0a.xml");
+IAsset asset = XmlLocalizationReader.Instance.CreateFileAsset("PluralityExample0a.xml");
 IAssetRoot root = new LocalizationRoot(asset);
 IAssetKey key = root.Key("Cats").Inline("{0} cat(s)");
 
@@ -173,7 +173,7 @@ If language string has two numeric arguments, then plurality keys can be added t
 ```
 
 ```csharp
-IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample2.xml");
+IAsset asset = XmlLocalizationReader.Instance.CreateFileAsset("PluralityExample2.xml");
 IAssetKey key = new LocalizationRoot(asset).Key("CatsDogs");
 
 for (int cats = 0; cats <= 2; cats++)
@@ -230,7 +230,7 @@ If translator wants to supply plurality for two numeric arguments, then all perm
 ```
 
 ```csharp
-IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample2-en.xml");
+IAsset asset = XmlLocalizationReader.Instance.CreateFileAsset("PluralityExample2-en.xml");
 IAssetRoot root = new LocalizationRoot(asset);
 IAssetKey key = root.Key("CatsDogs").Inline("{0} cat(s) and {1} dog(s)");
 
@@ -279,7 +279,7 @@ If there are more than two numeric arguments, pluralization can be provided for 
 ```
 
 ```csharp
-IAsset asset = XmlFileFormat.Instance.CreateFileAsset("PluralityExample4.xml");
+IAsset asset = XmlLocalizationReader.Instance.CreateFileAsset("PluralityExample4.xml");
 IAssetKey key = new LocalizationRoot(asset).Key("CatsDogsPoniesHorses");
 
 for (int cats = 0; cats <= 2; cats++)

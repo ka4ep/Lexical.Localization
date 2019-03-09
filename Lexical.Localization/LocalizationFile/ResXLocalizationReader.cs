@@ -14,14 +14,14 @@ using System.Xml.Linq;
 
 namespace Lexical.Localization
 {
-    public class ResXFileFormat : ILocalizationFileFormat, ILocalizationStringLinesStreamReader, ILocalizationStringLinesTextReader
+    public class ResXLocalizationReader : ILocalizationFileFormat, ILocalizationStringLinesStreamReader, ILocalizationStringLinesTextReader
     {
-        private readonly static ResXFileFormat instance = new ResXFileFormat();
-        public static ResXFileFormat Instance => instance;
+        private readonly static ResXLocalizationReader instance = new ResXLocalizationReader();
+        public static ResXLocalizationReader Instance => instance;
         public string Extension { get; protected set; }
 
-        public ResXFileFormat() : this("resx") { }
-        public ResXFileFormat(string ext) {
+        public ResXLocalizationReader() : this("resx") { }
+        public ResXLocalizationReader(string ext) {
             this.Extension = ext;
         }
 

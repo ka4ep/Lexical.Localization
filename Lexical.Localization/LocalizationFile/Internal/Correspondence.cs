@@ -3,6 +3,7 @@
 // Date:           7.3.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 
@@ -20,26 +21,51 @@ namespace Lexical.Localization.Internal
     public class KeyTreeXmlCorrespondence
     {
         public readonly Correspondence<IKeyTree, XElement> Nodes = new Correspondence<IKeyTree, XElement>();
-        public readonly Correspondence<KeyTreeValue, XText> Values = new Correspondence<KeyTreeValue, XText>();
+        public readonly Correspondence<KeyTreeValue, XText> Values = new Correspondence<KeyTreeValue, XText>(new KeyValueTreeComparer());
     }
 
     /// <summary>
     /// Reference to a value in a <see cref="IKeyTree"/>.
     /// </summary>
-    public class KeyTreeValue // todo hashequals
+    public struct KeyTreeValue : IEquatable<KeyTreeValue>
     {
-        public IKeyTree keyTree;
-        public string value;
-        public int valueIndex;
+        public readonly IKeyTree tree;
+        public readonly string value;
+        public readonly int valueIndex;
+
+        public KeyTreeValue(IKeyTree tree, string value, int valueIndex)
+        {
+            this.tree = tree ?? throw new ArgumentNullException(nameof(tree));
+            this.value = value;
+            this.valueIndex = valueIndex;
+        }
 
         public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
+            => obj is KeyTreeValue other ? tree == other.tree && value == other.value && valueIndex == other.valueIndex : false;
+        public bool Equals(KeyTreeValue other)
+            => tree == other.tree && value == other.value && valueIndex == other.valueIndex;
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            int hash = -2128831035;
+            hash ^= tree.GetHashCode();
+            hash *= 0x1000193;
+            hash ^= value == null ? 0 : value.GetHashCode();
+            hash *= 0x1000193;
+            hash ^= valueIndex;
+            hash *= 0x1000193;
+            return hash;
         }
+        public override string ToString()
+            => $"{tree}[{valueIndex}]={value}";
     }
+
+    public class KeyValueTreeComparer : IEqualityComparer<KeyTreeValue>
+    {
+        public bool Equals(KeyTreeValue x, KeyTreeValue y)
+            => x.tree == y.tree && x.value == y.value && x.valueIndex == y.valueIndex;
+
+        public int GetHashCode(KeyTreeValue obj)
+            => obj.GetHashCode();
+    }
+
 }

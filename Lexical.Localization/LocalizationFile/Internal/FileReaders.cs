@@ -62,13 +62,13 @@ namespace Lexical.Localization.Internal
 
         IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
         {
-            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileExtensions_.ReadFileAsStringLines(FileFormat, FileName, NamePolicy);
+            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileReaderExtensions_.ReadFileAsStringLines(FileFormat, FileName, NamePolicy);
             return lines.GetEnumerator();
         }
 
         public override IEnumerator GetEnumerator()
         {
-            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileExtensions_.ReadFileAsStringLines(FileFormat, FileName, NamePolicy);
+            IEnumerable<KeyValuePair<string, string>> lines = LocalizationFileReaderExtensions_.ReadFileAsStringLines(FileFormat, FileName, NamePolicy);
             return lines.GetEnumerator();
         }
     }
@@ -82,13 +82,13 @@ namespace Lexical.Localization.Internal
 
         IEnumerator<KeyValuePair<IAssetKey, string>> IEnumerable<KeyValuePair<IAssetKey, string>>.GetEnumerator()
         {
-            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationFileExtensions_.ReadFileAsKeyLines(FileFormat, FileName, NamePolicy);
+            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationFileReaderExtensions_.ReadFileAsKeyLines(FileFormat, FileName, NamePolicy);
             return lines.GetEnumerator();
         }
 
         public override IEnumerator GetEnumerator()
         {
-            IEnumerable lines = LocalizationFileExtensions_.ReadFileAsKeyLines(FileFormat, FileName, NamePolicy);
+            IEnumerable lines = LocalizationFileReaderExtensions_.ReadFileAsKeyLines(FileFormat, FileName, NamePolicy);
             return lines.GetEnumerator();
         }
 
@@ -105,13 +105,13 @@ namespace Lexical.Localization.Internal
 
         IEnumerator<IKeyTree> IEnumerable<IKeyTree>.GetEnumerator()
         {
-            IKeyTree tree = LocalizationFileExtensions_.ReadFileAsKeyTree(FileFormat, FileName, NamePolicy);
+            IKeyTree tree = LocalizationFileReaderExtensions_.ReadFileAsKeyTree(FileFormat, FileName, NamePolicy);
             return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
         }
 
         public override IEnumerator GetEnumerator()
         {
-            IKeyTree tree = LocalizationFileExtensions_.ReadFileAsKeyTree(FileFormat, FileName, NamePolicy);
+            IKeyTree tree = LocalizationFileReaderExtensions_.ReadFileAsKeyTree(FileFormat, FileName, NamePolicy);
             return new IKeyTree[] { tree }.GetEnumerator();
         }
 

@@ -16,7 +16,7 @@ namespace docs
         {
             {
                 #region Snippet_1
-                IAsset asset = IniFileFormat.Instance.CreateFileAsset("localization.ini");
+                IAsset asset = IniLocalizationReader.Instance.CreateFileAsset("localization.ini");
                 #endregion Snippet_1
             }
 

@@ -16,17 +16,17 @@ using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
-    public class JsonFileFormat : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
+    public class JsonLocalizationReader : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
     {
-        private readonly static JsonFileFormat instance = new JsonFileFormat();
-        public static JsonFileFormat Instance => instance;
+        private readonly static JsonLocalizationReader instance = new JsonLocalizationReader();
+        public static JsonLocalizationReader Instance => instance;
 
         protected ParameterNamePolicy parser = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:\"");
 
         public string Extension { get; protected set; }
 
-        public JsonFileFormat() : this("json") { }
-        public JsonFileFormat(string ext)
+        public JsonLocalizationReader() : this("json") { }
+        public JsonLocalizationReader(string ext)
         {
             this.Extension = ext;
         }

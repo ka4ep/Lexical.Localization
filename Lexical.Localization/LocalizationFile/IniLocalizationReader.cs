@@ -15,10 +15,10 @@ using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
-    public class IniFileFormat : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
+    public class IniLocalizationReader : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
     {
-        private readonly static IniFileFormat instance = new IniFileFormat();
-        public static IniFileFormat Instance => instance;
+        private readonly static IniLocalizationReader instance = new IniLocalizationReader();
+        public static IniLocalizationReader Instance => instance;
         static ParameterNamePolicy parser_comment = new ParameterNamePolicy("\\\n\t\r\0\a\b\f");
         static ParameterNamePolicy parser_section = new ParameterNamePolicy("\\\n\t\r\0\a\b\f[]");
         static ParameterNamePolicy parser_key = new ParameterNamePolicy("\\\n\t\r\0\a\b\f=");
@@ -26,8 +26,8 @@ namespace Lexical.Localization
 
         public string Extension { get; protected set; }
 
-        public IniFileFormat() : this("ini") { }
-        public IniFileFormat(string ext)
+        public IniLocalizationReader() : this("ini") { }
+        public IniLocalizationReader(string ext)
         {
             this.Extension = ext;
         }

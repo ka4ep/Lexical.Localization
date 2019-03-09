@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// </summary>
     public class LocalizationFileFormatMap : ConcurrentDictionary<string, ILocalizationFileFormat>
     {
-        static LocalizationFileFormatMap singleton = new LocalizationFileFormatMap( XmlFileFormat.Instance, ResXFileFormat.Instance, ResourcesFileFormat.Instance, JsonFileFormat.Instance, IniFileFormat.Instance );
+        static LocalizationFileFormatMap singleton = new LocalizationFileFormatMap( XmlLocalizationReader.Instance, ResXLocalizationReader.Instance, ResourcesLocalizationReader.Instance, JsonLocalizationReader.Instance, IniLocalizationReader.Instance );
 
         /// <summary>
         /// Global singleton instance.

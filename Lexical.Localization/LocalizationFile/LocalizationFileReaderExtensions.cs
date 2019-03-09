@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Contains extensions that help instantiating <see cref="IAsset"/> from intermediate key-value formats, and <see cref="ILocalizationFileFormat"/>.
     /// </summary>
-    public static class LocalizationFileExtensions_
+    public static class LocalizationFileReaderExtensions_
     {
         /// <summary>
         /// Read file into assetkey lines.
@@ -28,7 +28,7 @@ namespace Lexical.Localization
         public static IEnumerable<KeyValuePair<IAssetKey, string>> ReadFileAsKeyLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
         {
             using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
-                return LocalizationFileFormatReaderExtensions_.ReadKeyLines(fileFormat, fs, namePolicy).ToArray();
+                return LocalizationReaderExtensions_.ReadKeyLines(fileFormat, fs, namePolicy).ToArray();
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Lexical.Localization
         public static IKeyTree ReadFileAsKeyTree(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
         {
             using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
-                return LocalizationFileFormatReaderExtensions_.ReadKeyTree(fileFormat, fs, namePolicy);
+                return LocalizationReaderExtensions_.ReadKeyTree(fileFormat, fs, namePolicy);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Lexical.Localization
         public static IEnumerable<KeyValuePair<string, string>> ReadFileAsStringLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default)
         {
             using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
-                return LocalizationFileFormatReaderExtensions_.ReadStringLines(fileFormat, fs, namePolicy).ToArray();
+                return LocalizationReaderExtensions_.ReadStringLines(fileFormat, fs, namePolicy).ToArray();
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace Lexical.Localization.Ms.Extensions
     /// <summary>
     /// Contains extensions that help instantiating <see cref="IAsset"/> from intermediate key-value formats, and <see cref="ILocalizationFileFormat"/>.
     /// </summary>
-    public static class LocalizationFileExtensions_
+    public static class LocalizationFileProviderReaderExtensions
     {
         /// <summary>
         /// Create reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> when IEnumerator is requested.
