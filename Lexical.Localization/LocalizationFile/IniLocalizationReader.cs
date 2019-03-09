@@ -42,7 +42,7 @@ namespace Lexical.Localization
         {
             KeyTree root = new KeyTree(Key.Root);
             using (var ini = new IniTokenizer(text.ReadToEnd()))
-                ReadIniIntoTree(ini, root, namePolicy);
+                ReadIniIntoTree(ini, root, namePolicy, null);
             return root;
         }
 
@@ -52,23 +52,21 @@ namespace Lexical.Localization
         /// <param name="ini"></param>
         /// <param name="node">parent node to under which add nodes</param>
         /// <param name="namePolicy"></param>
+        /// <param name="correspondenceContext"></param>
         /// <returns><paramref name="node"/></returns>
-        public IKeyTree ReadIniIntoTree(IniTokenizer ini, KeyTree node, IAssetKeyNamePolicy namePolicy = default)
+        public IKeyTree ReadIniIntoTree(IniTokenizer ini, IKeyTree node, IAssetKeyNamePolicy namePolicy, KeyTreeIniCorrespondence correspondenceContext)
         {
-            List<KeyValuePair<string, string>> parameters = new List<KeyValuePair<string, string>>();
-            KeyTree section = null;
+            IKeyTree section = null;
             foreach(IniToken token in ini)
             {
                 switch (token.Type)
                 {
                     case IniTokenType.Section:
-                        Key key = null;
-                        parameters.Clear();
-                        if (parser_section.TryParseParameters(token.ValueText, parameters))
+                        IAssetKey key = null;
+                        if (parser_section.TryParse(token.ValueText, out key))
                         {
-                            foreach (var parameter in parameters)
-                                key = Key.Create(key, parameter.Key, parameter.Value);
-                            section = key == null ? null : node.GetOrCreateChild(key);
+                            section = key == null ? null : node.GetOrCreate(key);
+                            if (section != null && correspondenceContext != null) correspondenceContext.Nodes.Put(section, token);
                         }
                         else
                         {
@@ -76,15 +74,17 @@ namespace Lexical.Localization
                         }
                         break;
                     case IniTokenType.KeyValue:
-                        Key key_ = null;
-                        parameters.Clear();
-                        if (parser_key.TryParseParameters(token.KeyText, parameters))
+                        IAssetKey key_ = null;
+                        if (parser_key.TryParse(token.KeyText, out key_))
                         {
-                            foreach (var parameter in parameters)
-                                key_ = Key.Create(key_, parameter.Key, parameter.Value);
-                            KeyTree current = key_ == null ? null : (section??node).GetOrCreateChild(key_);
+                            IKeyTree current = key_ == null ? null : (section??node).GetOrCreate(key_);
                             string value = token.Value;
-                            if (!current.Values.Contains(value)) current.Values.Add(value);
+                            if (value != null)
+                            {
+                                int ix = current.Values.Count;
+                                current.Values.Add(value);
+                                if (section != null && correspondenceContext != null) correspondenceContext.Values.Put(new KeyTreeValue(section, value, ix), token);
+                            }
                         }
                         break;
                     case IniTokenType.Comment: break;

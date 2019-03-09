@@ -35,7 +35,7 @@ namespace Lexical.Localization
         /// <returns>lines</returns>
         public IEnumerable<KeyValuePair<string, string>> ReadElement(XElement element, IAssetKeyNamePolicy namePolicy)
         {
-            foreach(XElement dataNode in element.Elements("data"))
+            foreach (XElement dataNode in element.Elements("data"))
             {
                 XAttribute name = dataNode.Attribute("name");
                 string key = name?.Value;
@@ -54,6 +54,38 @@ namespace Lexical.Localization
                 }
             }
         }
+
+        public List<KeyValuePair<string, string>> ReadElement(XElement element, IAssetKeyNamePolicy namePolicy, StringLineXmlCorrespondence correspondence)
+        {
+            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+
+            foreach (XElement dataNode in element.Elements("data"))
+            {
+                XAttribute name = dataNode.Attribute("name");
+                string key = name?.Value;
+                if (key == null) continue;
+                if (correspondence != null) correspondence.Nodes.Put(key, dataNode);
+                foreach (XElement valueNode in dataNode.Elements("value"))
+                {
+                    foreach (XNode textNode in valueNode.Nodes())
+                    {
+                        if (textNode is XText text)
+                        {
+                            string value = text?.Value;
+                            if (value != null)
+                            {
+                                result.Add(new KeyValuePair<string, string>(key, value));
+                                if (correspondence != null) correspondence.Values.Put(new Pair<string, string>(key, value), text);
+                            }
+                        }
+                    
+                    }
+                }
+            }
+
+            return result;
+        }
+
     }
 
 }

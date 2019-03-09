@@ -15,6 +15,7 @@ namespace Lexical.Localization.Internal
         public List<R> UnmappedR = new List<R>();
         public Correspondence(IEqualityComparer<L> leftComparer = default, IEqualityComparer<R> rightComparer = default) : base(leftComparer, rightComparer) { }
     }
+
     /// <summary>
     /// Correspondence between <see cref="IKeyTree"/> and <see cref="XDocument"/>.
     /// </summary>
@@ -23,6 +24,19 @@ namespace Lexical.Localization.Internal
         public readonly Correspondence<IKeyTree, XElement> Nodes = new Correspondence<IKeyTree, XElement>();
         public readonly Correspondence<KeyTreeValue, XText> Values = new Correspondence<KeyTreeValue, XText>(new KeyValueTreeComparer());
     }
+
+    public class KeyTreeIniCorrespondence
+    {
+        public readonly Correspondence<IKeyTree, IniToken> Nodes = new Correspondence<IKeyTree, IniToken>();
+        public readonly Correspondence<KeyTreeValue, IniToken> Values = new Correspondence<KeyTreeValue, IniToken>(new KeyValueTreeComparer());
+    }
+
+    public class StringLineXmlCorrespondence
+    {
+        public readonly Correspondence<string, XElement> Nodes = new Correspondence<string, XElement>();
+        public readonly Correspondence<Pair<string, string>, XText> Values = new Correspondence<Pair<string, string>, XText>(Pair<string, string>.EqualityComparer.Default);
+    }
+
 
     /// <summary>
     /// Reference to a value in a <see cref="IKeyTree"/>.
@@ -66,6 +80,19 @@ namespace Lexical.Localization.Internal
 
         public int GetHashCode(KeyTreeValue obj)
             => obj.GetHashCode();
+    }
+
+}
+
+namespace Lexical.Localization.Internal
+{
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+
+    public class KeyTreeJsonCorrespondence
+    {
+        public readonly Correspondence<IKeyTree, JToken> Nodes = new Correspondence<IKeyTree, JToken>();
+        public readonly Correspondence<KeyTreeValue, JValue> Values = new Correspondence<KeyTreeValue, JValue>(new KeyValueTreeComparer());
     }
 
 }

@@ -108,11 +108,13 @@ namespace Lexical.Localization
         /// 
         /// If <paramref name="key"/> contains no parameters, returns <paramref name="node"/>.
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="node">(optional) not to append to</param>
         /// <param name="key">key that contains parameters</param>
         /// <returns>existing child, new child, or <paramref name="node"/> if no parameters were provided</returns>
         public static IKeyTree GetOrCreate(this IKeyTree node, IAssetKey key)
         {
+            if (node == null) return null;
+
             // No parameters
             if (key.GetParameterCount() == 0) return node;
 

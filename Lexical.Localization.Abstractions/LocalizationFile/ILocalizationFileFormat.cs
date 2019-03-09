@@ -160,15 +160,6 @@ namespace Lexical.Localization
         /// </summary>
         EffectiveKeyMatching = 16,
 
-        /// <summary>
-        /// Update-add, but doesn't remove
-        /// </summary>
-        Update = Add|Modify,
-
-        /// <summary>
-        /// Synchronize one file to another
-        /// </summary>
-        Synchronize = Add | Modify | Remove,
     }
 
     /// <summary>

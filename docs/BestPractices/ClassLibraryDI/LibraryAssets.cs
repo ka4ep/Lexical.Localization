@@ -6,13 +6,16 @@ namespace TutorialLibrary2
     [AssetSources]
     public class LibraryAssets : List<IAssetSource>
     {
+        public readonly IAssetSource EmbeddedLocalizationSource;
+
         public LibraryAssets() : base()
         {
             // Asset sources are added here
-            Add(XmlLocalizationReader.Instance.CreateEmbeddedAssetSource(
-                    asm: GetType().Assembly, 
-                    resourceName: "docs.LibraryLocalization2-de.xml")
-            );
+            EmbeddedLocalizationSource = XmlLocalizationReader.Instance.CreateEmbeddedAssetSource(
+                    asm: GetType().Assembly,
+                    resourceName: "docs.LibraryLocalization2-de.xml");
+
+            Add(EmbeddedLocalizationSource);
         }
     }
 }
