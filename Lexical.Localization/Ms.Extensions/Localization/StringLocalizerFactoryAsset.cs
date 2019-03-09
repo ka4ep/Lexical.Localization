@@ -4,13 +4,14 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
-using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Concurrent;
 using System.Globalization;
 
-namespace Lexical.Localization.Ms.Extensions
+namespace Lexical.Localization
 {
+    using Microsoft.Extensions.Localization;
+
     /// <summary>
     /// Adapts <see cref="IStringLocalizerFactory"/> into <see cref="IAsset"/>.
     /// </summary>

@@ -3,13 +3,14 @@
 // Date:           18.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
-namespace Lexical.Localization.Ms.Extensions
+namespace Lexical.Localization
 {
+    using Microsoft.Extensions.Localization;
+    using Microsoft.Extensions.Logging;
+
     /// <summary>
     /// A source that creates <see cref="ResourceManagerStringLocalizer"/> and adapts it into <see cref="IAsset"/>.
     /// </summary>

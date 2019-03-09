@@ -1,5 +1,4 @@
 ﻿using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;

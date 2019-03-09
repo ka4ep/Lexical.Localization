@@ -7,12 +7,13 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using System;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Localization;
 
-namespace Lexical.Localization.Ms.Extensions
+namespace Lexical.Localization
 {
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
+    using Microsoft.Extensions.Localization;
+
     public static partial class MsLocalizationExtensions
     {
         /// <summary>

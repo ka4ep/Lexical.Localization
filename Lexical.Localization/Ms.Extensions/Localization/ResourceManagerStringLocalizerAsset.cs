@@ -3,14 +3,15 @@
 // Date:           18.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Microsoft.Extensions.Localization;
 using System;
 using System.IO;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Logging;
 
-namespace Lexical.Localization.Ms.Extensions
+namespace Lexical.Localization
 {
+    using Microsoft.Extensions.Localization;
+    using Microsoft.Extensions.Options;
+    using Microsoft.Extensions.Logging;
+
     public static class ResourceManagerStringLocalizerAsset
     {
         /// <summary>

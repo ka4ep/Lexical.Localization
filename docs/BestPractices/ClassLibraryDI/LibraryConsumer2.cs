@@ -1,5 +1,4 @@
 ﻿using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using System;
 using System.Globalization;
 using System.Reflection;

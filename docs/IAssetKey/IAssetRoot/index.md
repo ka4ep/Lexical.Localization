@@ -19,7 +19,6 @@ These keys cannot be used as providers, only as references.
 **StringLocalizerRoot** is an alternative root implementation.
 Every key, that is constructed from this class, implements localization interfaces IStringLocalizer and IStringLocalizerFactory.
 
-The caller must import NuGet **Microsoft.Extensions.Localization.Abstractions** and namespace **Lexical.Localization.Ms.Extensions**.
 StringLocalizerRoot is constructed with an asset and a culture policy, just as LocalizationRoot.
 [!code-csharp[Snippet](Examples_StringLocalizer.cs#Snippet_1)]
 <br/>
@@ -57,8 +56,7 @@ If assets are initialized in concurrent environment then please lock with **Loca
 [!code-csharp[Snippet](Examples.cs#Snippet_2c)]
 
 **StringLocalizerRoot** is the same root as *LocalizationRoot*, but has extra feature of implementing IStringLocalizer and IStringLocalizerFactory.
-The calling assembly, however, needs to import NuGet **Microsoft.Extensions.Localization.Abstractions**
-and namespace **Lexical.Localization.Ms.Extensions**.
+The calling assembly, however, needs to import NuGet **Microsoft.Extensions.Localization.Abstractions**.
 [!code-csharp[Snippet](Examples.cs#Snippet_2d)]
 
 They share the same assets, and the root instances are interchangeable. Assets can be added to either root.

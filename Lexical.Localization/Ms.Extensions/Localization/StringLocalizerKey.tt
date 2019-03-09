@@ -37,10 +37,11 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Lexical.Localization;
 using Lexical.Localization.Internal;
-using Microsoft.Extensions.Localization;
 
-namespace Lexical.Localization.Ms.Extensions
+namespace Lexical.Localization
 {
+    using Microsoft.Extensions.Localization;
+
     /// <summary>
     /// StringLocalizerKey that implements and is assignable to following interfaces:
     ///     <see cref="IStringLocalizer"/>

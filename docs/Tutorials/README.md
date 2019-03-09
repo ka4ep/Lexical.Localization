@@ -13,6 +13,4 @@ The main library is *Lexical.Localization*. It contains the feature for handling
 *Lexical.Localization.Abstractions* contains the interfaces. 
 Both use namespace *Lexical.Localization*.
 
-Compability with Microsoft.Extensions's abstractions are held in namespaces *Lexical.Localization.Ms.Extensions* and *Lexical.Localization.Ms.Extensions*.
-
 

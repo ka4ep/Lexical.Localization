@@ -127,7 +127,6 @@ Console.WriteLine(myClass.Do());
 
 ```csharp
 using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Globalization;
@@ -178,7 +177,6 @@ builder.AddSource(assetSource).Build();
 
 ```csharp
 using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -286,7 +284,6 @@ using (var provider = services.BuildServiceProvider())
 
 ```csharp
 using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using System;

@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Lexical.Localization.Ms.Extensions;
 using Lexical.Localization;
 using Lexical.Localization.Internal;
 

@@ -5,7 +5,7 @@
 // --------------------------------------------------------
 using Microsoft.Extensions.Localization;
 
-namespace Lexical.Localization.Ms.Extensions
+namespace Lexical.Localization
 {
     /// <summary>
     /// Global singleton instance with compability to Lexical.Localization and Microsoft.Extensions.Localization.

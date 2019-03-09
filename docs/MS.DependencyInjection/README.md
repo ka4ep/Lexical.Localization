@@ -1,7 +1,7 @@
 # Ms.DependencyInjection
 Microsoft has introduced an abstraction to dependency injection in the NuGet package **Microsoft.Extensions.DependencyInjection.Abstractions**.
 
-The namespace **Lexical.Localization.Ms.Extensions** introduces extension method **<i>IServiceCollection</i>.AddLexicalLocalization(*addStringLocalizerService*, *addCulturePolicyService*, *useGlobalInstance*, *addCache*)** 
+The extension method **<i>IServiceCollection</i>.AddLexicalLocalization(*addStringLocalizerService*, *addCulturePolicyService*, *useGlobalInstance*, *addCache*)** 
 that adds various localization service implementations. The following services are added:
 * IAssetRoot. If *useGlobalInstance* is true, then the root is **[global static](../IAssetRoot#global-static-root)**.
 * IAssetKey&lt;T&gt;
@@ -56,7 +56,6 @@ using (var serviceProvider = serviceCollection.BuildServiceProvider())
 <details><summary>Example full code (<u>click here</u>).</summary>
 ```csharp
 using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 
@@ -149,7 +148,6 @@ using (var serviceProvider = serviceCollection.BuildServiceProvider())
 
 ```csharp
 using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;

@@ -170,7 +170,6 @@ In the setup of the application IStringLocalizerFactory or IStringLocalizer&lt;T
 
 ```csharp
 using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;

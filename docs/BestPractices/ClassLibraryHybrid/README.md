@@ -55,7 +55,6 @@ This root is linked to the global static root and shares its assets.
 
 ```csharp
 using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 
 namespace TutorialLibrary3
 {
@@ -167,7 +166,6 @@ Console.WriteLine(myClass2.Do());
 
 ```csharp
 using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Globalization;
@@ -241,7 +239,6 @@ Console.WriteLine(myClass2.Do());
 
 ```csharp
 using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Globalization;
@@ -356,7 +353,6 @@ using (var provider = services.BuildServiceProvider())
 
 ```csharp
 using Lexical.Localization;
-using Lexical.Localization.Ms.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Globalization;

@@ -45,7 +45,6 @@ string str = asset.GetString(key);
 **StringLocalizerRoot** is an alternative root implementation.
 Every key, that is constructed from this class, implements localization interfaces IStringLocalizer and IStringLocalizerFactory.
 
-The caller must import NuGet **Microsoft.Extensions.Localization.Abstractions** and namespace **Lexical.Localization.Ms.Extensions**.
 StringLocalizerRoot is constructed with an asset and a culture policy, just as LocalizationRoot.
 
 ```csharp
@@ -148,8 +147,7 @@ lock (LocalizationRoot.Builder) LocalizationRoot.Builder.AddAsset(asset).Build()
 ```
 
 **StringLocalizerRoot** is the same root as *LocalizationRoot*, but has extra feature of implementing IStringLocalizer and IStringLocalizerFactory.
-The calling assembly, however, needs to import NuGet **Microsoft.Extensions.Localization.Abstractions**
-and namespace **Lexical.Localization.Ms.Extensions**.
+The calling assembly, however, needs to import NuGet **Microsoft.Extensions.Localization.Abstractions**.
 
 ```csharp
 // StringLocalizerRoot is root for IStringLocalizer interoperability

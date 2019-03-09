@@ -8,10 +8,11 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Lexical.Localization;
-using Microsoft.Extensions.Localization;
 
-namespace Lexical.Localization.Ms.Extensions
+namespace Lexical.Localization
 {
+    using Microsoft.Extensions.Localization;
+
     /// <summary>
     /// StringLocalizerRoot implements and is assignable to:
     ///     <see cref="IStringLocalizer"/>
