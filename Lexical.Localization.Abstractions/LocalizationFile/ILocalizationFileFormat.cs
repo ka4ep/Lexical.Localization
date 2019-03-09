@@ -122,26 +122,43 @@ namespace Lexical.Localization
         /// No action.
         /// </summary>
         None = 0,
+
         /// <summary>
-        /// Allow to adds new entries.
+        /// Permission to add new entries to the container.
         /// </summary>
         Add = 1,
+
         /// <summary>
-        /// Allow to removes entires that no longer exist.
+        /// Permission to remove entires that no longer exist.
         /// </summary>
         Remove = 2,
+
         /// <summary>
-        /// Allow to modify values of existing entries.
+        /// Permission to modify values of existing entries.
         /// </summary>
         Modify = 4,
 
         /// <summary>
-        /// Overwrite contents of previous content.
-        /// <see cref="Add"/> must be set with this flag of else creates an empty document.
+        /// Overwrite contents of previous file.
+        ///   <see cref="Add"/> must be set with this flag of else creates an empty document.
         /// 
         /// Flags <see cref="Remove"/> and <see cref="Modify"/> have no effect with this flag.
         /// </summary>
         Overwrite = 8,
+
+        /// <summary>
+        /// Matches old state to new state by effective key.
+        /// 
+        /// For example if file had previously following node 
+        /// <![CDATA[ <Line Type="ConsoleApp1.MyController" Key="Success" Culture="de">Erfolg</Line> ]]>
+        /// 
+        /// And the code wants to write the following structure
+        /// <![CDATA[ <Type:ConsoleApp1.MyController><Key:Success Culture="de">Erfolg !!</Key:Success></Type:ConsoleApp1.MyController> ]]>
+        /// 
+        /// Then that node is is matched by effective key, which is equivalent in both cases, and the previous node gets updated.
+        /// If this <see cref="EffectiveKeyMatching"/> is false, then old node is removed and new node is created.
+        /// </summary>
+        EffectiveKeyMatching = 16,
 
         /// <summary>
         /// Update-add, but doesn't remove
