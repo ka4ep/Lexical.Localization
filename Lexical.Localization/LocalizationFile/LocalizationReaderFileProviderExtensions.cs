@@ -107,5 +107,34 @@ namespace Lexical.Localization
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
+
+        /// <summary>
+        /// Create localization asset source that reads FileProvider resource at <paramref name="filepath"/>.
+        /// </summary>
+        /// <param name="fileFormatProvider"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="filepath"></param>
+        /// <param name="namePolicy">(optional) </param>
+        /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
+        /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
+        /// <returns>asset</returns>
+        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static IAsset FileProviderAsset(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(filepath)].FileProviderAsset(fileProvider, filepath, namePolicy, prefix, suffix);
+
+        /// <summary>
+        /// Create localization asset that reads from FileProvider.
+        /// </summary>
+        /// <param name="fileFormatProvider"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="filepath"></param>
+        /// <param name="namePolicy">(optional) </param>
+        /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
+        /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
+        /// <returns>asset source</returns>
+        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static IAssetSource FileProviderAssetSource(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(filepath)].FileProviderAssetSource(fileProvider, filepath, namePolicy, prefix, suffix);
+
     }
 }

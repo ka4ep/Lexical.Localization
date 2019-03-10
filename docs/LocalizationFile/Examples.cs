@@ -14,9 +14,16 @@ namespace docs
         public static void Main(string[] args)
         {
             {
-                #region Snippet_1
+                #region Snippet_1a
+                // Use explicit reader instance
                 IAsset asset = IniLocalizationReader.Instance.FileAsset("localization.ini");
-                #endregion Snippet_1
+                #endregion Snippet_1a
+            }
+            {
+                #region Snippet_1b
+                // Infer reader instance from file extension '.ini'
+                IAsset asset = LocalizationReaderMap.Instance.FileAsset("localization.ini");
+                #endregion Snippet_1b
             }
 
             {

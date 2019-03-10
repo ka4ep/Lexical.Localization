@@ -13,7 +13,9 @@ Example of **.resx** localization file.
 
 # Loading Asset
 Files can then be loaded with a constructor.
-[!code-csharp[Snippet](Examples.cs#Snippet_1)]
+[!code-csharp[Snippet](Examples.cs#Snippet_1a)]
+
+[!code-csharp[Snippet](Examples.cs#Snippet_1b)]
 
 # Implementing
 <details>

@@ -15,7 +15,14 @@ Example of **.resx** localization file.
 Files can then be loaded with a constructor.
 
 ```csharp
+// Use explicit reader instance
 IAsset asset = IniLocalizationReader.Instance.FileAsset("localization.ini");
+```
+
+
+```csharp
+// Infer reader instance from file extension '.ini'
+IAsset asset = LocalizationReaderMap.Instance.FileAsset("localization.ini");
 ```
 
 # Implementing
