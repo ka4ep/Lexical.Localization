@@ -18,7 +18,7 @@ namespace Lexical.Localization.Tests
             IAssetKey key = LocalizationRoot.Global.Culture("en").Type("ConsoleApp1.MyController").Key("Success");
 
             // Act
-            IAsset asset = IniLocalizationReader.Instance.CreateEmbeddedAsset(GetType().Assembly, filename);
+            IAsset asset = IniLocalizationReader.Instance.EmbeddedAsset(GetType().Assembly, filename);
 
             // Assert
             Assert.AreEqual("Success", asset.GetString(key));
@@ -34,7 +34,7 @@ namespace Lexical.Localization.Tests
 
             // Act
             Stream s = GetType().Assembly.GetManifestResourceStream(filename);
-            IAsset asset = fileformat.CreateAsset(s, null);
+            IAsset asset = fileformat.StreamAsset(s, null);
             s.Dispose();
 
             // Assert
@@ -51,7 +51,7 @@ namespace Lexical.Localization.Tests
 
             // Act
             Stream s = GetType().Assembly.GetManifestResourceStream(filename);
-            IAsset asset = fileformat.CreateAsset(s, null);
+            IAsset asset = fileformat.StreamAsset(s, null);
             s.Dispose();
 
             // Assert
@@ -71,7 +71,7 @@ namespace Lexical.Localization.Tests
 
             // Act
             Stream s = new FileStream(filename, FileMode.Open);
-            IAsset asset = fileformat.CreateAsset(s, new AssetNamePattern("{Culture.}[anysection.][Key]"), Key.CreateFromParameters(param));
+            IAsset asset = fileformat.StreamAsset(s, new AssetNamePattern("{Culture.}[anysection.][Key]"), Key.CreateFromParameters(param));
             s.Dispose();
 
             // Assert

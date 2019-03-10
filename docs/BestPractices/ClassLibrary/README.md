@@ -22,7 +22,7 @@ namespace TutorialLibrary1
         public LibraryAssets() : base()
         {
             // Asset sources are added here
-            EmbeddedLocalizationSource = XmlLocalizationReader.Instance.CreateEmbeddedAssetSource(
+            EmbeddedLocalizationSource = XmlLocalizationReader.Instance.EmbeddedAssetSource(
                     asm: GetType().Assembly,
                     resourceName: "docs.LibraryLocalization1-de.xml");
 
@@ -158,7 +158,7 @@ The application can supply additional localizations by placing *IAssetSource*s t
 
 ```csharp
 // Install additional localization that was not available in the TutorialLibrary
-IAssetSource source = XmlLocalizationReader.Instance.CreateFileAssetSource("LibraryLocalization1-fi.xml");
+IAssetSource source = XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization1-fi.xml");
 LocalizationRoot.Builder.AddSource(source).Build();
 
 MyClass myClass = new MyClass();
@@ -187,7 +187,7 @@ namespace TutorialProject1
         {
             #region Snippet
             // Install additional localization that was not available in the TutorialLibrary
-            IAssetSource source = XmlLocalizationReader.Instance.CreateFileAssetSource("LibraryLocalization1-fi.xml");
+            IAssetSource source = XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization1-fi.xml");
             LocalizationRoot.Builder.AddSource(source).Build();
 
             MyClass myClass = new MyClass();

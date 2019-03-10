@@ -6,9 +6,9 @@
 ```csharp
 // Create localization source
 var source = new Dictionary<Key, string> {
-    { (Key)ParameterNamePolicy.Instance.Parse("type:MyController:key:hello", Key.Root),            "Hello World!" },
-    { (Key)ParameterNamePolicy.Instance.Parse("culture:en:type:MyController:key:hello", Key.Root), "Hello World!" },
-    { (Key)ParameterNamePolicy.Instance.Parse("culture:de:type:MyController:key:hello", Key.Root), "Hallo Welt!"  }
+    { (Key)ParameterNamePolicy.Instance.Parse("Type:MyController:Key:hello", Key.Root),            "Hello World!" },
+    { (Key)ParameterNamePolicy.Instance.Parse("Culture:en:Type:MyController:Key:hello", Key.Root), "Hello World!" },
+    { (Key)ParameterNamePolicy.Instance.Parse("Culture:de:Type:MyController:Key:hello", Key.Root), "Hallo Welt!"  }
 };
 // Create asset with string source
 IAsset asset = new LoadableLocalizationAsset().AddKeyLinesSource(source).Load();
@@ -35,7 +35,7 @@ var source = new Dictionary<string, string> {
     { "de:MyController:hello", "Hallo Welt!"  }
 };
 // Create asset with string source
-IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{culture:}{type:}{Key}").Load();
+IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{Culture:}[Type:][Key]").Load();
 ```
 </details>
 
@@ -46,7 +46,7 @@ These keys are converted to Key internally when <b>.Load()</b> is called.
 ```csharp
 // Create localization source
 var source = new Dictionary<IAssetKey, string> {
-    { new LocalizationRoot().Type("MyController").Key("hello"),                  "Hello World!" },
+    { new LocalizationRoot().Type("MyController").Key("hello"),               "Hello World!" },
     { new LocalizationRoot().Type("MyController").Key("hello").Culture("en"), "Hello World!" },
     { new LocalizationRoot().Type("MyController").Key("hello").Culture("de"), "Hallo Welt!"  }
 };

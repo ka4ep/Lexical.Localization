@@ -26,7 +26,7 @@ namespace TutorialProject3
             services.AddAssetLibrarySources(library);
 
             // Install additional localization that was not available in the TutorialLibrary.
-            services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.CreateFileAssetSource("LibraryLocalization3-fi.xml"));
+            services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization3-fi.xml"));
 
             // Service MyClass
             services.AddTransient<MyClass, MyClass>();

@@ -41,7 +41,7 @@ namespace docs
                 };
                 #region Snippet_2a
                 // Create asset with name pattern
-                IAsset asset = new LocalizationStringAsset(source, "{culture:}{type:}{Key}");
+                IAsset asset = new LocalizationStringAsset(source, "{Culture:}[Type:][Key]");
                 #endregion Snippet_2a
                 #region Snippet_2b
                 // Extract all keys

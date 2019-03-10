@@ -11,16 +11,16 @@ using System.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Collection of file formats
+    /// Collection of localization readers.
     /// </summary>
-    public class LocalizationFileFormatMap : ConcurrentDictionary<string, ILocalizationFileFormat>
+    public class LocalizationReaderMap : ConcurrentDictionary<string, ILocalizationFileFormat>
     {
-        static LocalizationFileFormatMap singleton = new LocalizationFileFormatMap( XmlLocalizationReader.Instance, ResXLocalizationReader.Instance, ResourcesLocalizationReader.Instance, JsonLocalizationReader.Instance, IniLocalizationReader.Instance );
+        static LocalizationReaderMap instance = new LocalizationReaderMap( XmlLocalizationReader.Instance, ResXLocalizationReader.Instance, ResourcesLocalizationReader.Instance, JsonLocalizationReader.Instance, IniLocalizationReader.Instance );
 
         /// <summary>
         /// Global singleton instance.
         /// </summary>
-        public static LocalizationFileFormatMap Singleton => singleton;
+        public static LocalizationReaderMap Instance => instance;
 
         /// <summary>
         /// All supported extensions.
@@ -67,16 +67,16 @@ namespace Lexical.Localization
             return null;
         }
 
-        public LocalizationFileFormatMap() : base(StringComparer.InvariantCultureIgnoreCase)
+        public LocalizationReaderMap() : base(StringComparer.InvariantCultureIgnoreCase)
         {
         }
 
-        public LocalizationFileFormatMap(params ILocalizationFileFormat[] fileFormats) : base(StringComparer.InvariantCultureIgnoreCase)
+        public LocalizationReaderMap(params ILocalizationFileFormat[] fileFormats) : base(StringComparer.InvariantCultureIgnoreCase)
         {
             AddRange(fileFormats);
         }
 
-        public LocalizationFileFormatMap(IEnumerable<ILocalizationFileFormat> fileFormats) : base(StringComparer.InvariantCultureIgnoreCase)
+        public LocalizationReaderMap(IEnumerable<ILocalizationFileFormat> fileFormats) : base(StringComparer.InvariantCultureIgnoreCase)
         {
             AddRange(fileFormats);
         }
@@ -93,7 +93,7 @@ namespace Lexical.Localization
             return result;
         }
 
-        public LocalizationFileFormatMap Add(ILocalizationFileFormat fileFormat)
+        public LocalizationReaderMap Add(ILocalizationFileFormat fileFormat)
         {
             string ext = fileFormat.Extension;
             if (ext == null) throw new ArgumentNullException("Extension");
@@ -102,14 +102,14 @@ namespace Lexical.Localization
             return this;
         }
 
-        public LocalizationFileFormatMap AddRange(IEnumerable<ILocalizationFileFormat> fileFormats)
+        public LocalizationReaderMap AddRange(IEnumerable<ILocalizationFileFormat> fileFormats)
         {
             foreach (ILocalizationFileFormat fileFormat in fileFormats)
                 Add(fileFormat);
             return this;
         }
 
-        public LocalizationFileFormatMap AddRange(params ILocalizationFileFormat[] fileFormats)
+        public LocalizationReaderMap AddRange(params ILocalizationFileFormat[] fileFormats)
         {
             foreach (ILocalizationFileFormat fileFormat in fileFormats)
                 Add(fileFormat);

@@ -22,7 +22,7 @@ namespace TutorialLibrary2
         public LibraryAssets() : base()
         {
             // Asset sources are added here
-            EmbeddedLocalizationSource = XmlLocalizationReader.Instance.CreateEmbeddedAssetSource(
+            EmbeddedLocalizationSource = XmlLocalizationReader.Instance.EmbeddedAssetSource(
                     asm: GetType().Assembly,
                     resourceName: "docs.LibraryLocalization2-de.xml");
 
@@ -173,7 +173,7 @@ The application can supply additional localization sources with **<i>IAssetBuild
 
 ```csharp
 // Install additional localization that was not available in the TutorialLibrary.
-IAssetSource assetSource = XmlLocalizationReader.Instance.CreateFileAssetSource("LibraryLocalization2-fi.xml");
+IAssetSource assetSource = XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization2-fi.xml");
 builder.AddSource(assetSource).Build();
 ```
 # [Full Code](#tab/full-2)
@@ -202,7 +202,7 @@ namespace TutorialProject2
 
             #region Snippet
             // Install additional localization that was not available in the TutorialLibrary.
-            IAssetSource assetSource = XmlLocalizationReader.Instance.CreateFileAssetSource("LibraryLocalization2-fi.xml");
+            IAssetSource assetSource = XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization2-fi.xml");
             builder.AddSource(assetSource).Build();
             #endregion Snippet
 
@@ -263,7 +263,7 @@ Assembly library = typeof(MyClass).Assembly;
 services.AddAssetLibrarySources(library);
 
 // Install additional localization that was not available in the TutorialLibrary.
-services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.CreateFileAssetSource("LibraryLocalization2-fi.xml"));
+services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization2-fi.xml"));
 
 // Service MyClass2
 services.AddTransient<MyClass, MyClass>();
@@ -315,7 +315,7 @@ namespace TutorialProject2
             services.AddAssetLibrarySources(library);
 
             // Install additional localization that was not available in the TutorialLibrary.
-            services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.CreateFileAssetSource("LibraryLocalization2-fi.xml"));
+            services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization2-fi.xml"));
 
             // Service MyClass2
             services.AddTransient<MyClass, MyClass>();

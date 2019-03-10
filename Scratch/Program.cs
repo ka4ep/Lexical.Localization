@@ -10,11 +10,11 @@ namespace Scratch
         static void Main(string[] args)
         {
             IAsset asset;
-            asset = JsonLocalizationReader.Instance.CreateFileAsset("localization.json");
-            asset = ResourcesLocalizationReader.Instance.CreateFileAsset("localization.resources", AssetKeyNameProvider.Colon_Dot_Dot);
-            asset = ResXLocalizationReader.Instance.CreateFileAsset("localization.resx", AssetKeyNameProvider.Colon_Dot_Dot);
-            asset = XmlLocalizationReader.Instance.CreateFileAsset("localization.xml");
-            asset = IniLocalizationReader.Instance.CreateFileAsset("localization.ini");
+            asset = JsonLocalizationReader.Instance.FileAsset("localization.json");
+            asset = ResourcesLocalizationReader.Instance.FileAsset("localization.resources", AssetKeyNameProvider.Colon_Dot_Dot);
+            asset = ResXLocalizationReader.Instance.FileAsset("localization.resx", AssetKeyNameProvider.Colon_Dot_Dot);
+            asset = XmlLocalizationReader.Instance.FileAsset("localization.xml");
+            asset = IniLocalizationReader.Instance.FileAsset("localization.ini");
             LocalizationRoot.Builder.AddAsset(asset).Build();
 
             // Shorter

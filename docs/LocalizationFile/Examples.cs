@@ -15,14 +15,14 @@ namespace docs
         {
             {
                 #region Snippet_1
-                IAsset asset = IniLocalizationReader.Instance.CreateFileAsset("localization.ini");
+                IAsset asset = IniLocalizationReader.Instance.FileAsset("localization.ini");
                 #endregion Snippet_1
             }
 
             {
                 #region Snippet_2
                 // Add reader of custom .ext format to the global collection of readers.
-                LocalizationFileFormatMap.Singleton["ext"] = new ExtFileFormat();
+                LocalizationReaderMap.Instance["ext"] = new ExtFileFormat();
                 #endregion Snippet_2
             }
 

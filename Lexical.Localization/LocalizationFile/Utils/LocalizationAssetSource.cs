@@ -90,7 +90,7 @@ namespace Lexical.Localization.Utils
             this.suffix = suffix;
         }
         public void Build(IList<IAsset> list)
-            => list.Add(FileFormat.CreateAsset(streamSource(), NamePolicy, prefix, suffix));
+            => list.Add(FileFormat.StreamAsset(streamSource(), NamePolicy, prefix, suffix));
 
         public IAsset PostBuild(IAsset asset)
             => asset;

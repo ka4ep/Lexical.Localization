@@ -28,7 +28,7 @@ namespace TutorialProject3
             Console.WriteLine(myClass1.Do());
 
             // Install additional localization that was not available in the TutorialLibrary.
-            IAssetSource assetSource = XmlLocalizationReader.Instance.CreateFileAssetSource("LibraryLocalization3-fi.xml");
+            IAssetSource assetSource = XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization3-fi.xml");
             // Add to global localizer instance for the non-DI case
             StringLocalizerRoot.Builder.AddSource(assetSource).Build();
             // Add to local localizer instance for the DI case.

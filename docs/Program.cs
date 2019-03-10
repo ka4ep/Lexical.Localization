@@ -6,6 +6,8 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            LocalizationAsset_Examples.Main(args);
+            LocalizationStringAsset_Examples.Main(args);
             IAssetRoot_StringLocalizer_Examples.Main(args);
             TutorialProject1.Program1.Main(args);
             TutorialProject1.Program2.Main(args);
@@ -20,8 +22,6 @@ namespace docs
             TutorialProject.ExampleB.Main(args);
             TutorialProject.ExampleC.Main(args);
             ParameterNamePolicy_Examples.Main(args);
-            LocalizationAsset_Examples.Main(args);
-            LocalizationStringAsset_Examples.Main(args);
             Ms_DependencyInjection_Example0.Main(args);
             Ms_DependencyInjection_Example1.Main(args);
             Ms_DependencyInjection_Example2.Main(args);

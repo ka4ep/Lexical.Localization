@@ -14,6 +14,9 @@ using System.Xml.Linq;
 
 namespace Lexical.Localization
 {
+    /// <summary>
+    /// Reader that reads Microsoft's binary ".resx" files as key,value lines.
+    /// </summary>
     public class ResXLocalizationReader : ILocalizationFileFormat, ILocalizationStringLinesStreamReader, ILocalizationStringLinesTextReader
     {
         private readonly static ResXLocalizationReader instance = new ResXLocalizationReader();

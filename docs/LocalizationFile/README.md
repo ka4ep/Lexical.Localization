@@ -15,7 +15,7 @@ Example of **.resx** localization file.
 Files can then be loaded with a constructor.
 
 ```csharp
-IAsset asset = IniLocalizationReader.Instance.CreateFileAsset("localization.ini");
+IAsset asset = IniLocalizationReader.Instance.FileAsset("localization.ini");
 ```
 
 # Implementing
@@ -32,7 +32,7 @@ And then adding to constructor delegate to **LocalizationFileFormatMap.Singleton
 
 ```csharp
 // Add reader of custom .ext format to the global collection of readers.
-LocalizationFileFormatMap.Singleton["ext"] = new ExtFileFormat();
+LocalizationReaderMap.Instance["ext"] = new ExtFileFormat();
 ```
 
 Non-hierarchical formats can be implemented by implementing IAsset that reads the format.	

@@ -12,6 +12,9 @@ using System.Linq;
 
 namespace Lexical.Localization
 {
+    /// <summary>
+    /// Reader that reads Microsoft's binary ".resources" files as key,value lines.
+    /// </summary>
     public class ResourcesLocalizationReader : ILocalizationFileFormat, ILocalizationStringLinesStreamReader
     {
         private readonly static ResourcesLocalizationReader instance = new ResourcesLocalizationReader();

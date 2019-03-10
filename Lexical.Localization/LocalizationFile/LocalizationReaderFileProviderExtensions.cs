@@ -19,39 +19,39 @@ namespace Lexical.Localization
     /// <summary>
     /// Contains extensions that help instantiating <see cref="IAsset"/> from intermediate key-value formats, and <see cref="ILocalizationFileFormat"/>.
     /// </summary>
-    public static class LocalizationFileProviderReaderExtensions
+    public static partial class LocalizationFileProviderReaderExtensions
     {
         /// <summary>
-        /// Create reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> when IEnumerator is requested.
+        /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.
         /// </summary>
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> CreateFileProviderReaderAsKeyLines(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> FileProviderReaderAsKeyLines(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
             => new LocalizationFileProviderReaderKeyLines(fileFormat, fileProvider, filepath, namePolicy);
 
         /// <summary>
-        /// Create reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> when IEnumerator is requested.
+        /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.
         /// </summary>
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
         /// <param name="namePolicy"></param>
         /// <returns>tree</returns>
-        public static IEnumerable<IKeyTree> CreateFileProviderReaderAsKeyTree(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
+        public static IEnumerable<IKeyTree> FileProviderReaderAsKeyTree(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
             => new LocalizationFileProviderReaderKeyTree(fileFormat, fileProvider, filepath, namePolicy);
 
         /// <summary>
-        /// Create reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> when IEnumerator is requested.
+        /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.
         /// </summary>
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
-        public static IEnumerable<KeyValuePair<string, string>> CreateFileProviderReaderAsStringLines(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
+        public static IEnumerable<KeyValuePair<string, string>> FileProviderReaderAsStringLines(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
             => new LocalizationFileProviderReaderStringLines(fileFormat, fileProvider, filepath, namePolicy);
 
         /// <summary>
@@ -64,19 +64,19 @@ namespace Lexical.Localization
         /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
         /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
         /// <returns>asset</returns>
-        public static IAsset CreateFileProviderAsset(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
+        public static IAsset FileProviderAsset(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return new LoadableLocalizationAsset().AddKeyTreeSource(fileFormat.CreateFileProviderReaderAsKeyTree(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix)).Load();
+                return new LoadableLocalizationAsset().AddKeyTreeSource(fileFormat.FileProviderReaderAsKeyTree(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix)).Load();
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return new LoadableLocalizationAsset().AddKeyLinesSource(fileFormat.CreateFileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix)).Load();
+                return new LoadableLocalizationAsset().AddKeyLinesSource(fileFormat.FileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix)).Load();
             }
             else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return new LoadableLocalizationStringAsset(namePolicy).AddLineStringSource(fileFormat.CreateFileProviderReaderAsStringLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix, namePolicy).AddKeySuffix(suffix, namePolicy)).Load();
+                return new LoadableLocalizationStringAsset(namePolicy).AddLineStringSource(fileFormat.FileProviderReaderAsStringLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix, namePolicy).AddKeySuffix(suffix, namePolicy)).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -91,19 +91,19 @@ namespace Lexical.Localization
         /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
         /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
         /// <returns>asset source</returns>
-        public static IAssetSource CreateFileProviderAssetSource(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
+        public static IAssetSource FileProviderAssetSource(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return fileFormat.CreateFileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix).ToAssetSource(filepath);
+                return fileFormat.FileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix).ToAssetSource(filepath);
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return fileFormat.CreateFileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix).ToAssetSource(filepath);
+                return fileFormat.FileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix).AddKeySuffix(suffix).ToAssetSource(filepath);
             }
             else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return fileFormat.CreateFileProviderReaderAsStringLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix, namePolicy).AddKeySuffix(suffix, namePolicy).ToAssetSource(namePolicy, filepath);
+                return fileFormat.FileProviderReaderAsStringLines(fileProvider, filepath, namePolicy).AddKeyPrefix(prefix, namePolicy).AddKeySuffix(suffix, namePolicy).ToAssetSource(namePolicy, filepath);
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
