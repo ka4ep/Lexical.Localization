@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace Lexical.Localization.Internal
+namespace Lexical.Localization.Utils
 {
     using Microsoft.Extensions.FileProviders;
 

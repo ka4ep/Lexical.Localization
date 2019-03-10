@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Lexical.Localization.Internal
+namespace Lexical.Localization.Utils
 {
     /// <summary>
     /// Asset source that constructs an asset from re-openable <see cref="IEnumerable{KeyValuePair{String, String}}"/> string based key-value lines.

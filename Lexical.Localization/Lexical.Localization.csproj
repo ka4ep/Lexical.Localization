@@ -63,8 +63,4 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="LocalizationFile\Utils\" />
-  </ItemGroup>
-
 </Project>
