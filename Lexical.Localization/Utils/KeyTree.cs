@@ -7,7 +7,9 @@ using Lexical.Localization;
 using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 
 namespace Lexical.Localization.Utils
 {
@@ -28,6 +30,7 @@ namespace Lexical.Localization.Utils
     ///           KeyTree(Key("Key", "Success")
     ///           
     /// </summary>
+    [DebuggerDisplay("{DebugPrint()}")]
     public class KeyTree : IKeyTree
     {
         /// <summary>
@@ -233,17 +236,42 @@ namespace Lexical.Localization.Utils
 
         public override string ToString()
         {
+            StringBuilder sb = new StringBuilder();
+            int i = 0;
+            foreach (IKeyTree tree in this.VisitFromRoot())
+            {
+                if (i++ > 0) sb.Append("/");
+                IAssetKey key = tree.Key;
+                if (key == null) continue;
+                ParameterNamePolicy.Instance.PrintKey(key, sb, false);
+            }
+
             if (HasValues)
             {
-                if (Values.Count == 1)
-                    return $"{GetType().Name}({Key}={Values.First()})";
-                else
-                    return $"{GetType().Name}({Key}={String.Join(",", Values)})";
+                sb.Append(" [");
+                int ix = 0;
+                foreach(string value in Values)
+                {
+                    if (ix++ > 0) sb.Append(", ");
+                    sb.Append(value);
+                }
+                sb.Append("]");
             }
-            else
+
+            return sb.ToString();
+        }
+
+        public virtual string DebugPrint()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach(IKeyTree tree in this.VisitFromRoot())
             {
-                return $"{GetType().Name}({Key})";
+                if (sb.Length > 0) sb.Append("/");
+                IAssetKey key = tree.Key;
+                if (key == null) continue;
+                ParameterNamePolicy.Instance.PrintKey(key, sb, false);
             }
+            return sb.ToString();
         }
 
     }

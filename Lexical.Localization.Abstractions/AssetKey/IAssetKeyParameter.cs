@@ -83,6 +83,22 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Get previous valid parameter key.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>key or null</returns>
+        public static IAssetKeyParameterAssigned GetPreviousParameterKey(this IAssetKey key)
+        {
+            if (key == null) return null;
+            for (IAssetKey k = key.GetPreviousKey(); k != null; k = k.GetPreviousKey())
+                if (k is IAssetKeyParameterAssigned parameterAssigned)
+                    if (!string.IsNullOrEmpty(parameterAssigned.ParameterName))
+                        return parameterAssigned;
+            return null;
+
+        }
+
+        /// <summary>
         /// Get all parameters as parameterName,parameterValue pairs.
         /// </summary>
         /// <param name="key">(optional) key to read parameters of</param>

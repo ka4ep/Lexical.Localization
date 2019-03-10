@@ -15,6 +15,9 @@
       "Key:Error": "Virhe (Koodi=0x{0:X8})"
     }
   },
+
   "Culture:sv:Type:ConsoleApp1.MyController:Key:Success": "Det funkar",
-  "Culture:sv:Type:ConsoleApp1.MyController:Key:Error": "Det funkar inte (Kod=0x{0:X8})"
+  "Culture:sv:Type:ConsoleApp1.MyController:Key:Error": "Det funkar inte (Kod=0x{0:X8})",
+
+  "Culture:sv:Type:ConsoleApp1.MyController:Key:SuccessValues": [ "Det funkar1", "Det funkar2" ]
 }

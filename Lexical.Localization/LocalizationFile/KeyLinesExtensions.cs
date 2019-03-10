@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Lexical.Localization.Internal;
 using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
@@ -190,8 +189,9 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IEnumerable<KeyValuePair<IAssetKey, string>> AddKeyPrefix(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetKey key)
         {
-            if (key == null || key.GetParameterCount() == 0) return lines;
-            return lines.Select(line => new KeyValuePair<IAssetKey, string>(key.ConcatIfNew(line.Key), line.Value));
+            Key _key = Key.CreateFrom(key);
+            if (_key == null) return lines;
+            return lines.Select(line => new KeyValuePair<IAssetKey, string>(_key.ConcatIfNew(line.Key), line.Value));
         }
 
         /// <summary>
@@ -202,8 +202,9 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IEnumerable<KeyValuePair<IAssetKey, string>> AddKeySuffix(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetKey key)
         {
-            if (key == null || key.GetParameterCount() == 0) return lines;
-            return lines.Select(line => new KeyValuePair<IAssetKey, string>(line.Key.ConcatIfNew(key), line.Value));
+            Key _key = Key.CreateFrom(key);
+            if (_key == null) return lines;
+            return lines.Select(line => new KeyValuePair<IAssetKey, string>(line.Key.ConcatIfNew(_key), line.Value));
         }
 
         /// <summary>

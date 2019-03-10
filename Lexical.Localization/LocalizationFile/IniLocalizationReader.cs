@@ -83,7 +83,7 @@ namespace Lexical.Localization
                             {
                                 int ix = current.Values.Count;
                                 current.Values.Add(value);
-                                if (section != null && correspondenceContext != null) correspondenceContext.Values.Put(new KeyTreeValue(section, value, ix), token);
+                                if (section != null && correspondenceContext != null) correspondenceContext.Values[new KeyTreeValue(section, value, ix)] = token;
                             }
                         }
                         break;

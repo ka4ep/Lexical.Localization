@@ -107,6 +107,13 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IEnumerable<IKeyTree> AddKeyPrefix(this IEnumerable<IKeyTree> trees, IAssetKey left)
         {
+            Key key = Key.CreateFrom(left);
+            if (key == null) return trees;
+            return _AddKeyPrefix(trees, key);
+        }
+
+        static IEnumerable<IKeyTree> _AddKeyPrefix(this IEnumerable<IKeyTree> trees, Key left)
+        {
             Key _left = null;
             foreach (var parameter in left.GetParameters())
                 _left = Key.Create(parameter.Key, parameter.Value);
@@ -135,6 +142,13 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IEnumerable<IKeyTree> AddKeySuffix(this IEnumerable<IKeyTree> trees, IAssetKey right)
         {
+            Key key = Key.CreateFrom(right);
+            if (key == null) return trees;
+            return _AddKeySuffix(trees, key);
+        }
+
+        static IEnumerable<IKeyTree> _AddKeySuffix(this IEnumerable<IKeyTree> trees, Key right)
+        {
             Key _right = null;
             foreach (var parameter in right.GetParameters())
                 _right = Key.Create(parameter.Key, parameter.Value);
@@ -153,5 +167,6 @@ namespace Lexical.Localization
                 yield return tree;
             }
         }
+
     }
 }

@@ -41,7 +41,8 @@ namespace Lexical.Localization
             LiteralEscape = new Regex("[" + Regex.Escape(escapeCharacters) + "]", opts);
             escapeChar = EscapeChar;
             unescapeChar = UnescapeChar;
-            _parameterVisitor = parameterVisitor;
+            _parameterVisitorIncludeRoot = parameterVisitorIncludeRoot;
+            _parameterVisitorExcludeRoot = parameterVisitorExcludeRoot;
         }
 
         /// <summary>
@@ -69,15 +70,72 @@ namespace Lexical.Localization
         public string PrintKey(IAssetKey key)
         {
             StringBuilder sb = new StringBuilder();
-            key.VisitFromRoot(_parameterVisitor, ref sb);
+            key.VisitFromRoot(_parameterVisitorExcludeRoot, ref sb);
             return sb.ToString();
         }
-        AssetKeyVisitor<StringBuilder> _parameterVisitor;
-        void parameterVisitor(IAssetKey key, ref StringBuilder sb)
+
+        /// <summary>
+        /// Convert a sequence of key,value pairs to a string.
+        /// 
+        /// The format is as following:
+        ///   parameterKey:parameterValue:parameterKey:parameterValue:...
+        /// 
+        /// Escape character is backslash.
+        ///  \unnnn
+        ///  \xnnnn
+        ///  \:
+        ///  \\
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="includeRoot"></param>
+        /// <returns></returns>
+        public string PrintKey(IAssetKey key, bool includeRoot)
+        {
+            StringBuilder sb = new StringBuilder();
+            key.VisitFromRoot(includeRoot ? _parameterVisitorIncludeRoot : _parameterVisitorExcludeRoot, ref sb);
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Convert a sequence of key,value pairs to a string.
+        /// 
+        /// The format is as following:
+        ///   parameterKey:parameterValue:parameterKey:parameterValue:...
+        /// 
+        /// Escape character is backslash.
+        ///  \unnnn
+        ///  \xnnnn
+        ///  \:
+        ///  \\
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="sb"></param>
+        /// <param name="includeRoot"></param>
+        /// <returns><paramref name="sb"/></returns>
+        public StringBuilder PrintKey(IAssetKey key, StringBuilder sb, bool includeRoot)
+        {
+            key.VisitFromRoot(includeRoot?_parameterVisitorIncludeRoot:_parameterVisitorExcludeRoot, ref sb);
+            return sb;
+        }
+
+        AssetKeyVisitor<StringBuilder> _parameterVisitorIncludeRoot, _parameterVisitorExcludeRoot;
+        void parameterVisitorExcludeRoot(IAssetKey key, ref StringBuilder sb)
         {
             if (key is IAssetKeyParameterAssigned parameter && parameter.ParameterName != "Root")
             {
-                if (sb.Length > 0) sb.Append(':');
+                IAssetKeyParameterAssigned prevKey = key.GetPreviousParameterKey();
+                if (prevKey != null && prevKey.ParameterName != "Root") sb.Append(':');
+                sb.Append(EscapeLiteral(parameter.ParameterName));
+                sb.Append(':');
+                sb.Append(EscapeLiteral(parameter.Name));
+            }
+        }
+        void parameterVisitorIncludeRoot(IAssetKey key, ref StringBuilder sb)
+        {
+            if (key is IAssetKeyParameterAssigned parameter)
+            {
+                IAssetKeyParameterAssigned prevKey = key.GetPreviousParameterKey();
+                if (prevKey != null) sb.Append(':');
                 sb.Append(EscapeLiteral(parameter.ParameterName));
                 sb.Append(':');
                 sb.Append(EscapeLiteral(parameter.Name));

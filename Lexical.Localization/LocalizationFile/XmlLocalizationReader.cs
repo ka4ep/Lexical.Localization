@@ -71,7 +71,7 @@ namespace Lexical.Localization
                             node.Values.Add(trimmedXmlValue);
 
                             if (correspondenceContext!=null)
-                                correspondenceContext.Values.Put(new KeyTreeValue(node, trimmedXmlValue, node.Values.Count - 1), text);
+                                correspondenceContext.Values[new KeyTreeValue(node, trimmedXmlValue, node.Values.Count - 1)] = text;
                         }
                     }
                 }

@@ -66,6 +66,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Search child by key.
         /// </summary>
+        /// <param name="tree"></param>
         /// <param name="key"></param>
         /// <returns>child node or null if was not found</returns>
         public static IKeyTree GetChild(this IKeyTree tree, IAssetKey key)
@@ -137,7 +138,7 @@ namespace Lexical.Localization
         /// <param name="node"></param>
         /// <param name="key">(optional) possible initial key to set.</param>
         /// <param name="value">(optional) possible initial value to add</param>
-        /// <returns><param name="node"></returns>
+        /// <returns><paramref name="node"/></returns>
         public static IKeyTree Add(this IKeyTree node, IAssetKey key, string value)
         {
             IKeyTree n = node;
@@ -155,7 +156,7 @@ namespace Lexical.Localization
         /// <param name="node"></param>
         /// <param name="key_parts">(optional) possible initial key to set.</param>
         /// <param name="value">(optional) possible initial value to add</param>
-        /// <returns><param name="node"></returns>
+        /// <returns><paramref name="node"/></returns>
         public static IKeyTree AddRecursive(this IKeyTree node, IEnumerable<IAssetKey> key_parts, string value)
         {
             IKeyTree n = node;
@@ -228,6 +229,7 @@ namespace Lexical.Localization
         /// <summary>
         /// List parameters from root to tail.
         /// </summary>
+        /// <param name="node"></param>
         /// <param name="skipRoot">should "Root" parameter be skipped</param>
         /// <returns>parameters</returns>
         public static IEnumerable<KeyValuePair<string, string>> GetConcatenatedParameters(this IKeyTree node, bool skipRoot)
@@ -245,6 +247,22 @@ namespace Lexical.Localization
         /// <returns>key</returns>
         public static IAssetKey GetConcatenatedKey(this IKeyTree node)
              => node.Parent != null ? node.Parent.GetConcatenatedKey().Concat(node.Key) : node.Key;
+
+        /// <summary>
+        /// Visit all nodes from root to <paramref name="tree"/>.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <returns></returns>
+        public static IKeyTree[] VisitFromRoot(this IKeyTree tree)
+        {
+            if (tree == null) return new IKeyTree[0];
+            int count = 0;
+            for (IKeyTree t = tree; t != null; t = t.Parent) count++;
+            IKeyTree[] result = new IKeyTree[count];
+            for (IKeyTree t = tree; t != null; t = t.Parent)
+                result[--count] = t;
+            return result;
+        }
 
         /// <summary>
         /// Get value count

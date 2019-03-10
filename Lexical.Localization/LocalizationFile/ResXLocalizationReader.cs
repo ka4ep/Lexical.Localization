@@ -78,7 +78,7 @@ namespace Lexical.Localization
                             if (value != null)
                             {
                                 result.Add(new KeyValuePair<string, string>(key, value));
-                                if (correspondence != null) correspondence.Values.Put(new Pair<string, string>(key, value), text);
+                                if (correspondence != null) correspondence.Values[new Pair<string, string>(key, value)] = text;
                             }
                         }
                     
