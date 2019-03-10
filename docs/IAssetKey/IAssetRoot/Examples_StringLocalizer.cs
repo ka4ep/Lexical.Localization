@@ -73,6 +73,15 @@ namespace docs
                 IStringLocalizer stringLocalizer = stringLocalizerFactory.Create(typeof(MyController))
                     .WithCulture(CultureInfo.GetCultureInfo("en"));
                 #endregion Snippet_5b
+                stringLocalizer = (IStringLocalizer)root.Culture("en").Type<MyController>();
+                // Change language
+                stringLocalizer = stringLocalizer.WithCulture(CultureInfo.GetCultureInfo("fi"));
+                // Keep language
+                stringLocalizer = stringLocalizer.WithCulture(CultureInfo.GetCultureInfo("fi"));
+                // Change language
+                stringLocalizer = stringLocalizer.WithCulture(CultureInfo.GetCultureInfo("sv"));
+                // Remove language
+                stringLocalizer = stringLocalizer.WithCulture(null);
             }
 
         }

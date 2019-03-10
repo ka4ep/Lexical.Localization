@@ -383,7 +383,30 @@ namespace Lexical.Localization
 
         public IStringLocalizer Create(string basename, string location) => new _Resource(new _Assembly(this, location), basename);
         public IStringLocalizer Create(Type type) => typeConstructor.Create(type, this);
-        public IStringLocalizer WithCulture(CultureInfo culture) => new _Culture(this, null, culture);
+        public IStringLocalizer WithCulture(CultureInfo newCulture)
+        {
+            // Find culture key
+            IAssetKey oldCultureKey = this.FindCultureKey();
+            // No culture key, create new
+            if (oldCultureKey == null) return newCulture == null ? this : new _Culture(this, null, newCulture);
+            // Old culture matches the new, return as is
+            if (oldCultureKey?.Name == newCulture?.Name) return this;
+
+            // Replace culture
+            IAssetKey beforeCultureKey = oldCultureKey?.GetPreviousKey();
+            if (beforeCultureKey == null) throw new InvalidOperationException("Cannot change culture when culture is the root key.");
+            // Read parameters
+            List<(string, string)> parameters = new List<(string, string)>();
+            for (IAssetKey k = this; k != oldCultureKey; k = k.GetPreviousKey())
+                if (k is IAssetKeyParameterAssigned parameterKey && parameterKey.ParameterName != null)
+                    parameters.Add((parameterKey.ParameterName, parameterKey.Name));
+            // Assign new culture
+            IAssetKey result = newCulture == null ? beforeCultureKey : beforeCultureKey.Culture(newCulture);
+            // Apply parameters
+            for (int i = parameters.Count - 1; i >= 0; i--)
+                result = result.AppendParameter(parameters[i].Item1, parameters[i].Item2);
+            return (IStringLocalizer)result;
+        }
         public LocalizedString this[string name] 
         { 
             get {

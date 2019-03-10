@@ -109,11 +109,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>culture policy or null</returns>
         public static CultureInfo FindCulture(this IAssetKey key)
-        {
-            for (; key != null; key = key.GetPreviousKey())
-                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.Culture != null) return cultureKey.Culture;
-            return null;
-        }
+            => FindCultureKey(key)?.Culture;
 
         /// <summary>
         /// Search linked list and find selected culture.
@@ -121,22 +117,19 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>culture name or null</returns>
         public static string FindCultureByName(this IAssetKey key)
-        {
-            for (; key != null; key = key.GetPreviousKey())
-                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.Name != null) return cultureKey.Name;
-            return null;
-        }
+            => FindCultureKey(key)?.Name;
 
         /// <summary>
-        /// Search linked list and find selected culture.
+        /// Search linked list and find selected active culture.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>culture policy or null</returns>
         public static ILocalizationKeyCultureAssigned FindCultureKey(this IAssetKey key)
         {
+            ILocalizationKeyCultureAssigned result = null;
             for (; key != null; key = key.GetPreviousKey())
-                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.Name != null) return cultureKey;
-            return null;
+                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.Name != null) result = cultureKey;
+            return result;
         }
 
         /// <summary>

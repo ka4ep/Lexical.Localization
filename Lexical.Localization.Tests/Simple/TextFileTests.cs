@@ -18,7 +18,7 @@ namespace Lexical.Localization.Tests
             IAssetKey key = LocalizationRoot.Global.Culture("en").Type("ConsoleApp1.MyController").Key("Success");
 
             // Act
-            IAsset asset = IniLocalizationReader.Instance.CreateEmbeddedResourceAsset(GetType().Assembly, filename);
+            IAsset asset = IniLocalizationReader.Instance.CreateEmbeddedAsset(GetType().Assembly, filename);
 
             // Assert
             Assert.AreEqual("Success", asset.GetString(key));

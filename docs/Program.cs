@@ -6,6 +6,7 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            IAssetRoot_StringLocalizer_Examples.Main(args);
             TutorialProject1.Program1.Main(args);
             TutorialProject1.Program2.Main(args);
             TutorialProject2.Program1.Main(args);
