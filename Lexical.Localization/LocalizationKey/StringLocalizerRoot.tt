@@ -9,7 +9,7 @@
 <#@ output extension=".cs" #>
 <#
     string dir = Path.GetDirectoryName(Host.TemplateFile);
-    string srcDir = Path.Combine(dir, "..", "..", "LocalizationKey");
+    string srcDir = dir; //Path.Combine(dir, "..", "..", "LocalizationKey");
     string srcFilename = Path.Combine(srcDir, "LocalizationRoot.cs");
     string srcCode = File.ReadAllText(srcFilename);
     srcCode = GetRegion(srcCode, "Code");

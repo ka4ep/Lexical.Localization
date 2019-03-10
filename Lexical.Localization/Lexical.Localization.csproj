@@ -36,11 +36,11 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Update="Ms.Extensions\Localization\StringLocalizerKey.tt">
+    <None Update="LocalizationKey\StringLocalizerKey.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>StringLocalizerKey.cs</LastGenOutput>
     </None>
-    <None Update="Ms.Extensions\Localization\StringLocalizerRoot.tt">
+    <None Update="LocalizationKey\StringLocalizerRoot.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>StringLocalizerRoot.cs</LastGenOutput>
     </None>
@@ -51,16 +51,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Ms.Extensions\Localization\StringLocalizerKey.cs">
+    <Compile Update="LocalizationKey\StringLocalizerKey.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>StringLocalizerKey.tt</DependentUpon>
     </Compile>
-    <Compile Update="Ms.Extensions\Localization\StringLocalizerRoot.cs">
+    <Compile Update="LocalizationKey\StringLocalizerRoot.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>StringLocalizerRoot.tt</DependentUpon>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="LocalizationFile\Utils\" />
   </ItemGroup>
 
 </Project>

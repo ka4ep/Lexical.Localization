@@ -1,9 +1,5 @@
-# Ms.Localization
-Adapter classes create 2-way interoperability between
-Microsoft.Extensions.Localization.Abstractions and Lexical.Localization.Abstractions.
-
-## Ms.Localization to Lexical.Localization
-**StringLocalizerFactoryAsset** adapts *IStringLocalizerFactory* implementations to *IAsset*.
+# Introduction
+**StringLocalizerFactoryAsset** adapts <b><i>IStringLocalizerFactory</i></b> implementations to *IAsset*.
 
 ```csharp
 // Create IStringLocalizerFactory
@@ -37,15 +33,14 @@ There is an extension method **.ToAsset()** that makes the same conversion.
 asset = stringLocalizerFactory.ToAsset();
 ```
 
-And **StringLocalizerAsset** adapts *IStringLocalizer* implementations to *IAsset*.
+**StringLocalizerAsset** adapts <b><i>IStringLocalizer</i></b> implementations to *IAsset*.
 
 ```csharp
 // Adapt IStringLocalizer to IAsset
 asset = new StringLocalizerAsset(stringLocalizer);
 ```
 
-## Lexical.Localization to Ms.Localization
-**StringLocalizerRoot** adapts *IAsset* implementations to *IStringLocalizerFactory*. [Read more.](../IAssetKey/IAssetRoot/#string-localizer)
+**StringLocalizerRoot** adapts *IAsset* implementations back to <b><i>IStringLocalizerFactory</i></b>. [Read more.](../IAssetKey/IAssetRoot/#string-localizer)
 
 ```csharp
 // Create asset
@@ -68,7 +63,7 @@ stringLocalizer = stringLocalizer.WithCulture(CultureInfo.GetCultureInfo("fi"));
 string str = stringLocalizer["Success"];
 ```
 
-And to *IStringLocalizer*.
+And to <b><i>IStringLocalizer</i></b>.
 
 ```csharp
 // Create asset
@@ -96,8 +91,8 @@ string str = stringLocalizer["Success"];
  * [IStringLocalizerFactory](https://github.com/aspnet/Extensions/blob/master/src/Localization/Abstractions/src/IStringLocalizerFactory.cs)
 * [Microsoft.Extensions.Localization](https://github.com/aspnet/Localization/tree/master/src/Microsoft.Extensions.Localization) ([NuGet](https://www.nuget.org/packages/Microsoft.Extensions.Localization/))
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [StringLocalizerAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/StringLocalizerAsset.cs)
- * [StringLocalizerRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/StringLocalizerRoot.cs)
- * [StringLocalizerFactoryAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/StringLocalizerFactoryAsset.cs)
- * [ResourceManagerStringLocalizerAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/ResourceManagerStringLocalizerAsset.cs)
- * [ResourceManagerStringLocalizerAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/ResourceManagerStringLocalizerAssetSource.cs)
+ * [StringLocalizerAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerAsset.cs)
+ * [StringLocalizerRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerRoot.cs)
+ * [StringLocalizerFactoryAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerFactoryAsset.cs)
+ * [ResourceManagerStringLocalizerAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/ResourceManagerStringLocalizerAsset.cs)
+ * [ResourceManagerStringLocalizerAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/ResourceManagerStringLocalizerAssetSource.cs)

@@ -123,15 +123,11 @@ string str = asset.GetString(key);
       <td>Adapts ResourceManager to IAsset</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Configuration/ConfigurationLocalizationAsset.cs">ConfigurationLocalizationAsset</a></td>
-      <td>Adapts IConfiguration to IAsset</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/StringLocalizerAsset.cs">StringLocalizerAsset</a></td>
+      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerAsset.cs">StringLocalizerAsset</a></td>
       <td>Adapts IStringLocalizer to IAsset</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/StringLocalizerFactoryAsset.cs">StringLocalizerFactoryAsset</a></td>
+      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerFactoryAsset.cs">StringLocalizerFactoryAsset</a></td>
       <td>Adapts IStringLocalizerFactory to IAsset</td>
     </tr>
     <tr>
@@ -143,11 +139,7 @@ string str = asset.GetString(key);
       <td>Adds asset as component when IAssetBuilder builds a new asset</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Configuration/ConfigurationBuilderLocalizationAssetSource.cs">ConfigurationBuilderLocalizationAssetSource</a></td>
-      <td>Adapts IConfigurationBuilder to IAssetSource</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/ResourceManagerStringLocalizerAssetSource.cs">ResourceManagerStringLocalizerAssetSource</a></td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/ResourceManagerStringLocalizerAssetSource.cs">ResourceManagerStringLocalizerAssetSource</a></td>
       <td>Adapts location of .resources file to IAssetSource</td>
     </tr>
     <tr>
@@ -173,42 +165,6 @@ string str = asset.GetString(key);
     <tr>
       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Asset/AssetResourceDictionary.cs">AssetResourceDictionary</a></td>
       <td>Converts Dictionary&lt;string, byte[]&gt; to IAsset</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetLoader/AssetLoader.cs">AssetLoader</a></td>
-      <td>Loads assets as needed</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetLoader/AssetLoaderPartFileResources.cs">AssetLoaderPartFileResources</a></td>
-      <td>Part that loads binary assets from local files</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderResources.cs">AssetLoaderPartFileProviderResources</a></td>
-      <td>Part that loads binary assets using IFileProvider interface</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetLoader/AssetLoaderPartEmbeddedResources.cs">AssetLoaderPartEmbeddedResources</a></td>
-      <td>Part that loads binary assets from embedded files</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAssetLoader/AssetLoaderPartEmbeddedResourceManager.cs">AssetLoaderPartEmbeddedResourceManager</a></td>
-      <td>Part that loads string assets from embedded .resources files</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAssetLoader/AssetLoaderPartEmbeddedStrings.cs">AssetLoaderPartEmbeddedStrings</a></td>
-      <td>Part that loads string assets from embedded text files</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAssetLoader/AssetLoaderPartFileResourceManager.cs">AssetLoaderPartFileResourceManager</a></td>
-      <td>Part that loads binary assets .resources files</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAssetLoader/AssetLoaderPartFileStrings.cs">AssetLoaderPartFileStrings</a></td>
-      <td>Part that loads string assets from text files</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/FileProvider/AssetLoaderPartFileProviderStrings.cs">AssetLoaderPartFileProviderStrings</a></td>
-      <td>Part that loads string assets from IFileProvider</td>
     </tr>
 </tbody>
 </table>
