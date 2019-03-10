@@ -35,7 +35,7 @@ IAsset asset = LocalizationReaderMap.Instance.FileAsset("localization.ini");
 </details>
 
 <p/>
-And then adding to constructor delegate to **LocalizationFileFormatMap.Singleton**.
+And then adding to constructor delegate to **LocalizationReaderMap.Instance**.
 
 ```csharp
 // Add reader of custom .ext format to the global collection of readers.

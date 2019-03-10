@@ -24,7 +24,7 @@ Files can then be loaded with a constructor.
 </details>
 
 <p/>
-And then adding to constructor delegate to **LocalizationFileFormatMap.Singleton**.
+And then adding to constructor delegate to **LocalizationReaderMap.Instance**.
 [!code-csharp[Snippet](Examples.cs#Snippet_2)]
 
 Non-hierarchical formats can be implemented by implementing IAsset that reads the format.	

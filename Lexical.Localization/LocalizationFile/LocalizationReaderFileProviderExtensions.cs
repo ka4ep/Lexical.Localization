@@ -109,6 +109,42 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.
+        /// </summary>
+        /// <param name="fileFormatProvider"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="filepath"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>lines</returns>
+        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> FileProviderReaderAsKeyLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(filepath)].FileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy);
+
+        /// <summary>
+        /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.
+        /// </summary>
+        /// <param name="fileFormatProvider"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="filepath"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>tree</returns>
+        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static IEnumerable<IKeyTree> FileProviderReaderAsKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(filepath)].FileProviderReaderAsKeyTree(fileProvider, filepath, namePolicy);
+
+        /// <summary>
+        /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.
+        /// </summary>
+        /// <param name="fileFormatProvider"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="filepath"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>lines</returns>
+        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static IEnumerable<KeyValuePair<string, string>> FileProviderReaderAsStringLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(filepath)].FileProviderReaderAsStringLines(fileProvider, filepath, namePolicy);
+
+        /// <summary>
         /// Create localization asset source that reads FileProvider resource at <paramref name="filepath"/>.
         /// </summary>
         /// <param name="fileFormatProvider"></param>

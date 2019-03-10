@@ -110,6 +110,42 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="asm"/> on <see cref="IEnumerable.GetEnumerator"/>.
+        /// </summary>
+        /// <param name="fileFormatProvider"></param>
+        /// <param name="asm"></param>
+        /// <param name="resourceName"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>lines</returns>
+        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> EmbeddedReaderAsKeyLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(resourceName)].EmbeddedReaderAsKeyLines(asm, resourceName, namePolicy);
+
+        /// <summary>
+        /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="asm"/> on <see cref="IEnumerable.GetEnumerator"/>.
+        /// </summary>
+        /// <param name="fileFormatProvider"></param>
+        /// <param name="asm"></param>
+        /// <param name="resourceName"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>tree</returns>
+        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static IEnumerable<IKeyTree> EmbeddedReaderAsKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(resourceName)].EmbeddedReaderAsKeyTree(asm, resourceName, namePolicy);
+
+        /// <summary>
+        /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="asm"/> on <see cref="IEnumerable.GetEnumerator"/>.
+        /// </summary>
+        /// <param name="fileFormatProvider"></param>
+        /// <param name="asm"></param>
+        /// <param name="resourceName"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns>lines</returns>
+        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static IEnumerable<KeyValuePair<string, string>> EmbeddedReaderAsStringLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(resourceName)].EmbeddedReaderAsStringLines(asm, resourceName, namePolicy);
+
+        /// <summary>
         /// Create localization asset from embedded resource<paramref name="resourceName"/>.
         /// 
         /// File is reloaded if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
