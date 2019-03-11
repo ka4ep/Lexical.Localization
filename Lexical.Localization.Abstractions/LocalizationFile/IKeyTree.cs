@@ -265,6 +265,39 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Get root node of <see cref=""/>.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <returns>root, or null if <paramref name="tree"/> is null</returns>
+        public static IKeyTree GetRoot(this IKeyTree tree)
+        {
+            if (tree == null) return null;
+            while (tree.Parent != null) tree = tree.Parent;
+            return tree;
+        }
+
+        /// <summary>
+        /// Calculate the level of <paramref name="tree"/>.
+        /// <list>
+        /// <item>0: Root</item>
+        /// <item>1: First level</item>
+        /// <item>2: Second level</item>
+        /// </list>
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <returns></returns>
+        public static int GetLevel(this IKeyTree tree)
+        {
+            int level = 0;
+            while (tree.Parent != null)
+            {
+                level++;
+                tree = tree.Parent;
+            }
+            return level;
+        }
+
+        /// <summary>
         /// Get value count
         /// </summary>
         /// <param name="node"></param>

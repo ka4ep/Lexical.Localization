@@ -60,7 +60,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="correspondenceContext">(optional) place to update correspondence. If set <paramref name="json"/> must implement <see cref="JTokenReader"/>.</param>
         /// <returns></returns>
-        public IKeyTree ReadJsonIntoTree(JsonReader json, IKeyTree node, IAssetKeyNamePolicy namePolicy, KeyTreeJsonCorrespondence correspondenceContext)
+        public IKeyTree ReadJsonIntoTree(JsonReader json, IKeyTree node, IAssetKeyNamePolicy namePolicy, JsonCorrespondence correspondenceContext)
         {
             IKeyTree current = node;
             Stack<IKeyTree> stack = new Stack<IKeyTree>();

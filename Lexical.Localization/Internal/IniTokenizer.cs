@@ -15,7 +15,7 @@ namespace Lexical.Localization.Internal
 {
     public enum IniTokenType { Text, Section, Comment, KeyValue }
 
-    public class IniToken : ICloneable
+    public class IniToken : ICloneable, IEnumerable<IniToken>
     {
         /// <summary>
         /// Create a Commment-token. "; comment"
@@ -53,7 +53,7 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Create a Section-token. "[Section]"
         /// </summary>
-        /// <param name="section">Raw unescaped value. Use any characters.</param>
+        /// <param name="section">Section name without escaping characters. Use any characters.</param>
         /// <returns>token</returns>
         public static IniToken Section(string section)
         {
@@ -70,14 +70,56 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Create a Section-token. "[Section]"
+        /// </summary>
+        /// <param name="section">Section name with escaping characters</param>
+        /// <returns>token</returns>
+        public static IniToken SectionRaw(string section)
+        {
+            string str = "[" + section + "]\r\n";
+            return new IniToken
+            {
+                Type = IniTokenType.Section,
+                source = str,
+                Index = 0,
+                Length = str.Length,
+                ValueIndex = 1,
+                ValueLength = section.Length
+            };
+        }
+
+        /// <summary>
         /// Create a KeyValue-token. "key = value"
         /// </summary>
-        /// <param name="key">Raw unescaped value. Use any characters.</param>
-        /// <param name="value">Raw unescaped value. Use any characters.</param>
+        /// <param name="key">Unescaped value. Use any characters.</param>
+        /// <param name="value">Unescaped value. Use any characters.</param>
         /// <returns>a new token with a modified key</returns>
-        public static IniToken SetKeyValue(string key, string value)
+        public static IniToken KeyValue(string key, string value)
         {
             string str = IniEscape.Key.EscapeLiteral(key) + " = " + IniEscape.Value.EscapeLiteral(value) + "\r\n";
+            return new IniToken
+            {
+                Type = IniTokenType.KeyValue,
+                source = str,
+                Index = 0,
+                Length = str.Length,
+                ValueIndex = key.Length + 3,
+                ValueLength = value.Length,
+                KeyIndex = 0,
+                KeyLength = key.Length
+            };
+        }
+
+
+        /// <summary>
+        /// Create a KeyValue-token. "key = value"
+        /// </summary>
+        /// <param name="key">Raw escaped value. Use any characters.</param>
+        /// <param name="value">Raw escaped value. Use any characters.</param>
+        /// <returns>a new token with a modified key</returns>
+        public static IniToken KeyValueRaw(string key, string value)
+        {
+            string str = key + " = " + value + "\r\n";
             return new IniToken
             {
                 Type = IniTokenType.KeyValue,
@@ -107,10 +149,11 @@ namespace Lexical.Localization.Internal
 
             // Lengths before and after "value" part.
             int len1 = ValueIndex - Index, len2 = newValue == null ? 0 : newValue.Length, len3 = Index + Length - ValueIndex - ValueLength;
-            StringBuilder sb = new StringBuilder(len1 + len2 + len2);
+            StringBuilder sb = new StringBuilder(len1 + len2 + len3 + 2);
             if (len1 > 0) sb.Append(source.Substring(Index, len1));
             if (len2 > 0) sb.Append(newValue);
             if (len3 > 0) sb.Append(source.Substring(ValueIndex + ValueLength, len3));
+            //sb.Append("\r\n");
             string str = sb.ToString();
             return new IniToken
             {
@@ -175,7 +218,7 @@ namespace Lexical.Localization.Internal
             => Index >= 0 && Length >= 0 && source != null ? source.Substring(Index, Length) : null;
 
         /// <summary>
-        /// Value in escaped format.
+        /// Value in raw format with escape characters.
         /// </summary>
         public string ValueText
             => ValueIndex >= 0 && ValueLength >= 0 && source != null ? source.Substring(ValueIndex, ValueLength) : null;
@@ -261,6 +304,62 @@ namespace Lexical.Localization.Internal
             for (IniToken t = this; t != null; t = t.Next)
                 yield return t;
         }
+
+        /// <summary>
+        /// Insert <paramref name="token"/> before self.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns>token</returns>
+        public IniToken InsertBefore(IniToken token)
+        {
+            IniToken x = this.Previous;
+            this.Previous = token;
+            if (x != null) x.Next = token;
+            token.Next = this;
+            token.Previous = x;
+            return token;
+        }
+
+        /// <summary>
+        /// Insert <paramref name="token"/> after self.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns>self</returns>
+        public IniToken InsertAfter(IniToken token)
+        {
+            IniToken x = this.Next;
+            this.Next = token;
+            if (x != null) x.Previous = token;
+            token.Previous = this;
+            token.Next = x;
+            return this;
+        }
+
+        /// <summary>
+        /// Remove self from linked list.
+        /// </summary>
+        public void Remove()
+        {
+            if (Previous != null) Previous.Next = Next;
+            if (Next != null) Next.Previous = Previous;
+        }
+
+        /// <summary>
+        /// If tokens are built as linked list, returns an <see cref="IEnumerable{IniToken}"/> that lists
+        /// this and other succeeding nodes.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<IniToken> GetEnumerator()
+            => LinkedList().GetEnumerator();
+
+        /// <summary>
+        /// If tokens are built as linked list, returns an <see cref="IEnumerable{IniToken}"/> that lists
+        /// this and other succeeding nodes.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator IEnumerable.GetEnumerator()
+            => LinkedList().GetEnumerator();
+
     }
 
     public class IniTokenizer : IEnumerable<IniToken>, IDisposable
@@ -310,6 +409,8 @@ namespace Lexical.Localization.Internal
                 if (head == null) head = token;
                 // Set link
                 if (prev != null) { prev.Next = token; token.Previous = prev; }
+                // Set prev
+                prev = token;
             }
             return head;
         }

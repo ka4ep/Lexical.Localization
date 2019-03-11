@@ -19,24 +19,23 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Correspondence between <see cref="IKeyTree"/> and <see cref="XDocument"/>.
     /// </summary>
-    public class KeyTreeXmlCorrespondence
+    public class XmlCorrespondence
     {
         public readonly Correspondence<IKeyTree, XElement> Nodes = new Correspondence<IKeyTree, XElement>();
         public readonly Dictionary<KeyTreeValue, XText> Values = new Dictionary<KeyTreeValue, XText>(new KeyValueTreeComparer());
     }
 
-    public class KeyTreeIniCorrespondence
+    public class IniCorrespondence
     {
         public readonly Correspondence<IKeyTree, IniToken> Nodes = new Correspondence<IKeyTree, IniToken>();
         public readonly Dictionary<KeyTreeValue, IniToken> Values = new Dictionary<KeyTreeValue, IniToken>(new KeyValueTreeComparer());
     }
 
-    public class StringLineXmlCorrespondence
+    public class ResxCorrespondence
     {
         public readonly Correspondence<string, XElement> Nodes = new Correspondence<string, XElement>();
-        public readonly Dictionary<Pair<string, string>, XText> Values = new Dictionary<Pair<string, string>, XText>(Pair<string, string>.EqualityComparer.Default);
+        public readonly Dictionary<Pair<string, string>, XElement> Values = new Dictionary<Pair<string, string>, XElement>(Pair<string, string>.EqualityComparer.Default);
     }
-
 
     /// <summary>
     /// Reference to a value in a <see cref="IKeyTree"/>.
@@ -89,7 +88,7 @@ namespace Lexical.Localization.Internal
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
-    public class KeyTreeJsonCorrespondence
+    public class JsonCorrespondence
     {
         public readonly Correspondence<IKeyTree, JToken> Nodes = new Correspondence<IKeyTree, JToken>();
         public readonly Dictionary<KeyTreeValue, JValue> Values = new Dictionary<KeyTreeValue, JValue>(new KeyValueTreeComparer());

@@ -58,7 +58,7 @@ namespace Lexical.Localization
             }
         }
 
-        public List<KeyValuePair<string, string>> ReadElement(XElement element, IAssetKeyNamePolicy namePolicy, StringLineXmlCorrespondence correspondence)
+        public List<KeyValuePair<string, string>> ReadElement(XElement element, IAssetKeyNamePolicy namePolicy, ResxCorrespondence correspondence)
         {
             List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
 
@@ -78,7 +78,7 @@ namespace Lexical.Localization
                             if (value != null)
                             {
                                 result.Add(new KeyValuePair<string, string>(key, value));
-                                if (correspondence != null) correspondence.Values[new Pair<string, string>(key, value)] = text;
+                                if (correspondence != null) correspondence.Values[new Pair<string, string>(key, value)] = valueNode;
                             }
                         }
                     

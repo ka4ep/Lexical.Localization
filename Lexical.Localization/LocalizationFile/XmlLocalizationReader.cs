@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <param name="parent"></param>
         /// <param name="correspondenceContext">(optional) Correspondence to write element-tree mappings</param>
         /// <returns>parent</returns>
-        public IKeyTree ReadElement(XElement element, IKeyTree parent, KeyTreeXmlCorrespondence correspondenceContext)
+        public IKeyTree ReadElement(XElement element, IKeyTree parent, XmlCorrespondence correspondenceContext)
         {
             IAssetKey key = ReadKey(element);
 
