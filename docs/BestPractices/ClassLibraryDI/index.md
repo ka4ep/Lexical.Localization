@@ -9,8 +9,8 @@ It should implement **ILibraryAssetSources** as a signal that it provides the lo
 Internal localization files are typically added built-in as embedded resources.
 [!code-csharp[Snippet](LibraryAssetSources.cs)]
 <details>
-  <summary>The example localization file *LibraryLocalization2-de.xml*.  (<u>click here</u>)</summary>
-[!code-xml[Snippet](../../LibraryLocalization2-de.xml)]
+  <summary>The example localization file *TutorialLibrary2-de.xml*.  (<u>click here</u>)</summary>
+[!code-xml[Snippet](../../TutorialLibrary2-de.xml)]
 </details>
 <br/>
 
@@ -37,8 +37,8 @@ The application can supply additional localization sources with **<i>IAssetBuild
 [!code-csharp[Snippet](LibraryConsumer2.cs)]
 ***
 <details>
-  <summary>The example localization file *LibraryLocalization2-fi.xml*.  (<u>click here</u>)</summary>
-[!code-xml[Snippet](../../LibraryLocalization2-fi.xml)]
+  <summary>The example localization file *TutorialLibrary2-fi.xml*.  (<u>click here</u>)</summary>
+[!code-xml[Snippet](../../TutorialLibrary2-fi.xml)]
 </details>
 <br/>
 

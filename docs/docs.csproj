@@ -12,12 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="LibraryLocalization1-de.xml" />
-    <None Remove="LibraryLocalization1-en.xml" />
-    <None Remove="LibraryLocalization2-de.xml" />
-    <None Remove="LibraryLocalization2-en.xml" />
-    <None Remove="LibraryLocalization3-de.xml" />
-    <None Remove="LibraryLocalization3-en.xml" />
     <None Remove="Resources\res.ConsoleApp1.MyController.Icon.Error" />
     <None Remove="Resources\res.ConsoleApp1.MyController.Icon.Success" />
     <None Remove="Resources\res.en.ConsoleApp1.MyController.Icon.Error" />
@@ -28,21 +22,27 @@
     <None Remove="Resources\res.fi.ConsoleApp1.MyController.Icon.Success" />
     <None Remove="Resources\res.sv.ConsoleApp1.MyController.Icon.Error" />
     <None Remove="Resources\res.sv.ConsoleApp1.MyController.Icon.Success" />
+    <None Remove="TutorialLibrary1-de.xml" />
+    <None Remove="TutorialLibrary1-en.xml" />
+    <None Remove="TutorialLibrary2-de.xml" />
+    <None Remove="TutorialLibrary2-en.xml" />
+    <None Remove="TutorialLibrary3-de.xml" />
+    <None Remove="TutorialLibrary3-en.xml" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="LibraryLocalization3-en.xml" />
-    <EmbeddedResource Include="LibraryLocalization2-en.xml">
+    <EmbeddedResource Include="TutorialLibrary3-en.xml" />
+    <EmbeddedResource Include="TutorialLibrary2-en.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="LibraryLocalization2-de.xml" />
-    <EmbeddedResource Include="LibraryLocalization3-de.xml">
+    <EmbeddedResource Include="TutorialLibrary2-de.xml" />
+    <EmbeddedResource Include="TutorialLibrary3-de.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="LibraryLocalization1-de.xml">
+    <EmbeddedResource Include="TutorialLibrary1-de.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="LibraryLocalization1-en.xml">
+    <EmbeddedResource Include="TutorialLibrary1-en.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\res.ConsoleApp1.MyController.Icon.Error">
@@ -117,13 +117,13 @@
     <None Update="HelloWorld.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="LibraryLocalization2-fi.xml">
+    <None Update="TutorialLibrary2-fi.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="LibraryLocalization3-fi.xml">
+    <None Update="TutorialLibrary3-fi.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="LibraryLocalization1-fi.xml">
+    <None Update="TutorialLibrary1-fi.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="PluralityExample0-fi.xml">
@@ -166,10 +166,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="LibraryLocalization3-en.xml">
+    <EmbeddedResource Update="TutorialLibrary3-en.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Update="LibraryLocalization2-de.xml">
+    <EmbeddedResource Update="TutorialLibrary2-de.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\ConsoleApp1.MyController.en.resx">

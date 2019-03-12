@@ -22,7 +22,7 @@ namespace TutorialLibrary1
         public readonly IAssetSource EmbeddedLocalizationSource = 
                 LocalizationReaderMap.Instance.EmbeddedAssetSource(
                     asm: typeof(LibraryAssetSources).Assembly,
-                    resourceName: "docs.LibraryLocalization1-de.xml");
+                    resourceName: "docs.TutorialLibrary1-de.xml");
 
         public LibraryAssetSources() : base()
         {
@@ -34,7 +34,7 @@ namespace TutorialLibrary1
 
 ```
 <details>
-  <summary>The example localization file *LibraryLocalization1-de.xml*.  (<u>click here</u>)</summary>
+  <summary>The example localization file *TutorialLibrary1-de.xml*.  (<u>click here</u>)</summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -159,7 +159,7 @@ The application can supply additional localizations by placing *IAssetSource*s t
 
 ```csharp
 // Install additional localization that was not available in the TutorialLibrary
-IAssetSource source = XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization1-fi.xml");
+IAssetSource source = XmlLocalizationReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
 LocalizationRoot.Builder.AddSource(source).Build();
 
 MyClass myClass = new MyClass();
@@ -188,7 +188,7 @@ namespace TutorialProject1
         {
             #region Snippet
             // Install additional localization that was not available in the TutorialLibrary
-            IAssetSource source = XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization1-fi.xml");
+            IAssetSource source = XmlLocalizationReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
             LocalizationRoot.Builder.AddSource(source).Build();
 
             MyClass myClass = new MyClass();
@@ -209,7 +209,7 @@ namespace TutorialProject1
 ***
 
 <details>
-  <summary>The example localization file *LibraryLocalization1-fi.xml*.  (<u>click here</u>)</summary>
+  <summary>The example localization file *TutorialLibrary1-fi.xml*.  (<u>click here</u>)</summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

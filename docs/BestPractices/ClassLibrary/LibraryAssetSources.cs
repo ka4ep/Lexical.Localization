@@ -11,7 +11,7 @@ namespace TutorialLibrary1
         public readonly IAssetSource EmbeddedLocalizationSource = 
                 LocalizationReaderMap.Instance.EmbeddedAssetSource(
                     asm: typeof(LibraryAssetSources).Assembly,
-                    resourceName: "docs.LibraryLocalization1-de.xml");
+                    resourceName: "docs.TutorialLibrary1-de.xml");
 
         public LibraryAssetSources() : base()
         {
