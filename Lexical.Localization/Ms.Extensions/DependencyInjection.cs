@@ -107,7 +107,7 @@ namespace Lexical.Localization
                     // Get IAssetSource services
                     IEnumerable<IAssetSource> assetSources = s.GetServices<IAssetSource>();
                     // Get IEnumerable<ILibraryAssetSources> services
-                    IEnumerable<ILibraryAssetSources> libraryAssetSourcesLists = s.GetServices<ILibraryAssetSources>();
+                    IEnumerable<IAssetSources> libraryAssetSourcesLists = s.GetServices<IAssetSources>();
                     // Concatenate
                     if (libraryAssetSourcesLists != null)
                     {
@@ -159,7 +159,7 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Search for classes that implement <see cref="ILibraryAssetSources"/> in <paramref name="library"/>.
-        /// Instantiates them and adds as services of <see cref="ILibraryAssetSources"/>, which will be picked up
+        /// Instantiates them and adds as services of <see cref="IAssetSources"/>, which will be picked up
         /// by services installed by <see cref="AddLexicalLocalization"/>.
         /// 
         /// </summary>
@@ -173,7 +173,7 @@ namespace Lexical.Localization
                     library
                     .GetExportedTypes()
                     .Where(t => typeof(ILibraryAssetSources).IsAssignableFrom(t))
-                    .Select(t => new ServiceDescriptor(typeof(ILibraryAssetSources), t, ServiceLifetime.Singleton));
+                    .Select(t => new ServiceDescriptor(typeof(IAssetSources), t, ServiceLifetime.Singleton));
 
             foreach (ServiceDescriptor serviceDescriptor in librarysAssetSourceServices)
                 services.Add(serviceDescriptor);

@@ -60,9 +60,19 @@ namespace Lexical.Localization
 
     #region attribute
     /// <summary>
+    /// Used with dependency injection as a service type of multiple <see cref="IAssetSource"/>s.
+    /// 
+    /// This is a workaround to the problem, where service provider implementation doesn't 
+    /// concatenate <see cref="IAssetSource"/> and <see cref="IEnumerable{IAssetSource}"/>s together.
+    /// And supplying an <see cref="IEnumerable{IAssetSource}"/> messes up the service descriptions
+    /// of <see cref="IAssetSource"/>.
+    /// </summary>
+    public interface IAssetSources : IEnumerable<IAssetSource> { }
+
+    /// <summary>
     /// This interface signals that the implementing class provides
     /// asset sources for the class library.
     /// </summary>
-    public interface ILibraryAssetSources : IEnumerable<IAssetSource> { }
+    public interface ILibraryAssetSources : IAssetSources { }
     #endregion attribute
 }
