@@ -31,10 +31,10 @@ namespace Lexical.Localization.Internal
         public readonly Dictionary<KeyTreeValue, IniToken> Values = new Dictionary<KeyTreeValue, IniToken>(new KeyValueTreeComparer());
     }
 
-    public class ResxCorrespondence
+    public class ResXCorrespondence
     {
         public readonly Correspondence<string, XElement> Nodes = new Correspondence<string, XElement>();
-        public readonly Dictionary<Pair<string, string>, XElement> Values = new Dictionary<Pair<string, string>, XElement>(Pair<string, string>.EqualityComparer.Default);
+        public readonly Dictionary<KeyValuePair<string, string>, XElement> Values = new Dictionary<KeyValuePair<string, string>, XElement>(KeyValuePairEqualityComparer<string, string>.Default);
     }
 
     /// <summary>

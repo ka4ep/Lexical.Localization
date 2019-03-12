@@ -11,6 +11,7 @@ Internal localization files are typically added built-in as embedded resources.
 ```csharp
 using System.Collections.Generic;
 using Lexical.Localization;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 
 namespace TutorialLibrary2
@@ -31,10 +32,26 @@ namespace TutorialLibrary2
             Add(EmbeddedLocalizationSource);
         }
 
-        public LibraryAssetSources(ILogger<LibraryAssetSources> logger) : this()
+        /// <summary>
+        /// Constructor that uses services from dependency injection.
+        /// </summary>
+        /// <param name="fileProvider"></param>
+        public LibraryAssetSources(IFileProvider fileProvider) : this()
         {
-            // Use service from dependency injection
-            logger?.LogInformation("Initializing LibraryAssetSources.");
+            // Use file provider from dependency injection and search for
+            // possible well-known localization file for this class library.
+            if (fileProvider!=null)
+            {
+                string filepath = "App_GlobalResources/TutorialLibrary2.xml";
+                if (fileProvider.GetFileInfo(filepath).Exists)
+                {
+                    IAssetSource externalLocalizationSource =
+                        XmlLocalizationReader.Instance.FileProviderAssetSource(
+                            fileProvider: fileProvider,
+                            filepath: filepath);
+                    Add(externalLocalizationSource);
+                }
+            }
         }
     }
 }
@@ -259,7 +276,8 @@ The extension method **AddLexicalLocalization(this <i>IServiceCollection</i>)** 
 ```csharp
 IServiceCollection services = new ServiceCollection();
 
-services.AddLogging();
+// Install file provider service
+services.AddSingleton<IFileProvider>(s=>new PhysicalFileProvider(Directory.GetCurrentDirectory()));
 
 // Install default IStringLocalizerFactory
 services.AddLexicalLocalization(
@@ -297,12 +315,13 @@ using (var provider = services.BuildServiceProvider())
 
 ```csharp
 using Lexical.Localization;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Globalization;
 using System.Reflection;
 using TutorialLibrary2;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace TutorialProject2
 {
@@ -313,7 +332,8 @@ namespace TutorialProject2
             #region Snippet
             IServiceCollection services = new ServiceCollection();
 
-            services.AddLogging();
+            // Install file provider service
+            services.AddSingleton<IFileProvider>(s=>new PhysicalFileProvider(Directory.GetCurrentDirectory()));
 
             // Install default IStringLocalizerFactory
             services.AddLexicalLocalization(
