@@ -1,10 +1,11 @@
 ﻿using Lexical.Localization;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Globalization;
 using System.Reflection;
 using TutorialLibrary2;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace TutorialProject2
 {
@@ -15,8 +16,8 @@ namespace TutorialProject2
             #region Snippet
             IServiceCollection services = new ServiceCollection();
 
-            // Install logging service
-            services.AddLogging();
+            // Install file provider service
+            services.AddSingleton<IFileProvider>(s=>new PhysicalFileProvider(Directory.GetCurrentDirectory()));
 
             // Install default IStringLocalizerFactory
             services.AddLexicalLocalization(

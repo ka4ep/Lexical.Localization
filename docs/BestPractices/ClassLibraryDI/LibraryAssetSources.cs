@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Lexical.Localization;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 
 namespace TutorialLibrary2
@@ -20,10 +21,26 @@ namespace TutorialLibrary2
             Add(EmbeddedLocalizationSource);
         }
 
-        public LibraryAssetSources(ILogger<LibraryAssetSources> logger) : this()
+        /// <summary>
+        /// Constructor that uses services from dependency injection.
+        /// </summary>
+        /// <param name="fileProvider"></param>
+        public LibraryAssetSources(IFileProvider fileProvider) : this()
         {
-            // Use service from dependency injection
-            logger?.LogInformation("Initializing LibraryAssetSources.");
+            // Use file provider from dependency injection and search for
+            // possible well-known localization file for this class library.
+            if (fileProvider!=null)
+            {
+                string filepath = "App_GlobalResources/TutorialLibrary2.xml";
+                if (fileProvider.GetFileInfo(filepath).Exists)
+                {
+                    IAssetSource externalLocalizationSource =
+                        XmlLocalizationReader.Instance.FileProviderAssetSource(
+                            fileProvider: fileProvider,
+                            filepath: filepath);
+                    Add(externalLocalizationSource);
+                }
+            }
         }
     }
 }
