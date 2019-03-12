@@ -106,16 +106,9 @@ namespace Lexical.Localization
                 {
                     // Get IAssetSource services
                     IEnumerable<IAssetSource> assetSources = s.GetServices<IAssetSource>();
-                    // Get IEnumerable<IAssetSource> services
-                    IEnumerable<IEnumerable<IAssetSource>> assetSourcesLists = s.GetServices<IEnumerable<IAssetSource>>();
                     // Get IEnumerable<ILibraryAssetSources> services
                     IEnumerable<ILibraryAssetSources> libraryAssetSourcesLists = s.GetServices<ILibraryAssetSources>();
                     // Concatenate
-                    if (assetSourcesLists != null)
-                    {
-                        foreach(IEnumerable<IAssetSource> assetSources_ in assetSourcesLists)
-                            assetSources = assetSources == null ? assetSources_ : assetSources.Concat(assetSources_);
-                    }
                     if (libraryAssetSourcesLists != null)
                     {
                         foreach (IEnumerable<IAssetSource> assetSources_ in libraryAssetSourcesLists)
