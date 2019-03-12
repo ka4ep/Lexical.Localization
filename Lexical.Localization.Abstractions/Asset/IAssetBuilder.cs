@@ -71,7 +71,7 @@ namespace Lexical.Localization
 
             IEnumerable<IAssetSource> librarysAssetSources =
                     library.GetExportedTypes()
-                    .Where(t => t.GetCustomAttributes(typeof(AssetSourcesAttribute)).FirstOrDefault() != null)
+                    .Where(t => typeof(ILibraryAssetSources).IsAssignableFrom(t))
                     .SelectMany(t => (IEnumerable<IAssetSource>)Activator.CreateInstance(t));
 
             foreach (IAssetSource src in librarysAssetSources)
