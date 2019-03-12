@@ -165,7 +165,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="services"></param>
         /// <param name="library">(optional) library to scan</param>
-        public static IServiceCollection AddAssetLibrarySources(this IServiceCollection services, Assembly library)
+        public static IServiceCollection AddLibraryAssetSources(this IServiceCollection services, Assembly library)
         {
             if (library == null) return services;
 

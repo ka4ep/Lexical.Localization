@@ -1,16 +1,17 @@
-# Class Library with compability to Dependency Injection
+# Class Library with Dependency Injection optional
 
 This article describes recommended practice for writing a class library that, for purposes of localization, is compatible with and without Dependency Injection.
 
-The developer of class library may want to provide its own builtin localizations. 
+The developer of a class library may want to provide builtin localizations. 
 The recommended practice is to create a class **LibraryAssetSources** into the class library.
-It should implement **ILibraryAssetSources** as a signal to notify that the class provides the localizations for the library.
+It should implement **ILibraryAssetSources** as a signal that it provides the localizations for the library.
 
 Internal localization files are typically added built-in as embedded resources.
 
 ```csharp
 using System.Collections.Generic;
 using Lexical.Localization;
+using Microsoft.Extensions.FileProviders;
 
 namespace TutorialLibrary3
 {
@@ -19,15 +20,37 @@ namespace TutorialLibrary3
         /// <summary>
         /// Asset source to a local embedded resource.
         /// </summary>
-        public readonly IAssetSource EmbeddedLocalizationSource = 
-                LocalizationReaderMap.Instance.EmbeddedAssetSource(
-                    asm: typeof(LibraryAssetSources).Assembly,
-                    resourceName: "docs.LibraryLocalization3-de.xml");
+        public IAssetSource InternalLocalizationSource = LocalizationReaderMap.Instance.EmbeddedAssetSource(
+                asm: typeof(LibraryAssetSources).Assembly,
+                resourceName: "docs.LibraryLocalization3-de.xml");
+
+        /// <summary>
+        /// Asset source to external file. (Optional)
+        /// </summary>
+        public IAssetSource ExternalLocalizationSource;
 
         public LibraryAssetSources() : base()
         {
             // Asset sources are added here
-            Add(EmbeddedLocalizationSource);
+            Add(InternalLocalizationSource);
+        }
+
+        /// <summary>
+        /// Constructor that uses services from dependency injection.
+        /// </summary>
+        /// <param name="fileProvider"></param>
+        public LibraryAssetSources(IFileProvider fileProvider) : this()
+        {
+            // Use file provider from dependency injection and search for an optional external file
+            if (fileProvider != null)
+            {
+                string filepath = "Resources/LibraryLocalization3.xml";
+                ExternalLocalizationSource = XmlLocalizationReader.Instance.FileProviderAssetSource(
+                    fileProvider: fileProvider,
+                    filepath: filepath,
+                    throwIfNotFound: false);
+                Add(ExternalLocalizationSource);
+            }
         }
     }
 }
@@ -330,7 +353,7 @@ services.AddLexicalLocalization(
 
 // Install TutorialLibrary's ILibraryAssetSources.
 Assembly library = typeof(MyClass).Assembly;
-services.AddAssetLibrarySources(library);
+services.AddLibraryAssetSources(library);
 
 // Install additional localization that was not available in the TutorialLibrary.
 services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization3-fi.xml"));
@@ -381,7 +404,7 @@ namespace TutorialProject3
 
             // Install TutorialLibrary's ILibraryAssetSources.
             Assembly library = typeof(MyClass).Assembly;
-            services.AddAssetLibrarySources(library);
+            services.AddLibraryAssetSources(library);
 
             // Install additional localization that was not available in the TutorialLibrary.
             services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization3-fi.xml"));

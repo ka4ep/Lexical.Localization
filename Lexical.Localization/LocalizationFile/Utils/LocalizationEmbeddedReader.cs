@@ -15,11 +15,13 @@ namespace Lexical.Localization.Utils
     {
         public string ResourceName { get; protected set; }
         public Assembly Asm { get; protected set; }
+        public bool ThrowIfNotFound { get; protected set; }
 
-        public LocalizationEmbeddedReader(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy) : base(fileFormat, namePolicy)
+        public LocalizationEmbeddedReader(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, namePolicy)
         {
             this.Asm = asm ?? throw new ArgumentNullException(nameof(asm));
             this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
+            this.ThrowIfNotFound = throwIfNotFound;
         }
 
         public override string ToString()
@@ -31,19 +33,28 @@ namespace Lexical.Localization.Utils
     /// </summary>
     public class LocalizationEmbeddedReaderStringLines : LocalizationEmbeddedReader, IEnumerable<KeyValuePair<string, string>>
     {
-        public LocalizationEmbeddedReaderStringLines(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy) : base(fileFormat, asm, resourceName, namePolicy) { }
+        public LocalizationEmbeddedReaderStringLines(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, asm, resourceName, namePolicy, throwIfNotFound) { }
+
+        static IEnumerable<KeyValuePair<string, string>> empty = new KeyValuePair<string, string>[0];
 
         IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
         {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
-                return FileFormat.ReadStringLines(s, NamePolicy).GetEnumerator();
+            try
+            {
+                using (Stream s = Asm.GetManifestResourceStream(ResourceName))
+                {
+                    if (!ThrowIfNotFound && s==null) return empty.GetEnumerator();
+                    return FileFormat.ReadStringLines(s, NamePolicy).GetEnumerator();
+                }
+            }
+            catch (FileNotFoundException) when (!ThrowIfNotFound)
+            {
+                return empty.GetEnumerator();
+            }
         }
 
         public override IEnumerator GetEnumerator()
-        {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
-                return FileFormat.ReadStringLines(s, NamePolicy).GetEnumerator();
-        }
+            => ((IEnumerable<KeyValuePair<string, string>>)this).GetEnumerator();
     }
 
     /// <summary>
@@ -51,19 +62,28 @@ namespace Lexical.Localization.Utils
     /// </summary>
     public class LocalizationEmbeddedReaderKeyLines : LocalizationEmbeddedReader, IEnumerable<KeyValuePair<IAssetKey, string>>
     {
-        public LocalizationEmbeddedReaderKeyLines(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy) : base(fileFormat, asm, resourceName, namePolicy) { }
+        public LocalizationEmbeddedReaderKeyLines(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, asm, resourceName, namePolicy, throwIfNotFound) { }
+
+        static IEnumerable<KeyValuePair<IAssetKey, string>> empty = new KeyValuePair<IAssetKey, string>[0];
 
         IEnumerator<KeyValuePair<IAssetKey, string>> IEnumerable<KeyValuePair<IAssetKey, string>>.GetEnumerator()
         {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
-                return FileFormat.ReadKeyLines(s, NamePolicy).GetEnumerator();
+            try
+            {
+                using (Stream s = Asm.GetManifestResourceStream(ResourceName))
+                {
+                    if (!ThrowIfNotFound && s == null) return empty.GetEnumerator();
+                    return FileFormat.ReadKeyLines(s, NamePolicy).GetEnumerator();
+                }
+            }
+            catch (FileNotFoundException) when (!ThrowIfNotFound)
+            {
+                return empty.GetEnumerator();
+            }
         }
 
         public override IEnumerator GetEnumerator()
-        {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
-                return FileFormat.ReadKeyLines(s, NamePolicy).GetEnumerator();
-        }
+            => ((IEnumerable<KeyValuePair<IAssetKey, string>>)this).GetEnumerator();
     }
 
     /// <summary>
@@ -71,25 +91,30 @@ namespace Lexical.Localization.Utils
     /// </summary>
     public class LocalizationEmbeddedReaderKeyTree : LocalizationEmbeddedReader, IEnumerable<IKeyTree>
     {
-        public LocalizationEmbeddedReaderKeyTree(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy) : base(fileFormat, asm, resourceName, namePolicy) { }
+        public LocalizationEmbeddedReaderKeyTree(ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, asm, resourceName, namePolicy, throwIfNotFound) { }
+
+        static IEnumerable<IKeyTree> empty = new IKeyTree[0];
 
         IEnumerator<IKeyTree> IEnumerable<IKeyTree>.GetEnumerator()
         {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
+            try
             {
-                IKeyTree tree = FileFormat.ReadKeyTree(s, NamePolicy);
-                return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
+                using (Stream s = Asm.GetManifestResourceStream(ResourceName))
+                {
+                    if (!ThrowIfNotFound && s == null) return empty.GetEnumerator();
+                    IKeyTree tree = FileFormat.ReadKeyTree(s, NamePolicy);
+                    if (tree == null) return empty.GetEnumerator();
+                    return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
+                }
+            }
+            catch (FileNotFoundException) when (!ThrowIfNotFound)
+            {
+                return empty.GetEnumerator();
             }
         }
 
         public override IEnumerator GetEnumerator()
-        {
-            using (Stream s = Asm.GetManifestResourceStream(ResourceName))
-            {
-                IKeyTree tree = FileFormat.ReadKeyTree(s, NamePolicy);
-                return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
-            }
-        }
+            => ((IEnumerable<IKeyTree>)this).GetEnumerator();
     }
 
 }

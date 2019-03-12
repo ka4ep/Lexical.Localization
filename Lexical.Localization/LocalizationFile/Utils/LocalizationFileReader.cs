@@ -6,8 +6,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 
 namespace Lexical.Localization.Utils
 {
@@ -28,10 +26,12 @@ namespace Lexical.Localization.Utils
     public abstract class LocalizationFileReader : LocalizationReader
     {
         public string FileName { get; protected set; }
+        public bool ThrowIfNotFound { get; protected set; }
 
-        public LocalizationFileReader(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy) : base(fileFormat, namePolicy)
+        public LocalizationFileReader(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, namePolicy)
         {
             this.FileName = filename ?? throw new ArgumentNullException(nameof(FileName));
+            this.ThrowIfNotFound = throwIfNotFound;
         }
 
         public override string ToString()
@@ -43,17 +43,17 @@ namespace Lexical.Localization.Utils
     /// </summary>
     public class LocalizationFileReaderStringLines : LocalizationFileReader, IEnumerable<KeyValuePair<string, string>>
     {
-        public LocalizationFileReaderStringLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy) : base(fileFormat, filename, namePolicy) { }
+        public LocalizationFileReaderStringLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, filename, namePolicy, throwIfNotFound) { }
 
         IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
         {
-            IEnumerable<KeyValuePair<string, string>> lines = LocalizationReaderExtensions_.ReadFileAsStringLines(FileFormat, FileName, NamePolicy);
+            IEnumerable<KeyValuePair<string, string>> lines = LocalizationReaderExtensions_.ReadFileAsStringLines(FileFormat, FileName, NamePolicy, ThrowIfNotFound);
             return lines.GetEnumerator();
         }
 
         public override IEnumerator GetEnumerator()
         {
-            IEnumerable<KeyValuePair<string, string>> lines = LocalizationReaderExtensions_.ReadFileAsStringLines(FileFormat, FileName, NamePolicy);
+            IEnumerable<KeyValuePair<string, string>> lines = LocalizationReaderExtensions_.ReadFileAsStringLines(FileFormat, FileName, NamePolicy, ThrowIfNotFound);
             return lines.GetEnumerator();
         }
     }
@@ -63,17 +63,17 @@ namespace Lexical.Localization.Utils
     /// </summary>
     public class LocalizationFileReaderKeyLines : LocalizationFileReader, IEnumerable<KeyValuePair<IAssetKey, string>>
     {
-        public LocalizationFileReaderKeyLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy) : base(fileFormat, filename, namePolicy) { }
+        public LocalizationFileReaderKeyLines(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, filename, namePolicy, throwIfNotFound) { }
 
         IEnumerator<KeyValuePair<IAssetKey, string>> IEnumerable<KeyValuePair<IAssetKey, string>>.GetEnumerator()
         {
-            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationReaderExtensions_.ReadFileAsKeyLines(FileFormat, FileName, NamePolicy);
+            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationReaderExtensions_.ReadFileAsKeyLines(FileFormat, FileName, NamePolicy, ThrowIfNotFound);
             return lines.GetEnumerator();
         }
 
         public override IEnumerator GetEnumerator()
         {
-            IEnumerable lines = LocalizationReaderExtensions_.ReadFileAsKeyLines(FileFormat, FileName, NamePolicy);
+            IEnumerable lines = LocalizationReaderExtensions_.ReadFileAsKeyLines(FileFormat, FileName, NamePolicy, ThrowIfNotFound);
             return lines.GetEnumerator();
         }
 
@@ -86,22 +86,27 @@ namespace Lexical.Localization.Utils
     /// </summary>
     public class LocalizationFileReaderKeyTree : LocalizationFileReader, IEnumerable<IKeyTree>
     {
-        public LocalizationFileReaderKeyTree(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy) : base(fileFormat, filename, namePolicy) { }
+        public LocalizationFileReaderKeyTree(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, filename, namePolicy, throwIfNotFound) { }
+        static IKeyTree[] no_trees = new IKeyTree[0];
 
         IEnumerator<IKeyTree> IEnumerable<IKeyTree>.GetEnumerator()
         {
-            IKeyTree tree = LocalizationReaderExtensions_.ReadFileAsKeyTree(FileFormat, FileName, NamePolicy);
-            return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
+            IKeyTree tree = LocalizationReaderExtensions_.ReadFileAsKeyTree(FileFormat, FileName, NamePolicy, ThrowIfNotFound);
+            IKeyTree[] trees = tree == null ? no_trees : new IKeyTree[] { tree };
+            return ((IEnumerable<IKeyTree>)trees).GetEnumerator();
         }
 
         public override IEnumerator GetEnumerator()
         {
-            IKeyTree tree = LocalizationReaderExtensions_.ReadFileAsKeyTree(FileFormat, FileName, NamePolicy);
-            return new IKeyTree[] { tree }.GetEnumerator();
+            IKeyTree tree = LocalizationReaderExtensions_.ReadFileAsKeyTree(FileFormat, FileName, NamePolicy, ThrowIfNotFound);
+            IKeyTree[] trees = tree == null ? no_trees : new IKeyTree[] { tree };
+            return ((IEnumerable<IKeyTree>)trees).GetEnumerator();
         }
 
         public override string ToString()
             => FileName;
     }
+
+
 
 }

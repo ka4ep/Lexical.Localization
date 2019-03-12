@@ -2,9 +2,9 @@
 
 This article describes recommended practice for writing a localized class library that doesn't use dependency injection.
 
-The developer of class library may want to provide its own builtin localizations. 
+The developer of a class library may want to provide builtin localizations. 
 The recommended practice is to create a class **LibraryAssetSources** into the class library.
-It should implement **ILibraryAssetSources** as a signal to notify that the class provides the localizations for the library.
+It should implement **ILibraryAssetSources** as a signal that it provides the localizations for the library.
 
 Internal localization files are typically added embedded resources.
 

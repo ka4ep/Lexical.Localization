@@ -23,7 +23,7 @@ namespace TutorialProject3
 
             // Install TutorialLibrary's ILibraryAssetSources.
             Assembly library = typeof(MyClass).Assembly;
-            services.AddAssetLibrarySources(library);
+            services.AddLibraryAssetSources(library);
 
             // Install additional localization that was not available in the TutorialLibrary.
             services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization3-fi.xml"));
