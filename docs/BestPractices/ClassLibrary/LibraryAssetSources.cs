@@ -6,7 +6,7 @@ namespace TutorialLibrary1
     public class LibraryAssetSources : List<IAssetSource>, ILibraryAssetSources
     {
         /// <summary>
-        /// Asset source to a local embedded resource.
+        /// A local embedded localization file.
         /// </summary>
         public readonly IAssetSource EmbeddedLocalizationSource = 
                 LocalizationReaderMap.Instance.EmbeddedAssetSource(
