@@ -19,7 +19,7 @@ namespace TutorialLibrary1
         LibraryLocalization(IAssetRoot linkedTo) : base(linkedTo)
         {
             // Add library's internal assets here
-            Builder.AddSources(new LibraryAssets());
+            Builder.AddSources(new LibraryAssetSources());
             // Apply changes
             Builder.Build();
         }

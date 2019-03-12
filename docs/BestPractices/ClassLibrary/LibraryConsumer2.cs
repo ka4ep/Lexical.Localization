@@ -16,7 +16,7 @@ namespace TutorialProject1
 
             MyClass myClass = new MyClass();
 
-            // Use the culture that was provided with the class library (LibraryAssets)
+            // Use the culture that was provided with the class library (LibraryAssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass.Do());
 

@@ -3,7 +3,7 @@
 This article describes recommended practice for writing a localized class library that uses inversion of control.
 
 The developer of class library may want to provide its own builtin localizations. 
-The recommended practice is to create a class **LibraryAssets** into the class library.
+The recommended practice is to create a class **LibraryAssetSources** into the class library.
 It should implement **ILibraryAssetSources** as a signal to notify that the class provides the localizations for the library.
 
 Internal localization files are typically added built-in as embedded resources.
@@ -15,25 +15,26 @@ using Microsoft.Extensions.Logging;
 
 namespace TutorialLibrary2
 {
-    public class LibraryAssets : List<IAssetSource>, ILibraryAssetSources
+    public class LibraryAssetSources : List<IAssetSource>, ILibraryAssetSources
     {
         /// <summary>
-        /// This is an asset source to local embedded resource
+        /// Asset source to a local embedded resource.
         /// </summary>
-        public readonly IAssetSource EmbeddedLocalizationSource = XmlLocalizationReader.Instance.EmbeddedAssetSource(
-                    asm: typeof(LibraryAssets).Assembly,
+        public readonly IAssetSource EmbeddedLocalizationSource = 
+                LocalizationReaderMap.Instance.EmbeddedAssetSource(
+                    asm: typeof(LibraryAssetSources).Assembly,
                     resourceName: "docs.LibraryLocalization2-de.xml");
 
-        public LibraryAssets() : base()
+        public LibraryAssetSources() : base()
         {
             // Asset sources are added here
             Add(EmbeddedLocalizationSource);
         }
 
-        public LibraryAssets(ILogger<LibraryAssets> logger) : this()
+        public LibraryAssetSources(ILogger<LibraryAssetSources> logger) : this()
         {
             // Use service from dependency injection
-            logger?.LogInformation("Initializing LibraryAssets.");
+            logger?.LogInformation("Initializing LibraryAssetSources.");
         }
     }
 }
@@ -129,7 +130,7 @@ builder.AddLibraryAssetSources(library).Build();
 IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>();
 MyClass myClass = new MyClass(classLocalizer);
 
-// Use the culture that was provided with the class library (LibraryAssets)
+// Use the culture that was provided with the class library (LibraryAssetSources)
 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
 Console.WriteLine(myClass.Do());
 ```
@@ -163,7 +164,7 @@ namespace TutorialProject2
             IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>();
             MyClass myClass = new MyClass(classLocalizer);
 
-            // Use the culture that was provided with the class library (LibraryAssets)
+            // Use the culture that was provided with the class library (LibraryAssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass.Do());
             #endregion Snippet
@@ -217,7 +218,7 @@ namespace TutorialProject2
             IAssetKey<MyClass> classLocalizer = localizer.Type<MyClass>();
             MyClassB myClass = new MyClassB(classLocalizer);
 
-            // Use the culture that was provided with the class library (LibraryAssets)
+            // Use the culture that was provided with the class library (LibraryAssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass.Do());
 
@@ -283,7 +284,7 @@ using (var provider = services.BuildServiceProvider())
     // Create class
     MyClass myClass = provider.GetService<MyClass>();
 
-    // Use the culture that was provided by with the class library (LibraryAssets)
+    // Use the culture that was provided by with the class library (LibraryAssetSources)
     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
     Console.WriteLine(myClass.Do());
 
@@ -337,7 +338,7 @@ namespace TutorialProject2
                 // Create class
                 MyClass myClass = provider.GetService<MyClass>();
 
-                // Use the culture that was provided by with the class library (LibraryAssets)
+                // Use the culture that was provided by with the class library (LibraryAssetSources)
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
                 Console.WriteLine(myClass.Do());
 

@@ -3,7 +3,7 @@
 This article describes recommended practice for writing a class library that, for purposes of localization, is compatible with and without Dependency Injection.
 
 The developer of class library may want to provide its own builtin localizations. 
-The recommended practice is to create a class **LibraryAssets** into the class library.
+The recommended practice is to create a class **LibraryAssetSources** into the class library.
 It should implement **ILibraryAssetSources** as a signal to notify that the class provides the localizations for the library.
 
 Internal localization files are typically added built-in as embedded resources.
@@ -14,17 +14,19 @@ using Lexical.Localization;
 
 namespace TutorialLibrary3
 {
-    public class LibraryAssets : List<IAssetSource>, ILibraryAssetSources
+    public class LibraryAssetSources : List<IAssetSource>, ILibraryAssetSources
     {
-        public readonly IAssetSource EmbeddedLocalizationSource;
-
-        public LibraryAssets() : base()
-        {
-            // Asset sources are added here
-            EmbeddedLocalizationSource = XmlLocalizationReader.Instance.EmbeddedAssetSource(
-                    asm: GetType().Assembly,
+        /// <summary>
+        /// Asset source to a local embedded resource.
+        /// </summary>
+        public readonly IAssetSource EmbeddedLocalizationSource = 
+                LocalizationReaderMap.Instance.EmbeddedAssetSource(
+                    asm: typeof(LibraryAssetSources).Assembly,
                     resourceName: "docs.LibraryLocalization3-de.xml");
 
+        public LibraryAssetSources() : base()
+        {
+            // Asset sources are added here
             Add(EmbeddedLocalizationSource);
         }
     }
@@ -77,7 +79,7 @@ namespace TutorialLibrary3
         LibraryLocalization(IAssetRoot linkedTo) : base(linkedTo)
         {
             // Add library's internal assets here
-            Builder.AddSources(new LibraryAssets());
+            Builder.AddSources(new LibraryAssetSources());
             // Apply changes
             Builder.Build();
         }
@@ -217,7 +219,7 @@ The application can supply additional localization sources with **<i>IAssetBuild
 // Create class without localizer
 MyClass myClass1 = new MyClass(default);
 
-// Use the culture that was provided by with the class library (LibraryAssets)
+// Use the culture that was provided by with the class library (LibraryAssetSources)
 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
 Console.WriteLine(myClass1.Do());
 
@@ -265,7 +267,7 @@ namespace TutorialProject3
             // Create class without localizer
             MyClass myClass1 = new MyClass(default);
 
-            // Use the culture that was provided by with the class library (LibraryAssets)
+            // Use the culture that was provided by with the class library (LibraryAssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass1.Do());
 
@@ -342,7 +344,7 @@ using (var provider = services.BuildServiceProvider())
     // Create class
     MyClass myClass = provider.GetService<MyClass>();
 
-    // Use the culture that was provided by with the class library (LibraryAssets)
+    // Use the culture that was provided by with the class library (LibraryAssetSources)
     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
     Console.WriteLine(myClass.Do());
 
@@ -393,7 +395,7 @@ namespace TutorialProject3
                 // Create class
                 MyClass myClass = provider.GetService<MyClass>();
 
-                // Use the culture that was provided by with the class library (LibraryAssets)
+                // Use the culture that was provided by with the class library (LibraryAssetSources)
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
                 Console.WriteLine(myClass.Do());
 

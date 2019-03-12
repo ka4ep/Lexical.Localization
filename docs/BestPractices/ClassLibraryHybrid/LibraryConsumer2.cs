@@ -23,7 +23,7 @@ namespace TutorialProject3
             // Create class without localizer
             MyClass myClass1 = new MyClass(default);
 
-            // Use the culture that was provided by with the class library (LibraryAssets)
+            // Use the culture that was provided by with the class library (LibraryAssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass1.Do());
 

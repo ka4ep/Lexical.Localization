@@ -3,11 +3,11 @@
 This article describes recommended practice for writing a class library that, for purposes of localization, is compatible with and without Dependency Injection.
 
 The developer of class library may want to provide its own builtin localizations. 
-The recommended practice is to create a class **LibraryAssets** into the class library.
+The recommended practice is to create a class **LibraryAssetSources** into the class library.
 It should implement **ILibraryAssetSources** as a signal to notify that the class provides the localizations for the library.
 
 Internal localization files are typically added built-in as embedded resources.
-[!code-csharp[Snippet](LibraryAssets.cs)]
+[!code-csharp[Snippet](LibraryAssetSources.cs)]
 <details>
   <summary>The example localization file *LibraryLocalization3-de.xml*.  (<u>click here</u>)</summary>
 [!code-xml[Snippet](../../LibraryLocalization3-de.xml)]

@@ -25,7 +25,7 @@ namespace TutorialProject2
             IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>();
             MyClass myClass = new MyClass(classLocalizer);
 
-            // Use the culture that was provided with the class library (LibraryAssets)
+            // Use the culture that was provided with the class library (LibraryAssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass.Do());
             #endregion Snippet

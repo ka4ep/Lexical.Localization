@@ -40,7 +40,7 @@ namespace TutorialProject2
                 // Create class
                 MyClass myClass = provider.GetService<MyClass>();
 
-                // Use the culture that was provided by with the class library (LibraryAssets)
+                // Use the culture that was provided by with the class library (LibraryAssetSources)
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
                 Console.WriteLine(myClass.Do());
 
