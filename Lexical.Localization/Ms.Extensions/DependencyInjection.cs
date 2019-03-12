@@ -160,7 +160,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Search for classes that implement <see cref="ILibraryAssetSources"/> in <paramref name="library"/>.
         /// Instantiates them and adds as services of <see cref="ILibraryAssetSources"/>, which will be picked up
-        /// by <see cref="AddLexicalLocalization"/>.
+        /// by services installed by <see cref="AddLexicalLocalization"/>.
         /// 
         /// </summary>
         /// <param name="services"></param>

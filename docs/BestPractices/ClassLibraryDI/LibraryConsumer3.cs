@@ -15,6 +15,7 @@ namespace TutorialProject2
             #region Snippet
             IServiceCollection services = new ServiceCollection();
 
+            // Install logging service
             services.AddLogging();
 
             // Install default IStringLocalizerFactory
@@ -24,7 +25,7 @@ namespace TutorialProject2
                 useGlobalInstance: false,
                 addCache: false);
 
-            // Install TutorialLibrary's [AssetSources].
+            // Install TutorialLibrary's ILibraryAssetSources.
             Assembly library = typeof(MyClass).Assembly;
             services.AddAssetLibrarySources(library);
 

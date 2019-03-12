@@ -21,7 +21,7 @@ namespace TutorialProject3
                 useGlobalInstance: false,
                 addCache: false);
 
-            // Install TutorialLibrary's [AssetSources].
+            // Install TutorialLibrary's ILibraryAssetSources.
             Assembly library = typeof(MyClass).Assembly;
             services.AddAssetLibrarySources(library);
 

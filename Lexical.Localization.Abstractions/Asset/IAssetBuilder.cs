@@ -59,8 +59,8 @@ namespace Lexical.Localization
 
 
         /// <summary>
-        /// Search for classes with [AssetSources] in <paramref name="library"/>.
-        /// Instantiates them and adds as <see cref="IEnumerable{IAssetSource}"/>.
+        /// Search for classes that implement <see cref="ILibraryAssetSources"/> in <paramref name="library"/>.
+        /// Instantiates them and adds as <see cref="IAssetSource"/>.
         /// 
         /// </summary>
         /// <param name="assetBuilder"></param>

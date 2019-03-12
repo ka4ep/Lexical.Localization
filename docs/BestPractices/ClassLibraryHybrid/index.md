@@ -27,7 +27,7 @@ For inversion of control, the class library can use IStringLocalizer abstraction
 <br/>
 
 Application that deploys with its localizer can include its depending libraries internal localizations with 
-**<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** which searches for **[AssetSources]** and adds them as *IAssetSource*s.
+**<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** which searches for **ILibraryAssetSources** and adds them as *IAssetSource*s.
 # [Snippet](#tab/snippet-1)
 [!code-csharp[Snippet](LibraryConsumer1.cs#Snippet)]
 # [Full Code](#tab/full-1)
