@@ -37,7 +37,6 @@ namespace Lexical.Localization
         /// 
         /// After this call, the <paramref name="serviceCollection"/> still needs to be populated with 
         /// instances of <see cref="IAssetSource"/>, such as:
-        ///     <see cref="ConfigurationAssetSource"/>
         ///     <see cref="AssetResourceDictionary"/>
         ///     <see cref="LocalizationStringAsset"/>
         /// 
@@ -105,7 +104,28 @@ namespace Lexical.Localization
             {
                 serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetBuilder>(s=>
                 {
+                    // Get IAssetSource services
                     IEnumerable<IAssetSource> assetSources = s.GetServices<IAssetSource>();
+                    // Get IEnumerable<IAssetSource> services
+                    IEnumerable<IEnumerable<IAssetSource>> assetSourcesLists = s.GetServices<IEnumerable<IAssetSource>>();
+                    // Get IEnumerable<ILibraryAssetSources> services
+                    IEnumerable<ILibraryAssetSources> libraryAssetSourcesLists = s.GetServices<ILibraryAssetSources>();
+                    // Concatenate
+                    if (assetSourcesLists != null)
+                    {
+                        foreach(IEnumerable<IAssetSource> assetSources_ in assetSourcesLists)
+                            assetSources = assetSources == null ? assetSources_ : assetSources.Concat(assetSources_);
+                    }
+                    if (libraryAssetSourcesLists != null)
+                    {
+                        foreach (IEnumerable<IAssetSource> assetSources_ in libraryAssetSourcesLists)
+                            assetSources = assetSources == null ? assetSources_ : assetSources.Concat(assetSources_);
+                    }
+                    // Take distinct
+                    if (assetSources != null) assetSources = assetSources.Distinct();
+                    // Is it still empty
+                    if (assetSources == null) assetSources = new IAssetSource[0];
+                    // Create builder
                     AssetBuilder.OneBuildInstance builder = new AssetBuilder.OneBuildInstance(assetSources);
                     return builder;
                 }));
@@ -145,23 +165,25 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Search for classes with [AssetSources] in <paramref name="library"/>.
-        /// Instantiates them and adds as <see cref="IEnumerable{IAssetSource}"/>.
+        /// Search for classes that implement <see cref="ILibraryAssetSources"/> in <paramref name="library"/>.
+        /// Instantiates them and adds as services of <see cref="ILibraryAssetSources"/>, which will be picked up
+        /// by <see cref="AddLexicalLocalization"/>.
         /// 
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="library"></param>
+        /// <param name="library">(optional) library to scan</param>
         public static IServiceCollection AddAssetLibrarySources(this IServiceCollection services, Assembly library)
         {
             if (library == null) return services;
 
-            IEnumerable<IAssetSource> librarysAssetSources =
-                    library.GetExportedTypes()
-                    .Where(t => t.GetCustomAttributes(typeof(AssetSourcesAttribute)).FirstOrDefault() != null)
-                    .SelectMany(t => (IEnumerable<IAssetSource>)Activator.CreateInstance(t));
+            IEnumerable<ServiceDescriptor> librarysAssetSourceServices =
+                    library
+                    .GetExportedTypes()
+                    .Where(t => typeof(ILibraryAssetSources).IsAssignableFrom(t))
+                    .Select(t => new ServiceDescriptor(typeof(ILibraryAssetSources), t, ServiceLifetime.Singleton));
 
-            foreach (IAssetSource src in librarysAssetSources)
-                services.AddSingleton<IAssetSource>(src);
+            foreach (ServiceDescriptor serviceDescriptor in librarysAssetSourceServices)
+                services.Add(serviceDescriptor);
 
             return services;
         }

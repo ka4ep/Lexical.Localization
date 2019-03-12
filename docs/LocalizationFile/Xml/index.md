@@ -41,3 +41,6 @@ And with "Line" node.
   <Line Culture="sv" Type="ConsoleApp1.MyController" Key="Error">Det funkar inte (Kod=0x{0:X8})</Line>
 </Localization>
 ```
+
+
+<!-- Write about parameter multiple times Section="aa" Section_1="aa" -->

@@ -4,29 +4,36 @@ This article describes recommended practice for writing a localized class librar
 
 The developer of class library may want to provide its own builtin localizations. 
 The recommended practice is to create a class **LibraryAssets** into the class library.
-It should use **[AssetSources]** attribute to a signal that this class provides the localizations.
+It should implement **ILibraryAssetSources** as a signal to notify that the class provides the localizations for the library.
 
 Internal localization files are typically added built-in as embedded resources.
 
 ```csharp
 using System.Collections.Generic;
 using Lexical.Localization;
+using Microsoft.Extensions.Logging;
 
 namespace TutorialLibrary2
 {
-    [AssetSources]
-    public class LibraryAssets : List<IAssetSource>
+    public class LibraryAssets : List<IAssetSource>, ILibraryAssetSources
     {
-        public readonly IAssetSource EmbeddedLocalizationSource;
+        /// <summary>
+        /// This is an asset source to local embedded resource
+        /// </summary>
+        public readonly IAssetSource EmbeddedLocalizationSource = XmlLocalizationReader.Instance.EmbeddedAssetSource(
+                    asm: typeof(LibraryAssets).Assembly,
+                    resourceName: "docs.LibraryLocalization2-de.xml");
 
         public LibraryAssets() : base()
         {
             // Asset sources are added here
-            EmbeddedLocalizationSource = XmlLocalizationReader.Instance.EmbeddedAssetSource(
-                    asm: GetType().Assembly,
-                    resourceName: "docs.LibraryLocalization2-de.xml");
-
             Add(EmbeddedLocalizationSource);
+        }
+
+        public LibraryAssets(ILogger<LibraryAssets> logger) : this()
+        {
+            // Use service from dependency injection
+            logger?.LogInformation("Initializing LibraryAssets.");
         }
     }
 }
@@ -251,6 +258,8 @@ The extension method **AddLexicalLocalization(this <i>IServiceCollection</i>)** 
 ```csharp
 IServiceCollection services = new ServiceCollection();
 
+services.AddLogging();
+
 // Install default IStringLocalizerFactory
 services.AddLexicalLocalization(
     addStringLocalizerService: true,
@@ -265,7 +274,7 @@ services.AddAssetLibrarySources(library);
 // Install additional localization that was not available in the TutorialLibrary.
 services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization2-fi.xml"));
 
-// Service MyClass2
+// Service MyClass
 services.AddTransient<MyClass, MyClass>();
 
 // Create instance container
@@ -303,6 +312,8 @@ namespace TutorialProject2
             #region Snippet
             IServiceCollection services = new ServiceCollection();
 
+            services.AddLogging();
+
             // Install default IStringLocalizerFactory
             services.AddLexicalLocalization(
                 addStringLocalizerService: true,
@@ -317,7 +328,7 @@ namespace TutorialProject2
             // Install additional localization that was not available in the TutorialLibrary.
             services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization2-fi.xml"));
 
-            // Service MyClass2
+            // Service MyClass
             services.AddTransient<MyClass, MyClass>();
 
             // Create instance container

@@ -15,6 +15,8 @@ namespace TutorialProject2
             #region Snippet
             IServiceCollection services = new ServiceCollection();
 
+            services.AddLogging();
+
             // Install default IStringLocalizerFactory
             services.AddLexicalLocalization(
                 addStringLocalizerService: true,
@@ -29,7 +31,7 @@ namespace TutorialProject2
             // Install additional localization that was not available in the TutorialLibrary.
             services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.FileAssetSource("LibraryLocalization2-fi.xml"));
 
-            // Service MyClass2
+            // Service MyClass
             services.AddTransient<MyClass, MyClass>();
 
             // Create instance container

@@ -35,6 +35,7 @@ namespace Lexical.Localization
         /// Reads lines from xml element.
         /// </summary>
         /// <param name="element">parent element that contains data elements</param>
+        /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
         public IEnumerable<KeyValuePair<string, string>> ReadElement(XElement element, IAssetKeyNamePolicy namePolicy)
         {

@@ -4,7 +4,7 @@ This article describes recommended practice for writing a class library that, fo
 
 The developer of class library may want to provide its own builtin localizations. 
 The recommended practice is to create a class **LibraryAssets** into the class library.
-It should use **[AssetSources]** attribute to a signal that this class provides the localizations.
+It should implement **ILibraryAssetSources** as a signal to notify that the class provides the localizations for the library.
 
 Internal localization files are typically added built-in as embedded resources.
 [!code-csharp[Snippet](LibraryAssets.cs)]

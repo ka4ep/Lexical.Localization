@@ -4,7 +4,7 @@ using Lexical.Localization;
 namespace TutorialLibrary1
 {
     [AssetSources]
-    public class LibraryAssets : List<IAssetSource>
+    public class LibraryAssets : List<IAssetSource>, ILibraryAssetSources
     {
         public readonly IAssetSource EmbeddedLocalizationSource;
 
