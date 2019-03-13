@@ -184,6 +184,8 @@ namespace Lexical.Localization
         /// Create a container where localization key-values can be written to.
         /// 
         /// If <paramref name="srcText"/> contains previous content, it is updated and rewritten to <paramref name="dstText"/> according to rules in <paramref name="flags"/>.
+        /// 
+        /// The callee mustn't close either <paramref name="srcText"/> or <paramref name="dstText"/>.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="srcText">(optional) source text, used if previous content are updated.</param>
@@ -203,6 +205,8 @@ namespace Lexical.Localization
         /// Write <paramref name="lines"/> to <paramref name="dstStream"/>.
         /// 
         /// If <paramref name="srcStream"/> contains previous content, it is updated and rewritten to <paramref name="dstStream"/> according to rules in <paramref name="flags"/>.
+        /// 
+        /// The callee mustn't close either <paramref name="srcStream"/> or <paramref name="dstStream"/>.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
@@ -241,6 +245,8 @@ namespace Lexical.Localization
         /// Write <paramref name="lines"/> to <paramref name="dstStream"/>.
         /// 
         /// If <paramref name="srcStream"/> contains previous content, it is updated and rewritten to <paramref name="dstStream"/> according to rules in <paramref name="flags"/>.
+        /// 
+        /// The callee mustn't close either <paramref name="srcStream"/> or <paramref name="dstStream"/>.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
@@ -260,6 +266,8 @@ namespace Lexical.Localization
         /// Write <paramref name="tree"/> to <paramref name="dstStream"/>.
         /// 
         /// If <paramref name="srcStream"/> contains previous content, it is updated and rewritten to <paramref name="dstStream"/> according to rules in <paramref name="flags"/>.
+        /// 
+        /// The callee mustn't close either <paramref name="srcStream"/> or <paramref name="dstStream"/>.
         /// </summary>
         /// <param name="tree"></param>
         /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
@@ -277,6 +285,8 @@ namespace Lexical.Localization
     {
         /// <summary>
         /// Create a container where localization key-values can be written to.
+        /// 
+        /// If <paramref name="srcText"/> contains previous content, it is updated and rewritten to <paramref name="dstText"/> according to rules in <paramref name="flags"/>.
         /// 
         /// If <paramref name="srcText"/> contains previous content, it is updated and rewritten to <paramref name="dstText"/> according to rules in <paramref name="flags"/>.
         /// </summary>
