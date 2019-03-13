@@ -115,6 +115,9 @@ namespace Lexical.Localization
         IEnumerable<KeyValuePair<string, string>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
     }
 
+    /// <summary>
+    /// Flags for write operation to localization files.
+    /// </summary>
     [Flags]
     public enum LocalizationFileWriteFlags : UInt32
     {

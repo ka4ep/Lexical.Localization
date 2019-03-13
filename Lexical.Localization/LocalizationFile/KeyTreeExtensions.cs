@@ -6,7 +6,6 @@
 using Lexical.Localization.Utils;
 using System.Linq;
 using System.Collections.Generic;
-using Lexical.Localization.Internal;
 
 namespace Lexical.Localization
 {
@@ -98,38 +97,39 @@ namespace Lexical.Localization
             => new LocalizationKeyLinesSource(trees.SelectMany(tree => tree.ToKeyLines()), sourceHint);
 
         /// <summary>
-        /// Add a prefix to the key of each first level node.
+        /// Add prefix <paramref name="prefix"/> to a <paramref name="trees"/>, by adding a new first tree level.
         /// 
-        /// If <paramref name="left"/> is null or contains no parameters, then original <paramref name="trees"/> are returned.
+        /// If <paramref name="prefix"/> is null or contains no parameters, then original <paramref name="trees"/> are returned.
         /// </summary>
         /// <param name="trees"></param>
-        /// <param name="left">(optional)</param>
+        /// <param name="prefix">(optional)</param>
         /// <returns></returns>
-        public static IEnumerable<IKeyTree> AddKeyPrefix(this IEnumerable<IKeyTree> trees, IAssetKey left)
+        public static IEnumerable<IKeyTree> AddKeyPrefix(this IEnumerable<IKeyTree> trees, IAssetKey prefix)
         {
-            Key key = Key.CreateFrom(left);
-            if (key == null) return trees;
-            return _AddKeyPrefix(trees, key);
+            if (prefix == null || prefix.GetParameterCount()==0) return trees;
+            return trees.Select(tree => tree.AddKeyPrefix(prefix));
         }
 
-        static IEnumerable<IKeyTree> _AddKeyPrefix(this IEnumerable<IKeyTree> trees, Key left)
+        /// <summary>
+        /// Add prefix <paramref name="prefix"/> to a <paramref name="tree"/>, by adding a new first tree level.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="prefix">(optional)Parameters to add</param>
+        /// <returns><paramref name="tree"/> as is or a new instance of <see cref="IKeyTree"/> that is modified</returns>
+        public static IKeyTree AddKeyPrefix(this IKeyTree tree, IAssetKey prefix)
         {
-            Key _left = null;
-            foreach (var parameter in left.GetParameters())
-                _left = Key.Create(parameter.Key, parameter.Value);
-
-            foreach (IKeyTree tree in trees)
-            {
-                // Transform tree
-                if (_left != null)
-                {
-                    foreach (IKeyTree node in tree.Children)
-                        node.Key = _left.ConcatIfNew(node.Key);
-                }
-
-                // Return tree
-                yield return tree;
-            }
+            // Make copy
+            Key _prefix = Key.CreateFrom(prefix);
+            // Return as is.
+            if (_prefix == null) return tree;
+            // Create new modified version
+            KeyTree newTree = new KeyTree( Key.CreateFrom(tree.Key) );
+            // Add new level 1
+            IKeyTree newTreeLevel1 = newTree.GetOrCreate(_prefix);
+            // Merge rest of the children
+            newTreeLevel1.Merge(tree, true);
+            // Return tree
+            return newTree;
         }
 
         /// <summary>
@@ -166,6 +166,357 @@ namespace Lexical.Localization
                 // Return tree
                 yield return tree;
             }
+        }
+
+        /// <summary>
+        /// Search child by key.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="key"></param>
+        /// <returns>child node or null if was not found</returns>
+        public static IKeyTree GetChild(this IKeyTree tree, IAssetKey key)
+            => tree.GetChildren(key)?.FirstOrDefault();
+
+        /// <summary>
+        /// Tests if <paramref name="tree"/> has a child with key <paramref name="key"/>.
+        /// 
+        /// If <paramref name="key"/> is null, then returns always false.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool HasChild(this IKeyTree tree, IAssetKey key)
+        {
+            if (key == null) return false;
+            if (!tree.HasChildren) return false;
+            IEnumerable<IKeyTree> children = tree.GetChildren(key);
+            if (children == null) return false;
+            return children.Count() > 0;
+        }
+
+        /// <summary>
+        /// Tests if <paramref name="tree"/> has a <paramref name="value"/>.
+        /// 
+        /// If <paramref name="value"/> is null, then returns always false.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool HasValue(this IKeyTree tree, string value)
+        {
+            if (value == null) return false;
+            if (!tree.HasValues) return false;
+            return tree.Values.Contains(value);
+        }
+
+        /// <summary>
+        /// Get or create node by parameters in <paramref name="key"/>.
+        /// 
+        /// If <paramref name="key"/> contains no parameters, returns <paramref name="node"/>.
+        /// </summary>
+        /// <param name="node">(optional) not to append to</param>
+        /// <param name="key">key that contains parameters</param>
+        /// <returns>existing child, new child, or <paramref name="node"/> if no parameters were provided</returns>
+        public static IKeyTree GetOrCreate(this IKeyTree node, IAssetKey key)
+        {
+            if (node == null) return null;
+
+            // No parameters
+            if (key.GetParameterCount() == 0) return node;
+
+            // Get existing child
+            IKeyTree child = node.GetChild(key);
+            if (child != null) return child;
+
+            // Create child
+            child = node.CreateChild();
+            child.Key = key;
+            return child;
+        }
+
+        /// <summary>
+        /// Adds key and/or value.
+        /// 
+        /// If argument <paramref name="key"/> is given, then get-or-creates child node, otherwise uses <paramref name="node"/>.
+        /// If argument <paramref name="value"/> is given, then adds value.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="key">(optional) possible initial key to set.</param>
+        /// <param name="value">(optional) possible initial value to add</param>
+        /// <returns><paramref name="node"/></returns>
+        public static IKeyTree Add(this IKeyTree node, IAssetKey key, string value)
+        {
+            IKeyTree n = node;
+            if (key != null) n = n.GetChild(key);
+            if (value != null && !n.Values.Contains(value)) n.Values.Add(value);
+            return node;
+        }
+
+        /// <summary>
+        /// Add key-value recursively
+        /// 
+        /// If argument <paramref name="key_parts"/> is given, then get-or-creates decendent node, otherwise uses <paramref name="node"/>.
+        /// If argument <paramref name="value"/> is given then adds value.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="key_parts">(optional) possible initial key to set.</param>
+        /// <param name="value">(optional) possible initial value to add</param>
+        /// <returns>the leaf node where the values was added</returns>
+        public static IKeyTree AddRecursive(this IKeyTree node, IEnumerable<IAssetKey> key_parts, string value)
+        {
+            // Drill into leaf
+            IKeyTree leaf = node;
+            foreach (IAssetKey key in key_parts)
+                leaf = leaf.GetOrCreate(key);
+
+            // Add value
+            if (value != null && !leaf.Values.Contains(value)) leaf.Values.Add(value);
+
+            // Return leaf
+            return leaf;
+        }
+
+        /// <summary>
+        /// Visit every decendent node in level-order.
+        /// 
+        /// Example:
+        ///   .child1
+        ///   .child2
+        ///   .child1.child1
+        ///   .child1.child2
+        ///   .child2.child1
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static IEnumerable<IKeyTree> Decendents(this IKeyTree node)
+        {
+            if (node == null) yield break;
+
+            Queue<IKeyTree> queue = new Queue<IKeyTree>();
+            queue.Enqueue(node);
+            while (queue.Count > 0)
+            {
+                IKeyTree n = queue.Dequeue();
+                if (n != node) yield return n;
+
+                if (n.HasChildren)
+                    foreach (IKeyTree child in n.Children)
+                        queue.Enqueue(child);
+            }
+        }
+
+        /// <summary>
+        /// Visit every decendent node and concatenated key in level-order.
+        /// 
+        /// 
+        /// Example:
+        ///   .child1
+        ///   .child2
+        ///   .child1.child1
+        ///   .child1.child2
+        ///   .child2.child1
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns>nodes and keys</returns>
+        public static IEnumerable<KeyValuePair<IKeyTree, IAssetKey>> DecendentsWithConcatenatedKeys(this IKeyTree node)
+        {
+            if (node == null) yield break;
+
+            Queue<(IKeyTree, IAssetKey)> queue = new Queue<(IKeyTree, IAssetKey)>();
+            queue.Enqueue((node, node.GetConcatenatedKey()));
+            while (queue.Count > 0)
+            {
+                (IKeyTree n, IAssetKey key) = queue.Dequeue();
+                if (n != node) yield return new KeyValuePair<IKeyTree, IAssetKey>(n, key);
+
+                if (n.HasChildren)
+                    foreach (IKeyTree child in n.Children)
+                        queue.Enqueue((child, key.Concat(child.Key)));
+            }
+        }
+
+        /// <summary>
+        /// List parameters from root to tail.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="skipRoot">should "Root" parameter be skipped</param>
+        /// <returns>parameters</returns>
+        public static IEnumerable<KeyValuePair<string, string>> GetConcatenatedParameters(this IKeyTree node, bool skipRoot)
+        {
+            IEnumerable<KeyValuePair<string, string>> result = null;
+            if (node.Parent != null) result = node.Parent.GetConcatenatedParameters(skipRoot);
+            IEnumerable<KeyValuePair<string, string>> key = node.Key.GetParameters(skipRoot);
+            result = result == null ? key : result.Concat(key);
+            return result;
+        }
+
+        /// <summary>
+        /// Get concatenated key from root to <paramref name="node"/>.
+        /// </summary>
+        /// <returns>key</returns>
+        public static IAssetKey GetConcatenatedKey(this IKeyTree node)
+             => node.Parent != null ? node.Parent.GetConcatenatedKey().Concat(node.Key) : node.Key;
+
+        /// <summary>
+        /// Visit all nodes from root to <paramref name="tree"/>.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <returns></returns>
+        public static IKeyTree[] VisitFromRoot(this IKeyTree tree)
+        {
+            if (tree == null) return new IKeyTree[0];
+            int count = 0;
+            for (IKeyTree t = tree; t != null; t = t.Parent) count++;
+            IKeyTree[] result = new IKeyTree[count];
+            for (IKeyTree t = tree; t != null; t = t.Parent)
+                result[--count] = t;
+            return result;
+        }
+
+        /// <summary>
+        /// Get root node of <see cref=""/>.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <returns>root, or null if <paramref name="tree"/> is null</returns>
+        public static IKeyTree GetRoot(this IKeyTree tree)
+        {
+            if (tree == null) return null;
+            while (tree.Parent != null) tree = tree.Parent;
+            return tree;
+        }
+
+        /// <summary>
+        /// Calculate the level of <paramref name="tree"/>.
+        /// <list>
+        /// <item>0: Root</item>
+        /// <item>1: First level</item>
+        /// <item>2: Second level</item>
+        /// </list>
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <returns></returns>
+        public static int GetLevel(this IKeyTree tree)
+        {
+            int level = 0;
+            while (tree.Parent != null)
+            {
+                level++;
+                tree = tree.Parent;
+            }
+            return level;
+        }
+
+        /// <summary>
+        /// Get value count
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static int ValueCount(this IKeyTree node)
+            => node.HasValues ? 0 : node.Values.Count();
+
+        /// <summary>
+        /// Get child count.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static int ChildCount(this IKeyTree node)
+            => node.HasChildren ? 0 : node.Children.Count();
+
+        /// <summary>
+        /// Search decendents for tree nodes that have matching key. 
+        /// </summary>
+        /// <param name="node">node to start search.</param>
+        /// <param name="searchKey">key to search</param>
+        /// <returns>nodes that have matching key</returns>
+        public static IEnumerable<IKeyTree> Search(this IKeyTree node, IAssetKey searchKey)
+        {
+            List<IKeyTree> result = new List<IKeyTree>();
+            _search(node, searchKey, node.Key, result);
+            return result;
+        }
+
+        static void _search(IKeyTree node, IAssetKey searchKey, IAssetKey concatenatedKeyOfNode, List<IKeyTree> result)
+        {
+            // Check for mismatch
+            for (IAssetKey k = concatenatedKeyOfNode; k != null; k = k.GetPreviousKey())
+            {
+                string parameterName = k.GetParameterName();
+                if (parameterName == null || parameterName == "Root") continue;
+                string parameterValue = k.Name;
+
+                bool parameterDetectedInSearchKey = false;
+                for (IAssetKey sk = searchKey; sk != null; sk = sk.GetPreviousKey())
+                {
+                    string _parameterName = sk.GetParameterName();
+                    if (_parameterName == null || _parameterName == "Root") continue;
+                    string _parameterValue = sk.Name;
+                    parameterDetectedInSearchKey |= _parameterValue == parameterValue;
+                    if (parameterDetectedInSearchKey) break;
+                }
+
+                // node has a parameter that was not found in search key. This is wrong branch
+                if (!parameterDetectedInSearchKey) return;
+            }
+
+            // Key match
+            if (AssetKeyComparer.Default.Equals(concatenatedKeyOfNode, searchKey)) { result.Add(node); return; }
+
+            // Recurse
+            if (node.HasChildren)
+            {
+                foreach (IKeyTree child in node.Children)
+                {
+                    IAssetKey newConcatenatedKey = concatenatedKeyOfNode.Concat(child.Key);
+                    _search(child, searchKey, newConcatenatedKey, result);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Merge key-values from <paramref name="mergeFrom"/> to <paramref name="tree"/>.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="mergeFrom"></param>
+        /// <param name="overwriteValues">if true replaces previous values, if false adds new values</param>
+        /// <returns><paramref name="tree"/></returns>
+        public static IKeyTree Merge(this IKeyTree tree, IKeyTree mergeFrom, bool overwriteValues)
+        {
+            Queue<(IKeyTree, IKeyTree)> queue = new Queue<(IKeyTree, IKeyTree)>();
+            queue.Enqueue((tree, mergeFrom));
+            while (queue.Count > 0)
+            {
+                // Dequeue
+                (IKeyTree _tree, IKeyTree _mergeFrom) n = queue.Dequeue();
+
+                // Add or overwrite values
+                if (n._mergeFrom.HasValues)
+                {
+                    ICollection<string> list = n._tree.Values;
+                    if (overwriteValues)
+                    {
+                        list.Clear();
+                        foreach (string value in n._mergeFrom.Values)
+                            list.Add(value);
+                    } else
+                    {
+                        foreach (string value in n._mergeFrom.Values)
+                        {
+                            if (!list.Contains(value)) list.Add(value);
+                        }
+                    }
+                }
+
+                // Queue children
+                if (n._mergeFrom.HasChildren)
+                {
+                    foreach (IKeyTree child in n._mergeFrom.Children)
+                    {
+                        queue.Enqueue((n._tree.GetOrCreate(child.Key), child));
+                    }
+                }
+            }
+
+            return tree;
         }
 
     }
