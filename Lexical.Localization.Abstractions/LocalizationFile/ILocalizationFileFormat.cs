@@ -129,14 +129,22 @@ namespace Lexical.Localization
         Add = 1,
 
         /// <summary>
-        /// Permission to remove entires that no longer exist.
+        /// Permission to remove entires that no longer exist. Remove is recursive.
+        /// If entry contains unrecognized attributes, comments, elements, then regardless
+        /// entry will be removed recursively.
         /// </summary>
         Remove = 2,
 
         /// <summary>
+        /// Permission to remove entires that no longer exist, but be cautious.
+        /// If entry contains unrecognized comments, elements, then remove will not proceed recursively.
+        /// </summary>
+        RemoveCautious = 4,
+
+        /// <summary>
         /// Permission to modify values of existing entries.
         /// </summary>
-        Modify = 4,
+        Modify = 8,
 
         /// <summary>
         /// Overwrite contents of previous file.
@@ -144,7 +152,7 @@ namespace Lexical.Localization
         /// 
         /// Flags <see cref="Remove"/> and <see cref="Modify"/> have no effect with this flag.
         /// </summary>
-        Overwrite = 8,
+        Overwrite = 16,
 
         /// <summary>
         /// Matches old state to new state by effective key.
@@ -158,7 +166,7 @@ namespace Lexical.Localization
         /// Then that node is is matched by effective key, which is equivalent in both cases, and the previous node gets updated.
         /// If this <see cref="EffectiveKeyMatching"/> is false, then old node is removed and new node is created.
         /// </summary>
-        EffectiveKeyMatching = 16,
+        EffectiveKeyMatching = 32,
 
     }
 
