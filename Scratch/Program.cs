@@ -18,7 +18,7 @@ namespace Scratch
             asset = LocalizationReaderMap.Instance.FileAsset("localization.json");
             LocalizationRoot.Builder.AddAsset(asset).Build();
 
-            IKeyTree tree = LocalizationReaderMap.Instance.ReadFileAsKeyTree("localization.json");
+            IKeyTree tree = LocalizationReaderMap.Instance.ReadKeyTree("localization.json");
             Console.WriteLine(tree.ToString());
             Console.WriteLine(tree.Children.First().ToString());
             Console.WriteLine(tree.Children.Take(1).First().ToString());

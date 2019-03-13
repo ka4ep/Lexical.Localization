@@ -7,7 +7,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Lexical.Localization.Internal;
 using Lexical.Localization.Utils;
 
@@ -18,75 +17,92 @@ namespace Lexical.Localization
     /// </summary>
     public static partial class LocalizationReaderExtensions_
     {
+
         /// <summary>
-        /// Read file into assetkey lines.
+        /// Read strings from <paramref name="srcFilename"/> file source. 
         /// </summary>
         /// <param name="fileFormat"></param>
-        /// <param name="filename"></param>
+        /// <param name="srcFilename"></param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="FileNotFoundException">thrown if file was not found and <paramref name="throwIfNotFound"/> is true</exception>
         /// <exception cref="IOException">on io error</exception>
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> ReadFileAsKeyLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+        public static IEnumerable<KeyValuePair<string, string>> ReadStringLines(this ILocalizationFileFormat fileFormat, string srcFilename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
         {
-            if (!throwIfNotFound && !File.Exists(filename)) return no_keylines;
+            if (!throwIfNotFound && !File.Exists(srcFilename)) return no_stringlines;
             try
             {
-                using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    return LocalizationReaderExtensions_.ReadKeyLines(fileFormat, fs, namePolicy).ToArray();
-            } catch (FileNotFoundException) when (!throwIfNotFound)
-            {
-                return no_keylines;
-            }
-        }
-
-        /// <summary>
-        /// Read file into a tree format.
-        /// </summary>
-        /// <param name="fileFormat"></param>
-        /// <param name="filename"></param>
-        /// <param name="namePolicy"></param>
-        /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise null is returned</param>
-        /// <returns>tree or null</returns>
-        /// <exception cref="FileNotFoundException">thrown if file was not found and <paramref name="throwIfNotFound"/> is true</exception>
-        /// <exception cref="IOException">on io error</exception>
-        public static IKeyTree ReadFileAsKeyTree(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-        {
-            if (!throwIfNotFound && !File.Exists(filename)) return null;
-            try
-            {
-                using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    return LocalizationReaderExtensions_.ReadKeyTree(fileFormat, fs, namePolicy);
-            }
-            catch (FileNotFoundException) when (!throwIfNotFound)
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Read file into strings file.
-        /// </summary>
-        /// <param name="fileFormat"></param>
-        /// <param name="filename"></param>
-        /// <param name="namePolicy"></param>
-        /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
-        /// <returns>lines</returns>
-        /// <exception cref="FileNotFoundException">thrown if file was not found and <paramref name="throwIfNotFound"/> is true</exception>
-        /// <exception cref="IOException">on io error</exception>
-        public static IEnumerable<KeyValuePair<string, string>> ReadFileAsStringLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-        {
-            if (!throwIfNotFound && !File.Exists(filename)) return no_stringlines;
-            try
-            {
-                using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    return LocalizationReaderExtensions_.ReadStringLines(fileFormat, fs, namePolicy).ToArray();
+                if (fileFormat is ILocalizationStringLinesTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), namePolicy);
+                if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), namePolicy);
+                if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcFilename.ReadText(), namePolicy).ToStringLines(namePolicy);
+                if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcFilename.ReadStream(), namePolicy).ToStringLines(namePolicy);
+                if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcFilename.ReadText(), namePolicy).ToStringLines(namePolicy);
+                if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(srcFilename.ReadStream(), namePolicy).ToStringLines(namePolicy);
             }
             catch (FileNotFoundException) when (!throwIfNotFound)
             {
                 return no_stringlines;
             }
+            throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
+        }
+
+        /// <summary>
+        /// Read lines from <paramref name="srcFilename"/> file source. 
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="srcFilename"></param>
+        /// <param name="namePolicy"></param>
+        /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
+        /// <returns>enumerable of lines</returns>
+        /// <exception cref="FileNotFoundException">thrown if file was not found and <paramref name="throwIfNotFound"/> is true</exception>
+        /// <exception cref="IOException">on io error</exception>
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(this ILocalizationFileFormat fileFormat, string srcFilename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+        {
+            if (!throwIfNotFound && !File.Exists(srcFilename)) return no_keylines;
+            try
+            {
+                if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcFilename.ReadText(), namePolicy);
+                if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcFilename.ReadStream(), namePolicy);
+                if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcFilename.ReadText(), namePolicy).ToKeyLines(true);
+                if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(srcFilename.ReadStream(), namePolicy).ToKeyLines(true);
+                if (fileFormat is ILocalizationStringLinesTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), namePolicy).ToKeyLines(namePolicy);
+                if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), namePolicy).ToKeyLines(namePolicy);
+            }
+            catch (FileNotFoundException) when (!throwIfNotFound)
+            {
+                return no_keylines;
+            }
+            throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
+        }
+
+        /// <summary>
+        /// Read lines from <paramref name="srcFilename"/> file source. 
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="srcFilename"></param>
+        /// <param name="namePolicy"></param>
+        /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise null is returned</param>
+        /// <returns>tree or null if file was not found and error not thrown</returns>
+        /// <exception cref="FileNotFoundException">thrown if file was not found and <paramref name="throwIfNotFound"/> is true</exception>
+        /// <exception cref="IOException">on io error</exception>
+        public static IKeyTree ReadKeyTree(this ILocalizationFileFormat fileFormat, string srcFilename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+        {
+            if (!throwIfNotFound && !File.Exists(srcFilename)) return null;
+            try
+            {
+                if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcFilename.ReadText(), namePolicy);
+                if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcFilename.ReadText(), namePolicy).ToKeyTree(namePolicy);
+                if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(srcFilename.ReadStream(), namePolicy);
+                if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcFilename.ReadStream(), namePolicy).ToKeyTree(namePolicy);
+                if (fileFormat is ILocalizationStringLinesTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), namePolicy).ToKeyTree(namePolicy);
+                if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), namePolicy).ToKeyTree(namePolicy);
+            }
+            catch (FileNotFoundException) when (!throwIfNotFound)
+            {
+                return null;
+            }
+            throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
 
         /// <summary>
@@ -187,8 +203,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> ReadFileAsKeyLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].ReadFileAsKeyLines(filename, namePolicy, throwIfNotFound);
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].ReadKeyLines(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Read file into a tree format.
@@ -199,8 +215,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IKeyTree ReadFileAsKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].ReadFileAsKeyTree(filename, namePolicy, throwIfNotFound);
+        public static IKeyTree ReadKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].ReadKeyTree(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Read file into strings file.
@@ -211,8 +227,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IEnumerable<KeyValuePair<string, string>> ReadFileAsStringLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].ReadFileAsStringLines(filename, namePolicy, throwIfNotFound);
+        public static IEnumerable<KeyValuePair<string, string>> ReadStringLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].ReadStringLines(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -283,6 +299,7 @@ namespace Lexical.Localization
         static IKeyTree[] no_trees = new IKeyTree[0];
         static KeyValuePair<IAssetKey, string>[] no_keylines = new KeyValuePair<IAssetKey, string>[0];
         static KeyValuePair<string, string>[] no_stringlines = new KeyValuePair<string, string>[0];
+
     }
 
 }

@@ -102,7 +102,7 @@ namespace Lexical.Localization.Internal
         public static TextReader ReadText(this string filename)
         {
             if (filename == null) return null;
-            using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
+            using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (var sr = new StreamReader(fs))
             {
                 string text = sr.ReadToEnd();
