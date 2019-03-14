@@ -286,18 +286,18 @@ namespace Lexical.Localization
         ///   .child1.child2
         ///   .child2.child1
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="tree"></param>
         /// <returns></returns>
-        public static IEnumerable<IKeyTree> Decendents(this IKeyTree node)
+        public static IEnumerable<IKeyTree> Decendents(this IKeyTree tree)
         {
-            if (node == null) yield break;
+            if (tree == null) yield break;
 
             Queue<IKeyTree> queue = new Queue<IKeyTree>();
-            queue.Enqueue(node);
+            queue.Enqueue(tree);
             while (queue.Count > 0)
             {
                 IKeyTree n = queue.Dequeue();
-                if (n != node) yield return n;
+                if (n != tree) yield return n;
 
                 if (n.HasChildren)
                     foreach (IKeyTree child in n.Children)

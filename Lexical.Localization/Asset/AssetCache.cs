@@ -112,7 +112,7 @@ namespace Lexical.Localization
             this.cloner = new AssetKeyCloner(Key.Root);
 
             // Create parametrizer, comparer and cache that reads IAssetKeys and AssetKeyProxies interchangeably. ParameterKey.Parametrizer must be on the left side, or it won't work. (because ParameterKey : IAssetKey).
-            this.comparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
+            this.comparer = AssetKeyComparer.Default;
 
             this.keyQueries = new Dictionary<IAssetKey, IAssetKey[]>(comparer);
             this.allKeyQueries = new Dictionary<IAssetKey, IAssetKey[]>(comparer);
@@ -234,7 +234,7 @@ namespace Lexical.Localization
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
             this.cloner = new AssetKeyCloner(Key.Root);
-            this.comparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
+            this.comparer = AssetKeyComparer.Default;
         }
 
         IAsset IAssetReloadable.Reload()
@@ -308,7 +308,7 @@ namespace Lexical.Localization
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
             this.cloner = new AssetKeyCloner(Key.Root);
-            this.comparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
+            this.comparer = AssetKeyComparer.Default;
             this.stringCache = new Dictionary<IAssetKey, string>(comparer);
             this.allStrings = new Dictionary<IAssetKey, KeyValuePair<string, string>[]>(comparer);
         }
@@ -432,7 +432,7 @@ namespace Lexical.Localization
             this.cloner = new AssetKeyCloner(Key.Root);
 
             // Create parametrizer, comparer and cache that reads IAssetKeys and AssetKeyProxies interchangeably. ParameterKey.Parametrizer must be on the left side, or it won't work. (because ParameterKey : IAssetKey).
-            this.comparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
+            this.comparer = AssetKeyComparer.Default;
             this.resourceCache = new Dictionary<IAssetKey, byte[]>(comparer);
         }
 

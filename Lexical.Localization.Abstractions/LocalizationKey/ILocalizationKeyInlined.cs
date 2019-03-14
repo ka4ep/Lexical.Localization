@@ -109,5 +109,17 @@ namespace Lexical.Localization
             return null;
         }
 
+        /// <summary>
+        /// Walks linked list and searches for all inlines.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>inlines</returns>
+        public static IEnumerable<IDictionary<IAssetKey, string>> FindAllInlines(this IAssetKey key)
+        {
+            for (; key != null; key = key.GetPreviousKey())
+                if (key is ILocalizationKeyInlined casted && casted.Inlines != null)
+                    yield return casted.Inlines;
+        }
+
     }
 }

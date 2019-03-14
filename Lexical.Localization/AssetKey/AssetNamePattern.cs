@@ -61,6 +61,23 @@ namespace Lexical.Localization
             @"(?<r_patterntext>\[(?<r_prefix>[^\]a-zA-Z]*)(?<r_identifier>(?<r_keyreader_identifier>[a-zA-Z]+)(_(?<r_occurance_index>[0-9]+|n))?)(\<(?<r_pattern>([^\\\>\\<]|\\.)*)\>)?(?<r_postfix>[^\]a-zA-Z]*)\])",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant);
 
+        /// <summary>
+        /// Try to parse <paramref name="pattern"/>.
+        /// </summary>
+        /// <param name="pattern"></param>
+        /// <returns>pattern or null if parse failed.</returns>
+        public static AssetNamePattern TryParse(string pattern)
+        {
+            try
+            {
+                return new AssetNamePattern(pattern);
+            }
+            catch (Exception) { }
+            {
+                return null;
+            }
+        }
+
         public string Pattern { get; internal set; }
         public override string ToString() => Pattern;
 

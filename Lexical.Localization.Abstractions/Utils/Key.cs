@@ -178,7 +178,7 @@ namespace Lexical.Localization.Utils
             public Canonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
         }
 
-        public static AssetKeyComparer ChainComparer = new AssetKeyComparer().AddCanonicalParametrizedComparer().AddNonCanonicalParametrizedComparer();
+        public static AssetKeyComparer ChainComparer = AssetKeyComparer.Default;
 
         bool IEquatable<Key>.Equals(Key other)
             => ChainComparer.Equals(this, other);
