@@ -235,6 +235,22 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Create child node with parameters in <paramref name="key"/>.
+        /// </summary>
+        /// <param name="node">(optional) not to append to</param>
+        /// <param name="key">key that contains parameters</param>
+        /// <returns>new child</returns>
+        public static IKeyTree Create(this IKeyTree node, IAssetKey key)
+        {
+            if (node == null) return null;
+
+            // Create child
+            IKeyTree child = node.CreateChild();
+            child.Key = key;
+            return child;
+        }
+
+        /// <summary>
         /// Adds key and/or value.
         /// 
         /// If argument <paramref name="key"/> is given, then get-or-creates child node, otherwise uses <paramref name="node"/>.

@@ -1,6 +1,9 @@
 ﻿{
   "Type:ConsoleApp1.MyController": {
-    "Key:Success": "Success",
+    "Key:Success": {
+      "": "Success",
+      "Culture:pl": "udało się"
+    },
     "Key:Error": "Error (Code=0x{0:X8})"
   },
   "Culture:en": {

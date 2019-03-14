@@ -81,8 +81,11 @@ namespace Lexical.Localization
                         IAssetKey key = null;
                         if (this.namePolicy.TryParse(json.Value?.ToString(), out key))
                         { 
-                            current = key == null ? null : stack.Peek()?.GetOrCreate(key);
-                            if (current != null && updateCorrespondence) correspondenceContext.Nodes.Put(current, tokenReader.CurrentToken);
+                            current = key == null ? stack.Peek() : stack.Peek()?.Create(key);
+                            if (current != null && updateCorrespondence && !correspondenceContext.Nodes.ContainsLeft(current))
+                            {
+                                correspondenceContext.Nodes.Put(current, tokenReader.CurrentToken);
+                            }
                         }
                         else
                         {

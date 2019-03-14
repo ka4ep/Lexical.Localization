@@ -58,6 +58,7 @@ namespace Lexical.Localization
         public static ILocalizationKeyCultureAssigned Culture(this IAssetKey key, CultureInfo culture)
         {
             if (key is ILocalizationKeyCultureAssignable casted) return casted.Culture(culture);
+            //if (key is IAssetKeyParameterAssignable parametrizable) return parametrizable.AppendParameter("Culture", culture.Name);
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyCultureAssignable)}.");
         }
 
@@ -71,6 +72,7 @@ namespace Lexical.Localization
         public static ILocalizationKeyCultureAssigned Culture(this IAssetKey key, string cultureName)
         {
             if (key is ILocalizationKeyCultureAssignable casted) return casted.Culture(cultureName);
+            //if (key is IAssetKeyParameterAssignable parametrizable) return parametrizable.AppendParameter("Culture", cultureName);
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyCultureAssignable)}.");
         }
 
@@ -87,7 +89,10 @@ namespace Lexical.Localization
                 CultureInfo culture = CultureInfo.GetCultureInfo(cultureName);
                 if (key is ILocalizationKeyCultureAssignable casted) return casted.Culture(culture);
             }
-            catch (CultureNotFoundException) { }
+            catch (CultureNotFoundException) {
+                if (key is ILocalizationKeyCultureAssignable casted) return casted.Culture(cultureName);
+            }
+            //if (key is IAssetKeyParameterAssignable parametrizable) return parametrizable.AppendParameter("Culture", cultureName);
             return null;
         }
 
@@ -100,6 +105,7 @@ namespace Lexical.Localization
         public static ILocalizationKeyCultureAssigned TrySetCulture(this IAssetKey key, CultureInfo culture)
         {
             if (key is ILocalizationKeyCultureAssignable casted) return casted.Culture(culture);
+            //if (key is IAssetKeyParameterAssignable parametrizable) return parametrizable.AppendParameter("Culture", culture.Name);
             return null;
         }
 

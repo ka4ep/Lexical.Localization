@@ -41,7 +41,7 @@ namespace Lexical.Localization.Utils
         /// <returns>tree root ""</returns>
         public static KeyTree Create(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
         {
-            KeyTree root = new KeyTree(new Key("Root", ""), null);
+            KeyTree root = new KeyTree(new Key("Root", ""));
             root.AddRange(keyValues);
             return root;
         }
@@ -154,10 +154,11 @@ namespace Lexical.Localization.Utils
         /// Create new key tree node.
         /// </summary>
         /// <param name="parameter"></param>
+        /// <param name="values">(optional) value to add</param>
         public KeyTree(Key parameter, params string[] values)
         {
             this.Key = parameter;
-            this.values = new List<string>(values);
+            if (values != null) this.values = new List<string>(values);
         }
 
         /// <summary>

@@ -65,7 +65,7 @@ namespace Lexical.Localization
                         IAssetKey key = null;
                         if (parser_section.TryParse(token.ValueText, out key))
                         {
-                            section = key == null ? null : root.GetOrCreate(key);
+                            section = key == null ? null : root.Create(key);
                             if (section != null && correspondence != null) correspondence.Nodes.Put(section, token);
                         }
                         else

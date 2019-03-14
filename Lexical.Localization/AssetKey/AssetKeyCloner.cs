@@ -50,10 +50,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Create a proxy copy of the key. 
-        /// 
-        /// Proxy copy doesn't have any of the interface features, just parameter name + value pairs.
-        /// Proxy result must be parametrized with <see cref="Key.Parametrizer"/>.
+        /// Create a copy of the key. 
         /// </summary>
         /// <param name="key">key to copy. If null root is returned</param>
         /// <returns>copy of every part the parametrizer extracted</returns>
@@ -69,7 +66,10 @@ namespace Lexical.Localization
         {
             string parameterName = key.GetParameterName(), parameterValue = key.Name;
             if (!String.IsNullOrEmpty(parameterName) && parameterValue != null)
+            {
+                if (parameterNamesToExclude.Contains(parameterName)) return;
                 result = result.AppendParameter(parameterName, parameterValue);
+            }
         }
 
     }

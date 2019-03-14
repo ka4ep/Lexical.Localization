@@ -21,7 +21,7 @@ namespace Lexical.Localization
     public class AssetKeyComparer : IEqualityComparer<IAssetKey>
     {
         private static AssetKeyComparer instance = new AssetKeyComparer().AddCanonicalComparer(ParametrizedComparer.Instance).AddNonCanonicalComparer(ParametrizedNonCanonicalComparer.Instance);
-        private static AssetKeyComparer exclude_culture = new AssetKeyComparer().AddCanonicalComparer(ParametrizedComparer.Instance).AddNonCanonicalComparer(ParametrizedNonCanonicalComparer.ExcludeCulture);
+        private static AssetKeyComparer ignore_culture = new AssetKeyComparer().AddCanonicalComparer(ParametrizedComparer.Instance).AddNonCanonicalComparer(ParametrizedNonCanonicalComparer.IgnoreCulture);
 
         /// <summary>
         /// Makes comparisons on interface level. 
@@ -43,9 +43,9 @@ namespace Lexical.Localization
         public static AssetKeyComparer Default => instance;
 
         /// <summary>
-        /// Comparer that excludes "Culture" parameter.
+        /// Comparer that is oblivious to "Culture" parameter.
         /// </summary>
-        public static AssetKeyComparer ExcludeCulture => exclude_culture;
+        public static AssetKeyComparer IgnoreCulture => ignore_culture;
 
         /// List of non-canonical comparers
         List<IEqualityComparer<IAssetKey>> canonicalComparers = new List<IEqualityComparer<IAssetKey>>();
@@ -195,8 +195,8 @@ namespace Lexical.Localization
     /// </summary>
     public class ParametrizedNonCanonicalComparer : IEqualityComparer<IAssetKey>
     {
-        private static ParametrizedNonCanonicalComparer all = new ParametrizedNonCanonicalComparer(parametersNamesToExclude: null);
-        private static ParametrizedNonCanonicalComparer exclude_culture = new ParametrizedNonCanonicalComparer(parametersNamesToExclude: new string[] { "Culture" });
+        private static ParametrizedNonCanonicalComparer all = new ParametrizedNonCanonicalComparer(parameterNamesToIgnore: null);
+        private static ParametrizedNonCanonicalComparer Ignore_culture = new ParametrizedNonCanonicalComparer(parameterNamesToIgnore: new string[] { "Culture" });
 
         /// <summary>
         /// Default instance that compares every non-canonical parameter.
@@ -206,20 +206,20 @@ namespace Lexical.Localization
         /// <summary>
         /// Instance that excludes "Culture" parameter from comparison.
         /// </summary>
-        public static ParametrizedNonCanonicalComparer ExcludeCulture => exclude_culture;
+        public static ParametrizedNonCanonicalComparer IgnoreCulture => Ignore_culture;
 
         /// <summary>
-        /// List of parameter names to exclude.
+        /// List of parameter names to ignore.
         /// </summary>
-        protected HashSet<string> parameterNamesToExclude;
+        protected HashSet<string> parameterNamesToIgnore;
 
         /// <summary>
         /// Create new comparer of <see cref="IAssetKeyParameterAssigned"/> and <see cref="IAssetKeyNonCanonicallyCompared"/> keys.
         /// </summary>
-        /// <param name="parametersNamesToExclude">(optional) list of parameter names not to compare</param>
-        public ParametrizedNonCanonicalComparer(IEnumerable<string> parametersNamesToExclude = null)
+        /// <param name="parameterNamesToIgnore">(optional) list of parameter names to not to compare</param>
+        public ParametrizedNonCanonicalComparer(IEnumerable<string> parameterNamesToIgnore = null)
         {
-            if (parameterNamesToExclude != null) this.parameterNamesToExclude = new HashSet<string>(parameterNamesToExclude);
+            if (parameterNamesToIgnore != null) this.parameterNamesToIgnore = new HashSet<string>(parameterNamesToIgnore);
         }
 
         public bool Equals(IAssetKey x, IAssetKey y)
@@ -237,7 +237,7 @@ namespace Lexical.Localization
                 if (x_parameter_name == null || x_parameter_value == null) continue;
 
                 // Is this parameter excluded
-                if (parameterNamesToExclude != null && parameterNamesToExclude.Contains(x_parameter_name)) continue;
+                if (parameterNamesToIgnore != null && parameterNamesToIgnore.Contains(x_parameter_name)) continue;
 
                 // Previous occurance x_parameters table index
                 int ix = -1;
@@ -268,7 +268,7 @@ namespace Lexical.Localization
                 if (y_parameter_name == null || y_parameter_value == null) continue;
 
                 // Is this parameter excluded
-                if (parameterNamesToExclude != null && parameterNamesToExclude.Contains(y_parameter_name)) continue;
+                if (parameterNamesToIgnore != null && parameterNamesToIgnore.Contains(y_parameter_name)) continue;
 
                 // Test if this parameter is yet to occure again towards left of the key
                 bool firstOccurance = true;
@@ -331,7 +331,7 @@ namespace Lexical.Localization
                 if (parameterName == null) continue;
 
                 // Is this parameter excluded
-                if (parameterNamesToExclude != null && parameterNamesToExclude.Contains(parameterName)) continue;
+                if (parameterNamesToIgnore != null && parameterNamesToIgnore.Contains(parameterName)) continue;
 
                 // Get value.
                 string parameter_value = k.Name;

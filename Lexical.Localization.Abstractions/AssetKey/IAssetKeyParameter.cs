@@ -106,17 +106,24 @@ namespace Lexical.Localization
         /// <returns>array of parameters</returns>
         public static KeyValuePair<string, string>[] GetParameters(this IAssetKey key, bool skipRoot = false)
         {
-            int count = key.GetParameterCount();
+            int count = 0;
+            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+            {
+                string parameterName = k.GetParameterName(), parameterValue = k.Name;
+                if (string.IsNullOrEmpty(parameterName) || parameterValue == null) continue;
+                if (skipRoot && parameterName == "Root") continue;
+                count++;
+            }
             if (count == 0) return no_parameters;
 
             KeyValuePair<string, string>[] result = new KeyValuePair<string, string>[count];
             int ix = count;
             for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
             {
-                string parameterName = k.GetParameterName();
-                if (parameterName == null) continue;
+                string parameterName = k.GetParameterName(), parameterValue = k.Name;
+                if (string.IsNullOrEmpty(parameterName) || parameterValue == null) continue;
                 if (skipRoot && parameterName == "Root") continue;
-                result[--ix] = new KeyValuePair<string, string>(parameterName, k.Name);
+                result[--ix] = new KeyValuePair<string, string>(parameterName, parameterValue);
             }
 
             return result;
@@ -298,6 +305,31 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Find value for a parameter.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="parameterName">parameter name, e.g. "Culture"</param>
+        /// <param name="rootMost">If true returns the value that is closest to root, if false then one closes to tail</param>
+        /// <returns>name or null</returns>
+        public static string FindParameterValue(this IAssetKey key, string parameterName, bool rootMost)
+        {
+            if (rootMost)
+            {
+                string result = null;
+                for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+                    if (k is IAssetKeyParameterAssigned parametrized && parametrized.ParameterName == parameterName && k.Name != null)
+                        result = k.Name;
+                return result;
+            }
+            else
+            {
+                for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+                    if (k is IAssetKeyParameterAssigned parametrized && parametrized.ParameterName == parameterName && k.Name != null)
+                        return k.Name;
+                return null;
+            }
+        }
     }
 
 
