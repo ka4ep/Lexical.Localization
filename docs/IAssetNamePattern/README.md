@@ -78,7 +78,7 @@ Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");
 ///  "{Culture.}localization.ini"        - Matches to "fi" in: key.SetCulture("en").SetCulture("de").SetCulture("fi");
 ///  "{Location_0/}{Location_1/}{Location_2/}{Location_n/}location.ini 
 ///  
-/// Regular expressions can be written between &lt; and &gt; characters to specify match criteria. \ escapes \, *, +, ?, |, {, [, (,), &lt;, &gr; ^, $,., #, and white space.
+/// Regular expressions can be written between &lt; and &gt; characters to specify match criteria. \ escapes \, *, +, ?, |, {, [, (,), &lt;, &gt; ^, $,., #, and white space.
 ///  "{Section&lt;[^:]*&gt;.}"
 /// 
 /// Regular expressions can be used for greedy match when matching against filenames and embedded resources.

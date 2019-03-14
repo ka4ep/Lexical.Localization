@@ -16,12 +16,14 @@ They can also be assigned as strings.
 [!code-csharp[Snippet](Examples.cs#Snippet_2c)]
 
 Culture policy can be configured to use **CultureInfo.CurrentCulture**. 
-This is also the default state of new *CulturePolicy*.
 Active culture can be controlled from that field.
-[!code-csharp[Snippet](Examples.cs#Snippet_3)]
+[!code-csharp[Snippet](Examples.cs#Snippet_3a)]
+And **CultureInfo.CurrentUICulture**.
+[!code-csharp[Snippet](Examples.cs#Snippet_3b)]
 
-Or **CultureInfo.CurrentUICulture**.
-[!code-csharp[Snippet](Examples.cs#Snippet_4)]
+And also current thread's culture.
+[!code-csharp[Snippet](Examples.cs#Snippet_4a)]
+[!code-csharp[Snippet](Examples.cs#Snippet_4b)]
 
 **.SetFunc()** assigns a delegate that uses the returned *CultureInfo*.
 [!code-csharp[Snippet](Examples.cs#Snippet_5)]

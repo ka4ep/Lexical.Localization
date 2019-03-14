@@ -49,7 +49,6 @@ ICulturePolicy culturePolicy = new CulturePolicy().SetCultureWithFallbackCulture
 ```
 
 Culture policy can be configured to use **CultureInfo.CurrentCulture**. 
-This is also the default state of new *CulturePolicy*.
 Active culture can be controlled from that field.
 
 ```csharp
@@ -58,14 +57,29 @@ ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentCulture();
 // Change current culture
 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en");
 ```
-
-Or **CultureInfo.CurrentUICulture**.
+And **CultureInfo.CurrentUICulture**.
 
 ```csharp
 // Set to use CultureInfo.CurrentCulture
-ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentCulture();
+ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentUICulture();
 // Change current culture
 CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en");
+```
+
+And also current thread's culture.
+
+```csharp
+// Set to use CultureInfo.CurrentCulture
+ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentThreadCulture();
+// Change current thread's culture
+Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en");
+```
+
+```csharp
+// Set to use CultureInfo.CurrentCulture
+ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentThreadUICulture();
+// Change current thread's culture
+Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("en");
 ```
 
 **.SetFunc()** assigns a delegate that uses the returned *CultureInfo*.

@@ -1,6 +1,7 @@
 ﻿using Lexical.Localization;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 
 namespace docs
 {
@@ -51,23 +52,39 @@ namespace docs
                 ICulturePolicy culturePolicy = new CulturePolicy().SetCultureWithFallbackCultures("en-US");
                 #endregion Snippet_2c
             }
-            
+
 
             {
-                #region Snippet_3
-                // Set to use CultureInfo.CurrentCulture
-                ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentThreadCulture();
-                // Change current culture
-                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en");
-                #endregion Snippet_3
-            }
-            {
-                #region Snippet_4
+                #region Snippet_3a
                 // Set to use CultureInfo.CurrentCulture
                 ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentCulture();
                 // Change current culture
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en");
+                #endregion Snippet_3a
+            }
+            {
+                #region Snippet_3b
+                // Set to use CultureInfo.CurrentCulture
+                ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentUICulture();
+                // Change current culture
                 CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en");
-                #endregion Snippet_4
+                #endregion Snippet_3b
+            }
+            {
+                #region Snippet_4a
+                // Set to use CultureInfo.CurrentCulture
+                ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentThreadCulture();
+                // Change current thread's culture
+                Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en");
+                #endregion Snippet_4a
+            }
+            {
+                #region Snippet_4b
+                // Set to use CultureInfo.CurrentCulture
+                ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentThreadUICulture();
+                // Change current thread's culture
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("en");
+                #endregion Snippet_4b
             }
             {
                 #region Snippet_5
