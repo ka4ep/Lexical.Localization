@@ -56,7 +56,7 @@ namespace docs
             {
                 #region Snippet_3
                 // Set to use CultureInfo.CurrentCulture
-                ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentCulture();
+                ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentThreadCulture();
                 // Change current culture
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en");
                 #endregion Snippet_3

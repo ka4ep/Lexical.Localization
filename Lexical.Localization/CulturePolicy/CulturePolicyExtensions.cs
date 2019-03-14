@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 
 namespace Lexical.Localization
 {
@@ -87,14 +88,24 @@ namespace Lexical.Localization
             => culturePolicy.SetCultures(new CulturePolicyFuncs(funcs));
 
         /// <summary>
-        /// Function that returns CultureInfo.CurrentCulture.
+        /// Function that returns <code>CultureInfo.CurrentCulture</code>.
         /// </summary>
         public static Func<CultureInfo> FuncCurrentCulture = () => CultureInfo.CurrentCulture;
 
         /// <summary>
-        /// Function that returns CultureInfo.CurrentUICulture.
+        /// Function that returns <code>CultureInfo.CurrentUICulture</code>.
         /// </summary>
         public static Func<CultureInfo> FuncCurrentUICulture = () => CultureInfo.CurrentUICulture;
+
+        /// <summary>
+        /// Function that returns <code>Thread.CurrentThread.CurrentCulture</code>.
+        /// </summary>
+        public static Func<CultureInfo> FuncCurrentThreadCulture = () => Thread.CurrentThread.CurrentCulture;
+
+        /// <summary>
+        /// Function that returns <code>Thread.CurrentThread.CurrentUICulture</code>.
+        /// </summary>
+        public static Func<CultureInfo> FuncCurrentThreadUICulture = () => Thread.CurrentThread.CurrentUICulture;
 
         /// <summary>
         /// Set to return CultureInfo.CurrentCulture, and then fallback cultures.
@@ -111,6 +122,22 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static ICulturePolicyAssignable SetToCurrentUICulture(this ICulturePolicyAssignable culturePolicy)
             => culturePolicy.SetCultures(new CultureFallbackEnumerableFunc(FuncCurrentUICulture));
+
+        /// <summary>
+        /// Set to return <code>Thread.CurrentThread.CurrentCulture</code>, and its respective fallback cultures.
+        /// </summary>
+        /// <param name="culturePolicy"></param>
+        /// <returns></returns>
+        public static ICulturePolicyAssignable SetToCurrentThreadCulture(this ICulturePolicyAssignable culturePolicy)
+            => culturePolicy.SetCultures(new CultureFallbackEnumerableFunc(FuncCurrentThreadCulture));
+
+        /// <summary>
+        /// Set to return <code>Thread.CurrentThread.CurrentUICulture</code>, and its respective fallback cultures.
+        /// </summary>
+        /// <param name="culturePolicy"></param>
+        /// <returns></returns>
+        public static ICulturePolicyAssignable SetToCurrentThreadUICulture(this ICulturePolicyAssignable culturePolicy)
+            => culturePolicy.SetCultures(new CultureFallbackEnumerableFunc(FuncCurrentThreadUICulture));
     }
 
     class CulturePolicySourceEnumerable : IEnumerable<CultureInfo>

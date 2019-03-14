@@ -85,7 +85,7 @@ namespace Lexical.Localization
                 else
                 {
                     serviceCollection.TryAdd(ServiceDescriptor.Singleton<ICulturePolicy>(
-                        s => new CulturePolicy().SetToCurrentCulture()
+                        s => new CulturePolicy().SetToCurrentThreadCulture()
                         ));
                 }
             }

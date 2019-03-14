@@ -70,7 +70,7 @@ namespace docs
             {
                 #region Snippet_Singleton
                 // How to setup singleton instance
-                (LocalizationRoot.Global.CulturePolicy as ICulturePolicyAssignable).SetToCurrentCulture();
+                (LocalizationRoot.Global.CulturePolicy as ICulturePolicyAssignable).SetToCurrentThreadCulture();
                 LocalizationRoot.Builder.AddStrings(languageStrings, AssetKeyNameProvider.Default);
                 LocalizationRoot.Builder.Build();
 

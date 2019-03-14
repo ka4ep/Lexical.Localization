@@ -29,7 +29,7 @@ namespace Lexical.Localization
         /// </summary>
         public CulturePolicy()
         {
-            CulturePolicyExtensions.SetToCurrentCulture(this);
+            CulturePolicyExtensions.SetToCurrentThreadCulture(this);
         }
 
         /// <summary>
