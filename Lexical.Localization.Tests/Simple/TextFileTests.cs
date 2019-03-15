@@ -67,11 +67,11 @@ namespace Lexical.Localization.Tests
 
             // .resx file property must be set to "Copy to output directory" = "Copy Always"
             string filename = "Resources/localization.en.resx";
-            IAssetKey key = LocalizationRoot.Global.Culture("en").Type("ConsoleApp1.MyController").Key("Success");
+            IAssetKey key = LocalizationRoot.Global/*.Culture("en")*/.Type("ConsoleApp1.MyController").Key("Success");
 
             // Act
             Stream s = new FileStream(filename, FileMode.Open);
-            IAsset asset = fileformat.StreamAsset(s, new AssetNamePattern("{Culture.}[anysection.][Key]"), Key.CreateFromParameters(param));
+            IAsset asset = fileformat.StreamAsset(s, new AssetNamePattern("{Culture.}[anysection.][Key]")/*, Key.CreateFromParameters(param)*/);
             s.Dispose();
 
             // Assert

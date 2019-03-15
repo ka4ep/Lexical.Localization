@@ -14,7 +14,6 @@ namespace docs
             TutorialProject2.Program3.Main(args);
             TutorialProject1.Program1.Main(args);
             TutorialProject1.Program2.Main(args);
-            ILocalizationFileReader2_Examples.Main(args);
             LocalizationAsset_Examples.Main(args);
             LocalizationStringAsset_Examples.Main(args);
             IAssetRoot_StringLocalizer_Examples.Main(args);
