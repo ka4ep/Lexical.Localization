@@ -97,78 +97,6 @@ namespace Lexical.Localization
             => new LocalizationKeyLinesSource(trees.SelectMany(tree => tree.ToKeyLines()), sourceHint);
 
         /// <summary>
-        /// Add prefix <paramref name="prefix"/> to a <paramref name="trees"/>, by adding a new first tree level.
-        /// 
-        /// If <paramref name="prefix"/> is null or contains no parameters, then original <paramref name="trees"/> are returned.
-        /// </summary>
-        /// <param name="trees"></param>
-        /// <param name="prefix">(optional)</param>
-        /// <returns></returns>
-        public static IEnumerable<IKeyTree> AddKeyPrefix(this IEnumerable<IKeyTree> trees, IAssetKey prefix)
-        {
-            if (prefix == null || prefix.GetParameterCount()==0) return trees;
-            return trees.Select(tree => tree.AddKeyPrefix(prefix));
-        }
-
-        /// <summary>
-        /// Add prefix <paramref name="prefix"/> to a <paramref name="tree"/>, by adding a new first tree level.
-        /// </summary>
-        /// <param name="tree"></param>
-        /// <param name="prefix">(optional)Parameters to add</param>
-        /// <returns><paramref name="tree"/> as is or a new instance of <see cref="IKeyTree"/> that is modified</returns>
-        public static IKeyTree AddKeyPrefix(this IKeyTree tree, IAssetKey prefix)
-        {
-            // Make copy
-            Key _prefix = Key.CreateFrom(prefix);
-            // Return as is.
-            if (_prefix == null) return tree;
-            // Create new modified version
-            KeyTree newTree = new KeyTree( Key.CreateFrom(tree.Key) );
-            // Add new level 1
-            IKeyTree newTreeLevel1 = newTree.GetOrCreate(_prefix);
-            // Merge rest of the children
-            newTreeLevel1.Merge(tree, true);
-            // Return tree
-            return newTree;
-        }
-
-        /// <summary>
-        /// Add suffix to the key of each value-level node.
-        /// 
-        /// If <paramref name="right"/> is null or contains no parameters, then original <paramref name="trees"/> are returned.
-        /// </summary>
-        /// <param name="trees"></param>
-        /// <param name="right">(optional)</param>
-        /// <returns></returns>
-        public static IEnumerable<IKeyTree> AddKeySuffix(this IEnumerable<IKeyTree> trees, IAssetKey right)
-        {
-            Key key = Key.CreateFrom(right);
-            if (key == null) return trees;
-            return _AddKeySuffix(trees, key);
-        }
-
-        static IEnumerable<IKeyTree> _AddKeySuffix(this IEnumerable<IKeyTree> trees, Key right)
-        {
-            Key _right = null;
-            foreach (var parameter in right.GetParameters())
-                _right = Key.Create(parameter.Key, parameter.Value);
-
-            foreach (IKeyTree tree in trees)
-            {
-                // Transform tree
-                if (_right != null)
-                {
-                    foreach (IKeyTree node in tree.Decendents())
-                        if (node.HasValues)
-                            node.Key = node.Key.ConcatIfNew(_right);
-                }
-
-                // Return tree
-                yield return tree;
-            }
-        }
-
-        /// <summary>
         /// Search child by key.
         /// </summary>
         /// <param name="tree"></param>
@@ -352,6 +280,19 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Tests if <paramref name="decendent"/> is decendent of <paramref name="anchestor"/>.
+        /// </summary>
+        /// <param name="decendent"></param>
+        /// <param name="anchestor"></param>
+        /// <returns></returns>
+        public static bool IsDecendentOf(this IKeyTree decendent, IKeyTree anchestor)
+        {
+            for (IKeyTree t = decendent; t != null; t = t.Parent)
+                if (t == anchestor) return true;
+            return false;
+        }
+
+        /// <summary>
         /// List parameters from root to tail.
         /// </summary>
         /// <param name="node"></param>
@@ -486,53 +427,6 @@ namespace Lexical.Localization
                     _search(child, searchKey, newConcatenatedKey, result);
                 }
             }
-        }
-
-        /// <summary>
-        /// Merge key-values from <paramref name="mergeFrom"/> to <paramref name="tree"/>.
-        /// </summary>
-        /// <param name="tree"></param>
-        /// <param name="mergeFrom"></param>
-        /// <param name="overwriteValues">if true replaces previous values, if false adds new values</param>
-        /// <returns><paramref name="tree"/></returns>
-        public static IKeyTree Merge(this IKeyTree tree, IKeyTree mergeFrom, bool overwriteValues)
-        {
-            Queue<(IKeyTree, IKeyTree)> queue = new Queue<(IKeyTree, IKeyTree)>();
-            queue.Enqueue((tree, mergeFrom));
-            while (queue.Count > 0)
-            {
-                // Dequeue
-                (IKeyTree _tree, IKeyTree _mergeFrom) n = queue.Dequeue();
-
-                // Add or overwrite values
-                if (n._mergeFrom.HasValues)
-                {
-                    ICollection<string> list = n._tree.Values;
-                    if (overwriteValues)
-                    {
-                        list.Clear();
-                        foreach (string value in n._mergeFrom.Values)
-                            list.Add(value);
-                    } else
-                    {
-                        foreach (string value in n._mergeFrom.Values)
-                        {
-                            if (!list.Contains(value)) list.Add(value);
-                        }
-                    }
-                }
-
-                // Queue children
-                if (n._mergeFrom.HasChildren)
-                {
-                    foreach (IKeyTree child in n._mergeFrom.Children)
-                    {
-                        queue.Enqueue((n._tree.GetOrCreate(child.Key), child));
-                    }
-                }
-            }
-
-            return tree;
         }
 
     }

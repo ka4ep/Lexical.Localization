@@ -68,19 +68,19 @@ namespace Lexical.Localization
         /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
         /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
         /// <returns>reloadable localization asset</returns>
-        public static IAsset EmbeddedAsset(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true, IAssetKey prefix = null, IAssetKey suffix = null)
+        public static IAsset EmbeddedAsset(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return new LoadableLocalizationAsset().AddKeyTreeSource(fileFormat.EmbeddedReaderAsKeyTree(asm, resourceName, namePolicy, throwIfNotFound).AddKeyPrefix(prefix).AddKeySuffix(suffix)).Load();
+                return new LoadableLocalizationAsset().AddKeyTreeSource(fileFormat.EmbeddedReaderAsKeyTree(asm, resourceName, namePolicy, throwIfNotFound)).Load();
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return new LoadableLocalizationAsset().AddKeyLinesSource(fileFormat.EmbeddedReaderAsKeyLines(asm, resourceName, namePolicy, throwIfNotFound).AddKeyPrefix(prefix).AddKeySuffix(suffix)).Load();
+                return new LoadableLocalizationAsset().AddKeyLinesSource(fileFormat.EmbeddedReaderAsKeyLines(asm, resourceName, namePolicy, throwIfNotFound)).Load();
             }
             else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return new LoadableLocalizationStringAsset(namePolicy).AddLineStringSource(fileFormat.EmbeddedReaderAsStringLines(asm, resourceName, namePolicy, throwIfNotFound).AddKeyPrefix(prefix, namePolicy).AddKeySuffix(suffix, namePolicy)).Load();
+                return new LoadableLocalizationStringAsset(namePolicy).AddLineStringSource(fileFormat.EmbeddedReaderAsStringLines(asm, resourceName, namePolicy, throwIfNotFound)).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -94,22 +94,20 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="namePolicy">(optional) </param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
-        /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
-        /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
         /// <returns>asset source</returns>
-        public static IAssetSource EmbeddedAssetSource(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true, IAssetKey prefix = null, IAssetKey suffix = null)
+        public static IAssetSource EmbeddedAssetSource(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return fileFormat.EmbeddedReaderAsKeyLines(asm, resourceName, namePolicy, throwIfNotFound).AddKeyPrefix(prefix).AddKeySuffix(suffix).ToAssetSource(resourceName);
+                return fileFormat.EmbeddedReaderAsKeyLines(asm, resourceName, namePolicy, throwIfNotFound).ToAssetSource(resourceName);
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return fileFormat.EmbeddedReaderAsKeyLines(asm, resourceName, namePolicy, throwIfNotFound).AddKeyPrefix(prefix).AddKeySuffix(suffix).ToAssetSource(resourceName);
+                return fileFormat.EmbeddedReaderAsKeyLines(asm, resourceName, namePolicy, throwIfNotFound).ToAssetSource(resourceName);
             }
             else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return fileFormat.EmbeddedReaderAsStringLines(asm, resourceName, namePolicy, throwIfNotFound).AddKeyPrefix(prefix, namePolicy).AddKeySuffix(suffix, namePolicy).ToAssetSource(namePolicy, resourceName);
+                return fileFormat.EmbeddedReaderAsStringLines(asm, resourceName, namePolicy, throwIfNotFound).ToAssetSource(namePolicy, resourceName);
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -163,12 +161,10 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="namePolicy">(optional) </param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
-        /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
-        /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
         /// <returns>reloadable localization asset</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IAsset EmbeddedAsset(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true, IAssetKey prefix = null, IAssetKey suffix = null)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(resourceName)].EmbeddedAsset(asm, resourceName, namePolicy, throwIfNotFound, prefix, suffix);
+        public static IAsset EmbeddedAsset(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(resourceName)].EmbeddedAsset(asm, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset source that reads embedded resource <paramref name="resourceName"/>.
@@ -178,12 +174,10 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="namePolicy">(optional) </param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
-        /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
-        /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
         /// <returns>asset source</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IAssetSource EmbeddedAssetSource(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true, IAssetKey prefix = null, IAssetKey suffix = null)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(resourceName)].EmbeddedAssetSource(asm, resourceName, namePolicy, throwIfNotFound, prefix, suffix);
+        public static IAssetSource EmbeddedAssetSource(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly asm, string resourceName, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationReaderMap.GetExtension(resourceName)].EmbeddedAssetSource(asm, resourceName, namePolicy, throwIfNotFound);
 
     }
 

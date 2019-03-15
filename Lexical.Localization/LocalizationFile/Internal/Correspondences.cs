@@ -14,6 +14,13 @@ namespace Lexical.Localization.Internal
         public List<L> UnmappedL = new List<L>();
         public List<R> UnmappedR = new List<R>();
         public Correspondence(IEqualityComparer<L> leftComparer = default, IEqualityComparer<R> rightComparer = default) : base(leftComparer, rightComparer) { }
+
+        public override void Clear()
+        {
+            base.Clear();
+            UnmappedL.Clear();
+            UnmappedR.Clear();
+        }
     }
 
     /// <summary>

@@ -27,24 +27,22 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="stream"></param>
         /// <param name="namePolicy">(optional) </param>
-        /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
-        /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
         /// <returns>localization asset</returns>
-        public static IAsset StreamAsset(this ILocalizationFileFormat fileFormat, Stream stream, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
+        public static IAsset StreamAsset(this ILocalizationFileFormat fileFormat, Stream stream, IAssetKeyNamePolicy namePolicy = default)
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return new LocalizationAsset(fileFormat.ReadKeyTree(stream, namePolicy).ToKeyLines().AddKeyPrefix(prefix).AddKeyPrefix(suffix).ToDictionary());
+                return new LocalizationAsset(fileFormat.ReadKeyTree(stream, namePolicy).ToKeyLines().ToDictionary());
             }
             else
             if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return new LocalizationAsset(fileFormat.ReadKeyLines(stream, namePolicy).AddKeyPrefix(prefix).AddKeyPrefix(suffix).ToDictionary());
+                return new LocalizationAsset(fileFormat.ReadKeyLines(stream, namePolicy).ToDictionary());
             }
             else
             if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return new LocalizationStringAsset(fileFormat.ReadStringLines(stream, namePolicy).AddKeyPrefix(prefix, namePolicy).AddKeySuffix(suffix, namePolicy), namePolicy);
+                return new LocalizationStringAsset(fileFormat.ReadStringLines(stream, namePolicy), namePolicy);
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -57,11 +55,9 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="streamSource"></param>
         /// <param name="namePolicy">(optional) </param>
-        /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
-        /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
         /// <returns>localization asset</returns>
-        public static IAssetSource StreamAssetSource(this ILocalizationFileFormat fileFormat, Func<Stream> streamSource, IAssetKeyNamePolicy namePolicy = default, IAssetKey prefix = null, IAssetKey suffix = null)
-            => new StreamProviderAssetSource(fileFormat, streamSource, namePolicy, prefix, suffix);
+        public static IAssetSource StreamAssetSource(this ILocalizationFileFormat fileFormat, Func<Stream> streamSource, IAssetKeyNamePolicy namePolicy = default)
+            => new StreamProviderAssetSource(fileFormat, streamSource, namePolicy);
 
     }
 

@@ -73,53 +73,5 @@ namespace Lexical.Localization.Internal
             return lines.Select(line => new KeyValuePair<string, string>(prefix + line.Key, line.Value));
         }
 
-        /// <summary>
-        /// Add prefix parameters to each key.
-        /// </summary>
-        /// <param name="lines"></param>
-        /// <param name="key"></param>
-        /// <param name="policy"></param>
-        /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, string>> AddKeyPrefix(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKey key, IAssetKeyNamePolicy policy)
-        {
-            if (lines == null || key == null || key.GetParameterCount() == 0) return lines;
-            if (policy == null) policy = AssetKeyNameProvider.Default;
-            return lines.Select(line => {
-                IAssetKey lineKey;
-                if (policy.TryParse(line.Key, out lineKey)) return new KeyValuePair<string, string>(policy.BuildName(key.ConcatIfNew(lineKey)), line.Value);
-                return new KeyValuePair<string, string>(policy.BuildName(key) + line.Key, line.Value);
-            });
-        }
-
-        /// <summary>
-        /// Add suffix parameters to each key.
-        /// </summary>
-        /// <param name="trees"></param>
-        /// <param name="key">(optional)</param>
-        /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, string>> AddKeySuffix(this IEnumerable<KeyValuePair<string, string>> lines, string suffix)
-        {
-            if (string.IsNullOrEmpty(suffix) || lines == null) return lines;
-            return lines.Select(line => new KeyValuePair<string, string>(line.Key+suffix, line.Value));
-        }
-
-        /// <summary>
-        /// Add suffix parameters to each key.
-        /// </summary>
-        /// <param name="lines"></param>
-        /// <param name="key"></param>
-        /// <param name="policy"></param>
-        /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, string>> AddKeySuffix(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKey key, IAssetKeyNamePolicy policy)
-        {
-            if (lines == null || key == null || key.GetParameterCount()==0) return lines;
-            if (policy == null) policy = AssetKeyNameProvider.Default;
-            return lines.Select(line => {
-                IAssetKey lineKey;
-                if (policy.TryParse(line.Key, out lineKey)) return new KeyValuePair<string, string>(policy.BuildName(lineKey.ConcatIfNew(key)), line.Value);
-                return new KeyValuePair<string, string>(line.Key+policy.BuildName(key), line.Value);
-            });
-        }
-
     }
 }

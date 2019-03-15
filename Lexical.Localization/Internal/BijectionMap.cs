@@ -233,7 +233,7 @@ namespace Lexical.Localization.Internal
         public Dictionary<R, L> GetRightToLeftDictionary()
             => tableRight;
 
-        public void Clear()
+        public virtual void Clear()
         {
             tableLeft.Clear();
             tableRight.Clear();

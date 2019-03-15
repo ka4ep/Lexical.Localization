@@ -27,7 +27,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Associated values.
         /// </summary>
-        ICollection<string> Values { get; }
+        IList<string> Values { get; }
 
         /// <summary>
         /// Test if has child nodes.

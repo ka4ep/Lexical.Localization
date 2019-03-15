@@ -217,7 +217,7 @@ namespace Lexical.Localization.Utils
 
         IKeyTree IKeyTree.Parent => Parent;
 
-        ICollection<string> IKeyTree.Values => this.Values;
+        IList<string> IKeyTree.Values => this.Values;
         IReadOnlyCollection<IKeyTree> IKeyTree.Children => this.Children;
         IKeyTree IKeyTree.CreateChild() => this.CreateChild();
         static IKeyTree[] empty = new IKeyTree[0];

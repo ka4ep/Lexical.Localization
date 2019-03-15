@@ -182,32 +182,6 @@ namespace Lexical.Localization
             => new LocalizationKeyLinesSource(lines, sourceHint);
 
         /// <summary>
-        /// Add prefix parameters to each key.
-        /// </summary>
-        /// <param name="lines"></param>
-        /// <param name="key">(optional)</param>
-        /// <returns></returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> AddKeyPrefix(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetKey key)
-        {
-            Key _key = Key.CreateFrom(key);
-            if (_key == null) return lines;
-            return lines.Select(line => new KeyValuePair<IAssetKey, string>(_key.ConcatIfNew(line.Key), line.Value));
-        }
-
-        /// <summary>
-        /// Add suffix parameters to each key.
-        /// </summary>
-        /// <param name="lines"></param>
-        /// <param name="key">(optional)</param>
-        /// <returns></returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> AddKeySuffix(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetKey key)
-        {
-            Key _key = Key.CreateFrom(key);
-            if (_key == null) return lines;
-            return lines.Select(line => new KeyValuePair<IAssetKey, string>(line.Key.ConcatIfNew(_key), line.Value));
-        }
-
-        /// <summary>
         /// Convert to dictionary.
         /// </summary>
         /// <param name="lines"></param>

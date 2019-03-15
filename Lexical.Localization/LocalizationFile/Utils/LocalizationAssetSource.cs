@@ -78,19 +78,15 @@ namespace Lexical.Localization.Utils
         public ILocalizationFileFormat FileFormat { get; protected set; }
         protected Func<Stream> streamSource;
         public IAssetKeyNamePolicy NamePolicy { get; protected set; }
-        protected IAssetKey prefix;
-        protected IAssetKey suffix;
 
-        public StreamProviderAssetSource(ILocalizationFileFormat fileFormat, Func<Stream> streamSource, IAssetKeyNamePolicy namePolicy, IAssetKey prefix = null, IAssetKey suffix = null)
+        public StreamProviderAssetSource(ILocalizationFileFormat fileFormat, Func<Stream> streamSource, IAssetKeyNamePolicy namePolicy)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.streamSource = streamSource ?? throw new ArgumentNullException(nameof(streamSource));
             this.NamePolicy = namePolicy;
-            this.prefix = prefix;
-            this.suffix = suffix;
         }
         public void Build(IList<IAsset> list)
-            => list.Add(FileFormat.StreamAsset(streamSource(), NamePolicy, prefix, suffix));
+            => list.Add(FileFormat.StreamAsset(streamSource(), NamePolicy));
 
         public IAsset PostBuild(IAsset asset)
             => asset;
