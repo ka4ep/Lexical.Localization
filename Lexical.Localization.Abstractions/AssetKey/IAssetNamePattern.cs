@@ -32,12 +32,15 @@ namespace Lexical.Localization
     /// Parts can be optional in curly braces {} and required in brackets [].
     ///  [Culture]
     /// 
-    /// Part can be added multiple times, which matches when part has identifier secion multiple times. Latter part names must be suffixed with "_number".
-    ///  "localization{-Key_0}{-Key_1}.ini"  - Matches to key.Key("x").Key("x");
+    /// Part can be added multiple times
+    ///  "{Location/}{Location/}{Location/}{Key}"  - Matches to, from 0 to 3 occurances of Location(), e.g. key.Location("dir").Location("dir1");
     /// 
-    /// Suffix "_n" refers to the last occurance. This is also the case without an occurance number.
-    ///  "{Culture.}localization.ini"        - Matches to "fi" in: key.SetCulture("en").SetCulture("de").SetCulture("fi");
-    ///  "{Location_0/}{Location_1/}{Location_2/}{Location_n/}location.ini 
+    /// If parts need to be matched out of order, then occurance index can be used "_number".
+    ///  "{Location_2/}{Location_1/}{Location_0/}{Key}"  - Matches to, from 0 to 3 occurances of Location, e.g. key.Location("dir").Location("dir1");
+    /// 
+    /// Suffix "_n" translates to five conscutive parts.
+    ///  "[Location_n/]location.ini" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
+    ///  "[location/]{Location_n/}location.ini" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}{Location_5/}"
     ///  
     /// Regular expressions can be written between &lt; and &gt; characters to specify match criteria. \ escapes \, *, +, ?, |, {, [, (,), &lt;, &gt; ^, $,., #, and white space.
     ///  "{Section&lt;[^:]*&gt;.}"
@@ -107,6 +110,7 @@ namespace Lexical.Localization
     {
         /// <summary>
         /// Text that represents this part in pattern.
+        /// for "_n" part, the first part has "_n" in PatternText, and the rest have "".
         /// </summary>
         string PatternText { get; }
 
@@ -126,7 +130,7 @@ namespace Lexical.Localization
         string PostfixSeparator { get; }
 
         /// <summary>
-        /// Parameter identifier.
+        /// Parameter identifier. Does not include occurance index, e.g. "_1".
         /// </summary>
         string ParameterName { get; }
         /// <summary>
@@ -160,7 +164,7 @@ namespace Lexical.Localization
         int OccuranceIndex { get; }
 
         /// <summary>
-        /// Pattern of this part.
+        /// Regex pattern for this part.
         /// </summary>
         Regex Regex { get; }
 
@@ -482,7 +486,6 @@ namespace Lexical.Localization
                     }
                 }
             }
-            _match._fixPartsWithOccurancesAndLastOccurance();
             return _match;
         }
 

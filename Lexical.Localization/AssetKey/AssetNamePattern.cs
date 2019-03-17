@@ -32,14 +32,17 @@ namespace Lexical.Localization
     /// Parts can be optional in curly braces {} and required in brackets [].
     ///  [Culture]
     /// 
-    /// Part can be added multiple times, which matches when part has identifier secion multiple times. Latter part names must be suffixed with "_number".
-    ///  "localization{-Key_0}{-Key_1}.ini"  - Matches to key.Key("x").Key("x");
+    /// Part can be added multiple times
+    ///  "{Location/}{Location/}{Location/}{Key}"  - Matches to, from 0 to 3 occurances of Location(), e.g. key.Location("dir").Location("dir1");
     /// 
-    /// Suffix "_n" refers to the last occurance. This is also the case without an occurance number.
-    ///  "{Culture.}localization.ini"        - Matches to "fi" in: key.Culture("en").Culture("de").Culture("fi");
-    ///  "{Location_0/}{Location_1/}{Location_2/}{Location_n/}location.ini 
+    /// If parts need to be matched out of order, then occurance index can be used "_number".
+    ///  "{Location_2/}{Location_1/}{Location_0/}{Key}"  - Matches to, from 0 to 3 occurances of Location, e.g. key.Location("dir").Location("dir1");
+    /// 
+    /// Suffix "_n" translates to five conscutive parts.
+    ///  "[Location_n/]location.ini" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
+    ///  "[location/]{Location_n/}location.ini" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}{Location_5/}"
     ///  
-    /// Regular expressions can be written between &lt; and &gt; characters to specify match criteria. \ escapes \, *, +, ?, |, {, [, (,), &lt;, &gr; ^, $,., #, and white space.
+    /// Regular expressions can be written between &lt; and &gt; characters to specify match criteria. \ escapes \, *, +, ?, |, {, [, (,), &lt;, &gt; ^, $,., #, and white space.
     ///  "{Section&lt;[^:]*&gt;.}"
     /// 
     /// Regular expressions can be used for greedy match when matching against filenames and embedded resources.
@@ -57,9 +60,14 @@ namespace Lexical.Localization
     {
         static Regex regex = new Regex(
             @"(?<text>[^\[\{\}\]]+)|" +
-            @"(?<o_patterntext>\{(?<o_prefix>[^\}a-zA-Z]*)(?<o_identifier>(?<o_keyreader_identifier>[a-zA-Z]+)(_(?<o_occurance_index>[0-9]+|n))?)(\<(?<o_pattern>([^\\\>\\<]|\\.)*)\>)?(?<o_postfix>[^\}a-zA-Z]*)\})|" +
-            @"(?<r_patterntext>\[(?<r_prefix>[^\]a-zA-Z]*)(?<r_identifier>(?<r_keyreader_identifier>[a-zA-Z]+)(_(?<r_occurance_index>[0-9]+|n))?)(\<(?<r_pattern>([^\\\>\\<]|\\.)*)\>)?(?<r_postfix>[^\]a-zA-Z]*)\])",
+            @"(?<o_patterntext>\{(?<o_prefix>[^\}a-zA-Z]*)(?<o_identifier>(?<o_parametername>[a-zA-Z]+)(_(?<o_occurance_index>[0-9]+|n))?)(\<(?<o_pattern>([^\\\>\\<]|\\.)*)\>)?(?<o_postfix>[^\}a-zA-Z]*)\})|" +
+            @"(?<r_patterntext>\[(?<r_prefix>[^\]a-zA-Z]*)(?<r_identifier>(?<r_parametername>[a-zA-Z]+)(_(?<r_occurance_index>[0-9]+|n))?)(\<(?<r_pattern>([^\\\>\\<]|\\.)*)\>)?(?<r_postfix>[^\]a-zA-Z]*)\])",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant);
+
+        /// <summary>
+        /// The number of parts "_n" occurance represents.
+        /// </summary>
+        static int n = 5;
 
         /// <summary>
         /// Try to parse <paramref name="pattern"/>.
@@ -134,52 +142,85 @@ namespace Lexical.Localization
                 Group g_text = match.Groups["text"];
                 Group g_o_identifier = match.Groups["o_identifier"];
                 Group g_r_identifier = match.Groups["r_identifier"];
+
+                // Matched as text
                 if (g_text.Success)
                 {
-                    Part part = new Part { Text = g_text.Value, Index = ix++, CaptureIndex = -1 };
-                    list.Add(part);
+                    list.Add(new Part { Text = g_text.Value, Index = ix++, CaptureIndex = -1 });
+                    continue;
                 }
-                else if (g_o_identifier.Success)
+
+                // Assert that either optional or required groups match
+                if (!g_o_identifier.Success && !g_r_identifier.Success) throw new ArgumentException($"Could not parse {nameof(AssetNamePattern)} \"{pattern}\"");
+
+                bool optional = g_o_identifier.Success;
+
+                Group g_pattern = optional ? match.Groups["o_pattern"] : match.Groups["r_pattern"];
+                string part_pattern = g_pattern.Success ? g_pattern.Value : null;
+                string parameterName = optional ? match.Groups["o_parametername"].Value : match.Groups["r_parametername"].Value;
+                string patternText = optional ? match.Groups["o_patterntext"].Value : match.Groups["r_patterntext"].Value;
+                string prefix = optional ? match.Groups["o_prefix"].Value : match.Groups["r_prefix"].Value;
+                string postfix = optional ? match.Groups["o_postfix"].Value : match.Groups["r_postfix"].Value;
+                string identifier = optional ? g_o_identifier.Value : g_r_identifier.Value;
+                Group g_occurance = optional ? match.Groups["o_occurance_index"] : match.Groups["r_occurance_index"];
+
+                // "_n"
+                bool n_occurances = g_occurance.Success && g_occurance.Value == "n";
+
+                int occuranceIndex = g_occurance.Success && !n_occurances ? int.Parse(g_occurance.Value) : -1;
+
+                Part part = new Part
                 {
-                    Group g_occurance = match.Groups["o_occurance_index"];
-                    Group g_pattern = match.Groups["o_pattern"];
-                    string part_pattern = g_pattern.Success ? g_pattern.Value : null;
-                    Part part = new Part
-                    {
-                        PatternText = match.Groups["o_patterntext"].Value,
-                        PrefixSeparator = match.Groups["o_prefix"].Value,
-                        PostfixSeparator = match.Groups["o_postfix"].Value,
-                        Identifier = g_o_identifier.Value,
-                        ParameterName = match.Groups["o_keyreader_identifier"].Value,
-                        Required = false,
-                        Index = ix++,
-                        CaptureIndex = matchIx++,
-                        regex = part_pattern == null ? null : new Regex(part_pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture),
-                        OccuranceIndex = g_occurance.Success ? g_occurance.Value == "n" ? Int32.MaxValue : int.Parse(g_occurance.Value) : Int32.MaxValue
-                    };
-                    list.Add(part);
-                }
-                else if (g_r_identifier.Success)
+                    PatternText = patternText, regex = part_pattern == null ? null : new Regex(part_pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture),
+                    PrefixSeparator = prefix, PostfixSeparator = postfix, Identifier = identifier,
+                    ParameterName = parameterName, Required = !optional, Index = ix++, CaptureIndex = matchIx++,                   
+                    OccuranceIndex = occuranceIndex
+                };
+                list.Add(part);
+
+                // For "_n", add consecutive parts 1 to n.
+                if (n_occurances)
                 {
-                    Group g_occurance = match.Groups["r_occurance_index"];
-                    Group g_pattern = match.Groups["r_pattern"];
-                    string part_pattern = g_pattern.Success ? g_pattern.Value : null;
-                    Part part = new Part
+                    for (int i=1; i<n; i++)
                     {
-                        PatternText = match.Groups["r_patterntext"].Value,
-                        PrefixSeparator = match.Groups["r_prefix"].Value,
-                        PostfixSeparator = match.Groups["r_postfix"].Value,
-                        Identifier = g_r_identifier.Value,
-                        ParameterName = match.Groups["r_keyreader_identifier"].Value,
-                        Required = true,
-                        Index = ix++,
-                        CaptureIndex = matchIx++,
-                        regex = part_pattern == null ? null : new Regex(part_pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture),
-                        OccuranceIndex = g_occurance.Success ? g_occurance.Value == "n" ? Int32.MaxValue : int.Parse(g_occurance.Value) : Int32.MaxValue
-                    };
-                    list.Add(part);
+                        Part p = new Part()
+                        {
+                            PatternText = "", regex = null,
+                            PrefixSeparator = prefix, PostfixSeparator = postfix,
+                            Identifier = identifier, ParameterName = parameterName, Required = false,
+                            Index = ix++, CaptureIndex = matchIx++,
+                            OccuranceIndex = -1
+                        };
+                        list.Add(p);
+                    }
                 }
             }
+
+            // Update -1 occurance indices, which have not yet been assigned. Use the first free occurance
+            MapList<string, int> occurances = null;
+            foreach (Part part in list.Where(p=>p.CaptureIndex>=0&&p.OccuranceIndex==-1))
+            {
+                // Make list of indices for each parameter name
+                if (occurances == null)
+                {
+                    occurances = new MapList<string, int>(list.Where(p => p.CaptureIndex >= 0 && p.OccuranceIndex>=0).Select(p => new KeyValuePair<string, int>(p.ParameterName, p.OccuranceIndex)));
+                    foreach (var __list in occurances.Values) __list.Sort();
+                }
+
+                // Get list for "parameter name"
+                int occuranceIndex = 0;
+                List<int> _list = occurances.TryGetList(part.ParameterName);
+                if (_list != null)
+                {
+                    foreach (int reservedOccuranceIndex in _list)
+                        if (reservedOccuranceIndex == occuranceIndex) occuranceIndex = reservedOccuranceIndex + 1;
+                } 
+                
+                part.OccuranceIndex = occuranceIndex;
+                part.Identifier = part.ParameterName + "_" + occuranceIndex;
+                occurances.Add(part.ParameterName, occuranceIndex);                
+            }
+
             allParts = list.ToArray();
             captureParts = list.Where(part => part.Identifier != null).ToArray();
             PartMap = CaptureParts.ToDictionary(p => p.Identifier);
@@ -268,7 +309,6 @@ namespace Lexical.Localization
         {
             NamePatternMatch match = new NamePatternMatch(this);
             key.VisitParameters(_keyvisitor, ref match);
-            match._fixPartsWithOccurancesAndLastOccurance();
             return match;
         }
 

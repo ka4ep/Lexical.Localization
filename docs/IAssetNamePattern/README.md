@@ -13,7 +13,7 @@ IAssetKey key = new LocalizationRoot()
 
 ```csharp
 // Create similiar policy with AssetNamePattern
-IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{culture/}{location/}{type/}{section/}[Key].txt");
+IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Culture/}{Location/}{Type/}{Section/}[Key].txt");
 // "en/Patches/MyController/Errors/InvalidState.txt"
 string str = myPolicy.BuildName(key);
 ```
@@ -23,17 +23,40 @@ Parameter is optional when it's written inside braces "{parameter/}" and require
 
 ```csharp
 // Create name pattern
-IAssetKeyNamePolicy myPolicy = new AssetNamePattern("Patches/{Section}[-key]{-culture}.png");
+IAssetKeyNamePolicy myPolicy = new AssetNamePattern("Patches/{Section}[-Key]{-Culture}.png");
 ```
 
-Parameter can be added multiple times by adding suffix "_#". Replace # with the occurance index. "_n" represents the last occurance.
+Parameter can be added multiple times.
 
 ```csharp
 // Create name pattern
-IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{location_0/}{location_1/}{location_n/}{Section}{-key}{-culture}.png");
+IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location/}{Location/}{Location/}{Section}{-Key}{-Culture}.png");
 // Create key
 IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
 // Converts to "Patches/20181130/icons-ok-de.png"
+string str = myPolicy.BuildName(key2);
+```
+
+A shorter way to add conscutive parameters is use suffix "_n". It translates to the five occurance.
+If part is required, e.g. "[parametername_n]", then only first part is required and others are optional.
+
+```csharp
+// "[Location_0/]" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
+IAssetKeyNamePolicy myPolicy = new AssetNamePattern("[Location_n/]{Section}{-Key}{-Culture}.png");
+// Create key
+IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+// Converts to "Patches/20181130/icons-ok-de.png"
+string str = myPolicy.BuildName(key2);
+```
+
+Parameters need to be added in non-consecutive order, then a suffix "_#" which represents the occurance index.
+
+```csharp
+// Create name pattern
+IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location_3}{Location_2/}{Location_1/}{Location_0/}{Section}{-Key}{-Culture}.png");
+// Create key
+IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+// Converts to "20181130/Patches/icons-ok-de.png"
 string str = myPolicy.BuildName(key2);
 ```
 
@@ -42,7 +65,7 @@ Expressions give more control when name pattern is used for matching against fil
 
 ```csharp
 // Create name pattern with regular expression detail
-IAssetNamePattern myPolicy = new AssetNamePattern("{location<[^/]+>/}{Section}{-key}{-culture}.png");
+IAssetNamePattern myPolicy = new AssetNamePattern("{Location<[^/]+>/}{Section}{-Key}{-Culture}.png");
 // Use its regular expression
 Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");
 ```
@@ -71,12 +94,15 @@ Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");
 /// Parts can be optional in curly braces {} and required in brackets [].
 ///  [Culture]
 /// 
-/// Part can be added multiple times, which matches when part has identifier secion multiple times. Latter part names must be suffixed with "_number".
-///  "localization{-Key_0}{-Key_1}.ini"  - Matches to key.Key("x").Key("x");
+/// Part can be added multiple times
+///  "{Location/}{Location/}{Location/}{Key}"  - Matches to, from 0 to 3 occurances of Location(), e.g. key.Location("dir").Location("dir1");
 /// 
-/// Suffix "_n" refers to the last occurance. This is also the case without an occurance number.
-///  "{Culture.}localization.ini"        - Matches to "fi" in: key.SetCulture("en").SetCulture("de").SetCulture("fi");
-///  "{Location_0/}{Location_1/}{Location_2/}{Location_n/}location.ini 
+/// If parts need to be matched out of order, then occurance index can be used "_number".
+///  "{Location_2/}{Location_1/}{Location_0/}{Key}"  - Matches to, from 0 to 3 occurances of Location, e.g. key.Location("dir").Location("dir1");
+/// 
+/// Suffix "_n" translates to five conscutive parts.
+///  "[Location_n/]location.ini" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
+///  "[location/]{Location_n/}location.ini" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}{Location_5/}"
 ///  
 /// Regular expressions can be written between &lt; and &gt; characters to specify match criteria. \ escapes \, *, +, ?, |, {, [, (,), &lt;, &gt; ^, $,., #, and white space.
 ///  "{Section&lt;[^:]*&gt;.}"

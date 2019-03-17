@@ -6,6 +6,7 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            AssetNamePattern_Examples.Main(args);
             TutorialProject3.Program1.Main(args);
             TutorialProject3.Program2.Main(args);
             TutorialProject3.Program3.Main(args);

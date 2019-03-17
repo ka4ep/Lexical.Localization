@@ -162,11 +162,11 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Create an asset that uses <paramref name="trees"/>.
+        /// Create an asset that uses <paramref name="lines"/>.
         /// 
         /// Lines are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
-        /// <param name="trees"></param>
+        /// <param name="lines"></param>
         /// <param name="hintSource"></param>
         /// <returns></returns>
         public static IAsset ToAsset(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, string hintSource = null)
