@@ -146,7 +146,7 @@ namespace Lexical.Localization
                     if (constructedKey != null) { key_parts.Add(constructedKey); constructedKey = null; }
 
                     // Add rest of the keys
-                    for (; part_ix <= partList.Count; part_ix++)
+                    for (; part_ix < partList.Count; part_ix++)
                         key_parts.Add(partList[part_ix].CreateKey(constructedKey));
                 }
 
