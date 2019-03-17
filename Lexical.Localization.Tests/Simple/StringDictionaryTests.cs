@@ -22,7 +22,8 @@ namespace Lexical.Localization.Tests
             languageStrings["fi:ConsoleApp1:MyController:Error"] = "Virhe (Koodi=0x{0:X8})";
             languageStrings["fi-Savo:ConsoleApp1:MyController:Success"] = "Onnistuepie";
             languageStrings["fi-Savo:ConsoleApp1:MyController:Error"] = "Epäonnistuepa (Koodi=0x{0:X8})";
-            IAsset asset = new LocalizationStringAsset(languageStrings, "{Culture:}{anysection_0:}{anysection_1:}{anysection_2:}{anysection_3:}{anysection_4:}{anysection_n:}{Key_0:}{Key_1:}{Key_n}");
+            IAssetKeyNamePolicy pattern = new AssetNamePattern("{Culture:}{anysection_0:}{anysection_1:}{anysection_2:}{anysection_3:}{anysection_4:}{anysection_n:}{Key}{:Key_n}");
+            IAsset asset = new LocalizationStringAsset(languageStrings, pattern);
             IAssetKey root = LocalizationRoot.Global;
             IAssetKey section = root.Section("ConsoleApp1").Section("MyController");
             IAssetKey fi = section.Culture("fi"), en = section.Culture("en"), fi_savo = section.Culture("fi-Savo");

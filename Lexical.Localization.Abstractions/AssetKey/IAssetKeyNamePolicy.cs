@@ -119,12 +119,6 @@ namespace Lexical.Localization
                 string name = provider.BuildName(key);
                 if (name != null) return name;
             }
-            if (policy is IAssetNamePattern pattern)
-            {
-                IAssetNamePatternMatch match = pattern.Match(key);
-                string name = AssetNamePatternExtensions.BuildName(pattern, match.PartValues);
-                if (name != null) return name;
-            }
             return null;
         }
 

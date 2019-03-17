@@ -56,7 +56,7 @@ namespace Lexical.Localization
     ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
     /// 
     /// </summary>
-    public class AssetNamePattern : IAssetNamePattern, IAssetKeyNameParser
+    public class AssetNamePattern : IAssetNamePattern, IAssetKeyNameParser, IAssetKeyNameProvider
     {
         static Regex regex = new Regex(
             @"(?<text>[^\[\{\}\]]+)|" +
@@ -172,7 +172,7 @@ namespace Lexical.Localization
                 Part part = new Part
                 {
                     PatternText = patternText, regex = part_pattern == null ? null : new Regex(part_pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture),
-                    PrefixSeparator = prefix, PostfixSeparator = postfix, Identifier = identifier,
+                    PrefixSeparator = prefix, PostfixSeparator = postfix, Identifier = occuranceIndex == 0 ? parameterName : identifier,
                     ParameterName = parameterName, Required = !optional, Index = ix++, CaptureIndex = matchIx++,                   
                     OccuranceIndex = occuranceIndex
                 };
@@ -187,7 +187,7 @@ namespace Lexical.Localization
                         {
                             PatternText = "", regex = null,
                             PrefixSeparator = prefix, PostfixSeparator = postfix,
-                            Identifier = identifier, ParameterName = parameterName, Required = false,
+                            ParameterName = parameterName, Required = false,
                             Index = ix++, CaptureIndex = matchIx++,
                             OccuranceIndex = -1
                         };
@@ -217,7 +217,7 @@ namespace Lexical.Localization
                 } 
                 
                 part.OccuranceIndex = occuranceIndex;
-                part.Identifier = part.ParameterName + "_" + occuranceIndex;
+                part.Identifier = occuranceIndex == 0 ? part.ParameterName : part.ParameterName + "_" + occuranceIndex;
                 occurances.Add(part.ParameterName, occuranceIndex);                
             }
 
@@ -398,6 +398,11 @@ namespace Lexical.Localization
             return true;
         }
 
+        public string BuildName(IAssetKey key)
+        {
+            IAssetNamePatternMatch match = Match(key);
+            return AssetNamePatternExtensions.BuildName(this, match.PartValues);
+        }
     }
 
     public static partial class AssetNamePatternExtensions_

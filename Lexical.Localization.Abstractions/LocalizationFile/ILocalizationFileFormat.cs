@@ -114,7 +114,7 @@ namespace Lexical.Localization
         /// <exception cref="IOException"></exception>
         IEnumerable<KeyValuePair<string, string>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
     }
-
+    
     /// <summary>
     /// Flags for write operation to localization files.
     /// </summary>
