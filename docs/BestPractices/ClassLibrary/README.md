@@ -1,10 +1,9 @@
 # Class Library
-
 This article describes recommended practice for writing a localized class library that doesn't use dependency injection.
 
-The developer of a class library may want to provide builtin localizations. 
-The recommended practice is to create a class **LibraryAssetSources** into the class library.
-It should implement **ILibraryAssetSources** as a signal that it provides the localizations for the library.
+## Localization Sources
+The class library may want to provide builtin localizations. 
+The recommended practice is to create a public class **LibraryAssetSources** which implements **ILibraryAssetSources** to signal that this class provides the locations of its internal localizations.
 
 Internal localization files are typically added embedded resources.
 
@@ -16,18 +15,12 @@ namespace TutorialLibrary1
 {
     public class LibraryAssetSources : List<IAssetSource>, ILibraryAssetSources
     {
-        /// <summary>
-        /// A local embedded localization file.
-        /// </summary>
-        public readonly IAssetSource EmbeddedLocalizationSource = 
-                LocalizationReaderMap.Instance.EmbeddedAssetSource(
-                    asm: typeof(LibraryAssetSources).Assembly,
-                    resourceName: "docs.TutorialLibrary1-de.xml");
-
         public LibraryAssetSources() : base()
         {
+            // Create source that reads an embedded resource.
+            IAssetSource internalLocalizationSource = LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
             // Asset sources are added here
-            Add(EmbeddedLocalizationSource);
+            Add(internalLocalizationSource);
         }
     }
 }
@@ -52,8 +45,8 @@ namespace TutorialLibrary1
 
 ```
 </details>
-<br/>
 
+## Using Localizer
 There should be another class called **LibraryLocalization** that is used as the *IAssetRoot* for the classes that use localization.
 This root is linked to the global static root and shares its assets.
 
@@ -108,8 +101,8 @@ namespace TutorialLibrary1
 }
 
 ```
-<br/>
 
+## Using the class library
 When another class library or application uses the class library the localization works out-of-the-box.
 # [Snippet](#tab/snippet-2)
 
@@ -153,8 +146,8 @@ namespace TutorialProject1
 ```
 ***
 
-<br/>
-The application can supply additional localizations by placing *IAssetSource*s to the global static **LocalizationRoot.Builder**.
+## Supplying Extra Localizations
+Application that deploys the class library can supply additional localizations by adding *IAssetSource*s to the global static **LocalizationRoot.Builder**.
 # [Snippet](#tab/snippet-3)
 
 ```csharp
@@ -228,3 +221,31 @@ namespace TutorialProject1
 ```
 </details>
 <br/>
+
+## External Localization
+Class library can be configured to search for external localization from preconfigured locations.
+
+```csharp
+using System.Collections.Generic;
+using Lexical.Localization;
+
+namespace TutorialLibrary1
+{
+    public class LibraryAssetSourcesB : List<IAssetSource>, ILibraryAssetSources
+    {
+        public LibraryAssetSourcesB() : base()
+        {
+            // Create source that reads embedded resource.
+            IAssetSource internalLocalizationSource = LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
+            // Asset sources are added here
+            Add(internalLocalizationSource);
+
+            // Create source that searches for a file
+            IAssetSource externalLocalizationSource = LocalizationReaderMap.Instance.FileAssetSource("docs.TutoarialLibrary1.xml");
+            // Asset sources are added here
+            Add(externalLocalizationSource);
+        }
+    }
+}
+
+```

@@ -2,9 +2,9 @@
 
 This article describes recommended practice for writing a class library that, for purposes of localization, is compatible with and without Dependency Injection.
 
-The developer of a class library may want to provide builtin localizations. 
-The recommended practice is to create a class **LibraryAssetSources** into the class library.
-It should implement **ILibraryAssetSources** as a signal that it provides the localizations for the library.
+## Localization Sources
+The class library may want to provide builtin localizations. 
+The recommended practice is to create a public class **LibraryAssetSources** which implements **ILibraryAssetSources** to signal that this class provides the locations of its internal localizations.
 
 Internal localization files are typically added built-in as embedded resources.
 [!code-csharp[Snippet](LibraryAssetSources.cs)]
@@ -12,22 +12,21 @@ Internal localization files are typically added built-in as embedded resources.
   <summary>The example localization file *TutorialLibrary3-de.xml*.  (<u>click here</u>)</summary>
 [!code-xml[Snippet](../../TutorialLibrary3-de.xml)]
 </details>
-<br/>
 
+## Using Localizer
 There should be another class called **LibraryLocalization** that is used as the *IAssetRoot* for the classes that use localization.
 This root is linked to the global static root and shares its assets.
 [!code-csharp[Snippet](LibraryLocalization.cs)]
-<br/> 
 
 For inversion of control, the class library can use IStringLocalizer abstractions. The non-dependency injection instance is acquired from *LibraryLocalization* if *localizer* is null.
 [!code-csharp[Snippet](MyClass.cs)]
 
 ... or alternatively Lexical.Localization.Abstractions.
 [!code-csharp[Snippet](MyClassB.cs)]
-<br/>
 
-Application that deploys with its localizer can include its depending libraries internal localizations with 
-**<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** which searches for **ILibraryAssetSources** and adds them as *IAssetSource*s.
+## Deploying Localizer
+Application that deploys the localizer must include the internal localizations with 
+**<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** which searches the **ILibraryAssetSources** of the library.
 # [Snippet](#tab/snippet-1)
 [!code-csharp[Snippet](LibraryConsumer1.cs#Snippet)]
 # [Full Code](#tab/full-1)
@@ -55,3 +54,6 @@ The extension method **AddLexicalLocalization(this <i>IServiceCollection</i>)** 
 [!code-csharp[Snippet](LibraryConsumer3.cs)]
 ***
 
+## External Localization
+Class library can be configured to search for external localization from preconfigured locations.
+[!code-csharp[Snippet](LibraryAssetSourcesB.cs)]
