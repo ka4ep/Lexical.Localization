@@ -476,11 +476,12 @@ namespace Lexical.Localization
 
                 // Sorting index
                 int ix = 0;
+                IParameterInfo info;
 
                 // Get name
                 string name = g_name.Value;
                 if (name == "anysection") name = "Section";
-                if (!ConvertPriority.TryGetValue(name, out ix)) ix = 0;
+                if (ParameterInfos.Default.TryGetValue(name, out info)) ix = info.SortingOrder;
 
                 // Occurance index "_#"
                 if (g_index.Success) ix += Int32.Parse(g_index.Value);
@@ -494,14 +495,6 @@ namespace Lexical.Localization
             return result;
         }
         static Regex occuranceIndexParser = new Regex("(?<name>.*)(_(?<index>\\d+))?$", RegexOptions.Compiled|RegexOptions.CultureInvariant|RegexOptions.ExplicitCapture);
-
-        /// <summary>
-        /// Sorting priority for <see cref="ConvertMatchParametersToNonMatchParameters(IReadOnlyDictionary{string, string})"/>
-        /// </summary>
-        public static Dictionary<string, int> ConvertPriority = new Dictionary<string, int> {
-            { "Root", -8000 }, { "Culture", -7000 }, { "Assembly", -6000 }, { "Location", -5000 }, { "Resource", -4000 }, { "Type", -3000 }, { "Section", -2000 }, { "Key", 1000 },
-            { "N", 10000 }, { "N1", 11000 }, { "N2", 12000 }, { "N3", 13000 }, { "N4", 14000 }, { "N5", 15000 }, { "N6", 16000 }, { "N7", 17000 }, { "N8", 18000 }, { "N9", 19000 }, { "N10", 20000 },
-        };
 
     }
 
