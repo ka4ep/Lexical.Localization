@@ -183,7 +183,7 @@ namespace Lexical.Localization
             for(IAssetKey k = key; k!=null; k=k.GetPreviousKey())
             {
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILocalizationKeyCultureAssigned || k is IAssetKeyNonCanonicallyCompared || string.IsNullOrEmpty(k.Name)) continue;
+                if (k is ILocalizationKeyCultureAssigned || string.IsNullOrEmpty(k.Name)) continue;
                 if (length > 0) length++;
                 length += k.Name.Length;
             }
@@ -192,7 +192,7 @@ namespace Lexical.Localization
             for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
             {
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILocalizationKeyCultureAssigned || k is IAssetKeyNonCanonicallyCompared || string.IsNullOrEmpty(k.Name)) continue;
+                if (k is ILocalizationKeyCultureAssigned || string.IsNullOrEmpty(k.Name)) continue;
                 if (ix < length) chars[--ix] = '.';
                 ix -= k.Name.Length;
                 k.Name.CopyTo(0, chars, ix, k.Name.Length);

@@ -9,9 +9,19 @@ namespace TutorialLibrary3
         public LibraryAssetSources() : base()
         {
             // Create source that reads an embedded resource.
-            IAssetSource InternalLocalizationSource = LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary3-de.xml");
+            IAssetSource internalLocalizationSource = LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary3-de.xml");
             // Asset sources are added here
-            Add(InternalLocalizationSource);
+            Add(internalLocalizationSource);
+        }
+
+        public LibraryAssetSources(IFileProvider fileProvider) : this()
+        {
+            // Use file provider from dependency injection and search for an optional external localization source
+            if (fileProvider != null)
+            {
+                IAssetSource externalLocalizationSource = XmlLocalizationReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
+                Add(externalLocalizationSource);
+            }
         }
     }
 }

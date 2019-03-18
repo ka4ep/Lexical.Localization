@@ -40,10 +40,10 @@ namespace Lexical.Localization.Tests
 
             /// Section-2
             // Arrange
-            IAssetKey subSection1 = section1.Type(typeof(HashEqualTests).CanonicalName());
-            IAssetKey subSection2 = section2.Type(typeof(HashEqualTests));
-            IAssetKey subSection3 = section3.Type<HashEqualTests>();
-            IAssetKey subSectionX = section1.Type("MySubSection");
+            IAssetKey subSection1 = section1.Section("HashEqualTests");
+            IAssetKey subSection2 = section2.Section(typeof(HashEqualTests).Name);
+            IAssetKey subSection3 = section3.Section(nameof(HashEqualTests));
+            IAssetKey subSectionX = section1.Section("MySubSection");
             // Assert
             AreEqual(subSection1, subSection2, subSection3);
             AreNotEqual(subSection1, subSectionX);

@@ -42,9 +42,9 @@ namespace Lexical.Localization.Tests
 
             /// Section-2
             // Arrange
-            IAssetKey subSection1 = section1.Type(typeof(MyController).FullName);
-            IAssetKey subSection2 = section2.Type(typeof(MyController));
-            IAssetKey subSection3 = section3.Type<MyController>();
+            IAssetKey subSection1 = section1.Section(typeof(MyController).Name);
+            IAssetKey subSection2 = section2.Section(nameof(MyController));
+            IAssetKey subSection3 = section3.Section("MyController");
             IAssetKey subSectionX = section1.Section("MySubSection");
             // Assert
             SerializeEqual(subSection1, subSection2, subSection3);

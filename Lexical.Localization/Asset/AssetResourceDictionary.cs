@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -13,7 +14,7 @@ namespace Lexical.Localization
     /// <summary>
     /// This class adapts IDictionary{byte[], byte[]} to <see cref="IAssetResourceProvider"/> and <see cref="ILocalizationStringProvider"/>.
     /// </summary>
-    public class AssetResourceDictionary : IAssetResourceProvider, IAssetResourceCollection
+    public class AssetResourceDictionary : IAssetResourceProvider, IAssetResourceCollection, ILocalizationAssetCultureCapabilities
     {
         protected IReadOnlyDictionary<string, byte[]> source;
 
@@ -36,13 +37,65 @@ namespace Lexical.Localization
             if (key == null) return source.Keys;
             if (namePolicy is IAssetNamePattern pattern)
             {
-                return source.Keys.Where(name => pattern.Match(name).Success);
-            } else
+                IAssetNamePatternMatch match = pattern.Match(key);
+                return source.Where(kp => IsEqualOrSuperset(match, pattern.Match(kp.Key))).Select(kp=>kp.Key);
+            }
+            else
             {
                 string key_name = namePolicy.BuildName(key);
-                return source.Keys.Where(name => name.Contains(key_name));
+                return source.Where(kp => kp.Key.Contains(key_name)).Select(kp => kp.Key);
             }
         }
+
+        CultureInfo[] cultures;
+        public IEnumerable<CultureInfo> GetSupportedCultures()
+        {
+            var _cultures = cultures;
+            if (_cultures != null) return _cultures;
+
+            if (namePolicy is IAssetNamePattern pattern)
+            {
+                IAssetNamePatternPart culturePart;
+                if (!pattern.PartMap.TryGetValue("Culture", out culturePart)) return null;
+
+                Dictionary<string, CultureInfo> result = new Dictionary<string, CultureInfo>();
+                foreach (var kp in source)
+                {
+                    IAssetNamePatternMatch match = pattern.Match(kp.Key);
+                    if (!match.Success) continue;
+                    string culture = match[culturePart.CaptureIndex];
+                    if (culture == null) culture = "";
+                    if (result.ContainsKey(culture)) continue;
+                    try { result[culture] = CultureInfo.GetCultureInfo(culture); } catch (CultureNotFoundException) { }
+                }
+                return cultures = result.Values.ToArray();
+            }
+            else
+            {
+                // Can't extract culture
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Comapres two matches for equality or being superset.
+        /// </summary>
+        /// <param name="match"></param>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        static bool IsEqualOrSuperset(IAssetNamePatternMatch match, IAssetNamePatternMatch other)
+        {
+            if (match.Pattern != other.Pattern) return false;
+            for (int ix = 0; ix < match.Pattern.CaptureParts.Length; ix++)
+            {
+                IAssetNamePatternPart part = match.Pattern.CaptureParts[ix];
+
+                if (match.PartValues[ix] == null) continue;
+                if (match.PartValues[ix] != other.PartValues[ix]) return false;
+            }
+            return true;
+        }
+
 
         public byte[] GetResource(IAssetKey key)
         {

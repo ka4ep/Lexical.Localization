@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,15 +22,16 @@ namespace Lexical.Localization
     /// 
     /// If parameter value is "", then it is considered as non-existing and will not be appended.
     /// </summary>
+    [Obsolete("Due to changes, this class needs to be redesigned, use AssetNamePattern in the mean time")]
     public class AssetKeyNameProvider : IAssetKeyNameDescription, IAssetKeyNameProvider, ICloneable
     {
         private static readonly AssetKeyNameProvider colon_colon_colon = new AssetKeyNameProvider().SetDefault(true, ":", "");
         private static readonly AssetKeyNameProvider colon_colon_dot = new AssetKeyNameProvider().SetDefault(true, ":", "").SetParameter("Key", true, ".", "");
-        private static readonly AssetKeyNameProvider none_colon_colon = new AssetKeyNameProvider().SetDefault(true, ":", "").SetNonCanonicalDefault(false);
+        private static readonly AssetKeyNameProvider none_colon_colon = new AssetKeyNameProvider().SetDefault(true, ":", "").SetNonCanonicalDefault(false).AddParameterInfo(ParameterInfos.Default["Type"], "", ":", true);
         private static readonly AssetKeyNameProvider dot_dot_dot = new AssetKeyNameProvider().SetDefault(true, ".", "");
-        private static readonly AssetKeyNameProvider colon_dot_dot = new AssetKeyNameProvider().SetNonCanonicalDefault(true, "", ":").SetCanonicalDefault(true, ".", "");
-        private static readonly AssetKeyNameProvider none_dot_dot = new AssetKeyNameProvider().SetNonCanonicalDefault(false).SetCanonicalDefault(true, ".", "");
-        private static readonly AssetKeyNameProvider _default = new AssetKeyNameProvider().SetParameter("Culture", true, "", ":").SetNonCanonicalDefault(false).SetDefault(true, ":", "");
+        private static readonly AssetKeyNameProvider colon_dot_dot = new AssetKeyNameProvider().SetNonCanonicalDefault(true, "", ":").SetCanonicalDefault(true, ".", "").AddParameterInfo(ParameterInfos.Default["Type"], "", ".", true);
+        private static readonly AssetKeyNameProvider none_dot_dot = new AssetKeyNameProvider().SetNonCanonicalDefault(false).SetCanonicalDefault(true, ".", "").AddParameterInfo(ParameterInfos.Default["Type"], "", ".", true);
+        private static readonly AssetKeyNameProvider _default = new AssetKeyNameProvider().SetParameter("Culture", true, "", ":").SetNonCanonicalDefault(false).SetDefault(true, ":", "").AddParameterInfo(ParameterInfos.Default["Type"], "", ":", true);
 
         /// <summary>
         /// Default name policy for language strings matching. Suitable for language strings policy of asset loader, but not suitable for filename matching.
@@ -111,6 +113,36 @@ namespace Lexical.Localization
         public AssetKeyNameProvider DontInclude(string parameterName)
         {
             parameters[parameterName] = new AssetKeyParameterDescription(parameterName, null, null, false);
+            return this;
+        }
+
+        /// <summary>
+        /// Set rule for a parameter infos.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="prefixSeparator"></param>
+        /// <param name="postfixSeparator"></param>
+        /// <param name="isIncluded"></param>
+        /// <returns>this</returns>
+        public AssetKeyNameProvider AddParameterInfo(IParameterInfo info, string prefixSeparator = "", string postfixSeparator = "", bool isIncluded = true)
+        {
+            parameters[info.ParameterName] = new AssetKeyParameterDescription(info.ParameterName, prefixSeparator, postfixSeparator, isIncluded);
+            return this;
+        }
+
+        /// <summary>
+        /// Set rule for a parameter infos.
+        /// </summary>
+        /// <param name="infos"></param>
+        /// <param name="prefixSeparator"></param>
+        /// <param name="postfixSeparator"></param>
+        /// <returns>this</returns>
+        public AssetKeyNameProvider AddParameterInfos(IEnumerable<IParameterInfo> infos, string prefixSeparator = "", string postfixSeparator = "")
+        {
+            foreach (var info in infos)
+            {
+                parameters[info.ParameterName] = new AssetKeyParameterDescription(info.ParameterName, prefixSeparator, postfixSeparator, true);
+            }
             return this;
         }
 
@@ -214,7 +246,7 @@ namespace Lexical.Localization
                 }
             }
 
-            // Append non-canonical
+            // Calculate non-canonical
             noncanonicalParameters.Clear();
             for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
             {

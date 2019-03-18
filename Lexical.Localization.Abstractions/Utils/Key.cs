@@ -92,13 +92,20 @@ namespace Lexical.Localization.Utils
         public static Key Create(string parameterName, string parameterValue)
             => Create(null, parameterName, parameterValue);
 
-        public static Key Create(Key prevKey, string parameterName, string parameterValue)
+        public static Key Create(Key prevKey, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfo = default)
         {
-            ParameterFlags flag;
-            if (!ParameterInfo.TryGetValue(parameterName, out flag)) flag = ParameterFlags.CanonicalCompare;
-            if ((flag & ParameterFlags.NonCanonicalCompare) != 0) return new Key.NonCanonical(prevKey, parameterName, parameterValue);
-            if ((flag & ParameterFlags.CanonicalCompare) != 0) return new Key.Canonical(prevKey, parameterName, parameterValue);
-            return new Key(prevKey, parameterName, parameterValue);
+            IParameterInfo info;
+            if ((parameterInfo ?? ParameterInfos.Default).TryGetValue(parameterName, out info))
+            {
+                if (info.IsCanonicalCompare) return new Key.Canonical(prevKey, parameterName, parameterValue);
+                if (info.IsNonCanonicalCompare) return new Key.NonCanonical(prevKey, parameterName, parameterValue);
+                return new Key(prevKey, parameterName, parameterValue);
+            }
+            else
+            {
+                // Guess .. or throw error?
+                return new Key.Canonical(prevKey, parameterName, parameterValue);
+            }
         }
 
         /// <summary>
@@ -132,17 +139,6 @@ namespace Lexical.Localization.Utils
         static KeyParameterVisitor<Key> _copyVisitor = copyVisitor;
         static void copyVisitor(string parameterName, string parameterValue, ref Key result)
             => result = Key.Create(result, parameterName, parameterValue);
-
-        [Flags]
-        public enum ParameterFlags { None = 0, NonCanonicalCompare = 1, CanonicalCompare = 2 }
-
-        /// <summary>
-        /// Database on each parameter name. The default is CanonicalCompare.
-        /// </summary>
-        public static readonly Dictionary<string, ParameterFlags> ParameterInfo = new Dictionary<string, ParameterFlags>
-        {
-            { "Root", ParameterFlags.None }, { "Culture", ParameterFlags.NonCanonicalCompare }, { "Assembly", ParameterFlags.NonCanonicalCompare }
-        };
 
         /// <summary>
         /// Concatenate two keys.

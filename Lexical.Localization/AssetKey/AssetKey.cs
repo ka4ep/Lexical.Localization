@@ -110,7 +110,7 @@ namespace Lexical.Localization
         IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(Type t) => typeSectionConstructor.Create(t, this);
         IAssetKey<T> IAssetKeyTypeAssignable.Type<T>() => new _Type<T>(this);
         [Serializable]
-        public class _Type : AssetKey, IAssetKeyTypeAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
+        public class _Type : AssetKey, IAssetKeyTypeAssigned, IAssetKeyParameterAssigned, IAssetKeyNonCanonicallyCompared
         {
             protected Type type;
             public virtual Type Type => type;

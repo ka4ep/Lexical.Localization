@@ -53,7 +53,3 @@ The extension method **AddLexicalLocalization(this <i>IServiceCollection</i>)** 
 # [Full Code](#tab/full-3)
 [!code-csharp[Snippet](LibraryConsumer3.cs)]
 ***
-
-## External Localization
-Class library can be configured to search for external localization from preconfigured locations.
-[!code-csharp[Snippet](LibraryAssetSourcesB.cs)]

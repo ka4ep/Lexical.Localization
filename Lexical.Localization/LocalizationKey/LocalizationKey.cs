@@ -164,7 +164,7 @@ namespace Lexical.Localization
         ILocalizationKeyPluralityAssigned ILocalizationKeyPluralityAssignable.N(int argumentIndex, string pluralityKind) => new _N(_N.BackUp(this, argumentIndex), argumentIndex, pluralityKind);
         public _N N(int argumentIndex, string pluralityKind) => new _N(_N.BackUp(this, argumentIndex), argumentIndex, pluralityKind);
         [Serializable]
-        public class _N : LocalizationKey, IAssetKeySectionAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared, ILocalizationKeyPluralityAssigned
+        public class _N : LocalizationKey, IAssetKeySectionAssigned, IAssetKeyParameterAssigned, IAssetKeyNonCanonicallyCompared, ILocalizationKeyPluralityAssigned
         {
             int argumentIndex;
             int ILocalizationKeyPluralityAssigned.ArgumentIndex => argumentIndex;
@@ -215,7 +215,7 @@ namespace Lexical.Localization
         public _Type Type(Type t) => typeConstructor.Create(t, this);
         public _Type<T> Type<T>() => new _Type<T>(this);
         [Serializable]
-        public class _Type : LocalizationKey, IAssetKeyTypeAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
+        public class _Type : LocalizationKey, IAssetKeyTypeAssigned, IAssetKeyParameterAssigned, IAssetKeyNonCanonicallyCompared
         {
             protected Type type;
             Type IAssetKeyTypeAssigned.Type => type;

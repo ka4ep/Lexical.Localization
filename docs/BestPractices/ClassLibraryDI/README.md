@@ -20,9 +20,19 @@ namespace TutorialLibrary2
         public LibraryAssetSources() : base()
         {
             // Create source that reads embedded resource
-            IAssetSource embeddedLocalizationSource = LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary2-de.xml");
+            IAssetSource internalLocalizationSource = LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary2-de.xml");
             // Asset sources are added here
-            Add(embeddedLocalizationSource);
+            Add(internalLocalizationSource);
+        }
+
+        public LibraryAssetSources(IFileProvider fileProvider) : this()
+        {
+            // Use file provider from dependency injection and search for an optional external localization source
+            if (fileProvider != null)
+            {
+                IAssetSource externalLocalizationSource = XmlLocalizationReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
+                Add(externalLocalizationSource);
+            }
         }
     }
 }
@@ -344,38 +354,3 @@ namespace TutorialProject2
 
 ```
 ***
-
-## External Localization
-Class library can be configured to search for external localization from preconfigured locations.
-
-```csharp
-using System.Collections.Generic;
-using Lexical.Localization;
-using Microsoft.Extensions.FileProviders;
-
-namespace TutorialLibrary2
-{
-    public class LibraryAssetSourcesB : List<IAssetSource>, ILibraryAssetSources
-    {
-        public LibraryAssetSourcesB()
-        {
-            // Create source that reads embedded resource
-            IAssetSource embeddedLocalizationSource = LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary2-de.xml");
-            // Asset sources are added here
-            Add(embeddedLocalizationSource);
-        }
-
-        public LibraryAssetSourcesB(IFileProvider fileProvider) : this()
-        {
-            // Use file provider from dependency injection and search for an optional external file
-            if (fileProvider != null)
-            {
-                // Create source that reads from file provider
-                IAssetSource externalLocalizationSource = XmlLocalizationReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary2.xml", throwIfNotFound: false);
-                Add(externalLocalizationSource);
-            }
-        }
-    }
-}
-
-```
