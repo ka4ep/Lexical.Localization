@@ -56,7 +56,7 @@ namespace Lexical.Localization
         /// <param name="groupingPatternText"></param>
         /// <returns></returns>
         public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines, string groupingPatternText)
-            => AddRange(node, lines, groupingRule: new AssetNamePattern(groupingPatternText));
+            => AddRange(node, lines, groupingRule: groupingPatternText == null ? null : new AssetNamePattern(groupingPatternText));
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
@@ -131,8 +131,11 @@ namespace Lexical.Localization
                         int ixx = -1;
                         for (int ix = part_ix; ix < partList.Count; ix++)
                         {
+                            string key_part = partList[ix].name;
                             // Detected part
-                            if (partList[ix].name == part.ParameterName) { ixx = ix; break; }
+                            if (key_part == part.ParameterName) { ixx = ix; break; }
+                            if (part.ParameterName == "anysection" && 
+                                (key_part == "Type" || key_part == "Section")) { ixx = ix; break; }
                         }
 
                         // Detected part for parameter name in the grouping rule

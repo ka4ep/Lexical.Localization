@@ -132,7 +132,7 @@ namespace Lexical.Localization
         {
             this.Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
             System.Text.RegularExpressions.MatchCollection matches = regex.Matches(pattern);
-            if (matches.Count == 0) throw new ArgumentException($"Failed to parse filename pattern \"{pattern}\"");
+            //if (matches.Count == 0) throw new ArgumentException($"Failed to parse filename pattern \"{pattern}\"");
 
             List<Part> list = new List<Part>(matches.Count);
             int ix = 0, matchIx = 0;
