@@ -224,9 +224,8 @@ namespace Lexical.Localization
 
         public bool Equals(IAssetKey x, IAssetKey y)
         {
-            LazyList<(string, string)> x_parameters = new LazyList<(string, string)>();
-
             // Get x's (parameter, value) pairs
+            StructList8<KeyValuePair<string, string>> x_parameters = new StructList8<KeyValuePair<string, string>>();
             for (IAssetKey x_node = x; x_node != null; x_node = x_node.GetPreviousKey())
             {
                 // Is non-canonical
@@ -242,76 +241,65 @@ namespace Lexical.Localization
                 // Previous occurance x_parameters table index
                 int ix = -1;
                 // Has this parameter been added already. 
-                for (int i = 0; i < x_parameters.Count; i++) if (x_parameters[i].Item1 == x_parameter_name) { ix = i; break; }
+                for (int i = 0; i < x_parameters.Count; i++) if (x_parameters[i].Key == x_parameter_name) { ix = i; break; }
                 // Left-most value stands.
                 if (ix >= 0)
                 {
                     // Update table
-                    x_parameters[ix] = (x_parameter_name, x_parameter_value);
+                    x_parameters[ix] = new KeyValuePair<string, string>(x_parameter_name, x_parameter_value);
                 }
                 else
                 {
                     // Add to list
-                    x_parameters.Add((x_parameter_name, x_parameter_value));
+                    x_parameters.Add( new KeyValuePair<string, string>(x_parameter_name, x_parameter_value) );
                 }
             }
 
-            // Match against y's
-            int count = 0;
+            // Get y's (parameter, value) pairs
+            StructList8<KeyValuePair<string, string>> y_parameters = new StructList8<KeyValuePair<string, string>>();
             for (IAssetKey y_node = y; y_node != null; y_node = y_node.GetPreviousKey())
             {
                 // Is non-canonical
                 if (y_node is IAssetKeyNonCanonicallyCompared == false) continue;
 
-                // Get parameter name
+                // Get parameter
                 string y_parameter_name = y_node.GetParameterName(), y_parameter_value = y_node.Name;
                 if (y_parameter_name == null || y_parameter_value == null) continue;
 
                 // Is this parameter excluded
                 if (parameterNamesToIgnore != null && parameterNamesToIgnore.Contains(y_parameter_name)) continue;
 
-                // Test if this parameter is yet to occure again towards left of the key
-                bool firstOccurance = true;
-                for (IAssetKey kk = y_node.GetPreviousKey(); kk != null; kk = kk.GetPreviousKey())
-                    if (kk is IAssetKeyNonCanonicallyCompared && kk.GetParameterName() == y_parameter_name)
-                    {
-                        firstOccurance = false;
-                        break;
-                    }
-                // Ignore this occurance as this non-canonical part occurs again.
-                if (!firstOccurance) continue;
-
-                // Test if x had one corresponding one
-                string x_value = null;
+                // Previous occurance y_parameters table index
                 int ix = -1;
-                for (int i = 0; i < x_parameters.Count; i++)
+                // Has this parameter been added already. 
+                for (int i = 0; i < y_parameters.Count; i++) if (y_parameters[i].Key == y_parameter_name) { ix = i; break; }
+                // Left-most value stands.
+                if (ix >= 0)
                 {
-                    if (x_parameters[i].Item1 == y_parameter_name)
-                    {
-                        x_value = x_parameters[i].Item2;
-                        ix = i;
-                        break;
-                    }
+                    // Update table
+                    y_parameters[ix] = new KeyValuePair<string, string>(y_parameter_name, y_parameter_value);
                 }
-
-                // y has a y_parameter_name that doesn't have a corresponding equivalent in x
-                if (ix < 0) return false;
-
-                // y_parameter_name has already been matched. It was ok. 
-                // This is second time for this parameter, the last in chain value only matters.
-                // Thereok, we can ignore this
-                if (x_value == null) continue;
-
-                // Value differs
-                if (x_value != y_parameter_value) return false;
-
-                // Value is same. We null x_parameter[ix].value as a signal that the paramter name has already been checked.
-                x_parameters[ix] = (y_parameter_name, null);
-                count++;
+                else
+                {
+                    // Add to list
+                    y_parameters.Add(new KeyValuePair<string, string>(y_parameter_name, y_parameter_value));
+                }
             }
 
-            // X had some values Y didn't
-            if (count != x_parameters.Count) return false;
+            // Compare count
+            if (x_parameters.Count != y_parameters.Count) return false;
+
+            // Sort arrays
+            var sorter = new StructListSorter<StructList8<KeyValuePair<string, string>>, KeyValuePair<string, string>>(KeyValuePairComparer<string, string>.Default);
+            sorter.Sort(ref x_parameters);
+            sorter.Sort(ref y_parameters);
+
+            // Compare sorted arrays
+            for (int i=0; i<x_parameters.Count; i++)
+            {
+                KeyValuePair<string, string> x_parameter = x_parameters[i], y_parameter = y_parameters[i];
+                if (x_parameter.Key != y_parameter.Key || x_parameter.Value != y_parameter.Value) return false;
+            }
 
             return true;
         }
