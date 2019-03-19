@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Context free format of asset key
     /// </summary>
-    public class ParameterParser : IAssetKeyNameProvider, IAssetKeyNameParser
+    public class ParameterParser
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
         static ParameterParser instance = new ParameterParser("\\\n\t\r\0\a\b\f:");
@@ -42,14 +42,6 @@ namespace Lexical.Localization
             _parameterVisitorIncludeRoot = parameterVisitorIncludeRoot;
             _parameterVisitorExcludeRoot = parameterVisitorExcludeRoot;
         }
-
-        /// <summary>
-        /// Build path string from key.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns>full name string</returns>
-        string IAssetKeyNameProvider.BuildName(IAssetKey key)
-            => PrintKey(key as IAssetKey);
 
         /// <summary>
         /// Convert a sequence of key,value pairs to a string.

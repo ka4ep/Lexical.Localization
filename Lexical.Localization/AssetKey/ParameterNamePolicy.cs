@@ -14,14 +14,14 @@ namespace Lexical.Localization
     /// <summary>
     /// Context free format of asset key
     /// </summary>
-    public class ParameterNamePolicy : ParameterParser
+    public class ParameterNamePolicy : ParameterParser, IAssetKeyNameProvider, IAssetKeyNameParser
     {
         static ParameterNamePolicy instance = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:");
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
         /// </summary>
-        public static ParameterNamePolicy Instance => instance;
+        public new static ParameterNamePolicy Instance => instance;
 
         /// <summary>
         /// Create new string serializer
@@ -80,5 +80,15 @@ namespace Lexical.Localization
             resultKey = result;
             return true;
         }
+
+
+        /// <summary>
+        /// Build path string from key.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>full name string</returns>
+        public string BuildName(IAssetKey key)
+            => PrintKey(key as IAssetKey);
+
     }
 }
