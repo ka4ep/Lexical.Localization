@@ -21,10 +21,10 @@ namespace Lexical.Localization.Tests
 
             /// Section-1
             // Arrange
-            IAssetKey section1 = root1.Type(typeof(HashEqualTests).CanonicalName());
+            IAssetKey section1 = root1.Type(typeof(HashEqualTests).FullName);
             IAssetKey section2 = root2.Type(typeof(HashEqualTests));
             IAssetKey section3 = root3.Type<HashEqualTests>();
-            IAssetKey section4 = new LocalizationKey._Type(new LocalizationRoot(), typeof(HashEqualTests).CanonicalName());
+            IAssetKey section4 = new LocalizationKey._Type(new LocalizationRoot(), typeof(HashEqualTests).FullName);
             IAssetKey sectionX = root1.Section("MySection");
             // Assert
             AreEqual(section1, section2, section3);

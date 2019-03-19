@@ -132,7 +132,7 @@ namespace Lexical.Localization
             {
                 object obj = (culture == null ? ResourceManager.GetObject(id) : ResourceManager.GetObject(id, culture)) as byte[];
                 if (obj == null) return null;
-                return obj is byte[] data ? data : throw new LocalizationException($"Key={id}, Expected byte[], got {obj.GetType().CanonicalName()}");
+                return obj is byte[] data ? data : throw new LocalizationException($"Key={id}, Expected byte[], got {obj.GetType().FullName}");
             } catch(Exception e)
             {
                 throw new LocalizationException(id, e);
@@ -147,7 +147,7 @@ namespace Lexical.Localization
             {
                 object obj = (culture == null ? ResourceManager.GetObject(id) : ResourceManager.GetObject(id, culture)) as byte[];
                 if (obj == null) return null;
-                return obj is byte[] data ? new MemoryStream(data) : throw new LocalizationException($"Key={id}, Expected byte[], got {obj.GetType().CanonicalName()}");
+                return obj is byte[] data ? new MemoryStream(data) : throw new LocalizationException($"Key={id}, Expected byte[], got {obj.GetType().FullName}");
             }
             catch (Exception e)
             {

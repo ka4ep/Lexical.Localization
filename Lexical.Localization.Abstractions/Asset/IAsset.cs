@@ -50,7 +50,7 @@ namespace Lexical.Localization
                     }
                 }
             }
-            throw new AssetException($"{typeof(T).CanonicalName()} was not found.");
+            throw new AssetException($"{typeof(T).FullName} was not found.");
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Lexical.Localization
                     }
                 }
             }
-            throw new AssetException($"{type.CanonicalName()} was not found.");
+            throw new AssetException($"{type.FullName} was not found.");
         }
 
         /// <summary>

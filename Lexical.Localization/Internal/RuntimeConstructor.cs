@@ -69,7 +69,7 @@ namespace Lexical.Localization.Internal
             // Assert
             this.genericType = genericType ?? throw new ArgumentNullException(nameof(genericType));
             Type[] genericArguments = genericType.GetGenericArguments();
-            if (genericArguments.Length != 1 || genericArguments[0].IsGenericType) throw new ArgumentException($"Needs exactly one generic argument. {genericType.CanonicalName()} doesn't match criteria for {GetType().CanonicalName()}");
+            if (genericArguments.Length != 1 || genericArguments[0].IsGenericType) throw new ArgumentException($"Needs exactly one generic argument. {genericType.FullName} doesn't match criteria for {GetType().FullName}");
 
             // Create ConditionalWeakTable.CreateValueCallback delegate instance
             cacheCallback = CreateConstructor;
@@ -85,7 +85,7 @@ namespace Lexical.Localization.Internal
         {
             Type runtimeType = genericType.MakeGenericType(t);
             ConstructorInfo ci = runtimeType.GetConstructor(constructorParamTypes);
-            if (ci == null) throw new Exception($"{GetType().CanonicalName()}: Could not find constructor for {runtimeType.CanonicalName()}({String.Join(", ", constructorParamTypes.Select(_=>_.CanonicalName()))})");
+            if (ci == null) throw new Exception($"{GetType().FullName}: Could not find constructor for {runtimeType.FullName}({String.Join(", ", constructorParamTypes.Select(_=>_.FullName))})");
 
             // Create delegate
             return (Func<P0, ReturnType>) Expression.Lambda(typeof(Func<P0, ReturnType>), Expression.New(ci, constructorParams), constructorParams).Compile();

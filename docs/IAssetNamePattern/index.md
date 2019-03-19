@@ -39,6 +39,7 @@ Some of the parameters are well-known, and they also have a respective method th
 | anysection | *all above* | Matches to any section above. |
 | Culture  | .Culture(*string*) | Culture |
 | Key | .Key(*string*) | Key name |
+| N | .N(*Type*) | Plurality key |
 
 <br/>
 Custom parameters can be created. Parameter key object should implement IAssetKey, have [AssetKeyParameter] attribute and [AssetKeyConstructor] in the method that creates it.

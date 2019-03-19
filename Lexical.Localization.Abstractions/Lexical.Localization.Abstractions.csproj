@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.20.1</Version>
+    <Version>0.21.0</Version>
     <Authors>Toni Kalajainen</Authors>
     <Company>Lexical</Company>
     <Description>Localization class library abstractions</Description>
@@ -16,6 +16,10 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageIconUrl>http://avalanche.fi/theme/logo_blue.svg</PackageIconUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

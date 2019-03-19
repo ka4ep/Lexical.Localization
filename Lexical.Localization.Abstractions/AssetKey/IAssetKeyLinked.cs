@@ -9,6 +9,9 @@ using System.Collections.Generic;
 
 namespace Lexical.Localization
 {
+    /// <summary>
+    /// Interface for key classes that can form a linked list.
+    /// </summary>
     public interface IAssetKeyLinked : IAssetKey
     {
         /// <summary>
@@ -17,6 +20,14 @@ namespace Lexical.Localization
         IAssetKey PreviousKey { get; }
     }
 
+    /// <summary>
+    /// A visitor delegate that is used when key is visited.
+    /// Visitation starts from tail and proceeds towards root.
+    /// Visitation is stack allocated.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="key"></param>
+    /// <param name="data"></param>
     public delegate void AssetKeyVisitor<T>(IAssetKey key, ref T data);
 
     public static partial class AssetKeyExtensions
@@ -128,7 +139,7 @@ namespace Lexical.Localization
         {
             for (; key != null; key = key.GetPreviousKey())
                 if (key is T casted) return casted;
-            throw new AssetKeyException(key, $"{typeof(T).CanonicalName()} is not found.");
+            throw new AssetKeyException(key, $"{typeof(T).FullName} is not found.");
         }
 
         /// <summary>
@@ -142,6 +153,22 @@ namespace Lexical.Localization
             for (IAssetKey k = key.GetPreviousKey(); k != null; k = k.GetPreviousKey())
                 if (k is T casted) return casted;
             return default;
+        }
+
+        /// <summary>
+        /// Scan key towards root, returns <paramref name="index"/>th key from tail.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="index">the index of key to return starting from tail.</param>
+        /// <returns>key</returns>
+        /// <exception cref="IndexOutOfRangeException">if <paramref name="index"/> goes over root</exception>
+        public static IAssetKey GetAt(this IAssetKey key, int index)
+        {
+            if (index < 0) throw new IndexOutOfRangeException();
+            for (int i = 0; i < index; i++)
+                key = key.GetPreviousKey();
+            if (key == null) throw new IndexOutOfRangeException();
+            return key;
         }
 
     }

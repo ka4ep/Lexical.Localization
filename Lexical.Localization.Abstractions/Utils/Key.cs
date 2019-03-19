@@ -174,16 +174,14 @@ namespace Lexical.Localization.Utils
             public Canonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
         }
 
-        public static AssetKeyComparer ChainComparer = AssetKeyComparer.Default;
-
         bool IEquatable<Key>.Equals(Key other)
-            => ChainComparer.Equals(this, other);
+            => AssetKeyComparer.Default.Equals(this, other);
 
         public override int GetHashCode()
-            => ChainComparer.GetHashCode(this);
+            => AssetKeyComparer.Default.GetHashCode(this);
 
         public override bool Equals(object obj)
-            => obj is Key other ? ChainComparer.Equals(this, other) : false;
+            => obj is Key other ? AssetKeyComparer.Default.Equals(this, other) : false;
 
         /// <summary>
         /// Prints the key in "parameterName:parameterValue:..." format.
@@ -209,7 +207,7 @@ namespace Lexical.Localization.Utils
             public Comparer(IComparer<string> parameterNameComparer = default, IComparer<string> parameterValueComparer = default)
             {
                 this.parameterNameComparer = parameterNameComparer ?? StringComparer.InvariantCultureIgnoreCase;
-                this.parameterValueComparer = parameterValueComparer ?? AlphaNumericComparer.Default;
+                this.parameterValueComparer = parameterValueComparer ?? StringComparer.InvariantCultureIgnoreCase;
             }
 
             public int Compare(Key x, Key y)
