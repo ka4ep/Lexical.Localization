@@ -15,28 +15,26 @@ namespace Lexical.Localization
     /// <summary>
     /// Context free format of asset key
     /// </summary>
-    public class ParameterNamePolicy : IAssetKeyNameProvider, IAssetKeyNameParser
+    public class ParameterParser : IAssetKeyNameProvider, IAssetKeyNameParser
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
-        static ParameterNamePolicy instance = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:");
+        static ParameterParser instance = new ParameterParser("\\\n\t\r\0\a\b\f:");
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
         /// </summary>
-        public static ParameterNamePolicy Instance => instance;
+        public static ParameterParser Instance => instance;
 
-        Regex ParsePattern =
-            new Regex(@"(?<key>([^:\\]|\\.)*)\:(?<value>([^:\\]|\\.)*)(\:|$)", opts);
-
-        Regex LiteralEscape;
-        Regex LiteralUnescape = new Regex(@"\\.", opts);
-        MatchEvaluator escapeChar, unescapeChar;
+        protected Regex ParsePattern = new Regex(@"(?<key>([^:\\]|\\.)*)\:(?<value>([^:\\]|\\.)*)(\:|$)", opts);
+        protected Regex LiteralEscape;
+        protected Regex LiteralUnescape = new Regex(@"\\.", opts);
+        protected MatchEvaluator escapeChar, unescapeChar;
 
         /// <summary>
         /// Create new string serializer
         /// </summary>
         /// <param name="escapeCharacters">list of characters that are to be escaped</param>
-        public ParameterNamePolicy(string escapeCharacters)
+        public ParameterParser(string escapeCharacters)
         {
             LiteralEscape = new Regex("[" + Regex.Escape(escapeCharacters) + "]", opts);
             escapeChar = EscapeChar;
@@ -173,10 +171,10 @@ namespace Lexical.Localization
         /// Parse string into IAssetKey.
         /// </summary>
         /// <param name="keyString"></param>
-        /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <param name="rootKey">root key to span values from</param>
         /// <returns>result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</returns>
         /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
-        public IAssetKey Parse(string keyString, IAssetKey rootKey = default)
+        public virtual IAssetKey Parse(string keyString, IAssetKey rootKey)
         {
             IAssetKey result = rootKey;
             MatchCollection matches = ParsePattern.Matches(keyString);
@@ -188,7 +186,7 @@ namespace Lexical.Localization
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
                 if (key == "Root") continue;
-                result = result == null ? Key.Create(key, value) : result.AppendParameter(key, value);
+                result = result.AppendParameter(key, value);
             }
             return result;
         }
@@ -198,9 +196,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="keyString"></param>
         /// <param name="resultKey">result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</param>
-        /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <param name="rootKey">root key to span values from</param>
         /// <returns>true if parse was successful</returns>
-        public bool TryParse(string keyString, out IAssetKey resultKey, IAssetKey rootKey = default)
+        public virtual bool TryParse(string keyString, out IAssetKey resultKey, IAssetKey rootKey)
         {
             IAssetKey result = rootKey;
             MatchCollection matches = ParsePattern.Matches(keyString);
@@ -212,7 +210,7 @@ namespace Lexical.Localization
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
                 if (key == "Root") continue;
-                result = result == null ? Key.Create(key, value) : result.AppendParameter(key, value);
+                result = result.AppendParameter(key, value);
             }
             resultKey = result;
             return true;

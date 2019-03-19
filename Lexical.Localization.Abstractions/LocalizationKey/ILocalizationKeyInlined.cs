@@ -60,7 +60,7 @@ namespace Lexical.Localization
         {
             ILocalizationKeyInlined inlinesKey = key.GetOrCreateInlinesKey();
             IDictionary<IAssetKey, string> inlines = inlinesKey.Inlines;
-            IAssetKey subKey = ParameterNamePolicy.Instance.Parse(subKeyText, key);
+            IAssetKey subKey = ParameterParser.Instance.Parse(subKeyText, key);
             if (text == null) inlines.Remove(subKey); else inlines[subKey] = text;
             return inlinesKey;
         }
