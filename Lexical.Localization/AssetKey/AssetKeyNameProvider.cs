@@ -213,7 +213,7 @@ namespace Lexical.Localization
             int length = 0;
 
             string pendingSeparator = null;
-            LazyList<string> noncanonicalParameters = new LazyList<string>();
+            StructList8<string> noncanonicalParameters = new StructList8<string>();
             // Calculate canonicals
             for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
             {

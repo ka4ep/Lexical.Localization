@@ -225,7 +225,7 @@ namespace Lexical.Localization
         public bool Equals(IAssetKey x, IAssetKey y)
         {
             // Get x's (parameter, value) pairs
-            StructList8<KeyValuePair<string, string>> x_parameters = new StructList8<KeyValuePair<string, string>>();
+            StructList8<KeyValuePair<string, string>> x_parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
             for (IAssetKey x_node = x; x_node != null; x_node = x_node.GetPreviousKey())
             {
                 // Is non-canonical
@@ -256,7 +256,7 @@ namespace Lexical.Localization
             }
 
             // Get y's (parameter, value) pairs
-            StructList8<KeyValuePair<string, string>> y_parameters = new StructList8<KeyValuePair<string, string>>();
+            StructList8<KeyValuePair<string, string>> y_parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
             for (IAssetKey y_node = y; y_node != null; y_node = y_node.GetPreviousKey())
             {
                 // Is non-canonical

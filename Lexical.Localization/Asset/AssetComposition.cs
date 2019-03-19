@@ -111,7 +111,7 @@ namespace Lexical.Localization
 
         public void Dispose()
         {
-            LazyList<Exception> errors = new LazyList<Exception>();
+            StructList4<Exception> errors = new StructList4<Exception>();
             foreach (IDisposable disposable in _getComponents<IDisposable>())
             {
                 try

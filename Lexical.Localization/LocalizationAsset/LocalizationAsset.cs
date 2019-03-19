@@ -262,7 +262,7 @@ namespace Lexical.Localization
                 if (disposeSources) disposables = sources.Select(s => s as IDisposable).Where(s => s != null).ToArray();
                 sources.Clear();
             }
-            LazyList<Exception> errors = new LazyList<Exception>();
+            StructList4<Exception> errors = new StructList4<Exception>();
             if (disposeSources)
             foreach (IDisposable d in disposables)
             {
