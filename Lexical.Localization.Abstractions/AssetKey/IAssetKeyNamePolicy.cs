@@ -4,17 +4,16 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
-using System.Collections.Generic;
 
 namespace Lexical.Localization
 {
     #region IAssetKeyNamePolicy
     /// <summary>
-    /// Signal that the class can convert <see cref="IAssetKey"/> into strings.
+    /// Signal that the class can do conversions of <see cref="IAssetKey"/> and <see cref="String"/>.
     /// 
-    /// Consumer of this interface should call <see cref="AssetKeyExtensions.BuildName(IAssetKeyNamePolicy, IAssetKey)"/>.
+    /// User of this interface should call <see cref="AssetKeyNamePolicyExtensions.BuildName(IAssetKeyNamePolicy, IAssetKey)"/>.
     /// 
-    /// Producer to this interface should implement one of the more specific interfaces:
+    /// Class that imlpements to this interface should implement one or both of the following interfaces:
     ///  <see cref="IAssetKeyNameProvider"/>
     ///  <see cref="IAssetNamePattern"/>
     /// </summary>
@@ -24,6 +23,9 @@ namespace Lexical.Localization
     #endregion IAssetKeyNamePolicy
 
     #region IAssetKeyNameProvider
+    /// <summary>
+    /// Converts <see cref="IAssetKey"/> to <see cref="String"/>.
+    /// </summary>
     public interface IAssetKeyNameProvider : IAssetKeyNamePolicy
     {
         /// <summary>
@@ -36,6 +38,9 @@ namespace Lexical.Localization
     #endregion IAssetKeyNameProvider
 
     #region IAssetKeyNameParser
+    /// <summary>
+    /// Parses <see cref="String"/> into <see cref="IAssetKey"/>.
+    /// </summary>
     public interface IAssetKeyNameParser : IAssetKeyNamePolicy
     {
         /// <summary>
@@ -59,59 +64,16 @@ namespace Lexical.Localization
     #endregion IAssetKeyNameParser
 
     /// <summary>
-    /// Converts localization key to a strings that identifies a language string.
-    /// 
-    /// Policy depends on how keys are formulated in the localization files.
+    /// Extension functions for <see cref="IAssetKeyNamePolicy"/>.
     /// </summary>
-    public interface IAssetKeyNameDescription : IAssetKeyNamePolicy
-    {
-        /// <summary>
-        /// Get all parameter policies
-        /// </summary>
-        IEnumerable<IAssetKeyParameterDescription> Parameters { get; }
-
-        /// <summary>
-        /// Get parameter policy by name
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        IAssetKeyParameterDescription this[string name] { get; }
-    }
-
-    public interface IAssetKeyParameterDescription
-    {
-        /// <summary>
-        /// Parameter identifier.
-        /// </summary>
-        string ParameterName { get; }
-
-        /// <summary>
-        /// Separator
-        /// </summary>
-        string PrefixSeparator { get; }
-
-        /// <summary>
-        /// Separator
-        /// </summary>
-        string PostfixSeparator { get; }
-
-        /// <summary>
-        /// Is this parameter to be included in name .
-        /// </summary>
-        bool IsIncluded { get; }
-    }
-
     public static partial class AssetKeyNamePolicyExtensions
     {
         /// <summary>
         /// Build name for key. 
-        /// 
-        /// This method completely ignores the selected culture in the key and uses the <paramref name="culture"/>.
-        /// If <paramref name="culture"/> is null, then doesn't print any culture at all.
         /// </summary>
-        /// <param name="key"></param>
         /// <param name="policy"></param>
-        /// <returns>full name string</returns>
+        /// <param name="key"></param>
+        /// <returns>full name string or null</returns>
         public static string BuildName(this IAssetKeyNamePolicy policy, IAssetKey key)
         {
             if (policy is IAssetKeyNameProvider provider)
@@ -137,6 +99,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Parse string into key.
         /// </summary>
+        /// <param name="policy"></param>
         /// <param name="str"></param>
         /// <param name="key">key result or null if contained no content</param>
         /// <param name="rootKey">(optional) root key to span values from</param>

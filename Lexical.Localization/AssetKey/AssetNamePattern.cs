@@ -481,7 +481,7 @@ namespace Lexical.Localization
                 // Get name
                 string name = g_name.Value;
                 if (name == "anysection") name = "Section";
-                if (ParameterInfos.Default.TryGetValue(name, out info)) ix = info.SortingOrder;
+                if (ParameterInfos.Default.TryGetValue(name, out info)) ix = info.Order;
 
                 // Occurance index "_#"
                 if (g_index.Success) ix += Int32.Parse(g_index.Value);

@@ -1,4 +1,5 @@
 ﻿using Lexical.Localization;
+using Lexical.Localization.Utils;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -13,7 +14,11 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "en/MyController/Hello", "Hello World!" } };
                 // Create key name policy
-                IAssetKeyNamePolicy policy = new AssetKeyNameProvider().SetDefault(true, "/");
+                IAssetKeyNamePolicy policy =
+                    new AssetKeyNameProvider()
+                        .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: "/") // Sorts parameters
+                        .Ignore("Root") // Ignore "Root"
+                        .DefaultRule(true, prefixSeparator: "/"); // Default separator
                 // Create asset
                 IAsset asset = new LocalizationStringAsset(source, policy);
                 // Create key
@@ -57,13 +62,13 @@ namespace docs
                     // Create a custom policy 
                     IAssetKeyNamePolicy myPolicy = new AssetKeyNameProvider()
                         // Enable non-canonical "Culture" parameter with "/" separator
-                        .SetParameter("Culture", true, "", "/")
+                        .Rule("Culture", true, "", "/")
                         // Disable other non-canonical parts
-                        .SetNonCanonicalDefault(false)
+                        .NonCanonicalRule(false)
                         // Enable canonical all parts with "/" separator
-                        .SetCanonicalDefault(true, "/", "")
+                        .CanonicalRule(true, "/", "")
                         // Set "Key" parameter's prefix to "/" and postfix to ".txt".
-                        .SetParameter("Key", true, "/", ".txt");
+                        .Rule("Key", true, "/", ".txt");
 
                     // "en/Patches/MyController/Errors/InvalidState.txt"
                     string str = myPolicy.BuildName(key);

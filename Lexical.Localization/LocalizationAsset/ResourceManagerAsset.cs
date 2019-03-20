@@ -29,21 +29,21 @@ namespace Lexical.Localization
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public  static readonly IAssetKeyNamePolicy namepolicy_for_type_resourcemanager = new AssetKeyNameProvider().SetParameter("Section", true, ".").SetParameter("Key", true, ".").SetDefault(false);
+        public  static readonly IAssetKeyNamePolicy namepolicy_for_type_resourcemanager = new AssetKeyNameProvider().Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
 
         /// <summary>
         /// Name policy where "Type", "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static readonly IAssetKeyNamePolicy namepolicy_for_location_resourcemanager = new AssetKeyNameProvider().SetParameter("Type", true, ".").SetParameter("Section", true, ".").SetParameter("Key", true, ".").SetDefault(false);
+        public static readonly IAssetKeyNamePolicy namepolicy_for_location_resourcemanager = new AssetKeyNameProvider().Rule("Type", true, ".").Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
 
         /// <summary>
         /// Name policy where "Resource", "Type", "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static readonly IAssetKeyNamePolicy namepolicy_for_root_resourcemanager = new AssetKeyNameProvider().SetParameter("Resource", true, ".").SetParameter("Type", true, ".").SetParameter("Section", true, ".").SetParameter("Key", true, ".").SetDefault(false);
+        public static readonly IAssetKeyNamePolicy namepolicy_for_root_resourcemanager = new AssetKeyNameProvider().Rule("Resource", true, ".").Rule("Type", true, ".").Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
 
         /// <summary>
         /// Create resource manager that is assigned to a specific type.

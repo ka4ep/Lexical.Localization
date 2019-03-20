@@ -21,10 +21,10 @@ namespace Lexical.Localization.Tests
             CultureInfo en = CultureInfo.GetCultureInfo("en");
 
             // Act
-            AssetKeyNameProvider policy_colon_colon_colon = AssetKeyNameProvider.Default;
-            AssetKeyNameProvider policy_colon_colon_dot = AssetKeyNameProvider.Colon_Colon_Dot;
-            AssetKeyNameProvider policy_colon_dot_dot = AssetKeyNameProvider.Colon_Dot_Dot;
-            AssetKeyNameProvider policy_dot_dot_dot = AssetKeyNameProvider.Dot_Dot_Dot;
+            IAssetKeyNameProvider policy_colon_colon_colon = AssetKeyNameProvider.Default;
+            IAssetKeyNameProvider policy_colon_colon_dot = AssetKeyNameProvider.Colon_Colon_Dot;
+            IAssetKeyNameProvider policy_colon_dot_dot = AssetKeyNameProvider.Colon_Dot_Dot;
+            IAssetKeyNameProvider policy_dot_dot_dot = AssetKeyNameProvider.Dot_Dot_Dot;
 
             // Assert
             Assert.AreEqual("en:ConsoleApp1:MyController:Success", policy_colon_colon_colon.BuildName(key_en));

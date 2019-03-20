@@ -92,13 +92,13 @@ namespace Lexical.Localization.Utils
         public static Key Create(string parameterName, string parameterValue)
             => Create(null, parameterName, parameterValue);
 
-        public static Key Create(Key prevKey, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfo = default)
+        public static Key Create(Key prevKey, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = default)
         {
             IParameterInfo info;
-            if ((parameterInfo ?? ParameterInfos.Default).TryGetValue(parameterName, out info))
+            if ((parameterInfos ?? ParameterInfos.Default).TryGetValue(parameterName, out info))
             {
-                if (info.IsCanonicalCompare) return new Key.Canonical(prevKey, parameterName, parameterValue);
-                if (info.IsNonCanonicalCompare) return new Key.NonCanonical(prevKey, parameterName, parameterValue);
+                if (info.IsCanonical) return new Key.Canonical(prevKey, parameterName, parameterValue);
+                if (info.IsNonCanonical) return new Key.NonCanonical(prevKey, parameterName, parameterValue);
                 return new Key(prevKey, parameterName, parameterValue);
             }
             else

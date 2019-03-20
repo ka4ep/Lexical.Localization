@@ -118,7 +118,7 @@ namespace Lexical.Localization.Tests
                 // Modify, Reload, Test
                 if (asset is IAssetComposition composition && !composition.IsReadOnly)
                 {
-                    IAsset sv_asset = new LocalizationStringAsset(languageStrings_sv, AssetData.Policy /* AssetKeyNameProvider.Colon_Colon_Dot*/);
+                    IAsset sv_asset = new LocalizationStringAsset(languageStrings_sv, AssetKeyNameProvider.Colon_Colon_Dot);
                     composition.Add(sv_asset);
                     try
                     {

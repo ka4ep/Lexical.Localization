@@ -13,7 +13,7 @@ namespace TutorialLibrary1
             Add(internalLocalizationSource);
 
             // Create source that searches for external localization source from a file
-            IAssetSource externalLocalizationSource = LocalizationReaderMap.Instance.FileAssetSource("docs.TutoarialLibrary1.localization.xml");
+            IAssetSource externalLocalizationSource = LocalizationReaderMap.Instance.FileAssetSource("docs.TutoarialLibrary1.localization.xml", throwIfNotFound: false);
             // Asset sources are added here
             Add(externalLocalizationSource);
         }

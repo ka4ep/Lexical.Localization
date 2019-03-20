@@ -1,4 +1,5 @@
 ﻿using Lexical.Localization;
+using Lexical.Localization.Utils;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -13,7 +14,11 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "en/MyController/Hello", "Hello World!" } };
                 // Create key name policy
-                IAssetKeyNamePolicy policy = new AssetKeyNameProvider().SetDefault(true, "/");
+                IAssetKeyNamePolicy policy = 
+                    new AssetKeyNameProvider()
+                        .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: "/") // Sorts parameters
+                        .Ignore("Root") // Ignore "Root"
+                        .DefaultRule(true, prefixSeparator: "/"); // Default separator
                 // Create asset
                 IAsset asset = new LocalizationStringAsset(source, policy);
                 // Create key
@@ -49,6 +54,8 @@ namespace docs
                     string str3 = AssetKeyNameProvider.None_Colon_Colon.BuildName(key);
                     // "en:Patches.MyController.Errors.InvalidState"
                     string str4 = AssetKeyNameProvider.Colon_Dot_Dot.BuildName(key);
+                    // "en:Patches:MyController:Errors.InvalidState"
+                    string str5 = AssetKeyNameProvider.Colon_Colon_Dot.BuildName(key);
                     #endregion Snippet_2
                 }
 
@@ -57,15 +64,15 @@ namespace docs
                     // Create a custom policy 
                     IAssetKeyNamePolicy myPolicy = new AssetKeyNameProvider()
                         // Enable non-canonical "Culture" parameter with "/" separator
-                        .SetParameter("Culture", true, "", "/")
+                        .Rule("Culture", true, postfixSeparator: "/", order: ParameterInfos.Default["Culture"].Order)
                         // Disable other non-canonical parts
-                        .SetNonCanonicalDefault(false)
+                        .NonCanonicalRule(false)
                         // Enable canonical all parts with "/" separator
-                        .SetCanonicalDefault(true, "/", "")
-                        // Set "Key" parameter's prefix to "/" and postfix to ".txt".
-                        .SetParameter("Key", true, "/", ".txt");
+                        .CanonicalRule(true, prefixSeparator: "/")
+                        // Set "Key" parameter's prefix to "/"
+                        .Rule("Key", true, prefixSeparator: "/", order: ParameterInfos.Default["Key"].Order);
 
-                    // "en/Patches/MyController/Errors/InvalidState.txt"
+                    // "en/Patches/MyController/Errors/InvalidState"
                     string str = myPolicy.BuildName(key);
                     #endregion Snippet_3
                 }

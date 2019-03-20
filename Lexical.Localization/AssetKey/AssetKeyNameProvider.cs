@@ -12,90 +12,118 @@ using System.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A name policy implementation that builds names of <see cref="IAssetKey"/>. 
+    /// A generic configurable name policy that converts <see cref="IAssetKey"/> to strings. 
     /// 
-    /// Non-canonical parts are appended in the beginning of the string. Order of non-canonical parameters uses string ordinal comparer, making "Culture" parameter typically first.
-    /// Example: key.Section("x").Key("y").Culture("fi") builds into string "fi:x:y".
+    /// Used with localizationa assets such <see cref="LocalizationStringAsset"/>, where keys are non-parseable strings.
     /// 
-    /// Canonical parts are concatenated in canonical order from root to tail.
-    /// Example: key.Key("x").Section("y").Key("z") builds into string "x:y:z".
+    /// Translation policy can be placed for specific parameter names, non-canonical parameters, canonical parameters, and rest. 
     /// 
-    /// If parameter value is "", then it is considered as non-existing and will not be appended.
+    /// Parameters are be configured for visibility, separator and sorting order.
+    /// 
+    /// Parameters with same sort order, are printed out in order of occurance in the key, from left (root) to right (tail).
+    /// For example: root.Section("1").Section("2") is printed out as "1.2".
     /// </summary>
-    [Obsolete("Due to changes, this class needs to be redesigned, use AssetNamePattern in the mean time")]
-    public class AssetKeyNameProvider : IAssetKeyNameDescription, IAssetKeyNameProvider, ICloneable
+    public class AssetKeyNameProvider : IAssetKeyNameProvider, ICloneable
     {
-        private static readonly AssetKeyNameProvider colon_colon_colon = new AssetKeyNameProvider().SetDefault(true, ":", "");
-        private static readonly AssetKeyNameProvider colon_colon_dot = new AssetKeyNameProvider().SetDefault(true, ":", "").SetParameter("Key", true, ".", "");
-        private static readonly AssetKeyNameProvider none_colon_colon = new AssetKeyNameProvider().SetDefault(true, ":", "").SetNonCanonicalDefault(false).AddParameterInfo(ParameterInfos.Default["Type"], "", ":", true);
-        private static readonly AssetKeyNameProvider dot_dot_dot = new AssetKeyNameProvider().SetDefault(true, ".", "");
-        private static readonly AssetKeyNameProvider colon_dot_dot = new AssetKeyNameProvider().SetNonCanonicalDefault(true, "", ":").SetCanonicalDefault(true, ".", "").AddParameterInfo(ParameterInfos.Default["Type"], "", ".", true);
-        private static readonly AssetKeyNameProvider none_dot_dot = new AssetKeyNameProvider().SetNonCanonicalDefault(false).SetCanonicalDefault(true, ".", "").AddParameterInfo(ParameterInfos.Default["Type"], "", ".", true);
-        private static readonly AssetKeyNameProvider _default = new AssetKeyNameProvider().SetParameter("Culture", true, "", ":").SetNonCanonicalDefault(false).SetDefault(true, ":", "").AddParameterInfo(ParameterInfos.Default["Type"], "", ":", true);
-
         /// <summary>
-        /// Default name policy for language strings matching. Suitable for language strings policy of asset loader, but not suitable for filename matching.
-        /// 
-        /// Appends "culture:" non-canonical parameter, but not other non-canonicals.
-        /// 
-        /// The section and key separators are ":".
+        /// Default name policy. Appends known parameters in <see cref="Utils.ParameterInfos"/> with ":" separator.
         /// 
         /// Example "en:ConsoleApp1:MyController:Success".
         /// </summary>
-        public static AssetKeyNameProvider Default => _default;
+        public static IAssetKeyNameProvider Default => instance;
+        private static readonly AssetKeyNameProvider instance = 
+            new AssetKeyNameProvider()
+                .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":"); // Add known parameters for sorting correcly
 
+        /// <summary>
         /// Name policy where every separator is ":".
         /// 
         /// Example "en:ConsoleApp1:MyController:Success".
         /// </summary>
-        public static AssetKeyNameProvider Colon_Colon_Colon => colon_colon_colon;
+        public static IAssetKeyNameProvider Colon_Colon_Colon => colon_colon_colon;
+        private static readonly AssetKeyNameProvider colon_colon_colon =
+            new AssetKeyNameProvider()
+                .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
+                .Ignore("Root") // Ignore root
+                .DefaultRule(true, prefixSeparator: ":"); // Add policy for unknown parameters
 
-        /// Name policy where every canonical separator is ":", and non-canonical (e.g. culture) is not appeded.
+        /// <summary>
+        /// Name policy where every separator is ":", but culture is not appeded.
         /// 
         /// Example "ConsoleApp1:MyController:Success".
         /// </summary>
-        public static AssetKeyNameProvider None_Colon_Colon => none_colon_colon;
+        public static IAssetKeyNameProvider None_Colon_Colon => none_colon_colon;
+        private static readonly AssetKeyNameProvider none_colon_colon =
+            new AssetKeyNameProvider()
+                .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
+                .Ignore("Root") // Ignore root
+                .Ignore("Culture") // Ignore Culture
+                .DefaultRule(true, prefixSeparator: ":");
 
+        /// <summary>
         /// Name policy where every separator is ":", except for "Key" that has "." separtor.
         /// 
         /// Example "en:ConsoleApp1:MyController.Success".
         /// </summary>
-        public static AssetKeyNameProvider Colon_Colon_Dot => colon_colon_dot;
+        public static IAssetKeyNameProvider Colon_Colon_Dot => colon_colon_dot;
+        private static readonly AssetKeyNameProvider colon_colon_dot = 
+            new AssetKeyNameProvider()
+                .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
+                .Ignore("Root") // Ignore root
+                .Separator("Key", prefixSeparator: ".")
+                .DefaultRule(true, prefixSeparator: ":");
 
         /// <summary>
         /// Name policy where every separator is ".".
         /// 
         /// Example "en.ConsoleApp1.MyController.Success"
         /// </summary>
-        public static AssetKeyNameProvider Dot_Dot_Dot => dot_dot_dot;
+        public static IAssetKeyNameProvider Dot_Dot_Dot => dot_dot_dot;
+        private static readonly AssetKeyNameProvider dot_dot_dot = 
+            new AssetKeyNameProvider()
+            .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
+            .Ignore("Root") // Ignore root
+            .DefaultRule(true, prefixSeparator: ".");
 
         /// <summary>
-        /// Name policy where non-canonical parts are not written out, and canonical parts have "." as separator.
+        /// Name policy where "Culture" is not printed, and canonical parts have "." as separator.
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static AssetKeyNameProvider None_Dot_Dot => none_dot_dot;
+        public static IAssetKeyNameProvider None_Dot_Dot => none_dot_dot;
+        private static readonly AssetKeyNameProvider none_dot_dot = 
+            new AssetKeyNameProvider()
+                .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
+                .Ignore("Root") // Ignore root
+                .Ignore("Culture") // Ignore Culture
+                .DefaultRule(true, prefixSeparator: ".");
 
         /// <summary>
-        /// Name policy where non-canonical parts have ":", and canonical parts "." as separator.
+        /// Name policy where "Culture" has ":", and other parts "." have as separator.
         /// 
         /// Example "en:ConsoleApp1.MyController.Success".
         /// </summary>
-        public static AssetKeyNameProvider Colon_Dot_Dot => colon_dot_dot;
+        public static IAssetKeyNameProvider Colon_Dot_Dot => colon_dot_dot;
+        private static readonly AssetKeyNameProvider colon_dot_dot =
+            new AssetKeyNameProvider()
+                .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
+                .Ignore("Root") // Ignore root
+                .Separator("Culture", postfixSeparator: ":") // Print with ":"
+                .DefaultRule(true, prefixSeparator: ".");
 
-        Dictionary<string, AssetKeyParameterDescription> parameters = new Dictionary<string, AssetKeyParameterDescription>();
+        Dictionary<string, _Rule> parameters = new Dictionary<string, _Rule>();
         
         /// <summary>
         /// Get indexed parameter.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public IAssetKeyParameterDescription this[string name] { get { AssetKeyParameterDescription result = null; parameters.TryGetValue(name, out result); return result; } }
+        public _Rule this[string name] { get { _Rule result = null; parameters.TryGetValue(name, out result); return result; } }
 
         /// <summary>
         /// Get all parametres
         /// </summary>
-        public IEnumerable<IAssetKeyParameterDescription> Parameters => parameters.Values;
+        public IEnumerable<_Rule> Parameters => parameters.Values;
 
         /// <summary>
         /// Construct a new name provider with no rules. 
@@ -106,96 +134,120 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Set rule to not include a specific type of parameter, for example "Culture".
+        /// Sets rule to not to include <paramref name="parameterName"/>, for example "Root".
         /// </summary>
         /// <param name="parameterName"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider DontInclude(string parameterName)
+        public AssetKeyNameProvider Ignore(string parameterName)
         {
-            parameters[parameterName] = new AssetKeyParameterDescription(parameterName, null, null, false);
+            parameters[parameterName] = new _Rule(parameterName, false, null, null, 0);
             return this;
         }
 
         /// <summary>
-        /// Set rule for a parameter infos.
+        /// Set rule for a parameter with <see cref="Utils.ParameterInfo"/>.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="prefixSeparator"></param>
         /// <param name="postfixSeparator"></param>
-        /// <param name="isIncluded"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider AddParameterInfo(IParameterInfo info, string prefixSeparator = "", string postfixSeparator = "", bool isIncluded = true)
+        public AssetKeyNameProvider ParameterInfo(IParameterInfo info, string prefixSeparator = null, string postfixSeparator = null)
         {
-            parameters[info.ParameterName] = new AssetKeyParameterDescription(info.ParameterName, prefixSeparator, postfixSeparator, isIncluded);
+            parameters[info.ParameterName] = new _Rule(info.ParameterName, true, prefixSeparator, postfixSeparator, info.Order);
             return this;
         }
 
         /// <summary>
-        /// Set rule for a parameter infos.
+        /// Set rule for parameters with <see cref="Utils.ParameterInfo"/>s.
         /// </summary>
         /// <param name="infos"></param>
         /// <param name="prefixSeparator"></param>
         /// <param name="postfixSeparator"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider AddParameterInfos(IEnumerable<IParameterInfo> infos, string prefixSeparator = "", string postfixSeparator = "")
+        public AssetKeyNameProvider ParameterInfo(IEnumerable<IParameterInfo> infos, string prefixSeparator = null, string postfixSeparator = null)
         {
             foreach (var info in infos)
             {
-                parameters[info.ParameterName] = new AssetKeyParameterDescription(info.ParameterName, prefixSeparator, postfixSeparator, true);
+                parameters[info.ParameterName] = new _Rule(info.ParameterName, true, prefixSeparator, postfixSeparator, info.Order);
             }
             return this;
         }
 
         /// <summary>
-        /// Set rule for a parameter type.
+        /// Set rule for a specific <paramref name="parameterName"/>.
         /// </summary>
         /// <param name="parameterName">parameter name, for example "Culture", "Section", "Key", etc</param>
         /// <param name="isIncluded">true, parameter is included in name. False, parameter is not to be included. </param>
         /// <param name="prefixSeparator"></param>
         /// <param name="postfixSeparator"></param>
+        /// <param name="order"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider SetParameter(string parameterName, bool isIncluded, string prefixSeparator = "", string postfixSeparator = "")
+        public AssetKeyNameProvider Rule(string parameterName, bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
         {
-            parameters[parameterName] = new AssetKeyParameterDescription(parameterName, prefixSeparator, postfixSeparator, isIncluded);
+            parameters[parameterName] = new _Rule(parameterName, isIncluded, prefixSeparator, postfixSeparator, order);
             return this;
         }
 
         /// <summary>
-        /// Set default rule for canonical key parts. Applied if there is no parameter specific explicit rule.
+        /// Changes separator of existing rule, or creates new rule and uses Order 0.
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="prefixSeparator"></param>
+        /// <param name="postfixSeparator"></param>
+        /// <returns>this</returns>
+        public AssetKeyNameProvider Separator(string parameterName, string prefixSeparator = null, string postfixSeparator = null)
+        {
+            _Rule rule;
+            if (parameters.TryGetValue(parameterName, out rule))
+            {
+                rule.PrefixSeparator = prefixSeparator;
+                rule.PostfixSeparator = postfixSeparator;
+            } else
+            {
+                parameters[parameterName] = new _Rule(parameterName, true, prefixSeparator, postfixSeparator, 0);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Set default rule for unmatched canonical keys. Applied if there were no policy match with specific parameter name.
         /// </summary>
         /// <param name="isIncluded">are canonical parts to be included</param>
         /// <param name="prefixSeparator"></param>
         /// <param name="postfixSeparator"></param>
+        /// <param name="order"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider SetCanonicalDefault(bool isIncluded, string prefixSeparator = "", string postfixSeparator = "")
+        public AssetKeyNameProvider CanonicalRule(bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
         {
-            parameters["canonical"] = new AssetKeyParameterDescription("canonical", prefixSeparator, postfixSeparator, isIncluded);
+            parameters["canonical"] = new _Rule("canonical", isIncluded, prefixSeparator, postfixSeparator, order);
             return this;
         }
 
         /// <summary>
-        /// Set default rule for non-canonical parts. Applied if there is no parameter specific explicit rule.
+        /// Set default rule for unmatched non-canonical key. Applied if there were no policy match with specific parameter name.
         /// </summary>
         /// <param name="isIncluded"></param>
         /// <param name="prefixSeparator"></param>
         /// <param name="postfixSeparator"></param>
+        /// <param name="order"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider SetNonCanonicalDefault(bool isIncluded, string prefixSeparator = "", string postfixSeparator = "")
+        public AssetKeyNameProvider NonCanonicalRule(bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
         {
-            parameters["noncanonical"] = new AssetKeyParameterDescription("noncanonical", prefixSeparator, postfixSeparator, isIncluded);
+            parameters["noncanonical"] = new _Rule("noncanonical", isIncluded, prefixSeparator, postfixSeparator, order);
             return this;
         }
 
         /// <summary>
-        /// Set default rule. Applied if there are no other applying rules.
+        /// Set rule for unknown parameterNames. This is the last rule that is applied.
         /// </summary>
         /// <param name="isIncluded"></param>
         /// <param name="prefixSeparator"></param>
         /// <param name="postfixSeparator"></param>
+        /// <param name="order"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider SetDefault(bool isIncluded, string prefixSeparator = "", string postfixSeparator = "")
+        public AssetKeyNameProvider DefaultRule(bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
         {
-            parameters[""] = new AssetKeyParameterDescription("", prefixSeparator, postfixSeparator, isIncluded);
+            parameters[""] = new _Rule("", isIncluded, prefixSeparator, postfixSeparator, order);
             return this;
         }
 
@@ -206,30 +258,26 @@ namespace Lexical.Localization
         /// <returns></returns>
         public string BuildName(IAssetKey key)
         {
-            // Build name without string builder, without reallocating buffers, and (most of the time) without any other heap objects.
-            // A bit of performance makes it looks messy. Tradeoffs.
+            // List for parts
+            StructList16<Part> parts = new StructList16<Part>(Part.Comparer.Default);
 
-            // Calculate length
-            int length = 0;
-
-            string pendingSeparator = null;
-            StructList8<string> noncanonicalParameters = new StructList8<string>();
-            // Calculate canonicals
+            // Iterate key
+            int occuranceIndex = 1;
             for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
             {
-                if (part is IAssetKeyCanonicallyCompared == false) continue;
                 if (part is IAssetKeyParameterAssigned parametrized)
                 {
                     // Read parameter name and value
                     string parameterName = parametrized.ParameterName, parameterValue = part.Name;
-                    if (string.IsNullOrEmpty(parameterValue)) continue;
+                    if (string.IsNullOrEmpty(parameterName) || parameterValue == null) continue;
 
-                    // Read description
-                    AssetKeyParameterDescription desc = null;
+                    // Get description
+                    _Rule desc = null;
                     if (parameters.TryGetValue(parameterName, out desc) && !desc.IsIncluded) continue;
 
                     // Try default descriptions
-                    if (desc == null) parameters.TryGetValue("canonical", out desc);
+                    if (desc == null && part is IAssetKeyCanonicallyCompared) parameters.TryGetValue("canonical", out desc);
+                    if (desc == null && part is IAssetKeyNonCanonicallyCompared) parameters.TryGetValue("noncanonical", out desc);
                     if (desc == null) parameters.TryGetValue("", out desc);
 
                     // No description
@@ -238,155 +286,197 @@ namespace Lexical.Localization
                     // This parameter is disabled
                     if (!desc.IsIncluded) continue;
 
-                    // Add to length
-                    if (!string.IsNullOrEmpty(pendingSeparator) && length > 0) length += pendingSeparator.Length;
-                    else if (!string.IsNullOrEmpty(desc.PostfixSeparator)) length += desc.PostfixSeparator.Length;
-                    length += parameterValue.Length;
-                    pendingSeparator = desc.PrefixSeparator;
+                    // Count occurance index
+                    occuranceIndex--;
+
+                    // Add to list
+                    parts.Add(new Part { ParameterName = parameterName, ParameterValue = parameterValue, Policy = desc, Order = desc.Order+occuranceIndex });
                 }
             }
 
-            // Calculate non-canonical
-            noncanonicalParameters.Clear();
-            for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
+            // Sort list
+            sorter.Sort(ref parts);
+
+            // Calculate char count
+            int len = 0;
+            for(int i=0; i<parts.Count; i++)
             {
-                if (part is IAssetKeyNonCanonicallyCompared == false) continue;
-                if (part is IAssetKeyParameterAssigned parametrized)
+                len += parts[i].ParameterValue.Length;
+                // Count in separator
+                if (i>0)
                 {
-                    // Read parameter name and value
-                    string parameterName = parametrized.ParameterName, parameterValue = part.Name;
-                    if (string.IsNullOrEmpty(parameterValue)) continue;
-
-                    // parameter by this name has already been added
-                    if (noncanonicalParameters.Contains(parameterName)) continue;
-
-                    // Is this parameter type included
-                    AssetKeyParameterDescription desc = null;
-                    if (parameters.TryGetValue(parameterName, out desc) && !desc.IsIncluded) continue;
-
-                    // Try default descriptions
-                    if (desc == null) parameters.TryGetValue("noncanonical", out desc);
-                    if (desc == null) parameters.TryGetValue("", out desc);
-
-                    // No configuration
-                    if (desc == null) continue;
-
-                    // This parameter is disabled
-                    if (!desc.IsIncluded) continue;
-
-                    // Add to length
-                    if (!string.IsNullOrEmpty(desc.PostfixSeparator) && length > 0) length += desc.PostfixSeparator.Length;
-                    else if (!string.IsNullOrEmpty(pendingSeparator) && length > 0) length += pendingSeparator.Length;
-                    length += parameterValue.Length;
-                    pendingSeparator = desc.PrefixSeparator;
-                    noncanonicalParameters.Add(parameterName);
+                    string separator = parts[i - 1].Policy.PostfixSeparator;
+                    if (separator != null) len += separator.Length;
+                    else 
+                    {
+                        separator = parts[i].Policy.PrefixSeparator;
+                        if (separator != null) len += separator.Length;
+                    }
                 }
             }
-
-            // Build Name
-            char[] dst = new char[length];
-            int ix = length;
-            pendingSeparator = null;
-            // Append canonical
-            for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
+            // Put together a string
+            char[] chars = new char[len];
+            int ix = 0;
+            for (int i = 0; i < parts.Count; i++)
             {
-                if (part is IAssetKeyCanonicallyCompared == false) continue;
-                if (part is IAssetKeyParameterAssigned parametrized)
+                string s;
+                // Add separator
+                if (i > 0)
                 {
-                    // Read parameter name and value
-                    string parameterName = parametrized.ParameterName, parameterValue = part.Name;
-                    if (string.IsNullOrEmpty(parameterValue)) continue;
-
-                    // Read description
-                    AssetKeyParameterDescription desc = null;
-                    if (parameters.TryGetValue(parameterName, out desc) && !desc.IsIncluded) continue;
-
-                    // Try default descriptions
-                    if (desc == null) parameters.TryGetValue("canonical", out desc);
-                    if (desc == null) parameters.TryGetValue("", out desc);
-
-                    // No description
-                    if (desc == null) continue;
-
-                    // This parameter is disabled
-                    if (!desc.IsIncluded) continue;
-
-                    // Add to length
-                    if (!string.IsNullOrEmpty(pendingSeparator) && ix<length) { ix -= pendingSeparator.Length; pendingSeparator.CopyTo(0, dst, ix, pendingSeparator.Length); }
-                    else if (!string.IsNullOrEmpty(desc.PostfixSeparator)) { ix -= desc.PostfixSeparator.Length; desc.PostfixSeparator.CopyTo(0, dst, ix, desc.PostfixSeparator.Length); }
-                    ix -= parameterValue.Length; parameterValue.CopyTo(0, dst, ix, parameterValue.Length);
-                    pendingSeparator = desc.PrefixSeparator;
+                    s = parts[i - 1].Policy.PostfixSeparator;
+                    if (s != null)
+                    {
+                        s.CopyTo(0, chars, ix, s.Length);
+                        ix += s.Length;
+                    }
+                    else
+                    {
+                        s = parts[i].Policy.PrefixSeparator;
+                        if (s != null)
+                        {
+                            s.CopyTo(0, chars, ix, s.Length);
+                            ix += s.Length;
+                        }
+                    }
                 }
+
+                // Add text
+                s = parts[i].ParameterValue;
+                s.CopyTo(0, chars, ix, s.Length);
+                ix += s.Length;
             }
 
-            // Append non-canonical
-            noncanonicalParameters.Clear();
-            for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
-            {
-                if (part is IAssetKeyNonCanonicallyCompared == false) continue;
-                if (part is IAssetKeyParameterAssigned parametrized)
-                {
-                    // Read parameter name and value
-                    string parameterName = parametrized.ParameterName, parameterValue = part.Name;
-                    if (string.IsNullOrEmpty(parameterValue)) continue;
-
-                    // parameter by this name has already been added
-                    if (noncanonicalParameters.Contains(parameterName)) continue;
-
-                    // Is this parameter type included
-                    AssetKeyParameterDescription desc = null;
-                    if (parameters.TryGetValue(parameterName, out desc) && !desc.IsIncluded) continue;
-
-                    // Try default descriptions
-                    if (desc == null) parameters.TryGetValue("noncanonical", out desc);
-                    if (desc == null) parameters.TryGetValue("", out desc);
-
-                    // No configuration
-                    if (desc == null) continue;
-
-                    // This parameter is disabled
-                    if (!desc.IsIncluded) continue;
-
-                    // Add to length
-                    if (!string.IsNullOrEmpty(desc.PostfixSeparator) && ix<length) { ix -= desc.PostfixSeparator.Length; desc.PostfixSeparator.CopyTo(0, dst, ix, desc.PostfixSeparator.Length); }
-                    else if (!string.IsNullOrEmpty(pendingSeparator)) { ix -= pendingSeparator.Length; pendingSeparator.CopyTo(0, dst, ix, pendingSeparator.Length); }
-                    ix -= parameterValue.Length; parameterValue.CopyTo(0, dst, ix, parameterValue.Length);
-                    pendingSeparator = desc.PrefixSeparator;
-                    noncanonicalParameters.Add(parameterName);
-                }
-            }
-
-            // Assert everything went ok
-            if (ix != 0) throw new AssetKeyException(key as IAssetKey, $"{nameof(AssetKeyNameProvider)}.BuildName failed to build name, ix != 0");
-
-            return new string(dst);
+            return new string(chars);
         }
 
+        static StructListSorter<StructList16<Part>, Part> sorter = new StructListSorter<StructList16<Part>, Part>(Part.Comparer.Default);
+
+        /// <summary>
+        /// Copy policy.
+        /// </summary>
+        /// <returns></returns>
         public object Clone()
         {
             AssetKeyNameProvider result = new AssetKeyNameProvider();
             foreach (var kp in parameters)
-                result.parameters[kp.Key] = kp.Value.Clone() as AssetKeyParameterDescription;
+                result.parameters[kp.Key] = kp.Value.Clone() as _Rule;
             return result;
         }
-    }
 
-    public class AssetKeyParameterDescription : IAssetKeyParameterDescription, ICloneable
-    {        
-        public string ParameterName { get; internal set; }
-        public string PrefixSeparator { get; internal set; }
-        public string PostfixSeparator { get; internal set; }
-        public bool IsIncluded { get; internal set; }
-
-        public AssetKeyParameterDescription(string parameterName, string prefixSeparator, string postfixSeparator, bool isIncluded)
+        /// <summary>
+        /// A policy on how to print out keys that use a specific parameter name.
+        /// </summary>
+        public class _Rule : ICloneable
         {
-            ParameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
-            PrefixSeparator = prefixSeparator ?? "";
-            PostfixSeparator = postfixSeparator ?? "";
-            IsIncluded = isIncluded;
+            /// <summary>
+            /// Name of parameter this policy applies to.
+            /// 
+            /// As special case value: 
+            ///     "noncanonical" generic policy for non-canonical keys,
+            ///     "canonical" generic policy for canonical keys,
+            ///     "" fallback policy for any parameter that wasn't handled.
+            /// </summary>
+            public string ParameterName { get; internal set; }
+
+            /// <summary>
+            /// Policy whether a key with this parameter name is to be printed or not.
+            /// </summary>
+            public bool IsIncluded { get; internal set; }
+
+            /// <summary>
+            /// Separator to be used after a key that is of this parameter, if key has succeeding key.
+            /// </summary>
+            public string PostfixSeparator { get; internal set; }
+
+            /// <summary>
+            /// Separator to be used before a key that is of this parameter, if previous key didn't specify <see cref="PostfixSeparator"/>.
+            /// </summary>
+            public string PrefixSeparator { get; internal set; }
+
+            /// <summary>
+            /// Sorting order for this parameters. The value should go in thousands. See <see cref="Utils.ParameterInfo"/>.
+            /// </summary>
+            public int Order { get; internal set; }
+
+            /// <summary>
+            /// Create new parameter policy for a specific <paramref name="parameterName"/>.
+            /// </summary>
+            /// <param name="parameterName">parameter name or "canonical", "noncanonical", "" for special cases</param>
+            /// <param name="isIncluded"></param>
+            /// <param name="prefixSeparator"></param>
+            /// <param name="postfixSeparator"></param>
+            /// <param name="order"></param>
+            public _Rule(string parameterName, bool isIncluded, string prefixSeparator, string postfixSeparator, int order)
+            {
+                ParameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
+                IsIncluded = isIncluded;
+                PrefixSeparator = prefixSeparator;
+                PostfixSeparator = postfixSeparator;
+                Order = order;
+            }
+
+            /// <summary>
+            /// Copy this policy
+            /// </summary>
+            /// <returns></returns>
+            public object Clone()
+                => new _Rule(ParameterName, IsIncluded, PrefixSeparator, PostfixSeparator, Order);
+
+            /// <summary>
+            /// Print out policy
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+                => $"{nameof(_Rule)}({ParameterName}, {IsIncluded}, {PrefixSeparator}, {PostfixSeparator}, {Order})";
         }
 
-        public object Clone()
-            => new AssetKeyParameterDescription(ParameterName, PrefixSeparator, PostfixSeparator, IsIncluded);
+        /// <summary>
+        /// Intermediate information about a <see cref="IAssetKey"/> that was matched to a <see cref="_Rule"/>.
+        /// </summary>
+        struct Part
+        {
+            /// <summary>
+            /// Parameter name
+            /// </summary>
+            public string ParameterName;
+
+            /// <summary>
+            /// Parameter value
+            /// </summary>
+            public string ParameterValue;
+
+            /// <summary>
+            /// Policy
+            /// </summary>
+            public _Rule Policy;
+
+            /// <summary>
+            /// Sort order
+            /// </summary>
+            public int Order;
+
+            /// <summary>
+            /// <see cref="Part"/> comparer.
+            /// </summary>
+            public class Comparer : IComparer<Part>, IEqualityComparer<Part>
+            {
+                private static Comparer instance;
+                public static Comparer Default => instance ?? (instance = new Comparer());
+
+                public bool Equals(Part x, Part y)
+                    => (x.ParameterName == y.ParameterName) && (x.ParameterValue == y.ParameterValue);
+                public int GetHashCode(Part obj)
+                    => (obj.ParameterName == null ? 0 : 11 * obj.ParameterName.GetHashCode()) +
+                       (obj.ParameterValue == null ? 0 : 13 * obj.ParameterValue.GetHashCode());
+                public int Compare(Part x, Part y)
+                    => x.Order - y.Order;
+            }
+
+            public override string ToString()
+                => ParameterName + ":" + ParameterValue;
+        }
+
+
     }
+
 }

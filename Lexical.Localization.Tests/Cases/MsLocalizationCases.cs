@@ -49,14 +49,14 @@ namespace Lexical.Localization.Tests
             init["strings"] = true;
             init["resources"] = true;
             IAssetBuilder builder = StringLocalizerRoot.Builder;
-            builder.AddAsset(new LocalizationStringAsset(languageStrings, AssetData.Policy /* AssetKeyNameProvider.Default */));
-            builder.AddAsset(new LocalizationStringAsset(languageStrings_en, AssetData.Policy /* AssetKeyNameProvider.Default */));
-            builder.AddAsset(new LocalizationStringAsset(languageStrings_fi, AssetData.Policy /* AssetKeyNameProvider.Default */));
-            builder.AddAsset(new LocalizationStringAsset(languageStrings_fi_savo, AssetData.Policy /* AssetKeyNameProvider.Default */));
-            builder.AddAsset(new AssetResourceDictionary(res, AssetData.Policy /* AssetKeyNameProvider.Default */));
-            builder.AddAsset(new AssetResourceDictionary(res_en, AssetData.Policy /* AssetKeyNameProvider.Default */));
-            builder.AddAsset(new AssetResourceDictionary(res_fi, AssetData.Policy /* AssetKeyNameProvider.Default */));
-            builder.AddAsset(new AssetResourceDictionary(res_fi_savo, AssetData.Policy /* AssetKeyNameProvider.Default */));
+            builder.AddAsset(new LocalizationStringAsset(languageStrings, AssetKeyNameProvider.Default));
+            builder.AddAsset(new LocalizationStringAsset(languageStrings_en, AssetKeyNameProvider.Default));
+            builder.AddAsset(new LocalizationStringAsset(languageStrings_fi, AssetKeyNameProvider.Default));
+            builder.AddAsset(new LocalizationStringAsset(languageStrings_fi_savo, AssetKeyNameProvider.Default));
+            builder.AddAsset(new AssetResourceDictionary(res, AssetKeyNameProvider.Default));
+            builder.AddAsset(new AssetResourceDictionary(res_en, AssetKeyNameProvider.Default));
+            builder.AddAsset(new AssetResourceDictionary(res_fi, AssetKeyNameProvider.Default));
+            builder.AddAsset(new AssetResourceDictionary(res_fi_savo, AssetKeyNameProvider.Default));
             return builder.Build();
         }
 

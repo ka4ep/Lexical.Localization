@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lexical.Localization.Utils
 {
@@ -14,29 +15,29 @@ namespace Lexical.Localization.Utils
     public class ParameterInfos : Dictionary<string, IParameterInfo>
     {
         private static IReadOnlyDictionary<string, IParameterInfo> instance = new ParameterInfos()
-            .Add(new ParameterInfo("Root", isCanonicalCompare: false, isNonCanonicalCompare: false, isSection: false, sortingOrder: -8000))
-            .Add(new ParameterInfo("Culture", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: -7000))
-            .Add(new ParameterInfo("Assembly", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: true, sortingOrder: -6000))
-            .Add(new ParameterInfo("Location", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: -5000))
-            .Add(new ParameterInfo("Resource", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: -4000))
-            .Add(new ParameterInfo("Type", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: true, sortingOrder: -3000))
-            .Add(new ParameterInfo("Section", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: -2000))
-            .Add(new ParameterInfo("Key", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: false, sortingOrder: 1000))
-            .Add(new ParameterInfo("N", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 5000))
-            .Add(new ParameterInfo("N1", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 5100))
-            .Add(new ParameterInfo("N2", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 5200))
-            .Add(new ParameterInfo("N3", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 5300))
-            .Add(new ParameterInfo("N4", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 5400))
-            .Add(new ParameterInfo("N5", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 5500))
-            .Add(new ParameterInfo("N6", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 5600))
-            .Add(new ParameterInfo("N7", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 5700))
-            .Add(new ParameterInfo("N8", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 5800))
-            .Add(new ParameterInfo("N9", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 5900))
-            .Add(new ParameterInfo("N10", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 6000))
-            .Add(new ParameterInfo("N11", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 6100))
-            .Add(new ParameterInfo("N12", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 6200))
-            .Add(new ParameterInfo("N13", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 6300))
-            .Add(new ParameterInfo("N14", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 6400))
+            .Add("Root", isCanonicalCompare: false, isNonCanonicalCompare: false, isSection: false, sortingOrder: -8000)
+            .Add("Culture", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: -6000)
+            .Add("Location", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: -4000)
+            .Add("Assembly", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: true, sortingOrder: -2000)
+            .Add("Resource", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: 0000)
+            .Add("Type", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: true, sortingOrder: 2000)
+            .Add("Section", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: 4000)
+            .Add("Key", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: false, sortingOrder: 6000)
+            .Add("N", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8000)
+            .Add("N1", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8100)
+            .Add("N2", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8200)
+            .Add("N3", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8300)
+            .Add("N4", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8400)
+            .Add("N5", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8500)
+            .Add("N6", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8600)
+            .Add("N7", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8700)
+            .Add("N8", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8800)
+            .Add("N9", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8900)
+            .Add("N10", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9000)
+            .Add("N11", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9100)
+            .Add("N12", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9200)
+            .Add("N13", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9300)
+            .Add("N14", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9400)
             as IReadOnlyDictionary<string, IParameterInfo>;
 
         /// <summary>
@@ -58,12 +59,12 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Is this parameter canonically compared
         /// </summary>
-        bool IsCanonicalCompare { get; }
+        bool IsCanonical { get; }
 
         /// <summary>
         /// Is this parameter non-canonically compared 
         /// </summary>
-        bool IsNonCanonicalCompare { get; }
+        bool IsNonCanonical { get; }
 
         /// <summary>
         /// Matches against "anysection"
@@ -73,7 +74,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Suggested sorting order. Smaller number is sorted to left, higher to right when formulating a string.
         /// </summary>
-        int SortingOrder { get; }
+        int Order { get; }
     }
 
     /// <summary>
@@ -89,12 +90,12 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Is this parameter canonically compared
         /// </summary>
-        public bool IsCanonicalCompare { get; private set; }
+        public bool IsCanonical { get; private set; }
 
         /// <summary>
         /// Is this parameter non-canonically compared 
         /// </summary>
-        public bool IsNonCanonicalCompare { get; private set; }
+        public bool IsNonCanonical { get; private set; }
 
         /// <summary>
         /// Matches against "anysection"
@@ -104,23 +105,23 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Suggested sorting order. Smaller number is sorted to left, higher to right when formulating a string.
         /// </summary>
-        public int SortingOrder { get; private set; }
+        public int Order { get; private set; }
 
         /// <summary>
         /// Create basic parameter info
         /// </summary>
         /// <param name="parameterName"></param>
-        /// <param name="isCanonicalCompare"></param>
-        /// <param name="isNonCanonicalCompare"></param>
+        /// <param name="isCanonicalCompared"></param>
+        /// <param name="isNonCanonicalCompared"></param>
         /// <param name="isSection"></param>
         /// <param name="sortingOrder"></param>
-        public ParameterInfo(string parameterName, bool isCanonicalCompare, bool isNonCanonicalCompare, bool isSection, int sortingOrder)
+        public ParameterInfo(string parameterName, bool isCanonicalCompared, bool isNonCanonicalCompared, bool isSection, int sortingOrder)
         {
             ParameterName = parameterName;
-            IsCanonicalCompare = isCanonicalCompare;
-            IsNonCanonicalCompare = isNonCanonicalCompare;
+            IsCanonical = isCanonicalCompared;
+            IsNonCanonical = isNonCanonicalCompared;
             IsSection = isSection;
-            SortingOrder = sortingOrder;
+            Order = sortingOrder;
         }
     }
 
@@ -135,11 +136,50 @@ namespace Lexical.Localization.Utils
         /// <param name="infos"></param>
         /// <param name="info"></param>
         /// <returns><paramref name="infos"/></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static IDictionary<string, IParameterInfo> Add(this IDictionary<string, IParameterInfo> infos, IParameterInfo info)
         {
             if (infos.ContainsKey(info.ParameterName)) throw new ArgumentException($"Parameter {info.ParameterName} already exists", nameof(info));
             infos[info.ParameterName] = info;
             return infos;
         }
+
+        /// <summary>
+        /// Add info entry to <paramref name="infos"/>.
+        /// </summary>
+        /// <param name="infos"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="isCanonicalCompare"></param>
+        /// <param name="isNonCanonicalCompare"></param>
+        /// <param name="isSection"></param>
+        /// <param name="sortingOrder"></param>
+        /// <returns><paramref name="infos"/></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static IDictionary<string, IParameterInfo> Add(this IDictionary<string, IParameterInfo> infos, string parameterName, bool isCanonicalCompare, bool isNonCanonicalCompare, bool isSection, int sortingOrder)
+        {
+            if (infos.ContainsKey(parameterName)) throw new ArgumentException($"Parameter {parameterName} already exists", nameof(parameterName));
+            infos[parameterName] = new ParameterInfo(parameterName, isCanonicalCompare, isNonCanonicalCompare, isSection, sortingOrder);
+            return infos;
+        }
+
+        /// <summary>
+        /// Canonical parameters.
+        /// </summary>
+        public static IEnumerable<IParameterInfo> Canonicals(this IReadOnlyDictionary<string, IParameterInfo> infos)
+            => infos.Values.Where(pi => pi.IsCanonical);
+
+        /// <summary>
+        /// Non-canonical parameters.
+        /// </summary>
+        public static IEnumerable<IParameterInfo> NonCanonicals(this IReadOnlyDictionary<string, IParameterInfo> infos)
+            => infos.Values.Where(pi => pi.IsNonCanonical);
+
+        /// <summary>
+        /// Comparable parameters (non-root).
+        /// </summary>
+        public static IEnumerable<IParameterInfo> Comparables(this IReadOnlyDictionary<string, IParameterInfo> infos)
+            => infos.Values.Where(pi => pi.IsNonCanonical|pi.IsCanonical);
+
+
     }
 }
