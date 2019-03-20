@@ -188,7 +188,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-            => ParameterNamePolicy.Instance.PrintParameters(this);
+            => ParameterNamePolicy.Instance.BuildName(this);
 
         /// <summary>
         /// Comparer that compares the node only, not the whole chain.

@@ -34,35 +34,37 @@ namespace Lexical.Localization
         /// Convert <paramref name="lines"/> to Key Tree of one level.
         /// </summary>
         /// <param name="lines"></param>
+        /// <param name="namePolicy"></param>
         /// <returns></returns>
         public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetKeyNamePolicy namePolicy)
-            => namePolicy is IAssetNamePattern pattern ?
-                new KeyTree(new Key("Root", ""), null).AddRange(lines, pattern) :
-                new KeyTree(new Key("Root", ""), null).AddRange(lines);
+        {
+            KeyTree tree = new KeyTree(new Key("Root", ""), null);
+            if (namePolicy is IAssetNamePattern pattern)
+                tree.AddRange(lines, pattern);
+            else
+                tree.AddRange(lines);
+            return tree;
+        }
 
         /// <summary>
-        /// Add an enumeration of key,value pairs. Each key will constructed a new node.
+        /// Add lines of key,value pairs to tree. Lines will be added as flat first level nodes
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="tree"></param>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines)
-            => AddRange(node, lines, groupingRule: DefaultGroupingRule);
-
-        /// <summary>
-        /// Add an enumeration of key,value pairs. Each key will constructed a new node.
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="lines"></param>
-        /// <param name="groupingPatternText"></param>
-        /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines, string groupingPatternText)
-            => AddRange(node, lines, groupingRule: groupingPatternText == null ? null : new AssetNamePattern(groupingPatternText));
+        public static IKeyTree AddRange(this IKeyTree tree, IEnumerable<KeyValuePair<IAssetKey, string>> lines)
+        {
+            foreach (var line in lines)
+            {
+                tree.GetOrCreate(line.Key).Values.Add(line.Value);
+            }
+            return tree;
+        }
 
         /// <summary>
         /// Default grouping rule.
         /// </summary>
-        public static IAssetNamePattern DefaultGroupingRule = new AssetNamePattern("{Culture/}{Location/Assembly/Resource/}{Type/Section/}{Key/}");
+        public static IAssetNamePattern DefaultGroupingRule = new AssetNamePattern("{Culture}/{Location_n}{Assembly}{Resource_n}/{Type}{Section_n/}/{Key_n}");
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
@@ -74,7 +76,6 @@ namespace Lexical.Localization
         ///  "type:MyController": {
         ///      "key:Success": "Success",
         ///      "culture:en:key:Success": "Success",
-        ///      "culture:fi:key:Success": "Onnistui"
         ///  }
         /// </code>
         /// 
@@ -83,96 +84,121 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="node"></param>
         /// <param name="lines"></param>
-        /// <param name="groupingRule">(optional)</param>
+        /// <param name="groupingRule"></param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetNamePattern groupingRule) // TOdo separate to sortRule + groupingRule
+        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetNamePattern groupingRule) // Todo separate to sortRule + groupingRule
         {
-            // Create comparer that can compare TreeNode and argument's keys
-            ParametrizedComparer comparer = new ParametrizedComparer();
-            // Create orderer
-            Part.Comparer parameterComparer = new Part.Comparer();
-            if (groupingRule != null)
-            {
-                foreach (IAssetNamePatternPart part in groupingRule.CaptureParts)
-                    parameterComparer.AddParametersToSortOrder(part.ParameterName);
-            }
-            else
-            {
-                parameterComparer.AddParametersToSortOrder("Culture");
-            }
+            // Use another method
+            if (groupingRule == null) { node.AddRange(lines); return node; }
 
-            StructList16<Part> partList = new StructList16<Part>(null);
-
-            // Reorder parts according to grouping rule
-            StructListSorter<StructList16<Part>, Part> parameterListSorter = new StructListSorter<StructList16<Part>, Part>(parameterComparer);
-
-            List<IAssetKey> key_parts = new List<IAssetKey>();
-            foreach (var kp in lines)
+            StructList16<Parameter> parameters = new StructList16<Parameter>(null);
+            foreach (var line in lines)
             {
-                foreach (IAssetKey part in kp.Key.ArrayFromRoot())
+                // Convert key into parts
+                for (IAssetKey k = line.Key; k != null; k = k.GetPreviousKey())
                 {
-                    string parameterName = part.GetParameterName(), parameterValue = part.Name;
+                    string parameterName = k.GetParameterName(), parameterValue = k.Name;
                     if (parameterName == null || parameterValue == null) continue;
-                    bool isCanonical = part is IAssetKeyCanonicallyCompared, isNonCanonical = part is IAssetKeyNonCanonicallyCompared;
+                    bool isCanonical = k is IAssetKeyCanonicallyCompared, isNonCanonical = k is IAssetKeyNonCanonicallyCompared;
                     if (!isCanonical && !isNonCanonical) continue;
-                    partList.Add(new Part(parameterName, parameterValue, isCanonical, isNonCanonical));
-                }
 
-                parameterListSorter.Sort(ref partList);
-
-                // Segment according to grouping rule
-                if (groupingRule == null)
-                {
-                    key_parts.AddRange(partList.Select(p => p.CreateKey()));
-                }
-                else
-                {
-                    int part_ix = 0;
-                    Key constructedKey = null;
-                    foreach (var part in groupingRule.AllParts)
+                    // Overwrite previously assigned non-canonical parameter
+                    if (isNonCanonical)
                     {
-                        // yield constructedKey into the array due to separator
-                        if (constructedKey != null && part.PrefixSeparator.Contains("/")) { key_parts.Add(constructedKey); constructedKey = null; }
-
-                        // Is not a capture part
-                        if (part.CaptureIndex < 0) { if (constructedKey != null) { key_parts.Add(constructedKey); constructedKey = null; } continue; }
-
-                        // Look ahead to see if there is part for this parameter name
                         int ixx = -1;
-                        for (int ix = part_ix; ix < partList.Count; ix++)
-                        {
-                            string key_part = partList[ix].parameterName;
-                            // Detected part
-                            if (key_part == part.ParameterName) { ixx = ix; break; }
-                            if (part.ParameterName == "anysection" && 
-                                (key_part == "Type" || key_part == "Section")) { ixx = ix; break; }
-                        }
-
-                        // Detected part for parameter name in the grouping rule
-                        if (ixx >= 0) for (; part_ix <= ixx; part_ix++) constructedKey = new Key(constructedKey, partList[part_ix].parameterName, partList[part_ix].parameterValue);
-
-                        // yield constructedKey into the array due to separator
-                        if (constructedKey != null && part.PrefixSeparator.Contains("/")) { key_parts.Add(constructedKey); constructedKey = null; }
+                        // Find previous occurance
+                        for (int i = 0; i < parameters.Count; i++) if (parameters[i].parameterName == parameterName) { ixx = i; break; }
+                        if (ixx >= 0) { parameters[ixx] = new Parameter(parameterName, parameterValue, isCanonical, isNonCanonical); continue; }
                     }
+                    // Add new parameter
+                    parameters.Add(new Parameter(parameterName, parameterValue, isCanonical, isNonCanonical));
+                }
+                parameterListSorter.Reverse(ref parameters);
 
-                    // yield constructedKey into the array.
-                    if (constructedKey != null) { key_parts.Add(constructedKey); constructedKey = null; }
+                // Key for the current level. 
+                Key levelKey = null;
+                // Build levels with this collection
+                List<IAssetKey> key_levels = new List<IAssetKey>();
+                // Visit both lists concurrently
+                Parameter next_parameter = default;
+                foreach (var part in groupingRule.AllParts)
+                {
+                    // Is not a capture part
+                    if (part.CaptureIndex < 0)
+                    {
+                        // Non-capture part has "/", go to next level. eg. "{nn}/{nn}"
+                        if (part.Text != null && part.Text.Contains("/")) { if (levelKey != null) key_levels.Add(levelKey); levelKey = null; }
+                        // Next part
+                        continue;
+                    }
+                    // Capture part has "/" in prefix, start next level
+                    if (levelKey != null && part.PrefixSeparator.Contains("/")) { if (levelKey != null) key_levels.Add(levelKey); levelKey = null; }
 
-                    // Add rest of the keys
-                    for (; part_ix < partList.Count; part_ix++)
-                        key_parts.Add(partList[part_ix].CreateKey(constructedKey));
+                    // Look ahead to see if there is a parameter that matches this capture part
+                    int next_parameter_ix = -1;
+                    for (int ix = 0; ix < parameters.Count; ix++)
+                    {
+                        // Copy 
+                        next_parameter = parameters[ix];
+                        // Already added before
+                        if (next_parameter.isUnused) continue;
+                        // Get name
+                        string parameter_name = next_parameter.parameterName;
+                        // Parameter matches the name in the pattern's capture part
+                        if (parameter_name == part.ParameterName) { next_parameter_ix = ix; break; }
+                        // Matches with "anysection"
+                        IParameterInfo info;
+                        if (part.ParameterName == "anysection" && ParameterInfos.Default.TryGetValue(parameter_name, out info) && info.IsSection) { next_parameter_ix = ix; break; }
+                    }
+                    // No matching parameter for this capture part
+                    if (next_parameter_ix < 0) continue;
+
+                    // This part is canonical.
+                    if (next_parameter.isCanonical)
+                    {
+                        // There (may be) are other canonical parts between part_ix and next_part_is. We have to add them here.
+                        for (int ix = 0; ix < next_parameter_ix; ix++)
+                        {
+                            // Copy
+                            Parameter parameter = parameters[ix];
+                            // Has been added before
+                            if (parameter.isUnused || !parameter.isCanonical) continue;
+                            // Append to level's key
+                            levelKey = parameter.CreateKey(levelKey);
+                            // Mark handled
+                            parameters[ix] = Parameter.Unused;
+                        }
+                    }
+                    // Append to level's key
+                    levelKey = next_parameter.CreateKey(levelKey);
+                    // Mark handled
+                    parameters[next_parameter_ix] = Parameter.Unused;
+                    // Yield level
+                    if (part.PostfixSeparator.Contains("/")) { key_levels.Add(levelKey); levelKey = null; }
                 }
 
-                // Add recursively
-                node.AddRecursive(key_parts, kp.Value);
+                // Append rest of the parameters
+                for (int ix = 0; ix < parameters.Count; ix++)
+                {
+                    // Copy
+                    Parameter parameter = parameters[ix];
+                    if (!parameter.isUnused) levelKey = parameter.CreateKey(levelKey);
+                }
 
-                // Clear
-                partList.Clear();
-                key_parts.Clear();
+                // yield levelKey
+                if (levelKey != null) { key_levels.Add(levelKey); levelKey = null; }
+
+                // Yield line
+                node.AddRecursive(key_levels, line.Value);
+                key_levels.Clear();
+                parameters.Clear();
             }
 
             return node;
         }
+
+        // Reorder parts according to grouping rule
+        static StructListSorter<StructList16<Parameter>, Parameter> parameterListSorter = new StructListSorter<StructList16<Parameter>, Parameter>(null);
 
         /// <summary>
         /// Create an asset that uses <paramref name="lines"/>.
@@ -202,73 +228,48 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static Dictionary<IAssetKey, string> ToDictionary(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IEqualityComparer<IAssetKey> keyComparer = default)
         {
-            Dictionary<IAssetKey, string> result = new Dictionary<IAssetKey, string>(keyComparer??AssetKeyComparer.Default);
+            Dictionary<IAssetKey, string> result = new Dictionary<IAssetKey, string>(keyComparer ?? AssetKeyComparer.Default);
             foreach (var line in lines)
                 if (line.Key != null) result[line.Key] = line.Value;
             return result;
         }
     }
 
-    internal struct Part
+    internal struct Parameter
     {
+        public static Parameter Unused = new Parameter { parameterName = null, parameterValue = null, flags = 0 };
+
         public string parameterName;
         public string parameterValue;
-        public bool isCanonical;
-        public bool isNonCanonical;
 
-        public Part(string parameterName, string parameterValue, bool isCanonical, bool isNonCanonical)
+        public bool isUnused => (flags & 1) == 0;
+        public bool isCanonical => (flags & 2) == 2;
+        public bool isNonCanonical => (flags & 4) == 4;
+
+        /// <summary>
+        /// 1 - unallocated
+        /// 2 - is canonical
+        /// 4 - is non canonical
+        /// </summary>
+        public int flags;
+
+        public Parameter(string parameterName, string parameterValue, bool isCanonical, bool isNonCanonical)
         {
             this.parameterName = parameterName;
             this.parameterValue = parameterValue;
-            this.isCanonical = isCanonical;
-            this.isNonCanonical = isNonCanonical;
+            int _flags = 1;
+            if (isCanonical) _flags |= 2;
+            if (isNonCanonical) _flags |= 4;
+            this.flags = _flags;
         }
 
         public Key CreateKey(Key prev = default)
-            => isCanonical ? new Key.Canonical(prev, parameterName, parameterValue) :
-               isNonCanonical ? new Key.NonCanonical(prev, parameterName, parameterValue) :
+            => ((flags & 2) == 2) ? new Key.Canonical(prev, parameterName, parameterValue) :
+               ((flags & 4) == 4) ? new Key.NonCanonical(prev, parameterName, parameterValue) :
                new Key(prev, parameterName, parameterValue);
 
         public override string ToString()
-            => parameterName==null||parameterValue==null ? null : parameterName + ":" + parameterValue;
-
-        public class Comparer : IComparer<Part>
-        {
-            private static readonly Comparer instance = new Comparer().AddParametersToSortOrder("Root", "Culture");
-            public static Comparer Default => instance;
-
-            public readonly List<string> order = new List<string>();
-
-            public Comparer()
-            {
-            }
-
-            public Comparer AddParametersToSortOrder(IEnumerable<string> parameters)
-            {
-                this.order.AddRange(parameters);
-                return this;
-            }
-
-            public Comparer AddParametersToSortOrder(params string[] parameters)
-            {
-                this.order.AddRange(parameters);
-                return this;
-            }
-
-            public int Compare(Part x, Part y)
-            {
-                // canonical parts cannot be reordered between themselves.
-                if (x.isCanonical || y.isCanonical) return 0;
-                int xix = order.IndexOf(x.parameterName);
-                int yix = order.IndexOf(y.parameterName);
-                if (xix == yix) return 0;
-                if (xix < 0) xix = Int32.MaxValue;
-                if (yix < 0) yix = Int32.MaxValue;
-                return xix - yix;
-            }
-        }
-
-
+            => parameterName == null || parameterValue == null ? null : parameterName + ":" + parameterValue;
     }
 
 }

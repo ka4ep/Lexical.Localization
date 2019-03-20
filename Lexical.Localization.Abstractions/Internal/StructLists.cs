@@ -1483,6 +1483,22 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Reverse elements of a list
+        /// </summary>
+        /// <param name="list"></param>
+        public void Reverse(ref List list)
+        {
+            int mid = list.Count / 2;
+            for(int i=0, j=list.Count-1; i<mid; i++,j--)
+            {
+                // Swap list[i] and list[j]
+                Element tmp = list[i];
+                list[i] = list[j];
+                list[j] = tmp;
+            }
+        }
+
+        /// <summary>
         /// Sort elements of list
         /// </summary>
         /// <param name="list"></param>
