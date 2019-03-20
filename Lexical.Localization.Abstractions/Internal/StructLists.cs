@@ -157,6 +157,20 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Removes and returns the element at the end of the list.
+        /// </summary>
+        /// <returns>the last element</returns>
+        /// <exception cref="InvalidOperationException">If list is empty</exception>
+        public T Dequeue()
+        {
+            if (count == 0) throw new InvalidOperationException();
+            int ix = count - 1;
+            T result = this[ix];
+            RemoveAt(ix);
+            return result;
+        }
+
+        /// <summary>
         /// Removes all items from the StructList4`1.
         /// </summary>
         /// <exception cref="System.NotSupportedException">The StructList4`1 is read-only.</exception>
@@ -248,10 +262,10 @@ namespace Lexical.Localization.Internal
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
         public IEnumerator<T> GetEnumerator()
         {
-            if (count >= 0) yield return _0;
-            if (count >= 1) yield return _1;
-            if (count >= 2) yield return _2;
-            if (count >= 3) yield return _3;
+            if (count > 0) yield return _0;
+            if (count > 1) yield return _1;
+            if (count > 2) yield return _2;
+            if (count > 3) yield return _3;
             if (rest != null)
             {
                 IEnumerator<T> restEtor = rest.GetEnumerator();
@@ -266,10 +280,10 @@ namespace Lexical.Localization.Internal
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            if (count >= 0) yield return _0;
-            if (count >= 1) yield return _1;
-            if (count >= 2) yield return _2;
-            if (count >= 3) yield return _3;
+            if (count > 0) yield return _0;
+            if (count > 1) yield return _1;
+            if (count > 2) yield return _2;
+            if (count > 3) yield return _3;
             if (rest != null)
             {
                 IEnumerator<T> restEtor = rest.GetEnumerator();
@@ -453,6 +467,20 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Removes and returns the element at the end of the list.
+        /// </summary>
+        /// <returns>the last element</returns>
+        /// <exception cref="InvalidOperationException">If list is empty</exception>
+        public T Dequeue()
+        {
+            if (count == 0) throw new InvalidOperationException();
+            int ix = count - 1;
+            T result = this[ix];
+            RemoveAt(ix);
+            return result;
+        }
+
+        /// <summary>
         /// Removes all items from the StructList8`1.
         /// </summary>
         /// <exception cref="System.NotSupportedException">The StructList8`1 is read-only.</exception>
@@ -564,14 +592,14 @@ namespace Lexical.Localization.Internal
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
         public IEnumerator<T> GetEnumerator()
         {
-            if (count >= 0) yield return _0;
-            if (count >= 1) yield return _1;
-            if (count >= 2) yield return _2;
-            if (count >= 3) yield return _3;
-            if (count >= 4) yield return _4;
-            if (count >= 5) yield return _5;
-            if (count >= 6) yield return _6;
-            if (count >= 7) yield return _7;
+            if (count > 0) yield return _0;
+            if (count > 1) yield return _1;
+            if (count > 2) yield return _2;
+            if (count > 3) yield return _3;
+            if (count > 4) yield return _4;
+            if (count > 5) yield return _5;
+            if (count > 6) yield return _6;
+            if (count > 7) yield return _7;
             if (rest != null)
             {
                 IEnumerator<T> restEtor = rest.GetEnumerator();
@@ -586,14 +614,14 @@ namespace Lexical.Localization.Internal
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            if (count >= 0) yield return _0;
-            if (count >= 1) yield return _1;
-            if (count >= 2) yield return _2;
-            if (count >= 3) yield return _3;
-            if (count >= 4) yield return _4;
-            if (count >= 5) yield return _5;
-            if (count >= 6) yield return _6;
-            if (count >= 7) yield return _7;
+            if (count > 0) yield return _0;
+            if (count > 1) yield return _1;
+            if (count > 2) yield return _2;
+            if (count > 3) yield return _3;
+            if (count > 4) yield return _4;
+            if (count > 5) yield return _5;
+            if (count > 6) yield return _6;
+            if (count > 7) yield return _7;
             if (rest != null)
             {
                 IEnumerator<T> restEtor = rest.GetEnumerator();
@@ -601,8 +629,8 @@ namespace Lexical.Localization.Internal
                     yield return restEtor.Current;
             }
         }
-    }
 
+    }
 
     /// <summary>
     /// A list where first 12 elements are struct elements. Rest are allocated from heap if needed.
@@ -801,6 +829,20 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Removes and returns the element at the end of the list.
+        /// </summary>
+        /// <returns>the last element</returns>
+        /// <exception cref="InvalidOperationException">If list is empty</exception>
+        public T Dequeue()
+        {
+            if (count == 0) throw new InvalidOperationException();
+            int ix = count - 1;
+            T result = this[ix];
+            RemoveAt(ix);
+            return result;
+        }
+
+        /// <summary>
         /// Removes all items from the StructList12`1.
         /// </summary>
         /// <exception cref="System.NotSupportedException">The StructList12`1 is read-only.</exception>
@@ -932,18 +974,18 @@ namespace Lexical.Localization.Internal
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
         public IEnumerator<T> GetEnumerator()
         {
-            if (count >= 0) yield return _0;
-            if (count >= 1) yield return _1;
-            if (count >= 2) yield return _2;
-            if (count >= 3) yield return _3;
-            if (count >= 4) yield return _4;
-            if (count >= 5) yield return _5;
-            if (count >= 6) yield return _6;
-            if (count >= 7) yield return _7;
-            if (count >= 8) yield return _8;
-            if (count >= 9) yield return _9;
-            if (count >= 10) yield return _10;
-            if (count >= 11) yield return _11;
+            if (count > 0) yield return _0;
+            if (count > 1) yield return _1;
+            if (count > 2) yield return _2;
+            if (count > 3) yield return _3;
+            if (count > 4) yield return _4;
+            if (count > 5) yield return _5;
+            if (count > 6) yield return _6;
+            if (count > 7) yield return _7;
+            if (count > 8) yield return _8;
+            if (count > 9) yield return _9;
+            if (count > 10) yield return _10;
+            if (count > 11) yield return _11;
             if (rest != null)
             {
                 IEnumerator<T> restEtor = rest.GetEnumerator();
@@ -958,18 +1000,18 @@ namespace Lexical.Localization.Internal
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            if (count >= 0) yield return _0;
-            if (count >= 1) yield return _1;
-            if (count >= 2) yield return _2;
-            if (count >= 3) yield return _3;
-            if (count >= 4) yield return _4;
-            if (count >= 5) yield return _5;
-            if (count >= 6) yield return _6;
-            if (count >= 7) yield return _7;
-            if (count >= 8) yield return _8;
-            if (count >= 9) yield return _9;
-            if (count >= 10) yield return _10;
-            if (count >= 11) yield return _11;
+            if (count > 0) yield return _0;
+            if (count > 1) yield return _1;
+            if (count > 2) yield return _2;
+            if (count > 3) yield return _3;
+            if (count > 4) yield return _4;
+            if (count > 5) yield return _5;
+            if (count > 6) yield return _6;
+            if (count > 7) yield return _7;
+            if (count > 8) yield return _8;
+            if (count > 9) yield return _9;
+            if (count > 10) yield return _10;
+            if (count > 11) yield return _11;
             if (rest != null)
             {
                 IEnumerator<T> restEtor = rest.GetEnumerator();
@@ -1201,6 +1243,20 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Removes and returns the element at the end of the list.
+        /// </summary>
+        /// <returns>the last element</returns>
+        /// <exception cref="InvalidOperationException">If list is empty</exception>
+        public T Dequeue()
+        {
+            if (count == 0) throw new InvalidOperationException();
+            int ix = count - 1;
+            T result = this[ix];
+            RemoveAt(ix);
+            return result;
+        }
+
+        /// <summary>
         /// Removes all items from the StructList16`1.
         /// </summary>
         /// <exception cref="System.NotSupportedException">The StructList16`1 is read-only.</exception>
@@ -1352,22 +1408,22 @@ namespace Lexical.Localization.Internal
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
         public IEnumerator<T> GetEnumerator()
         {
-            if (count >= 0) yield return _0;
-            if (count >= 1) yield return _1;
-            if (count >= 2) yield return _2;
-            if (count >= 3) yield return _3;
-            if (count >= 4) yield return _4;
-            if (count >= 5) yield return _5;
-            if (count >= 6) yield return _6;
-            if (count >= 7) yield return _7;
-            if (count >= 8) yield return _8;
-            if (count >= 9) yield return _9;
-            if (count >= 10) yield return _10;
-            if (count >= 11) yield return _11;
-            if (count >= 12) yield return _12;
-            if (count >= 13) yield return _13;
-            if (count >= 14) yield return _14;
-            if (count >= 15) yield return _15;
+            if (count > 0) yield return _0;
+            if (count > 1) yield return _1;
+            if (count > 2) yield return _2;
+            if (count > 3) yield return _3;
+            if (count > 4) yield return _4;
+            if (count > 5) yield return _5;
+            if (count > 6) yield return _6;
+            if (count > 7) yield return _7;
+            if (count > 8) yield return _8;
+            if (count > 9) yield return _9;
+            if (count > 10) yield return _10;
+            if (count > 11) yield return _11;
+            if (count > 12) yield return _12;
+            if (count > 13) yield return _13;
+            if (count > 14) yield return _14;
+            if (count > 15) yield return _15;
             if (rest != null)
             {
                 IEnumerator<T> restEtor = rest.GetEnumerator();
@@ -1382,22 +1438,22 @@ namespace Lexical.Localization.Internal
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            if (count >= 0) yield return _0;
-            if (count >= 1) yield return _1;
-            if (count >= 2) yield return _2;
-            if (count >= 3) yield return _3;
-            if (count >= 4) yield return _4;
-            if (count >= 5) yield return _5;
-            if (count >= 6) yield return _6;
-            if (count >= 7) yield return _7;
-            if (count >= 8) yield return _8;
-            if (count >= 9) yield return _9;
-            if (count >= 10) yield return _10;
-            if (count >= 11) yield return _11;
-            if (count >= 12) yield return _12;
-            if (count >= 13) yield return _13;
-            if (count >= 14) yield return _14;
-            if (count >= 15) yield return _15;
+            if (count > 0) yield return _0;
+            if (count > 1) yield return _1;
+            if (count > 2) yield return _2;
+            if (count > 3) yield return _3;
+            if (count > 4) yield return _4;
+            if (count > 5) yield return _5;
+            if (count > 6) yield return _6;
+            if (count > 7) yield return _7;
+            if (count > 8) yield return _8;
+            if (count > 9) yield return _9;
+            if (count > 10) yield return _10;
+            if (count > 11) yield return _11;
+            if (count > 12) yield return _12;
+            if (count > 13) yield return _13;
+            if (count > 14) yield return _14;
+            if (count > 15) yield return _15;
             if (rest != null)
             {
                 IEnumerator<T> restEtor = rest.GetEnumerator();
@@ -1409,7 +1465,7 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// Sorter specifically for struct based lists, but works on any <see cref="IList{T}"/>.
+    /// Inplace sorter specifically for struct based lists, but works on any <see cref="IList{T}"/>.
     /// </summary>
     /// <typeparam name="List"></typeparam>
     /// <typeparam name="Element"></typeparam>

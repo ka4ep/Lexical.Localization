@@ -100,6 +100,7 @@ namespace Lexical.Localization
             while (xLink != null && xLink is IAssetKeyCanonicallyCompared == false) xLink = xLink.GetPreviousKey();
             while (yLink != null && yLink is IAssetKeyCanonicallyCompared == false) yLink = yLink.GetPreviousKey();
             if (!CanonicalEquals(xLink, yLink)) return false;
+            // ^ Todo: unwrap recursion.
 
             return true;
         }
@@ -122,6 +123,7 @@ namespace Lexical.Localization
             while (yLink != null && yLink is IAssetKeyCanonicallyCompared == false) yLink = yLink.GetPreviousKey();
             if (xLink != null || yLink != null)
                 if (!CanonicalEquals(xLink, yLink)) return false;
+                  // ^ Todo: unwrap recursion.
 
             return true;
         }
@@ -290,11 +292,10 @@ namespace Lexical.Localization
             if (x_parameters.Count != y_parameters.Count) return false;
 
             // Sort arrays
-            var sorter = new StructListSorter<StructList8<KeyValuePair<string, string>>, KeyValuePair<string, string>>(KeyValuePairComparer<string, string>.Default);
             sorter.Sort(ref x_parameters);
             sorter.Sort(ref y_parameters);
 
-            // Compare sorted arrays
+            // Pair comparison to sorted lists
             for (int i=0; i<x_parameters.Count; i++)
             {
                 KeyValuePair<string, string> x_parameter = x_parameters[i], y_parameter = y_parameters[i];
@@ -304,6 +305,7 @@ namespace Lexical.Localization
             return true;
         }
 
+        static StructListSorter<StructList8<KeyValuePair<string, string>>, KeyValuePair<string, string>> sorter = new StructListSorter<StructList8<KeyValuePair<string, string>>, KeyValuePair<string, string>>(KeyValuePairComparer<string, string>.Default);
         const int FNVHashBasis = unchecked((int)0x811C9DC5);
         const int FNVHashPrime = 0x1000193;
         public int GetHashCode(IAssetKey key)

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Lexical.Localization.Internal;
 using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
@@ -46,7 +47,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <returns></returns>
         public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines)
-            => AddRange(node, lines, groupingRule: null);
+            => AddRange(node, lines, groupingRule: DefaultGroupingRule);
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
@@ -57,6 +58,11 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines, string groupingPatternText)
             => AddRange(node, lines, groupingRule: groupingPatternText == null ? null : new AssetNamePattern(groupingPatternText));
+
+        /// <summary>
+        /// Default grouping rule.
+        /// </summary>
+        public static IAssetNamePattern DefaultGroupingRule = new AssetNamePattern("{Culture/}{Location/Assembly/Resource/}{Type/Section/}{Key/}");
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
@@ -84,18 +90,22 @@ namespace Lexical.Localization
             // Create comparer that can compare TreeNode and argument's keys
             ParametrizedComparer comparer = new ParametrizedComparer();
             // Create orderer
-            PartComparer partComparer = new PartComparer().AddParametersToSortOrder("Root");
+            Part.Comparer parameterComparer = new Part.Comparer();
             if (groupingRule != null)
             {
                 foreach (IAssetNamePatternPart part in groupingRule.CaptureParts)
-                    partComparer.AddParametersToSortOrder(part.ParameterName);
+                    parameterComparer.AddParametersToSortOrder(part.ParameterName);
             }
             else
             {
-                partComparer.AddParametersToSortOrder("Culture");
+                parameterComparer.AddParametersToSortOrder("Culture");
             }
 
-            List<PartComparer.Part> partList = new List<PartComparer.Part>(10);
+            StructList16<Part> partList = new StructList16<Part>(null);
+
+            // Reorder parts according to grouping rule
+            StructListSorter<StructList16<Part>, Part> parameterListSorter = new StructListSorter<StructList16<Part>, Part>(parameterComparer);
+
             List<IAssetKey> key_parts = new List<IAssetKey>();
             foreach (var kp in lines)
             {
@@ -105,10 +115,10 @@ namespace Lexical.Localization
                     if (parameterName == null || parameterValue == null) continue;
                     bool isCanonical = part is IAssetKeyCanonicallyCompared, isNonCanonical = part is IAssetKeyNonCanonicallyCompared;
                     if (!isCanonical && !isNonCanonical) continue;
-                    partList.Add(new PartComparer.Part(parameterName, parameterValue, isCanonical, isNonCanonical));
+                    partList.Add(new Part(parameterName, parameterValue, isCanonical, isNonCanonical));
                 }
-                // Reorder parts according to grouping rule
-                partList.Sort(partComparer);
+
+                parameterListSorter.Sort(ref partList);
 
                 // Segment according to grouping rule
                 if (groupingRule == null)
@@ -131,7 +141,7 @@ namespace Lexical.Localization
                         int ixx = -1;
                         for (int ix = part_ix; ix < partList.Count; ix++)
                         {
-                            string key_part = partList[ix].name;
+                            string key_part = partList[ix].parameterName;
                             // Detected part
                             if (key_part == part.ParameterName) { ixx = ix; break; }
                             if (part.ParameterName == "anysection" && 
@@ -139,7 +149,7 @@ namespace Lexical.Localization
                         }
 
                         // Detected part for parameter name in the grouping rule
-                        if (ixx >= 0) for (; part_ix <= ixx; part_ix++) constructedKey = new Key(constructedKey, partList[part_ix].name, partList[part_ix].value);
+                        if (ixx >= 0) for (; part_ix <= ixx; part_ix++) constructedKey = new Key(constructedKey, partList[part_ix].parameterName, partList[part_ix].parameterValue);
 
                         // yield constructedKey into the array due to separator
                         if (constructedKey != null && part.PrefixSeparator.Contains("/")) { key_parts.Add(constructedKey); constructedKey = null; }
@@ -199,65 +209,66 @@ namespace Lexical.Localization
         }
     }
 
-    /// <summary>
-    /// TreeNode is an intermediate model for writing text files
-    /// 
-    /// Reorganize parts so that non-canonicals parts, so that "Root" is first, then "Culture", and then others by parameter name.
-    /// </summary>
-    internal class PartComparer : IComparer<PartComparer.Part>
+    internal struct Part
     {
-        private static readonly PartComparer instance = new PartComparer().AddParametersToSortOrder("Root", "Culture");
-        public static PartComparer Default => instance;
+        public string parameterName;
+        public string parameterValue;
+        public bool isCanonical;
+        public bool isNonCanonical;
 
-        public readonly List<string> order = new List<string>();
-
-        public PartComparer()
+        public Part(string parameterName, string parameterValue, bool isCanonical, bool isNonCanonical)
         {
+            this.parameterName = parameterName;
+            this.parameterValue = parameterValue;
+            this.isCanonical = isCanonical;
+            this.isNonCanonical = isNonCanonical;
         }
 
-        public PartComparer AddParametersToSortOrder(IEnumerable<string> parameters)
-        {
-            this.order.AddRange(parameters);
-            return this;
-        }
+        public Key CreateKey(Key prev = default)
+            => isCanonical ? new Key.Canonical(prev, parameterName, parameterValue) :
+               isNonCanonical ? new Key.NonCanonical(prev, parameterName, parameterValue) :
+               new Key(prev, parameterName, parameterValue);
 
-        public PartComparer AddParametersToSortOrder(params string[] parameters)
-        {
-            this.order.AddRange(parameters);
-            return this;
-        }
+        public override string ToString()
+            => parameterName==null||parameterValue==null ? null : parameterName + ":" + parameterValue;
 
-        public int Compare(Part x, Part y)
+        public class Comparer : IComparer<Part>
         {
-            // canonical parts cannot be reordered between themselves.
-            if (x.isCanonical || y.isCanonical) return 0;
-            int xix = order.IndexOf(x.name);
-            int yix = order.IndexOf(y.name);
-            if (xix == yix) return 0;
-            if (xix < 0) xix = Int32.MaxValue;
-            if (yix < 0) yix = Int32.MaxValue;
-            return xix - yix;
-        }
+            private static readonly Comparer instance = new Comparer().AddParametersToSortOrder("Root", "Culture");
+            public static Comparer Default => instance;
 
-        public struct Part
-        {
-            public string name;
-            public string value;
-            public bool isCanonical;
-            public bool isNonCanonical;
+            public readonly List<string> order = new List<string>();
 
-            public Part(string name, string value, bool isCanonical, bool isNonCanonical)
+            public Comparer()
             {
-                this.name = name;
-                this.value = value;
-                this.isCanonical = isCanonical;
-                this.isNonCanonical = isNonCanonical;
             }
 
-            public Key CreateKey(Key prev = default)
-                => isCanonical ? new Key.Canonical(prev, name, value) :
-                   isNonCanonical ? new Key.NonCanonical(prev, name, value) :
-                   new Key(prev, name, value);
+            public Comparer AddParametersToSortOrder(IEnumerable<string> parameters)
+            {
+                this.order.AddRange(parameters);
+                return this;
+            }
+
+            public Comparer AddParametersToSortOrder(params string[] parameters)
+            {
+                this.order.AddRange(parameters);
+                return this;
+            }
+
+            public int Compare(Part x, Part y)
+            {
+                // canonical parts cannot be reordered between themselves.
+                if (x.isCanonical || y.isCanonical) return 0;
+                int xix = order.IndexOf(x.parameterName);
+                int yix = order.IndexOf(y.parameterName);
+                if (xix == yix) return 0;
+                if (xix < 0) xix = Int32.MaxValue;
+                if (yix < 0) yix = Int32.MaxValue;
+                return xix - yix;
+            }
         }
+
+
     }
+
 }

@@ -38,6 +38,7 @@ namespace docs
                 // Let's create an example key
                 IAssetKey key = new LocalizationRoot()
                         .Location("Patches")
+                        .Section("Controllers")
                         .Type("MyController")
                         .Section("Errors")
                         .Key("InvalidState")
@@ -46,15 +47,15 @@ namespace docs
 
                 {
                     #region Snippet_2
-                    // "en:Patches:MyController:Errors:InvalidState"
+                    // "en:Patches:Controllers:MyController:Errors:InvalidState"
                     string str1 = AssetKeyNameProvider.Default.BuildName(key);
-                    // "en.Patches.MyController.Errors.InvalidState"
+                    // "en.Patches.Controllers.MyController.Errors.InvalidState"
                     string str2 = AssetKeyNameProvider.Dot_Dot_Dot.BuildName(key);
-                    // "Patches:MyController:Errors:InvalidState"
+                    // "Patches:Controllers:MyController:Errors:InvalidState"
                     string str3 = AssetKeyNameProvider.None_Colon_Colon.BuildName(key);
-                    // "en:Patches.MyController.Errors.InvalidState"
+                    // "en:Patches.Controllers.MyController.Errors.InvalidState"
                     string str4 = AssetKeyNameProvider.Colon_Dot_Dot.BuildName(key);
-                    // "en:Patches:MyController:Errors.InvalidState"
+                    // "en:Patches:Controllers:MyController:Errors.InvalidState"
                     string str5 = AssetKeyNameProvider.Colon_Colon_Dot.BuildName(key);
                     #endregion Snippet_2
                 }
