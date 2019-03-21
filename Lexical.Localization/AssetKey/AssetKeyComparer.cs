@@ -288,6 +288,10 @@ namespace Lexical.Localization
                 }
             }
 
+            // Remove values where parameterValue==""
+            for (int ix = 0; ix < x_parameters.Count;) if (x_parameters[ix].Value == "") x_parameters.RemoveAt(ix); else ix++;
+            for (int ix = 0; ix < y_parameters.Count;) if (y_parameters[ix].Value == "") y_parameters.RemoveAt(ix); else ix++;
+
             // Compare count
             if (x_parameters.Count != y_parameters.Count) return false;
 
@@ -338,8 +342,12 @@ namespace Lexical.Localization
                 // Ignore this occurance as this non-canonical part occurs again.
                 if (!firstOccurance) continue;
 
-                hash ^= parameterName.GetHashCode();
-                hash ^= parameter_value.GetHashCode();
+                // Hash in only if value is non-""
+                if (parameter_value != "")
+                {
+                    hash ^= parameterName.GetHashCode();
+                    hash ^= parameter_value.GetHashCode();
+                }
             }
             return hash;
         }

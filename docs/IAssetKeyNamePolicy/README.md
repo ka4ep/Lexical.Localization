@@ -8,7 +8,11 @@ then the loading asset must be instructed to use a policy that matches the separ
 // Create localization source
 var source = new Dictionary<string, string> { { "en/MyController/Hello", "Hello World!" } };
 // Create key name policy
-IAssetKeyNamePolicy policy = new AssetKeyNameProvider().SetDefault(true, "/");
+IAssetKeyNamePolicy policy =
+    new AssetKeyNameProvider()
+        .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: "/") // Sorts parameters
+        .Ignore("Root") // Ignore "Root"
+        .DefaultRule(true, prefixSeparator: "/"); // Default separator
 // Create asset
 IAsset asset = new LocalizationStringAsset(source, policy);
 // Create key
@@ -29,11 +33,11 @@ string id = policy.BuildName(key.Culture("en"));
 
 ```csharp
 /// <summary>
-/// Signal that the class can convert <see cref="IAssetKey"/> into strings.
+/// Signal that the class can do conversions of <see cref="IAssetKey"/> and <see cref="String"/>.
 /// 
-/// Consumer of this interface should call <see cref="AssetKeyExtensions.BuildName(IAssetKeyNamePolicy, IAssetKey)"/>.
+/// User of this interface should call <see cref="AssetKeyNamePolicyExtensions.BuildName(IAssetKeyNamePolicy, IAssetKey)"/>.
 /// 
-/// Producer to this interface should implement one of the more specific interfaces:
+/// Class that imlpements to this interface should implement one or both of the following interfaces:
 ///  <see cref="IAssetKeyNameProvider"/>
 ///  <see cref="IAssetNamePattern"/>
 /// </summary>

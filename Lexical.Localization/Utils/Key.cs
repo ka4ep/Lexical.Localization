@@ -6,6 +6,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Lexical.Localization.Internal;
 
 namespace Lexical.Localization.Utils
@@ -17,6 +18,7 @@ namespace Lexical.Localization.Utils
     /// 
     /// This class has one parameter name and a value, and it can carry a link to previous node.
     /// </summary>
+    [DebuggerDisplay("{ToString()}")]
     public partial class Key : IAssetKey, IAssetKeyLinked, IAssetKeyParameterAssigned, IAssetKeyParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>
     {
         private static readonly Key root = new Key("Root", "");
@@ -159,6 +161,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Proxy implementation of non-canonical parameter. Implements <see cref="IAssetKeyNonCanonicallyCompared"/>.
         /// </summary>
+        [DebuggerDisplay("{ToString()}")]
         public class NonCanonical : Key, IAssetKeyNonCanonicallyCompared
         {
             public NonCanonical(string parameterName, string parameterValue) : base(parameterName, parameterValue) { }
@@ -168,6 +171,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Proxy implementation of non-canonical parameter. Implements <see cref="IAssetKeyCanonicallyCompared"/>.
         /// </summary>
+        [DebuggerDisplay("{ToString()}")]
         public class Canonical : Key, IAssetKeyCanonicallyCompared
         {
             public Canonical(string parameterName, string parameterValue) : base(parameterName, parameterValue) { }

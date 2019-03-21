@@ -8,6 +8,7 @@ Let's create an example key.
 // Let's create an example key
 IAssetKey key = new LocalizationRoot()
         .Location("Patches")
+        .Section("Controllers")
         .Type("MyController")
         .Section("Errors")
         .Key("InvalidState")
@@ -16,14 +17,16 @@ IAssetKey key = new LocalizationRoot()
 And now, let's try out different policies to see how they look.
 
 ```csharp
-// "en:Patches:MyController:Errors:InvalidState"
+// "en:Patches:Controllers:MyController:Errors:InvalidState"
 string str1 = AssetKeyNameProvider.Default.BuildName(key);
-// "en.Patches.MyController.Errors.InvalidState"
+// "en.Patches.Controllers.MyController.Errors.InvalidState"
 string str2 = AssetKeyNameProvider.Dot_Dot_Dot.BuildName(key);
-// "Patches:MyController:Errors:InvalidState"
+// "Patches:Controllers:MyController:Errors:InvalidState"
 string str3 = AssetKeyNameProvider.None_Colon_Colon.BuildName(key);
-// "en:Patches.MyController.Errors.InvalidState"
+// "en:Patches.Controllers.MyController.Errors.InvalidState"
 string str4 = AssetKeyNameProvider.Colon_Dot_Dot.BuildName(key);
+// "en:Patches:Controllers:MyController:Errors.InvalidState"
+string str5 = AssetKeyNameProvider.Colon_Colon_Dot.BuildName(key);
 ```
 
 Custom policies can be created by instantiating AssetKeyNameProvider and adding configurations.
@@ -32,15 +35,15 @@ Custom policies can be created by instantiating AssetKeyNameProvider and adding 
 // Create a custom policy 
 IAssetKeyNamePolicy myPolicy = new AssetKeyNameProvider()
     // Enable non-canonical "Culture" parameter with "/" separator
-    .SetParameter("Culture", true, "", "/")
+    .Rule("Culture", true, postfixSeparator: "/", order: ParameterInfos.Default["Culture"].Order)
     // Disable other non-canonical parts
-    .SetNonCanonicalDefault(false)
+    .NonCanonicalRule(false)
     // Enable canonical all parts with "/" separator
-    .SetCanonicalDefault(true, "/", "")
-    // Set "Key" parameter's prefix to "/" and postfix to ".txt".
-    .SetParameter("Key", true, "/", ".txt");
+    .CanonicalRule(true, prefixSeparator: "/")
+    // Set "Key" parameter's prefix to "/"
+    .Rule("Key", true, prefixSeparator: "/", order: ParameterInfos.Default["Key"].Order);
 
-// "en/Patches/MyController/Errors/InvalidState.txt"
+// "en/Patches/MyController/Errors/InvalidState"
 string str = myPolicy.BuildName(key);
 ```
 
@@ -48,6 +51,9 @@ string str = myPolicy.BuildName(key);
   <summary><b>IAssetKeyNameProvider</b> is policy interface where Build() can be implemented directly. (<u>Click here</u>)</summary>
 
 ```csharp
+/// <summary>
+/// Converts <see cref="IAssetKey"/> to <see cref="String"/>.
+/// </summary>
 public interface IAssetKeyNameProvider : IAssetKeyNamePolicy
 {
     /// <summary>

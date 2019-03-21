@@ -94,13 +94,14 @@ string id2 = AssetKeyNameProvider.Colon_Colon_Colon.BuildName(key2);
 | Parameter | Canonical | Interface | Extension Method | Description |
 |:---------|:-------|:--------|:---------|:---------|
 | Root | canonical | IAssetRoot |  | Contains asset and culture policy. Keys are constructed from here. |
-| Type | canonical | IAssetKeyTypeAssignable | .Type(*Type*) | Type section for grouping by classes and interfaces. |
+| Type | non-canonical | IAssetKeyTypeAssignable | .Type(*Type*) | Type section for grouping by classes and interfaces. |
 | Location | canonical | IAsseyKeyLocationAssignable | .Location(*string*) | Hint to asset for a directory to search from. |
 | Assembly | non-canonical | IAssetKeyAssemblyAssignable | .Assembly(*Assembly*) | Hint to asset for an assembly to search from. |
 | Resource | canonical | IAssetKeyResourceAssignable | .Resource(*string*) | Hint to asset for an embedded resource path to search from. |
 | Section | canonical | IAssetKeySectionAssignable | .Section(*string*) | Generic section for grouping assets. |
 | Key | canonical | IAssetKeyAssignable | .Key(*string*) | Leaf key |
 | Culture | non-canonical | ILocalizationKeyCultureAssignable | .Culture(*CultureInfo*) | Parameter to override current culture. |
+| N | non-canonical | ILocalizationKeyPluralityAssignable | .N(*Type*) | Key that specifies plurality |
 |  | non-canonical | ILocalizationKeyFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
 |  | non-canonical | ILocalizationKeyInlined | .Inline(*string*, *string*) | Hint for default culture specific string values. |
 

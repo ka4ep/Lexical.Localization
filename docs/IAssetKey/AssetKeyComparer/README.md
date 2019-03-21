@@ -48,3 +48,22 @@ IAssetKey key2 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK")
 bool equals12 = AssetKeyComparer.Default.Equals(key1, key2);
 ```
 
+A parameter with empty value "" is considered same as not having a value.
+
+```csharp
+IAssetKey key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
+IAssetKey key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
+
+bool equals12 = AssetKeyComparer.Default.Equals(key1, key2);
+int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
+int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
+```
+
+There is a difference though, for a non-canonical parameter such as "Culture" cannot be re-selected.
+
+```csharp
+IAssetKey key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
+IAssetKey key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
+string str1 = key1.Culture("fi").ToString();  // <- Selects a culture
+string str2 = key2.Culture("fi").ToString();  // <- Doesn't change the effective culture
+```

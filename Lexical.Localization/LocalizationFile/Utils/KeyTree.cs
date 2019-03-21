@@ -91,9 +91,14 @@ namespace Lexical.Localization.Utils
                 Key oldKey = key;
                 if (oldKey != null && oldKey.Equals(value)) return;
                 Key newKey = value is Key _key ? _key : Key.CreateFrom(value);
-                if (oldKey != null)
+                // Add to parent's lookup table
+                if (oldKey == null)
                 {
-                    // Update parent's lookup table
+                    if (Parent != null) Parent.ChildrenLookup.Add(newKey, this);
+                }
+                // Update parent's lookup table
+                else
+                {
                     if (Parent != null && oldKey != null && !Key.Comparer.Default.Equals(oldKey, newKey))
                     {
                         if (oldKey != null && Parent.ChildrenLookup.ContainsKey(oldKey)) Parent.ChildrenLookup.Remove(oldKey, this);
@@ -129,7 +134,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Get-or-create child nodes
         /// </summary>
-        public MapList<IAssetKey, KeyTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<IAssetKey, KeyTree>(AssetKeyComparer.Default).AddRange(Children.Select(c=>new KeyValuePair<IAssetKey, KeyTree>(c.Key, c))));
+        public MapList<IAssetKey, KeyTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<IAssetKey, KeyTree>(AssetKeyComparer.Default).AddRange(Children.Where(c=>c.Key!=null).Select(c=>new KeyValuePair<IAssetKey, KeyTree>(c.Key, c))));
 
         /// <summary>
         /// Test if has values.

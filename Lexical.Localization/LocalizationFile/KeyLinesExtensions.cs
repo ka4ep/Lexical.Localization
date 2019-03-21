@@ -105,12 +105,13 @@ namespace Lexical.Localization
                     // Overwrite previously assigned non-canonical parameter
                     if (isNonCanonical)
                     {
-                        int ixx = -1;
                         // Find previous occurance
+                        int ixx = -1;
                         for (int i = 0; i < parameters.Count; i++) if (parameters[i].parameterName == parameterName) { ixx = i; break; }
+                        // Overwrite previous occurance, only left-most is effective
                         if (ixx >= 0) { parameters[ixx] = new Parameter(parameterName, parameterValue, isCanonical, isNonCanonical); continue; }
                     }
-                    // Add new parameter
+                    // Add parameter to list
                     parameters.Add(new Parameter(parameterName, parameterValue, isCanonical, isNonCanonical));
                 }
                 parameterListSorter.Reverse(ref parameters);

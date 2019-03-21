@@ -15,3 +15,8 @@ The location of *IAssetKeyNonCanonicallyCompared* parts, such as **.Culture()** 
 If a non-canonical part occurs multiple times in a key, then by a rule, only the left-most if considered effective.
 [!code-csharp[Snippet](Examples.cs#Snippet_4)]
 
+A parameter with empty value "" is considered same as not having a value.
+[!code-csharp[Snippet](Examples.cs#Snippet_5)]
+
+There is a difference though, for a non-canonical parameter such as "Culture" cannot be re-selected.
+[!code-csharp[Snippet](Examples.cs#Snippet_5b)]

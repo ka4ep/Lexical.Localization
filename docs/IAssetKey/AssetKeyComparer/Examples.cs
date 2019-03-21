@@ -59,11 +59,37 @@ namespace docs
             }
             {
                 #region Snippet_5
+                IAssetKey key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
+                IAssetKey key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
+
+                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2);
+                int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
+                int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
                 #endregion Snippet_5
+            }
+            {
+                #region Snippet_5b
+                IAssetKey key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
+                IAssetKey key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
+                string str1 = key1.Culture("fi").ToString();  // <- Selects a culture
+                string str2 = key2.Culture("fi").ToString();  // <- Doesn't change the effective culture
+                #endregion Snippet_5b
             }
             {
                 #region Snippet_6
                 #endregion Snippet_6
+            }
+            {
+                #region Snippet_7
+                #endregion Snippet_7
+            }
+            {
+                #region Snippet_8
+                #endregion Snippet_8
+            }
+            {
+                #region Snippet_9
+                #endregion Snippet_9
             }
         }
     }
