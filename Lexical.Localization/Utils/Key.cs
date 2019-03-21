@@ -22,6 +22,10 @@ namespace Lexical.Localization.Utils
     public partial class Key : IAssetKey, IAssetKeyLinked, IAssetKeyParameterAssigned, IAssetKeyParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>
     {
         private static readonly Key root = new Key("Root", "");
+
+        /// <summary>
+        /// Default root key.
+        /// </summary>
         public static Key Root => root;
 
         /// <summary>
@@ -62,8 +66,8 @@ namespace Lexical.Localization.Utils
         /// <param name="parameterValue"></param>
         public Key(string parameterName, string parameterValue)
         {
-            this.Name = parameterName;
-            this.Value = parameterValue;
+            this.Name = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
+            this.Value = parameterValue ?? throw new ArgumentNullException(nameof(parameterValue));
         }
 
         /// <summary>
@@ -74,8 +78,8 @@ namespace Lexical.Localization.Utils
         /// <param name="parameterValue"></param>
         public Key(Key previous, string parameterName, string parameterValue)
         {
-            this.Name = parameterName;
-            this.Value = parameterValue;
+            this.Name = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
+            this.Value = parameterValue ?? throw new ArgumentNullException(nameof(parameterValue));
             this.Previous = previous;
         }
 

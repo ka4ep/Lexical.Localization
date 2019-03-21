@@ -38,7 +38,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetKeyNamePolicy namePolicy)
         {
-            KeyTree tree = new KeyTree(new Key("Root", ""), null);
+            KeyTree tree = new KeyTree(Key.Root, null);
             if (namePolicy is IAssetNamePattern pattern)
                 tree.AddRange(lines, pattern);
             else
