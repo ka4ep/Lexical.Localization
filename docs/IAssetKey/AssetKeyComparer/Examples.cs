@@ -28,9 +28,9 @@ namespace docs
                 IAssetKey key3 = LocalizationRoot.Global.Type("MyClass").Key("OK");
                 IAssetKey key4 = StringLocalizerRoot.Global.Type("MyClass").Key("OK");
 
-                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2);
-                bool equals23 = AssetKeyComparer.Default.Equals(key2, key3);
-                bool equals34 = AssetKeyComparer.Default.Equals(key3, key4);
+                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
+                bool equals23 = AssetKeyComparer.Default.Equals(key2, key3); // Are equal
+                bool equals34 = AssetKeyComparer.Default.Equals(key3, key4); // Are equal
                 int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
                 int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
                 int hash3 = AssetKeyComparer.Default.GetHashCode(key3);
@@ -42,7 +42,7 @@ namespace docs
                 IAssetKey key1 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
                 IAssetKey key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("en");
 
-                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2);
+                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
                 #endregion Snippet_3
                 int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
                 int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
@@ -52,7 +52,7 @@ namespace docs
                 IAssetKey key1 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
                 IAssetKey key2 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK").Culture("de");
 
-                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2);
+                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
                 #endregion Snippet_4
                 int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
                 int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
@@ -62,7 +62,7 @@ namespace docs
                 IAssetKey key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
                 IAssetKey key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
 
-                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2);
+                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
                 int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
                 int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
                 #endregion Snippet_5
@@ -77,11 +77,17 @@ namespace docs
             }
             {
                 #region Snippet_6
+                IAssetKey key1 = LocalizationRoot.Global.Section("").Key("OK");
+                IAssetKey key2 = LocalizationRoot.Global.Key("OK");
+
+                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are not equal
+                int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
+                int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
                 #endregion Snippet_6
             }
             {
-                #region Snippet_7
-                #endregion Snippet_7
+                #region Snippet_6b
+                #endregion Snippet_6b
             }
             {
                 #region Snippet_8
