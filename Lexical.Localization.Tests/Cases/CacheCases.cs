@@ -17,14 +17,14 @@ namespace Lexical.Localization.Tests
     public class Cache_LocalizationAssetCache_CloneKeys
     {
         public object Initialize(Run init)
-            => init.Set<IAsset>(new AssetCache(init.Get<IAsset>()).AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache().ConfigureOptions(o=>o.SetCloneKeys(true)));
+            => init.Set<IAsset>(new AssetCache(init.Get<IAsset>()).AddResourceCache().AddStringsCache().AddCulturesCache().ConfigureOptions(o=>o.SetCloneKeys(true)));
     }
     
     [Case("Cache", nameof(AssetCachePartStrings)+",CloneKeys=False")]
     public class Cache_LocalizationAssetCache
     {
         public object Initialize(Run init)
-            => init.Set<IAsset>(new AssetCache(init.Get<IAsset>()).AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache().ConfigureOptions(o => o.SetCloneKeys(false)));
+            => init.Set<IAsset>(new AssetCache(init.Get<IAsset>()).AddResourceCache().AddStringsCache().AddCulturesCache().ConfigureOptions(o => o.SetCloneKeys(false)));
     }
 
 }

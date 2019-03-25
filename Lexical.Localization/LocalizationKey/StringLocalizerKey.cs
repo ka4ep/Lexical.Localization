@@ -429,7 +429,7 @@ namespace Lexical.Localization
         }
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            ILocalizationStringCollection collections = this.FindAsset() as ILocalizationStringCollection;
+            ILocalizationStringLinesEnumerable collections = this.FindAsset() as ILocalizationStringLinesEnumerable;
             if (collections == null) return null;
 
             CultureInfo ci = null;
@@ -438,7 +438,7 @@ namespace Lexical.Localization
                 IEnumerable<LocalizedString> result = null;
                 while (true)
                 {
-                    IEnumerable<KeyValuePair<string, string>> strs = collections?.GetAllStrings(this);
+                    IEnumerable<KeyValuePair<string, string>> strs = collections?.GetAllStringLines(this);
                     if (strs != null)
                     {
                         IEnumerable<LocalizedString> converted = ConvertStrings(strs);
@@ -451,7 +451,7 @@ namespace Lexical.Localization
             }
             else
             {
-                IEnumerable<KeyValuePair<string, string>> strs = collections?.GetAllStrings(this);
+                IEnumerable<KeyValuePair<string, string>> strs = collections?.GetAllStringLines(this);
                 return strs == null ? null : ConvertStrings(strs);
             }
         }

@@ -10,9 +10,9 @@ using System.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Interface read localization string.
+    /// Interface to read localization strings.
     /// 
-    /// Consumers of this interface should always call with <see cref="LocalizationAssetExtensions.GetString(IAsset, IAssetKey)"/>.
+    /// Consumers of this interface can use <see cref="LocalizationAssetExtensions.GetString(IAsset, IAssetKey)"/> with uncasted <see cref="IAsset"/>.
     /// </summary>
     public interface ILocalizationStringProvider : IAsset
     {
@@ -25,16 +25,79 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Interface to enumerate localization strings.
+    /// Interface to enumerate localization strings as <see cref="KeyValuePair{IAssetKey, String}"/> lines. 
+    /// 
+    /// This interface is used by classes that use <see cref="IAssetKey"/> as intrinsic keys.
     /// </summary>
-    public interface ILocalizationStringCollection : IAsset
+    public interface ILocalizationKeyLinesEnumerable : IAsset
     {
         /// <summary>
-        /// Gets all localization strings.
+        /// Get the lines this asset can provide. If cannot return all lines, returns null.
+        /// 
+        /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
+        /// 
+        /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
+        /// it must return an enumerable that is a snapshot and will not throw <see cref="InvalidOperationException"/>.
         /// </summary>
-        /// <param name="key">(optional) key to get strings for</param>
+        /// <param name="filterKey"></param>
+        /// <returns>all lines, or null</returns>
+        IEnumerable<KeyValuePair<IAssetKey, string>> GetKeyLines(IAssetKey filterKey = null);
+
+        /// <summary>
+        /// Get all localization lines. If cannot return all lines, return what is availale.
+        /// 
+        /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
+        /// 
+        /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
+        /// it must return an enumerable that is a snapshot and will not throw <see cref="InvalidOperationException"/>.
+        /// </summary>
+        /// <param name="filterKey"></param>
+        /// <returns>lines, or null</returns>
+        IEnumerable<KeyValuePair<IAssetKey, string>> GetAllKeyLines(IAssetKey filterKey = null);
+    }
+
+    /// <summary>
+    /// Interface to enumerate localization strings as <see cref="KeyValuePair{String, String}"/> lines.
+    /// 
+    /// This interface is used by classes that use <see cref="String"/> as intrinsic keys.
+    /// </summary>
+    public interface ILocalizationStringLinesEnumerable : IAsset
+    {
+        /// <summary>
+        /// Gets localization key-value pairs as string keys. If cannot return all lines, then return what is available.
+        /// 
+        /// If the implementation cannot filter with an <see cref="IAssetKey"/>, then it returns all available lines.
+        /// 
+        /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
+        /// 
+        /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
+        /// it must return an enumerable that is a snapshot and will not throw <see cref="InvalidOperationException"/>.
+        /// </summary>
+        /// <param name="filterKey">(optional) key used for filtering results</param>
         /// <returns>key to language string mapping, or null</returns>
-        IEnumerable<KeyValuePair<string, string>> GetAllStrings(IAssetKey key = null);
+        IEnumerable<KeyValuePair<string, string>> GetStringLines(IAssetKey filterKey = null);
+
+        /// <summary>
+        /// Gets all localization lines. If cannot return all keys, then returns null.
+        /// 
+        /// If the implementation cannot filter with an <see cref="IAssetKey"/>, then it returns all lines.
+        /// 
+        /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
+        /// 
+        /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
+        /// it must return an enumerable that is a snapshot and will not throw <see cref="InvalidOperationException"/>.
+        /// </summary>
+        /// <param name="filterKey">(optional) key to get strings for</param>
+        /// <returns>key to language string mapping, or null</returns>
+        IEnumerable<KeyValuePair<string, string>> GetAllStringLines(IAssetKey filterKey = null);
     }
 
     public static partial class LocalizationAssetExtensions
@@ -56,14 +119,14 @@ namespace Lexical.Localization
             }
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationStringProvider strs in composition.GetComponents<ILocalizationStringProvider>(true))
+                foreach (ILocalizationStringProvider component in composition.GetComponents<ILocalizationStringProvider>(true))
                 {
-                    string result = strs.GetString(key);
+                    string result = component.GetString(key);
                     if (result != null) return result;
                 }
-                foreach (IAssetProvider _ in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
                 {
-                    IEnumerable<IAsset> assets = _.LoadAssets(key);
+                    IEnumerable<IAsset> assets = component.LoadAssets(key);
                     if (assets != null)
                     {
                         foreach (IAsset loaded_asset in assets)
@@ -90,33 +153,37 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Get strings of specific section described by key.
-        /// If key is null, return all strings in the asset.
-        /// If key has a selected <paramref name="culture"/>, then return strings of that culture.
-        /// If key doesn't have a selected culture, then return strings of requested section from all cultures.
+        /// Gets localization lines as <see cref="IAssetKey"/> keys. If it cannot return all keys, then returns what is available.
+        /// 
+        /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
+        /// 
+        /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
+        /// it must return an enumerable that is a snapshot and will not throw <see cref="InvalidOperationException"/>.
         /// </summary>
         /// <param name="asset"></param>
-        /// <param name="key"></param>
-        /// <returns>resolved string or null</returns>
-        public static IEnumerable<KeyValuePair<string, string>> GetAllStrings(this IAsset asset, IAssetKey key = null)
+        /// <param name="filterKey">(optional) key used for filtering results</param>
+        /// <returns>key to language string mapping, or null</returns>
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> GetKeyLines(this IAsset asset, IAssetKey filterKey = null)
         {
-            IEnumerable<KeyValuePair<string, string>> result = null;
-            if (asset is ILocalizationStringCollection casted) result = casted.GetAllStrings(key);
+            IEnumerable<KeyValuePair<IAssetKey, string>> result = null;
+            if (asset is ILocalizationKeyLinesEnumerable casted) result = casted.GetKeyLines(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationStringCollection strs in composition.GetComponents<ILocalizationStringCollection>(true))
+                foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true))
                 {
-                    IEnumerable<KeyValuePair<string, string>> _result = strs.GetAllStrings(key);
+                    IEnumerable<KeyValuePair<IAssetKey, string>> _result = component.GetKeyLines(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                 }
-                foreach (IAssetProvider _ in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
                 {
-                    IEnumerable<IAsset> assets = _.LoadAssets(key);
+                    IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
                     if (assets != null)
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            IEnumerable<KeyValuePair<string, string>> _result = loaded_asset.GetAllStrings(key);
+                            IEnumerable<KeyValuePair<IAssetKey, string>> _result = loaded_asset.GetKeyLines(filterKey);
                             if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                         }
                     }
@@ -124,13 +191,183 @@ namespace Lexical.Localization
             }
             if (asset is IAssetProvider provider)
             {
-                IEnumerable<IAsset> loaded_assets = provider.LoadAllAssets(key);
+                IEnumerable<IAsset> loaded_assets = provider.LoadAllAssets(filterKey);
                 if (loaded_assets != null)
                 {
                     foreach (IAsset loaded_asset in loaded_assets)
                     {
-                        IEnumerable<KeyValuePair<string, string>> _result = loaded_asset.GetAllStrings(key);
+                        IEnumerable<KeyValuePair<IAssetKey, string>> _result = loaded_asset.GetKeyLines(filterKey);
                         if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
+                    }
+                }
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// Gets localization lines as <see cref="IAssetKey"/> keys. If it cannot return all keys, then returns null.
+        /// 
+        /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
+        /// 
+        /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
+        /// it must return an enumerable that is a snapshot and will not throw <see cref="InvalidOperationException"/>.
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <param name="filterKey">(optional) key used for filtering results</param>
+        /// <returns>key to language string mapping, or null</returns>
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> GetAllKeyLines(this IAsset asset, IAssetKey filterKey = null)
+        {
+            IEnumerable<KeyValuePair<IAssetKey, string>> result = null;
+            if (asset is ILocalizationKeyLinesEnumerable casted) result = casted.GetAllKeyLines(filterKey);
+            if (asset is IAssetComposition composition)
+            {
+                foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true))
+                {
+                    IEnumerable<KeyValuePair<IAssetKey, string>> _result = component.GetAllKeyLines(filterKey);
+                    if (_result == null) return null;
+                    if (_result is Array _array && _array.Length == 0) continue;
+                    result = result == null ? _result : result.Concat(_result);
+                }
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                {
+                    IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
+                    if (assets != null)
+                    {
+                        foreach (IAsset loaded_asset in assets)
+                        {
+                            IEnumerable<KeyValuePair<IAssetKey, string>> _result = loaded_asset.GetAllKeyLines(filterKey);
+                            if (_result == null) return null;
+                            if (_result is Array _array && _array.Length == 0) continue;
+                            result = result == null ? _result : result.Concat(_result);
+                        }
+                    }
+                }
+            }
+            if (asset is IAssetProvider provider)
+            {
+                IEnumerable<IAsset> loaded_assets = provider.LoadAllAssets(filterKey);
+                if (loaded_assets != null)
+                {
+                    foreach (IAsset loaded_asset in loaded_assets)
+                    {
+                        IEnumerable<KeyValuePair<IAssetKey, string>> _result = loaded_asset.GetAllKeyLines(filterKey);
+                        if (_result == null) return null;
+                        if (_result is Array _array && _array.Length == 0) continue;
+                        result = result == null ? _result : result.Concat(_result);
+                    }
+                }
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// Gets localization lines with string keys. If it cannot return all lines, then returns what is available.
+        /// 
+        /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
+        /// 
+        /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
+        /// it must return an enumerable that is a snapshot and will not throw <see cref="InvalidOperationException"/>.
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <param name="filterKey">(optional) key used for filtering results</param>
+        /// <returns>key to language string mapping, or null</returns>
+        public static IEnumerable<KeyValuePair<string, string>> GetStringLines(this IAsset asset, IAssetKey filterKey = null)
+        {
+            IEnumerable<KeyValuePair<string, string>> result = null;
+            if (asset is ILocalizationStringLinesEnumerable casted) result = casted.GetStringLines(filterKey);
+            if (asset is IAssetComposition composition)
+            {
+                foreach (ILocalizationStringLinesEnumerable component in composition.GetComponents<ILocalizationStringLinesEnumerable>(true))
+                {
+                    IEnumerable<KeyValuePair<string, string>> _result = component.GetStringLines(filterKey);
+                    if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
+                }
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                {
+                    IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
+                    if (assets != null)
+                    {
+                        foreach (IAsset loaded_asset in assets)
+                        {
+                            IEnumerable<KeyValuePair<string, string>> _result = loaded_asset.GetStringLines(filterKey);
+                            if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
+                        }
+                    }
+                }
+            }
+            if (asset is IAssetProvider provider)
+            {
+                IEnumerable<IAsset> loaded_assets = provider.LoadAllAssets(filterKey);
+                if (loaded_assets != null)
+                {
+                    foreach (IAsset loaded_asset in loaded_assets)
+                    {
+                        IEnumerable<KeyValuePair<string, string>> _result = loaded_asset.GetStringLines(filterKey);
+                        if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
+                    }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Gets localization lines with string keys. If it cannot return all keys, then returns what is available.
+        /// 
+        /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If the parameter has value "", then the result must be filtered to keys that have "" for the same parameter, or don't have that same parameter assigned.
+        /// 
+        /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
+        /// it must return an enumerable that is a snapshot and will not throw <see cref="InvalidOperationException"/>.
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <param name="filterKey">(optional) key used for filtering results</param>
+        /// <returns>key to language string mapping, or null</returns>
+        public static IEnumerable<KeyValuePair<string, string>> GetAllStringLines(this IAsset asset, IAssetKey filterKey = null)
+        {
+            IEnumerable<KeyValuePair<string, string>> result = null;
+            if (asset is ILocalizationStringLinesEnumerable casted) result = casted.GetAllStringLines(filterKey);
+            if (asset is IAssetComposition composition)
+            {
+                foreach (ILocalizationStringLinesEnumerable component in composition.GetComponents<ILocalizationStringLinesEnumerable>(true))
+                {
+                    IEnumerable<KeyValuePair<string, string>> _result = component.GetAllStringLines(filterKey);
+                    if (_result == null) return null;
+                    if (_result is Array _array && _array.Length == 0) continue;
+                    result = result == null ? _result : result.Concat(_result);
+                }
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                {
+                    IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
+                    if (assets != null)
+                    {
+                        foreach (IAsset loaded_asset in assets)
+                        {
+                            IEnumerable<KeyValuePair<string, string>> _result = loaded_asset.GetAllStringLines(filterKey);
+                            if (_result == null) return null;
+                            if (_result is Array _array && _array.Length == 0) continue;
+                            result = result == null ? _result : result.Concat(_result);
+                        }
+                    }
+                }
+            }
+            if (asset is IAssetProvider provider)
+            {
+                IEnumerable<IAsset> loaded_assets = provider.LoadAllAssets(filterKey);
+                if (loaded_assets != null)
+                {
+                    foreach (IAsset loaded_asset in loaded_assets)
+                    {
+                        IEnumerable<KeyValuePair<string, string>> _result = loaded_asset.GetAllStringLines(filterKey);
+                        if (_result == null) return null;
+                        if (_result is Array _array && _array.Length == 0) continue;
+                        result = result == null ? _result : result.Concat(_result);
                     }
                 }
             }

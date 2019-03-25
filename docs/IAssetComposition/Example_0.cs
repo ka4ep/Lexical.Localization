@@ -11,7 +11,7 @@ namespace docs
             #region Snippet
             // Create individual assets
             IAsset asset_1 = new LocalizationStringAsset(new Dictionary<string, string> { { "en:hello", "Hello World!" } });
-            IAsset asset_2 = new AssetResourceDictionary(new Dictionary<string, byte[]> { { "en:Hello.Icon", new byte[] { 1, 2, 3 } } });
+            IAsset asset_2 = new ResourceStringDictionary(new Dictionary<string, byte[]> { { "en:Hello.Icon", new byte[] { 1, 2, 3 } } });
 
             // Create composition asset
             IAssetComposition asset_composition = new AssetComposition(asset_1, asset_2);

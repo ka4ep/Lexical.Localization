@@ -25,7 +25,7 @@ namespace Lexical.Localization.Tests
             languageStrings["fi-Savo:ConsoleApp1.MyController:Success"] = "Onnistuepie";
             languageStrings["fi-Savo:ConsoleApp1.MyController:Error"] = "Epäonnistuepa (Koodi=0x{0:X8})";
             IAsset map = new LocalizationStringAsset(languageStrings, "{Culture:}[Type:]{Section_0:}{Section_1:}{Section_2:}{Section_n:}{Key}");
-            IAssetCache asset = new AssetCache(map).AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache();
+            IAssetCache asset = new AssetCache(map).AddResourceCache().AddStringsCache().AddCulturesCache();
             LocalizationRoot.Global.SetAsset(asset);
             IAssetKey root = LocalizationRoot.Global;
             IAssetKey section = root.Type("ConsoleApp1.MyController");
@@ -33,10 +33,10 @@ namespace Lexical.Localization.Tests
             IAssetKey success = section.Key("Success"), fi_success = fi.Key("Success"), en_success = en.Key("Success");
 
             // Assert
-            Assert.IsTrue(asset.GetAllStrings(root).Count() == 8);
-            Assert.IsTrue(asset.GetAllStrings(fi).Count() == 2);
-            Assert.IsTrue(asset.GetAllStrings(en).Count() == 2);
-            Assert.IsTrue(asset.GetAllStrings(fi_savo).Count() == 2);
+            Assert.IsTrue(asset.GetAllStringLines(root).Count() == 8);
+            Assert.IsTrue(asset.GetAllStringLines(fi).Count() == 2);
+            Assert.IsTrue(asset.GetAllStringLines(en).Count() == 2);
+            Assert.IsTrue(asset.GetAllStringLines(fi_savo).Count() == 2);
             Assert.IsTrue(asset.GetSupportedCultures().Count() == 4);
             Assert.AreEqual("Onnistui", asset.GetString(fi_success));
             Assert.AreEqual("Success", asset.GetString(en_success));
@@ -45,10 +45,10 @@ namespace Lexical.Localization.Tests
             Assert.AreEqual(null, asset.GetString(section.Key("uncertain")));
 
             // Again this time from cache
-            Assert.IsTrue(asset.GetAllStrings(root).Count() == 8);
-            Assert.IsTrue(asset.GetAllStrings(fi).Count() == 2);
-            Assert.IsTrue(asset.GetAllStrings(en).Count() == 2);
-            Assert.IsTrue(asset.GetAllStrings(fi_savo).Count() == 2);
+            Assert.IsTrue(asset.GetAllStringLines(root).Count() == 8);
+            Assert.IsTrue(asset.GetAllStringLines(fi).Count() == 2);
+            Assert.IsTrue(asset.GetAllStringLines(en).Count() == 2);
+            Assert.IsTrue(asset.GetAllStringLines(fi_savo).Count() == 2);
             Assert.IsTrue(asset.GetSupportedCultures().Count() == 4);
             Assert.AreEqual("Onnistui", asset.GetString(fi_success));
             Assert.AreEqual("Success", asset.GetString(en_success));
@@ -79,7 +79,7 @@ namespace Lexical.Localization.Tests
             languageStrings["fi-Savo:ConsoleApp1.MyController:Icon:Success"] = "Onnistuepie";
             languageStrings["fi-Savo:ConsoleApp1.MyController:Icon:Error"] = "Epäonnistuepa (Koodi=0x{0:X8})";
             IAsset map = new LocalizationStringAsset(languageStrings, AssetKeyNameProvider.Default);
-            IAsset asset = new AssetCache(map).AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache();
+            IAsset asset = new AssetCache(map).AddResourceCache().AddStringsCache().AddCulturesCache();
             ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentCulture();
             IAssetKey root = new LocalizationRoot(asset, culturePolicy);
             IAssetKey section = root.Section("ConsoleApp1.MyController").Section("Icon");

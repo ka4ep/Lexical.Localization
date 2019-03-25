@@ -60,7 +60,7 @@ namespace Lexical.Localization
             }
             return tree;
         }
-
+        
         /// <summary>
         /// Default grouping rule.
         /// </summary>

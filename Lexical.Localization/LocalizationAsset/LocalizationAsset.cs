@@ -19,7 +19,8 @@ namespace Lexical.Localization
     /// See: <see cref="LoadableLocalizationAsset"/> for version where asset can be reloaded from its configured sources.
     /// </summary>
     public class LocalizationAsset :
-        ILocalizationStringProvider, IAssetReloadable, IAssetKeyCollection,
+        ILocalizationStringProvider, IAssetReloadable, 
+        ILocalizationKeyLinesEnumerable,
         ILocalizationAssetCultureCapabilities, IDisposable
     {
         /// <summary>
@@ -60,11 +61,6 @@ namespace Lexical.Localization
             return result;
         }
 
-        public IEnumerable<IAssetKey> GetKeys(IAssetKey criteriaKey = null)
-            => dictionary.Keys.FilterKeys(criteriaKey); // TODO Optimize this with KeyTree
-        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey criteriaKey = null)
-            => dictionary.Keys.FilterKeys(criteriaKey); // TODO Optimize this with KeyTree
-
         protected virtual void ClearCache()
         {
             cultures = null;
@@ -94,24 +90,17 @@ namespace Lexical.Localization
         }
         CultureInfo[] cultures;
 
-        /// <summary>
-        /// Comapres two matches for equality or being superset.
-        /// </summary>
-        /// <param name="match"></param>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        static bool IsEqualOrSuperset(IAssetNamePatternMatch match, IAssetNamePatternMatch other)
+        public IEnumerable<KeyValuePair<IAssetKey, string>> GetKeyLines(IAssetKey filterKey = null)
         {
-            if (match.Pattern != other.Pattern) return false;
-            for (int ix = 0; ix < match.Pattern.CaptureParts.Length; ix++)
-            {
-                IAssetNamePatternPart part = match.Pattern.CaptureParts[ix];
-
-                if (match.PartValues[ix] == null) continue;
-                if (match.PartValues[ix] != other.PartValues[ix]) return false;
-            }
-            return true;
+            var map = dictionary;
+            if (map == null) return null;
+            if (filterKey == null) return map;
+            AssetKeyFilter filter = new AssetKeyFilter().KeyRule(filterKey);
+            return map.Where(line => filter.Filter(line.Key));
         }
+
+        public IEnumerable<KeyValuePair<IAssetKey, string>> GetAllKeyLines(IAssetKey filterKey = null)
+            => GetKeyLines(filterKey);
 
         /// <summary>
         /// Print name of the class.

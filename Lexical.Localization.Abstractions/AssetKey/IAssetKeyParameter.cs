@@ -330,7 +330,82 @@ namespace Lexical.Localization
                 return null;
             }
         }
+
     }
+}
 
+namespace Lexical.Localization.Internal
+{
+    /// <summary>
+    /// <see cref="IAssetKey"/> extension methods with internal class dependencies.
+    /// </summary>
+    public static partial class AssetKeyExtensions
+    {
+        /// <summary>
+        /// Break <paramref name="key"/> into effective parameters and write to <paramref name="list"/>.
+        /// The <paramref name="list"/> is allocated from stack by caller.
+        /// 
+        /// For non-canonical parameters, only the left-most is added, with occurance index 0.
+        /// For canonical parameters, the left most occurance starts with index 0, and increments for every new occurance.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="list">(ParameterName, occuranceIndex, ParameterValue)</param>
+        public static void GetEffectiveParameters(this IAssetKey key, ref StructList12<(string, int, string)> list)
+        {
+            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+            {
+                // Parameter
+                IAssetKeyParameterAssigned parametrized = k as IAssetKeyParameterAssigned;
+                if (parametrized == null) continue;
+                string parameterName = parametrized.ParameterName, parameterValue = parametrized.Name;
+                if (parameterName == null) continue;
 
+                // Canonical/Non-canonical
+                bool isCanonical = k is IAssetKeyCanonicallyCompared, isNonCanonical = k is IAssetKeyNonCanonicallyCompared;
+                if (!isCanonical && !isNonCanonical) continue;
+
+                if (isNonCanonical)
+                {
+                    // Test if parameter is already in list
+                    int ix = -1;
+                    for (int i = 0; i < list.Count; i++)
+                        if (list[i].Item1 == parameterName)
+                        {
+                            // Overwrite
+                            list[i] = (parameterName, 0, parameterValue);
+                            ix = i;
+                            break;
+                        }
+                    // Add new
+                    if (ix == -1)
+                    {
+                        list.Add((parameterName, 0, parameterValue));
+                    }
+                    continue;
+                }
+
+                if (isCanonical)
+                {
+                    // Add to list, fix occurance index later
+                    list.Add((parameterName, -1, parameterValue));
+                }
+            }
+
+            // Fix occurance indices
+            for (int i = 0; i < list.Count; i++)
+            {
+                (string parameterName, int occurance, string parameterValue) = list[i];
+                if (occurance >= 0) continue;
+                int oix = 0;
+                for (int j = i - 1; j >= 0; j--)
+                {
+                    (string parameterName_, int occurance_, string _) = list[j];
+                    if (parameterName_ == parameterName) { oix = occurance_ + 1; break; }
+                }
+                list[i] = (parameterName, oix, parameterValue);
+            }
+
+        }
+
+    }
 }

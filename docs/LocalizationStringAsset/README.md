@@ -39,14 +39,15 @@ Also keys can be enumerated from the asset.
 
 ```csharp
 // Extract all keys
-foreach (IAssetKey key in asset.GetAllKeys())
-    Console.WriteLine(key);
+foreach (IAssetKey _key in asset.GetKeyLines(null).Select(line => line.Key))
+    Console.WriteLine(_key);
 ```
 
 **GetAllKeys()** can be filtered with a criteria key.
 
 ```csharp
 // Keys can be filtered
-foreach (IAssetKey key in asset.GetAllKeys(LocalizationRoot.Global.Culture("de")))
-    Console.WriteLine(key);
+IAssetKey filterKey = LocalizationRoot.Global.Culture("de");
+foreach (IAssetKey _key in asset.GetKeyLines(filterKey).Select(line => line.Key))
+    Console.WriteLine(_key);
 ```

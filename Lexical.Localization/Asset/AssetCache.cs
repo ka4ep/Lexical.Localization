@@ -83,135 +83,6 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Cache part that caches results of <see cref="IAssetKeyCollection"/>.
-    /// </summary>
-    public class AssetCachePartKeys : IAssetCachePart, IAssetKeyCollection, IAssetReloadable
-    {
-        static IEnumerable<IAssetKey> emptyStrings = new IAssetKey[0];
-        static CultureInfo NO_CULTURE = CultureInfo.GetCultureInfo("");
-        ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
-
-        public IAsset Source { get; internal set; }
-        public AssetCacheOptions Options { get; internal set; }
-        protected volatile int iteration;
-
-        AssetKeyComparer comparer;
-        AssetKeyCloner cloner;
-
-        /// <summary>
-        /// Cached queries where key is filter-criteria-key, and value is query result.
-        /// </summary>
-        Dictionary<IAssetKey, IAssetKey[]> allKeyQueries, keyQueries;
-
-        public AssetCachePartKeys(IAsset source, AssetCacheOptions options)
-        {
-            this.Source = source ?? throw new ArgumentNullException(nameof(source));
-            this.Options = options ?? throw new ArgumentNullException(nameof(options));
-
-            // Create a cloner that reads values from IAssetKeys
-            this.cloner = new AssetKeyCloner(Key.Root);
-
-            // Create parametrizer, comparer and cache that reads IAssetKeys and AssetKeyProxies interchangeably. ParameterKey.Parametrizer must be on the left side, or it won't work. (because ParameterKey : IAssetKey).
-            this.comparer = AssetKeyComparer.Default;
-
-            this.keyQueries = new Dictionary<IAssetKey, IAssetKey[]>(comparer);
-            this.allKeyQueries = new Dictionary<IAssetKey, IAssetKey[]>(comparer);
-        }
-
-        public IEnumerable<IAssetKey> GetKeys(IAssetKey key = null)
-        {
-            int iter = iteration;
-            IAssetKey[] queryResult = null;
-            m_lock.EnterReadLock();
-            // Hash-Equals may throw exceptions, we need try-finally to release lock properly.
-            try
-            {
-                if (keyQueries.TryGetValue(key ?? cloner.Root, out queryResult)) return queryResult;
-            }
-            finally
-            {
-                m_lock.ExitReadLock();
-            }
-
-            // Read from backend and write to cache
-            queryResult = Source.GetKeys(key)?.ToArray();
-
-            // Write to cache, be that null or not
-            IAssetKey cacheKey = (Options.GetCloneKeys() ? cloner.Copy(key) : key) ?? cloner.Root;
-            m_lock.EnterWriteLock();
-            try
-            {
-                // The caller has flushed the cache, so let's not cache the data.
-                if (iter != iteration) return queryResult;
-                keyQueries[cacheKey] = queryResult;
-            }
-            finally
-            {
-                m_lock.ExitWriteLock();
-            }
-
-            return queryResult;
-        }
-
-        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey key = null)
-        {
-            int iter = iteration;
-            IAssetKey[] queryResult = null;
-            m_lock.EnterReadLock();
-            // Hash-Equals may throw exceptions, we need try-finally to release lock properly.
-            try
-            {
-                if (allKeyQueries.TryGetValue(key ?? cloner.Root, out queryResult)) return queryResult;
-            }
-            finally
-            {
-                m_lock.ExitReadLock();
-            }
-
-            // Read from backend and write to cache
-            queryResult = Source.GetAllKeys(key)?.ToArray();
-
-            // Write to cache, be that null or not
-            IAssetKey cacheKey = (Options.GetCloneKeys() ? cloner.Copy(key) : key) ?? cloner.Root;
-            m_lock.EnterWriteLock();
-            try
-            {
-                // The caller has flushed the cache, so let's not cache the data.
-                if (iter != iteration) return queryResult;
-                allKeyQueries[cacheKey] = queryResult;
-            }
-            finally
-            {
-                m_lock.ExitWriteLock();
-            }
-
-            return queryResult;
-        }
-
-        IAsset IAssetReloadable.Reload()
-        {
-            Source.Reload();
-            iteration++;
-
-            m_lock.EnterWriteLock();
-            try
-            {
-                keyQueries.Clear();
-                allKeyQueries.Clear();
-            }
-            finally
-            {
-                m_lock.ExitWriteLock();
-            }
-
-            return this;
-        }
-
-        public override string ToString()
-            => $"{GetType().Name}({Source.ToString()})";
-    }
-
-    /// <summary>
     /// Cache part that caches results of <see cref="ILocalizationAssetCultureCapabilities" />.
     /// </summary>
     public class AssetCachePartCultures : IAssetCachePart, ILocalizationAssetCultureCapabilities, IAssetReloadable
@@ -285,23 +156,78 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Cache part that caches results of <see cref="ILocalizationStringCollection" /> and <see cref="ILocalizationStringProvider"/>.
+    /// Cache part that caches calls to <see cref="ILocalizationKeyLinesEnumerable" /> and <see cref="ILocalizationStringProvider"/>.
     /// </summary>
-    public class AssetCachePartStrings : IAssetCachePart, ILocalizationStringCollection, ILocalizationStringProvider, IAssetReloadable
+    public class AssetCachePartStrings : IAssetCachePart, ILocalizationKeyLinesEnumerable, ILocalizationStringLinesEnumerable, ILocalizationStringProvider, IAssetReloadable
     {
-        static IEnumerable<KeyValuePair<string, string>> emptyStrings = new KeyValuePair<string, string>[0];
-        static CultureInfo NO_CULTURE = CultureInfo.GetCultureInfo("");
-        ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
-
         public IAsset Source { get; internal set; }
         public AssetCacheOptions Options { get; internal set; }
-        protected volatile int iteration;
 
         AssetKeyComparer comparer;
         AssetKeyCloner cloner;
 
-        Dictionary<IAssetKey, string> stringCache;
-        Dictionary<IAssetKey, KeyValuePair<string, string>[]> allStrings;
+        /// <summary>
+        /// Cache that is discarded when <see cref="IAssetReloadable.Reload"/> is called.
+        /// </summary>
+        Cache cache;
+
+        class Cache
+        {
+            /// <summary>
+            /// Lock 
+            /// </summary>
+            public ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
+
+            /// <summary>
+            /// Cached result of GetKeyLines(null)
+            /// </summary>
+            public List<KeyValuePair<IAssetKey, string>> keysLinesPartial;
+
+            /// <summary>
+            /// Cached result of GetAllKeyLines(null)
+            /// </summary>
+            public List<KeyValuePair<IAssetKey, string>> keysLinesAll;
+
+            /// <summary>
+            /// Cached result of individual GetString() fetches
+            /// </summary>
+            public Dictionary<IAssetKey, string> strings;
+
+            /// <summary>
+            /// GetKeyLines(null) was read and it was null.
+            /// </summary>
+            public bool keyLinesPartialIsNull;
+
+            /// <summary>
+            /// GetAllKeyLines(null) was read and it was null.
+            /// </summary>
+            public bool keyLinesAllIsNull;
+
+            /// <summary>
+            /// Cached result of GetKeyLines(null)
+            /// </summary>
+            public List<KeyValuePair<string, string>> stringLinesPartial;
+
+            /// <summary>
+            /// Cached result of GetAllKeyLines(null)
+            /// </summary>
+            public List<KeyValuePair<string, string>> stringLinesAll;
+
+            /// <summary>
+            /// GetKeyLines(null) was read and it was null.
+            /// </summary>
+            public bool stringLinesPartialIsNull;
+
+            /// <summary>
+            /// GetAllKeyLines(null) was read and it was null.
+            /// </summary>
+            public bool stringLinesAllIsNull;
+
+            public Cache(AssetKeyComparer comparer)
+            {
+                this.strings = new Dictionary<IAssetKey, string>(comparer);
+            }
+        }
 
         public AssetCachePartStrings(IAsset source, AssetCacheOptions options)
         {
@@ -309,58 +235,32 @@ namespace Lexical.Localization
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
             this.cloner = new AssetKeyCloner(Key.Root);
             this.comparer = AssetKeyComparer.Default;
-            this.stringCache = new Dictionary<IAssetKey, string>(comparer);
-            this.allStrings = new Dictionary<IAssetKey, KeyValuePair<string, string>[]>(comparer);
+            this.cache = new Cache(comparer);
         }
 
-        public IEnumerable<KeyValuePair<string, string>> GetAllStrings(IAssetKey key = null)
+        public IAsset Reload()
         {
-            int iter = iteration;
-            KeyValuePair<string, string>[] value = null;
-            m_lock.EnterReadLock();
-            // Hash-Equals may throw exceptions, we need try-finally to release lock properly.
-            try
-            {
-                if (allStrings.TryGetValue(key ?? cloner.Root, out value)) return value;
-            }
-            finally
-            {
-                m_lock.ExitReadLock();
-            }
-
-            // Read from backend and write to cache
-            value = Source.GetAllStrings(key)?.ToArray();
-
-            // Write to cache, be that null or not
-            IAssetKey cacheKey = (Options.GetCloneKeys() ? cloner.Copy(key) : key) ?? cloner.Root;
-            m_lock.EnterWriteLock();
-            try
-            {
-                // The caller has flushed the cache, so let's not cache the data.
-                if (iter != iteration) return value;
-                allStrings[cacheKey] = value;
-            }
-            finally
-            {
-                m_lock.ExitWriteLock();
-            }
-
-            return value;
+            // Discard previous cache
+            this.cache = new Cache(comparer);
+            // Reload source
+            Source.Reload();
+            return this;
         }
 
-        string ILocalizationStringProvider.GetString(IAssetKey key)
+        public string GetString(IAssetKey key)
         {
-            int iter = iteration;
+            Cache _cache = this.cache;
+
+            // Try to read previously cached value
             string value = null;
-            m_lock.EnterReadLock();
-            // Hash-Equals may throw exceptions, we need try-finally to capture that.
+            _cache.m_lock.EnterReadLock();
             try
             {
-                if (stringCache.TryGetValue(key, out value)) return value;
+                if (_cache.strings.TryGetValue(key, out value)) return value;
             }
             finally
             {
-                m_lock.ExitReadLock();
+                _cache.m_lock.ExitReadLock();
             }
 
             // Read from backend and write to cache
@@ -368,126 +268,380 @@ namespace Lexical.Localization
 
             // Write to cache, be that null or not
             IAssetKey cacheKey = cloner.Copy(key);
-            m_lock.EnterWriteLock();
+            _cache.m_lock.EnterWriteLock();
             try
             {
-                // The caller has flushed the cache, so let's not cache the data.
-                if (iter != iteration) return value;
-                stringCache[cacheKey] = value;
+                _cache.strings[cacheKey] = value;
             }
             finally
             {
-                m_lock.ExitWriteLock();
+                _cache.m_lock.ExitWriteLock();
             }
 
             return value;
         }
 
-        IAsset IAssetReloadable.Reload()
+        /// <summary>
+        /// Get partial key-lines and cache result, or return already cached lines.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<IAssetKey, string>> GetKeyLines(IAssetKey key = null)
         {
-            Source.Reload();
-            iteration++;
+            // Filtered queries are not cached
+            if (key != null) return Source.GetKeyLines(key);
 
-            m_lock.EnterWriteLock();
+            // Get cache instance
+            Cache _cache = this.cache;
+
+            // Return previously cached list
+            var _cachedList = _cache.keysLinesPartial;
+            if (_cachedList != null) return _cachedList;
+
+            // Previous read returned null
+            if (_cache.keyLinesPartialIsNull) return null;
+
+            // Read from source
+            IEnumerable<KeyValuePair<IAssetKey, string>> lines = Source.GetKeyLines(null);
+
+            // Got no results
+            if (lines == null)
+            {
+                _cache.keyLinesPartialIsNull = true;
+                return null;
+            }
+
+            // Clone keys
+            if (Options.GetCloneKeys()) lines = lines.Select(line => new KeyValuePair<IAssetKey, string>(cloner.Copy(line.Key), line.Value));
+
+            // Take snapshot
+            lines = new List<KeyValuePair<IAssetKey, string>>(lines);
+
+            // Write to cache
+            _cache.m_lock.EnterWriteLock();
             try
             {
-                stringCache.Clear();
-                allStrings.Clear();
+                _cache.keysLinesPartial = (List<KeyValuePair<IAssetKey, string>>)lines;
+                foreach (var line in lines)
+                    _cache.strings[line.Key] = line.Value;
             }
             finally
             {
-                m_lock.ExitWriteLock();
+                _cache.m_lock.ExitWriteLock();
             }
 
-            return this;
+            // Return the snapshot
+            return lines;
         }
 
+        /// <summary>
+        /// Get all key-lines and cache result, or return already cached lines.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<IAssetKey, string>> GetAllKeyLines(IAssetKey key = null)
+        {
+            // Filtered queries are not cached
+            if (key != null) return Source.GetAllKeyLines(key);
+
+            // Get cache instance
+            Cache _cache = this.cache;
+
+            // Return previously cached list
+            var _cachedList = _cache.keysLinesAll;
+            if (_cachedList != null) return _cachedList;
+
+            // Previous read returned null
+            if (_cache.keyLinesAllIsNull) return null;
+
+            // Read from source
+            IEnumerable<KeyValuePair<IAssetKey, string>> lines = Source.GetAllKeyLines(null);
+
+            // Got no results
+            if (lines == null)
+            {
+                _cache.keyLinesAllIsNull = true;
+                return null;
+            }
+
+            // Clone keys
+            if (Options.GetCloneKeys()) lines = lines.Select(line => new KeyValuePair<IAssetKey, string>(cloner.Copy(line.Key), line.Value));
+
+            // Take snapshot
+            lines = new List<KeyValuePair<IAssetKey, string>>(lines);
+
+            // Write to cache
+            _cache.m_lock.EnterWriteLock();
+            try
+            {
+                _cache.keysLinesAll = (List<KeyValuePair<IAssetKey, string>>)lines;
+                foreach (var line in lines)
+                    _cache.strings[line.Key] = line.Value;
+            }
+            finally
+            {
+                _cache.m_lock.ExitWriteLock();
+            }
+
+            // Return the snapshot
+            return lines;
+        }
+
+
+        /// <summary>
+        /// Get partial key-lines and cache result, or return already cached lines.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<string, string>> GetStringLines(IAssetKey key = null)
+        {
+            // Filtered queries are not cached
+            if (key != null) return Source.GetStringLines(key);
+
+            // Get cache instance
+            Cache _cache = this.cache;
+
+            // Return previously cached list
+            var _cachedList = _cache.stringLinesPartial;
+            if (_cachedList != null) return _cachedList;
+
+            // Previous read returned null
+            if (_cache.stringLinesPartialIsNull) return null;
+
+            // Read from source
+            IEnumerable<KeyValuePair<string, string>> lines = Source.GetStringLines(null);
+
+            // Got no results
+            if (lines == null)
+            {
+                _cache.stringLinesPartialIsNull = true;
+                return null;
+            }
+
+            // Take snapshot
+            lines = new List<KeyValuePair<string, string>>(lines);
+
+            // Write to cache
+            _cache.m_lock.EnterWriteLock();
+            try
+            {
+                _cache.stringLinesPartial = (List<KeyValuePair<string, string>>)lines;
+            }
+            finally
+            {
+                _cache.m_lock.ExitWriteLock();
+            }
+
+            // Return the snapshot
+            return lines;
+        }
+
+        /// <summary>
+        /// Get all key-lines and cache result, or return already cached lines.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<string, string>> GetAllStringLines(IAssetKey key = null)
+        {
+            // Filtered queries are not cached
+            if (key != null) return Source.GetAllStringLines(key);
+
+            // Get cache instance
+            Cache _cache = this.cache;
+
+            // Return previously cached list
+            var _cachedList = _cache.stringLinesAll;
+            if (_cachedList != null) return _cachedList;
+
+            // Previous read returned null
+            if (_cache.stringLinesAllIsNull) return null;
+
+            // Read from source
+            IEnumerable<KeyValuePair<string, string>> lines = Source.GetAllStringLines(null);
+
+            // Got no results
+            if (lines == null)
+            {
+                _cache.stringLinesAllIsNull = true;
+                return null;
+            }
+
+            // Take snapshot
+            lines = new List<KeyValuePair<string, string>>(lines);
+
+            // Write to cache
+            _cache.m_lock.EnterWriteLock();
+            try
+            {
+                _cache.stringLinesAll = (List<KeyValuePair<string, string>>)lines;
+            }
+            finally
+            {
+                _cache.m_lock.ExitWriteLock();
+            }
+
+            // Return the snapshot
+            return lines;
+        }
+
+        /// <summary>
+        /// Print cache part name.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}({Source.ToString()})";
+
     }
 
     /// <summary>
-    /// Cache part that caches the results of <see cref="IAssetResourceCollection"/> and <see cref="IAssetResourceProvider"/>.
+    /// Cache part that caches the results of <see cref="IAssetResourceKeysEnumerable"/>, <see cref="IAssetResourceNamesEnumerable"/> and <see cref="IAssetResourceProvider"/>.
     /// </summary>
-    public class AssetCachePartResources : IAssetCachePart, IAssetResourceCollection, IAssetResourceProvider, IAssetReloadable
+    public class AssetCachePartResources : IAssetCachePart, IAssetResourceKeysEnumerable, IAssetResourceNamesEnumerable, IAssetResourceProvider, IAssetReloadable
     {
-        public AssetCacheOptions Options { get; internal set; }
         public IAsset Source { get; internal set; }
+        public AssetCacheOptions Options { get; internal set; }
 
-        ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
-        protected volatile int iteration;
         AssetKeyComparer comparer;
         AssetKeyCloner cloner;
 
-        IDictionary<IAssetKey, byte[]> resourceCache;
-        string[] resourceNames;
-        bool resourceNamesCached;
+        /// <summary>
+        /// Cache that is discarded when <see cref="IAssetReloadable.Reload"/> is called.
+        /// </summary>
+        Cache cache;
+
+        class Cache
+        {
+            /// <summary>
+            /// Lock 
+            /// </summary>
+            public ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
+
+            /// <summary>
+            /// Cached result of GetResourceKeys(null)
+            /// </summary>
+            public List<IAssetKey> keysPartial;
+
+            /// <summary>
+            /// Cached result of GetAllResourceKeys(null)
+            /// </summary>
+            public List<IAssetKey> keysAll;
+
+            /// <summary>
+            /// Cached result of GetResourceNames(null)
+            /// </summary>
+            public List<string> namesPartial;
+
+            /// <summary>
+            /// Cached result of GetAllResourceNames(null)
+            /// </summary>
+            public List<string> namesAll;
+
+            /// <summary>
+            /// Cached result of individual GetString() fetches
+            /// </summary>
+            public Dictionary<IAssetKey, byte[]> data;
+
+            /// <summary>
+            /// GetResourceKeys(null) was read and it was null.
+            /// </summary>
+            public bool keysPartialIsNull;
+
+            /// <summary>
+            /// GetAllResourceKeys(null) was read and it was null.
+            /// </summary>
+            public bool keysAllIsNull;
+
+            /// <summary>
+            /// GetResourceNames(null) was read and it was null.
+            /// </summary>
+            public bool namesPartialIsNull;
+
+            /// <summary>
+            /// GetAllResourceNames(null) was read and it was null.
+            /// </summary>
+            public bool namesAllIsNull;
+
+            public Cache(AssetKeyComparer comparer)
+            {
+                this.data = new Dictionary<IAssetKey, byte[]>(comparer);
+            }
+        }
 
         public AssetCachePartResources(IAsset source, AssetCacheOptions options)
         {
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
-
-            // Create a cloner that reads values from IAssetKeys
             this.cloner = new AssetKeyCloner(Key.Root);
-
-            // Create parametrizer, comparer and cache that reads IAssetKeys and AssetKeyProxies interchangeably. ParameterKey.Parametrizer must be on the left side, or it won't work. (because ParameterKey : IAssetKey).
             this.comparer = AssetKeyComparer.Default;
-            this.resourceCache = new Dictionary<IAssetKey, byte[]>(comparer);
+            this.cache = new Cache(comparer);
+        }
+
+        public IAsset Reload()
+        {
+            // Discard previous cache
+            this.cache = new Cache(comparer);
+            // Reload source
+            Source.Reload();
+            return this;
         }
 
         public byte[] GetResource(IAssetKey key)
         {
-            int iter = iteration;
+            Cache _cache = this.cache;
+
+            // Try to read previously cached value
             byte[] value = null;
-            m_lock.EnterReadLock();
-            // Hash-Equals may throw exceptions, we need try-finally to capture that.
+            _cache.m_lock.EnterReadLock();
             try
             {
-                if (resourceCache.TryGetValue(key ?? cloner.Root, out value)) return value;
+                if (_cache.data.TryGetValue(key, out value)) return value;
             }
             finally
             {
-                m_lock.ExitReadLock();
+                _cache.m_lock.ExitReadLock();
             }
 
             // Read from backend and write to cache
             value = Source.GetResource(key);
 
-            // Write to cache, be that null or not.
-            if (value == null || value.Length <= Options.GetMaxResourceSize())
+            // Write to cache, be that null or not
+            if (value != null && value.Length <= Options.GetMaxResourceSize())
             {
-                IAssetKey cacheKey = (Options.GetCloneKeys() ? cloner.Copy(key) : key) ?? cloner.Root;
-                m_lock.EnterWriteLock();
+                IAssetKey cacheKey = cloner.Copy(key);
+                _cache.m_lock.EnterWriteLock();
                 try
                 {
-                    // The caller has flushed the cache, so let's not cache the data.
-                    if (iter != iteration) return value;
-                    resourceCache[cacheKey] = value;
+                    _cache.data[cacheKey] = value;
                 }
                 finally
                 {
-                    m_lock.ExitWriteLock();
+                    _cache.m_lock.ExitWriteLock();
                 }
-                return value;
             }
 
-            return null;
+            return value;
         }
 
+        /// <summary>
+        /// Open stream
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public Stream OpenStream(IAssetKey key)
         {
-            int iter = iteration;
-            byte[] value = null;
+            Cache _cache = this.cache;
 
-            m_lock.EnterReadLock();
+            // Try to read previously cached value
+            byte[] value = null;
+            _cache.m_lock.EnterReadLock();
             try
             {
-                if (resourceCache.TryGetValue(key ?? cloner.Root, out value)) return new MemoryStream(value);
+                if (_cache.data.TryGetValue(key, out value))
+                    return new MemoryStream(value);
             }
             finally
             {
-                m_lock.ExitReadLock();
+                _cache.m_lock.ExitReadLock();
             }
 
             // Open stream
@@ -496,20 +650,20 @@ namespace Lexical.Localization
             // Store into cache?
             if (Options.GetCacheStreams())
             {
+                IAssetKey cacheKey = Options.GetCloneKeys() ? cloner.Copy(key) : key;
+
                 // Cache null value
                 if (stream == null)
                 {
-                    IAssetKey cacheKey = (Options.GetCloneKeys() ? cloner.Copy(key) : key) ?? cloner.Root;
-                    m_lock.EnterWriteLock();
+                    _cache.m_lock.EnterWriteLock();
                     try
                     {
-                        // The caller has not flushed the cache, so let's cache the data.
-                        if (iter == iteration) resourceCache[cacheKey] = null;
+                        _cache.data[cacheKey] = null;
                         return null;
                     }
                     finally
                     {
-                        m_lock.ExitWriteLock();
+                        _cache.m_lock.ExitWriteLock();
                     }
                 }
 
@@ -518,7 +672,7 @@ namespace Lexical.Localization
                 int ix = 0;
                 try
                 {
-                    // Try to read stream lenght, if fails, throws an exception
+                    // Try to read stream length, if fails, throws an exception
                     long len = stream.Length;
 
                     if (len < Options.GetMaxResourceSize())
@@ -546,19 +700,16 @@ namespace Lexical.Localization
                         // Write data to cache
                         if (ix == len_)
                         {
-                            IAssetKey cacheKey = cloner.Copy(key);
-                            m_lock.EnterWriteLock();
+                            _cache.m_lock.EnterWriteLock();
                             try
                             {
-                                // The caller has not flushed the cache, so let's cache the data.
-                                if (iter == iteration) resourceCache[cacheKey] = data;
-
+                                _cache.data[cacheKey] = data;
                                 // Wrap to new stream.
                                 return new MemoryStream(data);
                             }
                             finally
                             {
-                                m_lock.ExitWriteLock();
+                                _cache.m_lock.ExitWriteLock();
                             }
                         }
                         else
@@ -581,7 +732,7 @@ namespace Lexical.Localization
                         // Failed to rewind stream.
                     }
 
-                    // Stream is not rewound. Let's open it again.
+                    // Stream has not been rewound. Let's open it again.
                     if (ix > 0)
                     {
                         stream.Dispose();
@@ -592,78 +743,217 @@ namespace Lexical.Localization
             return null;
         }
 
-        static string[] empty_string_array = new string[0];
-        public IEnumerable<string> GetResourceNames(IAssetKey key)
+        /// <summary>
+        /// Get partial key-lines and cache result, or return already cached lines.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public IEnumerable<IAssetKey> GetResourceKeys(IAssetKey key = null)
         {
-            // Request was for specific key
+            // Filtered queries are not cached
+            if (key != null) return Source.GetResourceKeys(key);
+
+            // Get cache instance
+            Cache _cache = this.cache;
+
+            // Return previously cached list
+            var _cachedList = _cache.keysPartial;
+            if (_cachedList != null) return _cachedList;
+
+            // Previous read returned null
+            if (_cache.keysPartialIsNull) return null;
+
+            // Read from source
+            IEnumerable<IAssetKey> lines = Source.GetResourceKeys(null);
+
+            // Got no results
+            if (lines == null)
+            {
+                _cache.keysPartialIsNull = true;
+                return null;
+            }
+
+            // Clone keys
+            if (Options.GetCloneKeys()) lines = lines.Select(line => cloner.Copy(line));
+
+            // Take snapshot
+            lines = new List<IAssetKey>(lines);
+
+            // Write to cache
+            _cache.m_lock.EnterWriteLock();
+            try
+            {
+                _cache.keysPartial = (List<IAssetKey>)lines;
+            }
+            finally
+            {
+                _cache.m_lock.ExitWriteLock();
+            }
+
+            // Return the snapshot
+            return lines;
+        }
+
+        /// <summary>
+        /// Get all key-lines and cache result, or return already cached lines.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public IEnumerable<IAssetKey> GetAllResourceKeys(IAssetKey key = null)
+        {
+            // Filtered queries are not cached
+            if (key != null) return Source.GetAllResourceKeys(key);
+
+            // Get cache instance
+            Cache _cache = this.cache;
+
+            // Return previously cached list
+            var _cachedList = _cache.keysAll;
+            if (_cachedList != null) return _cachedList;
+
+            // Previous read returned null
+            if (_cache.keysAllIsNull) return null;
+
+            // Read from source
+            IEnumerable<IAssetKey> lines = Source.GetAllResourceKeys(null);
+
+            // Got no results
+            if (lines == null)
+            {
+                _cache.keysAllIsNull = true;
+                return null;
+            }
+
+            // Clone keys
+            if (Options.GetCloneKeys()) lines = lines.Select(line => cloner.Copy(line));
+
+            // Take snapshot
+            lines = new List<IAssetKey>(lines);
+
+            // Write to cache
+            _cache.m_lock.EnterWriteLock();
+            try
+            {
+                _cache.keysAll = (List<IAssetKey>)lines;
+            }
+            finally
+            {
+                _cache.m_lock.ExitWriteLock();
+            }
+
+            // Return the snapshot
+            return lines;
+        }
+
+        /// <summary>
+        /// Get partial key-lines and cache result, or return already cached lines.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public IEnumerable<string> GetResourceNames(IAssetKey key = null)
+        {
+            // Filtered queries are not cached
             if (key != null) return Source.GetResourceNames(key);
 
-            // Do we have this in cache
-            var _resourceNames = resourceNames;
-            if (resourceNamesCached) return _resourceNames;
+            // Get cache instance
+            Cache _cache = this.cache;
 
-            // Retrieve
-            int iter = iteration;
-            IEnumerable<string> enumr = Source.GetResourceNames(null);
-            m_lock.EnterWriteLock();
+            // Return previously cached list
+            var _cachedList = _cache.namesPartial;
+            if (_cachedList != null) return _cachedList;
+
+            // Previous read returned null
+            if (_cache.namesPartialIsNull) return null;
+
+            // Read from source
+            IEnumerable<string> lines = Source.GetResourceNames(null);
+
+            // Got no results
+            if (lines == null)
+            {
+                _cache.namesPartialIsNull = true;
+                return null;
+            }
+
+            // Take snapshot
+            lines = new List<string>(lines);
+
+            // Write to cache
+            _cache.m_lock.EnterWriteLock();
             try
             {
-                // Got nothing
-                if (enumr == null)
-                {
-                    // Reloaded
-                    if (iter != iteration) return null;
-                    // Cache string[0]
-                    resourceNamesCached = true;
-                    return resourceNames = null;
-                }
-
-                // Reloaded, don't cache
-                if (iter != iteration) return enumr;
-
-                // Cache
-                resourceNames = enumr.ToArray();
-                resourceNamesCached = true;
-                return resourceNames;
+                _cache.namesPartial = (List<string>)lines;
             }
             finally
             {
-                m_lock.ExitWriteLock();
+                _cache.m_lock.ExitWriteLock();
             }
+
+            // Return the snapshot
+            return lines;
         }
 
-        public IAsset Reload()
+        /// <summary>
+        /// Get all key-lines and cache result, or return already cached lines.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public IEnumerable<string> GetAllResourceNames(IAssetKey key = null)
         {
-            Source.Reload();
-            iteration++;
+            // Filtered queries are not cached
+            if (key != null) return Source.GetAllResourceNames(key);
 
-            m_lock.EnterWriteLock();
+            // Get cache instance
+            Cache _cache = this.cache;
+
+            // Return previously cached list
+            var _cachedList = _cache.namesAll;
+            if (_cachedList != null) return _cachedList;
+
+            // Previous read returned null
+            if (_cache.namesAllIsNull) return null;
+
+            // Read from source
+            IEnumerable<string> lines = Source.GetAllResourceNames(null);
+
+            // Got no results
+            if (lines == null)
+            {
+                _cache.namesAllIsNull = true;
+                return null;
+            }
+
+            // Take snapshot
+            lines = new List<string>(lines);
+
+            // Write to cache
+            _cache.m_lock.EnterWriteLock();
             try
             {
-                resourceNames = null;
-                resourceNamesCached = false;
-                resourceCache.Clear();
+                _cache.namesAll = (List<string>)lines;
             }
             finally
             {
-                m_lock.ExitWriteLock();
+                _cache.m_lock.ExitWriteLock();
             }
 
-            return this;
+            // Return the snapshot
+            return lines;
         }
 
+
+        /// <summary>
+        /// Print cache part name.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}({Source.ToString()})";
+
     }
 
 
     public static partial class LocalizationCacheExtensions
     {
-        public static IAssetCache AddKeysCache(this IAssetCache cache)
-        {
-            cache.Add(new AssetCachePartKeys(cache.Source, cache.Options));
-            return cache;
-        }
         public static IAssetCache AddCulturesCache(this IAssetCache cache)
         {
             cache.Add(new AssetCachePartCultures(cache.Source, cache.Options));

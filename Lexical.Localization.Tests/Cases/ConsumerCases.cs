@@ -28,17 +28,17 @@ namespace Lexical.Localization.Tests
                 IAsset asset = run.Get<IAsset>();
                 dynamic d_section = root.Type<MyController>();
 
-                var string_enumeration_is_supported = asset.GetAllStrings() != null;
+                var string_enumeration_is_supported = asset.GetAllStringLines() != null && asset.GetAllStringLines(section) != null;
                 var culture_enumeration_is_supported = asset.GetSupportedCultures() != null;
 
                 // Assert
                 if (string_enumeration_is_supported)
                 {
-                    Assert.IsTrue(asset.GetAllStrings().Where(kp=>!kp.Value.Contains(";")).Count() == 8);
-                    Assert.IsTrue(asset.GetAllStrings(section).Where(kp => !kp.Value.Contains(";")).Count() == 8);
-                    Assert.IsTrue(asset.GetAllStrings(fi).Where(kp => !kp.Value.Contains(";")).Count() == 2);
-                    Assert.IsTrue(asset.GetAllStrings(en).Where(kp => !kp.Value.Contains(";")).Count() == 2);
-                    Assert.IsTrue(asset.GetAllStrings(fi_savo).Where(kp => !kp.Value.Contains(";")).Count() == 2);
+                    Assert.IsTrue(asset.GetAllStringLines().Where(kp=>!kp.Value.Contains(";")).Count() == 8);
+                    Assert.IsTrue(asset.GetAllStringLines(section).Where(kp => !kp.Value.Contains(";")).Count() == 8);
+                    Assert.IsTrue(asset.GetAllStringLines(fi).Where(kp => !kp.Value.Contains(";")).Count() == 2);
+                    Assert.IsTrue(asset.GetAllStringLines(en).Where(kp => !kp.Value.Contains(";")).Count() == 2);
+                    Assert.IsTrue(asset.GetAllStringLines(fi_savo).Where(kp => !kp.Value.Contains(";")).Count() == 2);
                 }
                 if (culture_enumeration_is_supported)
                 {
@@ -67,11 +67,11 @@ namespace Lexical.Localization.Tests
                 // Again this time from cache
                 if (string_enumeration_is_supported)
                 {
-                    Assert.IsTrue(asset.GetAllStrings().Where(kp => !kp.Value.Contains(";")).Count() == 8);
-                    Assert.IsTrue(asset.GetAllStrings(section).Where(kp => !kp.Value.Contains(";")).Count() == 8);
-                    Assert.IsTrue(asset.GetAllStrings(fi).Where(kp => !kp.Value.Contains(";")).Count() == 2);
-                    Assert.IsTrue(asset.GetAllStrings(en).Where(kp => !kp.Value.Contains(";")).Count() == 2);
-                    Assert.IsTrue(asset.GetAllStrings(fi_savo).Where(kp => !kp.Value.Contains(";")).Count() == 2);
+                    Assert.IsTrue(asset.GetAllStringLines().Where(kp => !kp.Value.Contains(";")).Count() == 8);
+                    Assert.IsTrue(asset.GetAllStringLines(section).Where(kp => !kp.Value.Contains(";")).Count() == 8);
+                    Assert.IsTrue(asset.GetAllStringLines(fi).Where(kp => !kp.Value.Contains(";")).Count() == 2);
+                    Assert.IsTrue(asset.GetAllStringLines(en).Where(kp => !kp.Value.Contains(";")).Count() == 2);
+                    Assert.IsTrue(asset.GetAllStringLines(fi_savo).Where(kp => !kp.Value.Contains(";")).Count() == 2);
                 }
                 if (culture_enumeration_is_supported)
                 {
@@ -94,11 +94,11 @@ namespace Lexical.Localization.Tests
                     // Again this time from cache
                     if (string_enumeration_is_supported)
                     {
-                        Assert.IsTrue(asset.GetAllStrings().Where(kp => !kp.Value.Contains(";")).Count() == 8);
-                        Assert.IsTrue(asset.GetAllStrings(section).Where(kp => !kp.Value.Contains(";")).Count() == 8);
-                        Assert.IsTrue(asset.GetAllStrings(fi).Where(kp => !kp.Value.Contains(";")).Count() == 2);
-                        Assert.IsTrue(asset.GetAllStrings(en).Where(kp => !kp.Value.Contains(";")).Count() == 2);
-                        Assert.IsTrue(asset.GetAllStrings(fi_savo).Where(kp => !kp.Value.Contains(";")).Count() == 2);
+                        Assert.IsTrue(asset.GetAllStringLines().Where(kp => !kp.Value.Contains(";")).Count() == 8);
+                        Assert.IsTrue(asset.GetAllStringLines(section).Where(kp => !kp.Value.Contains(";")).Count() == 8);
+                        Assert.IsTrue(asset.GetAllStringLines(fi).Where(kp => !kp.Value.Contains(";")).Count() == 2);
+                        Assert.IsTrue(asset.GetAllStringLines(en).Where(kp => !kp.Value.Contains(";")).Count() == 2);
+                        Assert.IsTrue(asset.GetAllStringLines(fi_savo).Where(kp => !kp.Value.Contains(";")).Count() == 2);
                     }
                     if (culture_enumeration_is_supported)
                     {
@@ -161,7 +161,7 @@ namespace Lexical.Localization.Tests
 
                 IAsset asset = run.Get<IAsset>();
                 dynamic d_section = root.Type<MyController>().Section("Icon");
-                var resource_enumeration_is_supported = asset.GetResourceNames() != null;
+                var resource_enumeration_is_supported = asset.GetResourceNames() != null && asset.GetResourceNames(section) != null;
                 var culture_enumeration_is_supported = asset.GetSupportedCultures() != null;
 
                 // Assert
@@ -208,7 +208,7 @@ namespace Lexical.Localization.Tests
                 // Modify, Reload, Test
                 if (asset is IAssetComposition composition && !composition.IsReadOnly)
                 {
-                    IAsset sv_asset = new AssetResourceDictionary(res_sv, AssetData.Policy /*AssetKeyNameProvider.Colon_Colon_Dot*/);
+                    IAsset sv_asset = new ResourceStringDictionary(res_sv, AssetData.Policy /*AssetKeyNameProvider.Colon_Colon_Dot*/);
                     composition.Add(sv_asset);
                     try
                     {

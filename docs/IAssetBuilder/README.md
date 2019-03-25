@@ -9,7 +9,7 @@ This example shows how to create asset builder, add asset sources, and then to b
 Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
 
 // Create IAssetSource that adds cache 
-IAssetSource assetSource_0 = new AssetCacheSource(c => c.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache());
+IAssetSource assetSource_0 = new AssetCacheSource(c => c.AddResourceCache().AddStringsCache().AddCulturesCache());
 // Create IAssetSource that static reference of IAsset (string dictionary)
 IAssetSource assetSource_1 = new AssetSource(new LocalizationStringAsset(strings, AssetKeyNameProvider.Default) );
 
@@ -50,7 +50,7 @@ IServiceCollection serviceCollection = new ServiceCollection();
 // Add IAssetBuilder, an instruction to construct one later
 serviceCollection.AddSingleton<IAssetBuilder, AssetBuilder>();
 // Add IAssetSource, that will construct cache cache
-serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache()));
+serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddCulturesCache()));
 // Add IAssetSource, that adds strings
 Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
 serviceCollection.AddSingleton<IAssetSource>(new AssetSource(new LocalizationStringAsset(strings, AssetKeyNameProvider.Default)));

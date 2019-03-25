@@ -53,10 +53,10 @@ namespace Lexical.Localization.Tests
             builder.AddAsset(new LocalizationStringAsset(languageStrings_en, AssetKeyNameProvider.Default));
             builder.AddAsset(new LocalizationStringAsset(languageStrings_fi, AssetKeyNameProvider.Default));
             builder.AddAsset(new LocalizationStringAsset(languageStrings_fi_savo, AssetKeyNameProvider.Default));
-            builder.AddAsset(new AssetResourceDictionary(res, AssetKeyNameProvider.Default));
-            builder.AddAsset(new AssetResourceDictionary(res_en, AssetKeyNameProvider.Default));
-            builder.AddAsset(new AssetResourceDictionary(res_fi, AssetKeyNameProvider.Default));
-            builder.AddAsset(new AssetResourceDictionary(res_fi_savo, AssetKeyNameProvider.Default));
+            builder.AddAsset(new ResourceStringDictionary(res, AssetKeyNameProvider.Default));
+            builder.AddAsset(new ResourceStringDictionary(res_en, AssetKeyNameProvider.Default));
+            builder.AddAsset(new ResourceStringDictionary(res_fi, AssetKeyNameProvider.Default));
+            builder.AddAsset(new ResourceStringDictionary(res_fi_savo, AssetKeyNameProvider.Default));
             return builder.Build();
         }
 

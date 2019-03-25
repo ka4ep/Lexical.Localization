@@ -72,7 +72,7 @@ namespace Lexical.Localization.Tests
         }
     }
     
-    [Case(nameof(IAsset), nameof(AssetResourceDictionary))]
+    [Case(nameof(IAsset), nameof(ResourceStringDictionary))]
     public class Asset_LocalizationResourceDictionary : AssetData
     {
         public object Initialize(Run init)
@@ -84,7 +84,7 @@ namespace Lexical.Localization.Tests
             var source = new Dictionary<string, byte[]>(res.Concat(res_en).Concat(res_fi).Concat(res_fi_savo));
 
             // Create asset
-            IAsset asset = new AssetResourceDictionary(source, AssetKeyNameProvider.Default);
+            IAsset asset = new ResourceStringDictionary(source, AssetKeyNameProvider.Default);
 
             return asset;
         }
@@ -190,10 +190,10 @@ namespace Lexical.Localization.Tests
             builder.AddAsset(new LocalizationStringAsset(languageStrings_en, AssetKeyNameProvider.Default));
             builder.AddAsset(new LocalizationStringAsset(languageStrings_fi, AssetKeyNameProvider.Default));
             builder.AddAsset(new LocalizationStringAsset(languageStrings_fi_savo, AssetKeyNameProvider.Default));
-            builder.AddAsset(new AssetResourceDictionary(res, AssetKeyNameProvider.Default));
-            builder.AddAsset(new AssetResourceDictionary(res_en, AssetKeyNameProvider.Default));
-            builder.AddAsset(new AssetResourceDictionary(res_fi, AssetKeyNameProvider.Default));
-            builder.AddAsset(new AssetResourceDictionary(res_fi_savo, AssetKeyNameProvider.Default));
+            builder.AddAsset(new ResourceStringDictionary(res, AssetKeyNameProvider.Default));
+            builder.AddAsset(new ResourceStringDictionary(res_en, AssetKeyNameProvider.Default));
+            builder.AddAsset(new ResourceStringDictionary(res_fi, AssetKeyNameProvider.Default));
+            builder.AddAsset(new ResourceStringDictionary(res_fi_savo, AssetKeyNameProvider.Default));
 
             // Build asset composition
             IAsset asset = builder.Build();

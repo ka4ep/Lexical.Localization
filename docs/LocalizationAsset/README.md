@@ -60,7 +60,7 @@ Keys can be enumerated with **GetAllKeys()**.
 
 ```csharp
 // Extract all keys
-foreach (Key _key in asset.GetAllKeys())
+foreach (IAssetKey _key in asset.GetKeyLines(null).Select(line=>line.Key))
     Console.WriteLine(_key);
 ```
 
@@ -68,6 +68,7 @@ The query can be filtered with a criteria key. It returns only keys that have eq
 
 ```csharp
 // Keys can be filtered
-foreach (Key _key in asset.GetAllKeys(LocalizationRoot.Global.Culture("de")))
+IAssetKey filterKey = LocalizationRoot.Global.Culture("de");
+foreach (IAssetKey _key in asset.GetKeyLines(filterKey).Select(line => line.Key))
     Console.WriteLine(_key);
 ```

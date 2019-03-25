@@ -13,7 +13,7 @@ namespace docs
             Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
 
             // Create IAssetSource that adds cache 
-            IAssetSource assetSource_0 = new AssetCacheSource(c => c.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache());
+            IAssetSource assetSource_0 = new AssetCacheSource(c => c.AddResourceCache().AddStringsCache().AddCulturesCache());
             // Create IAssetSource that static reference of IAsset (string dictionary)
             IAssetSource assetSource_1 = new AssetSource(new LocalizationStringAsset(strings, AssetKeyNameProvider.Default) );
 

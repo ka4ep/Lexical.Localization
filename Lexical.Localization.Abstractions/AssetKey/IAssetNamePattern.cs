@@ -116,6 +116,7 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Part identifier, unique in context of Pattern.CaptureParts.
+        /// The first occurance is the "ParameterName" as is, and succeeding have underscore and index "ParameterName_#" starting with index '1'.
         /// </summary>
         string Identifier { get; }
 

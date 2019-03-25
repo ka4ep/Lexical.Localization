@@ -21,7 +21,7 @@ namespace Lexical.Localization
         {
             Action<IAssetCache> func = cache =>
             {
-                IAssetCache c = cache.AddResourceCache().AddStringsCache().AddCulturesCache().AddKeysCache();
+                IAssetCache c = cache.AddResourceCache().AddStringsCache().AddCulturesCache();
                 if (configureCache != null) configureCache(c);
             };
             assetBuilder.Sources.Add(new AssetCacheSource(func));
@@ -41,7 +41,6 @@ namespace Lexical.Localization
             IAssetCache cache = new AssetCache(asset)
                 .AddResourceCache()
                 .AddStringsCache()
-                .AddKeysCache()
                 .AddCulturesCache();
             if (configureCache!=null) configureCache(cache);
             return cache;

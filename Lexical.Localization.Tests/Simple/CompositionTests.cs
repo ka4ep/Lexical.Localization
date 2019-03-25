@@ -37,10 +37,10 @@ namespace Lexical.Localization.Tests
             IAssetKey success = section.Key("Success"), fi_success = fi.Key("Success"), en_success = en.Key("Success");
 
             // Assert
-            Assert.IsTrue(asset.GetAllStrings(root).Count() == 8);
-            Assert.IsTrue(asset.GetAllStrings(fi).Count() == 2);
-            Assert.IsTrue(asset.GetAllStrings(en).Count() == 2);
-            Assert.IsTrue(asset.GetAllStrings(fi_savo).Count() == 2);
+            Assert.IsTrue(asset.GetAllStringLines(root).Count() == 8);
+            Assert.IsTrue(asset.GetAllStringLines(fi).Count() == 2);
+            Assert.IsTrue(asset.GetAllStringLines(en).Count() == 2);
+            Assert.IsTrue(asset.GetAllStringLines(fi_savo).Count() == 2);
             Assert.IsTrue(asset.GetSupportedCultures().Count() == 4);
             Assert.AreEqual("Onnistui", asset.GetString(fi_success));
             Assert.AreEqual("Success", asset.GetString(en_success));

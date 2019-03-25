@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// 
         /// After this call, the <paramref name="serviceCollection"/> still needs to be populated with 
         /// instances of <see cref="IAssetSource"/>, such as:
-        ///     <see cref="AssetResourceDictionary"/>
+        ///     <see cref="ResourceStringDictionary"/>
         ///     <see cref="LocalizationStringAsset"/>
         /// 
         /// </summary>
@@ -151,7 +151,7 @@ namespace Lexical.Localization
             if (addCache)
             {
                 // Add cache
-                serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache()));
+                serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddCulturesCache()));
             }
 
             return serviceCollection;

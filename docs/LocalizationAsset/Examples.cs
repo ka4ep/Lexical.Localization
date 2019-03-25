@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Lexical.Localization;
 using Lexical.Localization.Utils;
 using Microsoft.Extensions.Localization;
@@ -78,13 +79,14 @@ namespace docs
                 IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{Culture:}[Type:][Key]").Load();
                 #region Snippet_3a
                 // Extract all keys
-                foreach (Key _key in asset.GetAllKeys())
+                foreach (IAssetKey _key in asset.GetKeyLines(null).Select(line=>line.Key))
                     Console.WriteLine(_key);
                 #endregion Snippet_3a
 
                 #region Snippet_3b
                 // Keys can be filtered
-                foreach (Key _key in asset.GetAllKeys(LocalizationRoot.Global.Culture("de")))
+                IAssetKey filterKey = LocalizationRoot.Global.Culture("de");
+                foreach (IAssetKey _key in asset.GetKeyLines(filterKey).Select(line => line.Key))
                     Console.WriteLine(_key);
                 #endregion Snippet_3b
 

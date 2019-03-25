@@ -12,9 +12,9 @@ using System.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// This class adapts IDictionary{byte[], byte[]} to <see cref="IAssetResourceProvider"/> and <see cref="ILocalizationStringProvider"/>.
+    /// This class adapts IDictionary{string, byte[]} to <see cref="IAssetResourceProvider"/> and <see cref="IAssetResourceNamesEnumerable"/>.
     /// </summary>
-    public class AssetResourceDictionary : IAssetResourceProvider, IAssetResourceCollection, ILocalizationAssetCultureCapabilities
+    public class ResourceStringDictionary : IAssetResourceProvider, IAssetResourceNamesEnumerable, ILocalizationAssetCultureCapabilities
     {
         protected IReadOnlyDictionary<string, byte[]> source;
 
@@ -25,24 +25,25 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="dictionary">dictionary</param>
         /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
-        /// <param name="parametrizer">(optional) parametr reader</param>
-        public AssetResourceDictionary(IReadOnlyDictionary<string, byte[]> dictionary, IAssetKeyNamePolicy namePolicy = default)
+        public ResourceStringDictionary(IReadOnlyDictionary<string, byte[]> dictionary, IAssetKeyNamePolicy namePolicy = default)
         {
             this.source = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
             this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
         }
 
-        public IEnumerable<string> GetResourceNames(IAssetKey key)
+        public IEnumerable<string> GetResourceNames(IAssetKey filterKey)
+            => GetAllResourceNames(filterKey);
+        public IEnumerable<string> GetAllResourceNames(IAssetKey filterKey)
         {
-            if (key == null) return source.Keys;
+            if (filterKey == null) return source.Keys;
             if (namePolicy is IAssetNamePattern pattern)
             {
-                IAssetNamePatternMatch match = pattern.Match(key);
+                IAssetNamePatternMatch match = pattern.Match(filterKey);
                 return source.Where(kp => IsEqualOrSuperset(match, pattern.Match(kp.Key))).Select(kp=>kp.Key);
             }
             else
             {
-                string key_name = namePolicy.BuildName(key);
+                string key_name = namePolicy.BuildName(filterKey);
                 return source.Where(kp => kp.Key.Contains(key_name)).Select(kp => kp.Key);
             }
         }
@@ -129,7 +130,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetBuilder AddDictionary(this IAssetBuilder builder, IReadOnlyDictionary<String, byte[]> dictionary, IAssetKeyNamePolicy namePolicy)
         {
-            builder.AddAsset(new AssetResourceDictionary(dictionary, namePolicy));
+            builder.AddAsset(new ResourceStringDictionary(dictionary, namePolicy));
             return builder;
         }
 
@@ -142,7 +143,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetComposition AddDictionary(this IAssetComposition composition, IReadOnlyDictionary<String, byte[]> dictionary, IAssetKeyNamePolicy namePolicy)
         {
-            composition.Add(new AssetResourceDictionary(dictionary, namePolicy));
+            composition.Add(new ResourceStringDictionary(dictionary, namePolicy));
             return composition;
         }
     }

@@ -20,7 +20,7 @@ namespace Lexical.Localization.Tests
             //           This way every key needs to have assemblysection + typesection, or just typesection
             ILoggerFactory loggerFactory = new LoggerFactory();
             IAsset asset = ResourceManagerStringLocalizerAsset.CreateFactory("Resources", loggerFactory);
-            asset = asset.CreateCache(_ => _.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache());
+            asset = asset.CreateCache(_ => _.AddResourceCache().AddStringsCache().AddCulturesCache());
             ICulturePolicy culturePolicy = new CulturePolicy();
             IAssetRoot root = new StringLocalizerRoot(asset, culturePolicy);
             IAssetKey key_resx = root.Assembly(typeof(ResXTests).Assembly).Resource("localization");
@@ -36,7 +36,7 @@ namespace Lexical.Localization.Tests
             ILoggerFactory loggerFactory = new LoggerFactory();
             IAsset asset = ResourceManagerStringLocalizerAsset.Create("Lexical.Localization.Tests", "Resources", "localization", loggerFactory);
             ICulturePolicy culturePolicy = new CulturePolicy();
-            IAssetRoot root = new StringLocalizerRoot(asset.CreateCache(_ => _.AddResourceCache().AddStringsCache().AddKeysCache().AddCulturesCache()), culturePolicy);
+            IAssetRoot root = new StringLocalizerRoot(asset.CreateCache(_ => _.AddResourceCache().AddStringsCache().AddCulturesCache()), culturePolicy);
 
             Assert.AreEqual("Onnistui", root.Type<MyController>().Key("Success").Culture("fi").ToString());
             Assert.AreEqual("Success", root.Type<MyController>().Key("Success").Culture("en").ToString());

@@ -26,7 +26,7 @@ namespace Lexical.Localization
     /// </summary>
     public class StringLocalizerAsset : 
         ILocalizationStringProvider, 
-        ILocalizationStringCollection,  // Doesn't work
+        ILocalizationStringLinesEnumerable,  // Doesn't work
         IAssetReloadable
     {
         public readonly IStringLocalizer stringLocalizer;
@@ -204,8 +204,8 @@ namespace Lexical.Localization
             if (str.ResourceNotFound) return null;
             return str.Value;
         }
-        
-        public IEnumerable<KeyValuePair<string, string>> GetAllStrings(IAssetKey key = null)
+
+        public IEnumerable<KeyValuePair<string, string>> GetStringLines(IAssetKey key = null)
         {
             CultureInfo key_culture = key?.FindCulture();
             IStringLocalizer localizer = key == null ? stringLocalizer : FindStringLocalizer(key, key_culture).stringLocalizer;
@@ -222,10 +222,16 @@ namespace Lexical.Localization
                     ?.Select(str => new KeyValuePair<string, string>(prefix == null ? str.Name : prefix + str.Name, str.Value))
                     ?.Where(kp => kp.Value != null)
                     ?.ToArray();
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 return null;
             }
+        }
+
+        public IEnumerable<KeyValuePair<string, string>> GetAllStringLines(IAssetKey key = null)
+        {
+            return GetStringLines(key);
         }
 
         public IAsset Reload()

@@ -20,7 +20,7 @@ namespace Lexical.Localization
     /// This way the source file can have key notation where sections are not entirely distinguisable from each other.
     /// </summary>
     public class LocalizationStringAsset :
-        ILocalizationStringProvider, ILocalizationStringCollection, IAssetReloadable, IAssetKeyCollection,
+        ILocalizationStringProvider, ILocalizationStringLinesEnumerable, ILocalizationKeyLinesEnumerable, IAssetReloadable,
         ILocalizationAssetCultureCapabilities
     {
         /// <summary>
@@ -35,7 +35,7 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Create language string resolver that uses a dictionary as a source.
-        /// <see cref="ILocalizationStringCollection.GetAllStrings(IAssetKey)"/> and 
+        /// <see cref="ILocalizationStringLinesEnumerable.GetAllStringLines(IAssetKey)"/> and 
         /// <see cref="IAssetKeyCollection.GetAllKeys(IAssetKey)"/> requests.
         /// </summary>
         /// <param name="source">dictionary</param>
@@ -73,21 +73,6 @@ namespace Lexical.Localization
         /// <param name="namePattern">name patern</param>
         public LocalizationStringAsset(IEnumerable<KeyValuePair<string, string>> source, string namePattern) : this(source, new AssetNamePattern(namePattern)) { }
 
-        public virtual IEnumerable<KeyValuePair<string, string>> GetAllStrings(IAssetKey key)
-        {
-            if (key == null) return dictionary;
-            if (namePolicy is IAssetNamePattern pattern)
-            {
-                IAssetNamePatternMatch match = pattern.Match(key);
-                return dictionary.Where(kp => IsEqualOrSuperset(match, pattern.Match(kp.Key)));
-            }
-            else
-            {
-                string key_name = namePolicy.BuildName(key);
-                return dictionary.Where(kp => kp.Key.Contains(key_name));
-            }
-        }
-
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
             => dictionary.GetEnumerator();
 
@@ -101,84 +86,80 @@ namespace Lexical.Localization
             return result;
         }
 
-        public IEnumerable<IAssetKey> GetKeys(IAssetKey criteriaKey = null)
+        public IEnumerable<KeyValuePair<string, string>> GetStringLines(IAssetKey criteriaKey = null)
         {
-            if (namePolicy is IAssetNamePattern pattern) return GetAllKeysWithPattern(pattern, criteriaKey);
-
-            // Cannot provide keys
+            // Return all 
+            if (criteriaKey == null) return dictionary;
+            // Create filter.
+            AssetKeyFilter filter = new AssetKeyFilter().KeyRule(criteriaKey);
+            // There are no rules
+            if (!filter.HasRules) return dictionary;
+            // Filter with pattern
+            if (namePolicy is IAssetNamePattern pattern_) return Filter1(pattern_);
+            // Filter with parser
+            if (namePolicy is IAssetKeyNameParser parser_) return Filter2(parser_);
+            // Return nothing
             return null;
-        }
 
-        public IEnumerable<IAssetKey> GetAllKeys(IAssetKey criteriaKey = null)
-        {
-            if (namePolicy is IAssetNamePattern pattern)
+            IEnumerable<KeyValuePair<string, string>> Filter1(IAssetNamePattern pattern)
             {
-                List<IAssetKey> list = new List<IAssetKey>(dictionary.Count *2);
-                foreach(IAssetKey key in GetAllKeysWithPattern(pattern, criteriaKey))
+                foreach (var line in dictionary)
                 {
-                    if (key == null) return null;
-                    list.Add(key);
+                    IAssetNamePatternMatch match = pattern.Match(line.Key);
+                    if (!match.Success || !filter.Filter(match)) continue;
+                    yield return line;
                 }
-                return list;
             }
-
-            // Cannot provide keys
-            return null;
-        }
-
-        IEnumerable<IAssetKey> GetAllKeysWithPattern(IAssetNamePattern pattern, IAssetKey criteriaKey)
-        {
-            KeyValuePair<string, string>[] criteriaParams = criteriaKey.GetParameters();
-            
-            foreach (var line in dictionary)
+            IEnumerable<KeyValuePair<string, string>> Filter2(IAssetKeyNameParser parser)
             {
-                IAssetNamePatternMatch match = pattern.Match(line.Key);
-                if (!match.Success)
+                foreach (var line in dictionary)
                 {
-                    yield return null;
-                    continue;
+                    IAssetKey key;
+                    if (!parser.TryParse(line.Key, out key)) continue;
+                    if (!filter.Filter(key)) continue;
+                    yield return line;
                 }
-
-                // Filter by criteria key
-                bool ok = true;
-                if (criteriaParams != null)
-                {
-                    // Iterate all criteria parameters (key,value)
-                    foreach (var criteriaParameter in criteriaParams)
-                    {
-                        if (criteriaParameter.Key == "Root") continue;
-                        // Search key in our pattern.
-                        IAssetNamePatternPart[] parts;
-                        // If criteria has a parameter that is not in the pattern, then exit, no values can be provided.
-                        if (!pattern.ParameterMap.TryGetValue(criteriaParameter.Key, out parts)) yield break;
-
-                        // Test if one of the parts match criteria's value
-                        bool okk = false;
-                        foreach (var part in parts)
-                        {
-                            if (part.CaptureIndex < 0) continue;
-                            string matchValue = match[part.CaptureIndex];
-                            if (matchValue == criteriaParameter.Value) { okk = true; break; }
-                        }
-                        // criteria did not match, go to next line
-                        ok &= okk;
-                        if (!ok) break;
-                    }
-
-                }
-                if (!ok) continue;
-
-                Key _key = Key.Root;
-                foreach (var part in pattern.CaptureParts)
-                {
-                    string partValue = match[part.CaptureIndex];
-                    if (partValue == null) continue;
-
-                    _key = _key.Append(part.ParameterName, partValue);
-                }
-                if (_key != null) yield return _key;
             }
         }
+
+        public IEnumerable<KeyValuePair<string, string>> GetAllStringLines(IAssetKey criteriaKey)
+            => GetStringLines(criteriaKey);
+
+        public IEnumerable<KeyValuePair<IAssetKey, string>> GetKeyLines(IAssetKey criteriaKey = null)
+        {
+            // Create filter.
+            AssetKeyFilter filter = criteriaKey == null ? null : new AssetKeyFilter().KeyRule(criteriaKey);
+            // Filter with pattern
+            if (namePolicy is IAssetNamePattern pattern_) return Filter1(pattern_);
+            // Filter with parser
+            if (namePolicy is IAssetKeyNameParser parser_) return Filter2(parser_);
+            // Return nothing
+            return null;
+
+            IEnumerable<KeyValuePair<IAssetKey, string>> Filter1(IAssetNamePattern pattern)
+            {
+                foreach (var line in dictionary)
+                {
+                    IAssetNamePatternMatch match = pattern.Match(line.Key);
+                    if (!match.Success) continue;
+                    if (filter != null && !filter.Filter(match)) continue;
+                    yield return new KeyValuePair<IAssetKey, string>(match.ToKey(), line.Value);
+                }
+            }
+            IEnumerable<KeyValuePair<IAssetKey, string>> Filter2(IAssetKeyNameParser parser)
+            {
+                foreach (var line in dictionary)
+                {
+                    IAssetKey key;
+                    if (!parser.TryParse(line.Key, out key)) continue;
+                    if (filter != null && !filter.Filter(key)) continue;
+                    yield return new KeyValuePair<IAssetKey, string>(key, line.Value);
+                }
+            }
+        }
+
+        public IEnumerable<KeyValuePair<IAssetKey, string>> GetAllKeyLines(IAssetKey criteriaKey)
+            => GetKeyLines(criteriaKey);
 
         public virtual IAsset Reload()
         {
@@ -221,26 +202,6 @@ namespace Lexical.Localization
                 // Can't extract culture
                 return null;
             }
-        }
-
-
-        /// <summary>
-        /// Comapres two matches for equality or being superset.
-        /// </summary>
-        /// <param name="match"></param>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        static bool IsEqualOrSuperset(IAssetNamePatternMatch match, IAssetNamePatternMatch other)
-        {
-            if (match.Pattern != other.Pattern) return false;
-            for (int ix = 0; ix < match.Pattern.CaptureParts.Length; ix++)
-            {
-                IAssetNamePatternPart part = match.Pattern.CaptureParts[ix];
-
-                if (match.PartValues[ix] == null) continue;
-                if (match.PartValues[ix] != other.PartValues[ix]) return false;
-            }
-            return true;
         }
 
         public override string ToString() => $"{GetType().Name}()";

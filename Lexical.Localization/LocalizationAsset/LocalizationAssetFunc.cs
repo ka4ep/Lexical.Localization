@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 
 namespace Lexical.Localization
@@ -10,8 +9,8 @@ namespace Lexical.Localization
     /// </summary>
     public class LocalizationAssetFunc :
         IAsset,
-        ILocalizationStringProvider, ILocalizationStringCollection,
-        IAssetResourceProvider, IAssetResourceCollection
+        ILocalizationStringProvider, ILocalizationStringLinesEnumerable, ILocalizationKeyLinesEnumerable,
+        IAssetResourceProvider, IAssetResourceNamesEnumerable, IAssetResourceKeysEnumerable
     {
         public readonly Func<IAsset> Func;
 
@@ -20,14 +19,14 @@ namespace Lexical.Localization
             Func = func ?? throw new ArgumentNullException(nameof(func));
         }
 
-        IEnumerable<KeyValuePair<string, string>> ILocalizationStringCollection.GetAllStrings(IAssetKey key)
-            => (Func() as ILocalizationStringCollection)?.GetAllStrings(key);
+        IEnumerable<KeyValuePair<string, string>> ILocalizationStringLinesEnumerable.GetAllStringLines(IAssetKey key)
+            => (Func() as ILocalizationStringLinesEnumerable)?.GetAllStringLines(key);
 
         byte[] IAssetResourceProvider.GetResource(IAssetKey key)
             => (Func() as IAssetResourceProvider)?.GetResource(key);
 
-        IEnumerable<string> IAssetResourceCollection.GetResourceNames(IAssetKey key)
-            => (Func() as IAssetResourceCollection)?.GetResourceNames(key);
+        IEnumerable<string> IAssetResourceNamesEnumerable.GetResourceNames(IAssetKey key)
+            => (Func() as IAssetResourceNamesEnumerable)?.GetResourceNames(key);
 
         string ILocalizationStringProvider.GetString(IAssetKey key)
             => (Func() as ILocalizationStringProvider)?.GetString(key);
@@ -37,6 +36,24 @@ namespace Lexical.Localization
 
         public override string ToString()
             => $"{GetType().Name}()";
+
+        public IEnumerable<KeyValuePair<string, string>> GetStringLines(IAssetKey filterKey = null)
+            => (Func() as ILocalizationStringProvider)?.GetStringLines(filterKey);
+
+        public IEnumerable<KeyValuePair<IAssetKey, string>> GetKeyLines(IAssetKey filterKey = null)
+            => (Func() as ILocalizationStringProvider)?.GetKeyLines(filterKey);
+
+        public IEnumerable<KeyValuePair<IAssetKey, string>> GetAllKeyLines(IAssetKey filterKey = null)
+            => (Func() as ILocalizationStringProvider)?.GetAllKeyLines(filterKey);
+
+        public IEnumerable<string> GetAllResourceNames(IAssetKey filterKey = null)
+            => (Func() as ILocalizationStringProvider)?.GetAllResourceNames(filterKey);
+
+        public IEnumerable<IAssetKey> GetResourceKeys(IAssetKey filterKey = null)
+            => (Func() as ILocalizationStringProvider)?.GetResourceKeys(filterKey);
+
+        public IEnumerable<IAssetKey> GetAllResourceKeys(IAssetKey filterKey = null)
+            => (Func() as ILocalizationStringProvider)?.GetAllResourceKeys(filterKey);
     }
 
     public static partial class LanguageAssetExtensions
