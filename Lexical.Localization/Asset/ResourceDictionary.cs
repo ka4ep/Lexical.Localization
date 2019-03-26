@@ -12,56 +12,72 @@ using System.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// This class adapts IDictionary{IAssetKey, byte[]} to <see cref="IAssetResourceProvider"/> and <see cref="IAssetResourceKeysEnumerable"/>.
+    /// This class adapts IDictionary&lt;IAssetKey, byte[]&gt; to <see cref="IAssetResourceProvider"/> and <see cref="IAssetResourceKeysEnumerable"/>.
     /// </summary>
     public class ResourceDictionary : IAssetResourceProvider, IAssetResourceKeysEnumerable, ILocalizationAssetCultureCapabilities
     {
-        protected IReadOnlyDictionary<IAssetKey, byte[]> source;
-
-        IAssetKeyNamePolicy namePolicy;
+        /// <summary>
+        /// Source dictionary
+        /// </summary>
+        protected IReadOnlyDictionary<IAssetKey, byte[]> dictionary;
 
         /// <summary>
         /// Create language byte[] resolver that uses a dictionary as a backend.
         /// </summary>
         /// <param name="dictionary">dictionary</param>
-        /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
-        public ResourceDictionary(IReadOnlyDictionary<IAssetKey, byte[]> dictionary, IAssetKeyNamePolicy namePolicy = default)
+        public ResourceDictionary(IReadOnlyDictionary<IAssetKey, byte[]> dictionary)
         {
-            this.source = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
-            this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
+            this.dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
         }
 
+        /// <summary>
+        /// Get keys
+        /// </summary>
+        /// <param name="filterKey"></param>
+        /// <returns></returns>
         public IEnumerable<IAssetKey> GetResourceKeys(IAssetKey filterKey)
-            => GetAllResourceKeys(filterKey);
+        {
+            // Return all 
+            if (filterKey == null) return dictionary.Keys.ToList();
+            // Create filter.
+            AssetKeyFilter filter = new AssetKeyFilter().KeyRule(filterKey);
+            // Return keys as list
+            return filter.Filter(dictionary.Keys).ToList();
+        }
+
+        /// <summary>
+        /// Get keys
+        /// </summary>
+        /// <param name="filterKey"></param>
+        /// <returns></returns>
         public IEnumerable<IAssetKey> GetAllResourceKeys(IAssetKey filterKey)
-        {
-            if (filterKey == null) return source.Keys;
-            return null; // TODO Implement filtering
-        }
+            => GetResourceKeys(filterKey);
 
-        CultureInfo[] cultures;
+        /// <summary>
+        /// Get cultures
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<CultureInfo> GetSupportedCultures()
-        {
-            var _cultures = cultures;
-            if (_cultures != null) return _cultures;
+            => dictionary.Keys.Select(l => l.FindCulture()).Where(ci => ci != null).Distinct().ToArray();
 
-            HashSet<CultureInfo> set = new HashSet<CultureInfo>();
-            foreach(var line in source)
-            {
-                CultureInfo ci = line.Key.FindCulture();
-                if (ci != null) set.Add(ci);
-            }
-            return cultures = set.ToArray();
-        }
-
+        /// <summary>
+        /// Read resource
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public byte[] GetResource(IAssetKey key)
         {
             byte[] result = null;
             // Search dictionary
-            source.TryGetValue(key, out result);
+            dictionary.TryGetValue(key, out result);
             return result;
         }
 
+        /// <summary>
+        /// Open stream to resource
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public Stream OpenStream(IAssetKey key)
         {
             byte[] data = GetResource(key);
@@ -69,6 +85,10 @@ namespace Lexical.Localization
             return new MemoryStream(data);
         }
 
+        /// <summary>
+        /// Print class name
+        /// </summary>
+        /// <returns></returns>
         public override string ToString() 
             => $"{GetType().Name}()";
     }
@@ -80,11 +100,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="dictionary"></param>
-        /// <param name="namePolicy">instructions how to convert key to byte[]</param>
         /// <returns></returns>
-        public static IAssetBuilder AddDictionary(this IAssetBuilder builder, IReadOnlyDictionary<IAssetKey, byte[]> dictionary, IAssetKeyNamePolicy namePolicy)
+        public static IAssetBuilder AddResources(this IAssetBuilder builder, IReadOnlyDictionary<IAssetKey, byte[]> dictionary)
         {
-            builder.AddAsset(new ResourceDictionary(dictionary, namePolicy));
+            builder.AddAsset(new ResourceDictionary(dictionary));
             return builder;
         }
 
@@ -93,11 +112,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="composition"></param>
         /// <param name="dictionary"></param>
-        /// <param name="namePolicy">instructions how to convert key to byte[]</param>
         /// <returns></returns>
-        public static IAssetComposition AddDictionary(this IAssetComposition composition, IReadOnlyDictionary<IAssetKey, byte[]> dictionary, IAssetKeyNamePolicy namePolicy)
+        public static IAssetComposition AddResources(this IAssetComposition composition, IReadOnlyDictionary<IAssetKey, byte[]> dictionary)
         {
-            composition.Add(new ResourceDictionary(dictionary, namePolicy));
+            composition.Add(new ResourceDictionary(dictionary));
             return composition;
         }
     }

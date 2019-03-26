@@ -13,48 +13,86 @@ using System.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// This class adapts IDictionary{string, byte[]} to <see cref="IAssetResourceProvider"/> and <see cref="IAssetResourceNamesEnumerable"/>.
+    /// This class adapts IDictionary&lt;string, byte[]&gt; to <see cref="IAssetResourceProvider"/> and <see cref="IAssetResourceNamesEnumerable"/>.
     /// </summary>
     public class ResourceStringDictionary : IAssetResourceProvider, IAssetResourceNamesEnumerable, ILocalizationAssetCultureCapabilities
     {
+        /// <summary>
+        /// Source dictionary
+        /// </summary>
         protected IReadOnlyDictionary<string, byte[]> dictionary;
 
+        /// <summary>
+        /// Name policy that converts <see cref="IAssetKey"/> to string, and back to <see cref="IAssetKey"/>.
+        /// </summary>
         IAssetKeyNamePolicy namePolicy;
 
         /// <summary>
         /// Create language byte[] resolver that uses a dictionary as a backend.
         /// </summary>
         /// <param name="dictionary">dictionary</param>
-        /// <param name="namePolicy">(optional) policy that describes how to convert localization key to dictionary key</param>
+        /// <param name="namePolicy">policy that describes how to convert localization key to dictionary key</param>
         public ResourceStringDictionary(IReadOnlyDictionary<string, byte[]> dictionary, IAssetKeyNamePolicy namePolicy = default)
         {
             this.dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
-            this.namePolicy = namePolicy ?? AssetKeyNameProvider.Default;
+            this.namePolicy = namePolicy ?? throw new ArgumentNullException(nameof(namePolicy));
         }
 
+        /// <summary>
+        /// Get resource names
+        /// </summary>
+        /// <param name="filterKey"></param>
+        /// <returns></returns>
         public IEnumerable<string> GetResourceNames(IAssetKey filterKey)
-            => GetAllResourceNames(filterKey);
-        public IEnumerable<string> GetAllResourceNames(IAssetKey filterKey)
         {
-            if (filterKey == null) return dictionary.Keys;
-            if (namePolicy is IAssetNamePattern pattern)
+            // Return all 
+            if (filterKey == null) return dictionary.Keys.ToList();
+            // Create filter.
+            AssetKeyFilter filter = new AssetKeyFilter().KeyRule(filterKey);
+            // There are no rules
+            if (!filter.HasRules) return dictionary.Keys.ToList();
+            // Filter with pattern
+            if (namePolicy is IAssetNamePattern pattern_) return Filter1(pattern_).ToList();
+            // Filter with parser
+            if (namePolicy is IAssetKeyNameParser parser_) return Filter2(parser_).ToList();
+            // Return nothing
+            return null;
+
+            IEnumerable<string> Filter1(IAssetNamePattern pattern)
             {
-                IAssetNamePatternMatch match = pattern.Match(filterKey);
-                return dictionary.Where(kp => IsEqualOrSuperset(match, pattern.Match(kp.Key))).Select(kp=>kp.Key);
+                foreach (var line in dictionary)
+                {
+                    IAssetNamePatternMatch match = pattern.Match(line.Key);
+                    if (!match.Success || !filter.Filter(match)) continue;
+                    yield return line.Key;
+                }
             }
-            else
+            IEnumerable<string> Filter2(IAssetKeyNameParser parser)
             {
-                string key_name = namePolicy.BuildName(filterKey);
-                return dictionary.Where(kp => kp.Key.Contains(key_name)).Select(kp => kp.Key);
+                foreach (var line in dictionary)
+                {
+                    IAssetKey key;
+                    if (!parser.TryParse(line.Key, out key)) continue;
+                    if (!filter.Filter(key)) continue;
+                    yield return line.Key;
+                }
             }
         }
 
-        CultureInfo[] cultures;
+        /// <summary>
+        /// Get string lines
+        /// </summary>
+        /// <param name="filterKey">(optional) filter key</param>
+        /// <returns>lines or null</returns>
+        public IEnumerable<string> GetAllResourceNames(IAssetKey filterKey)
+            => GetResourceNames(filterKey);
+
+        /// <summary>
+        /// Get cultures
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<CultureInfo> GetSupportedCultures()
         {
-            var _cultures = cultures;
-            if (_cultures != null) return _cultures;
-
             if (namePolicy is IAssetNamePattern pattern)
             {
                 IAssetNamePatternPart culturePart;
@@ -70,11 +108,11 @@ namespace Lexical.Localization
                     if (result.ContainsKey(culture)) continue;
                     try { result[culture] = CultureInfo.GetCultureInfo(culture); } catch (CultureNotFoundException) { }
                 }
-                return cultures = result.Values.ToArray();
+                return result.Values.ToArray();
             }
             else if (namePolicy is IAssetKeyNameParser parser)
             {
-                return cultures = dictionary.Keys.Select(k => parser.TryParse(k, Key.Root)?.FindCulture()).Where(ci => ci != null).Distinct().ToArray();
+                return dictionary.Keys.Select(k => parser.TryParse(k, Key.Root)?.FindCulture()).Where(ci => ci != null).Distinct().ToArray();
             }
             else
             {
@@ -84,25 +122,10 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Comapres two matches for equality or being superset.
+        /// Get resource from <see cref="dictionary"/> by converting <paramref name="key"/> to <see cref="string"/> with <see cref="namePolicy"/>.
         /// </summary>
-        /// <param name="match"></param>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        static bool IsEqualOrSuperset(IAssetNamePatternMatch match, IAssetNamePatternMatch other)
-        {
-            if (match.Pattern != other.Pattern) return false;
-            for (int ix = 0; ix < match.Pattern.CaptureParts.Length; ix++)
-            {
-                IAssetNamePatternPart part = match.Pattern.CaptureParts[ix];
-
-                if (match.PartValues[ix] == null) continue;
-                if (match.PartValues[ix] != other.PartValues[ix]) return false;
-            }
-            return true;
-        }
-
-
+        /// <param name="key"></param>
+        /// <returns>resource or null</returns>
         public byte[] GetResource(IAssetKey key)
         {
             byte[] result = null;
@@ -113,6 +136,11 @@ namespace Lexical.Localization
             return result;
         }
 
+        /// <summary>
+        /// Open stream to resource from <see cref="dictionary"/> by converting <paramref name="key"/> to <see cref="string"/> with <see cref="namePolicy"/>.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public Stream OpenStream(IAssetKey key)
         {
             byte[] data = GetResource(key);
@@ -120,6 +148,10 @@ namespace Lexical.Localization
             return new MemoryStream(data);
         }
 
+        /// <summary>
+        /// Print class name
+        /// </summary>
+        /// <returns></returns>
         public override string ToString() 
             => $"{GetType().Name}()";
     }
