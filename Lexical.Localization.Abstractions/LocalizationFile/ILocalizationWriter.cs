@@ -11,16 +11,6 @@ namespace Lexical.Localization
 {
     /// <summary>
     /// Flags for write operation to localization files.
-    /// 
-    /// For writing capability, must implement one of:
-    /// <list type="Bullet">
-    /// <item><see cref="ILocalizationStringLinesTextWriter"/></item>
-    /// <item><see cref="ILocalizationStringLinesStreamWriter"/></item>
-    /// <item><see cref="ILocalizationKeyLinesTextWriter"/></item>
-    /// <item><see cref="ILocalizationKeyLinesStreamWriter"/></item>
-    /// <item><see cref="ILocalizationKeyTreeStreamWriter"/></item>
-    /// <item><see cref="ILocalizationKeyTreeTextWriter"/></item>
-    /// </list>
     /// </summary>
     [Flags]
     public enum LocalizationFileWriteFlags : UInt32
@@ -37,14 +27,14 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Permission to remove entires that no longer exist. Remove is recursive.
-        /// If entry contains unrecognized attributes, comments, elements, then regardless
-        /// entry will be removed recursively.
+        /// If entry contains unrecognized attributes, comments, elements, then 
+        /// entry will be removed regardless.
         /// </summary>
         Remove = 2,
 
         /// <summary>
         /// Permission to remove entires that no longer exist, but be cautious.
-        /// If entry contains unrecognized comments, elements, then remove will not proceed recursively.
+        /// If entry contains unrecognized comments, elements, then remove will not proceed.
         /// </summary>
         RemoveCautious = 4,
 
@@ -55,7 +45,7 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Overwrite contents of previous file.
-        ///   <see cref="Add"/> must be set with this flag of else creates an empty document.
+        ///   <see cref="Add"/> must be set with this flag, or else an empty document is created.
         /// 
         /// Flags <see cref="Remove"/> and <see cref="Modify"/> have no effect with this flag.
         /// </summary>
@@ -70,15 +60,26 @@ namespace Lexical.Localization
         /// And the code wants to write the following structure
         /// <![CDATA[ <Type:ConsoleApp1.MyController><Key:Success Culture="de">Erfolg !!</Key:Success></Type:ConsoleApp1.MyController> ]]>
         /// 
-        /// Then that node is is matched by effective key, which is equivalent in both cases, and the previous node gets updated.
-        /// If this <see cref="EffectiveKeyMatching"/> is false, then old node is removed and new node is created.
+        /// Then these nodes are considered corresponding as their keys are effectively same (though structurally differnet), and the previous node gets updated.
+        /// 
+        /// If this <see cref="EffectiveKeyMatching"/> is false, then previous node is removed and new node is created, provided those flags are enabled.
         /// </summary>
         EffectiveKeyMatching = 32,
 
     }
 
     /// <summary>
-    /// Signals that file format can write localization files.
+    /// Signals that file format class can write localization files.
+    /// 
+    /// Must implement atleast one of the sub classes.
+    /// <list type="Bullet">
+    /// <item><see cref="ILocalizationStringLinesTextWriter"/></item>
+    /// <item><see cref="ILocalizationStringLinesStreamWriter"/></item>
+    /// <item><see cref="ILocalizationKeyLinesTextWriter"/></item>
+    /// <item><see cref="ILocalizationKeyLinesStreamWriter"/></item>
+    /// <item><see cref="ILocalizationKeyTreeStreamWriter"/></item>
+    /// <item><see cref="ILocalizationKeyTreeTextWriter"/></item>
+    /// </list>
     /// </summary>
     public interface ILocalizationWriter : ILocalizationFileFormat { }
 
@@ -92,7 +93,7 @@ namespace Lexical.Localization
         /// 
         /// If <paramref name="srcText"/> contains previous content, it is updated and rewritten to <paramref name="dstText"/> according to rules in <paramref name="flags"/>.
         /// 
-        /// The callee mustn't close either <paramref name="srcText"/> or <paramref name="dstText"/>.
+        /// The implementation must not close either <paramref name="srcText"/> or <paramref name="dstText"/>.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="srcText">(optional) source text, used if previous content are updated.</param>
@@ -113,7 +114,7 @@ namespace Lexical.Localization
         /// 
         /// If <paramref name="srcStream"/> contains previous content, it is updated and rewritten to <paramref name="dstStream"/> according to rules in <paramref name="flags"/>.
         /// 
-        /// The callee mustn't close either <paramref name="srcStream"/> or <paramref name="dstStream"/>.
+        /// The implementation must not close either <paramref name="srcStream"/> or <paramref name="dstStream"/>.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
@@ -153,7 +154,7 @@ namespace Lexical.Localization
         /// 
         /// If <paramref name="srcStream"/> contains previous content, it is updated and rewritten to <paramref name="dstStream"/> according to rules in <paramref name="flags"/>.
         /// 
-        /// The callee mustn't close either <paramref name="srcStream"/> or <paramref name="dstStream"/>.
+        /// The implementation must not close either <paramref name="srcStream"/> or <paramref name="dstStream"/>.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
@@ -174,7 +175,7 @@ namespace Lexical.Localization
         /// 
         /// If <paramref name="srcStream"/> contains previous content, it is updated and rewritten to <paramref name="dstStream"/> according to rules in <paramref name="flags"/>.
         /// 
-        /// The callee mustn't close either <paramref name="srcStream"/> or <paramref name="dstStream"/>.
+        /// The implementation must not close either <paramref name="srcStream"/> or <paramref name="dstStream"/>.
         /// </summary>
         /// <param name="tree"></param>
         /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
@@ -192,8 +193,6 @@ namespace Lexical.Localization
     {
         /// <summary>
         /// Create a container where localization key-values can be written to.
-        /// 
-        /// If <paramref name="srcText"/> contains previous content, it is updated and rewritten to <paramref name="dstText"/> according to rules in <paramref name="flags"/>.
         /// 
         /// If <paramref name="srcText"/> contains previous content, it is updated and rewritten to <paramref name="dstText"/> according to rules in <paramref name="flags"/>.
         /// </summary>

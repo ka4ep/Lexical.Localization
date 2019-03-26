@@ -15,18 +15,48 @@ using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
+    /// <summary>
+    /// File format reader that handles .ini files. 
+    /// 
+    /// Uses two level structures. The first level is the section '[parameterName:parameterValue:...]'.
+    /// Chacters \:[] and white-spaces are escaped.
+    /// 
+    /// And second level is key-value pairs 'parameterName:parameterValue:.. = value'.
+    /// Characters \:= and white-spaces are escaped.
+    /// </summary>
     public class IniLocalizationReader : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
     {
         private readonly static IniLocalizationReader instance = new IniLocalizationReader();
-        public static IniLocalizationReader Instance => instance;
-        protected ParameterNamePolicy parser_comment = new ParameterNamePolicy("\\\n\t\r\0\a\b\f");
-        protected ParameterNamePolicy parser_section = new ParameterNamePolicy("\\\n\t\r\0\a\b\f[]");
-        protected ParameterNamePolicy parser_key = new ParameterNamePolicy("\\\n\t\r\0\a\b\f=");
-        protected ParameterNamePolicy parser_value = new ParameterNamePolicy("\\\n\t\r\0\a\b\f");
 
+        /// <summary>
+        /// Default instance of .ini localization reader.
+        /// </summary>
+        public static IniLocalizationReader Instance => instance;
+
+        /// <summary>
+        /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.
+        /// </summary>
+        protected ParameterNamePolicy escaper_section = new ParameterNamePolicy(":\n\t\r\0\a\b\f[]");
+
+        /// <summary>
+        /// Escaper for key parts of .ini files. Escapes '\', ':', '=' characters and white-spaces.
+        /// </summary>
+        protected ParameterNamePolicy escaper_key = new ParameterNamePolicy(":\n\t\r\0\a\b\f=");
+
+        /// <summary>
+        /// The file extension without dot "ini".
+        /// </summary>
         public string Extension { get; protected set; }
 
+        /// <summary>
+        /// Create new ini file reader.
+        /// </summary>
         public IniLocalizationReader() : this("ini") { }
+
+        /// <summary>
+        /// Create new ini file reader.
+        /// </summary>
+        /// <param name="ext"></param>
         public IniLocalizationReader(string ext)
         {
             this.Extension = ext;
@@ -63,7 +93,7 @@ namespace Lexical.Localization
                 {
                     case IniTokenType.Section:
                         IAssetKey key = null;
-                        if (parser_section.TryParse(token.ValueText, out key))
+                        if (escaper_section.TryParse(token.ValueText, out key))
                         {
                             section = key == null ? null : root.Create(key);
                             if (section != null && correspondence != null) correspondence.Nodes.Put(section, token);
@@ -75,7 +105,7 @@ namespace Lexical.Localization
                         break;
                     case IniTokenType.KeyValue:
                         IAssetKey key_ = null;
-                        if (parser_key.TryParse(token.KeyText, out key_))
+                        if (escaper_key.TryParse(token.KeyText, out key_))
                         {
                             IKeyTree current = key_ == null ? null : (section??root).GetOrCreate(key_);
                             string value = token.Value;

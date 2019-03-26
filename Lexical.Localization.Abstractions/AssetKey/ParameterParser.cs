@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Lexical.Localization.Internal;
@@ -18,17 +19,37 @@ namespace Lexical.Localization
     public class ParameterParser
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
-        static ParameterParser instance = new ParameterParser("\\\n\t\r\0\a\b\f:");
+        static ParameterParser instance = new ParameterParser("\n\t\r\0\a\b\f:");
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
         /// </summary>
         public static ParameterParser Instance => instance;
 
+        /// <summary>
+        /// Pattern that parses "ParameterName:ParameterValue" textx.
+        /// </summary>
         protected Regex ParsePattern = new Regex(@"(?<key>([^:\\]|\\.)*)\:(?<value>([^:\\]|\\.)*)(\:|$)", opts);
+
+        /// <summary>
+        /// Pattern that escapes string literal.
+        /// </summary>
         protected Regex LiteralEscape;
-        protected Regex LiteralUnescape = new Regex(@"\\.", opts);
-        protected MatchEvaluator escapeChar, unescapeChar;
+
+        /// <summary>
+        /// Pattern that unescapes string literal.
+        /// </summary>
+        protected Regex LiteralUnescape;
+
+        /// <summary>
+        /// Match delegate that escapes a character match.
+        /// </summary>
+        protected MatchEvaluator escapeChar;
+
+        /// <summary>
+        /// Match delegate that unescapes a character match.
+        /// </summary>
+        protected MatchEvaluator unescapeChar;
 
         /// <summary>
         /// Create new string serializer
@@ -36,7 +57,11 @@ namespace Lexical.Localization
         /// <param name="escapeCharacters">list of characters that are to be escaped</param>
         public ParameterParser(string escapeCharacters)
         {
-            LiteralEscape = new Regex("[" + Regex.Escape(escapeCharacters) + "]", opts);
+            // Regex.Escape doen't work for brackets []
+            //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
+            string escapeCharactersEscaped = escapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape(""+c)).Aggregate((a,b)=>a+b);
+            LiteralEscape = new Regex("[" + escapeCharactersEscaped + "]|(\\\\\\\\)", opts);
+            LiteralUnescape = new Regex(@"\\[" + escapeCharactersEscaped + "]", opts);
             escapeChar = EscapeChar;
             unescapeChar = UnescapeChar;
             _parameterVisitorIncludeRoot = parameterVisitorIncludeRoot;
@@ -254,9 +279,32 @@ namespace Lexical.Localization
         /// Escape literal and output it to string builder.
         /// </summary>
         public String EscapeLiteral(String input) => LiteralEscape.Replace(input, escapeChar);
+
+        /// <summary>
+        /// Unescape string literal.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public String UnescapeLiteral(String input) => LiteralUnescape.Replace(input, unescapeChar);
 
-        static String EscapeChar(Match m) => @"\" + m.Value;
+        static String EscapeChar(Match m)
+        {
+            if (m.Value == "\\\\") return m.Value;
+            char _ch = m.Value[0];
+            switch (_ch)
+            {
+                case '\0': return "\0";
+                case '\a': return "\a";
+                case '\b': return "\\";
+                case '\t': return "\t";
+                case '\f': return "\f";
+                case '\n': return "\n";
+                case '\r': return "\r";
+                default:
+                    return "\\" + _ch;
+            }
+        }
+
         static String UnescapeChar(Match m)
         {
             string capture = m.Value;

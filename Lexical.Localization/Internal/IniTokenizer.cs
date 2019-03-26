@@ -13,8 +13,37 @@ using System.Text.RegularExpressions;
 
 namespace Lexical.Localization.Internal
 {
-    public enum IniTokenType { Text, Section, Comment, KeyValue }
+    /// <summary>
+    /// Token type
+    /// </summary>
+    public enum IniTokenType
+    {
+        /// <summary>
+        /// Non-recognized text and white-space segment of text.
+        /// </summary>
+        Text,
 
+        /// <summary>
+        /// Token that represents section header "[section]"
+        /// </summary>
+        Section,
+
+        /// <summary>
+        /// Token that represents comment and line feed, e.g. "; comment\r\n" or "// comment\r\n", or "# comment\r\n"
+        /// </summary>
+        Comment,
+
+        /// <summary>
+        /// Token that represents key value pair, e.g. "key = value\r\n"
+        /// </summary>
+        KeyValue
+    }
+
+    /// <summary>
+    /// Single token. 
+    /// 
+    /// Token can be a linked list, if it has <see cref="Next"/> and <see cref="Previous"/> assigned. 
+    /// </summary>
     public class IniToken : ICloneable, IEnumerable<IniToken>
     {
         /// <summary>
@@ -24,16 +53,8 @@ namespace Lexical.Localization.Internal
         /// <returns></returns>
         public static IniToken Comment(string comment)
         {
-            string str = "; " + IniEscape.Comment.EscapeLiteral(comment) + "\r\n";
-            return new IniToken
-            {
-                Type = IniTokenType.Comment,
-                source = str,
-                Index = 0,
-                Length = str.Length,
-                ValueIndex = 2,
-                ValueLength = comment.Length
-            };
+            string content = "; " + IniEscape.Comment.EscapeLiteral(comment) + "\r\n";
+            return new IniToken { Type = IniTokenType.Comment, Source = content, Index = 0, Length = content.Length, ValueIndex = 2, ValueLength = comment.Length };
         }
 
         /// <summary>
@@ -58,15 +79,7 @@ namespace Lexical.Localization.Internal
         public static IniToken Section(string section)
         {
             string str = "[" + IniEscape.Section.EscapeLiteral(section) + "]\r\n";
-            return new IniToken
-            {
-                Type = IniTokenType.Section,
-                source = str,
-                Index = 0,
-                Length = str.Length,
-                ValueIndex = 1,
-                ValueLength = section.Length
-            };
+            return new IniToken { Type = IniTokenType.Section, Source = str, Index = 0, Length = str.Length, ValueIndex = 1, ValueLength = section.Length };
         }
 
         /// <summary>
@@ -77,15 +90,7 @@ namespace Lexical.Localization.Internal
         public static IniToken SectionRaw(string section)
         {
             string str = "[" + section + "]\r\n";
-            return new IniToken
-            {
-                Type = IniTokenType.Section,
-                source = str,
-                Index = 0,
-                Length = str.Length,
-                ValueIndex = 1,
-                ValueLength = section.Length
-            };
+            return new IniToken { Type = IniTokenType.Section, Source = str, Index = 0, Length = str.Length, ValueIndex = 1, ValueLength = section.Length };
         }
 
         /// <summary>
@@ -97,17 +102,7 @@ namespace Lexical.Localization.Internal
         public static IniToken KeyValue(string key, string value)
         {
             string str = IniEscape.Key.EscapeLiteral(key) + " = " + IniEscape.Value.EscapeLiteral(value) + "\r\n";
-            return new IniToken
-            {
-                Type = IniTokenType.KeyValue,
-                source = str,
-                Index = 0,
-                Length = str.Length,
-                ValueIndex = key.Length + 3,
-                ValueLength = value.Length,
-                KeyIndex = 0,
-                KeyLength = key.Length
-            };
+            return new IniToken { Type = IniTokenType.KeyValue, Source = str, Index = 0, Length = str.Length, ValueIndex = key.Length + 3, ValueLength = value.Length, KeyIndex = 0, KeyLength = key.Length };
         }
 
 
@@ -120,17 +115,7 @@ namespace Lexical.Localization.Internal
         public static IniToken KeyValueRaw(string key, string value)
         {
             string str = key + " = " + value + "\r\n";
-            return new IniToken
-            {
-                Type = IniTokenType.KeyValue,
-                source = str,
-                Index = 0,
-                Length = str.Length,
-                ValueIndex = key.Length + 3,
-                ValueLength = value.Length,
-                KeyIndex = 0,
-                KeyLength = key.Length
-            };
+            return new IniToken { Type = IniTokenType.KeyValue, Source = str, Index = 0, Length = str.Length, ValueIndex = key.Length + 3, ValueLength = value.Length, KeyIndex = 0, KeyLength = key.Length };
         }
 
         /// <summary>
@@ -150,15 +135,15 @@ namespace Lexical.Localization.Internal
             // Lengths before and after "value" part.
             int len1 = ValueIndex - Index, len2 = newValue == null ? 0 : newValue.Length, len3 = Index + Length - ValueIndex - ValueLength;
             StringBuilder sb = new StringBuilder(len1 + len2 + len3 + 2);
-            if (len1 > 0) sb.Append(source.Substring(Index, len1));
+            if (len1 > 0) sb.Append(Source.Substring(Index, len1));
             if (len2 > 0) sb.Append(newValue);
-            if (len3 > 0) sb.Append(source.Substring(ValueIndex + ValueLength, len3));
+            if (len3 > 0) sb.Append(Source.Substring(ValueIndex + ValueLength, len3));
             //sb.Append("\r\n");
             string str = sb.ToString();
             return new IniToken
             {
                 Type = Type,
-                source = str,
+                Source = str,
                 Index = 0,
                 Length = str.Length,
                 ValueIndex = len1,
@@ -174,7 +159,7 @@ namespace Lexical.Localization.Internal
         /// <param name="text">text</param>
         /// <returns></returns>
         public static IniToken Text(string text)
-            => new IniToken { Type = IniTokenType.Text, source = text, Index = 0, Length = text.Length, ValueIndex = 0, ValueLength = text.Length };
+            => new IniToken { Type = IniTokenType.Text, Source = text, Index = 0, Length = text.Length, ValueIndex = 0, ValueLength = text.Length };
 
         /// <summary>
         /// Token Type
@@ -209,19 +194,19 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Reference to the original ini source string.
         /// </summary>
-        public string source;
+        public string Source;
 
         /// <summary>
         /// The string that makes the content for this token.
         /// </summary>
         public string Content
-            => Index >= 0 && Length >= 0 && source != null ? source.Substring(Index, Length) : null;
+            => Index >= 0 && Length >= 0 && Source != null ? Source.Substring(Index, Length) : null;
 
         /// <summary>
         /// Value in raw format with escape characters.
         /// </summary>
         public string ValueText
-            => ValueIndex >= 0 && ValueLength >= 0 && source != null ? source.Substring(ValueIndex, ValueLength) : null;
+            => ValueIndex >= 0 && ValueLength >= 0 && Source != null ? Source.Substring(ValueIndex, ValueLength) : null;
 
         /// <summary>
         /// Value in unescaped format.
@@ -236,7 +221,7 @@ namespace Lexical.Localization.Internal
         /// Key in escaped format.
         /// </summary>
         public string KeyText
-            => KeyIndex >= 0 && KeyLength >= 0 ? source.Substring(KeyIndex, KeyLength) : null;
+            => KeyIndex >= 0 && KeyLength >= 0 ? Source.Substring(KeyIndex, KeyLength) : null;
 
         /// <summary>
         /// Key in unescaped format.
@@ -244,27 +229,27 @@ namespace Lexical.Localization.Internal
         public string Key
             => IniEscape.Key.UnescapeLiteral(KeyText);
 
+        /// <summary>
+        /// Print content
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => Content;
 
+        /// <summary>
+        /// Clone token
+        /// </summary>
+        /// <returns></returns>
         public object Clone()
-        {
-            return new IniToken
-            {
-                source = source,
-                Type = Type,
-                Index = Index,
-                Length = Length,
-                ValueIndex = ValueIndex,
-                ValueLength = ValueLength,
-                KeyIndex = KeyIndex,
-                KeyLength = KeyLength
-            };
-        }
+            => new IniToken { Source = Source, Type = Type, Index = Index, Length = Length, ValueIndex = ValueIndex, ValueLength = ValueLength, KeyIndex = KeyIndex, KeyLength = KeyLength };
 
+        /// <summary>
+        /// Copy from <paramref name="other"/>.
+        /// </summary>
+        /// <param name="other"></param>
         public void ReadFrom(IniToken other)
         {
-            this.source = other.source;
+            this.Source = other.Source;
             this.Type = other.Type;
             this.Index = other.Index;
             this.Length = other.Length;
@@ -274,6 +259,11 @@ namespace Lexical.Localization.Internal
             this.KeyLength = other.KeyLength;
         }
 
+        /// <summary>
+        /// Equals
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             IniToken other = obj as IniToken;
@@ -281,13 +271,17 @@ namespace Lexical.Localization.Internal
             return other.Type == Type && other.Content == Content;
         }
 
+        /// <summary>
+        /// Hash code
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             int hash = 900169;
-            if (source != null)
+            if (Source != null)
             {
                 for (int i = Index + Length - 1; i >= Index; i--)
-                    hash = hash * 999961 + source[i];
+                    hash = hash * 999961 + Source[i];
             }
             hash = hash * 999961 + (KeyIndex - Index);
             hash = hash * 999961 + KeyLength;
@@ -362,6 +356,9 @@ namespace Lexical.Localization.Internal
 
     }
 
+    /// <summary>
+    /// Class that reads text source and enumerates <see cref="IniToken"/>s.
+    /// </summary>
     public class IniTokenizer : IEnumerable<IniToken>, IDisposable
     {
         /// <summary>
@@ -380,15 +377,30 @@ namespace Lexical.Localization.Internal
         static Regex parser = new Regex(
             @"(\[(?<section>(\\[^\r\n]|[^\]\n\r\\])*)\])|((;|#|//)(?<comment>[^\r\n]*))|((?<key>(\\[^\r\n]|[^;#=\\ \t\x0B\f\r\n])+)[ \t\x0B\f]*=[ \t\x0B\f]*(?<value>(\\[^\r\n]|[^\\\n\r])*))|(?<text>.+?)",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+
+        /// <summary>
+        /// Matches from Regex
+        /// </summary>
         protected MatchCollection matches;
+
+        /// <summary>
+        /// Source text
+        /// </summary>
         protected string text;
 
+        /// <summary>
+        /// Create tokenizer that parses <paramref name="text"/> into tokens.
+        /// </summary>
+        /// <param name="text"></param>
         public IniTokenizer(string text)
         {
             matches = parser.Matches(text);
             this.text = text;
         }
 
+        /// <summary>
+        /// Dispose enumerable
+        /// </summary>
         public void Dispose()
         {
             matches = null;
@@ -431,6 +443,10 @@ namespace Lexical.Localization.Internal
             return new IniTokenEnumerator(text, matches);
         }
 
+        /// <summary>
+        /// To string
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return text;
@@ -505,7 +521,7 @@ namespace Lexical.Localization.Internal
             currentLineRead = true;
             if (ix < 0 || ix >= Count) return current = null;
             if (current == null) current = new IniToken();
-            current.source = text;
+            current.Source = text;
             Match m = matches[ix], next = ix + 1 < Count ? matches[ix + 1] : null;
             current.Index = m.Index;
             current.Length = m.Length;
@@ -574,23 +590,51 @@ namespace Lexical.Localization.Internal
             ix = Count = 0;
         }
     }
-
+    
+    /// <summary>
+    /// Handles escaping of ini files.
+    /// </summary>
     public class IniEscape
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
-        static IniEscape comment = new IniEscape("\\\n\t\r\0\a\b\f");
-        static IniEscape section = new IniEscape("\\\n\t\r\0\a\b\f[]");
-        static IniEscape key = new IniEscape("\\\n\t\r\0\a\b\f=");
-        static IniEscape value = new IniEscape("\\\n\t\r\0\a\b\f");
+        static IniEscape comment = new IniEscape("\n\t\r\0\a\b\f");
+        static IniEscape section = new IniEscape("\n\t\r\0\a\b\f[]");
+        static IniEscape key = new IniEscape("\n\t\r\0\a\b\f=");
+        static IniEscape value = new IniEscape("\n\t\r\0\a\b\f");
+
+        /// <summary>
+        /// Escape rules for comment text.
+        /// </summary>
         public static IniEscape Comment => comment;
+
+        /// <summary>
+        /// Escapre rules for section text.
+        /// </summary>
         public static IniEscape Section => section;
+
+        /// <summary>
+        /// Escape rules for key token.
+        /// </summary>
         public static IniEscape Key => key;
+
+        /// <summary>
+        /// Escape rules for value token.
+        /// </summary>
         public static IniEscape Value => value;
 
-        Regex ParsePattern = new Regex(@"(?<key>([^:\\]|\\.)*)\:(?<value>([^:\\]|\\.)*)(\:|$)", opts);
-
+        /// <summary>
+        /// Pattern for escaping text
+        /// </summary>
         Regex LiteralEscape;
-        Regex LiteralUnescape = new Regex(@"\\.", opts);
+
+        /// <summary>
+        /// Pattern for unescaping text
+        /// </summary>
+        Regex LiteralUnescape;
+
+        /// <summary>
+        /// Match evaluator delegates
+        /// </summary>
         MatchEvaluator escapeChar, unescapeChar;
 
         /// <summary>
@@ -599,15 +643,58 @@ namespace Lexical.Localization.Internal
         /// <param name="escapeCharacters">list of characters that are to be escaped</param>
         public IniEscape(string escapeCharacters)
         {
-            LiteralEscape = new Regex("[" + Regex.Escape(escapeCharacters) + "]", opts);
+            // Regex.Escape doen't work for brackets []
+            //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
+            string escapeCharactersEscaped = escapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape("" + c)).Aggregate((a, b) => a + b);
+            LiteralEscape = new Regex("[" + escapeCharactersEscaped + "]|(\\\\\\\\)", opts);
+            LiteralUnescape = new Regex(@"\\[" + escapeCharactersEscaped + "]", opts);
             escapeChar = EscapeChar;
             unescapeChar = UnescapeChar;
+            
         }
 
+        /// <summary>
+        /// Escape <paramref name="input"/>.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>Escaped text</returns>
         public String EscapeLiteral(String input) => input == null ? null : LiteralEscape.Replace(input, escapeChar);
+
+        /// <summary>
+        /// Unescape <paramref name="input"/>.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>Unescaped text</returns>
         public String UnescapeLiteral(String input) => input == null ? null : LiteralUnescape.Replace(input, unescapeChar);
 
-        static String EscapeChar(Match m) => @"\" + m.Value;
+        /// <summary>
+        /// Function that escapes <paramref name="m"/>.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        static String EscapeChar(Match m)
+        {
+            if (m.Value == "\\\\") return m.Value;
+            char _ch = m.Value[0];
+            switch (_ch)
+            {
+                case '\0': return "\\0";
+                case '\a': return "\\a";
+                case '\b': return "\\b";
+                case '\t': return "\\t";
+                case '\f': return "\\f";
+                case '\n': return "\\n";
+                case '\r': return "\\r";
+                default:
+                    return "\\" + _ch;
+            }
+        }
+
+        /// <summary>
+        /// Function that unescapes <paramref name="m"/>.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
         static String UnescapeChar(Match m)
         {
             string capture = m.Value;
@@ -616,7 +703,7 @@ namespace Lexical.Localization.Internal
             {
                 case '0': return "\0";
                 case 'a': return "\a";
-                case 'b': return "\\";
+                case 'b': return "\b";
                 case 't': return "\t";
                 case 'f': return "\f";
                 case 'n': return "\n";
