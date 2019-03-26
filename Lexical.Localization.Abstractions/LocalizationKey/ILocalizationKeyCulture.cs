@@ -117,6 +117,7 @@ namespace Lexical.Localization
         public static CultureInfo FindCulture(this IAssetKey key)
         {
             ILocalizationKeyCultureAssigned cultureKey = FindCultureKey(key);
+            if (cultureKey == null) return null;
             CultureInfo ci = cultureKey.Culture;
             if (ci == null && cultureKey.Name != null)
             {
