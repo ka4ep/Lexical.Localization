@@ -153,11 +153,11 @@ namespace Lexical.Localization
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return new LoadableLocalizationAsset().AddKeyTreeSource(fileFormat.FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound)).Load();
+                return new LocalizationAsset().AddKeyTreeSource(fileFormat.FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound)).Load();
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return new LoadableLocalizationAsset().AddKeyLinesSource(fileFormat.FileReaderAsKeyLines(filename, namePolicy, throwIfNotFound)).Load();
+                return new LocalizationAsset().AddKeyLinesSource(fileFormat.FileReaderAsKeyLines(filename, namePolicy, throwIfNotFound)).Load();
             }
             else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {

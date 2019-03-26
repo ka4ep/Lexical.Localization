@@ -113,9 +113,17 @@ namespace Lexical.Localization
         /// Search linked list and find selected culture.
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>culture policy or null</returns>
+        /// <returns>culture info or null</returns>
         public static CultureInfo FindCulture(this IAssetKey key)
-            => FindCultureKey(key)?.Culture;
+        {
+            ILocalizationKeyCultureAssigned cultureKey = FindCultureKey(key);
+            CultureInfo ci = cultureKey.Culture;
+            if (ci == null && cultureKey.Name != null)
+            {
+                try { ci = CultureInfo.GetCultureInfo(cultureKey.Name); } catch (CultureNotFoundException) { }
+            }
+            return ci;
+        }
 
         /// <summary>
         /// Search linked list and find selected culture.
@@ -126,7 +134,7 @@ namespace Lexical.Localization
             => FindCultureKey(key)?.Name;
 
         /// <summary>
-        /// Search linked list and find selected active culture.
+        /// Search linked list and find the effective culture key.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>culture policy or null</returns>

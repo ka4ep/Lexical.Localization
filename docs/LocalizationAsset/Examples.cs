@@ -21,7 +21,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!"  }
                 };
                 // Create asset with string source
-                IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{Culture:}[Type:][Key]").Load();
+                IAsset asset = new LocalizationAsset().AddStringLinesSource(source, "{Culture:}[Type:][Key]").Load();
                 #endregion Snippet_1a
                 IAssetKey key = new LocalizationRoot(asset).Type("MyController").Key("hello");
                 Console.WriteLine(key);
@@ -38,7 +38,7 @@ namespace docs
                     { (Key)ParameterNamePolicy.Instance.Parse("Culture:de:Type:MyController:Key:hello", Key.Root), "Hallo Welt!"  }
                 };
                 // Create asset with string source
-                IAsset asset = new LoadableLocalizationAsset().AddKeyLinesSource(source).Load();
+                IAsset asset = new LocalizationAsset().AddKeyLinesSource(source).Load();
                 #endregion Snippet_1b
 
                 #region Snippet_2b
@@ -58,7 +58,7 @@ namespace docs
                     { new LocalizationRoot().Type("MyController").Key("hello").Culture("de"), "Hallo Welt!"  }
                 };
                 // Create asset with string source
-                IAsset asset = new LoadableLocalizationAsset().AddKeyLinesSource(source).Load();
+                IAsset asset = new LocalizationAsset().AddKeyLinesSource(source).Load();
                 #endregion Snippet_1c
 
                 #region Snippet_2c
@@ -76,7 +76,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!" }
                 };
                 // Create asset with string source
-                IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{Culture:}[Type:][Key]").Load();
+                IAsset asset = new LocalizationAsset().AddStringLinesSource(source, "{Culture:}[Type:][Key]").Load();
                 #region Snippet_3a
                 // Extract all keys
                 foreach (IAssetKey _key in asset.GetKeyLines(null).Select(line=>line.Key))

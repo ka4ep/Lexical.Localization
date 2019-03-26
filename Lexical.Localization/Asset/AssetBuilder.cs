@@ -66,10 +66,10 @@ namespace Lexical.Localization
                     list.Add(_asset.Load());
 
             // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, string>> sources
-            LoadableLocalizationAsset __asset = null;
+            LocalizationAsset __asset = null;
             foreach (IAssetSource src in sources.Where(s => s is ILocalizationKeyLinesSource))
             {
-                if (__asset == null) __asset = new LoadableLocalizationAsset();
+                if (__asset == null) __asset = new LocalizationAsset();
                 __asset.AddKeyLinesSource((ILocalizationKeyLinesSource)src);
             }
             if (__asset != null) list.Add(__asset.Load());

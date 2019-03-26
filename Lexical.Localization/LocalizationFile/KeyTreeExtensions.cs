@@ -65,7 +65,7 @@ namespace Lexical.Localization
         /// <param name="hintSource"></param>
         /// <returns></returns>
         public static IAsset ToAsset(this IKeyTree tree, string hintSource = null)
-            => new LoadableLocalizationAsset().AddKeyTreeSource(tree, hintSource).Load();
+            => new LocalizationAsset().AddKeyTreeSource(tree, hintSource).Load();
 
         /// <summary>
         /// Create an asset that uses <paramref name="trees"/>.
@@ -76,7 +76,7 @@ namespace Lexical.Localization
         /// <param name="hintSource"></param>
         /// <returns></returns>
         public static IAsset ToAsset(this IEnumerable<IKeyTree> trees, string hintSource = null)
-            => new LoadableLocalizationAsset().AddKeyTreeSource(trees, hintSource).Load();
+            => new LocalizationAsset().AddKeyTreeSource(trees, hintSource).Load();
 
         /// <summary>
         /// Convert <paramref name="tree"/> to <see cref="IAssetSource"/>..

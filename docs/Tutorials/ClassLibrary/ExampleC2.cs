@@ -14,8 +14,8 @@ namespace TutorialProject
             // Create asset
             Dictionary<string, string> strs = new Dictionary<string, string>();
             strs["Culture:fi:Type:TutorialLibrary.MyController3:Key:OK"] = "Toiminto onnistui";
-            IAsset asset = new LoadableLocalizationAsset()
-                    .AddKeyStringSource(strs, ParameterNamePolicy.Instance)
+            IAsset asset = new LocalizationAsset()
+                    .AddStringLinesSource(strs, ParameterNamePolicy.Instance)
                     .Load();
 
             // Create asset root

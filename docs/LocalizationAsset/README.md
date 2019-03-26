@@ -11,7 +11,7 @@ var source = new Dictionary<Key, string> {
     { (Key)ParameterNamePolicy.Instance.Parse("Culture:de:Type:MyController:Key:hello", Key.Root), "Hallo Welt!"  }
 };
 // Create asset with string source
-IAsset asset = new LoadableLocalizationAsset().AddKeyLinesSource(source).Load();
+IAsset asset = new LocalizationAsset().AddKeyLinesSource(source).Load();
 ```
 
 Language strings can now be queried from the asset.
@@ -35,7 +35,7 @@ var source = new Dictionary<string, string> {
     { "de:MyController:hello", "Hallo Welt!"  }
 };
 // Create asset with string source
-IAsset asset = new LoadableLocalizationAsset().AddKeyStringSource(source, "{Culture:}[Type:][Key]").Load();
+IAsset asset = new LocalizationAsset().AddStringLinesSource(source, "{Culture:}[Type:][Key]").Load();
 ```
 </details>
 
@@ -51,7 +51,7 @@ var source = new Dictionary<IAssetKey, string> {
     { new LocalizationRoot().Type("MyController").Key("hello").Culture("de"), "Hallo Welt!"  }
 };
 // Create asset with string source
-IAsset asset = new LoadableLocalizationAsset().AddKeyLinesSource(source).Load();
+IAsset asset = new LocalizationAsset().AddKeyLinesSource(source).Load();
 ```
 </details>
 <br/>
