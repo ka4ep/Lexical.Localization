@@ -6,6 +6,7 @@
 using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lexical.Localization
 {
@@ -156,8 +157,10 @@ namespace Lexical.Localization
 
             // Go into composition
             if (asset is IAssetComposition composition)
-                foreach (T i in composition.GetComponents<T>(true))
+            {
+                foreach (T i in composition.GetComponents<T>(true) ?? Enumerable.Empty<T>())
                     yield return i;
+            }
         }
 
     }

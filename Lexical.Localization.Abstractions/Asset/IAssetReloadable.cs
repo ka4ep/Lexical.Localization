@@ -4,6 +4,8 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 
+using System.Linq;
+
 namespace Lexical.Localization
 {
     public interface IAssetReloadable : IAsset
@@ -26,7 +28,7 @@ namespace Lexical.Localization
             if (asset is IAssetReloadable casted) casted.Reload();
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetReloadable _ in composition.GetComponents<IAssetReloadable>(true))
+                foreach (IAssetReloadable _ in composition.GetComponents<IAssetReloadable>(true) ?? Enumerable.Empty<IAssetReloadable>())
                     _.Reload();
             }
             return asset;

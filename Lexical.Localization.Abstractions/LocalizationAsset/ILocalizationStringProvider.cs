@@ -119,12 +119,12 @@ namespace Lexical.Localization
             }
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationStringProvider component in composition.GetComponents<ILocalizationStringProvider>(true))
+                foreach (ILocalizationStringProvider component in composition.GetComponents<ILocalizationStringProvider>(true) ?? Enumerable.Empty<ILocalizationStringProvider>())
                 {
                     string result = component.GetString(key);
                     if (result != null) return result;
                 }
-                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
                     IEnumerable<IAsset> assets = component.LoadAssets(key);
                     if (assets != null)
@@ -171,12 +171,12 @@ namespace Lexical.Localization
             if (asset is ILocalizationKeyLinesEnumerable casted) result = casted.GetKeyLines(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true))
+                foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationKeyLinesEnumerable>())
                 {
                     IEnumerable<KeyValuePair<IAssetKey, string>> _result = component.GetKeyLines(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                 }
-                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
                     IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
                     if (assets != null)
@@ -224,14 +224,14 @@ namespace Lexical.Localization
             if (asset is ILocalizationKeyLinesEnumerable casted) result = casted.GetAllKeyLines(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true))
+                foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationKeyLinesEnumerable>())
                 {
                     IEnumerable<KeyValuePair<IAssetKey, string>> _result = component.GetAllKeyLines(filterKey);
                     if (_result == null) return null;
                     if (_result is Array _array && _array.Length == 0) continue;
                     result = result == null ? _result : result.Concat(_result);
                 }
-                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
                     IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
                     if (assets != null)
@@ -283,12 +283,12 @@ namespace Lexical.Localization
             if (asset is ILocalizationStringLinesEnumerable casted) result = casted.GetStringLines(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationStringLinesEnumerable component in composition.GetComponents<ILocalizationStringLinesEnumerable>(true))
+                foreach (ILocalizationStringLinesEnumerable component in composition.GetComponents<ILocalizationStringLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationStringLinesEnumerable>())
                 {
                     IEnumerable<KeyValuePair<string, string>> _result = component.GetStringLines(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                 }
-                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
                     IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
                     if (assets != null)
@@ -335,14 +335,14 @@ namespace Lexical.Localization
             if (asset is ILocalizationStringLinesEnumerable casted) result = casted.GetAllStringLines(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationStringLinesEnumerable component in composition.GetComponents<ILocalizationStringLinesEnumerable>(true))
+                foreach (ILocalizationStringLinesEnumerable component in composition.GetComponents<ILocalizationStringLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationStringLinesEnumerable>())
                 {
                     IEnumerable<KeyValuePair<string, string>> _result = component.GetAllStringLines(filterKey);
                     if (_result == null) return null;
                     if (_result is Array _array && _array.Length == 0) continue;
                     result = result == null ? _result : result.Concat(_result);
                 }
-                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
                     IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
                     if (assets != null)

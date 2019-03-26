@@ -141,12 +141,12 @@ namespace Lexical.Localization
             }
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceProvider component in composition.GetComponents<IAssetResourceProvider>(true))
+                foreach (IAssetResourceProvider component in composition.GetComponents<IAssetResourceProvider>(true) ?? Enumerable.Empty<IAssetResourceProvider>())
                 {
                     byte[] data = component.GetResource(key);
                     if (data != null) return data;
                 }
-                foreach(IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                foreach(IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
                     IEnumerable<IAsset> assets = component.LoadAssets(key);
                     if (assets != null)
@@ -190,12 +190,12 @@ namespace Lexical.Localization
             }
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceProvider component in composition.GetComponents<IAssetResourceProvider>(true))
+                foreach (IAssetResourceProvider component in composition.GetComponents<IAssetResourceProvider>(true) ?? Enumerable.Empty<IAssetResourceProvider>())
                 {
                     Stream steam = component.OpenStream(key);
                     if (steam != null) return steam;
                 }
-                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
                     IEnumerable<IAsset> assets = component.LoadAssets(key);
                     if (assets != null)
@@ -242,12 +242,12 @@ namespace Lexical.Localization
             if (asset is IAssetResourceNamesEnumerable casted) result = casted.GetResourceNames(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceNamesEnumerable component in composition.GetComponents<IAssetResourceNamesEnumerable>(true))
+                foreach (IAssetResourceNamesEnumerable component in composition.GetComponents<IAssetResourceNamesEnumerable>(true) ?? Enumerable.Empty<IAssetResourceNamesEnumerable>())
                 {
                     IEnumerable<string> _result = component.GetResourceNames(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                 }
-                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
                     IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
                     if (assets != null)
@@ -294,14 +294,14 @@ namespace Lexical.Localization
             if (asset is IAssetResourceNamesEnumerable casted) result = casted.GetAllResourceNames(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceNamesEnumerable component in composition.GetComponents<IAssetResourceNamesEnumerable>(true))
+                foreach (IAssetResourceNamesEnumerable component in composition.GetComponents<IAssetResourceNamesEnumerable>(true) ?? Enumerable.Empty<IAssetResourceNamesEnumerable>())
                 {
                     IEnumerable<string> _result = component.GetAllResourceNames(filterKey);
                     if (_result == null) return null;
                     if (_result is Array _array && _array.Length == 0) continue;
                     result = result == null ? _result : result.Concat(_result);
                 }
-                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
                     IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
                     if (assets != null)
@@ -352,12 +352,12 @@ namespace Lexical.Localization
             if (asset is IAssetResourceKeysEnumerable casted) result = casted.GetResourceKeys(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceKeysEnumerable component in composition.GetComponents<IAssetResourceKeysEnumerable>(true))
+                foreach (IAssetResourceKeysEnumerable component in composition.GetComponents<IAssetResourceKeysEnumerable>(true) ?? Enumerable.Empty<IAssetResourceKeysEnumerable>())
                 {
                     IEnumerable<IAssetKey> _result = component.GetResourceKeys(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                 }
-                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
                     IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
                     if (assets != null)
@@ -404,14 +404,14 @@ namespace Lexical.Localization
             if (asset is IAssetResourceKeysEnumerable casted) result = casted.GetAllResourceKeys(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceKeysEnumerable component in composition.GetComponents<IAssetResourceKeysEnumerable>(true))
+                foreach (IAssetResourceKeysEnumerable component in composition.GetComponents<IAssetResourceKeysEnumerable>(true) ?? Enumerable.Empty<IAssetResourceKeysEnumerable>())
                 {
                     IEnumerable<IAssetKey> _result = component.GetAllResourceKeys(filterKey);
                     if (_result == null) return null;
                     if (_result is Array _array && _array.Length == 0) continue;
                     result = result == null ? _result : result.Concat(_result);
                 }
-                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true))
+                foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
                     IEnumerable<IAsset> assets = component.LoadAssets(filterKey);
                     if (assets != null)
