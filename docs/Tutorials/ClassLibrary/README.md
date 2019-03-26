@@ -107,7 +107,7 @@ namespace TutorialProject
             Dictionary<string, string> strs = new Dictionary<string, string>();
             strs["Culture:fi:Type:TutorialLibrary.MyController2:Key:OK"] = "Toiminto onnistui";
             IAsset asset = new LocalizationAsset()
-                    .AddStringLinesSource(strs, ParameterNamePolicy.Instance)
+                    .AddSource(strs, ParameterNamePolicy.Instance)
                     .Load();
 
             // Create asset root
@@ -186,7 +186,7 @@ namespace TutorialProject
             Dictionary<string, string> strs = new Dictionary<string, string>();
             strs["Culture:fi:Type:TutorialLibrary.MyController3:Key:OK"] = "Toiminto onnistui";
             IAsset asset = new LocalizationAsset()
-                    .AddStringLinesSource(strs, ParameterNamePolicy.Instance)
+                    .AddSource(strs, ParameterNamePolicy.Instance)
                     .Load();
 
             // Create asset root

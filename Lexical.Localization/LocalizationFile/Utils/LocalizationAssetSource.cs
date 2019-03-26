@@ -34,7 +34,7 @@ namespace Lexical.Localization.Utils
         IEnumerator IEnumerable.GetEnumerator()
             => LineSource.GetEnumerator();
         public void Build(IList<IAsset> list)
-            => list.Add(new LoadableLocalizationStringAsset(NamePolicy).AddLineStringSource(LineSource).Load());
+            => list.Add(new LocalizationStringAsset(NamePolicy).AddSource(LineSource).Load());
         public IAsset PostBuild(IAsset asset)
             => asset;
         public override string ToString()
@@ -63,7 +63,7 @@ namespace Lexical.Localization.Utils
         IEnumerator IEnumerable.GetEnumerator()
             => LineSource.GetEnumerator();
         public void Build(IList<IAsset> list)
-            => list.Add(new LocalizationAsset().AddKeyLinesSource(LineSource).Load());
+            => list.Add(new LocalizationAsset().AddSource(LineSource).Load());
         public IAsset PostBuild(IAsset asset)
             => asset;
         public override string ToString()

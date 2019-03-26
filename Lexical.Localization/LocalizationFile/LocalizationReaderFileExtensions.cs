@@ -153,15 +153,15 @@ namespace Lexical.Localization
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return new LocalizationAsset().AddKeyTreeSource(fileFormat.FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound)).Load();
+                return new LocalizationAsset().AddSource(fileFormat.FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound)).Load();
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return new LocalizationAsset().AddKeyLinesSource(fileFormat.FileReaderAsKeyLines(filename, namePolicy, throwIfNotFound)).Load();
+                return new LocalizationAsset().AddSource(fileFormat.FileReaderAsKeyLines(filename, namePolicy, throwIfNotFound)).Load();
             }
             else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return new LoadableLocalizationStringAsset(namePolicy).AddLineStringSource(fileFormat.FileReaderAsStringLines(filename, namePolicy, throwIfNotFound)).Load();
+                return new LocalizationStringAsset(namePolicy).AddSource(fileFormat.FileReaderAsStringLines(filename, namePolicy, throwIfNotFound)).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -178,15 +178,15 @@ namespace Lexical.Localization
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return fileFormat.FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound).ToAssetSource(filename);
+                return fileFormat.FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound).ToAssetSource();
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return fileFormat.FileReaderAsKeyLines(filename, namePolicy, throwIfNotFound).ToAssetSource(filename);
+                return fileFormat.FileReaderAsKeyLines(filename, namePolicy, throwIfNotFound).ToAssetSource();
             }
             else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return fileFormat.FileReaderAsStringLines(filename, namePolicy, throwIfNotFound).ToAssetSource(namePolicy, filename);
+                return fileFormat.FileReaderAsStringLines(filename, namePolicy, throwIfNotFound).ToAssetSource(namePolicy);
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }

@@ -12,7 +12,7 @@ namespace docs
         public static void Main(string[] args)
         {
             {
-                IAsset asset = new LocalizationStringAsset(new Dictionary<string, string> { { "en:hello", "Hello World!" } });
+                IAsset asset = new LocalizationStringAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, ParameterNamePolicy.Instance);
                 // Assign the composition to root
                 IAssetRoot root = new LocalizationRoot(asset, new CulturePolicy());
                 #region Snippet_0
@@ -100,7 +100,7 @@ namespace docs
                 Dictionary<string, string> strs = new Dictionary<string, string>();
                 strs["ConsoleApp1.MyController:Error"] = "Error (Code=0x{0:X8})";
                 // Create asset
-                IAsset asset = new LocalizationStringAsset(strs);
+                IAsset asset = new LocalizationStringAsset(strs, AssetKeyNameProvider.Default);
                 // Create root
                 IAssetRoot root = new LocalizationRoot(asset);
                 #endregion Snippet_6a

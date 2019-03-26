@@ -11,9 +11,9 @@ namespace docs
             {
                 #region Snippet_1a
                 // Create localization source
-                var source = new Dictionary<string, string> { { "en:MyController:hello", "Hello World!" } };
+                var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
                 // Create asset
-                IAsset asset = new LocalizationStringAsset(source);
+                IAsset asset = new LocalizationStringAsset(source, ParameterNamePolicy.Instance);
                 // Create culture policy
                 ICulturePolicy culturePolicy = new CulturePolicy();
                 // Create root
@@ -35,9 +35,9 @@ namespace docs
 
             {
                 // Create localization source
-                var source = new Dictionary<string, string> { { "en:Section:Key", "Hello World!" } };
+                var source = new Dictionary<string, string> { { "Culture:en:Section:Section:Key:Key", "Hello World!" } };
                 // Create asset
-                IAsset asset = new LocalizationStringAsset(source);
+                IAsset asset = new LocalizationStringAsset(source, ParameterNamePolicy.Instance);
                 #region Snippet_5x
                 // Create reference
                 IAssetKey key = new LocalizationKey._Section(null, "Section").Key("Key");
@@ -54,9 +54,9 @@ namespace docs
 
                 #region Snippet_2b
                 // Create localization source
-                var source = new Dictionary<string, string> { { "en:MyController:hello", "Hello World!" } };
+                var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
                 // Create asset
-                IAsset asset = new LocalizationStringAsset(source);
+                IAsset asset = new LocalizationStringAsset(source, ParameterNamePolicy.Instance);
                 // Assets are added to global static builder. It must be (re-)built after adding.
                 LocalizationRoot.Builder.AddAsset(asset).Build();
                 #endregion Snippet_2b

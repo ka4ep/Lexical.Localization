@@ -207,19 +207,17 @@ namespace Lexical.Localization
         /// Lines are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="hintSource"></param>
         /// <returns></returns>
-        public static IAsset ToAsset(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, string hintSource = null)
-            => new LocalizationAsset().AddKeyLinesSource(lines, hintSource).Load();
+        public static IAsset ToAsset(this IEnumerable<KeyValuePair<IAssetKey, string>> lines)
+            => new LocalizationAsset().AddSource(lines).Load();
 
         /// <summary>
         /// Convert <paramref name="lines"/> to <see cref="IAssetSource"/>..
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="sourceHint">(optional)</param>
         /// <returns></returns>
-        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, string sourceHint = null)
-            => new LocalizationKeyLinesSource(lines, sourceHint);
+        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<IAssetKey, string>> lines)
+            => new LocalizationKeyLinesSource(lines);
 
         /// <summary>
         /// Convert to dictionary.

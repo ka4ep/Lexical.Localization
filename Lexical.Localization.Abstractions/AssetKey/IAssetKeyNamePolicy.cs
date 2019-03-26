@@ -111,5 +111,19 @@ namespace Lexical.Localization
             return false;
         }
 
+        /// <summary>
+        /// Parse string into key.
+        /// </summary>
+        /// <param name="policy"></param>
+        /// <param name="str"></param>
+        /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <returns>Key or null</returns>
+        public static IAssetKey TryParse(this IAssetKeyNamePolicy policy, string str, IAssetKey rootKey = default)
+        {
+            IAssetKey key;
+            if (policy is IAssetKeyNameParser parser && parser.TryParse(str, out key, rootKey)) return key;
+            return null;
+        }
+
     }
 }

@@ -6,7 +6,7 @@ Sources are typically files, embedded resources, and plain code.
 // Language string source
 Dictionary<string, string> src = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
 // Create Asset
-IAsset asset = new LocalizationStringAsset(src);
+IAsset asset = new LocalizationStringAsset(src, AssetKeyNameProvider.Default);
 ```
 
 IAsset is the root interface for assets. It serves as a signal that the implementing class has further asset features.

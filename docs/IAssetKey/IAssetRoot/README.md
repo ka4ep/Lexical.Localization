@@ -6,9 +6,9 @@ Root is the place where asset (the localization provider) is tied to key (locali
 
 ```csharp
 // Create localization source
-var source = new Dictionary<string, string> { { "en:MyController:hello", "Hello World!" } };
+var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
 // Create asset
-IAsset asset = new LocalizationStringAsset(source);
+IAsset asset = new LocalizationStringAsset(source, ParameterNamePolicy.Instance);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
@@ -49,9 +49,9 @@ StringLocalizerRoot is constructed with an asset and a culture policy, just as L
 
 ```csharp
 // Create localization source
-var source = new Dictionary<string, string> { { "en:MyController:hello", "Hello World!" } };
+var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
 // Create asset
-IAsset asset = new LocalizationStringAsset(source);
+IAsset asset = new LocalizationStringAsset(source, ParameterNamePolicy.Instance);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
@@ -132,9 +132,9 @@ Assets are added to the global root with **LocalizationRoot.Builder**.
 
 ```csharp
 // Create localization source
-var source = new Dictionary<string, string> { { "en:MyController:hello", "Hello World!" } };
+var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
 // Create asset
-IAsset asset = new LocalizationStringAsset(source);
+IAsset asset = new LocalizationStringAsset(source, ParameterNamePolicy.Instance);
 // Assets are added to global static builder. It must be (re-)built after adding.
 LocalizationRoot.Builder.AddAsset(asset).Build();
 ```

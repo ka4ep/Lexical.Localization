@@ -12,7 +12,7 @@ namespace docs
                 // Language string source
                 Dictionary<string, string> src = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
                 // Create Asset
-                IAsset asset = new LocalizationStringAsset(src);
+                IAsset asset = new LocalizationStringAsset(src, AssetKeyNameProvider.Default);
                 #endregion Snippet_1
 
                 #region Snippet_2

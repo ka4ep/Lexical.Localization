@@ -51,15 +51,15 @@ namespace Lexical.Localization
                 src.Build(list);
 
             // Build one asset for each <see cref="ILocalizationStringLinesSource"/> that share <see cref="IAssetKeyNamePolicy"/>.
-            Dictionary<IAssetKeyNamePolicy, LoadableLocalizationStringAsset> keyLinesAssetMap = null;
+            Dictionary<IAssetKeyNamePolicy, LocalizationStringAsset> keyLinesAssetMap = null;
             foreach (IAssetSource src in sources.Where(s => s is ILocalizationStringLinesSource))
             {
                 ILocalizationStringLinesSource lineSrc = (ILocalizationStringLinesSource)src;
-                if (keyLinesAssetMap == null) keyLinesAssetMap = new Dictionary<IAssetKeyNamePolicy, LoadableLocalizationStringAsset>();
-                LoadableLocalizationStringAsset _asset = null;
-                IAssetKeyNamePolicy policy = lineSrc.NamePolicy ?? LoadableLocalizationStringAsset.DefaultPolicy;
-                if (!keyLinesAssetMap.TryGetValue(policy, out _asset)) keyLinesAssetMap[policy] = _asset = new LoadableLocalizationStringAsset(policy);
-                _asset.AddLineStringSource(lineSrc, lineSrc.SourceHint);
+                if (keyLinesAssetMap == null) keyLinesAssetMap = new Dictionary<IAssetKeyNamePolicy, LocalizationStringAsset>();
+                LocalizationStringAsset _asset = null;
+                IAssetKeyNamePolicy policy = lineSrc.NamePolicy ?? ParameterNamePolicy.Instance;
+                if (!keyLinesAssetMap.TryGetValue(policy, out _asset)) keyLinesAssetMap[policy] = _asset = new LocalizationStringAsset(policy);
+                _asset.AddSource(lineSrc);
             }
             if (keyLinesAssetMap != null)
                 foreach (var _asset in keyLinesAssetMap.Values)
@@ -70,7 +70,7 @@ namespace Lexical.Localization
             foreach (IAssetSource src in sources.Where(s => s is ILocalizationKeyLinesSource))
             {
                 if (__asset == null) __asset = new LocalizationAsset();
-                __asset.AddKeyLinesSource((ILocalizationKeyLinesSource)src);
+                __asset.AddSource((ILocalizationKeyLinesSource)src);
             }
             if (__asset != null) list.Add(__asset.Load());
 

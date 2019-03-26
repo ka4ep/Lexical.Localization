@@ -10,8 +10,8 @@ namespace docs
         {
             #region Snippet
             // Create asset
-            var source = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-            IAsset asset = new LocalizationStringAsset(source);
+            var source = new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } };
+            IAsset asset = new LocalizationStringAsset(source, ParameterNamePolicy.Instance);
 
             // Cache it
             asset = asset.CreateCache();

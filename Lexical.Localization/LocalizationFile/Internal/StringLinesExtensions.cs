@@ -49,17 +49,16 @@ namespace Lexical.Localization.Internal
         /// <param name="lines"></param>
         /// <returns></returns>
         public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
-            => new LoadableLocalizationStringAsset(policy).AddLineStringSource(lines).Load();
+            => new LocalizationStringAsset(policy).AddSource(lines).Load();
 
         /// <summary>
         /// Convert <paramref name="lines"/> to <see cref="IAssetSource"/>.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="policy"></param>
-        /// <param name="sourceHint">(optional)</param>
         /// <returns></returns>
-        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy, string sourceHint = null)
-            => new LocalizationStringLinesSource(lines, policy, sourceHint);
+        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
+            => new LocalizationStringLinesSource(lines, policy);
 
         /// <summary>
         /// Add prefix parameters to each key.

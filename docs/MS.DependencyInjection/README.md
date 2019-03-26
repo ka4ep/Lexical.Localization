@@ -26,9 +26,9 @@ Assets are contributed to the service provider by adding *IAssetSource*s.
 
 ```csharp
 // Create localization source
-var source = new Dictionary<string, string> { { "en:ConsoleApp1.MyController:Hello", "Hello World!" } };
+var source = new Dictionary<string, string> { { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" } };
 // Create asset source
-IAssetSource assetSource = new LocalizationStringAsset(source).ToSource();
+IAssetSource assetSource = new LocalizationStringAsset(source, ParameterNamePolicy.Instance).ToSource();
 // Add asset source
 serviceCollection.AddSingleton<IAssetSource>(assetSource);
 ```
@@ -76,9 +76,9 @@ namespace docs
                 addCache: true);
 
             // Create localization source
-            var source = new Dictionary<string, string> { { "en:ConsoleApp1.MyController:Hello", "Hello World!" } };
+            var source = new Dictionary<string, string> { { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" } };
             // Create asset source
-            IAssetSource assetSource = new LocalizationStringAsset(source).ToSource();
+            IAssetSource assetSource = new LocalizationStringAsset(source, ParameterNamePolicy.Instance).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 
@@ -123,10 +123,10 @@ serviceCollection.AddLexicalLocalization(
 
 // Create localization source
 var source = new Dictionary<string, string> {
-    { "en:ConsoleApp1.MyController:Hello", "Hello World!" }
+    { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" }
 };
 // Create asset source
-IAssetSource assetSource = new LocalizationStringAsset(source).ToSource();
+IAssetSource assetSource = new LocalizationStringAsset(source, ParameterNamePolicy.Instance).ToSource();
 // Add asset source
 serviceCollection.AddSingleton<IAssetSource>(assetSource);
 
@@ -173,10 +173,10 @@ namespace docs
 
             // Create localization source
             var source = new Dictionary<string, string> {
-                { "en:ConsoleApp1.MyController:Hello", "Hello World!" }
+                { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" }
             };
             // Create asset source
-            IAssetSource assetSource = new LocalizationStringAsset(source).ToSource();
+            IAssetSource assetSource = new LocalizationStringAsset(source, ParameterNamePolicy.Instance).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 

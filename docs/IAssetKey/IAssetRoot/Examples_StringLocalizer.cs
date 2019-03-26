@@ -11,9 +11,9 @@ namespace docs
         {
             #region Snippet_1
             // Create localization source
-            var source = new Dictionary<string, string> { { "en:MyController:hello", "Hello World!" } };
+            var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
             // Create asset
-            IAsset asset = new LocalizationStringAsset(source);
+            IAsset asset = new LocalizationStringAsset(source, ParameterNamePolicy.Instance);
             // Create culture policy
             ICulturePolicy culturePolicy = new CulturePolicy();
             // Create root

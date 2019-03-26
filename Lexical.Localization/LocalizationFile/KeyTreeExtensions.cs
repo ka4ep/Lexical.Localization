@@ -62,10 +62,9 @@ namespace Lexical.Localization
         /// Trees are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="tree"></param>
-        /// <param name="hintSource"></param>
         /// <returns></returns>
-        public static IAsset ToAsset(this IKeyTree tree, string hintSource = null)
-            => new LocalizationAsset().AddKeyTreeSource(tree, hintSource).Load();
+        public static IAsset ToAsset(this IKeyTree tree)
+            => new LocalizationAsset().AddSource(tree).Load();
 
         /// <summary>
         /// Create an asset that uses <paramref name="trees"/>.
@@ -73,28 +72,25 @@ namespace Lexical.Localization
         /// Trees are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="trees"></param>
-        /// <param name="hintSource"></param>
         /// <returns></returns>
-        public static IAsset ToAsset(this IEnumerable<IKeyTree> trees, string hintSource = null)
-            => new LocalizationAsset().AddKeyTreeSource(trees, hintSource).Load();
+        public static IAsset ToAsset(this IEnumerable<IKeyTree> trees)
+            => new LocalizationAsset().AddSource(trees).Load();
 
         /// <summary>
         /// Convert <paramref name="tree"/> to <see cref="IAssetSource"/>..
         /// </summary>
         /// <param name="tree"></param>
-        /// <param name="sourceHint">(optional)</param>
         /// <returns></returns>
-        public static IAssetSource ToAssetSource(IKeyTree tree, string sourceHint = null)
-            => new LocalizationKeyLinesSource(tree.ToKeyLines(), sourceHint);
+        public static IAssetSource ToAssetSource(IKeyTree tree)
+            => new LocalizationKeyLinesSource(tree.ToKeyLines());
 
         /// <summary>
         /// Convert <paramref name="trees"/> to <see cref="IAssetSource"/>..
         /// </summary>
         /// <param name="trees"></param>
-        /// <param name="sourceHint">(optional)</param>
         /// <returns></returns>
-        public static IAssetSource ToAssetSource(this IEnumerable<IKeyTree> trees, string sourceHint = null)
-            => new LocalizationKeyLinesSource(trees.SelectMany(tree => tree.ToKeyLines()), sourceHint);
+        public static IAssetSource ToAssetSource(this IEnumerable<IKeyTree> trees)
+            => new LocalizationKeyLinesSource(trees.SelectMany(tree => tree.ToKeyLines()));
 
         /// <summary>
         /// Search child by key.

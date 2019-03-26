@@ -23,7 +23,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!" }
                 };
                 // Create asset with culture policy
-                IAsset asset = new LocalizationStringAsset(source);
+                IAsset asset = new LocalizationStringAsset(source, AssetKeyNameProvider.Default);
                 // Create root and assign culturePolicy
                 IAssetRoot root = new LocalizationRoot(asset, culturePolicy);
                 #endregion Snippet_1

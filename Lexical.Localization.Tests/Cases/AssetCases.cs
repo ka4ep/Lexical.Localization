@@ -106,10 +106,10 @@ namespace Lexical.Localization.Tests
             composition.AddStrings(languageStrings_en, AssetKeyNameProvider.Default);
             composition.AddStrings(languageStrings_fi, AssetKeyNameProvider.Default);
             composition.AddStrings(languageStrings_fi_savo, AssetKeyNameProvider.Default);
-            composition.AddDictionary(res, AssetKeyNameProvider.Default);
-            composition.AddDictionary(res_en, AssetKeyNameProvider.Default);
-            composition.AddDictionary(res_fi, AssetKeyNameProvider.Default);
-            composition.AddDictionary(res_fi_savo, AssetKeyNameProvider.Default);
+            composition.AddResources(res, AssetKeyNameProvider.Default);
+            composition.AddResources(res_en, AssetKeyNameProvider.Default);
+            composition.AddResources(res_fi, AssetKeyNameProvider.Default);
+            composition.AddResources(res_fi_savo, AssetKeyNameProvider.Default);
 
             // Asset composition
             IAsset asset = composition;
@@ -134,10 +134,10 @@ namespace Lexical.Localization.Tests
             builder.AddStrings(languageStrings_en, AssetKeyNameProvider.Default);
             builder.AddStrings(languageStrings_fi, AssetKeyNameProvider.Default);
             builder.AddStrings(languageStrings_fi_savo, AssetKeyNameProvider.Default);
-            builder.AddDictionary(res, AssetKeyNameProvider.Default);
-            builder.AddDictionary(res_en, AssetKeyNameProvider.Default);
-            builder.AddDictionary(res_fi, AssetKeyNameProvider.Default);
-            builder.AddDictionary(res_fi_savo, AssetKeyNameProvider.Default);
+            builder.AddResources(res, AssetKeyNameProvider.Default);
+            builder.AddResources(res_en, AssetKeyNameProvider.Default);
+            builder.AddResources(res_fi, AssetKeyNameProvider.Default);
+            builder.AddResources(res_fi_savo, AssetKeyNameProvider.Default);
 
             // Build asset composition
             IAsset asset = builder.Build();
@@ -162,10 +162,10 @@ namespace Lexical.Localization.Tests
             builder.AddStrings(languageStrings_en, AssetKeyNameProvider.Default);
             builder.AddStrings(languageStrings_fi, AssetKeyNameProvider.Default);
             builder.AddStrings(languageStrings_fi_savo, AssetKeyNameProvider.Default);
-            builder.AddDictionary(res, AssetKeyNameProvider.Default);
-            builder.AddDictionary(res_en, AssetKeyNameProvider.Default);
-            builder.AddDictionary(res_fi, AssetKeyNameProvider.Default);
-            builder.AddDictionary(res_fi_savo, AssetKeyNameProvider.Default);
+            builder.AddResources(res, AssetKeyNameProvider.Default);
+            builder.AddResources(res_en, AssetKeyNameProvider.Default);
+            builder.AddResources(res_fi, AssetKeyNameProvider.Default);
+            builder.AddResources(res_fi_savo, AssetKeyNameProvider.Default);
 
             // Build asset composition
             IAsset asset = builder.Build();
