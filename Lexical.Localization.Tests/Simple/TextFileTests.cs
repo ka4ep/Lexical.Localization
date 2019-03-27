@@ -18,7 +18,7 @@ namespace Lexical.Localization.Tests
             IAssetKey key = LocalizationRoot.Global.Culture("en").Type("ConsoleApp1.MyController").Key("Success");
 
             // Act
-            IAsset asset = IniLocalizationReader.Instance.EmbeddedAsset(GetType().Assembly, filename);
+            IAsset asset = LocalizationIniReader.Instance.EmbeddedAsset(GetType().Assembly, filename);
 
             // Assert
             Assert.AreEqual("Success", asset.GetString(key));
@@ -28,7 +28,7 @@ namespace Lexical.Localization.Tests
         public void ReadJsonFile()
         {
             // Arrange
-            ILocalizationFileFormat fileformat = JsonLocalizationReader.Instance;
+            ILocalizationFileFormat fileformat = LocalizationJsonReader.Instance;
             string filename = "Lexical.Localization.Tests.localization.json";
             IAssetKey key = LocalizationRoot.Global.Culture("en").Type("ConsoleApp1.MyController").Key("Success");
 
@@ -45,7 +45,7 @@ namespace Lexical.Localization.Tests
         public void ReadXmlFile()
         {
             // Arrange
-            ILocalizationFileFormat fileformat = XmlLocalizationReader.Instance;
+            ILocalizationFileFormat fileformat = LocalizationXmlReader.Instance;
             string filename = "Lexical.Localization.Tests.localization.xml";
             IAssetKey key = LocalizationRoot.Global.Culture("en").Type("ConsoleApp1.MyController").Key("Success");
 
@@ -62,7 +62,7 @@ namespace Lexical.Localization.Tests
         public void ReadResXFile()
         {
             // Arrange
-            ILocalizationFileFormat fileformat = ResXLocalizationReader.Instance;
+            ILocalizationFileFormat fileformat = LocalizationResxReader.Instance;
             Dictionary<string, string> param = new Dictionary<string, string> { { "Culture", "en" } };  
 
             // .resx file property must be set to "Copy to output directory" = "Copy Always"

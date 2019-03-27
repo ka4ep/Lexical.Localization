@@ -46,6 +46,7 @@ namespace Lexical.Localization
             return tree;
         }
 
+        // TODO "Root" key part is added, remove this
         /// <summary>
         /// Add lines of key,value pairs to tree. Lines will be added as flat first level nodes
         /// </summary>
@@ -89,7 +90,7 @@ namespace Lexical.Localization
         public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetNamePattern groupingRule) // Todo separate to sortRule + groupingRule
         {
             // Use another method
-            if (groupingRule == null) { node.AddRange(lines); return node; }
+            //if (groupingRule == null) { node.AddRange(lines); return node; }
 
             StructList16<Parameter> parameters = new StructList16<Parameter>(null);
             foreach (var line in lines)
@@ -122,60 +123,63 @@ namespace Lexical.Localization
                 List<IAssetKey> key_levels = new List<IAssetKey>();
                 // Visit both lists concurrently
                 Parameter next_parameter = default;
-                foreach (var part in groupingRule.AllParts)
+                if (groupingRule != null)
                 {
-                    // Is not a capture part
-                    if (part.CaptureIndex < 0)
+                    foreach (var part in groupingRule.AllParts)
                     {
-                        // Non-capture part has "/", go to next level. eg. "{nn}/{nn}"
-                        if (part.Text != null && part.Text.Contains("/")) { if (levelKey != null) key_levels.Add(levelKey); levelKey = null; }
-                        // Next part
-                        continue;
-                    }
-                    // Capture part has "/" in prefix, start next level
-                    if (levelKey != null && part.PrefixSeparator.Contains("/")) { if (levelKey != null) key_levels.Add(levelKey); levelKey = null; }
-
-                    // Look ahead to see if there is a parameter that matches this capture part
-                    int next_parameter_ix = -1;
-                    for (int ix = 0; ix < parameters.Count; ix++)
-                    {
-                        // Copy 
-                        next_parameter = parameters[ix];
-                        // Already added before
-                        if (next_parameter.isUnused) continue;
-                        // Get name
-                        string parameter_name = next_parameter.parameterName;
-                        // Parameter matches the name in the pattern's capture part
-                        if (parameter_name == part.ParameterName) { next_parameter_ix = ix; break; }
-                        // Matches with "anysection"
-                        IParameterInfo info;
-                        if (part.ParameterName == "anysection" && ParameterInfos.Default.TryGetValue(parameter_name, out info) && info.IsSection) { next_parameter_ix = ix; break; }
-                    }
-                    // No matching parameter for this capture part
-                    if (next_parameter_ix < 0) continue;
-
-                    // This part is canonical.
-                    if (next_parameter.isCanonical)
-                    {
-                        // There (may be) are other canonical parts between part_ix and next_part_is. We have to add them here.
-                        for (int ix = 0; ix < next_parameter_ix; ix++)
+                        // Is not a capture part
+                        if (part.CaptureIndex < 0)
                         {
-                            // Copy
-                            Parameter parameter = parameters[ix];
-                            // Has been added before
-                            if (parameter.isUnused || !parameter.isCanonical) continue;
-                            // Append to level's key
-                            levelKey = parameter.CreateKey(levelKey);
-                            // Mark handled
-                            parameters[ix] = Parameter.Unused;
+                            // Non-capture part has "/", go to next level. eg. "{nn}/{nn}"
+                            if (part.Text != null && part.Text.Contains("/")) { if (levelKey != null) key_levels.Add(levelKey); levelKey = null; }
+                            // Next part
+                            continue;
                         }
+                        // Capture part has "/" in prefix, start next level
+                        if (levelKey != null && part.PrefixSeparator.Contains("/")) { if (levelKey != null) key_levels.Add(levelKey); levelKey = null; }
+
+                        // Look ahead to see if there is a parameter that matches this capture part
+                        int next_parameter_ix = -1;
+                        for (int ix = 0; ix < parameters.Count; ix++)
+                        {
+                            // Copy 
+                            next_parameter = parameters[ix];
+                            // Already added before
+                            if (next_parameter.isUnused) continue;
+                            // Get name
+                            string parameter_name = next_parameter.parameterName;
+                            // Parameter matches the name in the pattern's capture part
+                            if (parameter_name == part.ParameterName) { next_parameter_ix = ix; break; }
+                            // Matches with "anysection"
+                            IParameterInfo info;
+                            if (part.ParameterName == "anysection" && ParameterInfos.Default.TryGetValue(parameter_name, out info) && info.IsSection) { next_parameter_ix = ix; break; }
+                        }
+                        // No matching parameter for this capture part
+                        if (next_parameter_ix < 0) continue;
+
+                        // This part is canonical.
+                        if (next_parameter.isCanonical)
+                        {
+                            // There (may be) are other canonical parts between part_ix and next_part_is. We have to add them here.
+                            for (int ix = 0; ix < next_parameter_ix; ix++)
+                            {
+                                // Copy
+                                Parameter parameter = parameters[ix];
+                                // Has been added before
+                                if (parameter.isUnused || !parameter.isCanonical) continue;
+                                // Append to level's key
+                                levelKey = parameter.CreateKey(levelKey);
+                                // Mark handled
+                                parameters[ix] = Parameter.Unused;
+                            }
+                        }
+                        // Append to level's key
+                        levelKey = next_parameter.CreateKey(levelKey);
+                        // Mark handled
+                        parameters[next_parameter_ix] = Parameter.Unused;
+                        // Yield level
+                        if (part.PostfixSeparator.Contains("/")) { key_levels.Add(levelKey); levelKey = null; }
                     }
-                    // Append to level's key
-                    levelKey = next_parameter.CreateKey(levelKey);
-                    // Mark handled
-                    parameters[next_parameter_ix] = Parameter.Unused;
-                    // Yield level
-                    if (part.PostfixSeparator.Contains("/")) { key_levels.Add(levelKey); levelKey = null; }
                 }
 
                 // Append rest of the parameters

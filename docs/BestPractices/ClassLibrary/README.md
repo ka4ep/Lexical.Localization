@@ -152,7 +152,7 @@ Application that deploys the class library can supply additional localizations b
 
 ```csharp
 // Install additional localization that was not available in the TutorialLibrary
-IAssetSource source = XmlLocalizationReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
+IAssetSource source = LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
 LocalizationRoot.Builder.AddSource(source).Build();
 
 MyClass myClass = new MyClass();
@@ -181,7 +181,7 @@ namespace TutorialProject1
         {
             #region Snippet
             // Install additional localization that was not available in the TutorialLibrary
-            IAssetSource source = XmlLocalizationReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
+            IAssetSource source = LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
             LocalizationRoot.Builder.AddSource(source).Build();
 
             MyClass myClass = new MyClass();

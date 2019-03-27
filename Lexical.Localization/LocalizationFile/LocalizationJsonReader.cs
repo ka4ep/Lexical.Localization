@@ -20,20 +20,20 @@ namespace Lexical.Localization
     /// <summary>
     /// Class that reads ".json" localization files.
     /// </summary>
-    public class JsonLocalizationReader : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
+    public class LocalizationJsonReader : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
     {
-        private readonly static JsonLocalizationReader instance = new JsonLocalizationReader();
-        public static JsonLocalizationReader Instance => instance;
+        private readonly static LocalizationJsonReader instance = new LocalizationJsonReader();
+        public static LocalizationJsonReader Instance => instance;
 
         protected ParameterNamePolicy namePolicy = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:\"");
 
         public string Extension { get; protected set; }
 
-        public JsonLocalizationReader() : this("json")
+        public LocalizationJsonReader() : this("json")
         {
         }
 
-        public JsonLocalizationReader(string ext)
+        public LocalizationJsonReader(string ext)
         {
             this.Extension = ext;
         }

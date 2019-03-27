@@ -9,6 +9,7 @@ using System.IO;
 
 namespace Lexical.Localization
 {
+    #region Interface
     /// <summary>
     /// Flags for write operation to localization files.
     /// </summary>
@@ -204,5 +205,5 @@ namespace Lexical.Localization
         /// <exception cref="IOException"></exception>
         void WriteKeyTree(IKeyTree tree, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, LocalizationFileWriteFlags flags);
     }
-
+    #endregion Interface
 }

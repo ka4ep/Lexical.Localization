@@ -17,14 +17,14 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that reads Microsoft's binary ".resx" files as key,value lines.
     /// </summary>
-    public class ResXLocalizationReader : ILocalizationFileFormat, ILocalizationStringLinesStreamReader, ILocalizationStringLinesTextReader
+    public class LocalizationResxReader : ILocalizationFileFormat, ILocalizationStringLinesStreamReader, ILocalizationStringLinesTextReader
     {
-        private readonly static ResXLocalizationReader instance = new ResXLocalizationReader();
-        public static ResXLocalizationReader Instance => instance;
+        private readonly static LocalizationResxReader instance = new LocalizationResxReader();
+        public static LocalizationResxReader Instance => instance;
         public string Extension { get; protected set; }
 
-        public ResXLocalizationReader() : this("resx") { }
-        public ResXLocalizationReader(string ext) {
+        public LocalizationResxReader() : this("resx") { }
+        public LocalizationResxReader(string ext) {
             this.Extension = ext;
         }
 

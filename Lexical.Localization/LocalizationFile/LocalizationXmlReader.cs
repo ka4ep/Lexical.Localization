@@ -15,20 +15,20 @@ using System.Xml.Linq;
 
 namespace Lexical.Localization
 {
-    public class XmlLocalizationReader : ILocalizationFileFormat, ILocalizationKeyTreeStreamReader, ILocalizationKeyTreeTextReader
+    public class LocalizationXmlReader : ILocalizationFileFormat, ILocalizationKeyTreeStreamReader, ILocalizationKeyTreeTextReader
     {
         public static readonly XNamespace NsDefault = "urn:lexical.fi";
         public static readonly XName NameLine = NsDefault + "Line";
         public static readonly XName NameRoot = NsDefault + "Localization";
         public const string URN_ = "urn:lexical.fi:";
 
-        private readonly static XmlLocalizationReader instance = new XmlLocalizationReader("xml");
-        public static XmlLocalizationReader Instance => instance;
+        private readonly static LocalizationXmlReader instance = new LocalizationXmlReader("xml");
+        public static LocalizationXmlReader Instance => instance;
         public string Extension { get; protected set; }
 
-        public XmlLocalizationReader() : this("xml") { }
+        public LocalizationXmlReader() : this("xml") { }
 
-        public XmlLocalizationReader(string extension)
+        public LocalizationXmlReader(string extension)
         {
             this.Extension = extension;
         }

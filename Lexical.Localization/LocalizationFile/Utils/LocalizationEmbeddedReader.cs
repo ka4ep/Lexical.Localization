@@ -43,7 +43,7 @@ namespace Lexical.Localization.Utils
             {
                 using (Stream s = Asm.GetManifestResourceStream(ResourceName))
                 {
-                    if (!ThrowIfNotFound && s==null) return empty.GetEnumerator();
+                    if (s == null) return !ThrowIfNotFound ? empty.GetEnumerator() : throw new FileNotFoundException(ResourceName);
                     return FileFormat.ReadStringLines(s, NamePolicy).GetEnumerator();
                 }
             }
@@ -72,7 +72,7 @@ namespace Lexical.Localization.Utils
             {
                 using (Stream s = Asm.GetManifestResourceStream(ResourceName))
                 {
-                    if (!ThrowIfNotFound && s == null) return empty.GetEnumerator();
+                    if (s == null) return !ThrowIfNotFound ? empty.GetEnumerator() : throw new FileNotFoundException(ResourceName);
                     return FileFormat.ReadKeyLines(s, NamePolicy).GetEnumerator();
                 }
             }
@@ -101,7 +101,7 @@ namespace Lexical.Localization.Utils
             {
                 using (Stream s = Asm.GetManifestResourceStream(ResourceName))
                 {
-                    if (!ThrowIfNotFound && s == null) return empty.GetEnumerator();
+                    if (s == null) return !ThrowIfNotFound ? empty.GetEnumerator() : throw new FileNotFoundException(ResourceName);
                     IKeyTree tree = FileFormat.ReadKeyTree(s, NamePolicy);
                     if (tree == null) return empty.GetEnumerator();
                     return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();

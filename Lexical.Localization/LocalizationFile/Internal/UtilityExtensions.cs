@@ -86,10 +86,11 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Read content in <paramref name="s"/> and decode into string.
         /// </summary>
-        /// <param name="s"></param>
-        /// <returns>string reader that doesn't need disposing</returns>
+        /// <param name="s">(optional) stream to read</param>
+        /// <returns>string reader that doesn't need disposing or null</returns>
         public static TextReader ReadText(this Stream s)
         {
+            if (s == null) return null;
             using (var sr = new StreamReader(s, Encoding, true, 32 * 1024))
                 return new StringReader(sr.ReadToEnd());
         }

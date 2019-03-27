@@ -19,7 +19,7 @@ namespace TutorialLibrary3
             // Use file provider from dependency injection and search for an optional external localization source
             if (fileProvider != null)
             {
-                IAssetSource externalLocalizationSource = XmlLocalizationReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
+                IAssetSource externalLocalizationSource = LocalizationXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
                 Add(externalLocalizationSource);
             }
         }

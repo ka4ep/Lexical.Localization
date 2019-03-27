@@ -15,15 +15,15 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that reads Microsoft's binary ".resources" files as key,value lines.
     /// </summary>
-    public class ResourcesLocalizationReader : ILocalizationFileFormat, ILocalizationStringLinesStreamReader
+    public class LocalizationResourcesReader : ILocalizationFileFormat, ILocalizationStringLinesStreamReader
     {
-        private readonly static ResourcesLocalizationReader instance = new ResourcesLocalizationReader();
-        public static ResourcesLocalizationReader Instance => instance;
+        private readonly static LocalizationResourcesReader instance = new LocalizationResourcesReader();
+        public static LocalizationResourcesReader Instance => instance;
 
         public string Extension { get; protected set; }
 
-        public ResourcesLocalizationReader() : this("resources") { }
-        public ResourcesLocalizationReader(string ext)
+        public LocalizationResourcesReader() : this("resources") { }
+        public LocalizationResourcesReader(string ext)
         {
             this.Extension = ext;
         }

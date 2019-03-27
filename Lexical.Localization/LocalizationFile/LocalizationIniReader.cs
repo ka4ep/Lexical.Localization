@@ -24,14 +24,14 @@ namespace Lexical.Localization
     /// And second level is key-value pairs 'parameterName:parameterValue:.. = value'.
     /// Characters \:= and white-spaces are escaped.
     /// </summary>
-    public class IniLocalizationReader : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
+    public class LocalizationIniReader : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
     {
-        private readonly static IniLocalizationReader instance = new IniLocalizationReader();
+        private readonly static LocalizationIniReader instance = new LocalizationIniReader();
 
         /// <summary>
         /// Default instance of .ini localization reader.
         /// </summary>
-        public static IniLocalizationReader Instance => instance;
+        public static LocalizationIniReader Instance => instance;
 
         /// <summary>
         /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.
@@ -51,13 +51,13 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new ini file reader.
         /// </summary>
-        public IniLocalizationReader() : this("ini") { }
+        public LocalizationIniReader() : this("ini") { }
 
         /// <summary>
         /// Create new ini file reader.
         /// </summary>
         /// <param name="ext"></param>
-        public IniLocalizationReader(string ext)
+        public LocalizationIniReader(string ext)
         {
             this.Extension = ext;
         }

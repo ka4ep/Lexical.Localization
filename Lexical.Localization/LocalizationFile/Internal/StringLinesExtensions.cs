@@ -39,7 +39,7 @@ namespace Lexical.Localization.Internal
         /// <param name="policy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
         /// <returns></returns>
         public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
-            => KeyTree.Create(lines.ToKeyLines(policy));
+            => KeyTree.Create(lines.ToKeyLines(policy), null);
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset.

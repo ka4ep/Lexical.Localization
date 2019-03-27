@@ -30,7 +30,7 @@ namespace TutorialLibrary3
             // Use file provider from dependency injection and search for an optional external localization source
             if (fileProvider != null)
             {
-                IAssetSource externalLocalizationSource = XmlLocalizationReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
+                IAssetSource externalLocalizationSource = LocalizationXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
                 Add(externalLocalizationSource);
             }
         }
@@ -228,7 +228,7 @@ CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
 Console.WriteLine(myClass1.Do());
 
 // Install additional localization that was not available in the TutorialLibrary.
-IAssetSource assetSource = XmlLocalizationReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml");
+IAssetSource assetSource = LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml");
 // Add to global localizer instance for the non-DI case
 StringLocalizerRoot.Builder.AddSource(assetSource).Build();
 // Add to local localizer instance for the DI case.
@@ -276,7 +276,7 @@ namespace TutorialProject3
             Console.WriteLine(myClass1.Do());
 
             // Install additional localization that was not available in the TutorialLibrary.
-            IAssetSource assetSource = XmlLocalizationReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml");
+            IAssetSource assetSource = LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml");
             // Add to global localizer instance for the non-DI case
             StringLocalizerRoot.Builder.AddSource(assetSource).Build();
             // Add to local localizer instance for the DI case.
@@ -337,7 +337,7 @@ Assembly library = typeof(MyClass).Assembly;
 services.AddLibraryAssetSources(library);
 
 // Install additional localization that was not available in the TutorialLibrary.
-services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml"));
+services.AddSingleton<IAssetSource>(LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml"));
 
 // Service MyClass
 services.AddTransient<MyClass, MyClass>();
@@ -388,7 +388,7 @@ namespace TutorialProject3
             services.AddLibraryAssetSources(library);
 
             // Install additional localization that was not available in the TutorialLibrary.
-            services.AddSingleton<IAssetSource>(XmlLocalizationReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml"));
+            services.AddSingleton<IAssetSource>(LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml"));
 
             // Service MyClass
             services.AddTransient<MyClass, MyClass>();

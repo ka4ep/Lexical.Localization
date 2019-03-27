@@ -37,12 +37,12 @@ namespace Lexical.Localization.Utils
         /// Create tree structure from source of flat key values.
         /// </summary>
         /// <param name="keyValues"></param>
-        /// <param name="parametrizer"></param>
+        /// <param name="groupingPolicy"></param>
         /// <returns>tree root ""</returns>
-        public static KeyTree Create(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues)
+        public static KeyTree Create(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues, IAssetNamePattern groupingPolicy)
         {
             KeyTree root = new KeyTree(Key.Root);
-            root.AddRange(keyValues);
+            root.AddRange(keyValues, groupingPolicy);
             return root;
         }
 
