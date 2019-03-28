@@ -32,10 +32,11 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.FormatException"></exception>
         public static uint ToUInt(String str, int startIndex = 0)
         {
-            HexEnumerator stream = new HexEnumerator(str.GetEnumerator());
-            for (int i=0; i<startIndex; i++)
-                if (!stream.MoveNext())
-                    throw new System.FormatException("End of stream before startIndex.");
+            CharEnumerator enumr = str.GetEnumerator();
+            for (int i = 0; i < startIndex; i++) 
+                if (!enumr.MoveNext())
+                throw new FormatException("End of stream before startIndex.");
+            HexEnumerator stream = new HexEnumerator(enumr);
 
             // Calculate hex character count
             int count = 0;
@@ -56,6 +57,7 @@ namespace Lexical.Localization.Internal
 
             // Restart
             stream.Reset();
+            for (int i = 0; i < startIndex; i++) enumr.MoveNext();
 
             // Too many characters
             if (meaningfulDigits >= 9) throw new System.FormatException("Hex value too large to fit into decimal.");

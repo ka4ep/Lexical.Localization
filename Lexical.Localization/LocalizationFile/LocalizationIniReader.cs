@@ -36,12 +36,17 @@ namespace Lexical.Localization
         /// <summary>
         /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.
         /// </summary>
-        protected ParameterNamePolicy escaper_section = new ParameterNamePolicy(":\n\t\r\0\a\b\f[]");
+        protected ParameterNamePolicy escaper_section = new ParameterNamePolicy("\\:[]");
 
         /// <summary>
         /// Escaper for key parts of .ini files. Escapes '\', ':', '=' characters and white-spaces.
         /// </summary>
-        protected ParameterNamePolicy escaper_key = new ParameterNamePolicy(":\n\t\r\0\a\b\f=");
+        protected ParameterNamePolicy escaper_key = new ParameterNamePolicy("\\:= ");
+
+        /// <summary>
+        /// Escaper for value parts of .ini files. Escapes '\', '{', '}' characters and white-spaces.
+        /// </summary>
+        protected IniEscape escaper_value = new IniEscape("\\");
 
         /// <summary>
         /// The file extension without dot "ini".
@@ -108,7 +113,7 @@ namespace Lexical.Localization
                         if (escaper_key.TryParse(token.KeyText, out key_))
                         {
                             IKeyTree current = key_ == null ? null : (section??root).GetOrCreate(key_);
-                            string value = token.Value;
+                            string value = escaper_value.UnescapeLiteral(token.ValueText);
                             if (value != null)
                             {
                                 int ix = current.Values.Count;

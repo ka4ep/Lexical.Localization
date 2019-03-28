@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,7 +20,7 @@ namespace Lexical.Localization
     public class ParameterParser
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
-        static ParameterParser instance = new ParameterParser("\n\t\r\0\a\b\f:");
+        static ParameterParser instance = new ParameterParser("\\:");
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
@@ -60,8 +61,8 @@ namespace Lexical.Localization
             // Regex.Escape doen't work for brackets []
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
             string escapeCharactersEscaped = escapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape(""+c)).Aggregate((a,b)=>a+b);
-            LiteralEscape = new Regex("[" + escapeCharactersEscaped + "]|(\\\\\\\\)", opts);
-            LiteralUnescape = new Regex(@"\\[" + escapeCharactersEscaped + "]", opts);
+            LiteralEscape = new Regex("\\\\{|\\\\}|[" + escapeCharactersEscaped + "]|[\\x00-\\x1f]", opts);
+            LiteralUnescape = new Regex("\\\\([0abtfnr " + escapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})", opts);
             escapeChar = EscapeChar;
             unescapeChar = UnescapeChar;
             _parameterVisitorIncludeRoot = parameterVisitorIncludeRoot;
@@ -289,41 +290,47 @@ namespace Lexical.Localization
 
         static String EscapeChar(Match m)
         {
-            if (m.Value == "\\\\") return m.Value;
-            char _ch = m.Value[0];
+            string s = m.Value;
+            if (s == "\\{" || s == "\\}") return s;
+            char _ch = s[0];
             switch (_ch)
             {
-                case '\0': return "\0";
-                case '\a': return "\a";
-                case '\b': return "\\";
-                case '\t': return "\t";
-                case '\f': return "\f";
-                case '\n': return "\n";
-                case '\r': return "\r";
-                default:
-                    return "\\" + _ch;
+                case '\\': return "\\\\";
+                case '\0': return "\\0";
+                case '\a': return "\\a";
+                case '\b': return "\\b";
+                case '\t': return "\\t";
+                case '\f': return "\\f";
+                case '\n': return "\\n";
+                case '\r': return "\\r";
             }
+            if (_ch < 32) return "\\x" + ((uint)_ch).ToString("X2", CultureInfo.InvariantCulture);
+            if (_ch >= 0xD800 && _ch <= 0xDFFF) return "\\u" + ((uint)_ch).ToString("X4", CultureInfo.InvariantCulture);
+            return "\\" + _ch;
         }
 
         static String UnescapeChar(Match m)
         {
-            string capture = m.Value;
-            char _ch = capture[1];
+            string s = m.Value;
+            if (s == "\\\\") return "\\";
+            if (s == "\\{" || s == "\\}" || s == "\\") return s;
+            char _ch = s[1];
             switch (_ch)
             {
                 case '0': return "\0";
                 case 'a': return "\a";
-                case 'b': return "\\";
+                case 'b': return "\b";
                 case 't': return "\t";
                 case 'f': return "\f";
                 case 'n': return "\n";
                 case 'r': return "\r";
-                case 'u':
-                    char ch = (char)Hex.ToUInt(capture, 2);
-                    return new string(ch, 1);
                 case 'x':
-                    char c = (char)Hex.ToUInt(capture, 2);
-                    return new string(c, 1);
+                case 'u':
+                    char ch = (char)Hex.ToUInt(s, 2);
+                    return new string(ch, 1);
+                case 'X':
+                    uint c = Hex.ToUInt(s, 2);
+                    return new string((char)(c >> 16), 1) + new string((char)(c & 0xffffU), 1);
                 default:
                     return new string(_ch, 1);
             }

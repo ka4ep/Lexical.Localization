@@ -6,6 +6,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -375,7 +376,7 @@ namespace Lexical.Localization.Internal
         }
 
         static Regex parser = new Regex(
-            @"(\[(?<section>(\\[^\r\n]|[^\]\n\r\\])*)\])|((;|#|//)(?<comment>[^\r\n]*))|((?<key>(\\[^\r\n]|[^;#=\\ \t\x0B\f\r\n])+)[ \t\x0B\f]*=[ \t\x0B\f]*(?<value>(\\[^\r\n]|[^\\\n\r])*))|(?<text>.+?)",
+            @"(\[(?<section>(\\[^\r\n]|[^\]\n\r\\])*)\])|((;|#|//)(?<comment>[^\r\n]*))|((?<key>(\\( |[^\r\n])|[^ \\=\r\n])+)[ \t\f]*=[ \t\f]*(?<value>(\\[^\r\n]|[^\\\n\r])*))|(?<text>.+?)",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
         /// <summary>
@@ -597,10 +598,10 @@ namespace Lexical.Localization.Internal
     public class IniEscape
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
-        static IniEscape comment = new IniEscape("\n\t\r\0\a\b\f");
-        static IniEscape section = new IniEscape("\n\t\r\0\a\b\f[]");
-        static IniEscape key = new IniEscape("\n\t\r\0\a\b\f=");
-        static IniEscape value = new IniEscape("\n\t\r\0\a\b\f");
+        static IniEscape comment = new IniEscape("\\");
+        static IniEscape section = new IniEscape("\\[]");
+        static IniEscape key = new IniEscape("\\= ");
+        static IniEscape value = new IniEscape("\\");
 
         /// <summary>
         /// Escape rules for comment text.
@@ -646,8 +647,8 @@ namespace Lexical.Localization.Internal
             // Regex.Escape doen't work for brackets []
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
             string escapeCharactersEscaped = escapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape("" + c)).Aggregate((a, b) => a + b);
-            LiteralEscape = new Regex("[" + escapeCharactersEscaped + "]|(\\\\\\\\)", opts);
-            LiteralUnescape = new Regex(@"\\[" + escapeCharactersEscaped + "]", opts);
+            LiteralEscape = new Regex("\\\\{|\\\\}|[" + escapeCharactersEscaped + "]|[\\x00-\\x1f]", opts);
+            LiteralUnescape = new Regex("\\\\([0abtfnr{} " + escapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})", opts);
             escapeChar = EscapeChar;
             unescapeChar = UnescapeChar;
             
@@ -674,10 +675,12 @@ namespace Lexical.Localization.Internal
         /// <returns></returns>
         static String EscapeChar(Match m)
         {
-            if (m.Value == "\\\\") return m.Value;
-            char _ch = m.Value[0];
+            string s = m.Value;
+            if (s == "\\{" || s == "\\}") return s;
+            char _ch = s[0];
             switch (_ch)
             {
+                case '\\': return "\\\\";
                 case '\0': return "\\0";
                 case '\a': return "\\a";
                 case '\b': return "\\b";
@@ -685,9 +688,10 @@ namespace Lexical.Localization.Internal
                 case '\f': return "\\f";
                 case '\n': return "\\n";
                 case '\r': return "\\r";
-                default:
-                    return "\\" + _ch;
             }
+            if (_ch < 32) return "\\x" + ((uint)_ch).ToString("X2", CultureInfo.InvariantCulture);
+            if (_ch >= 0xd800 && _ch<0xE000) return "\\u" + ((uint)_ch).ToString("X4", CultureInfo.InvariantCulture);
+            return "\\" + _ch;
         }
 
         /// <summary>
@@ -697,8 +701,10 @@ namespace Lexical.Localization.Internal
         /// <returns></returns>
         static String UnescapeChar(Match m)
         {
-            string capture = m.Value;
-            char _ch = capture[1];
+            string s = m.Value;
+            if (s == "\\\\") return "\\";
+            if (s == "\\{" || s == "\\}" || s == "\\") return s;
+            char _ch = s[1];
             switch (_ch)
             {
                 case '0': return "\0";
@@ -708,12 +714,13 @@ namespace Lexical.Localization.Internal
                 case 'f': return "\f";
                 case 'n': return "\n";
                 case 'r': return "\r";
-                case 'u':
-                    char ch = (char)Hex.ToUInt(capture, 2);
-                    return new string(ch, 1);
                 case 'x':
-                    char c = (char)Hex.ToUInt(capture, 2);
-                    return new string(c, 1);
+                case 'u':
+                    char ch = (char)Hex.ToUInt(s, 2);
+                    return new string(ch, 1);
+                case 'X':
+                    uint codepoint = Hex.ToUInt(s, 2);
+                    return new string((char)(codepoint >> 16), 1) + new string((char)(codepoint & 0xffffU), 1);
                 default:
                     return new string(_ch, 1);
             }

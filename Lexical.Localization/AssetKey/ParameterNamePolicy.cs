@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// </summary>
     public class ParameterNamePolicy : ParameterParser, IAssetKeyNameProvider, IAssetKeyNameParser
     {
-        static ParameterNamePolicy instance = new ParameterNamePolicy("\\\n\t\r\0\a\b\f:");
+        static ParameterNamePolicy instance = new ParameterNamePolicy("\\:");
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
@@ -78,7 +78,7 @@ namespace Lexical.Localization
                 result = result == null ? Key.Create(key, value) : result.AppendParameter(key, value);
             }
             resultKey = result;
-            return true;
+            return resultKey != null;
         }
 
 
