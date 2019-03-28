@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// </summary>
     public class ParameterNamePolicy : ParameterParser, IAssetKeyNameProvider, IAssetKeyNameParser
     {
-        static ParameterNamePolicy instance = new ParameterNamePolicy("\\:");
+        static ParameterNamePolicy instance = new ParameterNamePolicy("\\:", false);
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
@@ -27,7 +27,8 @@ namespace Lexical.Localization
         /// Create new string serializer
         /// </summary>
         /// <param name="escapeCharacters">list of characters that are to be escaped</param>
-        public ParameterNamePolicy(string escapeCharacters) : base(escapeCharacters)
+        /// <param name="escapeControlCharacters">Escape characters 0x00 - 0x1f</param>
+        public ParameterNamePolicy(string escapeCharacters, bool escapeControlCharacters) : base(escapeCharacters, escapeControlCharacters)
         {
         }
 

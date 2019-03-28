@@ -20,7 +20,7 @@ namespace Lexical.Localization
     public class ParameterParser
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
-        static ParameterParser instance = new ParameterParser("\\:");
+        static ParameterParser instance = new ParameterParser("\\:", false);
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
@@ -56,13 +56,20 @@ namespace Lexical.Localization
         /// Create new string serializer
         /// </summary>
         /// <param name="escapeCharacters">list of characters that are to be escaped</param>
-        public ParameterParser(string escapeCharacters)
+        /// <param name="escapeControlCharacters">Escape characters 0x00 - 0x1f</param>
+        public ParameterParser(string escapeCharacters, bool escapeControlCharacters)
         {
             // Regex.Escape doen't work for brackets []
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
             string escapeCharactersEscaped = escapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape(""+c)).Aggregate((a,b)=>a+b);
-            LiteralEscape = new Regex("\\\\{|\\\\}|[" + escapeCharactersEscaped + "]|[\\x00-\\x1f]", opts);
-            LiteralUnescape = new Regex("\\\\([0abtfnr " + escapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})", opts);
+            if (escapeControlCharacters)
+            {
+                LiteralEscape = new Regex("\\\\{|\\\\}|[" + escapeCharactersEscaped + "]|[\\x00-\\x1f]", opts);
+            } else
+            {
+                LiteralEscape = new Regex("\\\\{|\\\\}|[" + escapeCharactersEscaped + "]", opts);
+            }
+            LiteralUnescape = new Regex("\\\\([0abtfnr" + escapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})", opts);
             escapeChar = EscapeChar;
             unescapeChar = UnescapeChar;
             _parameterVisitorIncludeRoot = parameterVisitorIncludeRoot;
@@ -304,8 +311,8 @@ namespace Lexical.Localization
                 case '\n': return "\\n";
                 case '\r': return "\\r";
             }
-            if (_ch < 32) return "\\x" + ((uint)_ch).ToString("X2", CultureInfo.InvariantCulture);
-            if (_ch >= 0xD800 && _ch <= 0xDFFF) return "\\u" + ((uint)_ch).ToString("X4", CultureInfo.InvariantCulture);
+            if (_ch < 32) return "\\x" + ((uint)_ch).ToString("x2", CultureInfo.InvariantCulture);
+            //if (_ch >= 0xD800 && _ch <= 0xDFFF) return "\\u" + ((uint)_ch).ToString("x4", CultureInfo.InvariantCulture);
             return "\\" + _ch;
         }
 

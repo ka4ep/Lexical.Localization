@@ -25,7 +25,7 @@ namespace Lexical.Localization
         private readonly static LocalizationJsonReader instance = new LocalizationJsonReader();
         public static LocalizationJsonReader Instance => instance;
 
-        protected ParameterNamePolicy namePolicy = new ParameterNamePolicy("\n\t\r\0\a\b\f:\"");
+        protected ParameterNamePolicy namePolicy = new ParameterNamePolicy("\\:", false);
 
         public string Extension { get; protected set; }
 
