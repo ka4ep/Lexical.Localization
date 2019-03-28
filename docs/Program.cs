@@ -6,6 +6,7 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            LocalizationReader_Examples.Main(args);
             AssetKeyComparer_Examples.Main(args);
             IAssetKeyNameProvider_Examples.Main(args);
             IAssetKeyNamePolicy_Examples.Main(args);

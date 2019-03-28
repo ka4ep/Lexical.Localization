@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="localization.ini" />
     <None Remove="Resources\res.ConsoleApp1.MyController.Icon.Error" />
     <None Remove="Resources\res.ConsoleApp1.MyController.Icon.Success" />
     <None Remove="Resources\res.en.ConsoleApp1.MyController.Icon.Error" />
@@ -31,6 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="localization.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="TutorialLibrary3-en.xml" />
     <EmbeddedResource Include="TutorialLibrary2-en.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -111,10 +115,16 @@
     <None Update="Assets\localization.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="localization.ini">
+    <None Update="HelloWorld.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="HelloWorld.ini">
+    <None Update="localization.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="localization.resources">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="localization.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TutorialLibrary2-fi.xml">
@@ -166,6 +176,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="localization.resx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Update="TutorialLibrary3-en.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
