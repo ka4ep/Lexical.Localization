@@ -107,7 +107,7 @@ And into a tree.
 # Implementing
 <details>
   <summary><b>ILocalizationReader</b> is the root interface for localization writer classes. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../../../../Localization/Lexical.Localization.Abstractions/LocalizationFile/ILocalizationReader.cs#Interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/LocalizationFile/ILocalizationReader.cs#Interface)]
 </details>
 <br/>
 A class that implements **ILocalizationReader** must to implement one of its sub-interfaces. A one that best suits the underlying format.

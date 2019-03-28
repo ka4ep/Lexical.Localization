@@ -241,7 +241,7 @@ namespace docs
                 IAsset asset = LocalizationIniReader.Instance.FileAsset(
                     filename: "localization.ini",
                     throwIfNotFound: true);
-                #endregion Snippet_1a
+                #endregion Snippet_10a
             }
             {
                 #region Snippet_10b
@@ -250,7 +250,7 @@ namespace docs
                     assembly: asm,
                     resourceName: "docs.localization.ini",
                     throwIfNotFound: true);
-                #endregion Snippet_3b
+                #endregion Snippet_10b
             }
             {
                 #region Snippet_10c
@@ -259,14 +259,14 @@ namespace docs
                     fileProvider: fileProvider,
                     filepath: "localization.ini",
                     throwIfNotFound: true);
-                #endregion Snippet_1c
+                #endregion Snippet_10c
             }
             {
                 #region Snippet_10d
                 IAsset asset = LocalizationReaderMap.Instance.FileAsset(
                     filename: "localization.ini",
                     throwIfNotFound: true);
-                #endregion Snippet_1d
+                #endregion Snippet_10d
             }
 
             {
@@ -277,7 +277,7 @@ namespace docs
                         throwIfNotFound: true);
                 IAssetBuilder assetBuilder = new AssetBuilder().AddSource(assetSource);
                 IAsset asset = assetBuilder.Build();
-                #endregion Snippet_2a
+                #endregion Snippet_11a
             }
             {
                 #region Snippet_11b
@@ -287,7 +287,7 @@ namespace docs
                         assembly: asm,
                         resourceName: "docs.localization.ini",
                         throwIfNotFound: true);
-                #endregion Snippet_2b
+                #endregion Snippet_11b
             }
             {
                 #region Snippet_11c
@@ -297,14 +297,14 @@ namespace docs
                         fileProvider: fileProvider,
                         filepath: "localization.ini",
                         throwIfNotFound: true);
-                #endregion Snippet_2c
+                #endregion Snippet_11c
             }
             {
                 #region Snippet_11d
                 IAssetSource assetSource = LocalizationReaderMap.Instance.FileAssetSource(
                     filename: "localization.ini", 
                     throwIfNotFound: true);
-                #endregion Snippet_2d
+                #endregion Snippet_11d
             }
 
             {
@@ -346,10 +346,6 @@ namespace docs
             {
                 #region Snippet_18
                 #endregion Snippet_18
-            }
-            {
-                #region Snippet_19
-                #endregion Snippet_1
             }
             {
                 #region Snippet_30a
