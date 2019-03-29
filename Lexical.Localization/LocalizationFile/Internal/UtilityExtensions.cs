@@ -133,7 +133,9 @@ namespace Lexical.Localization.Internal
         public static void WriteText(this MemoryStream ms, TextWriter dstText)
         {
             ms.Position = 0L;
-            dstText.Write(Encoding.GetString(ms.GetBuffer()));
+            if (ms.Length > Int32.MaxValue) throw new InvalidOperationException("File over 2GB.");
+            byte[] data = ms.ToArray();
+            dstText.Write(Encoding.GetString(data, 0, (int) ms.Length));
             dstText.Flush();
         }
 

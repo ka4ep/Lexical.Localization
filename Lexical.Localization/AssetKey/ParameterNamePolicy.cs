@@ -32,7 +32,6 @@ namespace Lexical.Localization
         {
         }
 
-
         /// <summary>
         /// Parse string into IAssetKey.
         /// </summary>

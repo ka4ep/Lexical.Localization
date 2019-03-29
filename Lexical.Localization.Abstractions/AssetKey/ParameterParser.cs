@@ -56,6 +56,12 @@ namespace Lexical.Localization
         /// Create new string serializer
         /// </summary>
         /// <param name="escapeCharacters">list of characters that are to be escaped</param>
+        public ParameterParser(string escapeCharacters) : this(escapeCharacters, false) { }
+
+        /// <summary>
+        /// Create new string serializer
+        /// </summary>
+        /// <param name="escapeCharacters">list of characters that are to be escaped</param>
         /// <param name="escapeControlCharacters">Escape characters 0x00 - 0x1f</param>
         public ParameterParser(string escapeCharacters, bool escapeControlCharacters)
         {
@@ -64,10 +70,10 @@ namespace Lexical.Localization
             string escapeCharactersEscaped = escapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape(""+c)).Aggregate((a,b)=>a+b);
             if (escapeControlCharacters)
             {
-                LiteralEscape = new Regex("\\\\{|\\\\}|[" + escapeCharactersEscaped + "]|[\\x00-\\x1f]", opts);
+                LiteralEscape = new Regex("[" + escapeCharactersEscaped + "]|[\\x00-\\x1f]", opts);
             } else
             {
-                LiteralEscape = new Regex("\\\\{|\\\\}|[" + escapeCharactersEscaped + "]", opts);
+                LiteralEscape = new Regex("[" + escapeCharactersEscaped + "]", opts);
             }
             LiteralUnescape = new Regex("\\\\([0abtfnr" + escapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})", opts);
             escapeChar = EscapeChar;
@@ -298,7 +304,6 @@ namespace Lexical.Localization
         static String EscapeChar(Match m)
         {
             string s = m.Value;
-            if (s == "\\{" || s == "\\}") return s;
             char _ch = s[0];
             switch (_ch)
             {
@@ -319,8 +324,6 @@ namespace Lexical.Localization
         static String UnescapeChar(Match m)
         {
             string s = m.Value;
-            if (s == "\\\\") return "\\";
-            if (s == "\\{" || s == "\\}" || s == "\\") return s;
             char _ch = s[1];
             switch (_ch)
             {
@@ -331,6 +334,7 @@ namespace Lexical.Localization
                 case 'f': return "\f";
                 case 'n': return "\n";
                 case 'r': return "\r";
+                case '\\': return "\\";
                 case 'x':
                 case 'u':
                     char ch = (char)Hex.ToUInt(s, 2);
