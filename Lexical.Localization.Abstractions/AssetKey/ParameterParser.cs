@@ -75,7 +75,7 @@ namespace Lexical.Localization
             {
                 LiteralEscape = new Regex("[" + escapeCharactersEscaped + "]", opts);
             }
-            LiteralUnescape = new Regex("\\\\([0abtfnr" + escapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})", opts);
+            LiteralUnescape = new Regex("\\\\([0abtfnr " + escapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})", opts);
             escapeChar = EscapeChar;
             unescapeChar = UnescapeChar;
             _parameterVisitorIncludeRoot = parameterVisitorIncludeRoot;

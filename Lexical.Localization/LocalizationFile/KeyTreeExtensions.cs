@@ -365,7 +365,7 @@ namespace Lexical.Localization
         /// <param name="node"></param>
         /// <returns></returns>
         public static int ValueCount(this IKeyTree node)
-            => node.HasValues ? 0 : node.Values.Count();
+            => !node.HasValues ? 0 : node.Values.Count();
 
         /// <summary>
         /// Get child count.
@@ -373,7 +373,7 @@ namespace Lexical.Localization
         /// <param name="node"></param>
         /// <returns></returns>
         public static int ChildCount(this IKeyTree node)
-            => node.HasChildren ? 0 : node.Children.Count();
+            => !node.HasChildren ? 0 : node.Children.Count();
 
         /// <summary>
         /// Search decendents for tree nodes that have matching key. 

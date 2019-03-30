@@ -86,12 +86,12 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Create a Section-token. "[Section]"
         /// </summary>
-        /// <param name="section">Section name with escaping characters</param>
+        /// <param name="sectionRaw">Section name that is already escaped by the caller</param>
         /// <returns>token</returns>
-        public static IniToken SectionRaw(string section)
+        public static IniToken SectionRaw(string sectionRaw)
         {
-            string str = "[" + section + "]\r\n";
-            return new IniToken { Type = IniTokenType.Section, Source = str, Index = 0, Length = str.Length, ValueIndex = 1, ValueLength = section.Length };
+            string str = "[" + sectionRaw + "]\r\n";
+            return new IniToken { Type = IniTokenType.Section, Source = str, Index = 0, Length = str.Length, ValueIndex = 1, ValueLength = sectionRaw.Length };
         }
 
         /// <summary>
@@ -138,6 +138,36 @@ namespace Lexical.Localization.Internal
             StringBuilder sb = new StringBuilder(len1 + len2 + len3 + 2);
             if (len1 > 0) sb.Append(Source.Substring(Index, len1));
             if (len2 > 0) sb.Append(newValue);
+            if (len3 > 0) sb.Append(Source.Substring(ValueIndex + ValueLength, len3));
+            //sb.Append("\r\n");
+            string str = sb.ToString();
+            return new IniToken
+            {
+                Type = Type,
+                Source = str,
+                Index = 0,
+                Length = str.Length,
+                ValueIndex = len1,
+                ValueLength = len2,
+                KeyIndex = KeyIndex - Index,
+                KeyLength = KeyLength
+            };
+        }
+
+        /// <summary>
+        /// Create a new token where the value part has been modified to <paramref name="newValueRaw"/>.
+        /// </summary>
+        /// <param name="newValueRaw"></param>
+        /// <returns>a new token with modified value</returns>
+        public IniToken CreateWithNewValueRaw(string newValueRaw)
+        {
+            if (Type == IniTokenType.Text) return Text(newValueRaw);
+
+            // Lengths before and after "value" part.
+            int len1 = ValueIndex - Index, len2 = newValueRaw == null ? 0 : newValueRaw.Length, len3 = Index + Length - ValueIndex - ValueLength;
+            StringBuilder sb = new StringBuilder(len1 + len2 + len3 + 2);
+            if (len1 > 0) sb.Append(Source.Substring(Index, len1));
+            if (len2 > 0) sb.Append(newValueRaw);
             if (len3 > 0) sb.Append(Source.Substring(ValueIndex + ValueLength, len3));
             //sb.Append("\r\n");
             string str = sb.ToString();
@@ -207,7 +237,10 @@ namespace Lexical.Localization.Internal
         /// Value in raw format with escape characters.
         /// </summary>
         public string ValueText
-            => ValueIndex >= 0 && ValueLength >= 0 && Source != null ? Source.Substring(ValueIndex, ValueLength) : null;
+        {
+            get => ValueIndex >= 0 && ValueLength >= 0 && Source != null ? Source.Substring(ValueIndex, ValueLength) : null;
+            set => ReadFrom(CreateWithNewValueRaw(value));
+        }
 
         /// <summary>
         /// Value in unescaped format.
@@ -333,10 +366,19 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Remove self from linked list.
         /// </summary>
-        public void Remove()
+        /// <param name="first">Reference of first toke</param>
+        public void Remove(ref IniToken first)
         {
-            if (Previous != null) Previous.Next = Next;
-            if (Next != null) Next.Previous = Previous;
+            if (this == first)
+            {
+                first = Next;
+                if (Next != null) Next.Previous = null;
+            }
+            else
+            {
+                if (Previous != null) Previous.Next = Next;
+                if (Next != null) Next.Previous = Previous;
+            }
         }
 
         /// <summary>
@@ -376,7 +418,7 @@ namespace Lexical.Localization.Internal
         }
 
         static Regex parser = new Regex(
-            @"(\[(?<section>(\\[^\r\n]|[^\]\n\r\\])*)\])|((;|#|//)(?<comment>[^\r\n]*))|((?<key>(\\( |[^\r\n])|[^ \\=\r\n])+)[ \t\f]*=[ \t\f]*(?<value>(\\[^\r\n]|[^\\\n\r])*))|(?<text>.+?)",
+            @"(?<section_line>\[(?<section>(\\[^\r\n]|[^\]\n\r\\])*)\][ \t]*(\r\n|\n\r|\n)?)|(?<comment_line>(;|#|//)(?<comment>[^\r\n]*)[ \t]*(\r\n|\n\r|\n)?)|(?<keyvalue_line>(?<key>(\\( |[^\r\n])|[^ \\=\r\n])+)[ \t]*=[ \t]*(?<value>(\\[^\r\n]|[^\\\n\r])*)[ \t]*(\r\n|\n\r|\n)?)|(?<text>.+?)",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
         /// <summary>
@@ -499,8 +541,7 @@ namespace Lexical.Localization.Internal
 
             if (ix >= Count - 1) return false;
 
-            // Move to next token.
-            Match m = matches[++ix];
+            ix++;
 
             return true;
         }
@@ -523,49 +564,50 @@ namespace Lexical.Localization.Internal
             if (ix < 0 || ix >= Count) return current = null;
             if (current == null) current = new IniToken();
             current.Source = text;
-            Match m = matches[ix], next = ix + 1 < Count ? matches[ix + 1] : null;
+            Match m = matches[ix];
             current.Index = m.Index;
             current.Length = m.Length;
+            if (ix == Count - 1) current.Length = text.Length - current.Index;
+            else if (ix < Count - 1) current.Length = matches[ix + 1].Index - current.Index;
 
-            if (next != null && m.Index + m.Length < next.Index) current.Length = next.Index - m.Index;
-
-            Group g = null, g2 = null;
+            //
+            Group g = null, g2 = null, g3 = null;
 
             // Section
-            if ((g = m.Groups[1]).Success)
+            if ((g = m.Groups["section_line"]).Success && (g2 = m.Groups["section"]).Success)
             {
                 current.Type = IniTokenType.Section;
                 current.KeyIndex = -1;
                 current.KeyLength = -1;
-                current.ValueIndex = g.Index;
-                current.ValueLength = g.Length;
+                current.ValueIndex = g2.Index;
+                current.ValueLength = g2.Length;
             }
 
             // Comment
-            else if ((g = m.Groups[2]).Success)
+            else if ((g = m.Groups["comment_line"]).Success && (g2 = m.Groups["comment"]).Success)
             {
                 current.Type = IniTokenType.Comment;
                 current.KeyIndex = -1;
                 current.KeyLength = -1;
-                current.ValueIndex = g.Index;
-                current.ValueLength = g.Length;
+                current.ValueIndex = g2.Index;
+                current.ValueLength = g2.Length;
             }
 
             // KeyValue
-            else if ((g = m.Groups[3]).Success && (g2 = m.Groups[4]).Success)
+            else if ((g = m.Groups["keyvalue_line"]).Success && (g2 = m.Groups["key"]).Success && (g3 = m.Groups["value"]).Success)
             {
                 current.Type = IniTokenType.KeyValue;
-                current.KeyIndex = g.Index;
-                current.KeyLength = g.Length;
-                current.ValueIndex = g2.Index;
-                current.ValueLength = g2.Length;
+                current.KeyIndex = g2.Index;
+                current.KeyLength = g2.Length;
+                current.ValueIndex = g3.Index;
+                current.ValueLength = g3.Length;
             }
             else
 
             // Text
-            if ((g = m.Groups[5]).Success)
+            if ((g = m.Groups["text"]).Success)
             {
-                g = m.Groups[5];
+                g = m.Groups["text"];
                 current.Type = IniTokenType.Text;
                 current.ValueIndex = g.Index;
                 current.ValueLength = g.Length;
@@ -644,14 +686,13 @@ namespace Lexical.Localization.Internal
         /// <param name="escapeCharacters">list of characters that are to be escaped</param>
         public IniEscape(string escapeCharacters)
         {
-            // Regex.Escape doen't work for brackets []
+            // Regex.Escape doesn't work for brackets []
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
             string escapeCharactersEscaped = escapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape("" + c)).Aggregate((a, b) => a + b);
             LiteralEscape = new Regex("\\\\{|\\\\}|[" + escapeCharactersEscaped + "]|[\\x00-\\x1f]", opts);
             LiteralUnescape = new Regex("\\\\([0abtfnr{} " + escapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})", opts);
             escapeChar = EscapeChar;
             unescapeChar = UnescapeChar;
-            
         }
 
         /// <summary>

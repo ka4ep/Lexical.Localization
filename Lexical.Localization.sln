@@ -10,13 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		index.md = index.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexical.Localization.Tests", "Lexical.Localization.Tests\Lexical.Localization.Tests.csproj", "{A11A114C-8002-4BC6-BD63-D6AE7518EE90}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "docs", "docs\docs.csproj", "{6D920DBB-BB29-4BAD-AF73-A422EA7B980A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexical.Localization.Abstractions", "Lexical.Localization.Abstractions\Lexical.Localization.Abstractions.csproj", "{B7C80D2C-534A-4122-80B8-79B6292065EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scratch", "Scratch\Scratch.csproj", "{4DD9930E-A9A7-4329-9E5A-989FDD8240EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scratch", "Scratch\Scratch.csproj", "{4DD9930E-A9A7-4329-9E5A-989FDD8240EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,10 +26,6 @@ Global
 		{96763C60-B44F-428D-A6AB-F3EFD5D41C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96763C60-B44F-428D-A6AB-F3EFD5D41C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96763C60-B44F-428D-A6AB-F3EFD5D41C3A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A11A114C-8002-4BC6-BD63-D6AE7518EE90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A11A114C-8002-4BC6-BD63-D6AE7518EE90}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A11A114C-8002-4BC6-BD63-D6AE7518EE90}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A11A114C-8002-4BC6-BD63-D6AE7518EE90}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6D920DBB-BB29-4BAD-AF73-A422EA7B980A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6D920DBB-BB29-4BAD-AF73-A422EA7B980A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D920DBB-BB29-4BAD-AF73-A422EA7B980A}.Release|Any CPU.ActiveCfg = Release|Any CPU

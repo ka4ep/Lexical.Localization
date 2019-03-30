@@ -134,8 +134,7 @@ namespace Lexical.Localization.Internal
         {
             ms.Position = 0L;
             if (ms.Length > Int32.MaxValue) throw new InvalidOperationException("File over 2GB.");
-            byte[] data = ms.ToArray();
-            dstText.Write(Encoding.GetString(data, 0, (int) ms.Length));
+            dstText.Write(Encoding.GetString(ms.GetBuffer(), 0, (int) ms.Length));
             dstText.Flush();
         }
 
