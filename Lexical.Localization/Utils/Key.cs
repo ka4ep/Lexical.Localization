@@ -185,7 +185,6 @@ namespace Lexical.Localization.Utils
 
         bool defaultHashcodeCalculated;
         int defaultHashCode;
-        bool IAssetKeyDefaultHashCode.HasDefaultHashCodeCached => defaultHashcodeCalculated;
         int IAssetKeyDefaultHashCode.GetDefaultHashCode()
         {
             if (defaultHashcodeCalculated) return defaultHashCode;

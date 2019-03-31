@@ -11,20 +11,15 @@ namespace Lexical.Localization
 {
     /// <summary>
     /// This interface accesses default hashcode that is cached to an instance of the class.
-    /// The default hashcode is calculated by <see cref="AssetKeyComparer.Default"/>.
+    /// The default hash-code is calculated by <see cref="AssetKeyComparer.Default"/>.
     /// The purpose of this interface is to improve performance.
     /// </summary>
     public interface IAssetKeyDefaultHashCode
     {
         /// <summary>
-        /// Test if class has default (<see cref="AssetKeyComparer.Default"/>) hashcode calculated and cached.
+        /// Get or calculate the default hashcode with <see cref="AssetKeyComparer.Default"/> and <see cref="AssetKeyComparer.CalculateHashCode(IAssetKey)"/>.
         /// </summary>
-        bool HasDefaultHashCodeCached { get; }
-
-        /// <summary>
-        /// Get or calcualte the default hashcode. Must use <see cref="AssetKeyComparer.Default"/>.
-        /// </summary>
-        /// <returns></returns>
+        /// <returns>hash-code</returns>
         int GetDefaultHashCode();
     }
 

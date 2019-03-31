@@ -268,7 +268,6 @@ namespace Lexical.Localization
             return hashcode;
         }
 
-        bool IAssetKeyDefaultHashCode.HasDefaultHashCodeCached => hashcodeCalculated;
         int IAssetKeyDefaultHashCode.GetDefaultHashCode() => GetHashCode();
         #endregion Code
 

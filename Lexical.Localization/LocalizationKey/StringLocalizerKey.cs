@@ -380,7 +380,6 @@ namespace Lexical.Localization
             return hashcode;
         }
 
-        bool IAssetKeyDefaultHashCode.HasDefaultHashCodeCached => defaultHashcodeCalculated;
         int IAssetKeyDefaultHashCode.GetDefaultHashCode()
         {
             // Return cached default hashcode
