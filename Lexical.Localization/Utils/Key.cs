@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using Lexical.Localization.Internal;
 
 namespace Lexical.Localization.Utils
@@ -19,7 +20,7 @@ namespace Lexical.Localization.Utils
     /// This class has one parameter name and a value, and it can carry a link to previous node.
     /// </summary>
     [DebuggerDisplay("{ToString()}")]
-    public partial class Key : IAssetKey, IAssetKeyLinked, IAssetKeyParameterAssigned, IAssetKeyParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>
+    public partial class Key : IAssetKey, IAssetKeyLinked, IAssetKeyParameterAssigned, IAssetKeyParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>, IAssetKeyDefaultHashCode
     {
         private static readonly Key root = new Key("Root", "");
 
@@ -182,11 +183,29 @@ namespace Lexical.Localization.Utils
             public Canonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
         }
 
+        bool defaultHashcodeCalculated;
+        int defaultHashCode;
+        bool IAssetKeyDefaultHashCode.HasDefaultHashCodeCached => defaultHashcodeCalculated;
+        int IAssetKeyDefaultHashCode.GetDefaultHashCode()
+        {
+            if (defaultHashcodeCalculated) return defaultHashCode;
+            defaultHashCode = AssetKeyComparer.Default.CalculateHashCode(this);
+            Thread.MemoryBarrier();
+            defaultHashcodeCalculated = true;
+            return defaultHashCode;
+        }
+
         bool IEquatable<Key>.Equals(Key other)
             => AssetKeyComparer.Default.Equals(this, other);
 
         public override int GetHashCode()
-            => AssetKeyComparer.Default.GetHashCode(this);
+        {
+            if (defaultHashcodeCalculated) return defaultHashCode;
+            defaultHashCode = AssetKeyComparer.Default.CalculateHashCode(this);
+            Thread.MemoryBarrier();
+            defaultHashcodeCalculated = true;
+            return defaultHashCode;
+        }
 
         public override bool Equals(object obj)
             => obj is Key other ? AssetKeyComparer.Default.Equals(this, other) : false;
@@ -199,7 +218,7 @@ namespace Lexical.Localization.Utils
             => ParameterNamePolicy.Instance.BuildName(this);
 
         /// <summary>
-        /// Comparer that compares the node only, not the whole chain.
+        /// Comparer that compares a single key instance, not the whole chain.
         /// </summary>
         public class Comparer : IEqualityComparer<Key>, IComparer<Key>
         {
@@ -246,7 +265,6 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Create an array of parameters from head towards tail.
         /// </summary>
-        /// <param name="key"></param>
         /// <param name="includeNonCanonical">include all keys that implement ILocalizationKeyNonCanonicallyCompared</param>
         /// <returns>array of keys</returns>
         public Key[] ToArray(bool includeNonCanonical = true)
@@ -346,6 +364,7 @@ namespace Lexical.Localization.Utils
 
             return result;
         }
+
     }
 
 }

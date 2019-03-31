@@ -10,6 +10,25 @@ using System.Collections.Generic;
 namespace Lexical.Localization
 {
     /// <summary>
+    /// This interface accesses default hashcode that is cached to an instance of the class.
+    /// The default hashcode is calculated by <see cref="AssetKeyComparer.Default"/>.
+    /// The purpose of this interface is to improve performance.
+    /// </summary>
+    public interface IAssetKeyDefaultHashCode
+    {
+        /// <summary>
+        /// Test if class has default (<see cref="AssetKeyComparer.Default"/>) hashcode calculated and cached.
+        /// </summary>
+        bool HasDefaultHashCodeCached { get; }
+
+        /// <summary>
+        /// Get or calcualte the default hashcode. Must use <see cref="AssetKeyComparer.Default"/>.
+        /// </summary>
+        /// <returns></returns>
+        int GetDefaultHashCode();
+    }
+
+    /// <summary>
     /// Configurable <see cref="IAssetKey"/> comparer.
     /// 
     /// Canonical and non-canonical comparers can be added as component comparers of <see cref="IEqualityComparer{IAssetKey}"/>.
@@ -131,9 +150,18 @@ namespace Lexical.Localization
         public const int FNVHashBasis = unchecked((int)0x811C9DC5);
         public const int FNVHashPrime = 0x1000193;
 
-        public virtual int GetHashCode(IAssetKey key)
+        public int GetHashCode(IAssetKey key)
         {
+            // No key
             if (key == null) return 0;
+            // Get-or-calculate hashcode from IAssetKeyDefaultHashCode.
+            if (this == AssetKeyComparer.Default && key is IAssetKeyDefaultHashCode defaultHashCode) return defaultHashCode.GetDefaultHashCode();
+            // Calculate new hashcode
+            return CalculateHashCode(key);
+        }
+
+        public virtual int CalculateHashCode(IAssetKey key)
+        {
             int result = FNVHashBasis;
 
             // Non-canonical hashing
@@ -143,7 +171,7 @@ namespace Lexical.Localization
             }
 
             // Canonical hashing
-            for(IAssetKey k = key; k!=null; k=k.GetPreviousKey())
+            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
                 if (k is IAssetKeyCanonicallyCompared)
                     foreach (var comparer in canonicalComparers)
                     {
@@ -153,6 +181,7 @@ namespace Lexical.Localization
 
             return result;
         }
+
 
     }
 

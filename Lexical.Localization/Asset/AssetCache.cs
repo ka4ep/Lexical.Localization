@@ -95,8 +95,6 @@ namespace Lexical.Localization
         public AssetCacheOptions Options { get; internal set; }
         protected volatile int iteration;
 
-        AssetKeyComparer comparer;
-        AssetKeyCloner cloner;
         CultureInfo[] cultures;
         bool culturesCached;
 
@@ -104,8 +102,6 @@ namespace Lexical.Localization
         {
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
-            this.cloner = new AssetKeyCloner(Key.Root);
-            this.comparer = AssetKeyComparer.Default;
         }
 
         IAsset IAssetReloadable.Reload()

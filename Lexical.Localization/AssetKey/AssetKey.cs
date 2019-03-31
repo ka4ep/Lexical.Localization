@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Threading;
 
 namespace Lexical.Localization
 {
@@ -19,8 +20,8 @@ namespace Lexical.Localization
     [DebuggerDisplay("{DebugPrint()}")]
     public class AssetKey :
 #region Interfaces
-        IAssetKey, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyAssignable, IAssetKeyParameterAssignable, ISerializable, IDynamicMetaObjectProvider
-#endregion Interfaces
+        IAssetKey, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyAssignable, IAssetKeyParameterAssignable, ISerializable, IDynamicMetaObjectProvider, IAssetKeyDefaultHashCode
+    #endregion Interfaces
     {
         #region Code
 
@@ -233,19 +234,14 @@ namespace Lexical.Localization
         /// <summary>
         /// Determines if hashcode is calculated and cached
         /// </summary>
-        bool hashcodeCalculated = false;
-
-        /// <summary>
-        /// Preferred comparer
-        /// </summary>
-        static IEqualityComparer<IAssetKey> comparer = AssetKeyComparer.Default;
+        bool hashcodeCalculated;
 
         /// <summary>
         /// Equals comparison
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override bool Equals(object obj) => comparer.Equals(this, obj as IAssetKey);
+        public override bool Equals(object obj) => AssetKeyComparer.Default.Equals(this, obj as IAssetKey);
 
         /// <summary>
         /// Hashcode calculation
@@ -253,11 +249,27 @@ namespace Lexical.Localization
         /// <returns></returns>
         public override int GetHashCode()
         {
+            // Return cached default hashcode
             if (hashcodeCalculated) return hashcode;
-            hashcode = comparer.GetHashCode(this);
+
+            // Get previous key's default hashcode
+            if (this is IAssetKeyCanonicallyCompared == false && this is IAssetKeyNonCanonicallyCompared == false && this.prevKey is IAssetKeyDefaultHashCode prevDefaultHashcode)
+            {
+                hashcode = prevDefaultHashcode.GetDefaultHashCode();
+            }
+            else
+            {
+                hashcode = AssetKeyComparer.Default.CalculateHashCode(this);
+            }
+
+            // Mark calculated
+            Thread.MemoryBarrier();
             hashcodeCalculated = true;
             return hashcode;
         }
+
+        bool IAssetKeyDefaultHashCode.HasDefaultHashCodeCached => hashcodeCalculated;
+        int IAssetKeyDefaultHashCode.GetDefaultHashCode() => GetHashCode();
         #endregion Code
 
         /// <summary>

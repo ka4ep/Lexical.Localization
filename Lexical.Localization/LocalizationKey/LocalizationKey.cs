@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Threading;
 
 namespace Lexical.Localization
 {    
@@ -20,8 +21,8 @@ namespace Lexical.Localization
     [DebuggerDisplay("{DebugPrint()}")]
     public class LocalizationKey :
 #region Interfaces
-        ILocalizationKey, IAssetKeyAssignable, ILocalizationKeyInlineAssignable, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyParameterAssignable, ILocalizationKeyPluralityAssignable, ISerializable, IDynamicMetaObjectProvider
-#endregion Interfaces
+        ILocalizationKey, IAssetKeyAssignable, ILocalizationKeyInlineAssignable, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyParameterAssignable, ILocalizationKeyPluralityAssignable, ISerializable, IDynamicMetaObjectProvider, IAssetKeyDefaultHashCode
+    #endregion Interfaces
     {
         #region Code
 
@@ -338,12 +339,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Cached hashcode
         /// </summary>
-        int hashcode = -1;
+        int hashcode = -1, defaultHashcode = -1;
 
         /// <summary>
         /// Determines if hashcode is calculated and cached
         /// </summary>
-        bool hashcodeCalculated = false;
+        bool hashcodeCalculated, defaultHashcodeCalculated;
 
         /// <summary>
         /// Preferred comparer
@@ -351,14 +352,14 @@ namespace Lexical.Localization
         static IEqualityComparer<IAssetKey> comparer =
             new AssetKeyComparer().AddCanonicalComparer(ParametrizedComparer.Instance).AddNonCanonicalComparer(ParametrizedNonCanonicalComparer.Instance)
             .AddNonCanonicalComparer(new LocalizationKeyFormatArgsComparer());
-            //.AddNonCanonicalComparer(new LocalizationKeyCultureComparer()); // <- culture is already compared by parametrizer comparer.
 
         /// <summary>
         /// Equals comparison
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override bool Equals(object obj) => comparer.Equals(this, obj as IAssetKey);
+        public override bool Equals(object obj) 
+            => comparer.Equals(this, obj as IAssetKey);
 
         /// <summary>
         /// Hashcode calculation
@@ -370,6 +371,27 @@ namespace Lexical.Localization
             hashcode = comparer.GetHashCode(this);
             hashcodeCalculated = true;
             return hashcode;
+        }
+
+        bool IAssetKeyDefaultHashCode.HasDefaultHashCodeCached => defaultHashcodeCalculated;
+        int IAssetKeyDefaultHashCode.GetDefaultHashCode()
+        {
+            // Return cached default hashcode
+            if (defaultHashcodeCalculated) return defaultHashcode;
+
+            // Get previous key's default hashcode
+            if (this is IAssetKeyCanonicallyCompared == false && this is IAssetKeyNonCanonicallyCompared == false && this.prevKey is IAssetKeyDefaultHashCode prevDefaultHashcode)
+            {
+                defaultHashcode = prevDefaultHashcode.GetDefaultHashCode();
+            } else
+            {
+                defaultHashcode = AssetKeyComparer.Default.CalculateHashCode(this);
+            }
+
+            // Mark calculated
+            Thread.MemoryBarrier();
+            defaultHashcodeCalculated = true;
+            return defaultHashcode;
         }
         #endregion Code
 
