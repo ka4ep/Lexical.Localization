@@ -17,7 +17,7 @@ namespace Lexical.Localization
     public interface IAssetKeyDefaultHashCode
     {
         /// <summary>
-        /// Get or calculate the default hashcode with <see cref="AssetKeyComparer.Default"/> and <see cref="AssetKeyComparer.CalculateHashCode(IAssetKey)"/>.
+        /// Get cached or calculate hashcode with <see cref="AssetKeyComparer.Default"/> and <see cref="AssetKeyComparer.CalculateHashCode(IAssetKey)"/>.
         /// </summary>
         /// <returns>hash-code</returns>
         int GetDefaultHashCode();
@@ -34,8 +34,8 @@ namespace Lexical.Localization
     /// </summary>
     public class AssetKeyComparer : IEqualityComparer<IAssetKey>
     {
-        private static AssetKeyComparer instance = new AssetKeyComparer().AddCanonicalComparer(ParametrizedComparer.Instance).AddNonCanonicalComparer(ParametrizedNonCanonicalComparer.Instance);
-        private static AssetKeyComparer ignore_culture = new AssetKeyComparer().AddCanonicalComparer(ParametrizedComparer.Instance).AddNonCanonicalComparer(ParametrizedNonCanonicalComparer.IgnoreCulture);
+        private static AssetKeyComparer instance = new AssetKeyComparer().AddCanonicalComparer(ParameterComparer.Instance).AddComparer(ParametrizedNonCanonicalComparer.Instance).SetReadonly();
+        private static AssetKeyComparer ignoreCulture = new AssetKeyComparer().AddCanonicalComparer(ParameterComparer.Instance).AddComparer(ParametrizedNonCanonicalComparer.IgnoreCulture).SetReadonly();
 
         /// <summary>
         /// Makes comparisons on interface level. 
@@ -44,13 +44,13 @@ namespace Lexical.Localization
         /// This comparer uses the following pattern for comparisons:
         ///    Key                      canonical compare
         ///    Section                  canonical compare
-        ///    Type                     canonical compare
         ///    Resource                 canonical compare
         ///    Location                 canonical compare
+        ///    Type                     non-canonical compare
         ///    Assembly                 non-canonical compare
         ///    Culture                  non-canonical compare
-        ///    Format Args              non-canonical compare
-        ///    Inlining                 non-canonical compare
+        ///    Format Args              not compared (<see cref="LocalizationKey.FormatArgsComparer"/>.
+        ///    Inlining                 not compared
         ///    CulturePolicy            not compared
         ///    Root                     not compared
         /// </summary>
@@ -59,135 +59,171 @@ namespace Lexical.Localization
         /// <summary>
         /// Comparer that is oblivious to "Culture" parameter.
         /// </summary>
-        public static AssetKeyComparer IgnoreCulture => ignore_culture;
+        public static AssetKeyComparer IgnoreCulture => ignoreCulture;
 
-        /// List of non-canonical comparers
+        /// <summary>
+        /// List of canonical comparers that set to compare each <see cref="IAssetKeyCanonicallyCompared"/> part separately.
+        /// </summary>
         List<IEqualityComparer<IAssetKey>> canonicalComparers = new List<IEqualityComparer<IAssetKey>>();
 
-        // List of canonical comparers.
-        List<IEqualityComparer<IAssetKey>> noncanonicalComparers = new List<IEqualityComparer<IAssetKey>>();
+        /// <summary>
+        /// List of generic comparers.
+        /// </summary>
+        List<IEqualityComparer<IAssetKey>> comparers = new List<IEqualityComparer<IAssetKey>>();
 
+        /// <summary>
+        /// Is comparer locked to immutable state.
+        /// </summary>
+        bool immutable;
+
+        /// <summary>
+        /// Create new comparer. Canonical and non-canonical comparers must be added as components.
+        /// </summary>
         public AssetKeyComparer()
         {
         }
 
         /// <summary>
-        /// Add canonical comparer. Canonical comparer is applied to each non-canonical link of a key.
+        /// Lock comparer into non-modifiable state.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public AssetKeyComparer SetReadonly()
+        {
+            immutable = true;
+            return this;
+        }
+
+        /// <summary>
+        /// Add canonical comparer. Canonical comparer is applied to each key part that implements <see cref="IAssetKeyCanonicallyCompared"/>.
+        /// </summary>
         /// <param name="comparer"></param>
         /// <returns></returns>
         public AssetKeyComparer AddCanonicalComparer(IEqualityComparer<IAssetKey> comparer)
         {
             if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            if (immutable) throw new InvalidOperationException("immutable");
             canonicalComparers.Add(comparer);
             return this;
         }
 
         /// <summary>
-        /// Add non-canonical comparer. Non-canonical comparer is applied to the leaf of the key.
+        /// Add generic key comparer that evaluates hash-equals for the full keys.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="comparer"></param>
         /// <returns></returns>
-        public AssetKeyComparer AddNonCanonicalComparer(IEqualityComparer<IAssetKey> comparer)
+        public AssetKeyComparer AddComparer(IEqualityComparer<IAssetKey> comparer)
         {
             if (comparer == null) throw new ArgumentNullException(nameof(comparer));
-            noncanonicalComparers.Add(comparer);
+            if (immutable) throw new InvalidOperationException("immutable");
+            comparers.Add(comparer);
             return this;
         }
 
-        public virtual bool Equals(IAssetKey x, IAssetKey y)
+        /// <summary>
+        /// Compare <paramref name="x"/> and <paramref name="y"/> for equality.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>true if equal</returns>
+        public bool Equals(IAssetKey x, IAssetKey y)
         {
             bool xIsNull = x == null, yIsNull = y == null;
             if (xIsNull && yIsNull) return true;
             if (xIsNull || yIsNull) return false;
+            if (Object.ReferenceEquals(x, y)) return true;
 
-            // Non-canonical comparisons first
-            foreach(var comparer in noncanonicalComparers)
+            // Regular comparers
+            foreach(var comparer in comparers)
             {
                 if (!comparer.Equals(x, y)) return false;
             }
 
-            // Canonical Comparisons
-            IAssetKey xLink = x, yLink = y;
-            while (xLink != null && xLink is IAssetKeyCanonicallyCompared == false) xLink = xLink.GetPreviousKey();
-            while (yLink != null && yLink is IAssetKeyCanonicallyCompared == false) yLink = yLink.GetPreviousKey();
-            if (!CanonicalEquals(xLink, yLink)) return false;
-            // ^ Todo: unwrap recursion.
-
-            return true;
-        }
-
-        protected virtual bool CanonicalEquals(IAssetKey x, IAssetKey y)
-        {
-            bool xIsNull = x == null, yIsNull = y == null;
-            if (xIsNull && yIsNull) return true;
-            if (xIsNull || yIsNull) return false;
-
-            // Non-canonical comparisons first
-            foreach (var comparer in canonicalComparers)
+            // Canonical key part comparers
+            for (IAssetKey _x = x.GetCanonicalKey(), _y=y.GetCanonicalKey(); x!=null || y!=null; _x=_x.GetPreviousCanonicalKey(), _y=_y.GetPreviousCanonicalKey())
             {
-                if (!comparer.Equals(x, y)) return false;
+                // Ran out of one or another
+                if (_x == null && _y == null) break;
+                if (_x == null || _y == null) return false;
+                // Reference are equal
+                if (Object.ReferenceEquals(_x, _y)) break;
+                // Run comparers
+                foreach (var comparer in canonicalComparers)
+                    if (!comparer.Equals(_x, _y)) return false;
             }
 
-            // Compare next canonical keys
-            IAssetKey xLink = x.GetPreviousKey(), yLink = y.GetPreviousKey();
-            while (xLink != null && xLink is IAssetKeyCanonicallyCompared == false) xLink = xLink.GetPreviousKey();
-            while (yLink != null && yLink is IAssetKeyCanonicallyCompared == false) yLink = yLink.GetPreviousKey();
-            if (xLink != null || yLink != null)
-                if (!CanonicalEquals(xLink, yLink)) return false;
-                  // ^ Todo: unwrap recursion.
-
+            // Must be equal
             return true;
         }
 
-        public const int FNVHashBasis = unchecked((int)0x811C9DC5);
-        public const int FNVHashPrime = 0x1000193;
+        const int FNVHashBasis = unchecked((int)0x811C9DC5);
+        const int FNVHashPrime = 0x1000193;
 
+        /// <summary>
+        /// Get or calculate <paramref name="key"/>'s hashcode.
+        /// </summary>
+        /// <param name="key">(optional) key to calculate</param>
+        /// <returns>hashcode or 0 if <paramref name="key"/> was null</returns>
         public int GetHashCode(IAssetKey key)
         {
             // No key
             if (key == null) return 0;
             // Get-or-calculate hashcode from IAssetKeyDefaultHashCode.
-            if (this == AssetKeyComparer.Default && key is IAssetKeyDefaultHashCode defaultHashCode) return defaultHashCode.GetDefaultHashCode();
+            if (this == AssetKeyComparer.instance && key is IAssetKeyDefaultHashCode defaultHashCode) return defaultHashCode.GetDefaultHashCode();
             // Calculate new hashcode
             return CalculateHashCode(key);
         }
 
-        public virtual int CalculateHashCode(IAssetKey key)
+        /// <summary>
+        /// Calculate <paramref name="key"/>'s hashcode.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>hashcode or 0 if <paramref name="key"/> was null</returns>
+        public int CalculateHashCode(IAssetKey key)
         {
             int result = FNVHashBasis;
 
             // Non-canonical hashing
-            foreach (var comparer in noncanonicalComparers)
+            foreach (var comparer in comparers)
             {
+                // hash in non-canonical comparer
                 result ^= comparer.GetHashCode(key);
             }
 
             // Canonical hashing
             for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+            {
                 if (k is IAssetKeyCanonicallyCompared)
+                {
+                    // hash in canonical comparer 
                     foreach (var comparer in canonicalComparers)
-                    {
                         result ^= comparer.GetHashCode(k);
-                        result *= FNVHashPrime;
-                    }
+                    result *= FNVHashPrime;
+                }
+            }
 
             return result;
         }
-
-
     }
 
     /// <summary>
-    /// Compares key that implements <see cref="IAssetKeyParameterAssigned"/> against another.
+    /// Compares two keys that are assumed to implement <see cref="IAssetKeyParameterAssigned"/>.
     /// </summary>
-    public class ParametrizedComparer : IEqualityComparer<IAssetKey>
+    public class ParameterComparer : IEqualityComparer<IAssetKey>
     {
-        private static ParametrizedComparer instance = new ParametrizedComparer();
-        public static ParametrizedComparer Instance => instance;
+        private static ParameterComparer instance = new ParameterComparer();
 
+        /// <summary>
+        /// Get parameter comparer.
+        /// </summary>
+        public static ParameterComparer Instance => instance;
+
+        /// <summary>
+        /// Compare two keys for paramter name and value. 
+        /// Keys are assumed to implement <see cref="IAssetKeyParameterAssigned"/>.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public bool Equals(IAssetKey x, IAssetKey y)
         {
             IAssetKey xLink = x, yLink = y;
@@ -201,7 +237,12 @@ namespace Lexical.Localization
         }
 
         const int FNVHashBasis = unchecked((int)0x811C9DC5);
-        const int FNVHashPrime = 0x1000193;
+
+        /// <summary>
+        /// Calculate hashcode for parameter name and value.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public int GetHashCode(IAssetKey key)
         {
             string parameterName = key.GetParameterName();
@@ -214,10 +255,11 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Compares all non-canonical parameters keys agains each other.
+    /// Compares all non-canonical parameters keys against each other.
+    /// 
     /// These are keys that implement <see cref="IAssetKeyParameterAssigned"/> and <see cref="IAssetKeyNonCanonicallyCompared"/>.
     /// 
-    /// If <see cref="IAssetKeyNonCanonicallyCompared"/> occurs more than once, only the left-most is effective for compare purposes.
+    /// If <see cref="IAssetKeyNonCanonicallyCompared"/> occurs more than once, only the left-most is considered effective.
     /// </summary>
     public class ParametrizedNonCanonicalComparer : IEqualityComparer<IAssetKey>
     {
@@ -248,6 +290,14 @@ namespace Lexical.Localization
             if (parameterNamesToIgnore != null) this.parameterNamesToIgnore = new HashSet<string>(parameterNamesToIgnore);
         }
 
+        /// <summary>
+        /// Compare two keys for all their non-canonical part parameter key-values.
+        /// 
+        /// Only the left-most value of each parameter name is considered effective.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>true if keys are equals in terms of non-canonical parameters</returns>
         public bool Equals(IAssetKey x, IAssetKey y)
         {
             // Get x's (parameter, value) pairs
@@ -334,8 +384,14 @@ namespace Lexical.Localization
         }
 
         static StructListSorter<StructList8<KeyValuePair<string, string>>, KeyValuePair<string, string>> sorter = new StructListSorter<StructList8<KeyValuePair<string, string>>, KeyValuePair<string, string>>(KeyValuePairComparer<string, string>.Default);
-        const int FNVHashBasis = unchecked((int)0x811C9DC5);
-        const int FNVHashPrime = 0x1000193;
+
+        /// <summary>
+        /// Calculate hash-code of every non-canonical parameters.
+        /// 
+        /// Only the left-most value of each parameter name is considered effective.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public int GetHashCode(IAssetKey key)
         {
             int hash = 0;

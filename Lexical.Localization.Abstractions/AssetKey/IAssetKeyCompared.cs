@@ -10,7 +10,7 @@ namespace Lexical.Localization
     /// 
     /// Non-canonical key links are compared so that their order of appearance doesn't matter.
     /// </summary>
-    public interface IAssetKeyNonCanonicallyCompared
+    public interface IAssetKeyNonCanonicallyCompared : IAssetKey
     {
     }
 
@@ -19,7 +19,7 @@ namespace Lexical.Localization
     /// 
     /// The order of canonical links must match compared in the order of occurance.
     /// </summary>
-    public interface IAssetKeyCanonicallyCompared
+    public interface IAssetKeyCanonicallyCompared : IAssetKey
     {
     }
 
