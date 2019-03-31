@@ -129,6 +129,34 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Get key that implements <see cref="IAssetNonKeyCanonicallyCompared"/>, either this or preceding one, or null if not found.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns><paramref name="key"/>, or preceding non-canonical key or null</returns>
+        public static IAssetKeyNonCanonicallyCompared GetNonCanonicalKey(this IAssetKey key)
+        {
+            for (IAssetKey k = key; k != null; k = k is IAssetKeyLinked linkedKey ? linkedKey.PreviousKey : null)
+            {
+                if (k is IAssetKeyNonCanonicallyCompared kk) return kk;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Get preceding key that implements <see cref="IAssetKeyNonCanonicallyCompared"/>, or null if not found.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>preceding non-canonical key or null</returns>
+        public static IAssetKeyNonCanonicallyCompared GetPreviousNonCanonicalKey(this IAssetKey key)
+        {
+            for (IAssetKey k = key is IAssetKeyLinked lkk ? lkk.PreviousKey : null; k != null; k = k is IAssetKeyLinked nlkk ? nlkk.PreviousKey : null)
+            {
+                if (k is IAssetKeyNonCanonicallyCompared kk) return kk;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Get the first key in the linked list.
         /// </summary>
         /// <param name="key"></param>

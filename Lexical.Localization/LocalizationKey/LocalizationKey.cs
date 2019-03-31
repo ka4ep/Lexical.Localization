@@ -352,7 +352,7 @@ namespace Lexical.Localization
         static IEqualityComparer<IAssetKey> comparer =
             new AssetKeyComparer()
                 .AddCanonicalComparer(ParameterComparer.Instance)
-                .AddComparer(ParametrizedNonCanonicalComparer.Instance)
+                .AddComparer(NonCanonicalComparer.Instance)
                 .AddComparer(new LocalizationKeyFormatArgsComparer())
                 .SetReadonly();
 

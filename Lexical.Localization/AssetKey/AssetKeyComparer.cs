@@ -34,8 +34,8 @@ namespace Lexical.Localization
     /// </summary>
     public class AssetKeyComparer : IEqualityComparer<IAssetKey>
     {
-        private static AssetKeyComparer instance = new AssetKeyComparer().AddCanonicalComparer(ParameterComparer.Instance).AddComparer(ParametrizedNonCanonicalComparer.Instance).SetReadonly();
-        private static AssetKeyComparer ignoreCulture = new AssetKeyComparer().AddCanonicalComparer(ParameterComparer.Instance).AddComparer(ParametrizedNonCanonicalComparer.IgnoreCulture).SetReadonly();
+        private static AssetKeyComparer instance = new AssetKeyComparer().AddCanonicalComparer(ParameterComparer.Instance).AddComparer(NonCanonicalComparer.Instance).SetReadonly();
+        private static AssetKeyComparer ignoreCulture = new AssetKeyComparer().AddCanonicalComparer(ParameterComparer.Instance).AddComparer(NonCanonicalComparer.IgnoreCulture).SetReadonly();
 
         /// <summary>
         /// Makes comparisons on interface level. 
@@ -167,7 +167,7 @@ namespace Lexical.Localization
         {
             // No key
             if (key == null) return 0;
-            // Get-or-calculate hashcode from IAssetKeyDefaultHashCode.
+            // Get-or-calculate cached hashcode with IAssetKeyDefaultHashCode.
             if (this == AssetKeyComparer.instance && key is IAssetKeyDefaultHashCode defaultHashCode) return defaultHashCode.GetDefaultHashCode();
             // Calculate new hashcode
             return CalculateHashCode(key);
@@ -190,15 +190,12 @@ namespace Lexical.Localization
             }
 
             // Canonical hashing
-            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+            for (IAssetKey k = key.GetCanonicalKey(); k != null; k = k.GetPreviousCanonicalKey())
             {
-                if (k is IAssetKeyCanonicallyCompared)
-                {
-                    // hash in canonical comparer 
-                    foreach (var comparer in canonicalComparers)
-                        result ^= comparer.GetHashCode(k);
-                    result *= FNVHashPrime;
-                }
+                // hash in canonical comparer 
+                foreach (var comparer in canonicalComparers)
+                    result ^= comparer.GetHashCode(k);
+                result *= FNVHashPrime;
             }
 
             return result;
@@ -261,20 +258,20 @@ namespace Lexical.Localization
     /// 
     /// If <see cref="IAssetKeyNonCanonicallyCompared"/> occurs more than once, only the left-most is considered effective.
     /// </summary>
-    public class ParametrizedNonCanonicalComparer : IEqualityComparer<IAssetKey>
+    public class NonCanonicalComparer : IEqualityComparer<IAssetKey>
     {
-        private static ParametrizedNonCanonicalComparer all = new ParametrizedNonCanonicalComparer(parameterNamesToIgnore: null);
-        private static ParametrizedNonCanonicalComparer Ignore_culture = new ParametrizedNonCanonicalComparer(parameterNamesToIgnore: new string[] { "Culture" });
+        private static NonCanonicalComparer all = new NonCanonicalComparer(parameterNamesToIgnore: null);
+        private static NonCanonicalComparer Ignore_culture = new NonCanonicalComparer(parameterNamesToIgnore: new string[] { "Culture" });
 
         /// <summary>
         /// Default instance that compares every non-canonical parameter.
         /// </summary>
-        public static ParametrizedNonCanonicalComparer Instance => all;
+        public static NonCanonicalComparer Instance => all;
 
         /// <summary>
         /// Instance that excludes "Culture" parameter from comparison.
         /// </summary>
-        public static ParametrizedNonCanonicalComparer IgnoreCulture => Ignore_culture;
+        public static NonCanonicalComparer IgnoreCulture => Ignore_culture;
 
         /// <summary>
         /// List of parameter names to ignore.
@@ -285,7 +282,7 @@ namespace Lexical.Localization
         /// Create new comparer of <see cref="IAssetKeyParameterAssigned"/> and <see cref="IAssetKeyNonCanonicallyCompared"/> keys.
         /// </summary>
         /// <param name="parameterNamesToIgnore">(optional) list of parameter names to not to compare</param>
-        public ParametrizedNonCanonicalComparer(IEnumerable<string> parameterNamesToIgnore = null)
+        public NonCanonicalComparer(IEnumerable<string> parameterNamesToIgnore = null)
         {
             if (parameterNamesToIgnore != null) this.parameterNamesToIgnore = new HashSet<string>(parameterNamesToIgnore);
         }
@@ -302,11 +299,8 @@ namespace Lexical.Localization
         {
             // Get x's (parameter, value) pairs
             StructList8<KeyValuePair<string, string>> x_parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
-            for (IAssetKey x_node = x; x_node != null; x_node = x_node.GetPreviousKey())
+            for (IAssetKeyNonCanonicallyCompared x_node = x.GetNonCanonicalKey(); x_node != null; x_node = x_node.GetPreviousNonCanonicalKey())
             {
-                // Is non-canonical
-                if (x_node is IAssetKeyNonCanonicallyCompared == false) continue;
-
                 // Get parameter
                 string x_parameter_name = x_node.GetParameterName(), x_parameter_value = x_node.Name;
                 if (x_parameter_name == null || x_parameter_value == null) continue;
@@ -333,7 +327,7 @@ namespace Lexical.Localization
 
             // Get y's (parameter, value) pairs
             StructList8<KeyValuePair<string, string>> y_parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
-            for (IAssetKey y_node = y; y_node != null; y_node = y_node.GetPreviousKey())
+            for (IAssetKeyNonCanonicallyCompared y_node = y.GetNonCanonicalKey(); y_node != null; y_node = y_node.GetPreviousNonCanonicalKey())
             {
                 // Is non-canonical
                 if (y_node is IAssetKeyNonCanonicallyCompared == false) continue;
@@ -396,10 +390,8 @@ namespace Lexical.Localization
         {
             int hash = 0;
             // Get x's (parameter, value) pairs
-            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+            for (IAssetKeyNonCanonicallyCompared k = key.GetNonCanonicalKey(); k != null; k = k.GetPreviousNonCanonicalKey())
             {
-                if (k is IAssetKeyNonCanonicallyCompared == false) continue;
-
                 // Get parameters.
                 string parameterName = k.GetParameterName();
                 if (parameterName == null) continue;
@@ -413,8 +405,8 @@ namespace Lexical.Localization
 
                 // Test if this parameter is yet to occure again towards left of the key
                 bool firstOccurance = true;
-                for (IAssetKey kk = k.GetPreviousKey(); kk != null; kk = kk.GetPreviousKey())
-                    if (kk is IAssetKeyNonCanonicallyCompared && kk.GetParameterName() == parameterName)
+                for (IAssetKeyNonCanonicallyCompared kk = k.GetPreviousNonCanonicalKey(); kk != null; kk = kk.GetPreviousNonCanonicalKey())
+                    if (kk.GetParameterName() == parameterName)
                     {
                         firstOccurance = false;
                         break;
