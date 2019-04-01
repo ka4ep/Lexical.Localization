@@ -36,12 +36,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.
         /// </summary>
-        protected ParameterNamePolicy escaper_section = new ParameterNamePolicy("\\:[]", true);
+        protected ParameterNamePolicy escaper_section = new ParameterNamePolicy("\\:[]", true, "\\:[]", true);
 
         /// <summary>
         /// Escaper for key parts of .ini files. Escapes '\', ':', '=' characters and white-spaces.
         /// </summary>
-        protected ParameterNamePolicy escaper_key = new ParameterNamePolicy("\\:= ", true);
+        protected ParameterNamePolicy escaper_key = new ParameterNamePolicy("\\:= ", true, "\\:= ", true);
 
         /// <summary>
         /// Escaper for value parts of .ini files. Escapes '\', '{', '}' characters and white-spaces.

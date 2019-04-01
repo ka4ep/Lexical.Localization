@@ -23,16 +23,33 @@ namespace Lexical.Localization
     public class LocalizationJsonReader : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
     {
         private readonly static LocalizationJsonReader instance = new LocalizationJsonReader();
+
+        /// <summary>
+        /// Default intance of .json reader
+        /// </summary>
         public static LocalizationJsonReader Instance => instance;
 
-        protected ParameterNamePolicy namePolicy = new ParameterNamePolicy("\\:", false);
+        /// <summary>
+        /// Polity to read keys.
+        /// </summary>
+        protected ParameterNamePolicy namePolicy = new ParameterNamePolicy(" :\\", false, " :\\", false);
 
+        /// <summary>
+        /// File extension, default "json"
+        /// </summary>
         public string Extension { get; protected set; }
 
+        /// <summary>
+        /// Create new .json reader.
+        /// </summary>
         public LocalizationJsonReader() : this("json")
         {
         }
 
+        /// <summary>
+        /// Create new .json reader.
+        /// </summary>
+        /// <param name="ext"></param>
         public LocalizationJsonReader(string ext)
         {
             this.Extension = ext;
@@ -48,7 +65,9 @@ namespace Lexical.Localization
         {
             KeyTree root = new KeyTree(Key.Root);
             using (var json = new JsonTextReader(text))
+            {
                 ReadJsonIntoTree(json, root, namePolicy, null);
+            }
             return root;
         }
 
@@ -118,7 +137,6 @@ namespace Lexical.Localization
             }
             return node;
         }
-
 
     }
 

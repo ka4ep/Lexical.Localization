@@ -349,9 +349,10 @@ namespace docs
             }
             {
                 #region Snippet_30a
-                // If ExtFileFormat implements ILocalizationReader, it can be placed
-                // in reader map.
-                LocalizationReaderMap.Instance["ext"] = new ExtFileFormatReader();
+                // Clone foramts
+                LocalizationFileFormatMap formats = LocalizationReaderMap.Instance.Clone();
+                // If ExtFileFormatReader can be added to LocalizationFileFormatMap.
+                formats.Add(new ExtFileFormatReader());
                 #endregion Snippet_30a
             }
 

@@ -452,7 +452,7 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Reads all tokens into an separate instance. 
         /// </summary>
-        /// <returns>Head token or null if contained no tokens</returns>
+        /// <returns>Head token</returns>
         public IniToken ToLinkedList()
         {
             IniToken head = null, prev = null;
@@ -467,7 +467,7 @@ namespace Lexical.Localization.Internal
                 // Set prev
                 prev = token;
             }
-            return head;
+            return head ?? IniToken.Text("");
         }
 
         /// <summary>
@@ -690,7 +690,7 @@ namespace Lexical.Localization.Internal
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
             string escapeCharactersEscaped = escapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape("" + c)).Aggregate((a, b) => a + b);
             LiteralEscape = new Regex("\\\\{|\\\\}|[" + escapeCharactersEscaped + "]|[\\x00-\\x1f]", opts);
-            LiteralUnescape = new Regex("\\\\([0abtfnr{} " + escapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})", opts);
+            LiteralUnescape = new Regex("\\\\([0abtfnrv{} " + escapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})", opts);
             escapeChar = EscapeChar;
             unescapeChar = UnescapeChar;
         }
@@ -725,6 +725,7 @@ namespace Lexical.Localization.Internal
                 case '\0': return "\\0";
                 case '\a': return "\\a";
                 case '\b': return "\\b";
+                case '\v': return "\\v";
                 case '\t': return "\\t";
                 case '\f': return "\\f";
                 case '\n': return "\\n";
@@ -751,6 +752,7 @@ namespace Lexical.Localization.Internal
                 case '0': return "\0";
                 case 'a': return "\a";
                 case 'b': return "\b";
+                case 'v': return "\v";
                 case 't': return "\t";
                 case 'f': return "\f";
                 case 'n': return "\n";

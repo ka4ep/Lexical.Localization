@@ -20,7 +20,7 @@ namespace Lexical.Localization
     public class ParameterParser
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
-        static ParameterParser instance = new ParameterParser("\\:", false);
+        static ParameterParser instance = new ParameterParser("\\:", false, "\\:", false);
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
@@ -56,14 +56,10 @@ namespace Lexical.Localization
         /// Create new string serializer
         /// </summary>
         /// <param name="escapeCharacters">list of characters that are to be escaped</param>
-        public ParameterParser(string escapeCharacters) : this(escapeCharacters, false) { }
-
-        /// <summary>
-        /// Create new string serializer
-        /// </summary>
-        /// <param name="escapeCharacters">list of characters that are to be escaped</param>
         /// <param name="escapeControlCharacters">Escape characters 0x00 - 0x1f</param>
-        public ParameterParser(string escapeCharacters, bool escapeControlCharacters)
+        /// <param name="unescapeCharacters">list of characters that are to be unescaped</param>
+        /// <param name="unescapeControlCharacters">Unescape tnab0f</param>
+        public ParameterParser(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters)
         {
             // Regex.Escape doen't work for brackets []
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
@@ -75,8 +71,14 @@ namespace Lexical.Localization
             {
                 LiteralEscape = new Regex("[" + escapeCharactersEscaped + "]", opts);
             }
-            LiteralUnescape = new Regex("\\\\([0abtfnr " + escapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})", opts);
             escapeChar = EscapeChar;
+
+            string unescapeCharactersEscaped = unescapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape("" + c)).Aggregate((a, b) => a + b);
+            LiteralUnescape = new Regex(
+                unescapeControlCharacters ? 
+                "\\\\([0abtfnrv" + unescapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})" :
+                "\\\\[" + unescapeCharactersEscaped + "]"
+                , opts);
             unescapeChar = UnescapeChar;
             _parameterVisitorIncludeRoot = parameterVisitorIncludeRoot;
             _parameterVisitorExcludeRoot = parameterVisitorExcludeRoot;
@@ -311,6 +313,7 @@ namespace Lexical.Localization
                 case '\0': return "\\0";
                 case '\a': return "\\a";
                 case '\b': return "\\b";
+                case '\v': return "\\v";
                 case '\t': return "\\t";
                 case '\f': return "\\f";
                 case '\n': return "\\n";
@@ -330,6 +333,7 @@ namespace Lexical.Localization
                 case '0': return "\0";
                 case 'a': return "\a";
                 case 'b': return "\b";
+                case 'v': return "\v";
                 case 't': return "\t";
                 case 'f': return "\f";
                 case 'n': return "\n";
