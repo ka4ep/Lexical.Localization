@@ -46,7 +46,7 @@ Non-canonical parts are typically hints, such as **.SetCulture(*string*)**.
 | Culture | non-canonical | ILocalizationKeyCultureAssignable | .Culture(*CultureInfo*) | Parameter to override current culture. |
 | N | non-canonical | ILocalizationKeyPluralityAssignable | .N(*Type*) | Key that specifies plurality |
 |  | non-canonical | ILocalizationKeyFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
-|  | non-canonical | ILocalizationKeyInlined | .Inline(*string*, *string*) | Hint for default culture specific string values. |
+|  | non-canonical | ILocalizationKeyInlines | .Inline(*string*, *string*) | Hint for default culture specific string values. |
 
 ## Type Section
 Type section is a key that narrows down the scope of localization to a specific class, interface or structure.

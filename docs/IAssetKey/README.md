@@ -103,7 +103,7 @@ string id2 = AssetKeyNameProvider.Colon_Colon_Colon.BuildName(key2);
 | Culture | non-canonical | ILocalizationKeyCultureAssignable | .Culture(*CultureInfo*) | Parameter to override current culture. |
 | N | non-canonical | ILocalizationKeyPluralityAssignable | .N(*Type*) | Key that specifies plurality |
 |  | non-canonical | ILocalizationKeyFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
-|  | non-canonical | ILocalizationKeyInlined | .Inline(*string*, *string*) | Hint for default culture specific string values. |
+|  | non-canonical | ILocalizationKeyInlines | .Inline(*string*, *string*) | Hint for default culture specific string values. |
 
 ## Type Section
 Type section is a key that narrows down the scope of localization to a specific class, interface or structure.
@@ -166,49 +166,59 @@ string str = key_formulated.ResolveString();
 ```
 
 ## Inlining
-Default language strings can be written right into the code.
 Code can be [automatically scanned](http://lexical.fi/sdk/Localization/docs/InlineScanner/index.html) for inlined strings and exported to localization files.
 They can be used as templates for further translation process. 
 This way the templates don't need to be manually updated as the code evolves.
 
+Default language strings can be written right into the code with 
+<b>.Inline(<i>string</i>)</b> which sets string for the root culture "".
+
 ```csharp
 // Create root
 IAssetRoot root = new LocalizationRoot();
-// Create key and add default strings
-IAssetKey key = root.Section("Section").Key("Success")                    
-    .Inline("Culture:en", "Success")                           // Add inlining to the root culture ""
-    .Inline("Culture:fi", "Onnistui")                          // Add inlining to culture "fi"
-    .Inline("Culture:sv", "Det funkar");                       // Add inlining to culture "sv"
-
+// Create key and add default value
+IAssetKey key = root.Section("Section").Key("Success").Inline("Success");
 // Resolve string from inlined key "Success"
-string str = key.Culture("en").ToString();
+string str = key.ToString();
 ```
 
-There are extension methods for every language in namespace **Lexical.Localization.Inlines**. 
-
-```csharp
-using Lexical.Localization.Inlines;
-```
-Which can be used for slightly shortened presentation.
+Inlining can be provided for specific cultures with <b>.Inline(<i>string</i>, <i>string</i>)</b>.
 
 ```csharp
 // Create key and add default strings
 IAssetKey key = root.Section("Section").Key("Success")
+    .Inline("Success")                                 // Add inlining to the root culture ""
+    .Inline("Culture:en", "Success")                   // Add inlining to culture "en"
+    .Inline("Culture:fi", "Onnistui")                  // Add inlining to culture "fi"
+    .Inline("Culture:sv", "Det funkar");               // Add inlining to culture "sv"
+// Resolve string from inlined key "Success"
+string str = key.Culture("en").ToString();
+```
+
+There are shorter extension methods for every language in namespace **Lexical.Localization.Inlines**. 
+
+```csharp
+// Create key and add default strings
+IAssetKey key = root.Section("Section").Key("Success")
+    .Inline("Success")                                 // Add inlining to the root culture ""
     .en("Success")                                     // Add inlining to culture "en"
     .fi("Onnistui")                                    // Add inlining to culture "fi"
     .sv("Det funkar");                                 // Add inlining to culture "sv"
 ```
 
-Root culture is the one with empty string "" as its name. 
-It is the fallback culture to look into in case localization is not provided for the active culture.
-The recommended practice to add strings for the fallback culture, and in international english.
+Caveat however, that inlining to specific cultures with <b>.Inline(<i>string</i>, <i>string</i>)</b> allocates a dictionary internally, so it might be good idea to put the key into a static reference.
 
 ```csharp
-IAssetKey key = root.Section("Section").Key("Success")
-    .Inline("Success")                                 // Add inlining to the root culture ""
-    .en("Success")                                     // Add inlining to "en", optional as root culture is same
-    .fi("Onnistui")                                    // Add inlining to "fi"
-    .sv("Det funkar");                                 // Add inlining to "sv"
+class MyController__
+{
+    static IAssetKey localization = LocalizationRoot.Global.Type<MyControllerB>();
+    static IAssetKey Success = localization.Key("Success").Inline("Success").sv("Det funkar").fi("Onnistui");
+
+    public string Do()
+    {
+        return Success.ToString();
+    }
+}
 ```
 
 ## Dynamic use

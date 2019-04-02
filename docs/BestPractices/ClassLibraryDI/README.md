@@ -1,12 +1,12 @@
 # Class Library with Dependency Injection
-
 This article describes recommended practice for writing a localized class library that uses inversion of control.
 
 ## Localization Sources
 The class library may want to provide builtin localizations. 
-The recommended practice is to create a public class **LibraryAssetSources** which implements **ILibraryAssetSources** to signal that this class provides the locations of its internal localizations.
+The recommended practice is to create a public class **LibraryAssetSources** which implements **ILibraryAssetSources** as a signal 
+to indicate that this class provides localizations for this class library.
 
-Internal localization files are typically added built-in as embedded resources.
+Internal localization files are typically embedded resources.
 
 ```csharp
 using System.Collections.Generic;
@@ -17,12 +17,21 @@ namespace TutorialLibrary2
 {
     public class LibraryAssetSources : List<IAssetSource>, ILibraryAssetSources
     {
+        /// <summary>
+        /// Localization source reference to embedded resource.
+        /// </summary>
+        public readonly LocalizationEmbeddedSource LocalizationSource = 
+            LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary2-de.xml");
+
+        /// <summary>
+        /// (Optional) External file localization source.
+        /// </summary>
+        public readonly LocalizationFileProviderSource ExternalLocalizationSource;
+
         public LibraryAssetSources() : base()
         {
-            // Create source that reads embedded resource
-            IAssetSource internalLocalizationSource = LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary2-de.xml");
-            // Asset sources are added here
-            Add(internalLocalizationSource);
+            // Add internal localization source
+            Add(LocalizationSource);
         }
 
         public LibraryAssetSources(IFileProvider fileProvider) : this()
@@ -30,8 +39,9 @@ namespace TutorialLibrary2
             // Use file provider from dependency injection and search for an optional external localization source
             if (fileProvider != null)
             {
-                IAssetSource externalLocalizationSource = LocalizationXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
-                Add(externalLocalizationSource);
+                ExternalLocalizationSource = 
+                    LocalizationXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary2.xml", throwIfNotFound: false);
+                Add(ExternalLocalizationSource);
             }
         }
     }
@@ -58,7 +68,7 @@ namespace TutorialLibrary2
 ```
 </details>
 
-## Using Localizer
+## Classes
 For inversion of control, the class library can use IStringLocalizer abstractions
 
 ```csharp
@@ -109,7 +119,7 @@ namespace TutorialLibrary2
 
 ```
 
-## Deploying Localizer
+# Application
 Application that deploys the localizer must include the internal localizations with 
 **<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** which searches the **ILibraryAssetSources** of the library.
 # [Snippet](#tab/snippet-1)
@@ -174,6 +184,7 @@ namespace TutorialProject2
 ***
 <br/>
 
+## Supplying Localizations
 The application can supply additional localization sources with **<i>IAssetBuilder</i>.AddSource(*IAssetSource*)**
 # [Snippet](#tab/snippet-2)
 

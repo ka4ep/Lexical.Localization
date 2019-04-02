@@ -21,7 +21,7 @@ And from singleton instances.
 ILocalizationFileFormat format = LocalizationIniReader.Instance;
 ```
 
-# IAsset
+# Read IAsset
 File can be read right away into an *IAsset* with **.FileAsset()** extension method.
 
 ```csharp
@@ -58,7 +58,7 @@ IAsset asset = LocalizationReaderMap.Instance.FileAsset(
     throwIfNotFound: true);
 ```
 
-# IAssetSource
+# Read IAssetSource
 File can be read into an *IAssetSource* with **.FileAsset()** extension method. *IAssetSource* is a reference and a loader of asset.
 It is not read right away, but when the asset is built.
 
@@ -101,7 +101,7 @@ IAssetSource assetSource = LocalizationReaderMap.Instance.FileAssetSource(
     throwIfNotFound: true);
 ```
 
-# Reading Content
+# Read File
 Different file formats have different intrinsic formats. 
 * Context free list formats are handled with **IEnumerable&lt;KeyValuePair&lt;IAssetKey, string&gt;&gt;** class.
 * Context dependent list formats are held in **IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;**.
@@ -129,8 +129,8 @@ IKeyTree tree = LocalizationReaderMap.Instance.ReadKeyTree(
     filename: "localization.ini", 
     throwIfNotFound: true);
 ```
-<br/>
 
+# File Reader
 A file reader can be constructed with respective **.FileReaderAsKeyLines()**.
 File reader reads the refered file when **.GetEnumerator()** is called, and will re-read the file again every time.
 
@@ -157,8 +157,8 @@ IEnumerable<IKeyTree> tree_reader =
         filename: "localization.ini", 
         throwIfNotFound: true);
 ```
-<br/>
 
+# Embedded Reader
 Embedded resource reader is created with **.EmbeddedReaderAsKeyLines()**.
 
 ```csharp
@@ -188,8 +188,8 @@ IEnumerable<IKeyTree> tree_reader =
         resourceName: "docs.localization.ini", 
         throwIfNotFound: true);
 ```
-<br/> 
 
+# IFileProvider Reader
 File provider reader is created with **.FileProviderReaderAsKeyLines()**.
 
 ```csharp
@@ -220,8 +220,8 @@ IEnumerable<IKeyTree> tree_reader =
         filepath: "localization.ini", 
         throwIfNotFound: true);
 ```
-<br/> 
 
+# Read Stream
 Content can be read from **Stream** into key lines.
 
 ```csharp
@@ -248,8 +248,8 @@ using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.R
     IKeyTree tree = LocalizationIniReader.Instance.ReadKeyTree(s);
 }
 ```
-<br/>
 
+# Read TextReader
 Content can be read from **TextReader** into key lines.
 
 ```csharp
@@ -277,8 +277,8 @@ using (TextReader tr = new StringReader(text))
     IKeyTree tree = LocalizationIniReader.Instance.ReadKeyTree(tr);
 }
 ```
-<br/>
 
+# Read String
 And from **String** into key lines.
 
 ```csharp
@@ -305,7 +305,7 @@ IKeyTree tree =
 
 # Implementing
 <details>
-  <summary><b>ILocalizationReader</b> is the root interface for localization writer classes. (<u>Click here</u>)</summary>
+  <summary><b>ILocalizationReader</b> is the root interface for localization reader classes. (<u>Click here</u>)</summary>
 
 ```csharp
 /// <summary>
@@ -432,10 +432,11 @@ class ExtFileFormatReader : ILocalizationKeyLinesTextReader
 }
 ```
 
-Implementation can be added to the **LocalizationReaderMap** dictionary.
+Reader can be added to **LocalizationReaderMap**.
 
 ```csharp
-// If ExtFileFormat implements ILocalizationReader, it can be placed
-// in reader map.
-LocalizationReaderMap.Instance["ext"] = new ExtFileFormatReader();
+// Clone foramts
+LocalizationFileFormatMap formats = LocalizationReaderMap.Instance.Clone();
+// If ExtFileFormatReader can be added to LocalizationFileFormatMap.
+formats.Add(new ExtFileFormatReader());
 ```
