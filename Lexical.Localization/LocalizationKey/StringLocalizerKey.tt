@@ -15,7 +15,7 @@
     string srcCode = GetRegion(srcText, "Code");
     srcCode = Regex.Replace(srcCode, @"([^I])LocalizationKey(\W)", m => m.Groups[1].Value + "StringLocalizerKey" + m.Groups[2].Value);    
     //srcCode = srcCode.Replace("ILocalizationKeyComparer", "StringLocalizerComparer");
-    srcCode = srcCode.Replace("/**TypeSectionInterfaces**/", ", IStringLocalizer<T>");
+    srcCode = srcCode.Replace("/*TypeSectionInterfaces*/", ", IStringLocalizer<T>");
    
 
     string srcInterfaces = GetRegion(srcText, "Interfaces");
@@ -58,8 +58,27 @@ namespace Lexical.Localization
     {
 <#= srcCode #>
 
+
+        /// <summary>
+        /// Create Resource key part.
+        /// </summary>
+        /// <param name="basename"></param>
+        /// <param name="location"></param>
+        /// <returns></returns>
         public IStringLocalizer Create(string basename, string location) => new _Resource(new _Assembly(this, location), basename);
+
+        /// <summary>
+        /// Create Type key part.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public IStringLocalizer Create(Type type) => typeConstructor.Create(type, this);
+
+        /// <summary>
+        /// Create Culture key part.
+        /// </summary>
+        /// <param name="newCulture"></param>
+        /// <returns></returns>
         public IStringLocalizer WithCulture(CultureInfo newCulture)
         {
             // Find culture key
@@ -84,6 +103,12 @@ namespace Lexical.Localization
                 result = result.AppendParameter(parameters[i].Item1, parameters[i].Item2);
             return (IStringLocalizer)result;
         }
+
+        /// <summary>
+        /// Get localized string.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public LocalizedString this[string name] 
         { 
             get {
@@ -95,6 +120,13 @@ namespace Lexical.Localization
                     return new LocalizedString(name, printedString);
                 }
         }
+
+        /// <summary>
+        /// Create localized string with format arguments.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="arguments"></param>
+        /// <returns></returns>
         public LocalizedString this[string name, params object[] arguments] 
         { 
             get {
@@ -106,6 +138,12 @@ namespace Lexical.Localization
                     return new LocalizedString(name, printedString);
                 }
         }
+
+        /// <summary>
+        /// Get all strings as localized strings.
+        /// </summary>
+        /// <param name="includeParentCultures"></param>
+        /// <returns></returns>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
             ILocalizationStringLinesEnumerable collections = this.FindAsset() as ILocalizationStringLinesEnumerable;
@@ -134,6 +172,12 @@ namespace Lexical.Localization
                 return strs == null ? null : ConvertStrings(strs);
             }
         }
+
+        /// <summary>
+        /// Convert strings to localized strings.
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <returns></returns>
         IEnumerable<LocalizedString> ConvertStrings(IEnumerable<KeyValuePair<string, string>> lines)
         {
             foreach(var kp in lines)
@@ -143,11 +187,23 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// A library of interfaces and extension methods that DynamicMetaObject implementation seaches from when 
+        /// invoked with dynamic calls.
+        /// </summary>
         public static class Library
         {
             private static Lazy<DynamicObjectLibrary> lazy = new Lazy<DynamicObjectLibrary>(CreateDefault);
+
+            /// <summary>
+            /// Library of methods, fields and properties for dynamic object.
+            /// </summary>
             public static DynamicObjectLibrary Default => lazy.Value;
 
+            /// <summary>
+            /// Create library of methods, fields and properties for dynamic object implementation.
+            /// </summary>
+            /// <returns></returns>
             public static DynamicObjectLibrary CreateDefault()
                 => LocalizationKey.Library.CreateDefault();
         }

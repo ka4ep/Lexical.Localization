@@ -130,38 +130,38 @@ namespace docs
                 #region Snippet_7a
                 // Create root
                 IAssetRoot root = new LocalizationRoot();
-                // Create key and add default strings
-                IAssetKey key = root.Section("Section").Key("Success")                    
-                    .Inline("Culture:en", "Success")                           // Add inlining to the root culture ""
-                    .Inline("Culture:fi", "Onnistui")                          // Add inlining to culture "fi"
-                    .Inline("Culture:sv", "Det funkar");                       // Add inlining to culture "sv"
-
+                // Create key and add default value
+                IAssetKey key = root.Section("Section").Key("Success").Inline("Success");
                 // Resolve string from inlined key "Success"
-                string str = key.Culture("en").ToString();
+                string str = key.ToString();
                 #endregion Snippet_7a
             }
 
             {
                 // Create root
                 IAssetRoot root = new LocalizationRoot();
-                #region Snippet_7b2
+                #region Snippet_7b
                 // Create key and add default strings
                 IAssetKey key = root.Section("Section").Key("Success")
-                    .en("Success")                                     // Add inlining to culture "en"
-                    .fi("Onnistui")                                    // Add inlining to culture "fi"
-                    .sv("Det funkar");                                 // Add inlining to culture "sv"
-                #endregion Snippet_7b2
+                    .Inline("Success")                                 // Add inlining to the root culture ""
+                    .Inline("Culture:en", "Success")                   // Add inlining to culture "en"
+                    .Inline("Culture:fi", "Onnistui")                  // Add inlining to culture "fi"
+                    .Inline("Culture:sv", "Det funkar");               // Add inlining to culture "sv"
+                // Resolve string from inlined key "Success"
+                string str = key.Culture("en").ToString();
+                #endregion Snippet_7b
             }
 
             {
                 // Create root
                 IAssetRoot root = new LocalizationRoot();
                 #region Snippet_7c
+                // Create key and add default strings
                 IAssetKey key = root.Section("Section").Key("Success")
                     .Inline("Success")                                 // Add inlining to the root culture ""
-                    .en("Success")                                     // Add inlining to "en", optional as root culture is same
-                    .fi("Onnistui")                                    // Add inlining to "fi"
-                    .sv("Det funkar");                                 // Add inlining to "sv"
+                    .en("Success")                                     // Add inlining to culture "en"
+                    .fi("Onnistui")                                    // Add inlining to culture "fi"
+                    .sv("Det funkar");                                 // Add inlining to culture "sv"
                 #endregion Snippet_7c
             }
 
@@ -233,6 +233,19 @@ namespace docs
             }
         }
         #endregion Snippet_11b
+
+        #region Snippet_7d
+        class MyController__
+        {
+            static IAssetKey localization = LocalizationRoot.Global.Type<MyControllerB>();
+            static IAssetKey Success = localization.Key("Success").Inline("Success").sv("Det funkar").fi("Onnistui");
+
+            public string Do()
+            {
+                return Success.ToString();
+            }
+        }
+        #endregion Snippet_7d
 
     }
 

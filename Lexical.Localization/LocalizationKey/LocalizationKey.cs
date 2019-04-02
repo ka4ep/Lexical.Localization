@@ -18,6 +18,9 @@ using System.Collections;
 
 namespace Lexical.Localization
 {    
+    /// <summary>
+    /// Key for language strings and binary asset localizations.
+    /// </summary>
     [Serializable]
     [DebuggerDisplay("{DebugPrint()}")]
     public class LocalizationKey :
@@ -37,31 +40,89 @@ namespace Lexical.Localization
         /// </summary>
         protected IAssetKey prevKey;
 
+        /// <summary>
+        /// Name of this key.
+        /// </summary>
         public virtual String Name => name;
-        public virtual IAssetKey PreviousKey => prevKey;
-        public string DebugPrint() => ParameterNamePolicy.Instance.BuildName(this); // AssetKeyNameProvider.Default.BuildName(this);
 
+        /// <summary>
+        /// Previous key
+        /// </summary>
+        public virtual IAssetKey PreviousKey => prevKey;
+
+        /// <summary>
+        /// Debug print that prints the reference id of this key.
+        /// </summary>
+        /// <returns></returns>
+        public string DebugPrint() 
+            => ParameterNamePolicy.Instance.BuildName(this); // AssetKeyNameProvider.Default.BuildName(this);
+
+        /// <summary>
+        /// Create new localization key.
+        /// </summary>
+        /// <param name="name"></param>
         public LocalizationKey(string name)
         {
             this.name = name ?? throw new ArgumentNullException(nameof(name));
         }
 
+        /// <summary>
+        /// Create new localization key that has (optionally) a link to <paramref name="prevKey"/>.
+        /// </summary>
+        /// <param name="prevKey">(optional)</param>
+        /// <param name="name"></param>
         public LocalizationKey(IAssetKey prevKey, string name)
         {
             this.name = name ?? throw new ArgumentNullException(nameof(name));
             this.prevKey = prevKey;
         }
 
-        IAssetKeyAssigned IAssetKeyAssignable.Key(string subkey) => new _Key(this, subkey);
+        /// <summary>
+        /// Append "Key".
+        /// </summary>
+        /// <param name="subkey"></param>
+        /// <returns></returns>
         public _Key Key(string subkey) => new _Key(this, subkey);
+
+        /// <summary>
+        /// Append "Key".
+        /// </summary>
+        /// <param name="subkey"></param>
+        /// <returns></returns>
+        IAssetKeyAssigned IAssetKeyAssignable.Key(string subkey) => new _Key(this, subkey);
+
+        /// <summary>
+        /// Key part.
+        /// </summary>
         [Serializable]
         public class _Key : LocalizationKey, IAssetKeyAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
-            public _Key(IAssetKey prevKey, string name) : base(prevKey, name) { }
-            public _Key(SerializationInfo info, StreamingContext context) : base(info, context) { }
+            /// <summary>
+            /// ParameterName
+            /// </summary>
             public String ParameterName => "Key";
+
+            /// <summary>
+            /// Create new "Key" part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="name"></param>
+            public _Key(IAssetKey prevKey, string name) : base(prevKey, name) { }
+
+            /// <summary>
+            /// Deserialize a "Key".
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
+            public _Key(SerializationInfo info, StreamingContext context) : base(info, context) { }
         }
 
+        /// <summary>
+        /// Append new parameter
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        /// <returns></returns>
         IAssetKeyParameterAssigned IAssetKeyParameterAssignable.AppendParameter(string parameterName, string parameterValue)
         {
             if (parameterName == null) throw new ArgumentNullException(nameof(parameterName));
@@ -78,35 +139,108 @@ namespace Lexical.Localization
                 default: return new _Parameter(this, parameterName, parameterValue);
             }
         }
+
+        /// <summary>
+        /// Key for a parameterName that wasn't hard coded.
+        /// </summary>
         [Serializable]
         public class _Parameter : LocalizationKey, IAssetKeyAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
-            string parameterName;
+            /// <summary>
+            /// ParameterName
+            /// </summary>
+            protected string parameterName;
+
+            /// <summary>
+            /// Parameter Name
+            /// </summary>
+            public String ParameterName => parameterName;
+
+            /// <summary>
+            /// Create new parameter part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="parameterName"></param>
+            /// <param name="parameterValue"></param>
             public _Parameter(IAssetKey prevKey, string parameterName, string parameterValue) : base(prevKey, parameterValue)
             {
                 this.parameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
             }
+
+            /// <summary>
+            /// Deserialize a parameter key.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public _Parameter(SerializationInfo info, StreamingContext context) : base(info, context)
             {
                 this.parameterName = info.GetValue(nameof(ParameterName), typeof(string)) as string;
             }
+
+            /// <summary>
+            /// Serialize a parameter key.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
             {
                 base.GetObjectData(info, context);
                 info.AddValue(nameof(ParameterName), parameterName);
             }
-            public String ParameterName => parameterName;
         }
 
-        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.Culture(CultureInfo culture) => new _Culture(this, null, culture);
-        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.Culture(string cultureName) => new _Culture(this, cultureName, null);
+        /// <summary>
+        /// Append a "Culture" key part.
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <returns></returns>
         public _Culture Culture(CultureInfo culture) => new _Culture(this, null, culture);
+
+        /// <summary>
+        /// Append a culture key.
+        /// </summary>
+        /// <param name="cultureName"></param>
+        /// <returns></returns>
         public _Culture Culture(string cultureName) => new _Culture(this, cultureName, null);
+
+        /// <summary>
+        /// Append a culture key.
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.Culture(CultureInfo culture) => new _Culture(this, null, culture);
+
+        /// <summary>
+        /// Append a culture key.
+        /// </summary>
+        /// <param name="cultureName"></param>
+        /// <returns></returns>
+        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.Culture(string cultureName) => new _Culture(this, cultureName, null);
+
+        /// <summary>
+        /// Culture key.
+        /// </summary>
         [Serializable]
         public class _Culture : LocalizationKey, ILocalizationKeyCultureAssigned, IAssetKeyNonCanonicallyCompared, IAssetKeyParameterAssigned
         {
+            /// <summary>
+            /// ParameterName
+            /// </summary>
+            public String ParameterName => "Culture";
+
+            /// <summary>
+            /// CultureInfo, null if non-standard culture.
+            /// </summary>
             protected CultureInfo culture;
+
             CultureInfo ILocalizationKeyCultureAssigned.Culture => culture;
+
+            /// <summary>
+            /// Create new culture key.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="cultureName"></param>
+            /// <param name="culture"></param>
             public _Culture(IAssetKey prevKey, string cultureName, CultureInfo culture) : base(prevKey, cultureName ?? culture.Name)
             {
                 try
@@ -115,18 +249,43 @@ namespace Lexical.Localization
                 }
                 catch (Exception) { }
             }
+
+            /// <summary>
+            /// Deserialize culture key.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public _Culture(SerializationInfo info, StreamingContext context) : base(info, context) { this.culture = info.GetValue(nameof(Culture), typeof(CultureInfo)) as CultureInfo; }
+
+            /// <summary>
+            /// Serialize culture key.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
             {
                 base.GetObjectData(info, context);
                 info.AddValue(nameof(Culture), culture);
             }
-            public String ParameterName => "Culture";
         }
 
-        ILocalizationKeyInlines ILocalizationKeyInlineAssignable.AddInlines() => _addinlines();
+        /// <summary>
+        /// Append Inlines key part.
+        /// </summary>
+        /// <returns></returns>
         public _Inlines AddInlines() => _addinlines();
+
+        /// <summary>
+        /// Append Inlines key part.
+        /// </summary>
+        /// <returns></returns>
         protected virtual _Inlines _addinlines() => new _Inlines(this);
+
+        /// <summary>
+        /// Append Inlines key part.
+        /// </summary>
+        /// <returns></returns>
+        ILocalizationKeyInlines ILocalizationKeyInlineAssignable.AddInlines() => _addinlines();
 
         /// <summary>
         /// Key that contains inlines. 
@@ -401,15 +560,55 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Append format args key part.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         ILocalizationKeyFormatArgs ILocalizationKeyFormattable.Format(params object[] args) => new _FormatArgs(this, args);
+
+        /// <summary>
+        /// Append format args key part.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public virtual _FormatArgs Format(params object[] args) => new _FormatArgs(this, args);
+
+        /// <summary>
+        /// Format arguments key.
+        /// </summary>
         [Serializable]
         public class _FormatArgs : LocalizationKey, ILocalizationKeyFormatArgs, IAssetKeyNonCanonicallyCompared
         {
+            /// <summary>
+            /// Format arguments.
+            /// </summary>
             protected object[] args;
+
+            /// <summary>
+            /// Format arguments.
+            /// </summary>
             public virtual object[] Args => args;
+
+            /// <summary>
+            /// Create format arguments key part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="args"></param>
             public _FormatArgs(IAssetKey prevKey, Object[] args) : base(prevKey, "") { this.args = args; }
+
+            /// <summary>
+            /// Deserialize format args key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public _FormatArgs(SerializationInfo info, StreamingContext context) : base(info, context) { this.args = info.GetValue(nameof(Args), typeof(Object[])) as object[]; }
+
+            /// <summary>
+            /// Serialize format args key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
             {
                 base.GetObjectData(info, context);
@@ -417,29 +616,93 @@ namespace Lexical.Localization
             }
         }
 
-        ILocalizationKeyPluralityAssigned ILocalizationKeyPluralityAssignable.N(int argumentIndex, string pluralityKind) => new _N(_N.BackUp(this, argumentIndex), argumentIndex, pluralityKind);
+        /// <summary>
+        /// Append plurality key part.
+        /// </summary>
+        /// <param name="argumentIndex"></param>
+        /// <param name="pluralityKind"></param>
+        /// <returns></returns>
         public _N N(int argumentIndex, string pluralityKind) => new _N(_N.BackUp(this, argumentIndex), argumentIndex, pluralityKind);
+
+        /// <summary>
+        /// Append plurality key part.
+        /// </summary>
+        /// <param name="argumentIndex"></param>
+        /// <param name="pluralityKind"></param>
+        /// <returns></returns>
+        ILocalizationKeyPluralityAssigned ILocalizationKeyPluralityAssignable.N(int argumentIndex, string pluralityKind) => new _N(_N.BackUp(this, argumentIndex), argumentIndex, pluralityKind);
+
+        /// <summary>
+        /// Plurality key part.
+        /// </summary>
         [Serializable]
         public class _N : LocalizationKey, IAssetKeySectionAssigned, IAssetKeyParameterAssigned, IAssetKeyNonCanonicallyCompared, ILocalizationKeyPluralityAssigned
         {
+            /// <summary>
+            /// Argument index the plurality applies to.
+            /// </summary>
             int argumentIndex;
+
+            /// <summary>
+            /// Argument index the plurality applies to.
+            /// </summary>
             int ILocalizationKeyPluralityAssigned.ArgumentIndex => argumentIndex;
+
+            /// <summary>
+            /// Create plurality key part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="argumentIndex"></param>
+            /// <param name="pluralityKind"></param>
             public _N(IAssetKey prevKey, int argumentIndex, string pluralityKind) : base(prevKey, pluralityKind)
             {
                 if (argumentIndex < 0) throw new ArgumentException(nameof(argumentIndex));
                 this.argumentIndex = argumentIndex;
             }
+
+            /// <summary>
+            /// Deserialize plurality key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public _N(SerializationInfo info, StreamingContext context) : base(info, context) {
                 this.argumentIndex = info.GetInt32("ArgumentIndex");
             }
+
+            /// <summary>
+            /// Serialize plurality key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
             {                
                 info.AddValue("ArgumentIndex", argumentIndex);
                 base.GetObjectData(info, context);
             }
+
+            /// <summary>
+            /// ParameterName
+            /// </summary>
             public virtual String ParameterName => GetParameterName(argumentIndex);
+
+            /// <summary>
+            /// Static parameter names for plurality keys.
+            /// </summary>
             private static string[] ParameterNames = new string[] { "N", "N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N9" };
+
+            /// <summary>
+            /// Get or create parameter name for argument index.
+            /// </summary>
+            /// <param name="argumentIndex"></param>
+            /// <returns></returns>
             public static string GetParameterName(int argumentIndex) => argumentIndex < ParameterNames.Length ? ParameterNames[argumentIndex] : "N" + argumentIndex;
+
+            /// <summary>
+            /// Go back in key chain and find Plurality key.
+            /// </summary>
+            /// <param name="key"></param>
+            /// <param name="argumentIndex"></param>
+            /// <returns></returns>
             internal static IAssetKey BackUp(IAssetKey key, int argumentIndex)
             {
                 string parameterNameToSearch = _N.GetParameterName(argumentIndex);
@@ -453,33 +716,134 @@ namespace Lexical.Localization
             }
         }
 
-        IAssetKeySectionAssigned IAssetKeySectionAssignable.Section(string sectionName) => new _Section(this, sectionName);
+        /// <summary>
+        /// Append "Section" key part.
+        /// </summary>
+        /// <param name="sectionName"></param>
+        /// <returns></returns>
         public _Section Section(string sectionName) => new _Section(this, sectionName);
+
+        /// <summary>
+        /// Append "Section" key part.
+        /// </summary>
+        /// <param name="sectionName"></param>
+        /// <returns></returns>
+        IAssetKeySectionAssigned IAssetKeySectionAssignable.Section(string sectionName) => new _Section(this, sectionName);
+
+        /// <summary>
+        /// Section key part.
+        /// </summary>
         [Serializable]
         public class _Section : LocalizationKey, IAssetKeySectionAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
-            public _Section(IAssetKey prevKey, string name) : base(prevKey, name) { }
-            public _Section(SerializationInfo info, StreamingContext context) : base(info, context) { }
+            /// <summary>
+            /// ParameterName
+            /// </summary>
             public virtual String ParameterName => "Section";
+
+            /// <summary>
+            /// Create section key part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="name"></param>
+            public _Section(IAssetKey prevKey, string name) : base(prevKey, name) { }
+
+            /// <summary>
+            /// Deserialize section key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
+            public _Section(SerializationInfo info, StreamingContext context) : base(info, context) { }
         }
 
-        static RuntimeConstructor<IAssetKey, _Type> typeConstructor = new RuntimeConstructor<IAssetKey, _Type>(typeof(_Type<>));
-        IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(string typename) => new _Type(this, typename);
-        IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(Type t) => typeConstructor.Create(t, this);
-        IAssetKey<T> IAssetKeyTypeAssignable.Type<T>() => new _Type<T>(this);
+        /// <summary>
+        /// Append Type key part.
+        /// </summary>
+        /// <param name="typename"></param>
+        /// <returns></returns>
         public _Type Type(string typename) => new _Type(this, typename);
+
+        /// <summary>
+        /// Append Type key part.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         public _Type Type(Type t) => typeConstructor.Create(t, this);
+
+        /// <summary>
+        /// Append Type key part.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public _Type<T> Type<T>() => new _Type<T>(this);
+
+        /// <summary>
+        /// Append Type key part.
+        /// </summary>
+        /// <param name="typename"></param>
+        /// <returns></returns>
+        IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(string typename) => new _Type(this, typename);
+
+        /// <summary>
+        /// Append Type key part.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(Type t) => typeConstructor.Create(t, this);
+
+        /// <summary>
+        /// Append Type key part.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        IAssetKey<T> IAssetKeyTypeAssignable.Type<T>() => new _Type<T>(this);
+
+        static RuntimeConstructor<IAssetKey, _Type> typeConstructor = new RuntimeConstructor<IAssetKey, _Type>(typeof(_Type<>));
+
+        /// <summary>
+        /// Type key part.
+        /// </summary>
         [Serializable]
         public class _Type : LocalizationKey, IAssetKeyTypeAssigned, IAssetKeyParameterAssigned, IAssetKeyNonCanonicallyCompared
         {
+            /// <summary>
+            /// Refered Type, or null if type was not available at construction time.
+            /// </summary>
             protected Type type;
+
+            /// <summary>
+            /// Refered Type, or null if type was not available at construction time.
+            /// </summary>
             Type IAssetKeyTypeAssigned.Type => type;
+
+            /// <summary>
+            /// Create Type part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="type"></param>
             public _Type(IAssetKey prevKey, Type type) : base(prevKey, type.FullName) { this.type = type; }
+
+            /// <summary>
+            /// Create Type part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="name"></param>
             public _Type(IAssetKey prevKey, String name) : base(prevKey, name) { this.name = name; }
+
+            /// <summary>
+            /// Deserialize Type part. Does not work in .NET Core.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public _Type(SerializationInfo info, StreamingContext context) : base(info, context) {
                 this.type = info.GetValue(nameof(Type), typeof(Type)) as Type;
             }
+
+            /// <summary>
+            /// Serialize Type part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
             {
                 var t = type;
@@ -488,58 +852,204 @@ namespace Lexical.Localization
                 else if (t.IsSerializable) info.AddValue(nameof(Type), t);
                 base.GetObjectData(info, context);
             }
+
+            /// <summary>
+            /// ParameterName
+            /// </summary>
             public String ParameterName => "Type";
         }
+
+        /// <summary>
+        /// Type key part.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         [Serializable]
-        public class _Type<T> : _Type, IAssetKey<T>/**TypeSectionInterfaces**/
+        public class _Type<T> : _Type, IAssetKey<T>/*TypeSectionInterfaces*/
         {
+            /// <summary>
+            /// Create Type key part.
+            /// </summary>
+            /// <param name="prevKey"></param>
             public _Type(IAssetKey prevKey) : base(prevKey, typeof(T)) {}
+
+            /// <summary>
+            /// Create Type key part.
+            /// </summary>
+            /// <param name="root"></param>
             public _Type(IAssetRoot root) : base(root, typeof(T)) { }
+
+            /// <summary>
+            /// Deserialize Type key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public _Type(SerializationInfo info, StreamingContext context) : base(info, context) { }
         }
 
+        /// <summary>
+        /// Append Assembly key part.
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
         IAssetKeyAssemblyAssigned IAssetKeyAssemblyAssignable.Assembly(Assembly assembly) => new _Assembly(this, assembly);
+
+        /// <summary>
+        /// Append Assembly key part.
+        /// </summary>
+        /// <param name="assemblyName"></param>
+        /// <returns></returns>
         IAssetKeyAssemblyAssigned IAssetKeyAssemblyAssignable.Assembly(String assemblyName) => new _Assembly(this, assemblyName);
+
+        /// <summary>
+        /// Append Assembly key part.
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <returns></returns>
         public _Assembly Assembly(Assembly assembly) => new _Assembly(this, assembly);
+
+        /// <summary>
+        /// Append Assembly key part.
+        /// </summary>
+        /// <param name="assemblyName"></param>
+        /// <returns></returns>
         public _Assembly Assembly(String assemblyName) => new _Assembly(this, assemblyName);
+
+        /// <summary>
+        /// Assembly key part.
+        /// </summary>
         [Serializable]
         public class _Assembly : LocalizationKey, IAssetKeyAssemblyAssigned, IAssetKeyNonCanonicallyCompared, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
+            /// <summary>
+            /// Referred Assembly, or null if was not available.
+            /// </summary>
             protected Assembly assembly;
+
+            /// <summary>
+            /// Referred Assembly, or null if was not available.
+            /// </summary>
             Assembly IAssetKeyAssemblyAssigned.Assembly => assembly;
+
+            /// <summary>
+            /// ParameterName
+            /// </summary>
+            public String ParameterName => "Assembly";
+
+            /// <summary>
+            /// Create Assembly key part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="asmName"></param>
             public _Assembly(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
+
+            /// <summary>
+            /// Create Assembly key part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="assembly"></param>
             public _Assembly(IAssetKey prevKey, Assembly assembly) : base(prevKey, assembly.GetName().Name) { this.assembly = assembly; }
+
+            /// <summary>
+            /// Deserialize Assembly key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public _Assembly(SerializationInfo info, StreamingContext context) : base(info, context)
             {
                 this.assembly = info.GetValue(nameof(Assembly), typeof(Assembly)) as Assembly;
             }
+
+            /// <summary>
+            /// Serialize Assembly key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
             {
                 var a = assembly;
                 info.AddValue(nameof(Assembly), a);
                 base.GetObjectData(info, context);
             }
-            public String ParameterName => "Assembly";
         }
 
+        /// <summary>
+        /// Append Resource key part.
+        /// </summary>
+        /// <param name="resourceName"></param>
+        /// <returns></returns>
         IAssetKeyResourceAssigned IAssetKeyResourceAssignable.Resource(String resourceName) => new _Resource(this, resourceName);
+
+        /// <summary>
+        /// Append Resource key part.
+        /// </summary>
+        /// <param name="resourceName"></param>
+        /// <returns></returns>
         public _Resource Resource(String resourceName) => new _Resource(this, resourceName);
+
+        /// <summary>
+        /// Resource key part.
+        /// </summary>
         [Serializable]
         public class _Resource : LocalizationKey, IAssetKeyResourceAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
-            public _Resource(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
-            public _Resource(SerializationInfo info, StreamingContext context) : base(info, context) {}
+            /// <summary>
+            /// ParameterName.
+            /// </summary>
             public String ParameterName => "Resource";
+
+            /// <summary>
+            /// Create Resource key part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="asmName"></param>
+            public _Resource(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
+
+            /// <summary>
+            /// Deserialize Resource key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
+            public _Resource(SerializationInfo info, StreamingContext context) : base(info, context) {}
         }
 
+        /// <summary>
+        /// Append Location key part.
+        /// </summary>
+        /// <param name="resourceName"></param>
+        /// <returns></returns>
         IAssetKeyLocationAssigned IAssetKeyLocationAssignable.Location(String resourceName) => new _Location(this, resourceName);
+
+        /// <summary>
+        /// Append Location key part.
+        /// </summary>
+        /// <param name="resourceName"></param>
+        /// <returns></returns>
         public _Location Location(String resourceName) => new _Location(this, resourceName);
+
+        /// <summary>
+        /// Location key part.
+        /// </summary>
         [Serializable]
         public class _Location : LocalizationKey, IAssetKeyLocationAssigned, IAssetKeyParameterAssigned, IAssetKeyCanonicallyCompared
         {
-            public _Location(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
-            public _Location(SerializationInfo info, StreamingContext context) : base(info, context) { }
+            /// <summary>
+            /// ParameterName.
+            /// </summary>
             public String ParameterName => "Location";
+
+            /// <summary>
+            /// Create Location key part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="asmName"></param>
+            public _Location(IAssetKey prevKey, string asmName) : base(prevKey, asmName) { }
+
+            /// <summary>
+            /// Deserialize Location key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
+            public _Location(SerializationInfo info, StreamingContext context) : base(info, context) { }
         }
 
         /// <summary>
@@ -625,7 +1135,7 @@ namespace Lexical.Localization
             => comparer.Equals(this, obj as IAssetKey);
 
         /// <summary>
-        /// Hashcode calculation
+        /// Calculate hashcode with hashesin format arguments. Result is cached.
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
@@ -636,6 +1146,10 @@ namespace Lexical.Localization
             return hashcode;
         }
 
+        /// <summary>
+        /// Calculate default reference hashcode. Result is cached.
+        /// </summary>
+        /// <returns></returns>
         int IAssetKeyDefaultHashCode.GetDefaultHashCode()
         {
             // Return cached default hashcode
@@ -664,8 +1178,16 @@ namespace Lexical.Localization
         public static class Library
         {
             private static DynamicObjectLibrary instance = CreateDefault();
+
+            /// <summary>
+            /// Library of methods, fields and properties for dynamic object.
+            /// </summary>
             public static DynamicObjectLibrary Default => instance;
 
+            /// <summary>
+            /// Create library of methods, fields and properties for dynamic object implementation.
+            /// </summary>
+            /// <returns></returns>
             public static DynamicObjectLibrary CreateDefault()
                 => new DynamicObjectLibrary()
                     .AddExtensionMethods(typeof(AssetKeyExtensions))

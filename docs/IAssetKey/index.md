@@ -79,21 +79,22 @@ But, if needed an unformulated string can be resolved with **.ResolveString()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_6c)]
 
 ## Inlining
-Default language strings can be written right into the code.
 Code can be [automatically scanned](http://lexical.fi/sdk/Localization/docs/InlineScanner/index.html) for inlined strings and exported to localization files.
 They can be used as templates for further translation process. 
 This way the templates don't need to be manually updated as the code evolves.
+
+Default language strings can be written right into the code with 
+<b>.Inline(<i>string</i>)</b> which sets string for the root culture "".
 [!code-csharp[Snippet](Examples.cs#Snippet_7a)]
 
-There are extension methods for every language in namespace **Lexical.Localization.Inlines**. 
-[!code-csharp[Snippet](Examples.cs#Snippet_7b1)]
-Which can be used for slightly shortened presentation.
-[!code-csharp[Snippet](Examples.cs#Snippet_7b2)]
+Inlining can be provided for specific cultures with <b>.Inline(<i>string</i>, <i>string</i>)</b>.
+[!code-csharp[Snippet](Examples.cs#Snippet_7b)]
 
-Root culture is the one with empty string "" as its name. 
-It is the fallback culture to look into in case localization is not provided for the active culture.
-The recommended practice to add strings for the fallback culture, and in international english.
+There are shorter extension methods for every language in namespace **Lexical.Localization.Inlines**. 
 [!code-csharp[Snippet](Examples.cs#Snippet_7c)]
+
+Caveat however, that inlining to specific cultures with <b>.Inline(<i>string</i>, <i>string</i>)</b> allocates a dictionary internally, so it might be good idea to put the key into a static reference.
+[!code-csharp[Snippet](Examples.cs#Snippet_7d)]
 
 ## Dynamic use
 Asset keys from LocalizationRoot and StringLocalizationRoot are dynamically usable.
