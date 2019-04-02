@@ -43,7 +43,7 @@ namespace Lexical.Localization
     public partial class StringLocalizerRoot :
         StringLocalizerKey,
         IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned,
-        IStringLocalizer, IStringLocalizerFactory, IAssetKeyParameterAssigned
+        IStringLocalizer, IStringLocalizerFactory
     {
 <#= srcCode #>
      

@@ -11,7 +11,7 @@ using Lexical.Localization.Internal;
 
 namespace Lexical.Localization
 {
-    #region IAssetNamePattern
+    #region Interface
     /// <summary>
     /// A name pattern, akin to regular expression, that can be matched against filenames and <see cref="IAssetKey"/> instances.
     /// Is a sequence of parameter and text parts.
@@ -93,16 +93,14 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        IAssetNamePatternMatch Match(IAssetKey obj);
+        IAssetNamePatternMatch Match(IAssetKey key);
 
         /// <summary>
         /// A regular expression pattern that captures same parts from a filename string.
         /// </summary>
         Regex Regex { get; }
     }
-    #endregion IAssetNamePattern
-
-    #region IAssetNamePatternPart
+    
     /// <summary>
     /// Part of a pattern.
     /// </summary>
@@ -150,7 +148,7 @@ namespace Lexical.Localization
         int Index { get; }
 
         /// <summary>
-        /// Index in <see cref="IAssetNamePatternPart.CaptureParts"/>.
+        /// Index in <see cref="IAssetNamePattern.CaptureParts"/>.
         /// </summary>
         int CaptureIndex { get; }
 
@@ -176,9 +174,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         bool IsMatch(string text);
     }
-    #endregion IAssetNamePatternPart
-
-    #region IAssetNamePatternMatch
+        
     /// <summary>
     /// Match result.
     /// </summary>
@@ -195,7 +191,7 @@ namespace Lexical.Localization
         string[] PartValues { get; }
 
         /// <summary>
-        /// Part values by <see cref="CaptureParts" />
+        /// Part values by part index in <see cref="IAssetNamePatternPart.CaptureIndex"/>.
         /// </summary>
         /// <param name="ix"></param>
         /// <returns></returns>
@@ -213,8 +209,11 @@ namespace Lexical.Localization
         /// </summary>
         bool Success { get; }
     }
-    #endregion IAssetNamePatternMatch
+    #endregion Interface
 
+    /// <summary>
+    /// Extension methods for <see cref="IAssetNamePattern"/>.
+    /// </summary>
     public static partial class AssetNamePatternExtensions
     {
         /// <summary>
@@ -275,6 +274,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Build name from captured part values.
         /// </summary>
+        /// <param name="pattern"></param>
         /// <param name="parts"></param>
         /// <returns>Built name, or null if one of the required parts were not found.</returns>
         public static string BuildName(this IAssetNamePattern pattern, IReadOnlyDictionary<string, string> parts)

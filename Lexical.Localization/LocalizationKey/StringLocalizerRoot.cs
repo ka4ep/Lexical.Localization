@@ -25,11 +25,10 @@ namespace Lexical.Localization
     public partial class StringLocalizerRoot :
         StringLocalizerKey,
         IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned,
-        IStringLocalizer, IStringLocalizerFactory, IAssetKeyParameterAssigned
+        IStringLocalizer, IStringLocalizerFactory
     {
         protected ICulturePolicy culturePolicy;
         protected IAsset localizationAsset;
-        String IAssetKeyParameterAssigned.ParameterName => "Root";
 
         public virtual ICulturePolicy CulturePolicy { get => culturePolicy; set { throw new InvalidOperationException(); } }
         public virtual IAsset Asset { get => localizationAsset; set { throw new InvalidOperationException(); } }

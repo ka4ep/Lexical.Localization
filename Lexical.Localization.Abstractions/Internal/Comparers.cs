@@ -8,9 +8,8 @@ using System.Collections.Generic;
 
 namespace Lexical.Localization.Internal
 {
-
     /// <summary>
-    /// Order comparer between <see cref="KeyValuePair{Key, Value}".
+    /// Order comparer between KeyValuePair&lt;Key, Value&gt;.
     /// </summary>
     /// <typeparam name="Key"></typeparam>
     /// <typeparam name="Value"></typeparam>

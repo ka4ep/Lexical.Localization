@@ -22,7 +22,7 @@ namespace docs
 
                 {
                     #region Snippet_2
-                    // Create similiar policy with AssetNamePattern
+                    // Create pattern
                     IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Culture/}{Location/}{Type/}{Section/}[Key].txt");
                     // "en/Patches/MyController/Errors/InvalidState.txt"
                     string str = myPolicy.BuildName(key);
@@ -31,7 +31,7 @@ namespace docs
 
                 {
                     #region Snippet_3
-                    // Create name pattern
+                    // Create pattern
                     IAssetKeyNamePolicy myPolicy = new AssetNamePattern("Patches/{Section}[-Key]{-Culture}.png");
                     #endregion Snippet_3
                     // "Patches/Errors-InvalidState-en.png"
@@ -39,7 +39,7 @@ namespace docs
                 }
                 {
                     #region Snippet_4a
-                    // Create name pattern
+                    // Create pattern
                     IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
                     IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
@@ -49,7 +49,7 @@ namespace docs
                 }
                 {
                     #region Snippet_4b
-                    // Create name pattern
+                    // Create pattern
                     IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location/}{Location/}{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
                     IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
@@ -69,7 +69,7 @@ namespace docs
                 }
                 {
                     #region Snippet_4d
-                    // Create name pattern
+                    // Create pattern
                     IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location_3}{Location_2/}{Location_1/}{Location_0/}{Section}{-Key}{-Culture}.png");
                     // Create key
                     IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
@@ -79,7 +79,7 @@ namespace docs
                 }
                 {
                     #region Snippet_5
-                    // Create name pattern with regular expression detail
+                    // Create pattern with regular expression detail
                     IAssetNamePattern myPolicy = new AssetNamePattern("{Location<[^/]+>/}{Section}{-Key}{-Culture}.png");
                     // Use its regular expression
                     Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");

@@ -14,12 +14,11 @@ namespace Lexical.Localization
     /// </summary>
     [Serializable]
     public partial class LocalizationRoot : 
-        LocalizationKey, IAssetRoot, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned, IAssetKeyParameterAssigned
+        LocalizationKey, IAssetRoot, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned
     {
         #region Code
         protected ICulturePolicy culturePolicy;
         protected IAsset localizationAsset;
-        String IAssetKeyParameterAssigned.ParameterName => "Root";
 
         public virtual ICulturePolicy CulturePolicy { get => culturePolicy; set { throw new InvalidOperationException(); } }
         public virtual IAsset Asset { get => localizationAsset; set { throw new InvalidOperationException(); } }

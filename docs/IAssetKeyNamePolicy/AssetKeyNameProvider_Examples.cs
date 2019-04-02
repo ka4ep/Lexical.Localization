@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace docs
 {
-    public class IAssetKeyNameProvider_Examples
+    public class AssetKeyNameProvider_Examples
     {
         public static void Main(string[] args)
         {

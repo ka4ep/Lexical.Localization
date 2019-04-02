@@ -76,12 +76,12 @@ namespace Lexical.Localization
             string unescapeCharactersEscaped = unescapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape("" + c)).Aggregate((a, b) => a + b);
             LiteralUnescape = new Regex(
                 unescapeControlCharacters ? 
-                "\\\\([0abtfnrv" + unescapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|X[0-9a-fA-F]{8})" :
+                "\\\\([0abtfnrv" + unescapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8})" :
                 "\\\\[" + unescapeCharactersEscaped + "]"
                 , opts);
             unescapeChar = UnescapeChar;
-            _parameterVisitorIncludeRoot = parameterVisitorIncludeRoot;
-            _parameterVisitorExcludeRoot = parameterVisitorExcludeRoot;
+
+            _parameterVisitor = parameterVisitor;
         }
 
         /// <summary>
@@ -101,32 +101,10 @@ namespace Lexical.Localization
         public string PrintKey(IAssetKey key)
         {
             StringBuilder sb = new StringBuilder();
-            key.VisitFromRoot(_parameterVisitorExcludeRoot, ref sb);
+            key.VisitFromRoot(_parameterVisitor, ref sb);
             return sb.ToString();
         }
-
-        /// <summary>
-        /// Convert a sequence of key,value pairs to a string.
-        /// 
-        /// The format is as following:
-        ///   parameterKey:parameterValue:parameterKey:parameterValue:...
-        /// 
-        /// Escape character is backslash.
-        ///  \unnnn
-        ///  \xnnnn
-        ///  \:
-        ///  \\
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="includeRoot"></param>
-        /// <returns></returns>
-        public string PrintKey(IAssetKey key, bool includeRoot)
-        {
-            StringBuilder sb = new StringBuilder();
-            key.VisitFromRoot(includeRoot ? _parameterVisitorIncludeRoot : _parameterVisitorExcludeRoot, ref sb);
-            return sb.ToString();
-        }
-
+        
         /// <summary>
         /// Convert a sequence of key,value pairs to a string.
         /// 
@@ -141,27 +119,15 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <param name="sb"></param>
-        /// <param name="includeRoot"></param>
         /// <returns><paramref name="sb"/></returns>
-        public StringBuilder PrintKey(IAssetKey key, StringBuilder sb, bool includeRoot)
+        public StringBuilder PrintKey(IAssetKey key, StringBuilder sb)
         {
-            key.VisitFromRoot(includeRoot?_parameterVisitorIncludeRoot:_parameterVisitorExcludeRoot, ref sb);
+            key.VisitFromRoot(_parameterVisitor, ref sb);
             return sb;
         }
 
-        AssetKeyVisitor<StringBuilder> _parameterVisitorIncludeRoot, _parameterVisitorExcludeRoot;
-        void parameterVisitorExcludeRoot(IAssetKey key, ref StringBuilder sb)
-        {
-            if (key is IAssetKeyParameterAssigned parameter && parameter.ParameterName != "Root")
-            {
-                IAssetKeyParameterAssigned prevKey = key.GetPreviousParameterKey();
-                if (prevKey != null && prevKey.ParameterName != "Root") sb.Append(':');
-                sb.Append(EscapeLiteral(parameter.ParameterName));
-                sb.Append(':');
-                sb.Append(EscapeLiteral(parameter.Name));
-            }
-        }
-        void parameterVisitorIncludeRoot(IAssetKey key, ref StringBuilder sb)
+        AssetKeyVisitor<StringBuilder> _parameterVisitor;
+        void parameterVisitor(IAssetKey key, ref StringBuilder sb)
         {
             if (key is IAssetKeyParameterAssigned parameter)
             {
@@ -218,7 +184,6 @@ namespace Lexical.Localization
                 if (!k_key.Success || !k_value.Success) throw new FormatException(keyString);
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                if (key == "Root") continue;
                 result = result.AppendParameter(key, value);
             }
             return result;
@@ -242,7 +207,6 @@ namespace Lexical.Localization
                 if (!k_key.Success || !k_value.Success) { resultKey = null; return false; }
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                if (key == "Root") continue;
                 result = result.AppendParameter(key, value);
             }
             resultKey = result;
@@ -320,7 +284,7 @@ namespace Lexical.Localization
                 case '\r': return "\\r";
             }
             if (_ch < 32) return "\\x" + ((uint)_ch).ToString("x2", CultureInfo.InvariantCulture);
-            //if (_ch >= 0xD800 && _ch <= 0xDFFF) return "\\u" + ((uint)_ch).ToString("x4", CultureInfo.InvariantCulture);
+            if (_ch >= 0xD800 && _ch <= 0xDFFF) return "\\u" + ((uint)_ch).ToString("x4", CultureInfo.InvariantCulture);
             return "\\" + _ch;
         }
 
@@ -340,10 +304,12 @@ namespace Lexical.Localization
                 case 'r': return "\r";
                 case '\\': return "\\";
                 case 'x':
-                case 'u':
                     char ch = (char)Hex.ToUInt(s, 2);
                     return new string(ch, 1);
-                case 'X':
+                case 'u':
+                    char ch_ = (char)Hex.ToUInt(s, 2);
+                    return new string(ch_, 1);
+                case 'U':
                     uint c = Hex.ToUInt(s, 2);
                     return new string((char)(c >> 16), 1) + new string((char)(c & 0xffffU), 1);
                 default:

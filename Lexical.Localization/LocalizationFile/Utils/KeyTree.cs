@@ -249,7 +249,7 @@ namespace Lexical.Localization.Utils
                 if (i++ > 0) sb.Append("/");
                 IAssetKey key = tree.Key;
                 if (key == null) continue;
-                ParameterNamePolicy.Instance.PrintKey(key, sb, false);
+                ParameterNamePolicy.Instance.PrintKey(key, sb);
             }
 
             if (HasValues)
@@ -275,7 +275,7 @@ namespace Lexical.Localization.Utils
                 if (sb.Length > 0) sb.Append("/");
                 IAssetKey key = tree.Key;
                 if (key == null) continue;
-                ParameterNamePolicy.Instance.PrintKey(key, sb, false);
+                ParameterNamePolicy.Instance.PrintKey(key, sb);
             }
             return sb.ToString();
         }
