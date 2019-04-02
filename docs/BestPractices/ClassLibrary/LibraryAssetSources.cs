@@ -8,7 +8,8 @@ namespace TutorialLibrary1
         /// <summary>
         /// Localization source reference to embedded resource.
         /// </summary>
-        public readonly LocalizationEmbeddedSource LocalizationSource = LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
+        public readonly LocalizationEmbeddedSource LocalizationSource = 
+            LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
 
         public LibraryAssetSources() : base()
         {

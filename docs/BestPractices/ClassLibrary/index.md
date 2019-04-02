@@ -1,27 +1,31 @@
 ﻿# Class Library
-This article describes recommended practice for writing a localized class library that doesn't use dependency injection.
+This article describes recommended practice for writing localization for a class library that doesn't use dependency injection.
 
 ## Localization Sources
 The class library may want to provide builtin localizations. 
-The recommended practice is to create a public class **LibraryAssetSources** which implements **ILibraryAssetSources** to signal that this class provides the locations of its internal localizations.
+The recommended practice is to create a public class **LibraryAssetSources** which implements **ILibraryAssetSources** as a signal 
+to indicate that this class provides localizations for this class library.
 
-Internal localization files are typically added embedded resources.
+Internal localization files are typically embedded resources.
 [!code-csharp[Snippet](LibraryAssetSources.cs)]
 <details>
   <summary>The example localization file *TutorialLibrary1-de.xml*.  (<u>click here</u>)</summary>
 [!code-xml[Snippet](../../TutorialLibrary1-de.xml)]
 </details>
 
-## Using Localizer
+Class library can be configured to search for external localization from preconfigured locations.
+[!code-csharp[Snippet](LibraryAssetSourcesB.cs)]
+
+## Localization Root
 There should be another class called **LibraryLocalization** that is used as the *IAssetRoot* for the classes that use localization.
 This root is linked to the global static root and shares its assets.
 [!code-csharp[Snippet](LibraryLocalization.cs)]
-<br/> 
 
-All the other code in the class library can now use the library's localization root.
+## Classes
+Classes in the the class library can now use the localization root.
 [!code-csharp[Snippet](MyClass.cs)]
 
-## Using the class library
+# Application
 When another class library or application uses the class library the localization works out-of-the-box.
 # [Snippet](#tab/snippet-2)
 [!code-csharp[Snippet](LibraryConsumer1.cs#Snippet)]
@@ -29,7 +33,7 @@ When another class library or application uses the class library the localizatio
 [!code-csharp[Snippet](LibraryConsumer1.cs)]
 ***
 
-## Supplying Extra Localizations
+## Supplying Localizations
 Application that deploys the class library can supply additional localizations by adding *IAssetSource*s to the global static **LocalizationRoot.Builder**.
 # [Snippet](#tab/snippet-3)
 [!code-csharp[Snippet](LibraryConsumer2.cs#Snippet)]
@@ -43,6 +47,3 @@ Application that deploys the class library can supply additional localizations b
 </details>
 <br/>
 
-## External Localization
-Class library can be configured to search for external localization from preconfigured locations.
-[!code-csharp[Snippet](LibraryAssetSourcesB.cs)]

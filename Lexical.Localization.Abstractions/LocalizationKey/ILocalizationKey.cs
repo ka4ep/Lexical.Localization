@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// 
     /// Parameters:
     ///     <see cref="ILocalizationKeyCultureAssigned"/>
-    ///     <see cref="ILocalizationKeyInlined"/>
+    ///     <see cref="ILocalizationKeyInlines"/>
     ///     <see cref="ILocalizationKeyFormatArgs"/>
     ///     
     /// Hints:

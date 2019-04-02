@@ -9,7 +9,8 @@ namespace TutorialLibrary3
         /// <summary>
         /// Localization source reference to embedded resource.
         /// </summary>
-        public readonly LocalizationEmbeddedSource LocalizationSource = LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary3-de.xml");
+        public readonly LocalizationEmbeddedSource LocalizationSource = 
+            LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary3-de.xml");
 
         /// <summary>
         /// (Optional) External file localization source.
@@ -27,7 +28,8 @@ namespace TutorialLibrary3
             // Use file provider from dependency injection and search for an optional external localization source
             if (fileProvider != null)
             {
-                ExternalLocalizationSource = LocalizationXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
+                ExternalLocalizationSource = 
+                    LocalizationXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
                 Add(ExternalLocalizationSource);
             }
         }

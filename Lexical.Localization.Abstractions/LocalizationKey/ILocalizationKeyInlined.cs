@@ -13,22 +13,18 @@ namespace Lexical.Localization
     public interface ILocalizationKeyInlineAssignable : IAssetKey
     {
         /// <summary>
-        /// Add <see cref="ILocalizationKeyInlined"/> part to the key. 
+        /// Add <see cref="ILocalizationKeyInlines"/> part to the key. 
         /// </summary>
         /// <returns>key with inlines (non-null dictionary)</returns>
         /// <exception cref="AssetKeyException">If key can't be inlined.</exception>
-        ILocalizationKeyInlined AddInlines();
+        ILocalizationKeyInlines AddInlines();
     }
 
     /// <summary>
-    /// Key that (may have) has inlining dictionary assigned.
+    /// Key that has inline value assignments.
     /// </summary>
-    public interface ILocalizationKeyInlined : IAssetKeyNonCanonicallyCompared, ILocalizationKey
+    public interface ILocalizationKeyInlines : ILocalizationKey, IDictionary<IAssetKey, string>
     {
-        /// <summary>
-        /// The assigned inlining dictionary. Or null if there is none assigned.
-        /// </summary>
-        IDictionary<IAssetKey, string> Inlines { get; }
     }
 
     public static partial class LocalizationKeyExtensions
@@ -40,11 +36,10 @@ namespace Lexical.Localization
         /// <param name="text">text to add, or null to remove</param>
         /// <returns>new key with inliens or <paramref name="key"/></returns>
         /// <exception cref="AssetKeyException">If key can't be inlined.</exception>
-        public static ILocalizationKeyInlined Inline(this IAssetKey key, string text)
+        public static ILocalizationKeyInlines Inline(this IAssetKey key, string text)
         {
-            ILocalizationKeyInlined inlinesKey = key.GetOrCreateInlinesKey();
-            IDictionary<IAssetKey, string> inlines = inlinesKey.Inlines;
-            if (text == null) inlines.Remove(key); else inlines[key] = text;
+            ILocalizationKeyInlines inlinesKey = key.GetOrCreateInlinesKey();
+            if (text == null) inlinesKey.Remove(key); else inlinesKey[key] = text;
             return inlinesKey;
         }
 
@@ -58,67 +53,46 @@ namespace Lexical.Localization
         /// <exception cref="AssetKeyException">If key can't be inlined.</exception>
         public static IAssetKey Inline(this IAssetKey key, string subKeyText, string text)
         {
-            ILocalizationKeyInlined inlinesKey = key.GetOrCreateInlinesKey();
-            IDictionary<IAssetKey, string> inlines = inlinesKey.Inlines;
+            ILocalizationKeyInlines inlinesKey = key.GetOrCreateInlinesKey();
             IAssetKey subKey = ParameterParser.Instance.Parse(subKeyText, key);
-            if (text == null) inlines.Remove(subKey); else inlines[subKey] = text;
+            if (text == null) inlinesKey.Remove(subKey); else inlinesKey[subKey] = text;
             return inlinesKey;
         }
 
         /// <summary>
-        /// Finds in <see cref="ILocalizationKeyInlined"/> that has a non-null <see cref="ILocalizationKeyInlined.Inlines"/>.
+        /// Finds in <see cref="ILocalizationKeyInlines"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static ILocalizationKeyInlined FindInlinesKey(this IAssetKey key)
+        public static ILocalizationKeyInlines FindInlines(this IAssetKey key)
         {
             for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
-                if (k is ILocalizationKeyInlined inlinesKey && inlinesKey.Inlines != null) return inlinesKey;
+                if (k is ILocalizationKeyInlines inlinesKey) return inlinesKey;
             return null;
         }
 
         /// <summary>
-        /// Get or create <see cref="ILocalizationKeyInlined"/> section in the <paramref name="key"/>.
+        /// Get or create <see cref="ILocalizationKeyInlines"/> section in the <paramref name="key"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>inlines key</returns>
         /// <exception cref="AssetKeyException">If <paramref name="key"/> doesn't implement <see cref="ILocalizationKeyInlineAssignable"/></exception>
-        public static ILocalizationKeyInlined GetOrCreateInlinesKey(this IAssetKey key)
-            => key.FindInlinesKey() ?? 
+        public static ILocalizationKeyInlines GetOrCreateInlinesKey(this IAssetKey key)
+            => key.FindInlines() ?? 
                (key is ILocalizationKeyInlineAssignable assignable ? 
                 assignable.AddInlines() : 
                 throw new AssetKeyException(key, $"Doesn't implement {nameof(ILocalizationKeyInlineAssignable)}"));
-
-        /// <summary>
-        /// Get or create inlines dictionary for <paramref name="key"/>.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns>inlines dictionary</returns>
-        public static IDictionary<IAssetKey, string> GetOrCreateInlines(this IAssetKey key)
-            => key.GetOrCreateInlinesKey().Inlines;
-
-        /// <summary>
-        /// Walks linked list and searches for previous inlines.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns>inlines or null</returns>
-        public static IDictionary<IAssetKey, string> FindInlines(this IAssetKey key)
-        {
-            for (; key != null; key = key.GetPreviousKey())
-                if (key is ILocalizationKeyInlined casted && casted.Inlines != null) return casted.Inlines;
-            return null;
-        }
 
         /// <summary>
         /// Walks linked list and searches for all inlines.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>inlines</returns>
-        public static IEnumerable<IDictionary<IAssetKey, string>> FindAllInlines(this IAssetKey key)
+        public static IEnumerable<ILocalizationKeyInlines> FindAllInlines(this IAssetKey key)
         {
             for (; key != null; key = key.GetPreviousKey())
-                if (key is ILocalizationKeyInlined casted && casted.Inlines != null)
-                    yield return casted.Inlines;
+                if (key is ILocalizationKeyInlines casted)
+                    yield return casted;
         }
 
     }

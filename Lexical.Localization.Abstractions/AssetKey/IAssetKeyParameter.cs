@@ -246,7 +246,7 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Concatenate <paramref name="anotherKey"/> to this <paramref name="key"/> and return the concatenated key.
-        /// If <paramref name="anotherKey"/> contains non-parametrizable nodes such as <see cref="ILocalizationKeyInlined"/> or <see cref="ILocalizationKeyFormatArgs"/>
+        /// If <paramref name="anotherKey"/> contains non-parametrizable nodes such as <see cref="ILocalizationKeyInlines"/> or <see cref="ILocalizationKeyFormatArgs"/>
         /// then these keys are not appended to the result.
         /// </summary>
         /// <param name="key">Key that must implement <see cref="IAssetKeyParameterAssignable"/>.</param>
@@ -269,7 +269,7 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Try concatenate <paramref name="anotherKey"/> to this <paramref name="key"/> and return the concatenated key.
-        /// If <paramref name="anotherKey"/> contains non-parametrizable nodes such as <see cref="ILocalizationKeyInlined"/> or <see cref="ILocalizationKeyFormatArgs"/>
+        /// If <paramref name="anotherKey"/> contains non-parametrizable nodes such as <see cref="ILocalizationKeyInlines"/> or <see cref="ILocalizationKeyFormatArgs"/>
         /// then these keys are not appended to the result.
         /// </summary>
         /// <param name="key">Key that must implement <see cref="IAssetKeyParameterAssignable"/>.</param>

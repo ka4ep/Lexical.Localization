@@ -132,8 +132,12 @@ namespace Lexical.Localization
             if (xIsNull || yIsNull) return false;
             if (Object.ReferenceEquals(x, y)) return true;
 
+            // Test if cached hash-codes mismatch.
+            if (this == AssetKeyComparer.instance && x is IAssetKeyDefaultHashCode x_code && y is IAssetKeyDefaultHashCode y_code)
+                if (x_code.GetDefaultHashCode() != y_code.GetDefaultHashCode()) return false;
+
             // Regular comparers
-            foreach(var comparer in comparers)
+            foreach (var comparer in comparers)
             {
                 if (!comparer.Equals(x, y)) return false;
             }
