@@ -112,8 +112,8 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> FileReaderAsKeyLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationFileReaderKeyLines(fileFormat, filename, namePolicy, throwIfNotFound);
+        public static LocalizationFileKeyLinesSource FileReaderAsKeyLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => new LocalizationFileKeyLinesSource(fileFormat, filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -123,8 +123,8 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
-        public static IEnumerable<IKeyTree> FileReaderAsKeyTree(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationFileReaderKeyTree(fileFormat, filename, namePolicy, throwIfNotFound);
+        public static LocalizationFileKeyTreeSource FileReaderAsKeyTree(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => new LocalizationFileKeyTreeSource(fileFormat, filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -134,8 +134,8 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        public static IEnumerable<KeyValuePair<string, string>> FileReaderAsStringLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationFileReaderStringLines(fileFormat, filename, namePolicy, throwIfNotFound);
+        public static LocalizationFileStringLinesSource FileReaderAsStringLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => new LocalizationFileStringLinesSource(fileFormat, filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset that reads file <paramref name="filename"/>.
@@ -174,19 +174,19 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) </param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>asset source</returns>
-        public static IAssetSource FileAssetSource(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+        public static LocalizationFileSource FileAssetSource(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return fileFormat.FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound).ToAssetSource();
+                return new LocalizationFileKeyTreeSource(fileFormat, filename, namePolicy, throwIfNotFound);
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return fileFormat.FileReaderAsKeyLines(filename, namePolicy, throwIfNotFound).ToAssetSource();
+                return new LocalizationFileKeyLinesSource(fileFormat, filename, namePolicy, throwIfNotFound);
             }
             else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return fileFormat.FileReaderAsStringLines(filename, namePolicy, throwIfNotFound).ToAssetSource(namePolicy);
+                return new LocalizationFileStringLinesSource(fileFormat, filename, namePolicy, throwIfNotFound);
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -199,9 +199,9 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
         public static IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].ReadKeyLines(filename, namePolicy, throwIfNotFound);
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].ReadKeyLines(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Read file into a tree format.
@@ -211,9 +211,9 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
-        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
         public static IKeyTree ReadKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].ReadKeyTree(filename, namePolicy, throwIfNotFound);
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].ReadKeyTree(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Read file into strings file.
@@ -223,9 +223,9 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
         public static IEnumerable<KeyValuePair<string, string>> ReadStringLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].ReadStringLines(filename, namePolicy, throwIfNotFound);
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].ReadStringLines(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -235,9 +235,9 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> FileReaderAsKeyLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].FileReaderAsKeyLines(filename, namePolicy, throwIfNotFound);
+        /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static LocalizationFileKeyLinesSource FileReaderAsKeyLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].FileReaderAsKeyLines(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -247,9 +247,9 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
-        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IEnumerable<IKeyTree> FileReaderAsKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound);
+        /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static LocalizationFileKeyTreeSource FileReaderAsKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -259,9 +259,9 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IEnumerable<KeyValuePair<string, string>> FileReaderAsStringLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].FileReaderAsStringLines(filename, namePolicy, throwIfNotFound);
+        /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static LocalizationFileStringLinesSource FileReaderAsStringLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].FileReaderAsStringLines(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset that reads file <paramref name="filename"/>.
@@ -273,9 +273,9 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) </param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>reloadable localization asset</returns>
-        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
         public static IAsset FileAsset(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].FileAsset(filename, namePolicy, throwIfNotFound);
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].FileAsset(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset source that reads file <paramref name="filename"/>.
@@ -285,9 +285,9 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) </param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>asset source</returns>
-        /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IAssetSource FileAssetSource(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationReaderMap.GetExtension(filename)].FileAssetSource(filename, namePolicy, throwIfNotFound);
+        /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
+        public static LocalizationFileSource FileAssetSource(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].FileAssetSource(filename, namePolicy, throwIfNotFound);
 
         static IKeyTree[] no_trees = new IKeyTree[0];
         static KeyValuePair<IAssetKey, string>[] no_keylines = new KeyValuePair<IAssetKey, string>[0];

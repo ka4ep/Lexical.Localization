@@ -10,7 +10,7 @@ using Lexical.Localization.Utils;
 namespace Lexical.Localization.Internal
 {
     /// <summary>
-    /// Extensions for <see cref="IEnumerable{KeyValuePair{string, string}}"/>.
+    /// Extensions for IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;.
     /// </summary>
     public static class StringLinesExtensions
     {
@@ -36,7 +36,7 @@ namespace Lexical.Localization.Internal
         /// Parse string key of each line and put into <see cref="IKeyTree"/>.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="policy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
+        /// <param name="policy"></param>
         /// <returns></returns>
         public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
             => KeyTree.Create(lines.ToKeyLines(policy), null);
@@ -47,6 +47,7 @@ namespace Lexical.Localization.Internal
         /// Lines are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="lines"></param>
+        /// <param name="policy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
         /// <returns></returns>
         public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
             => new LocalizationStringAsset(policy).AddSource(lines).Load();

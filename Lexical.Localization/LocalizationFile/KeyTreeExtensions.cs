@@ -26,6 +26,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Flatten <paramref name="node"/> to key lines.
         /// </summary>
+        /// <param name="node"></param>
         /// <param name="skipRoot"></param>
         /// <returns></returns>
         public static IEnumerable<KeyValuePair<IAssetKey, string>> ToKeyLines(this IKeyTree node, bool skipRoot = true)
@@ -82,7 +83,7 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <returns></returns>
         public static IAssetSource ToAssetSource(IKeyTree tree)
-            => new LocalizationKeyLinesSource(tree.ToKeyLines());
+            => new LocalizationKeyTreeSource(tree == null ? new IKeyTree[0] : new IKeyTree[] { tree });
 
         /// <summary>
         /// Convert <paramref name="trees"/> to <see cref="IAssetSource"/>..
@@ -90,7 +91,7 @@ namespace Lexical.Localization
         /// <param name="trees"></param>
         /// <returns></returns>
         public static IAssetSource ToAssetSource(this IEnumerable<IKeyTree> trees)
-            => new LocalizationKeyLinesSource(trees.SelectMany(tree => tree.ToKeyLines()));
+            => new LocalizationKeyTreeSource(trees);
 
         /// <summary>
         /// Search child by key.
@@ -327,7 +328,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Get root node of <see cref=""/>.
+        /// Get root node of <paramref name="tree"/>.
         /// </summary>
         /// <param name="tree"></param>
         /// <returns>root, or null if <paramref name="tree"/> is null</returns>

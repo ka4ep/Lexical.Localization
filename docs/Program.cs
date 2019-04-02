@@ -6,19 +6,20 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            TutorialProject1.Program1.Main(args);
+            TutorialProject1.Program2.Main(args);
+            TutorialProject2.Program1.Main(args);
+            TutorialProject2.Program2.Main(args);
+            TutorialProject2.Program3.Main(args);
+            TutorialProject3.Program1.Main(args);
+            TutorialProject3.Program2.Main(args);
+            TutorialProject3.Program3.Main(args);
+
             LocalizationReader_Examples.Main(args);
             AssetKeyComparer_Examples.Main(args);
             IAssetKeyNameProvider_Examples.Main(args);
             IAssetKeyNamePolicy_Examples.Main(args);
             AssetNamePattern_Examples.Main(args);
-            TutorialProject3.Program1.Main(args);
-            TutorialProject3.Program2.Main(args);
-            TutorialProject3.Program3.Main(args);
-            TutorialProject2.Program1.Main(args);
-            TutorialProject2.Program2.Main(args);
-            TutorialProject2.Program3.Main(args);
-            TutorialProject1.Program1.Main(args);
-            TutorialProject1.Program2.Main(args);
             LocalizationAsset_Examples.Main(args);
             LocalizationStringAsset_Examples.Main(args);
             IAssetRoot_StringLocalizer_Examples.Main(args);

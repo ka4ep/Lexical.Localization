@@ -39,7 +39,6 @@ namespace Lexical.Localization
     /// </summary>
     public interface ILocalizationSource : IAssetSource
     {
-        string SourceHint { get; }
     }
 
     /// <summary>
@@ -47,6 +46,9 @@ namespace Lexical.Localization
     /// </summary>
     public interface ILocalizationStringLinesSource : ILocalizationSource, IEnumerable<KeyValuePair<string, string>>
     {
+        /// <summary>
+        /// Name policy that is used for converting string to <see cref="IAssetKey"/>.
+        /// </summary>
         IAssetKeyNamePolicy NamePolicy { get; }
     }
 
@@ -54,6 +56,13 @@ namespace Lexical.Localization
     /// Source that provides <see cref="IAssetKey"/> based key-value lines.
     /// </summary>
     public interface ILocalizationKeyLinesSource : ILocalizationSource, IEnumerable<KeyValuePair<IAssetKey, string>>
+    {
+    }
+
+    /// <summary>
+    /// Source that provides <see cref="IKeyTree"/> based key-value lines.
+    /// </summary>
+    public interface ILocalizationKeyTreeSource : ILocalizationSource, IEnumerable<IKeyTree>
     {
     }
     #endregion interface_2
