@@ -38,7 +38,7 @@ namespace Lexical.Localization
         /// <exception cref="AssetKeyException">If key can't be inlined.</exception>
         public static ILocalizationKeyInlines Inline(this IAssetKey key, string text)
         {
-            ILocalizationKeyInlines inlinesKey = key.GetOrCreateInlinesKey();
+            ILocalizationKeyInlines inlinesKey = key.GetOrCreateInlines();
             if (text == null) inlinesKey.Remove(key); else inlinesKey[key] = text;
             return inlinesKey;
         }
@@ -53,7 +53,7 @@ namespace Lexical.Localization
         /// <exception cref="AssetKeyException">If key can't be inlined.</exception>
         public static IAssetKey Inline(this IAssetKey key, string subKeyText, string text)
         {
-            ILocalizationKeyInlines inlinesKey = key.GetOrCreateInlinesKey();
+            ILocalizationKeyInlines inlinesKey = key.GetOrCreateInlines();
             IAssetKey subKey = ParameterParser.Instance.Parse(subKeyText, key);
             if (text == null) inlinesKey.Remove(subKey); else inlinesKey[subKey] = text;
             return inlinesKey;
@@ -77,7 +77,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>inlines key</returns>
         /// <exception cref="AssetKeyException">If <paramref name="key"/> doesn't implement <see cref="ILocalizationKeyInlineAssignable"/></exception>
-        public static ILocalizationKeyInlines GetOrCreateInlinesKey(this IAssetKey key)
+        public static ILocalizationKeyInlines GetOrCreateInlines(this IAssetKey key)
             => key.FindInlines() ?? 
                (key is ILocalizationKeyInlineAssignable assignable ? 
                 assignable.AddInlines() : 

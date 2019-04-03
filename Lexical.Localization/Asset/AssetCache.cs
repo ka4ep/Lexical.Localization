@@ -22,14 +22,18 @@ namespace Lexical.Localization
         public AssetCacheOptions Options { get; }
         public IAsset Source { get; internal set; }
 
+        protected bool disposeSource;
+
         /// <summary>
         /// Create new asset cache.
         /// </summary>
         /// <param name="source">The source asset whose requests are cached.</param>
-        public AssetCache(IAsset source)
+        /// <param name="disposeSource">Disposes <paramref name="source"/> along with cache</param>
+        public AssetCache(IAsset source, bool disposeSource = true)
         {
             Options = new AssetCacheOptions();
             Source = source ?? throw new ArgumentNullException(nameof(source));
+            this.disposeSource = disposeSource;
         }
 
         /// <summary>
@@ -41,6 +45,33 @@ namespace Lexical.Localization
         {
             Options = new AssetCacheOptions();
             Source = source ?? throw new ArgumentNullException(nameof(source));
+            this.disposeSource = true;
+        }
+
+        /// <summary>
+        /// Create new asset cache.
+        /// </summary>
+        /// <param name="source">The source asset whose reuqests are cached.</param>
+        /// <param name="cacheParts">parts that handle interface specific properties, such as <see cref="AssetCachePartResources"/>, AssetStringsCachePart and AssetCulturesCachePart</param>
+        /// <param name="disposeSource">Disposes <paramref name="source"/> along with cache</param>
+        public AssetCache(IAsset source, bool disposeSource = true, params IAssetCachePart[] cacheParts) : base(cacheParts)
+        {
+            Options = new AssetCacheOptions();
+            Source = source ?? throw new ArgumentNullException(nameof(source));
+            this.disposeSource = disposeSource;
+        }
+
+        /// <summary>
+        /// Create new asset cache.
+        /// </summary>
+        /// <param name="source">The source asset whose reuqests are cached.</param>
+        /// <param name="disposeSource">Disposes <paramref name="source"/> along with cache</param>
+        /// <param name="cacheParts">parts that handle interface specific properties, such as <see cref="AssetCachePartResources"/>, AssetStringsCachePart and AssetCulturesCachePart</param>
+        public AssetCache(IAsset source, bool disposeSource, IEnumerable<IAssetCachePart> cacheParts) : base(cacheParts)
+        {
+            Options = new AssetCacheOptions();
+            Source = source ?? throw new ArgumentNullException(nameof(source));
+            this.disposeSource = disposeSource;
         }
 
         /// <summary>
@@ -52,6 +83,27 @@ namespace Lexical.Localization
         {
             Options = new AssetCacheOptions();
             Source = source ?? throw new ArgumentNullException(nameof(source));
+            this.disposeSource = true;
+        }
+
+        /// <summary>
+        /// Dispose cache parts and possibly <see cref="Source"/>.
+        /// </summary>
+        /// <param name="errors"></param>
+        protected override void Dispose(ref StructList4<Exception> errors)
+        {
+            // Dispose cache parts
+            base.Dispose(ref errors);
+            try
+            {
+                // Dispose source
+                if (disposeSource) Source.Dispose();
+            }
+            catch(Exception e)
+            {
+                // Add error
+                errors.Add(e);
+            }
         }
 
         public override string ToString()
@@ -85,13 +137,13 @@ namespace Lexical.Localization
     /// <summary>
     /// Cache part that caches results of <see cref="ILocalizationAssetCultureCapabilities" />.
     /// </summary>
-    public class AssetCachePartCultures : IAssetCachePart, ILocalizationAssetCultureCapabilities, IAssetReloadable
+    public class AssetCachePartCultures : IAssetCachePart, ILocalizationAssetCultureCapabilities, IAssetReloadable, IDisposable
     {
         static CultureInfo[] empty_cultures = new CultureInfo[0];
         static CultureInfo NO_CULTURE = CultureInfo.GetCultureInfo("");
         ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
 
-        public IAsset Source { get; internal set; }
+        public IAsset Source { get; protected set; }
         public AssetCacheOptions Options { get; internal set; }
         protected volatile int iteration;
 
@@ -149,12 +201,17 @@ namespace Lexical.Localization
         public override string ToString()
             => $"{GetType().Name}({Source.ToString()})";
 
+        public void Dispose()
+        {
+            Source = null;
+            cultures = null;
+        }
     }
 
     /// <summary>
     /// Cache part that caches calls to <see cref="ILocalizationKeyLinesEnumerable" /> and <see cref="ILocalizationStringProvider"/>.
     /// </summary>
-    public class AssetCachePartStrings : IAssetCachePart, ILocalizationKeyLinesEnumerable, ILocalizationStringLinesEnumerable, ILocalizationStringProvider, IAssetReloadable
+    public class AssetCachePartStrings : IAssetCachePart, ILocalizationKeyLinesEnumerable, ILocalizationStringLinesEnumerable, ILocalizationStringProvider, IAssetReloadable, IDisposable
     {
         public IAsset Source { get; internal set; }
         public AssetCacheOptions Options { get; internal set; }
@@ -481,18 +538,26 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Discard cached content.
+        /// </summary>
+        public void Dispose()
+        {
+            Source = null;
+            this.cache = null;
+        }
+
+        /// <summary>
         /// Print cache part name.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}({Source.ToString()})";
-
     }
 
     /// <summary>
     /// Cache part that caches the results of <see cref="IAssetResourceKeysEnumerable"/>, <see cref="IAssetResourceNamesEnumerable"/> and <see cref="IAssetResourceProvider"/>.
     /// </summary>
-    public class AssetCachePartResources : IAssetCachePart, IAssetResourceKeysEnumerable, IAssetResourceNamesEnumerable, IAssetResourceProvider, IAssetReloadable
+    public class AssetCachePartResources : IAssetCachePart, IAssetResourceKeysEnumerable, IAssetResourceNamesEnumerable, IAssetResourceProvider, IAssetReloadable, IDisposable
     {
         public IAsset Source { get; internal set; }
         public AssetCacheOptions Options { get; internal set; }
@@ -937,6 +1002,14 @@ namespace Lexical.Localization
             return lines;
         }
 
+        /// <summary>
+        /// Discard cached content.
+        /// </summary>
+        public void Dispose()
+        {
+            Source = null;
+            cache = null;
+        }
 
         /// <summary>
         /// Print cache part name.
@@ -944,9 +1017,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}({Source.ToString()})";
-
     }
-
 
     public static partial class LocalizationCacheExtensions
     {

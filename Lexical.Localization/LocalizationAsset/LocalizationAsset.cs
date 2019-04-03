@@ -6,9 +6,11 @@
 using Lexical.Localization.Internal;
 using Lexical.Localization.Utils;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 
 namespace Lexical.Localization
 {
@@ -20,7 +22,7 @@ namespace Lexical.Localization
     public class LocalizationAsset : ILocalizationStringProvider, IAssetReloadable, ILocalizationKeyLinesEnumerable, ILocalizationAssetCultureCapabilities, IDisposable
     {
         /// <summary>
-        /// Active dictionary of key-values.
+        /// Loaded and active key-values. It is compiled union of all sources.
         /// </summary>
         protected IReadOnlyDictionary<IAssetKey, string> dictionary;
 
@@ -283,7 +285,171 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public override string ToString() => $"{GetType().Name}()";
+
     }
+
+    /// <summary>
+    /// Line source information
+    /// </summary>
+    public class Source : IObserver<IAssetSourceEvent>, IEnumerable<KeyValuePair<IAssetKey, string>>
+    {
+        /// <summary>
+        /// Reader, the original reference.
+        /// </summary>
+        protected IEnumerable source;
+
+        /// <summary>
+        /// Casted to key string reader.
+        /// </summary>
+        protected IEnumerable<KeyValuePair<IAssetKey, string>> keyLinesReader;
+
+        /// <summary>
+        /// Previously loaded snapshot.
+        /// </summary>
+        protected KeyValuePair<IAssetKey, string>[] snapshot;
+
+        /// <summary>
+        /// Previous line count.
+        /// </summary>
+        protected int lineCount;
+
+        /// <summary>
+        /// Handle that observes source
+        /// </summary>
+        protected IDisposable observerHandle;
+
+        /// <summary>
+        /// Name policy.
+        /// 
+        /// If source is string lines the parses into strings into <see cref="IAssetKey"/>.
+        /// </summary>
+        protected IAssetKeyNamePolicy namePolicy;
+
+        /// <summary>
+        /// Handler that processes file load errors, and file monitoring errors.
+        /// 
+        /// If <see cref="errorHandler"/> returns true, or there is no handler, then exception is thrown and asset loading fails.
+        /// 
+        /// If <see cref="errorHandler"/> returns false, then exception is caught and empty list is used.
+        /// </summary>
+        protected Func<Exception, bool> errorHandler;
+
+        /// <summary>
+        /// Create source
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="namePolicy">used if source is string line enumerable</param>
+        /// <param name="errorHandler">(optional) handles file load and observe errors for logging and capturing exceptions. If <paramref name="errorHandler"/> returns false then exception is caught and not thrown upwards</param>
+        public Source(IEnumerable source, IAssetKeyNamePolicy namePolicy, Func<Exception, bool> errorHandler)
+        {
+            this.source = source;
+            this.namePolicy = namePolicy;
+            this.keyLinesReader = source is IEnumerable<KeyValuePair<IAssetKey, string>> keyLines ? keyLines :
+                source is IEnumerable<KeyValuePair<string, string>> stringLines ? stringLines.ToKeyLines(namePolicy) :
+                source is IEnumerable<IKeyTree> trees ? trees.SelectMany(tree => tree.ToKeyLines()) :
+                throw new ArgumentException("source must be key-lines, string-lines or key tree", nameof(source));
+            this.errorHandler = errorHandler;
+
+            if (source is IObservable<IAssetSourceEvent> observable)
+            {
+                try
+                {
+                    observerHandle = observable.Subscribe(this);
+                } catch (Exception e) when (errorHandler==null?true:!errorHandler(e))
+                {
+                    // Discard error.
+                }
+            }
+        }
+
+        /// <summary>
+        /// Dispose source information
+        /// </summary>
+        public virtual void Dispose(ref StructList4<Exception> errors)
+        {
+            try
+            {
+                // Cancel observer
+                Interlocked.CompareExchange(ref observerHandle, null, observerHandle)?.Dispose();
+            }
+            catch (Exception e)
+            {
+                errors.Add(e);
+            }
+        }
+
+        KeyValuePair<IAssetKey, string>[] GetLines()
+        {
+            return null;
+            /*            // Read lines
+                        try
+                        {
+                            list.AddRange(keyLinesReader);
+                            snapshot = list.ToArray();
+
+                        }
+                        catch (Exception e)
+                        {
+                            // Problem reading file
+                        }
+            */
+        }
+
+        /// <summary>
+        /// Read source, or return already read snapshot.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<KeyValuePair<IAssetKey, string>> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Asset source stopped sending events
+        /// </summary>
+        public virtual void OnCompleted()
+        {
+            // Cancel observer
+            Interlocked.CompareExchange(ref observerHandle, null, observerHandle)?.Dispose();
+        }
+
+        /// <summary>
+        /// Error while monitoring asset source
+        /// </summary>
+        /// <param name="error"></param>
+        public virtual void OnError(Exception error)
+        {
+        }
+
+        /// <summary>
+        /// Source file changed.
+        /// </summary>
+        /// <param name="value"></param>
+        public virtual void OnNext(IAssetSourceEvent value)
+        {
+            if (value is IAssetChangeEvent changeEvent)
+            {
+                // Discard snapshot
+                snapshot = null;
+
+                // Pass on event.
+            }
+        }
+
+        /// <summary>
+        /// Print info
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            => source.ToString();
+
+    }
+
 
     public static partial class LocalizationAssetExtensions_
     {

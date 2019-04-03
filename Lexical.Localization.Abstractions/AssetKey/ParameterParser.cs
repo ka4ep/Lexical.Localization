@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Lexical.Localization.Internal;
-using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
@@ -28,7 +27,7 @@ namespace Lexical.Localization
         public static ParameterParser Instance => instance;
 
         /// <summary>
-        /// Pattern that parses "ParameterName:ParameterValue" textx.
+        /// Pattern that parses "ParameterName:ParameterValue" texts.
         /// </summary>
         protected Regex ParsePattern = new Regex(@"(?<key>([^:\\]|\\.)*)\:(?<value>([^:\\]|\\.)*)(\:|$)", opts);
 

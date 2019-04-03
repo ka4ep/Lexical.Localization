@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
@@ -439,22 +440,20 @@ namespace Lexical.Localization
         /// <summary>
         /// Default patterns to use for each parameter.
         /// </summary>
-        public static readonly IReadOnlyDictionary<string, Regex> default_parameter_patterns;
         static readonly Regex default_reluctant_pattern = new Regex(".*?", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+        /// <summary>
+        /// Get default pattern for a ParameterName.
+        /// </summary>
+        /// <param name="parameter">parameter name</param>
+        /// <returns>capture pattern to use</returns>
         public static Regex GetDefaultPattern(string parameter)
         {
             if (parameter == null || parameter == "") return default_reluctant_pattern;
-            Regex pattern;
-            if (default_parameter_patterns.TryGetValue(parameter, out pattern)) return pattern;
-            return default_reluctant_pattern;
-        }
 
-        static AssetNamePatternExtensions()
-        {
-            var map = new Dictionary<string, Regex>();
-            default_parameter_patterns = map;
-            map["Culture"] = new Regex(@"^([a-z]{2,5})(-([A-Za-z]{2,7}))?$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
-            map["Type"] = new Regex("[^:0-9][^:]*", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+            IParameterInfo parameterInfo;
+            if (ParameterInfos.Default.TryGetValue(parameter, out parameterInfo) && parameterInfo.Pattern != null) return parameterInfo.Pattern;
+            return default_reluctant_pattern;
         }
 
         /// <summary>

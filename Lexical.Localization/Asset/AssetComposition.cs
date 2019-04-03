@@ -109,9 +109,8 @@ namespace Lexical.Localization
             }
         }
 
-        public void Dispose()
+        protected virtual void Dispose(ref StructList4<Exception> errors)
         {
-            StructList4<Exception> errors = new StructList4<Exception>();
             foreach (IDisposable disposable in _getComponents<IDisposable>())
             {
                 try
@@ -128,7 +127,12 @@ namespace Lexical.Localization
                 Clear();
                 ClearCache();
             }
+        }
 
+        public virtual void Dispose()
+        {
+            StructList4<Exception> errors = new StructList4<Exception>();
+            Dispose(ref errors);
             if (errors.Count == 1) throw new Exception(errors[0].Message, errors[0]);
             if (errors.Count > 1) throw new AggregateException(errors);
         }

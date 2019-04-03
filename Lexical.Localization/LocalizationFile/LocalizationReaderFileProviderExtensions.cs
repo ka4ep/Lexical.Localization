@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Contains extensions that help instantiating <see cref="IAsset"/> from intermediate key-value formats, and <see cref="ILocalizationFileFormat"/>.
     /// </summary>
-    public static partial class LocalizationFileProviderReaderExtensions
+    public static partial class LocalizationReaderFileProviderExtensions
     {
         /// <summary>
         /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.

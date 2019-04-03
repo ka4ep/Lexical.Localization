@@ -349,7 +349,7 @@ string str = myPolicy.BuildName(key);
 ```
 
 Name pattern consists of parameters. They are written in format of "{prefix **ParameterName** suffix}".  
-Braces "{parameter/}" make parameter optional, and brackets "[parameter/]" a mandatory.
+Braces "{parameter/}" make parameter optional, and brackets "[parameter/]" mandatory.
 
 ```csharp
 // Create pattern
@@ -371,7 +371,7 @@ A shorter way to add consecutive parameters is use suffix "_n". It translates to
 If part is required, e.g. "[parametername_n]", then only first part is required and others optional.
 
 ```csharp
-// "[Location_0/]" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
+// "[Location_n/]" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
 IAssetKeyNamePolicy myPolicy = new AssetNamePattern("[Location_n/]{Section}{-Key}{-Culture}.png");
 // Create key
 IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
@@ -379,19 +379,18 @@ IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130")
 string str = myPolicy.BuildName(key2);
 ```
 
-Parameters need to be added in non-consecutive order, then a suffix "_#" which represents the occurance index.
+Parameters need to be added in non-consecutive order, then "_#" can be used to represent the occurance index.
 
 ```csharp
 // Create pattern
-IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location_3}{Location_2/}{Location_1/}{Location_0/}{Section}{-Key}{-Culture}.png");
+IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location_3}{Location_2/}{Location_1/}{Location/}{Section}{-Key}{-Culture}.png");
 // Create key
 IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
 // Converts to "20181130/Patches/icons-ok-de.png"
 string str = myPolicy.BuildName(key2);
 ```
 
-Regular expression can be written inside angle brackets "{parameter&lt;*regexp*&gt;/}".
-Expressions give more control when name pattern is used for matching against filenames or key-value lines.
+Regular expression can be written inside angle brackets "{parameter&lt;*regexp*&gt;/}", which gives more control over matching.
 
 ```csharp
 // Create pattern with regular expression detail

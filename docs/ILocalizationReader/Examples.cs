@@ -349,10 +349,16 @@ namespace docs
             }
             {
                 #region Snippet_30a
-                // Clone foramts
+                // Create writer
+                ILocalizationReader format = new ExtFileFormatReader();
+
+                // Clone formats
                 LocalizationFileFormatMap formats = LocalizationReaderMap.Instance.Clone();
-                // If ExtFileFormatReader can be added to LocalizationFileFormatMap.
-                formats.Add(new ExtFileFormatReader());
+                // Add to clone
+                formats.Add(format);
+
+                // Or if in deploying application project, format can be added to the global singleton
+                (LocalizationReaderMap.Instance as IDictionary<string, ILocalizationFileFormat>).Add(format);
                 #endregion Snippet_30a
             }
 

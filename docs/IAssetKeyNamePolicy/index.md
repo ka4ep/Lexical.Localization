@@ -65,7 +65,7 @@ Example of escaped key "Success\\:Plural".
 [!code-csharp[Snippet](AssetNamePattern_Examples.cs#Snippet_2)]
 
 Name pattern consists of parameters. They are written in format of "{prefix **ParameterName** suffix}".  
-Braces "{parameter/}" make parameter optional, and brackets "[parameter/]" a mandatory.
+Braces "{parameter/}" make parameter optional, and brackets "[parameter/]" mandatory.
 [!code-csharp[Snippet](AssetNamePattern_Examples.cs#Snippet_3)]
 
 Parameter can be added multiple times.
@@ -75,11 +75,10 @@ A shorter way to add consecutive parameters is use suffix "_n". It translates to
 If part is required, e.g. "[parametername_n]", then only first part is required and others optional.
 [!code-csharp[Snippet](AssetNamePattern_Examples.cs#Snippet_4c)]
 
-Parameters need to be added in non-consecutive order, then a suffix "_#" which represents the occurance index.
+Parameters need to be added in non-consecutive order, then "_#" can be used to represent the occurance index.
 [!code-csharp[Snippet](AssetNamePattern_Examples.cs#Snippet_4d)]
 
-Regular expression can be written inside angle brackets "{parameter&lt;*regexp*&gt;/}".
-Expressions give more control when name pattern is used for matching against filenames or key-value lines.
+Regular expression can be written inside angle brackets "{parameter&lt;*regexp*&gt;/}", which gives more control over matching.
 [!code-csharp[Snippet](AssetNamePattern_Examples.cs#Snippet_5)]
 
 ## Parameters

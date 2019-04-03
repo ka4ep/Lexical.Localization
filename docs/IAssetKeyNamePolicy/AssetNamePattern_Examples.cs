@@ -59,7 +59,7 @@ namespace docs
                 }
                 {
                     #region Snippet_4c
-                    // "[Location_0/]" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
+                    // "[Location_n/]" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
                     IAssetKeyNamePolicy myPolicy = new AssetNamePattern("[Location_n/]{Section}{-Key}{-Culture}.png");
                     // Create key
                     IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
@@ -70,7 +70,7 @@ namespace docs
                 {
                     #region Snippet_4d
                     // Create pattern
-                    IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location_3}{Location_2/}{Location_1/}{Location_0/}{Section}{-Key}{-Culture}.png");
+                    IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location_3}{Location_2/}{Location_1/}{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
                     IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "20181130/Patches/icons-ok-de.png"

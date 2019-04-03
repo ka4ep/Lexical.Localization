@@ -171,12 +171,12 @@ namespace Lexical.Localization
             public override IAsset Build()
             {
                 // Create list of assets
-                List<IAsset> list = BuildAssets();
+                List<IAsset> new_assets = BuildAssets();
 
                 IAsset built_asset;
-                if (list.Count == 0) built_asset = new AssetComposition(); // Dummy
-                else if (list.Count == 1) built_asset = list[0]; // as-is
-                else built_asset = new AssetComposition(list);
+                if (new_assets.Count == 0) built_asset = new AssetComposition(); // Dummy
+                else if (new_assets.Count == 1) built_asset = new_assets[0]; // as-is
+                else built_asset = new AssetComposition(new_assets);
 
                 // Post-build
                 IAsset post_built_asset = built_asset;
@@ -186,9 +186,13 @@ namespace Lexical.Localization
                     if (post_built_asset == null) throw new AssetException($"{src.GetType().Name}.{nameof(IAssetSource.PostBuild)} returned null");
                 }
 
-                // Post-Build did something
+                // Get old assets
+                HashSet<IAsset> old_assets = new HashSet<IAsset>(Asset);
+
+                // Assign new assets
                 if (built_asset != post_built_asset)
                 {
+                    // Post-Build did something
                     Asset.CopyFrom(new IAsset[] { post_built_asset });
                 } else
                 {
@@ -196,6 +200,11 @@ namespace Lexical.Localization
                     IEnumerable<IAsset> enumr = post_built_asset is IEnumerable<IAsset> casted ? casted : new IAsset[] { post_built_asset };
                     Asset.CopyFrom(enumr);
                 }
+
+                // Dispose removed assets
+                foreach (IAsset asset in new_assets) old_assets.Remove(asset);
+                foreach (IAsset asset in old_assets) asset.Dispose();
+                // TODO? IS disposing of cache handled correctly?
 
                 return Asset;
             }

@@ -8,7 +8,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Lexical.Localization.Internal;
-using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
@@ -146,10 +145,8 @@ namespace Lexical.Localization
         /// <param name="filename"></param>
         /// <param name="namePolicy">(optional) </param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
-        /// <param name="prefix">(optional) parameters to add in front of key of each line</param>
-        /// <param name="suffix">(optional) parameters to add at the end of key of each line</param>
         /// <returns>reloadable localization asset</returns>
-        public static IAsset FileAsset(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true, IAssetKey prefix = null, IAssetKey suffix = null)
+        public static IAsset FileAsset(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {

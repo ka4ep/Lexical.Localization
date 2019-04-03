@@ -53,7 +53,9 @@ namespace Lexical.Localization
         Overwrite = 16,
 
         /// <summary>
-        /// Matches old state to new state by effective key.
+        /// Matches when old and new files have different tree structure. 
+        /// 
+        /// Matches effective key of each entry to the effective key of new entry.
         /// 
         /// For example if file had previously following node 
         /// <![CDATA[ <Line Type="ConsoleApp1.MyController" Key="Success" Culture="de">Erfolg</Line> ]]>

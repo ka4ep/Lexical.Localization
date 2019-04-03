@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Lexical.Localization.Utils
 {
@@ -15,29 +16,29 @@ namespace Lexical.Localization.Utils
     public class ParameterInfos : Dictionary<string, IParameterInfo>
     {
         private static IReadOnlyDictionary<string, IParameterInfo> instance = new ParameterInfos()
-            .Add("Root", isCanonicalCompare: false, isNonCanonicalCompare: false, isSection: false, sortingOrder: -8000)
-            .Add("Culture", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: -6000)
-            .Add("Location", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: -4000)
-            .Add("Assembly", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: true, sortingOrder: -2000)
-            .Add("Resource", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: 0000)
-            .Add("Section", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: 2000)
-            .Add("Type", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: true, sortingOrder: 2000)
-            .Add("Key", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: false, sortingOrder: 6000)
-            .Add("N", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8000)
-            .Add("N1", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8100)
-            .Add("N2", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8200)
-            .Add("N3", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8300)
-            .Add("N4", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8400)
-            .Add("N5", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8500)
-            .Add("N6", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8600)
-            .Add("N7", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8700)
-            .Add("N8", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8800)
-            .Add("N9", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8900)
-            .Add("N10", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9000)
-            .Add("N11", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9100)
-            .Add("N12", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9200)
-            .Add("N13", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9300)
-            .Add("N14", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9400)
+            .Add("Root", isCanonicalCompare: false, isNonCanonicalCompare: false, isSection: false, sortingOrder: -8000, pattern: null)
+            .Add("Culture", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: -6000, pattern: new Regex(@"^([a-z]{2,5})(-([A-Za-z]{2,7}))?$", RegexOptions.CultureInvariant | RegexOptions.Compiled))
+            .Add("Location", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: -4000, pattern: null)
+            .Add("Assembly", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: true, sortingOrder: -2000, pattern: null)
+            .Add("Resource", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: 0000, pattern: null)
+            .Add("Section", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: 2000, pattern: null)
+            .Add("Type", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: true, sortingOrder: 2000, pattern: new Regex("[^:0-9][^:]*", RegexOptions.CultureInvariant | RegexOptions.Compiled))
+            .Add("Key", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: false, sortingOrder: 6000, pattern: null)
+            .Add("N", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8000, pattern: null)
+            .Add("N1", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8100, pattern: null)
+            .Add("N2", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8200, pattern: null)
+            .Add("N3", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8300, pattern: null)
+            .Add("N4", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8400, pattern: null)
+            .Add("N5", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8500, pattern: null)
+            .Add("N6", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8600, pattern: null)
+            .Add("N7", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8700, pattern: null)
+            .Add("N8", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8800, pattern: null)
+            .Add("N9", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 8900, pattern: null)
+            .Add("N10", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9000, pattern: null)
+            .Add("N11", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9100, pattern: null)
+            .Add("N12", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9200, pattern: null)
+            .Add("N13", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9300, pattern: null)
+            .Add("N14", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9400, pattern: null)
             as IReadOnlyDictionary<string, IParameterInfo>;
 
         /// <summary>
@@ -75,6 +76,11 @@ namespace Lexical.Localization.Utils
         /// Suggested sorting order. Smaller number is sorted to left, higher to right when formulating a string.
         /// </summary>
         int Order { get; }
+
+        /// <summary>
+        /// Default capture pattern for IAssetNamePattern.
+        /// </summary>
+        Regex Pattern { get; }
     }
 
     /// <summary>
@@ -108,6 +114,11 @@ namespace Lexical.Localization.Utils
         public int Order { get; private set; }
 
         /// <summary>
+        /// Default capture pattern for IAssetNamePattern.
+        /// </summary>
+        public Regex Pattern { get; private set; }
+
+        /// <summary>
         /// Create basic parameter info
         /// </summary>
         /// <param name="parameterName"></param>
@@ -115,13 +126,15 @@ namespace Lexical.Localization.Utils
         /// <param name="isNonCanonicalCompared"></param>
         /// <param name="isSection"></param>
         /// <param name="sortingOrder"></param>
-        public ParameterInfo(string parameterName, bool isCanonicalCompared, bool isNonCanonicalCompared, bool isSection, int sortingOrder)
+        /// <param name="pattern"></param>
+        public ParameterInfo(string parameterName, bool isCanonicalCompared, bool isNonCanonicalCompared, bool isSection, int sortingOrder, Regex pattern)
         {
             ParameterName = parameterName;
             IsCanonical = isCanonicalCompared;
             IsNonCanonical = isNonCanonicalCompared;
             IsSection = isSection;
             Order = sortingOrder;
+            Pattern = pattern;
         }
     }
 
@@ -153,12 +166,13 @@ namespace Lexical.Localization.Utils
         /// <param name="isNonCanonicalCompare"></param>
         /// <param name="isSection"></param>
         /// <param name="sortingOrder"></param>
+        /// <param name="pattern">(optional) capture pattern for <see cref="IAssetNamePattern"/></param>
         /// <returns><paramref name="infos"/></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static IDictionary<string, IParameterInfo> Add(this IDictionary<string, IParameterInfo> infos, string parameterName, bool isCanonicalCompare, bool isNonCanonicalCompare, bool isSection, int sortingOrder)
+        public static IDictionary<string, IParameterInfo> Add(this IDictionary<string, IParameterInfo> infos, string parameterName, bool isCanonicalCompare, bool isNonCanonicalCompare, bool isSection, int sortingOrder, Regex pattern)
         {
             if (infos.ContainsKey(parameterName)) throw new ArgumentException($"Parameter {parameterName} already exists", nameof(parameterName));
-            infos[parameterName] = new ParameterInfo(parameterName, isCanonicalCompare, isNonCanonicalCompare, isSection, sortingOrder);
+            infos[parameterName] = new ParameterInfo(parameterName, isCanonicalCompare, isNonCanonicalCompare, isSection, sortingOrder, pattern);
             return infos;
         }
 

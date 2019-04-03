@@ -163,5 +163,15 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Disposes <paramref name="asset"/>, if it implements <see cref="IDisposable"/>.
+        /// </summary>
+        /// <param name="asset"></param>
+        public static void Dispose(this IAsset asset)
+        {
+            if (asset is IDisposable disposable)
+                disposable.Dispose();
+        }
     }
+
 }
