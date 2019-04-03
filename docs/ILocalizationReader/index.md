@@ -46,11 +46,11 @@ The same extension methods are also available in the **LocalizationReaderMap**, 
 Different file formats have different intrinsic formats. 
 * Context free list formats are handled with **IEnumerable&lt;KeyValuePair&lt;IAssetKey, string&gt;&gt;** class.
 * Context dependent list formats are held in **IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;**.
-* Context free tree files are held in **IKeyTree**.
+* Structural file formats with context free keys are held in **IKeyTree**.
 
 Localization file can be read right away into key lines with **.ReadKeyLines()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1a)]
-Into three string lines with **.ReadStringLines()**.
+Into string lines with **.ReadStringLines()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1b)]
 And into a tree **.ReadKeyTree()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c)]

@@ -16,7 +16,7 @@ Internal localization files are typically embedded resources.
 
 ## Localization Root
 There should be another class called **LibraryLocalization** that is used as the *IAssetRoot* for the classes that use localization.
-This root is linked to the global static root and shares its assets.
+This root can be linked to the global static root and shares its assets.
 [!code-csharp[Snippet](LibraryLocalization.cs)]
 
 ## Classes
@@ -28,7 +28,7 @@ For inversion of control, the class library can use IStringLocalizer abstraction
 
 # Application
 Application that deploys the localizer must include the internal localizations with 
-**<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** which searches the **ILibraryAssetSources** of the library.
+**<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** which searches the **ILibraryAssetSources** from the library.
 # [Snippet](#tab/snippet-1)
 [!code-csharp[Snippet](LibraryConsumer1.cs#Snippet)]
 # [Full Code](#tab/full-1)

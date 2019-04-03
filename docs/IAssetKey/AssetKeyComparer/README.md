@@ -39,7 +39,7 @@ IAssetKey key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("en")
 bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
 ```
 
-If a non-canonical part occurs multiple times in a key, then by a rule, only the left-most if considered effective.
+If a non-canonical part occurs multiple times in a key, then by rule, only the left-most if considered effective.
 
 ```csharp
 IAssetKey key1 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
@@ -68,13 +68,13 @@ string str1 = key1.Culture("fi").ToString();  // <- Selects a culture
 string str2 = key2.Culture("fi").ToString();  // <- Doesn't change the effective culture
 ```
 
-A canonical parameter with empty value "" is considered as meaningful for hash-equals comparison.
+A canonical parameter with empty value "" is considered meaningful for hash-equals comparison.
 
 ```csharp
-IAssetKey key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
-IAssetKey key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
+IAssetKey key1 = LocalizationRoot.Global.Section("").Key("OK");
+IAssetKey key2 = LocalizationRoot.Global.Key("OK");
 
-bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
+bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are not equal
 int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
 int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
 ```

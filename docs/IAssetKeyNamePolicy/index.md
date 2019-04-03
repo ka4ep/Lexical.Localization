@@ -23,8 +23,7 @@
 | AssetKeyNameProvider | &#9745; | &#9744; |
 
 # ParameterNamePolicy
-**ParameterNamePolicy** is an *IAssetNameKeyPolicy* class that prints and parses keys into strings without 
-contextual information.
+**ParameterNamePolicy** is an *IAssetNameKeyPolicy* class that prints and parses keys into strings using the following notation.
 ```none
 parameterName:parameterValue:parameterName:parameterValue:...
 ```

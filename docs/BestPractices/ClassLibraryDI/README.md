@@ -1,5 +1,5 @@
 # Class Library with Dependency Injection
-This article describes recommended practice for writing a localized class library that uses inversion of control.
+This article describes recommended practice for writing a localized class library that uses Depedency Injection.
 
 ## Localization Sources
 The class library may want to provide builtin localizations. 
@@ -69,7 +69,7 @@ namespace TutorialLibrary2
 </details>
 
 ## Classes
-For inversion of control, the class library can use IStringLocalizer abstractions
+Classes in the class library can use IStringLocalizer abstractions
 
 ```csharp
 using Microsoft.Extensions.Localization;
@@ -121,7 +121,7 @@ namespace TutorialLibrary2
 
 # Application
 Application that deploys the localizer must include the internal localizations with 
-**<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** which searches the **ILibraryAssetSources** of the library.
+**<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** which searches the **ILibraryAssetSources** from the library.
 # [Snippet](#tab/snippet-1)
 
 ```csharp

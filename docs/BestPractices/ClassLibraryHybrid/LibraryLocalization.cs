@@ -2,7 +2,7 @@
 
 namespace TutorialLibrary3
 {
-    internal class LibraryLocalization : StringLocalizerRoot.LinkedTo
+    internal class LibraryLocalization : StringLocalizerRoot.LinkedTo, IAssetRoot
     {
         private static readonly LibraryLocalization instance = new LibraryLocalization(LocalizationRoot.Global);
 

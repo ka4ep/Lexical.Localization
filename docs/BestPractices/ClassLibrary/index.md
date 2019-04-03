@@ -18,7 +18,7 @@ Class library can be configured to search for external localization from preconf
 
 ## Localization Root
 There should be another class called **LibraryLocalization** that is used as the *IAssetRoot* for the classes that use localization.
-This root is linked to the global static root and shares its assets.
+This root can be linked to the global static root and shares its assets. 
 [!code-csharp[Snippet](LibraryLocalization.cs)]
 
 ## Classes

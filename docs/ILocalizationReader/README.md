@@ -105,7 +105,7 @@ IAssetSource assetSource = LocalizationReaderMap.Instance.FileAssetSource(
 Different file formats have different intrinsic formats. 
 * Context free list formats are handled with **IEnumerable&lt;KeyValuePair&lt;IAssetKey, string&gt;&gt;** class.
 * Context dependent list formats are held in **IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;**.
-* Context free tree files are held in **IKeyTree**.
+* Structural file formats with context free keys are held in **IKeyTree**.
 
 Localization file can be read right away into key lines with **.ReadKeyLines()**.
 
@@ -114,7 +114,7 @@ IEnumerable<KeyValuePair<IAssetKey, string>> key_lines = LocalizationReaderMap.I
     filename: "localization.ini", 
     throwIfNotFound: true);
 ```
-Into three string lines with **.ReadStringLines()**.
+Into string lines with **.ReadStringLines()**.
 
 ```csharp
 IEnumerable<KeyValuePair<string, string>> string_lines = LocalizationReaderMap.Instance.ReadStringLines(

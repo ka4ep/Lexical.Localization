@@ -6,9 +6,13 @@
 /// <summary>
 /// Signal that the class can do conversions of <see cref="IAssetKey"/> and <see cref="String"/>.
 /// 
-/// User of this interface should call <see cref="AssetKeyNamePolicyExtensions.BuildName(IAssetKeyNamePolicy, IAssetKey)"/>.
+/// User of this interface should use extensions methods 
+/// <list type="bullet">
+/// <item><see cref="AssetKeyNamePolicyExtensions.BuildName(IAssetKeyNamePolicy, IAssetKey)"/></item>
+/// <item><see cref="AssetKeyNamePolicyExtensions.Parse(IAssetKeyNamePolicy, string, IAssetKey)"/></item>
+/// </list>
 /// 
-/// Class that imlpements to this interface should implement one or both of the following interfaces:
+/// Class that implements to this interface should implement one or both of the following interfaces:
 ///  <see cref="IAssetKeyNameProvider"/>
 ///  <see cref="IAssetNamePattern"/>
 /// </summary>
@@ -76,8 +80,7 @@ public interface IAssetKeyNameParser : IAssetKeyNamePolicy
 | AssetKeyNameProvider | &#9745; | &#9744; |
 
 # ParameterNamePolicy
-**ParameterNamePolicy** is an *IAssetNameKeyPolicy* class that prints and parses keys into strings without 
-contextual information.
+**ParameterNamePolicy** is an *IAssetNameKeyPolicy* class that prints and parses keys into strings using the following notation.
 ```none
 parameterName:parameterValue:parameterName:parameterValue:...
 ```
