@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy that is used for converting string to <see cref="IAssetKey"/>.
         /// </summary>
-        IAssetKeyNamePolicy NamePolicy { get; }
+        IAssetKeyNamePolicy KeyPolicy { get; }
     }
 
     /// <summary>

@@ -85,7 +85,7 @@ namespace Lexical.Localization
             {
                 if (keyLinesAssetMap == null) keyLinesAssetMap = new Dictionary<IAssetKeyNamePolicy, LocalizationStringAsset>();
                 LocalizationStringAsset _asset = null;
-                IAssetKeyNamePolicy policy = src.NamePolicy ?? ParameterNamePolicy.Instance;
+                IAssetKeyNamePolicy policy = src.KeyPolicy ?? ParameterNamePolicy.Instance;
                 if (!keyLinesAssetMap.TryGetValue(policy, out _asset)) keyLinesAssetMap[policy] = _asset = new LocalizationStringAsset(policy);
                 _asset.AddSource(src);
             }

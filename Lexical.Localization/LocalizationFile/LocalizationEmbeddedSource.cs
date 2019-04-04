@@ -19,7 +19,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
+        public IAssetKeyNamePolicy KeyPolicy { get; protected set; }
 
         /// <summary>
         /// File format 
@@ -32,12 +32,12 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="assembly"></param>
         /// <param name="resourceName"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="keyPolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationEmbeddedSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(assembly, resourceName, throwIfNotFound)
+        public LocalizationEmbeddedSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, IAssetKeyNamePolicy keyPolicy, bool throwIfNotFound) : base(assembly, resourceName, throwIfNotFound)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.NamePolicy = namePolicy;
+            this.KeyPolicy = keyPolicy;
             this.Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
             this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
             this.ThrowIfNotFound = throwIfNotFound;
@@ -89,7 +89,7 @@ namespace Lexical.Localization
                 using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
                 {
                     if (s == null) return !ThrowIfNotFound ? empty.GetEnumerator() : throw new FileNotFoundException(ResourceName);
-                    return FileFormat.ReadStringLines(s, NamePolicy).GetEnumerator();
+                    return FileFormat.ReadStringLines(s, KeyPolicy).GetEnumerator();
                 }
             }
             catch (FileNotFoundException) when (!ThrowIfNotFound)
@@ -111,7 +111,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public override void Build(IList<IAsset> list)
-            => list.Add(new LocalizationStringAsset(NamePolicy).AddSource(this).Load());
+            => list.Add(new LocalizationStringAsset(KeyPolicy).AddSource(this).Load());
 
         /// <summary>
         /// Post build action.
@@ -151,7 +151,7 @@ namespace Lexical.Localization
                 using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
                 {
                     if (s == null) return !ThrowIfNotFound ? empty.GetEnumerator() : throw new FileNotFoundException(ResourceName);
-                    return FileFormat.ReadKeyLines(s, NamePolicy).GetEnumerator();
+                    return FileFormat.ReadKeyLines(s, KeyPolicy).GetEnumerator();
                 }
             }
             catch (FileNotFoundException) when (!ThrowIfNotFound)
@@ -213,7 +213,7 @@ namespace Lexical.Localization
                 using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
                 {
                     if (s == null) return !ThrowIfNotFound ? empty.GetEnumerator() : throw new FileNotFoundException(ResourceName);
-                    IKeyTree tree = FileFormat.ReadKeyTree(s, NamePolicy);
+                    IKeyTree tree = FileFormat.ReadKeyTree(s, KeyPolicy);
                     if (tree == null) return empty.GetEnumerator();
                     return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
                 }

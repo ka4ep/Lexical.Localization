@@ -58,4 +58,53 @@ namespace Lexical.Localization
         public override string ToString()
             => FileName;
     }
+
+    /// <summary>
+    /// A pattern of files, which are resolved to physical file when parameters in requesting key is matched to pattern.
+    /// 
+    /// For example if pattern is "{Culture/}{Assembly}.dll" then file name is resolved based on "Culture" and "Assembly" parametrs.
+    /// </summary>
+    public abstract class FilePatternSource : IAssetSource
+    {
+        /// <summary>
+        /// Root path
+        /// </summary>
+        public string Path { get; protected set; }
+
+        /// <summary>
+        /// File pattern.
+        /// </summary>
+        public IAssetNamePattern FilePattern { get; protected set; }
+
+        /// <summary>
+        /// Create abstract file source.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="filePattern"></param>
+        public FilePatternSource(string path, IAssetNamePattern filePattern)
+        {
+            this.Path = path ?? throw new ArgumentNullException(nameof(path));
+            this.FilePattern = filePattern ?? throw new ArgumentNullException(nameof(FilePattern));
+        }
+
+        /// <summary>
+        /// (IAssetSource) Build asset into list.
+        /// </summary>
+        /// <param name="list"></param>
+        public abstract void Build(IList<IAsset> list);
+
+        /// <summary>
+        /// (IAssetSource) Build asset into list.
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <returns></returns>
+        public abstract IAsset PostBuild(IAsset asset);
+
+        /// <summary>
+        /// Print info of source
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            => System.IO.Path.Combine(Path, FilePattern.Pattern);
+    }
 }

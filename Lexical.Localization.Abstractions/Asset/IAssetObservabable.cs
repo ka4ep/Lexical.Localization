@@ -11,7 +11,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Source that can send events.
     /// </summary>
-    public interface IAssetObservable : IAsset, IObservable<IAssetSourceEvent>
+    public interface IAssetObservable : IAsset, IObservable<IAssetEvent>
     {
     }
 

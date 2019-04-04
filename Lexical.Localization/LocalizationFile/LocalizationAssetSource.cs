@@ -18,7 +18,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
+        public IAssetKeyNamePolicy KeyPolicy { get; protected set; }
 
         /// <summary>
         /// Line source
@@ -33,7 +33,7 @@ namespace Lexical.Localization
         public LocalizationStringLinesSource(IEnumerable<KeyValuePair<string, string>> lineSource, IAssetKeyNamePolicy namePolicy)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
-            this.NamePolicy = namePolicy;
+            this.KeyPolicy = namePolicy;
         }
 
         IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public void Build(IList<IAsset> list)
-            => list.Add(new LocalizationStringAsset(NamePolicy).AddSource(this).Load());
+            => list.Add(new LocalizationStringAsset(KeyPolicy).AddSource(this).Load());
 
         /// <summary>
         /// Post build action.

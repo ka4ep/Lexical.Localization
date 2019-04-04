@@ -73,16 +73,31 @@ namespace Lexical.Localization
             ClearSources();
         }
 
-        IAsset IAssetReloadable.Reload() => Load();
-
         /// <summary>
-        /// Load all into a new snapshot (<see cref="lines"/>). Replaces previous content.
+        /// Load new and changed files.
         /// </summary>
         /// <returns>this</returns>
         /// <exception cref="Exception">On any non-captured problem</exception>
         public virtual LocalizationAsset Load()
         {
             SetContent(collections.ToArray().SelectMany(l=>l.Value));
+            return this;
+        }
+
+        /// <summary>
+        /// Reload all files.
+        /// </summary>
+        /// <returns>this</returns>
+        /// <exception cref="Exception">On any non-captured problem</exception>
+        public virtual IAsset Reload()
+        {
+            // Clear snapshots
+            var collectionLines = collections.ToArray();
+            foreach (var line in collectionLines)
+                line.Value.snapshot = null;
+
+            // Set content
+            SetContent(collectionLines.SelectMany(l => l.Value));
             return this;
         }
 
@@ -290,7 +305,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="observer"></param>
         /// <returns></returns>
-        public IDisposable Subscribe(IObserver<IAssetSourceEvent> observer)
+        public IDisposable Subscribe(IObserver<IAssetEvent> observer)
         {
             // TODO
             return null;
@@ -321,7 +336,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Previously loaded snapshot.
         /// </summary>
-        protected KeyValuePair<IAssetKey, string>[] snapshot;
+        internal protected KeyValuePair<IAssetKey, string>[] snapshot;
 
         /// <summary>
         /// Previous line count.
