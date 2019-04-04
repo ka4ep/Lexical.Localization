@@ -15,7 +15,7 @@ namespace docs
             // Create IAssetSource that adds cache 
             IAssetSource assetSource_0 = new AssetCacheSource(c => c.AddResourceCache().AddStringsCache().AddCulturesCache());
             // Create IAssetSource that static reference of IAsset (string dictionary)
-            IAssetSource assetSource_1 = new AssetSource(new LocalizationStringAsset(strings, AssetKeyNameProvider.Default) );
+            IAssetSource assetSource_1 = new AssetInstanceSource(new LocalizationStringAsset(strings, AssetKeyNameProvider.Default) );
 
             // Create AssetBuilder
             IAssetBuilder builder = new AssetBuilder(assetSource_0, assetSource_1);

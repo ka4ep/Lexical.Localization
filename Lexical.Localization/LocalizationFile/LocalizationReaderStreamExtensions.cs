@@ -32,12 +32,12 @@ namespace Lexical.Localization
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return new LocalizationAsset(fileFormat.ReadKeyTree(stream, namePolicy).ToKeyLines().ToDictionary());
+                return new LocalizationAsset().AddSource(new IKeyTree[] { fileFormat.ReadKeyTree(stream, namePolicy) }, namePolicy).Load();
             }
             else
             if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return new LocalizationAsset(fileFormat.ReadKeyLines(stream, namePolicy).ToDictionary());
+                return new LocalizationAsset().AddSource(fileFormat.ReadKeyLines(stream, namePolicy), namePolicy).Load();
             }
             else
             if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)

@@ -19,7 +19,7 @@ namespace docs
             serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddCulturesCache()));
             // Add IAssetSource, that adds strings
             Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-            serviceCollection.AddSingleton<IAssetSource>(new AssetSource(new LocalizationStringAsset(strings, AssetKeyNameProvider.Default)));
+            serviceCollection.AddSingleton<IAssetSource>(new AssetInstanceSource(new LocalizationStringAsset(strings, AssetKeyNameProvider.Default)));
 
             // Add delegate to forward IAsset request to IAssetBuilder
             serviceCollection.AddSingleton<IAsset>(s => s.GetService<IAssetBuilder>().Build());

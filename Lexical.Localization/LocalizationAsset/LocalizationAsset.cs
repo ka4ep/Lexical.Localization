@@ -4,13 +4,14 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
-using Lexical.Localization.Utils;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Lexical.Localization
 {
@@ -19,54 +20,46 @@ namespace Lexical.Localization
     /// 
     /// Content is loaded from <see cref="IEnumerable{T}"/> sources when <see cref="IAssetReloadable.Reload"/> is called.
     /// </summary>
-    public class LocalizationAsset : ILocalizationStringProvider, IAssetReloadable, ILocalizationKeyLinesEnumerable, ILocalizationAssetCultureCapabilities, IDisposable
+    public class LocalizationAsset : ILocalizationStringProvider, IAssetReloadable, ILocalizationKeyLinesEnumerable, ILocalizationAssetCultureCapabilities, IDisposable, IAssetObservable
     {
         /// <summary>
         /// Loaded and active key-values. It is compiled union of all sources.
         /// </summary>
-        protected IReadOnlyDictionary<IAssetKey, string> dictionary;
+        protected IReadOnlyDictionary<IAssetKey, string> lines;
 
         /// <summary>
-        /// List of source where values are read from when <see cref="Load"/> is called.
+        /// Collections of lines and source readers. They are read when <see cref="Load"/> is called.
         /// </summary>
-        protected List<IEnumerable<KeyValuePair<IAssetKey, string>>> sources;
+        protected ConcurrentDictionary<IEnumerable, Collection> collections = new ConcurrentDictionary<IEnumerable, Collection>();
 
         /// <summary>
-        /// <see cref="IAssetKey"/> comparer for <see cref="dictionary"/>.
+        /// Timer task that reloads content.
+        /// </summary>
+        protected Task reloadTask;
+
+        /// <summary>
+        /// <see cref="IAssetKey"/> comparer for <see cref="lines"/>.
         /// </summary>
         IEqualityComparer<IAssetKey> comparer;
 
         /// <summary>
-        /// Create string asset with no initial sources.
+        /// Handler that processes file load errors, and file monitoring errors.
+        /// 
+        /// If <see cref="errorHandler"/> returns false, or there is no handler, then exception is thrown and asset loading fails.
+        /// If <see cref="errorHandler"/> returns true, then exception is caught and empty list is used.
         /// </summary>
-        public LocalizationAsset()
-        {
-            this.comparer = comparer ?? AssetKeyComparer.Default;
-            this.sources = new List<IEnumerable<KeyValuePair<IAssetKey, string>>>();
-            Load();
-        }
+        Func<Exception, bool> errorHandler;
 
         /// <summary>
         /// Create language string resolver that uses a dictionary as a source.
         /// </summary>
         /// <param name="comparer">(optional) comparer to use</param>
-        public LocalizationAsset(IEqualityComparer<IAssetKey> comparer = default) : base()
+        /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
+        public LocalizationAsset(IEqualityComparer<IAssetKey> comparer = default, Func<Exception, bool> errorHandler = null) : base()
         {
             this.comparer = comparer ?? AssetKeyComparer.Default;
-            this.sources = new List<IEnumerable<KeyValuePair<IAssetKey, string>>>();
-            Load();
-        }
-
-        /// <summary>
-        /// Create localization asset that uses <paramref name="lines"/> as source of key-values.
-        /// </summary>
-        /// <param name="lines">reference to use as key-value source</param>
-        public LocalizationAsset(IDictionary<IAssetKey, string> lines) : this()
-        {
-            if (lines == null) throw new ArgumentNullException(nameof(lines));
-            this.comparer = comparer ?? AssetKeyComparer.Default;
-            this.sources = new List<IEnumerable<KeyValuePair<IAssetKey, string>>>();
-            this.sources.Add(lines);
+            this.errorHandler = errorHandler;
+            // Load to create snapshop
             Load();
         }
 
@@ -76,37 +69,39 @@ namespace Lexical.Localization
         /// <exception cref="AggregateException">If disposing of one of the sources failed</exception>
         public virtual void Dispose()
         {
-            ClearSources(disposeSources: true);
             this.cultures = null;
+            ClearSources();
         }
 
         IAsset IAssetReloadable.Reload() => Load();
 
         /// <summary>
-        /// Load content all <see cref="sources"/> into a new internal (<see cref="dictionary"/>). Replaces previous content.
+        /// Load all into a new snapshot (<see cref="lines"/>). Replaces previous content.
         /// </summary>
         /// <returns>this</returns>
+        /// <exception cref="Exception">On any non-captured problem</exception>
         public virtual LocalizationAsset Load()
         {
-            SetContent(sources.SelectMany(l=>l));
+            SetContent(collections.ToArray().SelectMany(l=>l.Value));
             return this;
         }
 
         /// <summary>
-        /// Replaces <see cref="dictionary"/> with a new dictionary that is filled with lines from <paramref name="src"/>.
+        /// Replaces <see cref="lines"/> with a new dictionary that is filled with lines from <paramref name="src"/>.
         /// </summary>
         /// <param name="src"></param>
         protected virtual void SetContent(IEnumerable<KeyValuePair<IAssetKey, string>> src)
         {
-            var newMap = new Dictionary<IAssetKey, string>(comparer);
+            Dictionary<IAssetKey, string> newLines = new Dictionary<IAssetKey, string>(comparer);
             foreach (var line in src)
             {
                 if (line.Key == null) continue;
-                newMap[line.Key] = line.Value;
+                newLines[line.Key] = line.Value;
             }
             // Replace reference
+            // TODO notify observers, such as cache, that content is changed.
             this.cultures = null;
-            this.dictionary = newMap;
+            this.lines = newLines;
         }
 
         /// <summary>
@@ -117,7 +112,7 @@ namespace Lexical.Localization
         public virtual string GetString(IAssetKey key)
         {
             string result = null;
-            this.dictionary.TryGetValue(key, out result);
+            this.lines.TryGetValue(key, out result);
             return result;
         }
 
@@ -130,7 +125,7 @@ namespace Lexical.Localization
             var _cultures = cultures;
             if (_cultures != null) return _cultures;
 
-            return cultures = dictionary.Keys.Select(k => k.FindCulture()).Where(ci => ci != null).Distinct().ToArray();
+            return cultures = lines.Keys.Select(k => k.FindCulture()).Where(ci => ci != null).Distinct().ToArray();
         }
         CultureInfo[] cultures;
 
@@ -141,7 +136,7 @@ namespace Lexical.Localization
         /// <returns>list of key-lines, or null if could not be provided</returns>
         public IEnumerable<KeyValuePair<IAssetKey, string>> GetKeyLines(IAssetKey filterKey = null)
         {
-            var map = dictionary;
+            var map = lines;
             if (map == null) return null;
             if (filterKey == null) return map;
             AssetKeyFilter filter = new AssetKeyFilter().KeyRule(filterKey);
@@ -157,94 +152,85 @@ namespace Lexical.Localization
             => GetKeyLines(filterKey);
 
         /// <summary>
-        /// Add language string key-value source. 
-        /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
+        /// Add reader of lines.
         /// 
-        /// If <paramref name="linesSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
+        /// Reader must implement one of:
+        /// <list type="bullet">
+        /// <item>IEnumerable&gt;KeyValuePair&gt;IAssetKey, string&lt;&lt;</item>
+        /// <item>IEnumerable&gt;KeyValuePair&gt;string, string&lt;&lt;</item>
+        /// <item>IEnumerable&gt;IKeyTree&lt;</item>
+        /// </list>
         /// </summary>
-        /// <param name="linesSource"></param>
+        /// <param name="reader"></param>
+        /// <param name="namePolicy">(optional) name policy that reads the content. Required if reader implements string reader</param>
+        /// <param name="errorHandler">(optional) overrides default handler.</param>
+        /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="LocalizationAsset"/></param>
         /// <returns></returns>
-        public LocalizationAsset AddSource(IEnumerable<KeyValuePair<Key, string>> linesSource)
+        public LocalizationAsset AddSource(IEnumerable reader, IAssetKeyNamePolicy namePolicy = null, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
         {
-            if (linesSource == null) throw new ArgumentNullException(nameof(linesSource));
-            lock (sources) sources.Add(linesSource.Select(kp => new KeyValuePair<IAssetKey, string>((IAssetKey)kp.Key, kp.Value)));
+            // Reader argument not null
+            if (reader == null) throw new ArgumentNullException(nameof(reader));
+            // IEnumerable<KeyValuePair<string,string>> must be added with namePolicy
+            if (reader is IEnumerable<KeyValuePair<IAssetKey, string>> == false && reader is IEnumerable<IKeyTree> == false && reader is IEnumerable<KeyValuePair<string, string>> && namePolicy == null)
+                throw new ArgumentNullException(nameof(namePolicy), $"{nameof(namePolicy)} name policy must be provided for reader of type {reader.GetType().FullName}");
+
+            // Create collection
+            var _errorHandler = errorHandler ?? this.errorHandler;
+            Collection collection = new Collection(reader, namePolicy, _errorHandler, this, disposeReader);
+            // Start observing file changes
+            collection.SubscribeObserving();
+            // Add to collection
+            bool addedOk = collections.TryAdd(reader, collection);
+
+            // Adding failed, dispose the collection
+            if (!addedOk)
+            {
+                StructList4<Exception> errors = new StructList4<Exception>();
+                collection.Dispose(ref errors);
+                if (errors.Count > 0)
+                {
+                    Exception e = errors.Count == 1 ? errors[0] : new AggregateException(errors);
+                    if (_errorHandler == null || !_errorHandler(e)) throw errors.Count == 1 ? new AggregateException(errors) : e;
+                }
+            }
             return this;
         }
 
-        /// <summary>
-        /// Add language string key-value source. 
-        /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
+        /// Add reader of lines.
         /// 
-        /// If <paramref name="linesSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
+        /// Reader must implement one of:
+        /// <list type="bullet">
+        /// <item>IEnumerable&gt;KeyValuePair&gt;IAssetKey, string&lt;&lt;</item>
+        /// <item>IEnumerable&gt;KeyValuePair&gt;string, string&lt;&lt;</item>
+        /// <item>IEnumerable&gt;IKeyTree&lt;</item>
+        /// </list>
         /// </summary>
-        /// <param name="linesSource"></param>
+        /// <param name="reader"></param>
+        /// <param name="namePolicy">name policy that reads the content. Required if reader implements string reader</param>
+        /// <param name="errorHandler">(optional) overrides default handler.</param>
+        /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="LocalizationAsset"/></param>
         /// <returns></returns>
-        public LocalizationAsset AddSource(IEnumerable<KeyValuePair<IAssetKey, string>> linesSource)
-        {
-            if (linesSource == null) throw new ArgumentNullException(nameof(linesSource));
-            lock (sources) sources.Add(linesSource);
-            return this;
-        }
+        public LocalizationAsset AddSource(IEnumerable reader, string namePattern, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
+            => AddSource(reader, new AssetNamePattern(namePattern), errorHandler, disposeReader);
 
         /// <summary>
-        /// Add language string key-value source. 
-        /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
-        /// 
-        /// If <paramref name="linesSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
+        /// Remove <paramref name="reader"/>. If reader was added with disposeReader, it will be disposed here.
         /// </summary>
-        /// <param name="linesSource"></param>
-        /// <param name="namePattern"></param>
+        /// <param name="reader"></param>
         /// <returns></returns>
-        public LocalizationAsset AddSource(IEnumerable<KeyValuePair<string, string>> linesSource, string namePattern)
-            => AddSource(linesSource, new AssetNamePattern(namePattern));
-
-        /// <summary>
-        /// Add language string key-value source. 
-        /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
-        /// 
-        /// If <paramref name="stringLines"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
-        /// </summary>
-        /// <param name="stringLines"></param>
-        /// <param name="namePolicy"></param>
-        /// <returns></returns>
-        public LocalizationAsset AddSource(IEnumerable<KeyValuePair<string, string>> stringLines, IAssetKeyNamePolicy namePolicy)
+        public LocalizationAsset RemoveSource(IEnumerable reader)
         {
-            if (stringLines == null) throw new ArgumentNullException(nameof(stringLines));
-            if (namePolicy is IAssetKeyNameParser == false) throw new ArgumentException($"{nameof(namePolicy)} must implement {nameof(IAssetKeyNameParser)}.");
-            IEnumerable<KeyValuePair<IAssetKey, string>> adaptedSource = stringLines.ToKeyLines(namePolicy);
-            lock (sources) sources.Add(adaptedSource);
-            return this;
-        }
-
-        /// <summary>
-        /// Add language string key-value source. 
-        /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
-        /// 
-        /// If <paramref name="treeSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
-        /// </summary>
-        /// <param name="treeSource"></param>
-        /// <returns></returns>
-        public LocalizationAsset AddSource(IEnumerable<IKeyTree> treeSource)
-        {
-            if (treeSource == null) throw new ArgumentNullException(nameof(treeSource));
-            IEnumerable<KeyValuePair<IAssetKey, string>> adaptedSource = treeSource.SelectMany(tree => tree.ToKeyLines());
-            lock (sources) sources.Add(adaptedSource);
-            return this;
-        }
-
-        /// <summary>
-        /// Add language string key-value source. 
-        /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
-        /// 
-        /// If <paramref name="treeSource"/> implements <see cref="IDisposable"/>, then its disposed along with the class or when <see cref="ClearSources"/> is called.
-        /// </summary>
-        /// <param name="treeSource"></param>
-        /// <returns></returns>
-        public LocalizationAsset AddSource(IKeyTree treeSource)
-        {
-            if (treeSource == null) throw new ArgumentNullException(nameof(treeSource));
-            IEnumerable<KeyValuePair<IAssetKey, string>> adaptedSource = treeSource.ToKeyLines();
-            lock (sources) sources.Add(adaptedSource);
+            Collection c;
+            if (collections.TryRemove(reader, out c))
+            {
+                StructList4<Exception> errors = new StructList4<Exception>();
+                c.Dispose(ref errors);
+                if (errors.Count > 0)
+                {
+                    Exception e = errors.Count == 1 ? errors[0] : new AggregateException(errors);
+                    if (c.errorHandler == null || !c.errorHandler(e)) throw errors.Count == 1 ? new AggregateException(errors) : e;
+                }
+            }
             return this;
         }
 
@@ -253,31 +239,61 @@ namespace Lexical.Localization
         /// Caller must call <see cref="Load"/> afterwards to make the changes effective.
         /// </summary>
         /// <returns></returns>
-        /// <param name="disposeSources">if true, sources are disposed</param>
         /// <exception cref="AggregateException">If disposing of one of the sources failed</exception>
-        public LocalizationAsset ClearSources(bool disposeSources)
+        public LocalizationAsset ClearSources()
         {
-            IDisposable[] disposables = null;
-            lock (sources)
-            {
-                if (disposeSources) disposables = sources.Select(s => s as IDisposable).Where(s => s != null).ToArray();
-                sources.Clear();
-            }
             StructList4<Exception> errors = new StructList4<Exception>();
-            if (disposeSources)
-            foreach (IDisposable d in disposables)
+            foreach (var collectionLine in collections.ToArray())
             {
-                try
-                {
-                    d.Dispose();
-                }
-                catch (Exception e)
-                {
-                    errors.Add(e);
-                }
+                Collection c;
+                collections.TryRemove(collectionLine.Key, out c);
+                collectionLine.Value.Dispose(ref errors);
             }
             if (errors.Count > 0) throw new AggregateException(errors);
             return this;
+        }
+
+        /// <summary>
+        /// Starts a task that reloads the content. 
+        /// Task sleeps for a while (500ms) before loading content.
+        /// Task is not started if one is already sleeping.
+        /// </summary>
+        public virtual void StartReloadTimer()
+        {
+            // Reload task already running
+            if (reloadTask != null) return;
+
+            Task[] tasks = new Task[1];
+            tasks[0] = new Task(ReloadTask, tasks);
+            Interlocked.CompareExchange(ref reloadTask, tasks[0], null);
+            tasks[0].Start();
+        }        
+
+        /// <summary>
+        /// Task that is called by <see cref="StartReloadTimer"/>.
+        /// </summary>
+        /// <param name="tasks"></param>
+        protected void ReloadTask(object tasks)
+        {
+            // Wait for a while
+            Thread.Sleep(500);
+
+            // Remove task reference
+            Interlocked.CompareExchange(ref reloadTask, null, (tasks as Task[])[0]);
+
+            // Reload changed content
+            Load();
+        }
+
+        /// <summary>
+        /// Subscribe for content change events
+        /// </summary>
+        /// <param name="observer"></param>
+        /// <returns></returns>
+        public IDisposable Subscribe(IObserver<IAssetSourceEvent> observer)
+        {
+            // TODO
+            return null;
         }
 
         /// <summary>
@@ -285,18 +301,17 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public override string ToString() => $"{GetType().Name}()";
-
     }
 
     /// <summary>
-    /// Line source information
+    /// Collection of lines
     /// </summary>
-    public class Source : IObserver<IAssetSourceEvent>, IEnumerable<KeyValuePair<IAssetKey, string>>
+    public class Collection : IObserver<IAssetSourceEvent>, IEnumerable<KeyValuePair<IAssetKey, string>>
     {
         /// <summary>
         /// Reader, the original reference.
         /// </summary>
-        protected IEnumerable source;
+        protected IEnumerable reader;
 
         /// <summary>
         /// Casted to key string reader.
@@ -311,7 +326,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Previous line count.
         /// </summary>
-        protected int lineCount;
+        protected int lineCount = -1;
 
         /// <summary>
         /// Handle that observes source
@@ -328,36 +343,56 @@ namespace Lexical.Localization
         /// <summary>
         /// Handler that processes file load errors, and file monitoring errors.
         /// 
-        /// If <see cref="errorHandler"/> returns true, or there is no handler, then exception is thrown and asset loading fails.
-        /// 
-        /// If <see cref="errorHandler"/> returns false, then exception is caught and empty list is used.
+        /// If <see cref="errorHandler"/> returns false, or there is no handler, then exception is thrown and asset loading fails.
+        /// If <see cref="errorHandler"/> returns true, then exception is caught and empty list is used.
         /// </summary>
-        protected Func<Exception, bool> errorHandler;
+        internal protected Func<Exception, bool> errorHandler;
+
+        /// <summary>
+        /// Parent object
+        /// </summary>
+        protected LocalizationAsset parent;
+
+        /// <summary>
+        /// Should reader be disposed along with this class.
+        /// </summary>
+        protected bool disposeReader;
 
         /// <summary>
         /// Create source
         /// </summary>
-        /// <param name="source"></param>
+        /// <param name="reader"></param>
         /// <param name="namePolicy">used if source is string line enumerable</param>
-        /// <param name="errorHandler">(optional) handles file load and observe errors for logging and capturing exceptions. If <paramref name="errorHandler"/> returns false then exception is caught and not thrown upwards</param>
-        public Source(IEnumerable source, IAssetKeyNamePolicy namePolicy, Func<Exception, bool> errorHandler)
+        /// <param name="errorHandler">(optional) handles file load and observe errors for logging and capturing exceptions. If <paramref name="errorHandler"/> returns true then exception is caught and not thrown</param>
+        /// <param name="parent"></param>
+        /// <param name="disposeReader"></param>
+        public Collection(IEnumerable reader, IAssetKeyNamePolicy namePolicy, Func<Exception, bool> errorHandler, LocalizationAsset parent, bool disposeReader)
         {
-            this.source = source;
+            this.parent = parent;
+            this.reader = reader;
             this.namePolicy = namePolicy;
-            this.keyLinesReader = source is IEnumerable<KeyValuePair<IAssetKey, string>> keyLines ? keyLines :
-                source is IEnumerable<KeyValuePair<string, string>> stringLines ? stringLines.ToKeyLines(namePolicy) :
-                source is IEnumerable<IKeyTree> trees ? trees.SelectMany(tree => tree.ToKeyLines()) :
-                throw new ArgumentException("source must be key-lines, string-lines or key tree", nameof(source));
+            this.keyLinesReader = reader is IEnumerable<KeyValuePair<IAssetKey, string>> keyLines ? keyLines :
+                reader is IEnumerable<KeyValuePair<string, string>> stringLines ? stringLines.ToKeyLines(namePolicy) :
+                reader is IEnumerable<IKeyTree> trees ? trees.SelectMany(tree => tree.ToKeyLines()) :
+                throw new ArgumentException("source must be key-lines, string-lines or key tree", nameof(reader));
             this.errorHandler = errorHandler;
+            this.disposeReader = disposeReader;
+        }
 
-            if (source is IObservable<IAssetSourceEvent> observable)
+        /// <summary>
+        /// Start observing file changes
+        /// </summary>
+        public void SubscribeObserving()
+        {
+            if (reader is IObservable<IAssetSourceEvent> observable)
             {
                 try
                 {
                     observerHandle = observable.Subscribe(this);
-                } catch (Exception e) when (errorHandler==null?true:!errorHandler(e))
+                }
+                catch (Exception e) when (errorHandler != null && errorHandler(e))
                 {
-                    // Discard error.
+                    // Observing failed, but discard the problem as per error handler.
                 }
             }
         }
@@ -367,32 +402,67 @@ namespace Lexical.Localization
         /// </summary>
         public virtual void Dispose(ref StructList4<Exception> errors)
         {
+            var _reader = reader;
+            keyLinesReader = null;
+            reader = null;
+            errorHandler = null;
+            snapshot = null;
+            parent = null;
+
+            // Cancel observer
             try
             {
-                // Cancel observer
                 Interlocked.CompareExchange(ref observerHandle, null, observerHandle)?.Dispose();
             }
             catch (Exception e)
             {
                 errors.Add(e);
             }
+
+            // Dispose reader
+            if (disposeReader && _reader is IDisposable disposable)
+                try 
+                {
+                    disposable.Dispose();
+                } catch(Exception e)
+                {
+                    errors.Add(e);
+                }
         }
 
-        KeyValuePair<IAssetKey, string>[] GetLines()
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
         {
-            return null;
-            /*            // Read lines
-                        try
-                        {
-                            list.AddRange(keyLinesReader);
-                            snapshot = list.ToArray();
+            StructList4<Exception> errors = new StructList4<Exception>();
+            Dispose(ref errors);
+            if (errors.Count > 0) throw new AggregateException(errors);
+        }
 
-                        }
-                        catch (Exception e)
-                        {
-                            // Problem reading file
-                        }
-            */
+        /// <summary>
+        /// Get snaphost or read lines
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception">On read problem that is not handled by <see cref="errorHandler"/>.</exception>
+        public KeyValuePair<IAssetKey, string>[] GetLines()
+        {
+            // Return snapshot
+            var _snapshot = snapshot;
+            if (_snapshot != null) return _snapshot;
+
+            // Read lines
+            try
+            {
+                List<KeyValuePair<IAssetKey, string>> lines = new List<KeyValuePair<IAssetKey, string>>(lineCount < 0 ? 25 : lineCount);
+                lines.AddRange(keyLinesReader);
+                lineCount = lines.Count;
+                return snapshot = lines.ToArray();
+            } catch (Exception e) when(errorHandler!=null && errorHandler(e))
+            {
+                // Reading failed, but discard the problem as per error handler.
+                return snapshot = new KeyValuePair<IAssetKey, string>[0];
+            }
         }
 
         /// <summary>
@@ -400,19 +470,15 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public IEnumerator<KeyValuePair<IAssetKey, string>> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+            => ((IEnumerable<KeyValuePair<IAssetKey, string>>) GetLines()).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+            => GetLines().GetEnumerator();
 
         /// <summary>
         /// Asset source stopped sending events
         /// </summary>
-        public virtual void OnCompleted()
+        void IObserver<IAssetSourceEvent>.OnCompleted()
         {
             // Cancel observer
             Interlocked.CompareExchange(ref observerHandle, null, observerHandle)?.Dispose();
@@ -422,7 +488,7 @@ namespace Lexical.Localization
         /// Error while monitoring asset source
         /// </summary>
         /// <param name="error"></param>
-        public virtual void OnError(Exception error)
+        void IObserver<IAssetSourceEvent>.OnError(Exception error)
         {
         }
 
@@ -430,23 +496,23 @@ namespace Lexical.Localization
         /// Source file changed.
         /// </summary>
         /// <param name="value"></param>
-        public virtual void OnNext(IAssetSourceEvent value)
+        void IObserver<IAssetSourceEvent>.OnNext(IAssetSourceEvent value)
         {
             if (value is IAssetChangeEvent changeEvent)
             {
                 // Discard snapshot
                 snapshot = null;
-
-                // Pass on event.
+                // Start timer that reloads collections
+                parent.StartReloadTimer();
             }
         }
 
         /// <summary>
-        /// Print info
+        /// Print info from source reference.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-            => source.ToString();
+            => reader.ToString();
 
     }
 

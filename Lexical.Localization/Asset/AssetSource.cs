@@ -11,9 +11,9 @@ using System.Collections.Generic;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Adapts single <see cref="IAsset"/> to <see cref="IAssetSource"/>.
+    /// Adapts single instance to <see cref="IAssetSource"/>.
     /// </summary>
-    public class AssetSource : IAssetSource
+    public class AssetInstanceSource : IAssetSource
     {
         /// <summary>
         /// Asset to add
@@ -24,7 +24,7 @@ namespace Lexical.Localization
         /// Create adapter that adapts <paramref name="asset"/> to <see cref="IAssetSource"/>.
         /// </summary>
         /// <param name="asset"></param>
-        public AssetSource(IAsset asset)
+        public AssetInstanceSource(IAsset asset)
         {
             this.asset = asset ?? throw new ArgumentNullException(nameof(asset));
         }
@@ -63,7 +63,7 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <returns></returns>
         public static IAssetSource ToSource(this IAsset asset)
-            => new AssetSource(asset);
+            => new AssetInstanceSource(asset);
 
         /// <summary>
         /// Adapts <see cref="IAsset"/> to <see cref="IAssetSource"/> and adds to builder.
@@ -73,7 +73,7 @@ namespace Lexical.Localization
         /// <returns>builder</returns>
         public static IAssetBuilder AddAsset(this IAssetBuilder builder, IAsset asset)
         {
-            builder.Sources.Add(new AssetSource(asset));
+            builder.Sources.Add(new AssetInstanceSource(asset));
             return builder;
         }
 

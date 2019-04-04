@@ -34,7 +34,7 @@ namespace Lexical.Localization
     public static partial class LocalizationAssetExtensions_
     {
         public static IAssetSource ToSource(this Func<IAssetKey, string> stringFunc)
-            => new AssetSource(new LocalizationStringsFunc(stringFunc));
+            => new AssetInstanceSource(new LocalizationStringsFunc(stringFunc));
         public static ILocalizationStringProvider ToAsset(this Func<IAssetKey, string> stringFunc)
             => new LocalizationStringsFunc(stringFunc);
 
@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// <returns>builder</returns>
         public static IAssetBuilder AddSourceFunc(this IAssetBuilder builder, Func<IAssetKey, string> resolver)
         {
-            builder.Sources.Add(new AssetSource(new LocalizationStringsFunc(resolver)));
+            builder.Sources.Add(new AssetInstanceSource(new LocalizationStringsFunc(resolver)));
             return builder;
         }
     }

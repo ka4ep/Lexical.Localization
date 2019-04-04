@@ -22,7 +22,7 @@ namespace docs
 
             // Add dictionary of strings
             Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-            serviceCollection.AddSingleton<IAssetSource>(new AssetSource(new LocalizationStringAsset(strings, AssetKeyNameProvider.Default)));
+            serviceCollection.AddSingleton<IAssetSource>(new AssetInstanceSource(new LocalizationStringAsset(strings, AssetKeyNameProvider.Default)));
 
             // Create service scope
             using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())

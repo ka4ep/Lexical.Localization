@@ -59,7 +59,7 @@ namespace Lexical.Localization
     public static partial class LanguageAssetExtensions
     {
         public static IAssetSource ToSource(this Func<IAsset> assetProvider)
-            => new AssetSource(new LocalizationAssetFunc(assetProvider));
+            => new AssetInstanceSource(new LocalizationAssetFunc(assetProvider));
         public static IAsset ToAsset(this Func<IAsset> assetProvider)
             => new LocalizationAssetFunc(assetProvider);
     }
