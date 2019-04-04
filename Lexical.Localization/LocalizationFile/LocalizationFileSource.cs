@@ -14,18 +14,17 @@ namespace Lexical.Localization
     /// <summary>
     /// Localization file source.
     /// </summary>
-    public abstract class LocalizationFileSource : LocalizationReader, IAssetSource
+    public abstract class LocalizationFileSource : FileSource, IAssetSource, IEnumerable
     {
         /// <summary>
-        /// File path.
+        /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public string FileName { get; protected set; }
+        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
 
         /// <summary>
-        /// If true, throws <see cref="FileNotFoundException"/> if file is not found.
-        /// If false, returns empty enumerable.
+        /// File format 
         /// </summary>
-        public bool ThrowIfNotFound { get; protected set; }
+        public ILocalizationFileFormat FileFormat { get; protected set; }
 
         /// <summary>
         /// Create abstract file source.
@@ -34,31 +33,17 @@ namespace Lexical.Localization
         /// <param name="filename"></param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileSource(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, namePolicy)
+        public LocalizationFileSource(ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(filename, throwIfNotFound)
         {
-            this.FileName = filename ?? throw new ArgumentNullException(nameof(FileName));
-            this.ThrowIfNotFound = throwIfNotFound;
+            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
+            this.NamePolicy = namePolicy;
         }
 
         /// <summary>
-        /// (IAssetSource) Build asset into list.
-        /// </summary>
-        /// <param name="list"></param>
-        public abstract void Build(IList<IAsset> list);
-
-        /// <summary>
-        /// (IAssetSource) Build asset into list.
-        /// </summary>
-        /// <param name="asset"></param>
-        /// <returns></returns>
-        public abstract IAsset PostBuild(IAsset asset);
-
-        /// <summary>
-        /// Print info of source
+        /// Create reader.
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-            => FileName;
+        public abstract IEnumerator GetEnumerator();
     }
 
     /// <summary>

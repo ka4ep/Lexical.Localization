@@ -14,22 +14,17 @@ namespace Lexical.Localization
     /// <summary>
     /// Localization source and reader that reads lines from embedded resource.
     /// </summary>
-    public abstract class LocalizationEmbeddedSource : LocalizationReader, IAssetSource
+    public abstract class LocalizationEmbeddedSource : EmbeddedSource, IAssetSource, IEnumerable
     {
         /// <summary>
-        /// Embedded resource name.
+        /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public string ResourceName { get; protected set; }
+        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
 
         /// <summary>
-        /// Assembly
+        /// File format 
         /// </summary>
-        public Assembly Assembly { get; protected set; }
-
-        /// <summary>
-        /// Throw <see cref="FileNotFoundException"/> if file is not found.
-        /// </summary>
-        public bool ThrowIfNotFound { get; protected set; }
+        public ILocalizationFileFormat FileFormat { get; protected set; }
 
         /// <summary>
         /// Create (abstract) embedded reader.
@@ -39,25 +34,20 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationEmbeddedSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, namePolicy)
+        public LocalizationEmbeddedSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(assembly, resourceName, throwIfNotFound)
         {
+            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
+            this.NamePolicy = namePolicy;
             this.Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
             this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
             this.ThrowIfNotFound = throwIfNotFound;
         }
 
         /// <summary>
-        /// (IAssetSource) Build asset into list.
+        /// Create reader.
         /// </summary>
-        /// <param name="list"></param>
-        public abstract void Build(IList<IAsset> list);
-
-        /// <summary>
-        /// (IAssetSource) Build asset into list.
-        /// </summary>
-        /// <param name="asset"></param>
         /// <returns></returns>
-        public abstract IAsset PostBuild(IAsset asset);
+        public abstract IEnumerator GetEnumerator();
 
         /// <summary>
         /// Print info of source

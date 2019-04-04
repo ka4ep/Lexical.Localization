@@ -15,22 +15,17 @@ namespace Lexical.Localization
     /// <summary>
     /// Localization source and reader that reads lines from file provider.
     /// </summary>
-    public abstract class LocalizationFileProviderSource : LocalizationReader, IAssetSource
+    public abstract class LocalizationFileProviderSource : FileProviderSource, IAssetSource, IEnumerable
     {
         /// <summary>
-        /// File path in the <see cref="FileProvider"/>.
+        /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public string FilePath { get; protected set; }
+        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
 
         /// <summary>
-        /// File provider
+        /// File format 
         /// </summary>
-        public IFileProvider FileProvider { get; protected set; }
-
-        /// <summary>
-        /// Throw <see cref="FileNotFoundException"/> if file is not found.
-        /// </summary>
-        public bool ThrowIfNotFound { get; protected set; }
+        public ILocalizationFileFormat FileFormat { get; protected set; }
 
         /// <summary>
         /// Create (abstract) source to localization file in a file provider.
@@ -40,32 +35,17 @@ namespace Lexical.Localization
         /// <param name="filepath"></param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileProviderSource(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, namePolicy)
+        public LocalizationFileProviderSource(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileProvider, filepath, throwIfNotFound)
         {
-            this.FilePath = filepath ?? throw new ArgumentNullException(nameof(filepath));
-            this.FileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
-            this.ThrowIfNotFound = throwIfNotFound;
+            this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
+            this.NamePolicy = namePolicy;
         }
 
         /// <summary>
-        /// (IAssetSource) Build asset into list.
-        /// </summary>
-        /// <param name="list"></param>
-        public abstract void Build(IList<IAsset> list);
-
-        /// <summary>
-        /// (IAssetSource) Build asset into list.
-        /// </summary>
-        /// <param name="asset"></param>
-        /// <returns></returns>
-        public abstract IAsset PostBuild(IAsset asset);
-
-        /// <summary>
-        /// Print info of source
+        /// Create reader.
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-            => FilePath;
+        public abstract IEnumerator GetEnumerator();
     }
 
     /// <summary>
