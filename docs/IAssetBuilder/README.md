@@ -11,7 +11,7 @@ Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hell
 // Create IAssetSource that adds cache 
 IAssetSource assetSource_0 = new AssetCacheSource(c => c.AddResourceCache().AddStringsCache().AddCulturesCache());
 // Create IAssetSource that static reference of IAsset (string dictionary)
-IAssetSource assetSource_1 = new AssetSource(new LocalizationAsset(strings, AssetKeyNameProvider.Default) );
+IAssetSource assetSource_1 = new AssetInstanceSource(new LocalizationAsset(strings, AssetKeyNameProvider.Default) );
 
 // Create AssetBuilder
 IAssetBuilder builder = new AssetBuilder(assetSource_0, assetSource_1);
@@ -53,7 +53,7 @@ serviceCollection.AddSingleton<IAssetBuilder, AssetBuilder>();
 serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddCulturesCache()));
 // Add IAssetSource, that adds strings
 Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-serviceCollection.AddSingleton<IAssetSource>(new AssetSource(new LocalizationAsset(strings, AssetKeyNameProvider.Default)));
+serviceCollection.AddSingleton<IAssetSource>(new AssetInstanceSource(new LocalizationAsset(strings, AssetKeyNameProvider.Default)));
 
 // Add delegate to forward IAsset request to IAssetBuilder
 serviceCollection.AddSingleton<IAsset>(s => s.GetService<IAssetBuilder>().Build());
@@ -88,7 +88,7 @@ serviceCollection.AddLexicalLocalization(
 
 // Add dictionary of strings
 Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-serviceCollection.AddSingleton<IAssetSource>(new AssetSource(new LocalizationAsset(strings, AssetKeyNameProvider.Default)));
+serviceCollection.AddSingleton<IAssetSource>(new AssetInstanceSource(new LocalizationAsset(strings, AssetKeyNameProvider.Default)));
 
 // Create service scope
 using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
