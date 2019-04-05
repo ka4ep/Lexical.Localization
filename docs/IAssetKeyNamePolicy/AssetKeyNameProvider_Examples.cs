@@ -20,7 +20,7 @@ namespace docs
                         .Ignore("Root") // Ignore "Root"
                         .DefaultRule(true, prefixSeparator: "/"); // Default separator
                 // Create asset
-                IAsset asset = new LocalizationStringAsset(source, policy);
+                IAsset asset = new LocalizationAsset(source, policy);
                 // Create key
                 IAssetKey key = new LocalizationRoot(asset).Section("MyController").Key("Hello");
                 // Retrieve string

@@ -38,7 +38,7 @@ namespace Lexical.Localization
         /// After this call, the <paramref name="serviceCollection"/> still needs to be populated with 
         /// instances of <see cref="IAssetSource"/>, such as:
         ///     <see cref="ResourceStringDictionary"/>
-        ///     <see cref="LocalizationStringAsset"/>
+        ///     <see cref="LocalizationAsset"/>
         /// 
         /// </summary>
         /// <param name="serviceCollection"></param>

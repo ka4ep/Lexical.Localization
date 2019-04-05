@@ -80,7 +80,7 @@ namespace Lexical.Localization
         public static string ResolveString(this IAssetKey key)
         {
             // If there is no explicitly assigned culture in the key, try cultures from culture policy
-            string explicitCulture = key.FindCultureByName();
+            string explicitCulture = key.FindCultureName();
             IEnumerable<CultureInfo> cultures = null;
             bool rootCultureTried = false;
             if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
@@ -169,7 +169,7 @@ namespace Lexical.Localization
 
             // If there is no explicitly assigned culture in the key, try cultures from culture policy
             bool rootCultureTried = false;
-            string explicitCulture = key.FindCultureByName();
+            string explicitCulture = key.FindCultureName();
             IEnumerable<CultureInfo> cultures = null;
             if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
             {

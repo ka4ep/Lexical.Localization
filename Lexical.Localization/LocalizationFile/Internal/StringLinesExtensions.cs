@@ -50,7 +50,7 @@ namespace Lexical.Localization.Internal
         /// <param name="policy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
         /// <returns></returns>
         public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
-            => new LocalizationStringAsset(policy).AddSource(lines).Load();
+            => new LocalizationAsset().Add(lines, policy).Load();
 
         /// <summary>
         /// Convert <paramref name="lines"/> to <see cref="IAssetSource"/>.

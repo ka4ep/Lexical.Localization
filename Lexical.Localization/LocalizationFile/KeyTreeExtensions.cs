@@ -65,7 +65,7 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <returns></returns>
         public static IAsset ToAsset(this IKeyTree tree)
-            => new LocalizationAsset().AddSource(new IKeyTree[] { tree }).Load();
+            => new LocalizationAsset().Add(new IKeyTree[] { tree }).Load();
 
         /// <summary>
         /// Create an asset that uses <paramref name="trees"/>.
@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// <param name="trees"></param>
         /// <returns></returns>
         public static IAsset ToAsset(this IEnumerable<IKeyTree> trees)
-            => new LocalizationAsset().AddSource(trees).Load();
+            => new LocalizationAsset().Add(trees).Load();
 
         /// <summary>
         /// Convert <paramref name="tree"/> to <see cref="IAssetSource"/>..

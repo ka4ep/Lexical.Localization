@@ -20,12 +20,46 @@ namespace Lexical.Localization
     /// 
     /// Content is loaded from <see cref="IEnumerable{T}"/> sources when <see cref="IAssetReloadable.Reload"/> is called.
     /// </summary>
-    public class LocalizationAsset : ILocalizationStringProvider, IAssetReloadable, ILocalizationKeyLinesEnumerable, ILocalizationAssetCultureCapabilities, IDisposable, IAssetObservable
+    public class LocalizationAsset :
+        ILocalizationStringProvider,
+        ILocalizationStringLinesEnumerable,
+        ILocalizationKeyLinesEnumerable,
+        ILocalizationAssetCultureCapabilities,
+        IAssetReloadable,
+        IDisposable,
+        IAssetObservable
     {
         /// <summary>
-        /// Loaded and active key-values. It is compiled union of all sources.
+        /// Get or load key-lines
         /// </summary>
-        protected IReadOnlyDictionary<IAssetKey, string> lines;
+        /// <returns></returns>
+        protected virtual Dictionary<IAssetKey, string> KeyLines => keyLines ?? LoadKeyLines();
+
+        /// <summary>
+        /// Get or load key-lines
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Dictionary<string, string> StringLines => stringLines ?? LoadStringLines();
+
+        /// <summary>
+        /// String lines sorted by name policy.
+        /// </summary>
+        protected virtual Dictionary<IAssetKeyNameProvider, Dictionary<string, string>> StringLinesByProvider => stringLinesByProvider ?? LoadStringLinesByProvider();
+
+        /// <summary>
+        /// Loaded and active key lines. It is compiled union of all sources.
+        /// </summary>
+        protected Dictionary<IAssetKey, string> keyLines;
+
+        /// <summary>
+        /// Loaded and active string lines. It is compiled union of all sources.
+        /// </summary>
+        protected Dictionary<string, string> stringLines;
+
+        /// <summary>
+        /// String lines sorted by name policy.
+        /// </summary>
+        protected Dictionary<IAssetKeyNameProvider, Dictionary<string, string>> stringLinesByProvider;
 
         /// <summary>
         /// Collections of lines and source readers. They are read when <see cref="Load"/> is called.
@@ -38,7 +72,7 @@ namespace Lexical.Localization
         protected Task reloadTask;
 
         /// <summary>
-        /// <see cref="IAssetKey"/> comparer for <see cref="lines"/>.
+        /// <see cref="IAssetKey"/> comparer for <see cref="keyLines"/>.
         /// </summary>
         IEqualityComparer<IAssetKey> comparer;
 
@@ -51,6 +85,11 @@ namespace Lexical.Localization
         Func<Exception, bool> errorHandler;
 
         /// <summary>
+        /// Observers that monitor content changes.
+        /// </summary>
+        List<IObserver<IAssetEvent>> observers = null;
+
+        /// <summary>
         /// Create language string resolver that uses a dictionary as a source.
         /// </summary>
         /// <param name="comparer">(optional) comparer to use</param>
@@ -59,8 +98,48 @@ namespace Lexical.Localization
         {
             this.comparer = comparer ?? AssetKeyComparer.Default;
             this.errorHandler = errorHandler;
-            // Load to create snapshop
             Load();
+        }
+
+        /// <summary>
+        /// Create language string resolver that uses a dictionary as a source.
+        /// 
+        /// <paramref name="reader"/> must implement one of:
+        /// <list type="bullet">
+        /// <item>IEnumerable&gt;KeyValuePair&gt;IAssetKey, string&lt;&lt;</item>
+        /// <item>IEnumerable&gt;KeyValuePair&gt;string, string&lt;&lt;</item>
+        /// <item>IEnumerable&gt;IKeyTree&lt;</item>
+        /// </list>
+        /// </summary>
+        /// <param name="reader">initial reader</param>
+        /// <param name="keyPolicy"></param>
+        /// <param name="comparer">(optional) comparer to use</param>
+        /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
+        public LocalizationAsset(IEnumerable reader, IAssetKeyNamePolicy keyPolicy, IEqualityComparer<IAssetKey> comparer = default, Func<Exception, bool> errorHandler = null) : base()
+        {
+            this.comparer = comparer ?? AssetKeyComparer.Default;
+            this.errorHandler = errorHandler;
+            Add(reader ?? throw new ArgumentNullException(nameof(reader)), keyPolicy);
+            Load();
+        }
+
+        /// <summary>
+        /// Create language string resolver that uses a dictionary as a source.
+        /// 
+        /// <paramref name="reader"/> must implement one of:
+        /// <list type="bullet">
+        /// <item>IEnumerable&gt;KeyValuePair&gt;IAssetKey, string&lt;&lt;</item>
+        /// <item>IEnumerable&gt;KeyValuePair&gt;string, string&lt;&lt;</item>
+        /// <item>IEnumerable&gt;IKeyTree&lt;</item>
+        /// </list>
+        /// </summary>
+        /// <param name="reader">initial reader</param>
+        /// <param name="keyPattern"></param>
+        /// <param name="comparer">(optional) comparer to use</param>
+        /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
+        public LocalizationAsset(IEnumerable reader, string keyPattern, IEqualityComparer<IAssetKey> comparer = default, Func<Exception, bool> errorHandler = null)
+            : this(reader, new AssetNamePattern(keyPattern), comparer, errorHandler)
+        {
         }
 
         /// <summary>
@@ -69,8 +148,9 @@ namespace Lexical.Localization
         /// <exception cref="AggregateException">If disposing of one of the sources failed</exception>
         public virtual void Dispose()
         {
+            this.culturesFetched = false;
             this.cultures = null;
-            ClearSources();
+            Clear();
         }
 
         /// <summary>
@@ -80,7 +160,12 @@ namespace Lexical.Localization
         /// <exception cref="Exception">On any non-captured problem</exception>
         public virtual LocalizationAsset Load()
         {
-            SetContent(collections.ToArray().SelectMany(l=>l.Value));
+            foreach (var line in collections.ToArray())
+                line.Value.Load();
+            this.culturesFetched = false;
+            cultures = null;
+            keyLines = null;
+            stringLines = null;
             return this;
         }
 
@@ -91,32 +176,76 @@ namespace Lexical.Localization
         /// <exception cref="Exception">On any non-captured problem</exception>
         public virtual IAsset Reload()
         {
-            // Clear snapshots
+            // Clear caches
             var collectionLines = collections.ToArray();
             foreach (var line in collectionLines)
-                line.Value.snapshot = null;
+                line.Value.Clear();
 
-            // Set content
-            SetContent(collectionLines.SelectMany(l => l.Value));
-            return this;
+            cultures = null;
+            culturesFetched = false;
+            keyLines = null;
+            stringLines = null;
+
+            // Load content
+            return Load();
         }
 
         /// <summary>
-        /// Replaces <see cref="lines"/> with a new dictionary that is filled with lines from <paramref name="src"/>.
+        /// Replaces <see cref="keyLines"/> with a new dictionary that is filled with lines from <see cref="collections"/>.
         /// </summary>
-        /// <param name="src"></param>
-        protected virtual void SetContent(IEnumerable<KeyValuePair<IAssetKey, string>> src)
+        /// <returns>new key lines</returns>
+        /// <exception cref="Exception">If load fails</exception>
+        protected virtual Dictionary<IAssetKey, string> LoadKeyLines()
         {
             Dictionary<IAssetKey, string> newLines = new Dictionary<IAssetKey, string>(comparer);
-            foreach (var line in src)
+            foreach (var collectionsLine in collections.ToArray())
             {
-                if (line.Key == null) continue;
-                newLines[line.Key] = line.Value;
+                foreach (var line in collectionsLine.Value.KeyLines)
+                    newLines[line.Key] = line.Value;
             }
-            // Replace reference
-            // TODO notify observers, such as cache, that content is changed.
-            this.cultures = null;
-            this.lines = newLines;
+            return this.keyLines = newLines;
+        }
+
+        /// <summary>
+        /// Replaces <see cref="stringLines"/> with a new dictionary that is filled with lines from <see cref="collections"/>.
+        /// </summary>
+        /// <returns>new key lines</returns>
+        /// <exception cref="Exception">If load fails</exception>
+        protected virtual Dictionary<string, string> LoadStringLines()
+        {
+            Dictionary<string, string> newLines = new Dictionary<string, string>();
+            foreach (var collectionsLine in collections.ToArray())
+            {
+                foreach (var line in collectionsLine.Value.StringLines)
+                    newLines[line.Key] = line.Value;
+            }
+            return this.stringLines = newLines;
+        }
+
+        /// <summary>
+        /// Replaces <see cref="stringLines"/> with a new dictionary that is filled with lines from <see cref="collections"/>.
+        /// </summary>
+        /// <returns>new key lines</returns>
+        /// <exception cref="Exception">If load fails</exception>
+        protected virtual Dictionary<IAssetKeyNameProvider, Dictionary<string, string>> LoadStringLinesByProvider()
+        {
+            Dictionary<IAssetKeyNameProvider, Dictionary<string, string>> byProvider = new Dictionary<IAssetKeyNameProvider, Dictionary<string, string>>();
+
+            foreach (var collectionsLine in collections.ToArray())
+            {
+                Collection c = collectionsLine.Value;
+                if (c.reader is IEnumerable<KeyValuePair<string, string>> == false) continue;
+                Dictionary<string, string> newLines;
+                IAssetKeyNameProvider provider = c.namePolicy as IAssetKeyNameProvider;
+                if (provider == null) continue;
+                if (!byProvider.TryGetValue(provider, out newLines))
+                    byProvider[provider] = newLines = new Dictionary<string, string>();
+
+                foreach (var line in c.StringLines)
+                    newLines[line.Key] = line.Value;
+            }
+
+            return this.stringLinesByProvider = byProvider;
         }
 
         /// <summary>
@@ -127,8 +256,14 @@ namespace Lexical.Localization
         public virtual string GetString(IAssetKey key)
         {
             string result = null;
-            this.lines.TryGetValue(key, out result);
-            return result;
+            if (KeyLines.TryGetValue(key, out result)) return result;
+            foreach(var line in StringLinesByProvider)
+            {
+                string id = line.Key.BuildName(key);
+                if (line.Value.TryGetValue(id, out result)) return result;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -137,12 +272,27 @@ namespace Lexical.Localization
         /// <returns></returns>
         public IEnumerable<CultureInfo> GetSupportedCultures()
         {
-            var _cultures = cultures;
-            if (_cultures != null) return _cultures;
+            if (culturesFetched) return this.cultures;
 
-            return cultures = lines.Keys.Select(k => k.FindCulture()).Where(ci => ci != null).Distinct().ToArray();
+            HashSet<CultureInfo> cultures = null;
+            foreach (var collectionLine in collections.ToArray())
+            {
+                if (collectionLine.Value.reader is IEnumerable<KeyValuePair<string, string>> && collectionLine.Value.namePolicy is IAssetKeyNameParser == false && collectionLine.Value.StringLines.Length>0) return null;
+                foreach (var line in collectionLine.Value.KeyLines)
+                {
+                    if (cultures == null) cultures = new HashSet<CultureInfo>();
+                    CultureInfo ci = line.Key.FindCulture() ?? rootCulture;
+                    cultures.Add(ci);
+                }
+            }
+
+            this.cultures = cultures.ToArray();
+            culturesFetched = true;
+            return this.cultures;
         }
+        bool culturesFetched;
         CultureInfo[] cultures;
+        static CultureInfo rootCulture = CultureInfo.GetCultureInfo("");
 
         /// <summary>
         /// Get a snapshot of key-lines in this asset.
@@ -151,11 +301,14 @@ namespace Lexical.Localization
         /// <returns>list of key-lines, or null if could not be provided</returns>
         public IEnumerable<KeyValuePair<IAssetKey, string>> GetKeyLines(IAssetKey filterKey = null)
         {
-            var map = lines;
-            if (map == null) return null;
-            if (filterKey == null) return map;
+            // Get snapshot
+            var _lines = KeyLines;
+            // Return all
+            if (filterKey == null) return _lines;
+            // Create filter
             AssetKeyFilter filter = new AssetKeyFilter().KeyRule(filterKey);
-            return map.Where(line => filter.Filter(line.Key));
+            // Apply filter
+            return _lines.Where(line => filter.Filter(line.Key));
         }
 
         /// <summary>
@@ -165,6 +318,70 @@ namespace Lexical.Localization
         /// <returns>list of key-lines, or null if could not be provided</returns>
         public IEnumerable<KeyValuePair<IAssetKey, string>> GetAllKeyLines(IAssetKey filterKey = null)
             => GetKeyLines(filterKey);
+
+        /// <summary>
+        /// Get string lines
+        /// </summary>
+        /// <param name="filterKey">(optional) filter key</param>
+        /// <returns>lines or null</returns>
+        public IEnumerable<KeyValuePair<string, string>> GetStringLines(IAssetKey filterKey = null)
+        {
+            // Return all 
+            if (filterKey == null) return StringLines;
+            // Create filter.
+            AssetKeyFilter filter = new AssetKeyFilter().KeyRule(filterKey);
+            // Apply filter
+            List<KeyValuePair<string, string>> result = null;
+            foreach (var collectionLine in collections.ToArray())
+            {
+                if (collectionLine.Value.reader is IEnumerable<KeyValuePair<string, string>> && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider_ && collectionLine.Value.namePolicy is IAssetKeyNameParser nameParser_)
+                {
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, string>(nameProvider_.BuildName(line.Key), line.Value));
+                    if (result == null) result = new List<KeyValuePair<string, string>>();
+                    result.AddRange(__stringLines);
+                }
+                else
+                if ((collectionLine.Value.reader is IEnumerable<KeyValuePair<IAssetKey, string>> || collectionLine.Value.reader is IEnumerable<IKeyTree>) && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider)
+                {
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, string>(nameProvider.BuildName(line.Key), line.Value));
+                    if (result == null) result = new List<KeyValuePair<string, string>>();
+                    result.AddRange(__stringLines);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Get all string lines
+        /// </summary>
+        /// <param name="filterKey">(optional) filter key</param>
+        /// <returns>lines or null</returns>
+        public IEnumerable<KeyValuePair<string, string>> GetAllStringLines(IAssetKey filterKey = null)
+        {
+            // Return all 
+            if (filterKey == null) return StringLines;
+            // Create filter.
+            AssetKeyFilter filter = new AssetKeyFilter().KeyRule(filterKey);
+            // Apply filter
+            List<KeyValuePair<string, string>> result = null;
+            foreach (var collectionLine in collections.ToArray())
+            {
+                if (collectionLine.Value.reader is IEnumerable<KeyValuePair<string, string>> && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider_ && collectionLine.Value.namePolicy is IAssetKeyNameParser nameParser_)
+                {
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, string>(nameProvider_.BuildName(line.Key), line.Value));
+                    if (result == null) result = new List<KeyValuePair<string, string>>();
+                    result.AddRange(__stringLines);
+                } else 
+                if ((collectionLine.Value.reader is IEnumerable<KeyValuePair<IAssetKey, string>> || collectionLine.Value.reader is IEnumerable<IKeyTree>) && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider)
+                {
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, string>(nameProvider.BuildName(line.Key), line.Value));
+                    if (result == null) result = new List<KeyValuePair<string, string>>();
+                    result.AddRange(__stringLines);
+                }
+                else return null;
+            }
+            return result;
+        }
 
         /// <summary>
         /// Add reader of lines.
@@ -181,13 +398,10 @@ namespace Lexical.Localization
         /// <param name="errorHandler">(optional) overrides default handler.</param>
         /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="LocalizationAsset"/></param>
         /// <returns></returns>
-        public LocalizationAsset AddSource(IEnumerable reader, IAssetKeyNamePolicy namePolicy = null, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
+        public LocalizationAsset Add(IEnumerable reader, IAssetKeyNamePolicy namePolicy = null, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
         {
             // Reader argument not null
             if (reader == null) throw new ArgumentNullException(nameof(reader));
-            // IEnumerable<KeyValuePair<string,string>> must be added with namePolicy
-            if (reader is IEnumerable<KeyValuePair<IAssetKey, string>> == false && reader is IEnumerable<IKeyTree> == false && reader is IEnumerable<KeyValuePair<string, string>> && namePolicy == null)
-                throw new ArgumentNullException(nameof(namePolicy), $"{nameof(namePolicy)} name policy must be provided for reader of type {reader.GetType().FullName}");
 
             // Create collection
             var _errorHandler = errorHandler ?? this.errorHandler;
@@ -211,6 +425,7 @@ namespace Lexical.Localization
             return this;
         }
 
+        /// <summary>
         /// Add reader of lines.
         /// 
         /// Reader must implement one of:
@@ -221,19 +436,19 @@ namespace Lexical.Localization
         /// </list>
         /// </summary>
         /// <param name="reader"></param>
-        /// <param name="namePolicy">name policy that reads the content. Required if reader implements string reader</param>
+        /// <param name="namePattern">name pattern that reads the content</param>
         /// <param name="errorHandler">(optional) overrides default handler.</param>
         /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="LocalizationAsset"/></param>
         /// <returns></returns>
-        public LocalizationAsset AddSource(IEnumerable reader, string namePattern, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
-            => AddSource(reader, new AssetNamePattern(namePattern), errorHandler, disposeReader);
+        public LocalizationAsset Add(IEnumerable reader, string namePattern, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
+            => Add(reader, new AssetNamePattern(namePattern), errorHandler, disposeReader);
 
         /// <summary>
         /// Remove <paramref name="reader"/>. If reader was added with disposeReader, it will be disposed here.
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public LocalizationAsset RemoveSource(IEnumerable reader)
+        public LocalizationAsset Remove(IEnumerable reader)
         {
             Collection c;
             if (collections.TryRemove(reader, out c))
@@ -255,7 +470,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         /// <exception cref="AggregateException">If disposing of one of the sources failed</exception>
-        public LocalizationAsset ClearSources()
+        public LocalizationAsset Clear()
         {
             StructList4<Exception> errors = new StructList4<Exception>();
             foreach (var collectionLine in collections.ToArray())
@@ -321,22 +536,22 @@ namespace Lexical.Localization
     /// <summary>
     /// Collection of lines
     /// </summary>
-    public class Collection : IObserver<IAssetSourceEvent>, IEnumerable<KeyValuePair<IAssetKey, string>>
+    public class Collection : IObserver<IAssetSourceEvent>, IEnumerable<KeyValuePair<IAssetKey, string>>, IEnumerable<KeyValuePair<string, string>>
     {
         /// <summary>
         /// Reader, the original reference.
         /// </summary>
-        protected IEnumerable reader;
+        internal protected IEnumerable reader;
 
         /// <summary>
-        /// Casted to key string reader.
+        /// Previously loaded snapshot of key lines
         /// </summary>
-        protected IEnumerable<KeyValuePair<IAssetKey, string>> keyLinesReader;
+        internal protected KeyValuePair<IAssetKey, string>[] keyLines;
 
         /// <summary>
-        /// Previously loaded snapshot.
+        /// Previously loaded snapshot of key lines
         /// </summary>
-        internal protected KeyValuePair<IAssetKey, string>[] snapshot;
+        internal protected KeyValuePair<string, string>[] stringLines;
 
         /// <summary>
         /// Previous line count.
@@ -353,7 +568,7 @@ namespace Lexical.Localization
         /// 
         /// If source is string lines the parses into strings into <see cref="IAssetKey"/>.
         /// </summary>
-        protected IAssetKeyNamePolicy namePolicy;
+        protected internal IAssetKeyNamePolicy namePolicy;
 
         /// <summary>
         /// Handler that processes file load errors, and file monitoring errors.
@@ -385,11 +600,7 @@ namespace Lexical.Localization
         {
             this.parent = parent;
             this.reader = reader;
-            this.namePolicy = namePolicy;
-            this.keyLinesReader = reader is IEnumerable<KeyValuePair<IAssetKey, string>> keyLines ? keyLines :
-                reader is IEnumerable<KeyValuePair<string, string>> stringLines ? stringLines.ToKeyLines(namePolicy) :
-                reader is IEnumerable<IKeyTree> trees ? trees.SelectMany(tree => tree.ToKeyLines()) :
-                throw new ArgumentException("source must be key-lines, string-lines or key tree", nameof(reader));
+            this.namePolicy = namePolicy ?? ParameterNamePolicy.Instance;
             this.errorHandler = errorHandler;
             this.disposeReader = disposeReader;
         }
@@ -413,15 +624,23 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Clear cached lines
+        /// </summary>
+        public void Clear()
+        {
+            keyLines = null;
+            stringLines = null;
+        }
+
+        /// <summary>
         /// Dispose source information
         /// </summary>
         public virtual void Dispose(ref StructList4<Exception> errors)
         {
             var _reader = reader;
-            keyLinesReader = null;
             reader = null;
             errorHandler = null;
-            snapshot = null;
+            keyLines = null;
             parent = null;
 
             // Cancel observer
@@ -436,13 +655,16 @@ namespace Lexical.Localization
 
             // Dispose reader
             if (disposeReader && _reader is IDisposable disposable)
-                try 
+            {
+                try
                 {
                     disposable.Dispose();
-                } catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     errors.Add(e);
                 }
+            }
         }
 
         /// <summary>
@@ -456,27 +678,124 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Get snaphost or read lines
+        /// Load reader into memory, if has not already been loaded.
+        /// </summary>
+        public void Load()
+        {
+            if (reader is IEnumerable<KeyValuePair<IAssetKey, string>> || reader is IEnumerable<IKeyTree>)
+            {
+                var _lines = KeyLines;
+            }
+            else if (reader is IEnumerable<KeyValuePair<string, string>>)
+            {
+                var _lines = StringLines;
+            }
+
+        }
+
+        /// <summary>
+        /// Get snapshot or read lines
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception">On read problem that is not handled by <see cref="errorHandler"/>.</exception>
-        public KeyValuePair<IAssetKey, string>[] GetLines()
+        public KeyValuePair<IAssetKey, string>[] KeyLines
         {
-            // Return snapshot
-            var _snapshot = snapshot;
-            if (_snapshot != null) return _snapshot;
+            get
+            {
+                // Return snapshot
+                var _lines = keyLines;
+                if (_lines != null) return _lines;
 
-            // Read lines
-            try
+                // Read lines
+                try
+                {
+                    List<KeyValuePair<IAssetKey, string>> lines = new List<KeyValuePair<IAssetKey, string>>(lineCount < 0 ? 25 : lineCount);
+
+                    // Read as key-lines
+                    if (reader is IEnumerable<KeyValuePair<IAssetKey, string>> keyLinesReader)
+                    {
+                        lines.AddRange(keyLinesReader);
+                    }
+
+                    // Read as tree lines
+                    else if (reader is IEnumerable<IKeyTree> treesReader)
+                    {
+                        lines.AddRange(treesReader.SelectMany(tree => tree.ToKeyLines()));
+                    }
+
+                    // Read as string lines
+                    else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader)
+                    {
+                        // Convert from string lines
+                        var _stringLines = stringLines;
+                        if (_stringLines != null && namePolicy is IAssetKeyNameParser parser)
+                            lines.AddRange(_stringLines.ToKeyLines(parser));
+                        else
+                            lines.AddRange(stringLinesReader.ToKeyLines(namePolicy));
+                    }
+                    else throw new ArgumentException($"Cannot read {reader.GetType().FullName}: {reader}");
+
+                    lineCount = lines.Count;
+                    return keyLines = lines.ToArray();
+                }
+                catch (Exception e) when (errorHandler != null && errorHandler(e))
+                {
+                    // Reading failed, but discard the problem as per error handler.
+                    return keyLines = new KeyValuePair<IAssetKey, string>[0];
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get previously read, or read lines now
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception">On read problem that is not handled by <see cref="errorHandler"/>.</exception>
+        public KeyValuePair<string, string>[] StringLines
+        {
+            get
             {
-                List<KeyValuePair<IAssetKey, string>> lines = new List<KeyValuePair<IAssetKey, string>>(lineCount < 0 ? 25 : lineCount);
-                lines.AddRange(keyLinesReader);
-                lineCount = lines.Count;
-                return snapshot = lines.ToArray();
-            } catch (Exception e) when(errorHandler!=null && errorHandler(e))
-            {
-                // Reading failed, but discard the problem as per error handler.
-                return snapshot = new KeyValuePair<IAssetKey, string>[0];
+                // Return snapshot
+                var _lines = stringLines;
+                if (_lines != null) return _lines;
+
+                // Read lines
+                try
+                {
+                    List<KeyValuePair<string, string>> lines = new List<KeyValuePair<string, string>>(lineCount < 0 ? 25 : lineCount);
+
+                    // Read as key-lines
+                    if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader)
+                    {
+                        lines.AddRange(stringLinesReader);
+                    }
+
+                    // Read as tree lines
+                    else if (reader is IEnumerable<IKeyTree> treesReader)
+                    {
+                        lines.AddRange(treesReader.SelectMany(tree => tree.ToStringLines(namePolicy)));
+                    }
+
+                    // Read as string lines
+                    else if (reader is IEnumerable<KeyValuePair<IAssetKey, string>> keyLinesReader)
+                    {
+                        // Convert from string lines
+                        var _keyLines = keyLines;
+                        if (_keyLines != null && namePolicy is IAssetKeyNameProvider provider)
+                            lines.AddRange(_keyLines.ToStringLines(provider));
+                        else
+                            lines.AddRange(keyLinesReader.ToStringLines(namePolicy));
+                    }
+                    else throw new ArgumentException($"Cannot read {reader.GetType().FullName}: {reader}");
+
+                    lineCount = lines.Count;
+                    return stringLines = lines.ToArray();
+                }
+                catch (Exception e) when (errorHandler != null && errorHandler(e))
+                {
+                    // Reading failed, but discard the problem as per error handler.
+                    return stringLines = new KeyValuePair<string, string>[0];
+                }
             }
         }
 
@@ -484,11 +803,18 @@ namespace Lexical.Localization
         /// Read source, or return already read snapshot.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<KeyValuePair<IAssetKey, string>> GetEnumerator()
-            => ((IEnumerable<KeyValuePair<IAssetKey, string>>) GetLines()).GetEnumerator();
+        IEnumerator<KeyValuePair<IAssetKey, string>> IEnumerable<KeyValuePair<IAssetKey, string>>.GetEnumerator()
+            => ((IEnumerable<KeyValuePair<IAssetKey, string>>)KeyLines).GetEnumerator();
+
+        /// <summary>
+        /// Read source, or return already read snapshot.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
+            => ((IEnumerable<KeyValuePair<string, string>>)StringLines).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-            => GetLines().GetEnumerator();
+            => KeyLines.GetEnumerator();
 
         /// <summary>
         /// Asset source stopped sending events
@@ -516,7 +842,7 @@ namespace Lexical.Localization
             if (value is IAssetChangeEvent changeEvent)
             {
                 // Discard snapshot
-                snapshot = null;
+                keyLines = null;
                 // Start timer that reloads collections
                 parent.StartReloadTimer();
             }
@@ -542,7 +868,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetBuilder AddKeyLines(this IAssetBuilder builder, IEnumerable<KeyValuePair<IAssetKey, string>> lines)
         {
-            builder.AddAsset(new LocalizationAsset().AddSource(lines).Load());
+            builder.AddAsset(new LocalizationAsset().Add(lines).Load());
             return builder;
         }
 
@@ -554,7 +880,39 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetComposition AddKeyLines(this IAssetComposition composition, IEnumerable<KeyValuePair<IAssetKey, string>> lines)
         {
-            composition.Add(new LocalizationAsset().AddSource(lines).Load());
+            composition.Add(new LocalizationAsset().Add(lines).Load());
+            return composition;
+        }
+    }
+
+
+    /// <summary>
+    /// </summary>
+    public static partial class LocalizationAssetExtensions_
+    {
+        /// <summary>
+        /// Add string dictionary to builder.
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="dictionary"></param>
+        /// <param name="namePolicy">instructions how to convert key to string</param>
+        /// <returns></returns>
+        public static IAssetBuilder AddStrings(this IAssetBuilder builder, IReadOnlyDictionary<string, string> dictionary, IAssetKeyNamePolicy namePolicy)
+        {
+            builder.AddAsset(new LocalizationAsset(dictionary, namePolicy));
+            return builder;
+        }
+
+        /// <summary>
+        /// Add string dictionary to composition.
+        /// </summary>
+        /// <param name="composition"></param>
+        /// <param name="dictionary"></param>
+        /// <param name="namePolicy">instructions how to convert key to string</param>
+        /// <returns></returns>
+        public static IAssetComposition AddStrings(this IAssetComposition composition, IReadOnlyDictionary<string, string> dictionary, IAssetKeyNamePolicy namePolicy)
+        {
+            composition.Add(new LocalizationAsset(dictionary, namePolicy));
             return composition;
         }
     }

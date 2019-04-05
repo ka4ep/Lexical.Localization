@@ -17,6 +17,8 @@ namespace Lexical.Localization
         /// 
         /// Same cultures may be returned multiple times.
         /// Caller can use <see cref="Enumerable.Distinct"/> to remove reoccurances.
+        /// 
+        /// If contains keys for root culture "", then root culture is returned.
         /// </summary>
         /// <returns>cultures or null of feature is not supported</returns>
         IEnumerable<CultureInfo> GetSupportedCultures();
@@ -29,6 +31,8 @@ namespace Lexical.Localization
         /// 
         /// Same cultures may be returned multiple times.
         /// Caller can use <see cref="Enumerable.Distinct"/> to remove reoccurances.
+        /// 
+        /// If contains keys for root culture "", then root culture is returned.
         /// </summary>
         /// <param name="asset"></param>
         /// <returns>cultures or null of feature is not supported</returns>

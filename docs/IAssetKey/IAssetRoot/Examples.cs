@@ -13,7 +13,7 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
                 // Create asset
-                IAsset asset = new LocalizationStringAsset(source, ParameterNamePolicy.Instance);
+                IAsset asset = new LocalizationAsset(source, ParameterNamePolicy.Instance);
                 // Create culture policy
                 ICulturePolicy culturePolicy = new CulturePolicy();
                 // Create root
@@ -37,7 +37,7 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "Culture:en:Section:Section:Key:Key", "Hello World!" } };
                 // Create asset
-                IAsset asset = new LocalizationStringAsset(source, ParameterNamePolicy.Instance);
+                IAsset asset = new LocalizationAsset(source, ParameterNamePolicy.Instance);
                 #region Snippet_5x
                 // Create reference
                 IAssetKey key = new LocalizationKey._Section(null, "Section").Key("Key");
@@ -56,7 +56,7 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
                 // Create asset
-                IAsset asset = new LocalizationStringAsset(source, ParameterNamePolicy.Instance);
+                IAsset asset = new LocalizationAsset(source, ParameterNamePolicy.Instance);
                 // Assets are added to global static builder. It must be (re-)built after adding.
                 LocalizationRoot.Builder.AddAsset(asset).Build();
                 #endregion Snippet_2b

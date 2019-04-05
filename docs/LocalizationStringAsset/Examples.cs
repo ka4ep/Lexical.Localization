@@ -20,7 +20,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!" }
                 };
                 // Create asset
-                IAsset asset = new LocalizationStringAsset(source, AssetKeyNameProvider.Default);
+                IAsset asset = new LocalizationAsset(source, AssetKeyNameProvider.Default);
                 #endregion Snippet_1a
 
                 #region Snippet_1b
@@ -42,7 +42,7 @@ namespace docs
                 };
                 #region Snippet_2a
                 // Create asset with name pattern
-                IAsset asset = new LocalizationStringAsset(source, "{Culture:}[Type:][Key]");
+                IAsset asset = new LocalizationAsset(source, "{Culture:}[Type:][Key]");
                 #endregion Snippet_2a
                 #region Snippet_2b
                 // Extract all keys

@@ -79,32 +79,24 @@ namespace Lexical.Localization
             foreach (IAssetSource src in sources.Where(s => s is ILocalizationSource == false))
                 src.Build(list);
 
-            // Build one asset for each <see cref="ILocalizationStringLinesSource"/> that share <see cref="IAssetKeyNamePolicy"/>.
-            Dictionary<IAssetKeyNamePolicy, LocalizationStringAsset> keyLinesAssetMap = null;
-            foreach (ILocalizationStringLinesSource src in sources.Where(s => s is ILocalizationStringLinesSource).Cast<ILocalizationStringLinesSource>())
-            {
-                if (keyLinesAssetMap == null) keyLinesAssetMap = new Dictionary<IAssetKeyNamePolicy, LocalizationStringAsset>();
-                LocalizationStringAsset _asset = null;
-                IAssetKeyNamePolicy policy = src.KeyPolicy ?? ParameterNamePolicy.Instance;
-                if (!keyLinesAssetMap.TryGetValue(policy, out _asset)) keyLinesAssetMap[policy] = _asset = new LocalizationStringAsset(policy);
-                _asset.AddSource(src);
-            }
-            if (keyLinesAssetMap != null)
-                foreach (var _asset in keyLinesAssetMap.Values)
-                    list.Add(_asset.Load());
-
             // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, string>> sources
             LocalizationAsset __asset = null;
+            foreach (ILocalizationStringLinesSource src in sources.Where(s => s is ILocalizationStringLinesSource).Cast<ILocalizationStringLinesSource>())
+            {
+                if (__asset == null) __asset = new LocalizationAsset();
+                __asset.Add(src, src.KeyPolicy);
+            }
+            // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, string>> sources
             foreach (ILocalizationKeyLinesSource src in sources.Where(s => s is ILocalizationKeyLinesSource).Cast<ILocalizationKeyLinesSource>())
             {
                 if (__asset == null) __asset = new LocalizationAsset();
-                __asset.AddSource(src);
+                __asset.Add(src);
             }
             // ... and IEnumerable<IKeyTree> sources
             foreach (ILocalizationKeyTreeSource src in sources.Where(s => s is ILocalizationKeyTreeSource).Cast<ILocalizationKeyTreeSource>())
             {
                 if (__asset == null) __asset = new LocalizationAsset();
-                __asset.AddSource(src);
+                __asset.Add(src);
             }
             if (__asset != null) list.Add(__asset.Load());
 

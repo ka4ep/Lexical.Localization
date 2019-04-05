@@ -67,15 +67,15 @@ namespace Lexical.Localization
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return new LocalizationAsset().AddSource(fileFormat.FileProviderReaderAsKeyTree(fileProvider, filepath, namePolicy, throwIfNotFound)).Load();
+                return new LocalizationAsset().Add(fileFormat.FileProviderReaderAsKeyTree(fileProvider, filepath, namePolicy, throwIfNotFound), namePolicy).Load();
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return new LocalizationAsset().AddSource(fileFormat.FileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy, throwIfNotFound)).Load();
+                return new LocalizationAsset().Add(fileFormat.FileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy, throwIfNotFound), namePolicy).Load();
             }
             else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return new LocalizationStringAsset(namePolicy).AddSource(fileFormat.FileProviderReaderAsStringLines(fileProvider, filepath, namePolicy, throwIfNotFound)).Load();
+                return new LocalizationAsset().Add(fileFormat.FileProviderReaderAsStringLines(fileProvider, filepath, namePolicy, throwIfNotFound), namePolicy).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }

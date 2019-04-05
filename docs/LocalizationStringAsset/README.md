@@ -12,7 +12,7 @@ var source = new Dictionary<string, string> {
     { "de:MyController:hello", "Hallo Welt!" }
 };
 // Create asset
-IAsset asset = new LocalizationStringAsset(source, AssetKeyNameProvider.Default);
+IAsset asset = new LocalizationAsset(source, AssetKeyNameProvider.Default);
 ```
 
 If the provided key name policy is *AssetKeyNameProvider.Default*, then identity string is constructed by concatenating parameters from requesting key in the order of appearance. Non-canonical parameter "Culture" is, however, appended first.
@@ -28,11 +28,11 @@ string id = AssetKeyNameProvider.Default.BuildName(key);
 string localizedString = key.ToString();
 ```
 
-If LocalizationStringAsset was constructed with a [IAssetNamePattern](../IAssetKeyNamePolicy/index.html#asset-name-pattern) (or string), then parameters from IAssetKey substituted to the parameter names in the pattern.
+If LocalizationAsset was constructed with a [IAssetNamePattern](../IAssetKeyNamePolicy/index.html#asset-name-pattern) (or string), then parameters from IAssetKey substituted to the parameter names in the pattern.
 
 ```csharp
 // Create asset with name pattern
-IAsset asset = new LocalizationStringAsset(source, "{Culture:}[Type:][Key]");
+IAsset asset = new LocalizationAsset(source, "{Culture:}[Type:][Key]");
 ```
 
 Also keys can be enumerated from the asset.

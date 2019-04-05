@@ -6,7 +6,7 @@ Sources are typically files, embedded resources, and plain code.
 // Language string source
 Dictionary<string, string> src = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
 // Create Asset
-IAsset asset = new LocalizationStringAsset(src, AssetKeyNameProvider.Default);
+IAsset asset = new LocalizationAsset(src, AssetKeyNameProvider.Default);
 ```
 
 IAsset is the root interface for assets. It serves as a signal that the implementing class has further asset features.
@@ -111,7 +111,7 @@ string str = asset.GetString(key);
       <td>Calls delegate Func&lt;IAsset&gt; to provide IAsset</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/LocalizationStringAsset.cs">LocalizationStringAsset</a></td>
+      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/LocalizationAsset.cs">LocalizationAsset</a></td>
       <td>Adapts Dictionary&lt;string, string&gt; to IAsset</td>
     </tr>
     <tr>

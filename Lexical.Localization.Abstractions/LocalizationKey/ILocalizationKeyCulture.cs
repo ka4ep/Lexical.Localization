@@ -110,29 +110,42 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Search linked list and find selected culture.
+        /// Search linked list and finds the selected (left-most) <see cref="ILocalizationKeyCultureAssigned"/> key.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>culture info or null</returns>
         public static CultureInfo FindCulture(this IAssetKey key)
         {
-            ILocalizationKeyCultureAssigned cultureKey = FindCultureKey(key);
-            if (cultureKey == null) return null;
-            CultureInfo ci = cultureKey.Culture;
-            if (ci == null && cultureKey.Name != null)
+            string cultureName = null;
+            CultureInfo culture = null;
+            for (; key != null; key = key.GetPreviousKey())
             {
-                try { ci = CultureInfo.GetCultureInfo(cultureKey.Name); } catch (CultureNotFoundException) { }
+                if (key is ILocalizationKeyCultureAssigned cultureKey) {
+                    if (cultureKey.Culture != null) culture = cultureKey.Culture;
+                    else if (cultureKey.Name != null) cultureName = cultureKey.Name;
+                }
+                else if (key is IAssetKeyParameterAssigned parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.Name != null) cultureName = parameterKey.Name;
             }
-            return ci;
+            if (culture != null) return culture;
+            if (cultureName != null) try { return CultureInfo.GetCultureInfo(cultureName); } catch (CultureNotFoundException) { }
+            return null;
         }
 
         /// <summary>
-        /// Search linked list and find selected culture.
+        /// Search linked list and find selected (left-most) culture name.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>culture name or null</returns>
-        public static string FindCultureByName(this IAssetKey key)
-            => FindCultureKey(key)?.Name;
+        public static string FindCultureName(this IAssetKey key)
+        {
+            string result = null;
+            for (; key != null; key = key.GetPreviousKey())
+            {
+                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.Name != null) result = cultureKey.Name;
+                else if (key is IAssetKeyParameterAssigned parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.Name != null) result = parameterKey.Name;
+            }
+            return result;
+        }
 
         /// <summary>
         /// Search linked list and find the effective culture key.
@@ -217,9 +230,9 @@ namespace Lexical.Localization
         //static IEqualityComparer<CultureInfo> culture_comparer = new EqualsComparer<CultureInfo>();
         static IEqualityComparer<string> string_comparer = StringComparer.InvariantCulture;
         public bool Equals(IAssetKey x, IAssetKey y)
-            => string_comparer.Equals(x?.FindCultureByName(), y?.FindCultureByName());
+            => string_comparer.Equals(x?.FindCultureName(), y?.FindCultureName());
         public int GetHashCode(IAssetKey obj)
-            => string_comparer.GetHashCode(obj?.FindCultureByName());
+            => string_comparer.GetHashCode(obj?.FindCultureName());
     }
 
     /// <summary>
@@ -232,9 +245,9 @@ namespace Lexical.Localization
         //static IEqualityComparer<CultureInfo> culture_comparer = new EqualsComparer<CultureInfo>();
         static IEqualityComparer<string> string_comparer = StringComparer.InvariantCulture;
         public bool Equals(IAssetKey x, IAssetKey y)
-            => string_comparer.Equals(x?.FindCultureByName() ?? "", y?.FindCultureByName() ?? "");
+            => string_comparer.Equals(x?.FindCultureName() ?? "", y?.FindCultureName() ?? "");
         public int GetHashCode(IAssetKey obj)
-            => string_comparer.GetHashCode(obj?.FindCultureByName() ?? "");
+            => string_comparer.GetHashCode(obj?.FindCultureName() ?? "");
     }
 
 }

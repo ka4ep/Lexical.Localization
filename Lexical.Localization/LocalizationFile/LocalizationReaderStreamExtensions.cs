@@ -32,17 +32,17 @@ namespace Lexical.Localization
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return new LocalizationAsset().AddSource(new IKeyTree[] { fileFormat.ReadKeyTree(stream, namePolicy) }, namePolicy).Load();
+                return new LocalizationAsset().Add(new IKeyTree[] { fileFormat.ReadKeyTree(stream, namePolicy) }, namePolicy).Load();
             }
             else
             if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return new LocalizationAsset().AddSource(fileFormat.ReadKeyLines(stream, namePolicy), namePolicy).Load();
+                return new LocalizationAsset().Add(fileFormat.ReadKeyLines(stream, namePolicy), namePolicy).Load();
             }
             else
             if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return new LocalizationStringAsset(fileFormat.ReadStringLines(stream, namePolicy), namePolicy);
+                return new LocalizationAsset().Add(fileFormat.ReadStringLines(stream, namePolicy), namePolicy).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }

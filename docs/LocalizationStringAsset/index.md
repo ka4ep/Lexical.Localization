@@ -8,7 +8,7 @@ When a language string is requested the requested IAssetKey is converted to stri
 If the provided key name policy is *AssetKeyNameProvider.Default*, then identity string is constructed by concatenating parameters from requesting key in the order of appearance. Non-canonical parameter "Culture" is, however, appended first.
 [!code-csharp[Snippet](Examples.cs#Snippet_1b)]
 
-If LocalizationStringAsset was constructed with a [IAssetNamePattern](../IAssetKeyNamePolicy/index.html#asset-name-pattern) (or string), then parameters from IAssetKey substituted to the parameter names in the pattern.
+If LocalizationAsset was constructed with a [IAssetNamePattern](../IAssetKeyNamePolicy/index.html#asset-name-pattern) (or string), then parameters from IAssetKey substituted to the parameter names in the pattern.
 [!code-csharp[Snippet](Examples.cs#Snippet_2a)]
 
 Also keys can be enumerated from the asset.

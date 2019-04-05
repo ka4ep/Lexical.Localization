@@ -107,12 +107,12 @@ namespace Lexical.Localization
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.
         /// </summary>
         /// <param name="fileFormat"></param>
-        /// <param name="filename"></param>
+        /// <param name="filename">relative non-rooted filepath, or rooted absolute file path</param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         public static LocalizationFileKeyLinesSource FileReaderAsKeyLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationFileKeyLinesSource(fileFormat, filename, namePolicy, throwIfNotFound);
+            => new LocalizationFileKeyLinesSource(fileFormat, null, filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -123,7 +123,7 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
         public static LocalizationFileKeyTreeSource FileReaderAsKeyTree(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationFileKeyTreeSource(fileFormat, filename, namePolicy, throwIfNotFound);
+            => new LocalizationFileKeyTreeSource(fileFormat, null, filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -134,7 +134,7 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         public static LocalizationFileStringLinesSource FileReaderAsStringLines(this ILocalizationFileFormat fileFormat, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationFileStringLinesSource(fileFormat, filename, namePolicy, throwIfNotFound);
+            => new LocalizationFileStringLinesSource(fileFormat, null, filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset that reads file <paramref name="filename"/>.
@@ -150,15 +150,15 @@ namespace Lexical.Localization
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return new LocalizationAsset().AddSource(fileFormat.FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound)).Load();
+                return new LocalizationAsset().Add(fileFormat.FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound), namePolicy).Load();
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return new LocalizationAsset().AddSource(fileFormat.FileReaderAsKeyLines(filename, namePolicy, throwIfNotFound)).Load();
+                return new LocalizationAsset().Add(fileFormat.FileReaderAsKeyLines(filename, namePolicy, throwIfNotFound), namePolicy).Load();
             }
             else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return new LocalizationStringAsset(namePolicy).AddSource(fileFormat.FileReaderAsStringLines(filename, namePolicy, throwIfNotFound)).Load();
+                return new LocalizationAsset().Add(fileFormat.FileReaderAsStringLines(filename, namePolicy, throwIfNotFound), namePolicy).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -167,7 +167,7 @@ namespace Lexical.Localization
         /// Create localization asset source that reads file <paramref name="filename"/>.
         /// </summary>
         /// <param name="fileFormat"></param>
-        /// <param name="filename"></param>
+        /// <param name="filename">non-rooted relative path, or rooted full path</param>
         /// <param name="namePolicy">(optional) </param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>asset source</returns>
@@ -175,15 +175,41 @@ namespace Lexical.Localization
         {
             if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
             {
-                return new LocalizationFileKeyTreeSource(fileFormat, filename, namePolicy, throwIfNotFound);
+                return new LocalizationFileKeyTreeSource(fileFormat, null, filename, namePolicy, throwIfNotFound);
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
-                return new LocalizationFileKeyLinesSource(fileFormat, filename, namePolicy, throwIfNotFound);
+                return new LocalizationFileKeyLinesSource(fileFormat, null, filename, namePolicy, throwIfNotFound);
             }
             else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
             {
-                return new LocalizationFileStringLinesSource(fileFormat, filename, namePolicy, throwIfNotFound);
+                return new LocalizationFileStringLinesSource(fileFormat, null, filename, namePolicy, throwIfNotFound);
+            }
+            throw new ArgumentException($"Cannot create asset for {fileFormat}.");
+        }
+
+        /// <summary>
+        /// Create localization asset source that reads file <paramref name="filename"/>.
+        /// </summary>
+        /// <param name="fileFormat"></param>
+        /// <param name="path">(optional) root folder</param>
+        /// <param name="filename">non-rooted relative path, or rooted full path</param>
+        /// <param name="namePolicy">(optional) </param>
+        /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
+        /// <returns>asset source</returns>
+        public static LocalizationFileSource FileAssetSource(this ILocalizationFileFormat fileFormat, string path, string filename, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true)
+        {
+            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            {
+                return new LocalizationFileKeyTreeSource(fileFormat, path, filename, namePolicy, throwIfNotFound);
+            }
+            else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
+            {
+                return new LocalizationFileKeyLinesSource(fileFormat, path, filename, namePolicy, throwIfNotFound);
+            }
+            else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
+            {
+                return new LocalizationFileStringLinesSource(fileFormat, path, filename, namePolicy, throwIfNotFound);
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }

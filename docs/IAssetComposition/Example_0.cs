@@ -10,7 +10,7 @@ namespace docs
         {
             #region Snippet
             // Create individual assets
-            IAsset asset_1 = new LocalizationStringAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, ParameterNamePolicy.Instance);
+            IAsset asset_1 = new LocalizationAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, ParameterNamePolicy.Instance);
             IAsset asset_2 = new ResourceStringDictionary(new Dictionary<string, byte[]> { { "Culture:en:Key:Hello.Icon", new byte[] { 1, 2, 3 } } }, ParameterNamePolicy.Instance);
 
             // Create composition asset

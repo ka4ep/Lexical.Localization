@@ -19,12 +19,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public IAssetKeyNamePolicy KeyPolicy { get; protected set; }
+        public IAssetKeyNamePolicy KeyPolicy { get; internal set; }
 
         /// <summary>
         /// File format 
         /// </summary>
-        public ILocalizationFileFormat FileFormat { get; protected set; }
+        public ILocalizationFileFormat FileFormat { get; internal set; }
 
         /// <summary>
         /// Create (abstract) embedded reader.
@@ -111,7 +111,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public override void Build(IList<IAsset> list)
-            => list.Add(new LocalizationStringAsset(KeyPolicy).AddSource(this).Load());
+            => list.Add(new LocalizationAsset(this, KeyPolicy));
 
         /// <summary>
         /// Post build action.
@@ -173,7 +173,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public override void Build(IList<IAsset> list)
-            => list.Add(new LocalizationAsset().AddSource(this).Load());
+            => list.Add(new LocalizationAsset().Add(this).Load());
 
         /// <summary>
         /// Post build action
@@ -237,7 +237,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public override void Build(IList<IAsset> list)
-            => list.Add(new LocalizationAsset().AddSource(this).Load());
+            => list.Add(new LocalizationAsset().Add(this).Load());
 
         /// <summary>
         /// Post build action

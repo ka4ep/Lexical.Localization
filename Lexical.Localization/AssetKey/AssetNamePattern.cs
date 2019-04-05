@@ -372,7 +372,9 @@ namespace Lexical.Localization
             foreach (var kp in match)
             {
                 if (kp.Key == null || kp.Value == null) continue;
-                result = result == null ? Key.Create(kp.Key, kp.Value) : result.AppendParameter(kp.Key, kp.Value);
+                string parameterName = kp.Key;
+                if (parameterName == "anysection") parameterName = "Section";
+                result = result == null ? Key.Create(parameterName, kp.Value) : result.AppendParameter(parameterName, kp.Value);
             }
             return result;
         }
@@ -392,7 +394,9 @@ namespace Lexical.Localization
             foreach (var kp in match)
             {
                 if (kp.Key == null || kp.Value == null) continue;
-                result = result == null ? Key.Create(kp.Key, kp.Value) : result.AppendParameter(kp.Key, kp.Value);
+                string parameterName = kp.Key;
+                if (parameterName == "anysection") parameterName = "Section";
+                result = result == null ? Key.Create(parameterName, kp.Value) : result.AppendParameter(parameterName, kp.Value);
             }
             key = result;
             return true;
@@ -402,6 +406,25 @@ namespace Lexical.Localization
         {
             IAssetNamePatternMatch match = Match(key);
             return AssetNamePatternExtensions.BuildName(this, match.PartValues);
+        }
+
+        /// <summary>
+        /// Get hashcode for pattern.
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+            => Pattern.GetHashCode() ^ 0x4234234;
+
+        /// <summary>
+        /// Compare object for equality.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            if (obj is AssetNamePattern other)
+                return other.Pattern == Pattern;
+            return false;
         }
     }
 

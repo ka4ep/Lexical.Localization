@@ -17,23 +17,44 @@ namespace Lexical.Localization
     public abstract class FileSource : IAssetSource
     {
         /// <summary>
-        /// File path.
+        /// (optional) Overriding explicit path. 
+        /// 
+        /// If null then <see cref="IAssetLoader"/> determines the folder to use, which is typically application root.
         /// </summary>
-        public string FileName { get; protected set; }
+        public string Path { get; internal set; }
+
+        /// <summary>
+        /// File path that is relative to <see cref="Path"/>, or if <see cref="Path"/> is null, then relative to application path.
+        /// If <see cref="FileName"/> is rooted and <see cref="Path"/> is null, then uses <see cref="FileName"/> as is.
+        /// </summary>
+        public string FileName { get; internal set; }
 
         /// <summary>
         /// If true, throws <see cref="FileNotFoundException"/> if file is not found.
         /// If false, returns empty enumerable.
         /// </summary>
-        public bool ThrowIfNotFound { get; protected set; }
+        public bool ThrowIfNotFound { get; internal set; }
+
+        /// <summary>
+        /// Return default filepath.
+        /// 
+        /// If <see cref="FileName"/> is rooted, then returns it as is.
+        /// If <see cref="Path"/> is provided, then returns combination of <see cref="Path"/> and <see cref="FileName"/>.
+        /// If <see cref="Path"/> is null, then returns <see cref="AppDomain.CurrentDomain.BaseDirectory"/> and see <see cref="FileName"/>.
+        /// </summary>
+        public string FilePath
+            => System.IO.Path.IsPathRooted(FileName) ? FileName :
+               System.IO.Path.Combine(Path ?? AppDomain.CurrentDomain.BaseDirectory, FileName);
 
         /// <summary>
         /// Create abstract file source.
         /// </summary>
+        /// <param name="path"></param>
         /// <param name="filename"></param>
         /// <param name="throwIfNotFound"></param>
-        public FileSource(string filename, bool throwIfNotFound)
+        public FileSource(string path, string filename, bool throwIfNotFound)
         {
+            this.Path = path;
             this.FileName = filename ?? throw new ArgumentNullException(nameof(FileName));
             this.ThrowIfNotFound = throwIfNotFound;
         }
@@ -50,6 +71,13 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <returns></returns>
         public abstract IAsset PostBuild(IAsset asset);
+
+        /// <summary>
+        /// Create a clone with new path value.
+        /// </summary>
+        /// <param name="newPath"></param>
+        /// <returns>clone</returns>
+        public abstract FileSource SetPath(string newPath);
 
         /// <summary>
         /// Print info of source
