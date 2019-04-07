@@ -10,38 +10,21 @@ using System.Text;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Result of parse
-    /// </summary>
-    public enum FormulationStringState
-    {
-        /// <summary>
-        /// String is not parsed
-        /// </summary>
-        NotParsed,
-
-        /// <summary>
-        /// String is parsed ok
-        /// </summary>
-        Ok,
-
-        /// <summary>
-        /// Parse is not complete as string is malformed.
-        /// </summary>
-        Malformed
-    }
-
-    /// <summary>
     /// Preparsed formulation string.
     /// </summary>
     public interface IFormulationString
     {
         /// <summary>
-        /// Type
+        /// One of 
+        /// <list type="table">
+        /// <item><see cref="LocalizationStatus.FormulationErrorMalformed"/> if there is a problem in the stirng</item>
+        /// <item><see cref="LocalizationStatus.FormulationOk"/> if formulation was parsed ok.</item>
+        /// </list>
         /// </summary>
-        FormulationStringState Status { get; }
+        LocalizationStatus Status { get; }
 
         /// <summary>
-        /// Formulation string, for example "You received {cardinal:0} coin(s).".
+        /// Formulation string, for example "You received {plural:0} coin(s).".
         /// The notation depends on <see cref="ILocalizationArgumentFormatter"/>.
         /// </summary>
         string FormulationString { get; }
@@ -68,38 +51,38 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="argumentIndex"></param>
         /// <returns></returns>
-        FormulationArgument this[int argumentIndex] { get; }
+        IFormulationArgument this[int argumentIndex] { get; }
     }
 
     /// <summary>
-    /// Formulation argument, e.g. "cardinal:0:X2"
+    /// Formulation argument, e.g. "plural:0:X2"
     /// </summary>
-    public class FormulationArgument
+    public interface IFormulationArgument
     {
         /// <summary>
         /// Argument index
         /// </summary>
-        public readonly string ArgumentIndex;
+        string ArgumentIndex { get; }
 
         /// <summary>
-        /// Pluralization category, e.g. "cardinal", "optional", "range", "ordinal".
+        /// Pluralization category, e.g. "plural", "optional", "range", "ordinal".
         /// </summary>
-        public readonly string PluralizationCategory;
+        string PluralizationCategory { get; }
 
         /// <summary>
         /// Function name
         /// </summary>
-        public readonly string FunctionName;
+        string FunctionName { get; }
 
         /// <summary>
         /// Character index in the formulation string where argument starts.
         /// </summary>
-        public readonly int Index;
+        int Index { get; }
 
         /// <summary>
         /// Length of the character segment that defines argument.
         /// </summary>
-        public readonly int Length;
+        int Length { get; }
     }
 
 }

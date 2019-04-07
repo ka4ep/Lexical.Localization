@@ -19,10 +19,10 @@ namespace Lexical.Localization
         public const string One = "One";
         public const string Plural = "Plural";
 
-        public const string Cardinal = "cardinal";
-        public const string Ordinal = "ordinal";
-        public const string Range = "range";
-        public const string Optional = "optional";
+        public const string plural = "plural";
+        public const string ordinal = "ordinal";
+        public const string range = "range";
+        public const string optional = "optional";
 
     }
 
@@ -45,7 +45,7 @@ namespace Lexical.Localization
         /// 
         /// Known categories:
         /// <list type="table">
-        /// <item>cardinal</item>
+        /// <item>plural</item>
         /// <item>ordinal</item>
         /// <item>range</item>
         /// <item>optional</item>
@@ -68,7 +68,7 @@ namespace Lexical.Localization
     public interface IPluralityRules
     {
         /// <summary>
-        /// Category name, e.g. "cardinal" "ordinal", "range", "optional"
+        /// Category name, e.g. "plural" "ordinal", "range", "optional"
         /// </summary>
         String Category { get; }
     }
@@ -78,8 +78,8 @@ namespace Lexical.Localization
     /// 
     /// The instance is language specific.
     /// 
-    /// "cardinal"
-    ///      Case "":         "{cardinal:0} car(s)"
+    /// "plural"
+    ///      Case "":         "{plural:0} car(s)"
     ///      Case "N0:One":   "a car"                       when {0}=1
     ///      Case "N0:Other": "{0} cars"                    when {0}=5
     ///      
@@ -97,7 +97,7 @@ namespace Lexical.Localization
         /// <summary>
         /// A group of cses that must all be supplied with language string when plurality is supported.
         /// 
-        /// Or null if this plurality rules cannot provide cardinal rules.
+        /// Or null if this plurality rules cannot provide plural rules.
         /// 
         /// Cases are language specific, for example english language has "One" and "Other".
         /// </summary>

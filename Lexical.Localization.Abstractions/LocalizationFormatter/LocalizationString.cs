@@ -310,7 +310,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Tests if there is no result.
         /// </summary>
-        public bool NoResult => Status == LocalizationStatus.NoResult;
+        public bool HasResult => Status != LocalizationStatus.NoResult;
 
         /// <summary>
         /// Result has ok state out of four severity states (Ok, Warning, Error, Failed).

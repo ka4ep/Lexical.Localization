@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Parses arguments from formulation strings.
     /// 
-    /// For example "You received {cardinal:0} coin(s)." is a formulation string
+    /// For example "You received {plural:0} coin(s)." is a formulation string
     /// that parsed into argument and non-argument sections.
     /// </summary>
     public interface ILocalizationArgumentFormatter
