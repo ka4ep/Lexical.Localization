@@ -17,6 +17,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create a new ILocalizationKey with arguments attached.
         /// </summary>
+        /// <param name="formatProvider">(optional) custom format provider</param>
         /// <param name="args">attach arguments</param>
         /// <returns>new key</returns>
         ILocalizationKeyFormatArgs Format(params object[] args);

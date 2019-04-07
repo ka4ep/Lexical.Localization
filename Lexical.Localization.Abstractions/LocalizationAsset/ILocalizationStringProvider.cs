@@ -17,10 +17,12 @@ namespace Lexical.Localization
     public interface ILocalizationStringProvider : IAsset
     {
         /// <summary>
-        /// Try to read a localization string.
+        /// Try to read a localization string. 
+        /// 
+        /// The returned string is in formulation format where possible arguments are numbered and inide brace parenthesis, e.g. "Welcome {0}."
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>resolved string or null</returns>
+        /// <returns>formulation string or null</returns>
         string GetString(IAssetKey key);
     }
 
