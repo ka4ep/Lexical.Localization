@@ -27,7 +27,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Parses arguments from formulation strings.
+    /// Parses arguments from formulation strings. Handles escaping.
     /// 
     /// For example "You received {plural:0} coin(s)." is a formulation string
     /// that parsed into argument and non-argument sections.
@@ -45,5 +45,6 @@ namespace Lexical.Localization
         /// <exception cref="ArgumentNullException">if <paramref name="formulationString"/> is null</exception>
         ILocalizationFormulationString Parse(string formulationString);
     }
+
 
 }

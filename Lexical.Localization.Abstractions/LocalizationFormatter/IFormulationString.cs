@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Arguments order of occurance that are parsed from <see cref="Text"/> by an <see cref="ILocalizationStringFormatParser"/>.
         /// </summary>
-        IFormulationArgument[] Arguments { get; }
+        ILocalizationArgumentFormulation[] Arguments { get; }
 
         /// <summary>
         /// (optional) Formatters to apply to the formulation string.
@@ -53,9 +53,9 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Formulation argument, e.g. "plural:0:X2"
+    /// Formulation of an argument e.g. "{plural:0:X2}"
     /// </summary>
-    public interface IFormulationArgument
+    public interface ILocalizationArgumentFormulation
     {
         /// <summary>
         /// The whole argument definition as it appears in the formulation string.

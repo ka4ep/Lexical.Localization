@@ -22,6 +22,25 @@ namespace Lexical.Localization
         /// <param name="arg">argument value</param>
         /// <param name="formatProvider">culture-specific formatting information</param>
         /// <returns>The string representation of the value of arg, formatted as specified by <paramref name="format"/>, <paramref name="functionName"/> and <paramref name="formatProvider"/>, or null if was unable to format</returns>
-        string Format(string functionName, string format, object arg, IFormatProvider formatProvider);
+        ArgumentFormulation Format(string functionName, string format, object arg, IFormatProvider formatProvider);
     }
+
+    /// <summary>
+    /// Argument in formulated string format.
+    /// </summary>
+    public struct ArgumentFormulation
+    {
+        /// <summary>
+        /// Status code for formulation conversion.
+        /// 
+        /// Statuscode is a value in <see cref="LocalizationStatus.ArgumentMask"/>.
+        /// </summary>
+        public LocalizationStatus Status;
+
+        /// <summary>
+        /// Resulted formatted string.
+        /// </summary>
+        public string String;           
+    }
+
 }
