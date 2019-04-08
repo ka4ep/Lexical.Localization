@@ -9,7 +9,7 @@ using System.IO;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Extension methods for adding loggers to <see cref="ILocalizationFormatter"/>s.
+    /// Extension methods for adding loggers to <see cref="ILocalizationStringResolver"/>s.
     /// </summary>
     public static partial class LocalizationFormatterLoggerExtensions_
     {
@@ -19,7 +19,7 @@ namespace Lexical.Localization
         /// <param name="formatter"></param>
         /// <param name="observer"></param>
         /// <returns>disposable subscription handle, or null if <paramref name="formatter"/> cannot be observed</returns>
-        public static IDisposable TryAddObserver(this ILocalizationFormatter formatter, IObserver<LocalizationString> observer)
+        public static IDisposable TryAddObserver(this ILocalizationStringResolver formatter, IObserver<LocalizationString> observer)
         {
             if (formatter == null) throw new ArgumentNullException(nameof(formatter));
             if (observer == null) throw new ArgumentNullException(nameof(observer));
@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <param name="logWarning"></param>
         /// <param name="logError"></param>
         /// <returns>disposable subscription handle, or null if <paramref name="formatter"/> cannot be observed</returns>
-        public static IDisposable TryAddLogger(this ILocalizationFormatter formatter, TextWriter logger, bool logOk, bool logWarning, bool logError)
+        public static IDisposable TryAddLogger(this ILocalizationStringResolver formatter, TextWriter logger, bool logOk, bool logWarning, bool logError)
         {
             if (formatter == null) throw new ArgumentNullException(nameof(formatter));
             if (logger == null) throw new ArgumentNullException(nameof(logger));
@@ -110,7 +110,7 @@ namespace Lexical.Localization
     using Microsoft.Extensions.Logging;
 
     /// <summary>
-    /// Extension methods for adding loggers to <see cref="ILocalizationFormatter"/>s.
+    /// Extension methods for adding loggers to <see cref="ILocalizationStringResolver"/>s.
     /// </summary>
     public static partial class LocalizationFormatterLoggerExtensions___
     {
@@ -120,7 +120,7 @@ namespace Lexical.Localization
         /// <param name="formatter"></param>
         /// <param name="logger"></param>
         /// <returns>disposable subscription handle, or null if <paramref name="formatter"/> cannot be observed</returns>
-        public static IDisposable TryAddLogger(this ILocalizationFormatter formatter, ILogger logger)
+        public static IDisposable TryAddLogger(this ILocalizationStringResolver formatter, ILogger logger)
         {
             if (formatter == null) throw new ArgumentNullException(nameof(formatter));
             if (logger == null) throw new ArgumentNullException(nameof(logger));

@@ -4,18 +4,21 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Preparsed formulation string.
+    /// Preparsed formulation string. 
+    /// 
+    /// For example "Welcome, {0}!" is a formulation string. 
+    /// When it's in parsed format the argument "{0}" is extracted and the string can be processed more efficiently.
+    /// 
+    /// <see cref="ILocalizationFormulationString"/> is produced by <see cref="ILocalizationStringFormatParser"/>.
     /// </summary>
-    public interface IFormulationString
+    public interface ILocalizationFormulationString
     {
         /// <summary>
-        /// One of 
+        /// Parse result. One of:
         /// <list type="table">
         /// <item><see cref="LocalizationStatus.FormulationErrorMalformed"/> if there is a problem in the stirng</item>
         /// <item><see cref="LocalizationStatus.FormulationOk"/> if formulation was parsed ok.</item>
@@ -24,34 +27,29 @@ namespace Lexical.Localization
         LocalizationStatus Status { get; }
 
         /// <summary>
-        /// Formulation string, for example "You received {plural:0} coin(s).".
-        /// The notation depends on <see cref="ILocalizationArgumentFormatter"/>.
+        /// Formulation string as it appears, for example "You received {plural:0} coin(s).".
         /// </summary>
-        string FormulationString { get; }
+        string Text { get; }
 
         /// <summary>
-        /// Number of arguments
+        /// Arguments order of occurance that are parsed from <see cref="Text"/> by an <see cref="ILocalizationStringFormatParser"/>.
         /// </summary>
-        int ArgumentCount { get; }
+        IFormulationArgument[] Arguments { get; }
 
         /// <summary>
-        /// (optional) Explicit plurality rules that should be applied to this formulation string.
+        /// (optional) Formatters to apply to the formulation string.
+        /// Some asset files may enforce their own rules.
         /// 
-        /// Plurality rules are typically acquired from culture, but some asset files may enforce their own explicit plurality rules.
+        /// The formatter is requested for following interfaces (Depends on <see cref="ILocalizationStringResolver"/> implementation.)
+        /// <list type="bullet">
+        /// <item><see cref="ILocalizationArgumentFormatter"/></item>
+        /// <item><see cref="ICustomFormatter"/></item>
+        /// <item><see cref="IPluralityFunctionMap"/></item>
+        /// <item><see cref="IPluralityFunction"/></item>
+        /// </list>
+        /// 
         /// </summary>
-        IPluralityRuleSet PluralityRules { get; }
-
-        /// <summary>
-        /// Argument formatter that extracted the argments from formulation string.
-        /// </summary>
-        ILocalizationArgumentFormatter ArgumentFormatter { get; }
-
-        /// <summary>
-        /// Get argument info
-        /// </summary>
-        /// <param name="argumentIndex"></param>
-        /// <returns></returns>
-        IFormulationArgument this[int argumentIndex] { get; }
+        IFormatProvider FormatterProvider { get; }
     }
 
     /// <summary>
@@ -60,19 +58,34 @@ namespace Lexical.Localization
     public interface IFormulationArgument
     {
         /// <summary>
-        /// Argument index
+        /// The whole argument definition as it appears in the formulation string.
         /// </summary>
-        string ArgumentIndex { get; }
+        string Text { get; }
 
         /// <summary>
-        /// Pluralization category, e.g. "plural", "optional", "range", "ordinal".
+        /// Occurance index in formulation string.
         /// </summary>
-        string PluralizationCategory { get; }
+        int OccuranceIndex { get; }
 
         /// <summary>
-        /// Function name
+        /// If argument is index based, the index of the argument, otherwise -1.
         /// </summary>
-        string FunctionName { get; }
+        int ArgumentIndex { get; }
+
+        /// <summary>
+        /// Argument name as string, or null if not available.
+        /// </summary>
+        string ArgumentName { get; }
+
+        /// <summary>
+        /// Formatter name, e.g. "plural", "optional", "range", "ordinal".
+        /// </summary>
+        string FormatterName { get; }
+
+        /// <summary>
+        /// Default value, used if argument is not provided.
+        /// </summary>
+        string DefaultValue { get; }
 
         /// <summary>
         /// Character index in the formulation string where argument starts.
@@ -83,6 +96,17 @@ namespace Lexical.Localization
         /// Length of the character segment that defines argument.
         /// </summary>
         int Length { get; }
+
+        /// <summary>
+        /// Format provider that can provide argument formatters.
+        /// Is searched for types
+        /// <list type="bullet">
+        /// <item><see cref="ICustomFormatter"/></item>
+        /// <item><see cref="ILocalizationArgumentFormatter"/></item>
+        /// </list>
+        /// </summary>
+        IFormatProvider FormatProvider { get; }
     }
+
 
 }

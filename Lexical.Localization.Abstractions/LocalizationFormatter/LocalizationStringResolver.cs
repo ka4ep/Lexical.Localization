@@ -13,14 +13,14 @@ namespace Lexical.Localization
     /// <summary>
     /// The default localization formatter implementation.
     /// </summary>
-    public class LocalizationFormatter : ILocalizationFormatter
+    public class LocalizationStringResolver : ILocalizationStringResolver
     {
-        private static LocalizationFormatter instance = new LocalizationFormatter();
+        private static LocalizationStringResolver instance = new LocalizationStringResolver();
 
         /// <summary>
         /// Default instance
         /// </summary>
-        public static LocalizationFormatter Instance => instance;
+        public static LocalizationStringResolver Instance => instance;
 
         /// <summary>
         /// Resolve the formulation string. 

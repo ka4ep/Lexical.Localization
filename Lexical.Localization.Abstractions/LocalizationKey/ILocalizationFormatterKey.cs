@@ -11,7 +11,7 @@ using System.Text;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A key that can be assigned with a <see cref="ILocalizationFormatter"/>.
+    /// A key that can be assigned with a <see cref="ILocalizationStringResolver"/>.
     /// </summary>
     public interface ILocalizationFormatterAssignable : IAssetKey
     {
@@ -22,7 +22,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="formatter"></param>
         /// <returns>key that is assigned with <paramref name="formatter"/></returns>
-        ILocalizationFormatterAssigned Formatter(ILocalizationFormatter formatter);
+        ILocalizationFormatterAssigned Formatter(ILocalizationStringResolver formatter);
     }
 
     /// <summary>
@@ -33,7 +33,7 @@ namespace Lexical.Localization
         /// <summary>
         /// (Optional) The assigned formatter.
         /// </summary>
-        ILocalizationFormatter Formatter { get; }
+        ILocalizationStringResolver Formatter { get; }
     }
 
     public static partial class LocalizationKeyExtensions
@@ -42,9 +42,9 @@ namespace Lexical.Localization
         /// <summary>
         /// Get formulation string, but does not apply arguments.
         /// 
-        /// Tries to resolve string with each <see cref="ILocalizationFormatter"/> until result other than <see cref="LocalizationStatus.NoResult"/> is found.
+        /// Tries to resolve string with each <see cref="ILocalizationStringResolver"/> until result other than <see cref="LocalizationStatus.NoResult"/> is found.
         /// 
-        /// If no applicable <see cref="ILocalizationFormatter"/> is found return a value with state <see cref="LocalizationStatus.NoResult"/>.
+        /// If no applicable <see cref="ILocalizationStringResolver"/> is found return a value with state <see cref="LocalizationStatus.NoResult"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -52,7 +52,7 @@ namespace Lexical.Localization
         {
             for(IAssetKey k = key; k!=null; k=k.GetPreviousKey())
             {
-                ILocalizationFormatter _formatter;
+                ILocalizationStringResolver _formatter;
                 if (k is ILocalizationFormatterAssigned formatterAssigned && ((_formatter=formatterAssigned.Formatter)!=null))
                 {
                     LocalizationString str = _formatter.ResolveString(key);
@@ -61,7 +61,7 @@ namespace Lexical.Localization
             }
 
             // TODO Remove this
-            return LocalizationFormatter.Instance.ResolveString(key).Value;
+            return LocalizationStringResolver.Instance.ResolveString(key).Value;
             // TODO change return type to LocalizationString -- in another method
             //return new LocalizationString(key, null, LocalizationStatus.NoResult, null);
         }
@@ -69,9 +69,9 @@ namespace Lexical.Localization
         /// <summary>
         /// Resolve and formulate string (applies arguments).
         /// 
-        /// Tries to resolve string with each <see cref="ILocalizationFormatter"/> until result other than <see cref="LocalizationStatus.NoResult"/> is found.
+        /// Tries to resolve string with each <see cref="ILocalizationStringResolver"/> until result other than <see cref="LocalizationStatus.NoResult"/> is found.
         /// 
-        /// If no applicable <see cref="ILocalizationFormatter"/> is found return a value with state <see cref="LocalizationStatus.NoResult"/>.
+        /// If no applicable <see cref="ILocalizationStringResolver"/> is found return a value with state <see cref="LocalizationStatus.NoResult"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>If key has <see cref="ILocalizationKeyFormatArgs"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
@@ -81,7 +81,7 @@ namespace Lexical.Localization
         {
             for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
             {
-                ILocalizationFormatter _formatter;
+                ILocalizationStringResolver _formatter;
                 if (k is ILocalizationFormatterAssigned formatterAssigned && ((_formatter = formatterAssigned.Formatter) != null))
                 {
                     LocalizationString str = _formatter.ResolveFormulatedString(key);
@@ -90,7 +90,7 @@ namespace Lexical.Localization
             }
 
             // TODO Remove this
-            return LocalizationFormatter.Instance.ResolveFormulatedString(key).Value;
+            return LocalizationStringResolver.Instance.ResolveFormulatedString(key).Value;
             // TODO change return type to LocalizationString -- in another method
             //return new LocalizationString(key, null, LocalizationStatus.NoResult, null);
         }

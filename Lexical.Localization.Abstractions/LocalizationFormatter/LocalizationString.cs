@@ -35,6 +35,8 @@ namespace Lexical.Localization
         ResolveFailedNotFound = 0xC1UL << Shift.Resolve,
         /// <summary>Asset was not found and could not resolve key inline</summary>
         ResolveFailedNoAsset = 0xC2UL << Shift.Resolve,
+        /// <summary>Result has not been processed</summary>
+        ResolveFailedNoResult = 0xffUL << Shift.Resolve,
         /// <summary>Mask for severity</summary>
         ResolveSeverityMask = 0xC0UL << Shift.Resolve,
         /// <summary>Mask for resolve status</summary>
@@ -57,6 +59,8 @@ namespace Lexical.Localization
         CultureErrorNotMatched = 0x81UL << Shift.Culture,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         CultureFailed = 0xC0UL << Shift.Culture,
+        /// <summary>Result has not been processed</summary>
+        CultureFailedNoResult = 0xffUL << Shift.Culture,
         /// <summary>Mask for severity</summary>
         CultureSeverityMask = 0xC00UL << Shift.Culture,
         /// <summary>Mask for culture status</summary>
@@ -83,6 +87,8 @@ namespace Lexical.Localization
         PluralityErrorRulesNotFound = 0x81UL << Shift.Plurality,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PluralityFailed = 0xC0UL << Shift.Plurality,
+        /// <summary>Result has not been processed</summary>
+        PluralityFailedNoResult = 0xffUL << Shift.Plurality,
         /// <summary>Mask for severity</summary>
         PluralitySeverityMask = 0xC00UL << Shift.Plurality,
         /// <summary>Mask for plurality status</summary>
@@ -101,8 +107,12 @@ namespace Lexical.Localization
         ArgumentWarningToStringUsed = 0x41UL << Shift.Argument,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ArgumentError = 0x80UL << Shift.Argument,
+        /// <summary>The argument object did not match the type in formulation string</summary>
+        ArgumentErrorTypeMismatch = 0x88UL << Shift.Argument,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ArgumentFailed = 0xC0UL << Shift.Argument,
+        /// <summary>Result has not been processed</summary>
+        ArgumentFailedNoResult = 0xffUL << Shift.Argument,
         /// <summary>Mask for severity</summary>
         ArgumentSeverityMask = 0xC0UL << Shift.Argument,
         /// <summary>Mask for argument status</summary>
@@ -129,6 +139,8 @@ namespace Lexical.Localization
         FormulationErrorMalformed = 0x8fUL << Shift.Formulation,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         FormulationFailed = 0xC0UL << Shift.Formulation,
+        /// <summary>Result has not been processed</summary>
+        FormulationFailedNoResult = 0xffUL << Shift.Formulation,
         /// <summary>Mask for severity</summary>
         FormulationSeverityMask = 0xC0UL << Shift.Formulation,
         /// <summary>Mask for argument status</summary>
@@ -143,6 +155,8 @@ namespace Lexical.Localization
         Custom0Error = 0x80UL << Shift.Custom0,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         Custom0Failed = 0xC0UL << Shift.Custom0,
+        /// <summary>Result has not been processed</summary>
+        Custom0FailedNoResult = 0xffUL << Shift.Custom0,
         /// <summary>Mask for severity</summary>
         Custom0SeverityMask = 0xC0UL << Shift.Custom0,
         /// <summary>Mask for argument status</summary>
@@ -157,6 +171,8 @@ namespace Lexical.Localization
         Custom1Error = 0x80UL << Shift.Custom1,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         Custom1Failed = 0xC0UL << Shift.Custom1,
+        /// <summary>Result has not been processed</summary>
+        Custom1FailedNoResult = 0xffUL << Shift.Custom1,
         /// <summary>Mask for severity</summary>
         Custom1SeverityMask = 0xC0UL << Shift.Custom1,
         /// <summary>Mask for argument status</summary>
@@ -190,7 +206,7 @@ namespace Lexical.Localization
         /// <summary>
         /// The object that formatted the result, or null if unavailable.
         /// </summary>
-        public ILocalizationFormatter Formatter;
+        public ILocalizationStringResolver Formatter;
 
         /// <summary>
         /// Severity for the step that resolves <see cref="IAssetKey"/> into formulation string.
@@ -253,9 +269,9 @@ namespace Lexical.Localization
         public int FormulationSeverity => (int)((ulong)Status >> Shift.FormulationSeverity) & 3;
 
         /// <summary>
-        /// Severity for <see cref="ILocalizationFormatter"/> implementation specific "Custom0" status.
+        /// Severity for <see cref="ILocalizationStringResolver"/> implementation specific "Custom0" status.
         /// 
-        /// "Custom0" is a status code that is specific to the <see cref="ILocalizationFormatter"/> implementation.
+        /// "Custom0" is a status code that is specific to the <see cref="ILocalizationStringResolver"/> implementation.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
@@ -267,9 +283,9 @@ namespace Lexical.Localization
         public int Custom0Severity => (int)((ulong)Status >> Shift.Custom0Severity) & 3;
 
         /// <summary>
-        /// Severity for <see cref="ILocalizationFormatter"/> implementation specific "Custom1" status.
+        /// Severity for <see cref="ILocalizationStringResolver"/> implementation specific "Custom1" status.
         /// 
-        /// "Custom1" is a status code that is specific to the <see cref="ILocalizationFormatter"/> implementation.
+        /// "Custom1" is a status code that is specific to the <see cref="ILocalizationStringResolver"/> implementation.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
@@ -347,7 +363,7 @@ namespace Lexical.Localization
         /// <param name="value"></param>
         /// <param name="status"></param>
         /// <param name="formatter"></param>
-        public LocalizationString(IAssetKey key, string value, LocalizationStatus status, ILocalizationFormatter formatter)
+        public LocalizationString(IAssetKey key, string value, LocalizationStatus status, ILocalizationStringResolver formatter)
         {
             Key = key;
             Value = value;

@@ -1,28 +1,27 @@
 ﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           7.4.2019
+// Date:           8.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Parses arguments from formulation strings.
+    /// Extended version of <see cref="ICustomFormatter"/>. 
     /// 
-    /// For example "You received {plural:0} coin(s)." is a formulation string
-    /// that parsed into argument and non-argument sections.
+    /// <see cref="ILocalizationArgumentFormatter"/> is provided with <see cref="IFormatProvider"/>.
     /// </summary>
     public interface ILocalizationArgumentFormatter
     {
         /// <summary>
-        /// Try to parse formulation string into <see cref="IFormulationString"/>.
+        /// Converts the value of a specified object to an equivalent string representation using specified format and culture-specific formatting information <paramref name="formatProvider"/>.
         /// </summary>
-        /// <param name="formulationString"></param>
-        /// <returns>formulation string</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="formulationString"/> is null</exception>
-        IFormulationString Parse(string formulationString);
+        /// <param name="functionName">function name that is extracted from formulation string</param>
+        /// <param name="format">format paramters</param>
+        /// <param name="arg">argument value</param>
+        /// <param name="formatProvider">culture-specific formatting information</param>
+        /// <returns>The string representation of the value of arg, formatted as specified by <paramref name="format"/>, <paramref name="functionName"/> and <paramref name="formatProvider"/>, or null if was unable to format</returns>
+        string Format(string functionName, string format, object arg, IFormatProvider formatProvider);
     }
 }

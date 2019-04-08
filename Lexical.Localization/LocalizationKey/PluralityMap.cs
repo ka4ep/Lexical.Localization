@@ -3,6 +3,8 @@
 // Date:           6.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
+using System;
 using System.Collections.Generic;
 
 namespace Lexical.Localization
@@ -12,62 +14,59 @@ namespace Lexical.Localization
     /// 
     /// The key is ISO 639-1 (two character) or ISO 639-2 (three character) language code.
     /// </summary>
-    public class PluralizationRulesSetMap : Dictionary<string, IPluralityRuleSet>, IPluralizationRuleSetMap
+    public class PluralizationRulesSetMap : Dictionary<KeyValuePair<string, string>, IPluralityFunction>, IPluralityFunctionMap, ICloneable
     {
         /// <summary>
         /// </summary>
-        public PluralizationRulesSetMap() : base() { }
+        public PluralizationRulesSetMap() : base(KeyValuePairEqualityComparer<string, string>.Default)
+        {
+        }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="dictionary"></param>
-        public PluralizationRulesSetMap(IDictionary<string, IPluralityRuleSet> dictionary) : base() { }
+        /// <param name="languageCode"></param>
+        /// <param name="functionName"></param>
+        /// <returns></returns>
+        public IPluralityFunction TryGet(string languageCode, string functionName)
+        {
+            IPluralityFunction result = null;
+            TryGetValue(new KeyValuePair<string, string>(languageCode, functionName), out result);
+            return result;
+        }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="comparer"></param>
-        public PluralizationRulesSetMap(IEqualityComparer<string> comparer) : base() { }
-    }
-
-    /// <summary>
-    /// Extensions for <see cref="IPluralizationRuleSetMap"/> classes.
-    /// </summary>
-    public static class PluralityMapExtensions_
-    {
-        /// <summary>
-        /// Add <paramref name="value"/>.
-        /// </summary>
-        /// <param name="map"></param>
-        /// <param name="code"></param>
-        /// <param name="value"></param>
+        /// <param name="languageCode"></param>
+        /// <param name="function"></param>
         /// <returns></returns>
-        public static IDictionary<string, IPluralityRuleSet> Add(this IDictionary<string, IPluralityRuleSet> map, string code, IPluralityRuleSet value)
+        public PluralizationRulesSetMap Add(string languageCode, IPluralityFunction function)
         {
-            map[code] = value;
-            return map;
+            this[new KeyValuePair<string, string>(languageCode, function.Name)] = function;
+            return this;
         }
 
         /// <summary>
-        /// Add <paramref name="values"/>.
+        /// Enumerate content
         /// </summary>
-        /// <param name="map"></param>
-        /// <param name="values"></param>
-        /// <returns></returns>
-        public static IDictionary<string, IPluralityRuleSet> AddRange(this IDictionary<string, IPluralityRuleSet> map, IEnumerable<KeyValuePair<string, IPluralityRuleSet>> values)
+        /// <returns>Tuples of language code and function</returns>
+        IEnumerator<(string, IPluralityFunction)> IEnumerable<(string, IPluralityFunction)>.GetEnumerator()
         {
-            foreach (var line in values)
-                map[line.Key] = line.Value;
-            return map;
+            foreach (var line in this)
+                yield return (line.Key.Key, line.Value);
         }
 
         /// <summary>
-        /// Create clone 
+        /// Create new clone
         /// </summary>
-        /// <param name="map"></param>
         /// <returns></returns>
-        public static PluralizationRulesSetMap Clone(this IReadOnlyDictionary<string, IPluralityRuleSet> map)
-            => new PluralizationRulesSetMap().AddRange(map) as PluralizationRulesSetMap;
+        public object Clone()
+        {
+            PluralizationRulesSetMap result = new PluralizationRulesSetMap();
+            foreach (var line in this)
+                result.Add(line.Key, line.Value);
+            return result;
+        }
     }
 }
