@@ -3,11 +3,6 @@
 // Date:           20.3.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-
 namespace Lexical.Localization
 {
     /// <summary>
@@ -29,15 +24,6 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns></returns>
         LocalizationString ResolveFormulatedString(IAssetKey key);
-    }
-
-    /// <summary>
-    /// A formatter where result observer, typically a logger, can be placed into.
-    /// 
-    /// TODO Put into key.
-    /// </summary>
-    public interface ILocalizationStringResolverObservable : ILocalizationResolver, IObservable<LocalizationString>
-    {
     }
 
 }

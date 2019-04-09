@@ -47,7 +47,7 @@ namespace Lexical.Localization
         /// <exception cref="AssetKeyException">If key doesn't implement <see cref="ILocalizationKeyResolverAssignable"/></exception>
         public static ILocalizationKeyResolverAssigned Resolver(this IAssetKey key, ILocalizationResolver resolver)
         {
-            if (key is ILocalizationKeyResolverAssignable casted) return Resolver(casted, resolver);
+            if (key is ILocalizationKeyResolverAssignable casted) return casted.Resolver(resolver);
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyResolverAssignable)}.");
         }
 

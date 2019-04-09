@@ -139,6 +139,8 @@ namespace Lexical.Localization
         FormulationErrorMalformed = 0x8fUL << Shift.Formulation,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         FormulationFailed = 0xC0UL << Shift.Formulation,
+        /// <summary>Formulation string is null</summary>
+        FormulationFailedNull = 0xC01L << Shift.Formulation,
         /// <summary>Result has not been processed</summary>
         FormulationFailedNoResult = 0xffUL << Shift.Formulation,
         /// <summary>Mask for severity</summary>

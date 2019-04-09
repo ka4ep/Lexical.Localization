@@ -17,7 +17,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Set culture policy.
         /// </summary>
-        /// <param name=""></param>
+        /// <param name="culturePolicy"></param>
         /// <returns>a key with a culture policy. (most likely the same key)</returns>
         /// <exception cref="InvalidOperationException">If object is read-only</exception>
         ILocalizationKeyCulturePolicyAssigned CulturePolicy(ICulturePolicy culturePolicy);

@@ -39,10 +39,10 @@ namespace Lexical.Localization
         /// 
         /// If parse fails this method should return an instance where state is <see cref="LocalizationStatus.FormulationErrorMalformed"/>.
         /// If parse succeeds, the returned instance should have state <see cref="LocalizationStatus.FormulationOk"/> or some other formulation state.
+        /// If <paramref name="formulationString"/> is null then stat is <see cref="LocalizationStatus.FormulationFailedNull"/>.
         /// </summary>
         /// <param name="formulationString"></param>
         /// <returns>formulation string</returns>
-        /// <exception cref="ArgumentNullException">if <paramref name="formulationString"/> is null</exception>
         ILocalizationFormulationString Parse(string formulationString);
     }
 

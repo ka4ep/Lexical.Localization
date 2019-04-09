@@ -19,7 +19,7 @@ namespace Lexical.Localization
         public const string One = "One";
         public const string Plural = "Plural";
 
-        public const string plurality = "plurality";
+        public const string plural = "plural";
         public const string ordinal = "ordinal";
         public const string range = "range";
         public const string optional = "optional";
@@ -28,16 +28,11 @@ namespace Lexical.Localization
 
     /// <summary>
     /// Map that contains plurality rules.
+    /// 
+    /// The key of the map is is ISO 639-1 (two character) or ISO 639-2 (three character) language code.
     /// </summary>
-    public interface IPluralityFunctionProvider : IEnumerable<(string, IPluralityFunction)>
+    public interface IPluralityRuleMap : IReadOnlyDictionary<string, IPluralityRules>
     {
-        /// <summary>
-        /// Try get plurality function.
-        /// </summary>
-        /// <param name="languageCode">The key is ISO 639-1 (two character) or ISO 639-2 (three character) language code</param>
-        /// <param name="functionName">Function name, such as "plurality", "ordinal"</param>
-        /// <returns>function or null</returns>
-        IPluralityFunction TryGet(string languageCode, string functionName);
     }
 
     /// <summary>
@@ -46,7 +41,7 @@ namespace Lexical.Localization
     /// The instance is language specific.
     /// 
     /// "plural"
-    ///      Case "":         "{plurality:0} car(s)"
+    ///      Case "":         "{plural:0} car(s)"
     ///      Case "N0:One":   "a car"                       when {0}=1
     ///      Case "N0:Other": "{0} cars"                    when {0}=5
     ///      
@@ -59,10 +54,22 @@ namespace Lexical.Localization
     ///      Case "":        "{optional:0} cars"
     ///      Case "N0:Null": "No cars"                      when {0}=null
     /// </summary>
-    public interface IPluralityFunction
+    public interface IPluralityRules : IReadOnlyDictionary<string, IPluralityCategory>
+    {
+
+    }
+
+    /// <summary>
+    /// Plurality category is function that can be attached to an argument to describe possible
+    /// cases of declination of sentences.
+    /// 
+    /// For example formulation string "There are {plural:0} cats", describes that there will be
+    /// different declination cases of the sentence depending on the number in the argument.
+    /// </summary>
+    public interface IPluralityCategory
     {
         /// <summary>
-        /// Function name, e.g. "plurality" "ordinal", "optional"
+        /// Category name, e.g. "plural" "ordinal", "optional"
         /// </summary>
         String Name { get; }
 
@@ -76,7 +83,7 @@ namespace Lexical.Localization
         /// 
         /// Sometimes there are optional cases. They are returned first, the mandatory cases are last indices of the result array.
         /// 
-        /// For example, "{plurality:0} cars" for value '0' returns cases "Zero" and "Other".
+        /// For example, "{plural:0} cars" for value '0' returns cases "Zero" and "Other".
         /// Zero is optional, and the translator can choose whether to use "Zero" string or not.
         ///    "N0:Zero"="No cars"
         ///    "N0:Other="{0} cars"
@@ -90,17 +97,17 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// A single case of a <see cref="IPluralityFunction"/>.
+    /// A single case of a <see cref="IPluralityCategory"/>.
     /// </summary>
     public interface IPluralityCase
     {
         /// <summary>
         /// The function this case is part of
         /// </summary>
-        IPluralityFunction Function { get; }
+        IPluralityCategory Function { get; }
 
         /// <summary>
-        /// Index in <see cref="IPluralityFunction.Cases"/>.
+        /// Index in <see cref="IPluralityCategory.Cases"/>.
         /// </summary>
         int CaseIndex { get; }
 

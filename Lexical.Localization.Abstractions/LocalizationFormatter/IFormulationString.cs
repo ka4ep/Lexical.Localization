@@ -32,9 +32,15 @@ namespace Lexical.Localization
         string Text { get; }
 
         /// <summary>
-        /// Arguments order of occurance that are parsed from <see cref="Text"/> by an <see cref="ILocalizationStringFormatParser"/>.
+        /// Formulation string as sequence of text and argument parts.
         /// </summary>
-        ILocalizationArgumentFormulation[] Arguments { get; }
+        ILocalizationFormulationStringPart[] Parts { get; }
+
+        /// <summary>
+        /// Arguments order of occurance in the formulation string.
+        /// They are parsed from <see cref="Text"/> by an <see cref="ILocalizationStringFormatParser"/>.
+        /// </summary>
+        ILocalizationFormulationStringArgument[] Arguments { get; }
 
         /// <summary>
         /// (optional) Formatters to apply to the formulation string.
@@ -44,24 +50,69 @@ namespace Lexical.Localization
         /// <list type="bullet">
         /// <item><see cref="ILocalizationArgumentFormatter"/></item>
         /// <item><see cref="ICustomFormatter"/></item>
-        /// <item><see cref="IPluralityFunctionProvider"/></item>
-        /// <item><see cref="IPluralityFunction"/></item>
+        /// <item><see cref="IPluralityRuleMap"/></item>
+        /// <item><see cref="IPluralityCategory"/></item>
         /// </list>
         /// 
+        /// <see cref="ILocalizationResolver"/> combines format providers from asset and key.
+        /// The format provider that comes from <see cref="ILocalizationFormulationString"/> has the highest priority.
         /// </summary>
         IFormatProvider FormatProvider { get; }
     }
 
     /// <summary>
-    /// Formulation of an argument e.g. "{plural:0:X2}"
+    /// Type of string part
     /// </summary>
-    public interface ILocalizationArgumentFormulation
+    public enum LocalizationFormulationStringPartKind
     {
         /// <summary>
-        /// The whole argument definition as it appears in the formulation string.
+        /// Text
         /// </summary>
-        string Text { get; }
+        Text,
 
+        /// <summary>
+        /// Argument
+        /// </summary>
+        Argument
+    }
+
+    /// <summary>
+    /// A part in formulation string.
+    /// </summary>
+    public interface ILocalizationFormulationStringPart
+    {
+        /// <summary>
+        /// The 'parent' formulation string.
+        /// </summary>
+        ILocalizationFormulationString FormulationString { get; }
+
+        /// <summary>
+        /// Part type.
+        /// </summary>
+        LocalizationFormulationStringPartKind Kind { get; }
+
+        /// <summary>
+        /// Character index in the formulation string where argument starts.
+        /// </summary>
+        int Index { get; }
+
+        /// <summary>
+        /// Length of the character segment that defines argument.
+        /// </summary>
+        int Length { get; }
+
+        /// <summary>
+        /// The whole part as it appears in the formulation string.
+        /// </summary>
+        /// <returns></returns>
+        string Text { get; }
+    }
+
+    /// <summary>
+    /// Formulation of an argument e.g. "{[function:]0[,alignment][:format]}"
+    /// </summary>
+    public interface ILocalizationFormulationStringArgument : ILocalizationFormulationStringPart
+    {
         /// <summary>
         /// Occurance index in formulation string.
         /// </summary>
@@ -78,35 +129,31 @@ namespace Lexical.Localization
         string ArgumentName { get; }
 
         /// <summary>
-        /// Formatter name, e.g. "plural", "optional", "range", "ordinal".
+        /// (Optional) The function name that is passed to <see cref="ILocalizationArgumentFormatter"/>.
+        /// E.g. "plural", "optional", "range", "ordinal".
         /// </summary>
-        string FormatterName { get; }
+        string Function { get; }
 
         /// <summary>
-        /// Default value, used if argument is not provided.
+        /// Alignment is an integer that defines field width. If negative then field is left-aligned, if positive then right-aligned.
+        /// </summary>
+        int Alignment { get; }
+
+        /// <summary>
+        /// (Optional) The format text that is passed to <see cref="ICustomFormatter"/>, <see cref="IFormattable"/> and <see cref="ILocalizationArgumentFormatter"/>.
+        /// E.g. "x2".
+        /// </summary>
+        string Format { get; }
+
+        /// <summary>
+        /// (Optional) Default value, used if argument is not provided.
         /// </summary>
         string DefaultValue { get; }
-
-        /// <summary>
-        /// Character index in the formulation string where argument starts.
-        /// </summary>
-        int Index { get; }
-
-        /// <summary>
-        /// Length of the character segment that defines argument.
-        /// </summary>
-        int Length { get; }
-
-        /// <summary>
-        /// Format provider that can provide argument formatters.
-        /// Is searched for types
-        /// <list type="bullet">
-        /// <item><see cref="ICustomFormatter"/></item>
-        /// <item><see cref="ILocalizationArgumentFormatter"/></item>
-        /// </list>
-        /// </summary>
-        IFormatProvider FormatProvider { get; }
     }
 
+    /// <summary/>
+    public static partial class LocalizationFormulationStringExtensions
+    {
+    }
 
 }

@@ -8,7 +8,8 @@ using System;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Extended version of <see cref="ICustomFormatter"/>. 
+    /// Argment formatter converts arguments into strings. 
+    /// It is an extended interface of <see cref="ICustomFormatter"/>. 
     /// 
     /// <see cref="ILocalizationArgumentFormatter"/> is provided with <see cref="IFormatProvider"/>.
     /// </summary>

@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           20.3.2019
+// Date:           9.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
@@ -19,8 +19,8 @@ namespace Lexical.Localization
         /// <list type="bullet">
         /// <item><see cref="ILocalizationArgumentFormatter"/></item>
         /// <item><see cref="ICustomFormatter"/></item>
-        /// <item><see cref="IPluralityFunctionProvider"/></item>
-        /// <item><see cref="IPluralityFunction"/></item>
+        /// <item><see cref="IPluralityRuleMap"/></item>
+        /// <item><see cref="IPluralityCategory"/></item>
         /// </list>
         /// 
         /// </summary>
@@ -49,8 +49,8 @@ namespace Lexical.Localization
         /// <list type="bullet">
         /// <item><see cref="ILocalizationArgumentFormatter"/></item>
         /// <item><see cref="ICustomFormatter"/></item>
-        /// <item><see cref="IPluralityFunctionProvider"/></item>
-        /// <item><see cref="IPluralityFunction"/></item>
+        /// <item><see cref="IPluralityRuleMap"/></item>
+        /// <item><see cref="IPluralityCategory"/></item>
         /// </list>        
         /// </summary>
         /// <param name="key"></param>
@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// <exception cref="AssetKeyException">If key doesn't implement <see cref="ILocalizationKeyFormatProviderAssignable"/></exception>
         public static ILocalizationKeyFormatProviderAssigned FormatProvider(this IAssetKey key, IFormatProvider formatProvider)
         {
-            if (key is ILocalizationKeyFormatProviderAssignable casted) return FormatProvider(casted, formatProvider);
+            if (key is ILocalizationKeyFormatProviderAssignable casted) return casted.FormatProvider(formatProvider);
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyFormatProviderAssignable)}.");
         }
     }

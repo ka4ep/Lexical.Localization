@@ -20,7 +20,7 @@ namespace Lexical.Localization
         /// 
         /// Adds <see cref="ILocalizationKeyCultureAssigned"/> link.
         /// </summary>
-        /// <param name="subkey">Name for new sub key.</param>
+        /// <param name="culture">Name for new sub key.</param>
         /// <returns>new key</returns>
         ILocalizationKeyCultureAssigned Culture(CultureInfo culture);
 
@@ -46,6 +46,8 @@ namespace Lexical.Localization
         CultureInfo Culture { get; }
     }
 
+    /// <summary>
+    /// </summary>
     public static partial class LocalizationKeyExtensions
     {
         /// <summary>

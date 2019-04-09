@@ -33,7 +33,7 @@ namespace Lexical.Localization
 
         public virtual ICulturePolicy CulturePolicy { get => culturePolicy; set { throw new InvalidOperationException(); } }
         public virtual IAsset Asset { get => localizationAsset; set { throw new InvalidOperationException(); } }
-        public virtual ILocalizationResolver Resolver { get => resolver; set { throw new InvalidOperationException(); } }
+        public new virtual ILocalizationResolver Resolver { get => resolver; set { throw new InvalidOperationException(); } }
 
         public static StringLocalizerRoot CreateDefault() => new StringLocalizerRoot(new AssetComposition(), new CulturePolicy());
 
