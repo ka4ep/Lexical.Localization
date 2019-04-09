@@ -40,16 +40,16 @@ namespace Lexical.Localization
         /// (optional) Formatters to apply to the formulation string.
         /// Some asset files may enforce their own rules.
         /// 
-        /// The formatter is requested for following interfaces (Depends on <see cref="ILocalizationStringResolver"/> implementation.)
+        /// The formatter is requested for following interfaces (Depends on <see cref="ILocalizationResolver"/> implementation.)
         /// <list type="bullet">
         /// <item><see cref="ILocalizationArgumentFormatter"/></item>
         /// <item><see cref="ICustomFormatter"/></item>
-        /// <item><see cref="IPluralityFunctionMap"/></item>
+        /// <item><see cref="IPluralityFunctionProvider"/></item>
         /// <item><see cref="IPluralityFunction"/></item>
         /// </list>
         /// 
         /// </summary>
-        IFormatProvider FormatterProvider { get; }
+        IFormatProvider FormatProvider { get; }
     }
 
     /// <summary>

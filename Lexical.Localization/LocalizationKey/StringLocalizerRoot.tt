@@ -36,13 +36,13 @@ namespace Lexical.Localization
     ///     <see cref="IStringLocalizer"/>
     ///     <see cref="IStringLocalizerFactory"/>
     ///     <see cref="ILocalizationKey"/>
-    ///     <see cref="ILocalizationRoot"/>
+    ///     <see cref="IAssetRoot"/>
     /// </summary>
     [Serializable]
     [DebuggerDisplay("{DebugPrint()}")]
     public partial class StringLocalizerRoot :
         StringLocalizerKey,
-        IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned,
+        IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned, ILocalizationKeyResolverAssigned,
         IStringLocalizer, IStringLocalizerFactory
     {
 <#= srcCode #>

@@ -146,7 +146,7 @@ namespace Lexical.Localization
         /// <summary>Mask for argument status</summary>
         FormulationMask = 0xffUL << Shift.Formulation,
 
-        //// Custom0 - ILocalizationFormatter implementation specific status flags. Can be used for any purpose.
+        //// Custom0 - ILocalizationResolver implementation specific status flags. Can be used for any purpose by the resolver.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         Custom0Ok = 0x00UL << Shift.Custom0,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
@@ -162,7 +162,7 @@ namespace Lexical.Localization
         /// <summary>Mask for argument status</summary>
         Custom0Mask = 0xffUL << Shift.Custom0,
 
-        //// Custom0 - ILocalizationFormatter implementation specific status flags. Can be used for any purpose.
+        //// Custom0 - ILocalizationResolver implementation specific status flags. Can be used for any purpose by the resolver.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         Custom1Ok = 0x00UL << Shift.Custom1,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
@@ -185,6 +185,13 @@ namespace Lexical.Localization
     public struct LocalizationString
     {
         /// <summary>
+        /// Return string <see cref="Value"/>.
+        /// </summary>
+        /// <param name="localizationString"></param>
+        public static implicit operator string(LocalizationString localizationString)
+            => localizationString.Value;
+
+        /// <summary>
         /// Status code
         /// </summary>
         public LocalizationStatus Status;
@@ -206,7 +213,7 @@ namespace Lexical.Localization
         /// <summary>
         /// The object that formatted the result, or null if unavailable.
         /// </summary>
-        public ILocalizationStringResolver Formatter;
+        public ILocalizationResolver Formatter;
 
         /// <summary>
         /// Severity for the step that resolves <see cref="IAssetKey"/> into formulation string.
@@ -269,9 +276,9 @@ namespace Lexical.Localization
         public int FormulationSeverity => (int)((ulong)Status >> Shift.FormulationSeverity) & 3;
 
         /// <summary>
-        /// Severity for <see cref="ILocalizationStringResolver"/> implementation specific "Custom0" status.
+        /// Severity for <see cref="ILocalizationResolver"/> implementation specific "Custom0" status.
         /// 
-        /// "Custom0" is a status code that is specific to the <see cref="ILocalizationStringResolver"/> implementation.
+        /// "Custom0" is a status code that is specific to the <see cref="ILocalizationResolver"/> implementation.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
@@ -283,9 +290,9 @@ namespace Lexical.Localization
         public int Custom0Severity => (int)((ulong)Status >> Shift.Custom0Severity) & 3;
 
         /// <summary>
-        /// Severity for <see cref="ILocalizationStringResolver"/> implementation specific "Custom1" status.
+        /// Severity for <see cref="ILocalizationResolver"/> implementation specific "Custom1" status.
         /// 
-        /// "Custom1" is a status code that is specific to the <see cref="ILocalizationStringResolver"/> implementation.
+        /// "Custom1" is a status code that is specific to the <see cref="ILocalizationResolver"/> implementation.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
@@ -363,7 +370,7 @@ namespace Lexical.Localization
         /// <param name="value"></param>
         /// <param name="status"></param>
         /// <param name="formatter"></param>
-        public LocalizationString(IAssetKey key, string value, LocalizationStatus status, ILocalizationStringResolver formatter)
+        public LocalizationString(IAssetKey key, string value, LocalizationStatus status, ILocalizationResolver formatter)
         {
             Key = key;
             Value = value;
@@ -494,30 +501,40 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Print information about the formatting result.
+        /// Return Value or ""
         /// </summary>
         /// <returns></returns>
         public override string ToString()
+            => Value ?? "";
+
+        /// <summary>
+        /// Print debug information about the formatting result.
+        /// </summary>
+        /// <returns></returns>
+        public string DebugInfo
         {
-            StringBuilder sb = new StringBuilder();
-
-            // Append key
-            ParameterParser.Instance.PrintKey(Key, sb);
-
-            // Append result
-            if (Value != null)
+            get
             {
-                sb.Append(" \"");
-                sb.Append(Value);
-                sb.Append("\"");
+                StringBuilder sb = new StringBuilder();
+
+                // Append key
+                ParameterParser.Instance.PrintKey(Key, sb);
+
+                // Append result
+                if (Value != null)
+                {
+                    sb.Append(" \"");
+                    sb.Append(Value);
+                    sb.Append("\"");
+                }
+
+                // Append status
+                sb.Append(" (");
+                AppendFlags(Status, sb);
+                sb.Append(")");
+
+                return sb.ToString();
             }
-
-            // Append status
-            sb.Append(" (");
-            AppendFlags(Status, sb);
-            sb.Append(")");
-
-            return sb.ToString();
         }
     }
 
@@ -533,8 +550,8 @@ namespace Lexical.Localization
         internal const int Argument = 24;
         internal const int Formulation = 32;
         internal const int Reserved = 40;  // Reserved for future use
-        internal const int Custom0 = 48;    // ILocalizationFormatter implemtation can use for any custom purpose.
-        internal const int Custom1 = 56;    // ILocalizationFormatter implemtation can use for any custom purpose.
+        internal const int Custom0 = 48;    // ILocalizationResolver implemtation can use for any custom purpose.
+        internal const int Custom1 = 56;    // ILocalizationResolver implemtation can use for any custom purpose.
 
         // bit shifts for severity bits (2bits) of each category.
         internal const int ResolveSeverity = Resolve + 6;

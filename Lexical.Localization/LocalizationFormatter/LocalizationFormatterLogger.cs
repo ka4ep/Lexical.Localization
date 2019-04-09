@@ -9,7 +9,7 @@ using System.IO;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Extension methods for adding loggers to <see cref="ILocalizationStringResolver"/>s.
+    /// Extension methods for adding loggers to <see cref="ILocalizationResolver"/>s.
     /// </summary>
     public static partial class LocalizationFormatterLoggerExtensions_
     {
@@ -19,7 +19,7 @@ namespace Lexical.Localization
         /// <param name="formatter"></param>
         /// <param name="observer"></param>
         /// <returns>disposable subscription handle, or null if <paramref name="formatter"/> cannot be observed</returns>
-        public static IDisposable TryAddObserver(this ILocalizationStringResolver formatter, IObserver<LocalizationString> observer)
+        public static IDisposable TryAddObserver(this ILocalizationResolver formatter, IObserver<LocalizationString> observer)
         {
             if (formatter == null) throw new ArgumentNullException(nameof(formatter));
             if (observer == null) throw new ArgumentNullException(nameof(observer));
@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <param name="logWarning"></param>
         /// <param name="logError"></param>
         /// <returns>disposable subscription handle, or null if <paramref name="formatter"/> cannot be observed</returns>
-        public static IDisposable TryAddLogger(this ILocalizationStringResolver formatter, TextWriter logger, bool logOk, bool logWarning, bool logError)
+        public static IDisposable TryAddLogger(this ILocalizationResolver formatter, TextWriter logger, bool logOk, bool logWarning, bool logError)
         {
             if (formatter == null) throw new ArgumentNullException(nameof(formatter));
             if (logger == null) throw new ArgumentNullException(nameof(logger));
@@ -100,7 +100,7 @@ namespace Lexical.Localization
             int severity = value.Severity;
             // Write status
             if ((logOk && severity == 0) || (logWarning && severity == 1) || (logError && severity>=2) )
-                _logger.Write(value);
+                _logger.Write(value.DebugInfo);
         }
     }
 }
@@ -110,7 +110,7 @@ namespace Lexical.Localization
     using Microsoft.Extensions.Logging;
 
     /// <summary>
-    /// Extension methods for adding loggers to <see cref="ILocalizationStringResolver"/>s.
+    /// Extension methods for adding loggers to <see cref="ILocalizationResolver"/>s.
     /// </summary>
     public static partial class LocalizationFormatterLoggerExtensions___
     {
@@ -120,7 +120,7 @@ namespace Lexical.Localization
         /// <param name="formatter"></param>
         /// <param name="logger"></param>
         /// <returns>disposable subscription handle, or null if <paramref name="formatter"/> cannot be observed</returns>
-        public static IDisposable TryAddLogger(this ILocalizationStringResolver formatter, ILogger logger)
+        public static IDisposable TryAddLogger(this ILocalizationResolver formatter, ILogger logger)
         {
             if (formatter == null) throw new ArgumentNullException(nameof(formatter));
             if (logger == null) throw new ArgumentNullException(nameof(logger));
@@ -172,9 +172,9 @@ namespace Lexical.Localization
             // Get severity
             int severity = value.Severity;
             // Write status
-            if (_logger.IsEnabled(LogLevel.Trace) && severity == 0) { _logger.LogError(value.ToString()); return; }
-            if (_logger.IsEnabled(LogLevel.Warning) && severity == 1) { _logger.LogWarning(value.ToString()); return; }
-            if (_logger.IsEnabled(LogLevel.Error) && severity >= 2) { _logger.LogError(value.ToString()); return; }
+            if (_logger.IsEnabled(LogLevel.Trace) && severity == 0) { _logger.LogError(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Warning) && severity == 1) { _logger.LogWarning(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Error) && severity >= 2) { _logger.LogError(value.DebugInfo); return; }
         }
     }
 }

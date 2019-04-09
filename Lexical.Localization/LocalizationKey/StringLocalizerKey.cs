@@ -31,7 +31,7 @@ namespace Lexical.Localization
     [DebuggerDisplay("{DebugPrint()}")]
     [Serializable]
     public class StringLocalizerKey :  
-        ILocalizationKey, IAssetKeyAssignable, ILocalizationKeyInlineAssignable, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyParameterAssignable, ILocalizationKeyPluralityAssignable, ISerializable, IDynamicMetaObjectProvider, IAssetKeyDefaultHashCode,
+        ILocalizationKey, IAssetKeyAssignable, ILocalizationKeyInlineAssignable, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, ILocalizationKeyResolverAssignable, ILocalizationKeyFormatProviderAssignable, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyParameterAssignable, ILocalizationKeyPluralityAssignable, ISerializable, IDynamicMetaObjectProvider, IAssetKeyDefaultHashCode,
         IStringLocalizer, IStringLocalizerFactory
     {
         /// <summary>
@@ -1068,6 +1068,118 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Append Resolver key part.
+        /// </summary>
+        /// <param name="resolver"></param>
+        /// <returns></returns>
+        ILocalizationKeyResolverAssigned ILocalizationKeyResolverAssignable.Resolver(ILocalizationResolver resolver) => new _Resolver(this, resolver);
+
+        /// <summary>
+        /// Append Resolver key part.
+        /// </summary>
+        /// <param name="resolver"></param>
+        /// <returns></returns>
+        public _Resolver Resolver(ILocalizationResolver resolver) => new _Resolver(this, resolver);
+
+        /// <summary>
+        /// Resolver key part.
+        /// </summary>
+        [Serializable]
+        public class _Resolver : StringLocalizerKey, ILocalizationKeyResolverAssigned
+        {
+            /// <summary>
+            /// The assigned resolver, or null.
+            /// </summary>
+            protected ILocalizationResolver resolver;
+
+            ILocalizationResolver ILocalizationKeyResolverAssigned.Resolver => resolver;
+
+            /// <summary>
+            /// Create Resolver key part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="resolver"></param>
+            public _Resolver(IAssetKey prevKey, ILocalizationResolver resolver) : base(prevKey, "") { this.resolver = resolver; }
+
+            /// <summary>
+            /// Deserialize Resolver key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
+            public _Resolver(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+                this.resolver = info.GetValue(nameof(Resolver), typeof(ILocalizationResolver)) as ILocalizationResolver;
+            }
+
+            /// <summary>
+            /// Serialize resolver key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
+            public override void GetObjectData(SerializationInfo info, StreamingContext context)
+            {
+                base.GetObjectData(info, context);
+                info.AddValue(nameof(Resolver), resolver);
+            }
+        }
+
+        /// <summary>
+        /// Append FormatProvider key part.
+        /// </summary>
+        /// <param name="formatProvider"></param>
+        /// <returns></returns>
+        ILocalizationKeyFormatProviderAssigned ILocalizationKeyFormatProviderAssignable.FormatProvider(IFormatProvider formatProvider) => new _FormatProvider(this, formatProvider);
+
+        /// <summary>
+        /// Append FormatProvider key part.
+        /// </summary>
+        /// <param name="formatProvider"></param>
+        /// <returns></returns>
+        public _FormatProvider FormatProvider(IFormatProvider formatProvider) => new _FormatProvider(this, formatProvider);
+
+        /// <summary>
+        /// FormatProvider key part.
+        /// </summary>
+        [Serializable]
+        public class _FormatProvider : StringLocalizerKey, ILocalizationKeyFormatProviderAssigned
+        {
+            /// <summary>
+            /// The assigned formatProvider, or null.
+            /// </summary>
+            protected IFormatProvider formatProvider;
+
+            IFormatProvider ILocalizationKeyFormatProviderAssigned.FormatProvider => formatProvider;
+
+            /// <summary>
+            /// Create FormatProvider key part.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="formatProvider"></param>
+            public _FormatProvider(IAssetKey prevKey, IFormatProvider formatProvider) : base(prevKey, "") { this.formatProvider = formatProvider; }
+
+            /// <summary>
+            /// Deserialize FormatProvider key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
+            public _FormatProvider(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+                this.formatProvider = info.GetValue(nameof(FormatProvider), typeof(IFormatProvider)) as IFormatProvider;
+            }
+
+            /// <summary>
+            /// Serialize formatProvider key part.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
+            public override void GetObjectData(SerializationInfo info, StreamingContext context)
+            {
+                base.GetObjectData(info, context);
+                info.AddValue(nameof(FormatProvider), formatProvider);
+            }
+        }
+
+        /// <summary>
         /// Serialize
         /// </summary>
         /// <param name="info"></param>
@@ -1086,7 +1198,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-            => this.ResolveFormulatedString() ?? this.DebugPrint();
+            => this.ResolveFormulatedString().Value ?? this.DebugPrint();
 
         /// <summary>
         /// Cached dynamic object.
@@ -1229,11 +1341,11 @@ namespace Lexical.Localization
         { 
             get {
                 ILocalizationKey key = this.Key(name);
-                string printedString = key.ResolveFormulatedString();
-                if (printedString == null)
+                LocalizationString printedString = key.ResolveFormulatedString();
+                if (printedString.Value == null)
                     return new LocalizedString(name, key.BuildName(), true);
                 else
-                    return new LocalizedString(name, printedString);
+                    return new LocalizedString(name, printedString.Value);
                 }
         }
 
@@ -1247,11 +1359,11 @@ namespace Lexical.Localization
         { 
             get {
                 ILocalizationKey key = this.Key(name).Format(arguments);
-                string printedString = key.ResolveFormulatedString();
-                if (printedString == null)
+                LocalizationString printedString = key.ResolveFormulatedString();
+                if (printedString.Value == null)
                     return new LocalizedString(name, key.BuildName(), true);
                 else
-                    return new LocalizedString(name, printedString);
+                    return new LocalizedString(name, printedString.Value);
                 }
         }
 

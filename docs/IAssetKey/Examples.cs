@@ -113,7 +113,7 @@ namespace docs
                 #endregion Snippet_6b
                 { 
                 #region Snippet_6c
-                    // Resolve to localized string "Error (Code=0x{0:X8})", but does not formulate.
+                    // Resolve to localized string "Error (Code=0x{0:X8})", but does not append arguments
                     string str = key_formulated.ResolveString();
                 #endregion Snippet_6c
                 }

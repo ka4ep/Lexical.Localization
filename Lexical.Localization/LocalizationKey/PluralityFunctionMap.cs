@@ -14,11 +14,11 @@ namespace Lexical.Localization
     /// 
     /// The key is ISO 639-1 (two character) or ISO 639-2 (three character) language code.
     /// </summary>
-    public class PluralizationRulesSetMap : Dictionary<KeyValuePair<string, string>, IPluralityFunction>, IPluralityFunctionMap, ICloneable
+    public class PluralityFunctionMap : Dictionary<KeyValuePair<string, string>, IPluralityFunction>, IPluralityFunctionProvider, ICloneable, IFormatProvider
     {
         /// <summary>
         /// </summary>
-        public PluralizationRulesSetMap() : base(KeyValuePairEqualityComparer<string, string>.Default)
+        public PluralityFunctionMap() : base(KeyValuePairEqualityComparer<string, string>.Default)
         {
         }
 
@@ -41,7 +41,7 @@ namespace Lexical.Localization
         /// <param name="languageCode"></param>
         /// <param name="function"></param>
         /// <returns></returns>
-        public PluralizationRulesSetMap Add(string languageCode, IPluralityFunction function)
+        public PluralityFunctionMap Add(string languageCode, IPluralityFunction function)
         {
             this[new KeyValuePair<string, string>(languageCode, function.Name)] = function;
             return this;
@@ -63,10 +63,18 @@ namespace Lexical.Localization
         /// <returns></returns>
         public object Clone()
         {
-            PluralizationRulesSetMap result = new PluralizationRulesSetMap();
+            PluralityFunctionMap result = new PluralityFunctionMap();
             foreach (var line in this)
                 result.Add(line.Key, line.Value);
             return result;
         }
+
+        /// <summary>
+        /// Get provider for <see cref="IFormatProvider"/>.
+        /// </summary>
+        /// <param name="formatType"></param>
+        /// <returns></returns>
+        public object GetFormat(Type formatType)
+            => formatType == typeof(IPluralityFunctionProvider) ? this : null;
     }
 }

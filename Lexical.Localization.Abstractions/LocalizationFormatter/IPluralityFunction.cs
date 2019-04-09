@@ -29,7 +29,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Map that contains plurality rules.
     /// </summary>
-    public interface IPluralityFunctionMap : IEnumerable<(string, IPluralityFunction)>
+    public interface IPluralityFunctionProvider : IEnumerable<(string, IPluralityFunction)>
     {
         /// <summary>
         /// Try get plurality function.

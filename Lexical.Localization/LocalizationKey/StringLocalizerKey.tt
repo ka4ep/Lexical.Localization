@@ -113,11 +113,11 @@ namespace Lexical.Localization
         { 
             get {
                 ILocalizationKey key = this.Key(name);
-                string printedString = key.ResolveFormulatedString();
-                if (printedString == null)
+                LocalizationString printedString = key.ResolveFormulatedString();
+                if (printedString.Value == null)
                     return new LocalizedString(name, key.BuildName(), true);
                 else
-                    return new LocalizedString(name, printedString);
+                    return new LocalizedString(name, printedString.Value);
                 }
         }
 
@@ -131,11 +131,11 @@ namespace Lexical.Localization
         { 
             get {
                 ILocalizationKey key = this.Key(name).Format(arguments);
-                string printedString = key.ResolveFormulatedString();
-                if (printedString == null)
+                LocalizationString printedString = key.ResolveFormulatedString();
+                if (printedString.Value == null)
                     return new LocalizedString(name, key.BuildName(), true);
                 else
-                    return new LocalizedString(name, printedString);
+                    return new LocalizedString(name, printedString.Value);
                 }
         }
 

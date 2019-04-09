@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Resolver that resolves <see cref="IAssetKey"/> into <see cref="LocalizationString"/>.
     /// </summary>
-    public interface ILocalizationStringResolver
+    public interface ILocalizationResolver
     {
         /// <summary>
         /// Resolve <paramref name="key"/> into <see cref="ILocalizationFormulationString"/>, but don't apply arguments.
@@ -33,8 +33,10 @@ namespace Lexical.Localization
 
     /// <summary>
     /// A formatter where result observer, typically a logger, can be placed into.
+    /// 
+    /// TODO Put into key.
     /// </summary>
-    public interface ILocalizationStringResolverObservable : ILocalizationStringResolver, IObservable<LocalizationString>
+    public interface ILocalizationStringResolverObservable : ILocalizationResolver, IObservable<LocalizationString>
     {
     }
 

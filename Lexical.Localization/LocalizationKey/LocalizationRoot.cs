@@ -14,24 +14,28 @@ namespace Lexical.Localization
     /// </summary>
     [Serializable]
     public partial class LocalizationRoot : 
-        LocalizationKey, IAssetRoot, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned
+        LocalizationKey, IAssetRoot, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned, ILocalizationKeyResolverAssigned
     {
         #region Code
         protected ICulturePolicy culturePolicy;
         protected IAsset localizationAsset;
+        protected ILocalizationResolver resolver;
 
         public virtual ICulturePolicy CulturePolicy { get => culturePolicy; set { throw new InvalidOperationException(); } }
         public virtual IAsset Asset { get => localizationAsset; set { throw new InvalidOperationException(); } }
+        public virtual ILocalizationResolver Resolver { get => resolver; set { throw new InvalidOperationException(); } }
 
         public static LocalizationRoot CreateDefault() => new LocalizationRoot(new AssetComposition(), new CulturePolicy());
 
-        public LocalizationRoot() : this("", null, null) { }
-        public LocalizationRoot(IAsset asset) : this("", asset, null) { }
-        public LocalizationRoot(IAsset asset, ICulturePolicy culturePolicy) : this("", asset, culturePolicy) { }
-        public LocalizationRoot(string name, IAsset asset, ICulturePolicy culturePolicy) : base(null, name)
+        public LocalizationRoot() : this("", null, null, LocalizationResolver.Instance) { }
+        public LocalizationRoot(IAsset asset) : this("", asset, null, LocalizationResolver.Instance) { }
+        public LocalizationRoot(IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver = default) : this("", asset, culturePolicy, resolver ?? LocalizationResolver.Instance) { }
+
+        protected LocalizationRoot(string name, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver) : base(null, name)
         {
             this.culturePolicy = culturePolicy;
             this.localizationAsset = asset;
+            this.resolver = resolver ?? LocalizationResolver.Instance;
         }
 
         /// <summary>
@@ -42,9 +46,10 @@ namespace Lexical.Localization
         {
             public override ICulturePolicy CulturePolicy { get => culturePolicy; set => SetCulturePolicy(culturePolicy); }
             public override IAsset Asset { get => localizationAsset; set { SetAsset(value); } }
+            public override ILocalizationResolver Resolver { get => resolver; set { SetResolver(value); } }
             public Mutable() : base(null, null) { }
             public Mutable(IAsset languageStrings) : base(languageStrings, null) { }
-            public Mutable(IAsset languageStrings, ICulturePolicy culturePolicy) : base(languageStrings, culturePolicy) { }
+            public Mutable(IAsset languageStrings, ICulturePolicy culturePolicy, ILocalizationResolver resolver) : base(languageStrings, culturePolicy, resolver) { }
             public Mutable(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
             ILocalizationKeyCulturePolicyAssigned ILocalizationKeyCulturePolicyAssignable.CulturePolicy(ICulturePolicy culturePolicy)
@@ -59,6 +64,12 @@ namespace Lexical.Localization
             public IAssetKeyAssetAssigned SetAsset(IAsset languageStrings)
             {
                 this.localizationAsset = languageStrings;
+                return this;
+            }
+
+            public ILocalizationKeyResolverAssigned SetResolver(ILocalizationResolver resolver)
+            {
+                this.resolver = resolver;
                 return this;
             }
         }
