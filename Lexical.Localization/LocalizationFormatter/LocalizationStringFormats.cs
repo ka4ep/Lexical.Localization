@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Collection of localization formats.
     /// </summary>
-    public class LocalizationStringFormats : ConcurrentDictionary<string, ILocalizationStringFormat>
+    public class LocalizationStringFormats : ConcurrentDictionary<string, ILocalizationStringFormat>, ILocalizationStringFormats
     {
         private static LocalizationStringFormats instance;
 
@@ -55,57 +55,10 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Extenions for <see cref="LocalizationStringFormats"/>.
+    /// Extensions for <see cref="LocalizationStringFormats"/>.
     /// </summary>
-    public static partial class LocalizationStringFormatMapExtensions_
+    public static partial class LocalizationStringFormatsExtensions_
     {
-        /// <summary>
-        /// Parse formulation string into an <see cref="ILocalizationFormulationString"/>.
-        /// 
-        /// If parse fails this method should return an instance where state is <see cref="LocalizationStatus.FormulationErrorMalformed"/>.
-        /// If parse succeeds, the returned instance should have state <see cref="LocalizationStatus.FormulationOk"/> or some other formulation state.
-        /// If <paramref name="formulationString"/> is null then stat is <see cref="LocalizationStatus.FormulationFailedNull"/>.
-        /// </summary>
-        /// <param name="formats"></param>
-        /// <param name="formatName"></param>
-        /// <param name="formulationString"></param>
-        /// <returns>formulation string</returns>
-        /// <exception cref="ArgumentException">If <paramref name="formatName"/> doesn't implement <see cref="ILocalizationStringFormatParser"/></exception>
-        public static ILocalizationFormulationString Parse(this IReadOnlyDictionary<string, ILocalizationStringFormat> formats, string formatName, string formulationString)
-        {
-            ILocalizationStringFormat format;
-            if (!formats.TryGetValue(formatName, out format))
-                throw new ArgumentException(formatName);
-
-            if (formats is ILocalizationStringFormatParser parser) return parser.Parse(formulationString);
-            throw new ArgumentException($"{formats} doesn't implement {nameof(ILocalizationStringFormatParser)}.");
-        }
-
-        /// <summary>
-        /// Add format to map.
-        /// </summary>
-        /// <param name="formats"></param>
-        /// <param name="format"></param>
-        /// <returns><paramref name="formats"/></returns>
-        public static IDictionary<string, ILocalizationStringFormat> Add(this IDictionary<string, ILocalizationStringFormat> formats, ILocalizationStringFormat format)
-        {
-            formats[format.Name] = format;
-            return formats;
-        }
-
-        /// <summary>
-        /// Add format to map.
-        /// </summary>
-        /// <param name="formats"></param>
-        /// <param name="formatsToAdd"></param>
-        /// <returns><paramref name="formats"/></returns>
-        public static IDictionary<string, ILocalizationStringFormat> AddRange(this IDictionary<string, ILocalizationStringFormat> formats, IEnumerable<ILocalizationStringFormat> formatsToAdd)
-        {
-            foreach(var format in formatsToAdd)
-                formats[format.Name] = format;
-            return formats;
-        }
-
         /// <summary>
         /// Create clone 
         /// </summary>
