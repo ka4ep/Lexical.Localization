@@ -6,14 +6,13 @@
 using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using System.Threading;
 
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Lexical string format similiar to C# string format, with one difference; arguments can be prefixed with function name.
+    /// Lexical string format similiar to C# string format, with one difference, function descriptions can be added to the argument description.
     /// 
     ///     "Text {[function:]0:[,alignment][:format]} text".
     /// 
@@ -27,7 +26,7 @@ namespace Lexical.Localization
     ///  3. On the right-side of argument are format specifiers:
     ///     "Hex value {0:X4}."
     /// 
-    ///  4. On the left-side of argument is function name:
+    ///  4. On the left-side of argument a function can be placed. Function cannot start with a number, cannot contain unescaped colon ':'.
     ///     "There are {optional:0} cats."
     /// 
     /// <see href="https://docs.microsoft.com/en-us/dotnet/api/system.string.format?view=netframework-4.7.2"/>
@@ -138,35 +137,64 @@ namespace Lexical.Localization
             /// <summary>
             /// Parse string
             /// </summary>
-            protected  void Build()
+            protected void Build()
             {
-                string str = Text;
-
-                LocalizationStatus status = LocalizationStatus.FormulationOk;
                 StructList8<ILocalizationFormulationStringPart> parts = new StructList8<ILocalizationFormulationStringPart>();
 
-                int state = 0;
-                int braceLevel = 0;
-                int startIx = 0;
-                // reader state: 0-text, 1-argumentStart, 2-function, 3-index, 4-alignment, 5-format, 6-
-                Parser parser = new Parser();
+                // Create parser
+                Parser parser = new Parser(this);
+
+                // Read parts
+                while (parser.HasMore)
+                {
+                    ILocalizationFormulationStringPart part = parser.ReadNext();
+                    if (part != null) parts.Add(part);
+                }
 
                 // Create parts array
                 var partArray = new ILocalizationFormulationStringPart[parts.Count];
                 parts.CopyTo(partArray, 0);
+                // Set PartsArrayIndex
+                for (int i = 0; i < partArray.Length; i++)
+                {
+                    if (partArray[i] is TextPart textPart) textPart.PartsIndex = i;
+                    else if (partArray[i] is Argument argPart) argPart.PartsIndex = i;
+                }
 
                 // Create arguments array
                 int argumentCount = 0;
                 for (int i = 0; i < parts.Count; i++) if (parts[i] is ILocalizationFormulationStringArgument) argumentCount++;
                 var argumentsArray = new ILocalizationFormulationStringArgument[argumentCount];
                 int j = 0;
-                for (int i = 0; i < parts.Count; i++) if (parts[i] is ILocalizationFormulationStringArgument argPart) argumentsArray[j++] = argPart;
+                for (int i = 0; i < parts.Count; i++) if (parts[i] is Argument argPart) argumentsArray[j++] = argPart;
+                Array.Sort(argumentsArray, ArgumentComparer.Instance);
+                for (int i = 0; i < argumentsArray.Length; i++) ((Argument)argumentsArray[i]).ArgumentsIndex = i;
 
                 // Write status.
                 Thread.MemoryBarrier();
                 this.arguments = argumentsArray;
                 this.parts = partArray;
-                this.status = status;
+                this.status = parser.status;
+            }
+
+            /// <summary>
+            /// Comparer that compares first by argument index, then by occurance index.
+            /// </summary>
+            class ArgumentComparer : IComparer<ILocalizationFormulationStringArgument>
+            {
+                static IComparer<ILocalizationFormulationStringArgument> instance = new ArgumentComparer();
+                public static IComparer<ILocalizationFormulationStringArgument> Instance => instance;
+
+                public int Compare(ILocalizationFormulationStringArgument x, ILocalizationFormulationStringArgument y)
+                {
+                    int c = x.ArgumentIndex - y.ArgumentIndex;
+                    if (c < 0) return -1;
+                    if (c > 0) return 1;
+                    c = x.OccuranceIndex - y.OccuranceIndex;
+                    if (c < 0) return -1;
+                    if (c > 0) return 1;
+                    return c;
+                }
             }
 
             /// <summary>
@@ -282,6 +310,11 @@ namespace Lexical.Localization
             public string Text => FormulationString.Text.Substring(Index, Length);
 
             /// <summary>
+            /// Index in Parts array.
+            /// </summary>
+            public int PartsIndex { get; internal set; }
+
+            /// <summary>
             /// Create text part.
             /// </summary>
             /// <param name="formulationString"></param>
@@ -346,11 +379,6 @@ namespace Lexical.Localization
             public int Length { get; internal set; }
 
             /// <summary>
-            /// Associated format provider for this particular argument.
-            /// </summary>
-            public IFormatProvider FormatProvider => throw new NotImplementedException();
-
-            /// <summary>
             /// (Optional) The function name that is passed to <see cref="ILocalizationArgumentFormatter"/>.
             /// E.g. "plural", "optional", "range", "ordinal".
             /// </summary>
@@ -371,6 +399,16 @@ namespace Lexical.Localization
             /// Get default value
             /// </summary>
             public string DefaultValue => null;
+
+            /// <summary>
+            /// Index in Arguments array.
+            /// </summary>
+            public int ArgumentsIndex { get; internal set; }
+
+            /// <summary>
+            /// Index in parts array.
+            /// </summary>
+            public int PartsIndex { get; internal set; }
 
             /// <summary>
             /// Create argument info.
@@ -403,11 +441,377 @@ namespace Lexical.Localization
                 => FormulationString.Text.Substring(Index, Length);
         }
 
+        enum ParserState { Text, ArgumentStart, Function, Index, Alignment, Format, ArgumentEnd }
+
         /// <summary>
         /// Parser that breaks formulation string into parts
         /// </summary>
-        public struct Parser 
+        struct Parser
         {
+            /// <summary>
+            /// Formulation string
+            /// </summary>
+            String str;
+
+            /// <summary>
+            /// Reader state
+            /// </summary>
+            ParserState state;
+
+            /// <summary>
+            /// Is previous character escape
+            /// </summary>
+            bool escaped;
+
+            /// <summary>
+            /// Argument occurance index
+            /// </summary>
+            int occuranceIx;
+
+            /// <summary>
+            /// Part's start index
+            /// </summary>
+            int partIx;
+
+            /// <summary>
+            /// Function text indices
+            /// </summary>
+            int functionStartIx, functionEndIx;
+
+            /// <summary>
+            /// Argument index indices
+            /// </summary>
+            int indexStartIx, indexEndIx;
+
+            /// <summary>
+            /// Alignment indices
+            /// </summary>
+            int alignmentStartIx, alignmentEndIx;
+
+            /// <summary>
+            /// Format text indices
+            /// </summary>
+            int formatStartIx, formatEndIx;
+
+            /// <summary>
+            /// Status
+            /// </summary>
+            public LocalizationStatus status;
+
+            /// <summary>
+            /// Character index
+            /// </summary>
+            int i;
+
+            /// <summary>
+            /// Formulation string
+            /// </summary>
+            ILocalizationFormulationString formulationString;
+
+            /// <summary>
+            /// Initialize parser
+            /// </summary>
+            /// <param name="formulationString"></param>
+            public Parser(ILocalizationFormulationString formulationString)
+            {
+                this.formulationString = formulationString;
+                str = formulationString.Text;
+                state = ParserState.Text;
+                escaped = false;
+                partIx = 0;
+                occuranceIx = -1;
+                functionStartIx = -1; functionEndIx = -1;
+                indexStartIx = -1; indexEndIx = -1;
+                alignmentStartIx = -1; alignmentEndIx = -1;
+                formatStartIx = -1; formatEndIx = -1;
+                i = -1;
+                status = LocalizationStatus.FormulationOk;
+            }
+
+            /// <summary>
+            /// Has more characters
+            /// </summary>
+            public bool HasMore => i < str.Length;
+
+            /// <summary>
+            /// Complete collected part and reset state.
+            /// </summary>
+            /// <param name="endIx">end index</param>
+            /// <returns>new part or null</returns>
+            ILocalizationFormulationStringPart CompletePart(int endIx)
+            {
+                // Calculate character length
+                int length = endIx - partIx;
+                // No parts
+                if (length == 0) return null;
+                // Return text part
+                if (state == ParserState.Text)
+                {
+                    ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
+                    ResetPartState();
+                    return part;
+                }
+                // Argument ended too soon '{}' or '{function}', return as text part and mark error
+                if (state == ParserState.ArgumentStart || state == ParserState.Function)
+                {
+                    status = LocalizationStatus.FormulationErrorMalformed;
+                    ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
+                    ResetPartState();
+                    return part;
+                }
+                // Complete at argument index
+                if (state == ParserState.Index)
+                {
+                    indexEndIx = endIx;
+                    // Unfinished, did not get '}'
+                    status = LocalizationStatus.FormulationErrorMalformed;
+                }
+                // Complete at alignment
+                else if (state == ParserState.Alignment)
+                {
+                    alignmentEndIx = endIx;
+                    // Unfinished, did not get '}'
+                    status = LocalizationStatus.FormulationErrorMalformed;
+                } else if (state == ParserState.Format)
+                {
+                    formatEndIx = endIx;
+                    // Unfinished, did not get '}'
+                    status = LocalizationStatus.FormulationErrorMalformed;
+                }
+
+                // Error with argument index, return as text 
+                if (indexStartIx<0||indexEndIx<0||indexStartIx>=indexEndIx)
+                {
+                    ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
+                    status = LocalizationStatus.FormulationErrorMalformed;
+                    ResetPartState();
+                    return part;
+                }
+
+                // Parse argument index
+                int argumentIndex;
+                try
+                {
+                    string argumentIndexText = str.Substring(indexStartIx, indexEndIx-indexStartIx);
+                    argumentIndex = int.Parse(argumentIndexText, CultureInfo.InvariantCulture);
+                }
+                catch (Exception)
+                {
+                    // Parse failed, probably too large number
+                    ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
+                    status = LocalizationStatus.FormulationErrorMalformed;
+                    ResetPartState();
+                    return part;
+                }
+
+                // Function text
+                string function = functionStartIx >= 0 && functionEndIx >= 0 && functionStartIx < functionEndIx ? str.Substring(functionStartIx, functionEndIx - functionStartIx) : null;
+
+                // Format text
+                string format = formatStartIx >= 0 && formatEndIx >= 0 && formatStartIx < formatEndIx ? str.Substring(formatStartIx, formatEndIx - formatStartIx) : null;
+
+                // Alignment
+                int alignment = 0;
+                if (alignmentStartIx >= 0 && alignmentEndIx >= 0 && alignmentStartIx < alignmentEndIx)
+                {
+                    try
+                    {
+                        string alignmentText = str.Substring(alignmentStartIx, alignmentEndIx - alignmentStartIx);
+                        alignment = int.Parse(alignmentText, CultureInfo.InvariantCulture);
+                    }
+                    catch (Exception)
+                    {
+                        // Parse failed, probably too large number
+                        status = LocalizationStatus.FormulationErrorMalformed;
+                    }
+                }
+
+                // Create argument part
+                ILocalizationFormulationStringPart argument = new Argument(formulationString, partIx, length, ++occuranceIx, argumentIndex, function, format, alignment);
+                // Reset to 'Text' state
+                ResetPartState();
+                partIx = endIx;
+                // Return the constructed argument
+                return argument;
+            }
+
+            /// <summary>
+            /// Reset part state
+            /// </summary>
+            void ResetPartState()
+            {
+                partIx = i <= str.Length ? i : str.Length;
+                functionStartIx = -1; functionEndIx = -1;
+                indexStartIx = -1; indexEndIx = -1;
+                alignmentStartIx = -1; alignmentEndIx = -1;
+                formatStartIx = -1; formatEndIx = -1;
+                state = ParserState.Text;
+            }
+
+            /// <summary>
+            /// Read next character
+            /// </summary>
+            /// <returns>possible part</returns>
+            public ILocalizationFormulationStringPart ReadNext()
+            {
+                while (HasMore)
+                {
+                    // Move to next index
+                    i++;
+                    // Beyond end
+                    if (i >= str.Length) return CompletePart(str.Length);
+                    // End escape
+                    if (escaped) { escaped = false; continue; }
+                    // Read char
+                    char ch = str[i];
+                    // Begin escape
+                    if (ch == '\\') { escaped = true; continue; }
+
+                    // Open brace
+                    if (ch == '{')
+                    {
+                        // Start argument
+                        if (state == ParserState.Text)
+                        {
+                            // Complate previous part, and reset state
+                            ILocalizationFormulationStringPart part = CompletePart(i);
+                            // Start argument
+                            state = ParserState.ArgumentStart;
+                            // 
+                            return part;
+                        }
+                        else
+                        {
+                            // Already in argument formulation and got unexpected unescaped '{'
+                            status = LocalizationStatus.FormulationErrorMalformed;
+                            //
+                            continue;
+                        }
+                    }
+
+                    // Close brace
+                    if (ch == '}')
+                    {
+                        // End argument
+                        if (state != ParserState.Text)
+                        {
+                            // End argument
+                            state = ParserState.ArgumentEnd;
+                            // Complete previous part, and reset state
+                            ILocalizationFormulationStringPart part = CompletePart(i+1);
+                            //
+                            return part;
+                        }
+                        else
+                        {
+                            // In text state and got unexpected unescaped '}'
+                            //status = LocalizationStatus.FormulationErrorMalformed;
+                            // Go on
+                            continue;
+                        }
+                    }
+
+                    // Nothing further for text part
+                    if (state == ParserState.Text) continue;
+
+                    // At ArgumentStart, choose next state
+                    if (state == ParserState.ArgumentStart)
+                    {
+                        // index char
+                        if (ch >= '0' && ch <= '9')
+                        {
+                            if (indexStartIx < 0) indexStartIx = i;
+                            indexEndIx = i + 1;
+                            state = ParserState.Index;
+                        }
+                        else
+                        // function char
+                        {
+                            if (functionStartIx < 0) functionStartIx = i;
+                            functionEndIx = i + 1;
+                            state = ParserState.Function;
+                        }
+                        continue;
+                    }
+
+                    // At Function state
+                    if (state == ParserState.Function)
+                    {
+                        // Change to Index state
+                        if (ch == ':')
+                        {
+                            state = ParserState.Index;
+                        }
+                        else
+                        // Move indices
+                        {
+                            if (functionStartIx < 0) functionStartIx = i;
+                            functionEndIx = i + 1;
+                        }
+                        continue;
+                    }
+
+                    // At Index state
+                    if (state == ParserState.Index)
+                    {
+                        // Move indices
+                        if (ch >= '0' && ch <= '9')
+                        {
+                            if (indexStartIx < 0) indexStartIx = i;
+                            indexEndIx = i + 1;
+                            continue;
+                        }
+                        // Change to Alignment state
+                        if (ch == ',')
+                        {
+                            state = ParserState.Alignment;
+                            continue;
+                        }
+                        // Change to Format state
+                        if (ch == ':')
+                        {
+                            state = ParserState.Format;
+                            continue;
+                        }
+                        // Unexpected character
+                        status = LocalizationStatus.FormulationErrorMalformed;
+                        continue;
+                    }
+
+                    // At Alignment state
+                    if (state == ParserState.Alignment)
+                    {
+                        // Move indices
+                        if (ch >= '0' && ch <= '9')
+                        {
+                            if (alignmentStartIx < 0) alignmentStartIx = i;
+                            alignmentEndIx = i + 1;
+                            continue;
+                        }
+                        // Change to Format state
+                        if (ch == ':')
+                        {
+                            state = ParserState.Format;
+                            continue;
+                        }
+                        // Unexpected character
+                        status = LocalizationStatus.FormulationErrorMalformed;
+                        continue;
+                    }
+
+                    // At Format state
+                    if (state == ParserState.Format)
+                    {
+                        // Move indices
+                        if (formatStartIx < 0) formatStartIx = i;
+                        formatEndIx = i + 1;
+                        continue;
+                    }
+                }
+                return null;
+            }
+
         }
+
     }
 }

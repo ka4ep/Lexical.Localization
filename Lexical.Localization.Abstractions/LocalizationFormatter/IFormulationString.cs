@@ -37,7 +37,14 @@ namespace Lexical.Localization
         ILocalizationFormulationStringPart[] Parts { get; }
 
         /// <summary>
-        /// Arguments order of occurance in the formulation string.
+        /// Arguments ordered by argument index first, then occurance index.
+        /// 
+        /// If there are gaps in argument index, gaps are not included.
+        /// E.g. "Value={0}, Description={5}" returns argument {0} first then {5}.
+        /// 
+        /// If same argument occurs twice, then ordered by occurance index.
+        /// E.g. "Value={0,10}, x={0:X8}" returns first {0,10} then second {0:X8}.
+        /// 
         /// They are parsed from <see cref="Text"/> by an <see cref="ILocalizationStringFormatParser"/>.
         /// </summary>
         ILocalizationFormulationStringArgument[] Arguments { get; }
@@ -106,6 +113,11 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         string Text { get; }
+
+        /// <summary>
+        /// The index in the <see cref="ILocalizationFormulationString.Parts"/>.
+        /// </summary>
+        int PartsIndex { get; }
     }
 
     /// <summary>
@@ -119,9 +131,15 @@ namespace Lexical.Localization
         int OccuranceIndex { get; }
 
         /// <summary>
-        /// If argument is index based, the index of the argument, otherwise -1.
+        /// If format is argument based, then this is the argument index, otherwise -1.
+        /// Also index in <see cref="ILocalizationKeyFormatArgs.Args"/>.
         /// </summary>
         int ArgumentIndex { get; }
+
+        /// <summary>
+        /// The index in the <see cref="ILocalizationFormulationString.Arguments"/>.
+        /// </summary>
+        int ArgumentsIndex { get; }
 
         /// <summary>
         /// Argument name as string, or null if not available.
