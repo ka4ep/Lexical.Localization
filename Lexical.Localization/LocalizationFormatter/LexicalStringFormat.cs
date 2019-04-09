@@ -151,6 +151,17 @@ namespace Lexical.Localization
                     if (part != null) parts.Add(part);
                 }
 
+                // Unify text parts
+                for (int i=1; i<parts.Count;)
+                {
+                    if (parts[i - 1] is TextPart left && parts[i] is TextPart right)
+                    {
+                        parts[i - 1] = TextPart.Unify(left, right);
+                        parts.RemoveAt(i);
+                    }
+                    else i++;
+                }
+
                 // Create parts array
                 var partArray = new ILocalizationFormulationStringPart[parts.Count];
                 parts.CopyTo(partArray, 0);
@@ -284,6 +295,15 @@ namespace Lexical.Localization
         /// </summary>
         public class TextPart : ILocalizationFormulationStringPart
         {
+            /// <summary>
+            /// Unify two parts
+            /// </summary>
+            /// <param name="leftPart"></param>
+            /// <param name="rightPart"></param>
+            /// <returns></returns>
+            internal static TextPart Unify(TextPart leftPart, TextPart rightPart)
+                => new TextPart(leftPart.FormulationString, leftPart.Index, rightPart.Index - leftPart.Index + rightPart.Length);
+
             /// <summary>
             /// The 'parent' formulation string.
             /// </summary>
@@ -548,7 +568,7 @@ namespace Lexical.Localization
                 if (state == ParserState.Text)
                 {
                     ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
-                    ResetPartState();
+                    ResetPartState(endIx);
                     return part;
                 }
                 // Argument ended too soon '{}' or '{function}', return as text part and mark error
@@ -556,7 +576,7 @@ namespace Lexical.Localization
                 {
                     status = LocalizationStatus.FormulationErrorMalformed;
                     ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
-                    ResetPartState();
+                    ResetPartState(endIx);
                     return part;
                 }
                 // Complete at argument index
@@ -584,7 +604,7 @@ namespace Lexical.Localization
                 {
                     ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
                     status = LocalizationStatus.FormulationErrorMalformed;
-                    ResetPartState();
+                    ResetPartState(endIx);
                     return part;
                 }
 
@@ -600,7 +620,7 @@ namespace Lexical.Localization
                     // Parse failed, probably too large number
                     ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
                     status = LocalizationStatus.FormulationErrorMalformed;
-                    ResetPartState();
+                    ResetPartState(endIx);
                     return part;
                 }
 
@@ -629,8 +649,7 @@ namespace Lexical.Localization
                 // Create argument part
                 ILocalizationFormulationStringPart argument = new Argument(formulationString, partIx, length, ++occuranceIx, argumentIndex, function, format, alignment);
                 // Reset to 'Text' state
-                ResetPartState();
-                partIx = endIx;
+                ResetPartState(endIx);
                 // Return the constructed argument
                 return argument;
             }
@@ -638,9 +657,9 @@ namespace Lexical.Localization
             /// <summary>
             /// Reset part state
             /// </summary>
-            void ResetPartState()
+            void ResetPartState(int startIx)
             {
-                partIx = i <= str.Length ? i : str.Length;
+                partIx = startIx;
                 functionStartIx = -1; functionEndIx = -1;
                 indexStartIx = -1; indexEndIx = -1;
                 alignmentStartIx = -1; alignmentEndIx = -1;
@@ -775,7 +794,7 @@ namespace Lexical.Localization
                         }
                         // Unexpected character
                         status = LocalizationStatus.FormulationErrorMalformed;
-                        continue;
+                        return CompletePart(i);
                     }
 
                     // At Alignment state
@@ -796,7 +815,7 @@ namespace Lexical.Localization
                         }
                         // Unexpected character
                         status = LocalizationStatus.FormulationErrorMalformed;
-                        continue;
+                        return CompletePart(i);
                     }
 
                     // At Format state
