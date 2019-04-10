@@ -386,7 +386,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Argument name.
             /// </summary>
-            public string ArgumentName => ArgumentIndex.ToString();
+            public string ArgumentName => null;
 
             /// <summary>
             /// Start index of first character of the argument in the formulation string.

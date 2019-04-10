@@ -137,12 +137,13 @@ namespace Lexical.Localization
         int ArgumentIndex { get; }
 
         /// <summary>
-        /// The index in the <see cref="ILocalizationFormulationString.Arguments"/>.
+        /// Argument reference by index. -1 if arguments are not refered by index.
+        /// The index correspondes to index in <see cref="ILocalizationFormulationString.Arguments"/>.
         /// </summary>
         int ArgumentsIndex { get; }
 
         /// <summary>
-        /// Argument name as string, or null if not available.
+        /// Argument reference by name, or null.
         /// </summary>
         string ArgumentName { get; }
 
