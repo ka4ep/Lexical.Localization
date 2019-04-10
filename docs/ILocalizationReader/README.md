@@ -110,14 +110,14 @@ Different file formats have different intrinsic formats.
 Localization file can be read right away into key lines with **.ReadKeyLines()**.
 
 ```csharp
-IEnumerable<KeyValuePair<IAssetKey, string>> key_lines = LocalizationReaderMap.Instance.ReadKeyLines(
+IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines = LocalizationReaderMap.Instance.ReadKeyLines(
     filename: "localization.ini", 
     throwIfNotFound: true);
 ```
 Into string lines with **.ReadStringLines()**.
 
 ```csharp
-IEnumerable<KeyValuePair<string, string>> string_lines = LocalizationReaderMap.Instance.ReadStringLines(
+IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LocalizationReaderMap.Instance.ReadStringLines(
     filename: "localization.ini", 
     namePolicy: ParameterNamePolicy.Instance,
     throwIfNotFound: true);
@@ -135,7 +135,7 @@ A file reader can be constructed with respective **.FileReaderAsKeyLines()**.
 File reader reads the refered file when **.GetEnumerator()** is called, and will re-read the file again every time.
 
 ```csharp
-IEnumerable<KeyValuePair<IAssetKey, string>> key_lines_reader = 
+IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines_reader = 
     LocalizationReaderMap.Instance.FileReaderAsKeyLines(
         filename: "localization.ini", 
         throwIfNotFound: true);
@@ -143,7 +143,7 @@ IEnumerable<KeyValuePair<IAssetKey, string>> key_lines_reader =
 **.FileReaderAsStringLines()** creates a reader that returns string lines.
 
 ```csharp
-IEnumerable<KeyValuePair<string, string>> string_lines_reader = 
+IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader = 
     LocalizationReaderMap.Instance.FileReaderAsStringLines(
         filename: "localization.ini",
         namePolicy: ParameterNamePolicy.Instance,
@@ -163,7 +163,7 @@ Embedded resource reader is created with **.EmbeddedReaderAsKeyLines()**.
 
 ```csharp
 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
-IEnumerable<KeyValuePair<IAssetKey, string>> key_lines_reader = 
+IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines_reader = 
     LocalizationReaderMap.Instance.EmbeddedReaderAsKeyLines(
         assembly: asm, 
         resourceName: "docs.localization.ini", 
@@ -172,7 +172,7 @@ IEnumerable<KeyValuePair<IAssetKey, string>> key_lines_reader =
 **.EmbeddedReaderAsStringLines()** creates embedded reader of string lines.
 
 ```csharp
-IEnumerable<KeyValuePair<string, string>> string_lines_reader = 
+IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader = 
     LocalizationReaderMap.Instance.EmbeddedReaderAsStringLines(
         assembly: asm, 
         resourceName: "docs.localization.ini", 
@@ -194,7 +194,7 @@ File provider reader is created with **.FileProviderReaderAsKeyLines()**.
 
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-IEnumerable<KeyValuePair<IAssetKey, string>> key_lines_reader = 
+IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines_reader = 
     LocalizationReaderMap.Instance.FileProviderReaderAsKeyLines(
         fileProvider: fileProvider, 
         filepath: "localization.ini", 
@@ -204,7 +204,7 @@ IEnumerable<KeyValuePair<IAssetKey, string>> key_lines_reader =
 
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-IEnumerable<KeyValuePair<string, string>> string_lines_reader = 
+IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader = 
     LocalizationReaderMap.Instance.FileProviderReaderAsStringLines(
         fileProvider: fileProvider, 
         filepath: "localization.ini", 
@@ -227,7 +227,7 @@ Content can be read from **Stream** into key lines.
 ```csharp
 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
 {
-    IEnumerable<KeyValuePair<IAssetKey, string>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(s);
+    IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(s);
 }
 ```
 Into string lines.
@@ -235,7 +235,7 @@ Into string lines.
 ```csharp
 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
 {
-    IEnumerable<KeyValuePair<string, string>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
+    IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
         stream: s,
         namePolicy: ParameterNamePolicy.Instance);
 }
@@ -256,7 +256,7 @@ Content can be read from **TextReader** into key lines.
 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
 using (TextReader tr = new StringReader(text))
 {
-    IEnumerable<KeyValuePair<IAssetKey, string>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(tr);
+    IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(tr);
 }
 ```
 Into string lines.
@@ -264,7 +264,7 @@ Into string lines.
 ```csharp
 using (TextReader tr = new StringReader(text))
 {
-    IEnumerable<KeyValuePair<string, string>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
+    IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
         srcText: tr,
         namePolicy: ParameterNamePolicy.Instance);
 }
@@ -283,14 +283,14 @@ And from **String** into key lines.
 
 ```csharp
 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
-IEnumerable<KeyValuePair<IAssetKey, string>> key_lines = 
+IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines = 
     LocalizationIniReader.Instance.ReadStringAsKeyLines(
         srcText: text);
 ```
 Into string lines.
 
 ```csharp
-IEnumerable<KeyValuePair<string, string>> string_lines = 
+IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = 
     LocalizationIniReader.Instance.ReadStringAsStringLines(
         srcText: text,
         namePolicy: ParameterNamePolicy.Instance);
@@ -335,7 +335,7 @@ public interface ILocalizationKeyLinesStreamReader : ILocalizationReader
     /// <param name="namePolicy">(optional) name policy. </param>
     /// <returns>the read lines</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
+    IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ReadKeyLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
 }
 
 /// <summary>
@@ -365,7 +365,7 @@ public interface ILocalizationKeyLinesTextReader : ILocalizationReader
     /// <param name="namePolicy">(optional) name policy.</param>
     /// <returns>the read lines</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+    IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ReadKeyLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
 }
 
 /// <summary>
@@ -395,7 +395,7 @@ public interface ILocalizationStringLinesTextReader : ILocalizationReader
     /// <param name="namePolicy">(optional) name policy.</param>
     /// <returns>the read string key-values</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<string, string>> ReadStringLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+    IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
 }
 
 /// <summary>
@@ -410,7 +410,7 @@ public interface ILocalizationStringLinesStreamReader : ILocalizationReader
     /// <param name="namePolicy">(optional) name policy.</param>
     /// <returns>the read string key-values</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<string, string>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
+    IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
 }
 ```
 </details>
@@ -422,12 +422,12 @@ class ExtFileFormatReader : ILocalizationKeyLinesTextReader
 {
     public string Extension => "ext";
 
-    public IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(
+    public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ReadKeyLines(
         TextReader text, 
         IAssetKeyNamePolicy namePolicy = null)
     {
         IAssetKey key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
-        yield return new KeyValuePair<IAssetKey, string>(key, "Hello World!");
+        yield return new KeyValuePair<IAssetKey, IFormulationString>(key, LexicalStringFormat.Instance.Parse("Hello World!"));
     }
 }
 ```

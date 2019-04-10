@@ -38,7 +38,7 @@ These keys cannot be used as providers, only as references.
 // Create reference
 IAssetKey key = new LocalizationKey._Section(null, "Section").Key("Key");
 // Retreieve with reference
-string str = asset.GetString(key);
+IFormulationString str = asset.GetString(key);
 ```
 
 # String Localizer
