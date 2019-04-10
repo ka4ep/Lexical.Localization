@@ -236,15 +236,17 @@ namespace Lexical.Localization
             foreach (var collectionsLine in collections.ToArray())
             {
                 Collection c = collectionsLine.Value;
-                if (c.reader is IEnumerable<KeyValuePair<string, IFormulationString>> == false) continue;
-                Dictionary<string, IFormulationString> newLines;
-                IAssetKeyNameProvider provider = c.namePolicy as IAssetKeyNameProvider;
-                if (provider == null) continue;
-                if (!byProvider.TryGetValue(provider, out newLines))
-                    byProvider[provider] = newLines = new Dictionary<string, IFormulationString>();
+                if (c.Type == CollectionType.StringLines)
+                {
+                    Dictionary<string, IFormulationString> newLines;
+                    IAssetKeyNameProvider provider = c.namePolicy as IAssetKeyNameProvider;
+                    if (provider == null) continue;
+                    if (!byProvider.TryGetValue(provider, out newLines))
+                        byProvider[provider] = newLines = new Dictionary<string, IFormulationString>();
 
-                foreach (var line in c.StringLines)
-                    newLines[line.Key] = line.Value;
+                    foreach (var line in c.StringLines)
+                        newLines[line.Key] = line.Value;
+                } 
             }
 
             return this.stringLinesByProvider = byProvider;
@@ -279,7 +281,7 @@ namespace Lexical.Localization
             HashSet<CultureInfo> cultures = null;
             foreach (var collectionLine in collections.ToArray())
             {
-                if (collectionLine.Value.reader is IEnumerable<KeyValuePair<string, IFormulationString>> && collectionLine.Value.namePolicy is IAssetKeyNameParser == false && collectionLine.Value.StringLines.Length>0) return null;
+                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is IAssetKeyNameParser == false && collectionLine.Value.StringLines.Length>0) return null;
                 foreach (var line in collectionLine.Value.KeyLines)
                 {
                     if (cultures == null) cultures = new HashSet<CultureInfo>();
@@ -288,7 +290,7 @@ namespace Lexical.Localization
                 }
             }
 
-            this.cultures = cultures.ToArray();
+            this.cultures = cultures?.ToArray();
             culturesFetched = true;
             return this.cultures;
         }
@@ -336,14 +338,14 @@ namespace Lexical.Localization
             List<KeyValuePair<string, IFormulationString>> result = null;
             foreach (var collectionLine in collections.ToArray())
             {
-                if (collectionLine.Value.reader is IEnumerable<KeyValuePair<string, IFormulationString>> && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider_ && collectionLine.Value.namePolicy is IAssetKeyNameParser nameParser_)
+                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider_ && collectionLine.Value.namePolicy is IAssetKeyNameParser nameParser_)
                 {
                     var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider_.BuildName(line.Key), line.Value));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
                     result.AddRange(__stringLines);
                 }
                 else
-                if ((collectionLine.Value.reader is IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> || collectionLine.Value.reader is IEnumerable<IKeyTree>) && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider)
+                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.KeyTree) && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider)
                 {
                     var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.BuildName(line.Key), line.Value));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
@@ -368,13 +370,13 @@ namespace Lexical.Localization
             List<KeyValuePair<string, IFormulationString>> result = null;
             foreach (var collectionLine in collections.ToArray())
             {
-                if (collectionLine.Value.reader is IEnumerable<KeyValuePair<string, IFormulationString>> && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider_ && collectionLine.Value.namePolicy is IAssetKeyNameParser nameParser_)
+                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider_ && collectionLine.Value.namePolicy is IAssetKeyNameParser nameParser_)
                 {
                     var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider_.BuildName(line.Key), line.Value));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
                     result.AddRange(__stringLines);
                 } else 
-                if ((collectionLine.Value.reader is IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> || collectionLine.Value.reader is IEnumerable<IKeyTree>) && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider)
+                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.KeyTree) && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider)
                 {
                     var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.BuildName(line.Key), line.Value));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
@@ -536,6 +538,27 @@ namespace Lexical.Localization
     }
 
     /// <summary>
+    /// Collection reader type
+    /// </summary>
+    public enum CollectionType
+    {
+        /// <summary>
+        /// Key is string
+        /// </summary>
+        StringLines,
+
+        /// <summary>
+        /// Key is IAssetKey
+        /// </summary>
+        KeyLines,
+
+        /// <summary>
+        /// Key is IKeyTree
+        /// </summary>
+        KeyTree
+    }
+
+    /// <summary>
     /// Collection of lines
     /// </summary>
     public class Collection : IObserver<IAssetSourceEvent>, IEnumerable<KeyValuePair<IAssetKey, IFormulationString>>, IEnumerable<KeyValuePair<string, IFormulationString>>
@@ -591,6 +614,11 @@ namespace Lexical.Localization
         protected bool disposeReader;
 
         /// <summary>
+        /// Collection type.
+        /// </summary>
+        public CollectionType Type;
+
+        /// <summary>
         /// Create source
         /// </summary>
         /// <param name="reader"></param>
@@ -605,6 +633,13 @@ namespace Lexical.Localization
             this.namePolicy = namePolicy ?? ParameterNamePolicy.Instance;
             this.errorHandler = errorHandler;
             this.disposeReader = disposeReader;
+
+            if (reader is IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> keyLinesReader) this.Type = CollectionType.KeyLines;
+            else if (reader is IEnumerable<IKeyTree> treesReader) this.Type = CollectionType.KeyTree;
+            else if (reader is IEnumerable<KeyValuePair<string, IFormulationString>> stringLinesReader) this.Type = CollectionType.StringLines;
+            else if (reader is IEnumerable<KeyValuePair<IAssetKey, string>> keyLinesReader_) this.Type = CollectionType.KeyLines;
+            else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_) this.Type = CollectionType.StringLines;
+            else throw new ArgumentException($"Cannot read from {reader.GetType().FullName}: {reader}");
         }
 
         /// <summary>

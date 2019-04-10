@@ -3,6 +3,7 @@
 // Date:           7.3.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Asset file source.
     /// </summary>
-    public abstract class FileSource : IAssetSource
+    public abstract class FileSource : IAssetSource, IAssetSourceObservable
     {
         /// <summary>
         /// (optional) Overriding explicit path. 
@@ -80,6 +81,14 @@ namespace Lexical.Localization
         public abstract FileSource SetPath(string newPath);
 
         /// <summary>
+        /// Subscribe source watcher.
+        /// </summary>
+        /// <param name="observer"></param>
+        /// <returns></returns>
+        public IDisposable Subscribe(IObserver<IAssetSourceEvent> observer)
+            => new FileObserver(this, observer, FilePath);
+
+        /// <summary>
         /// Print info of source
         /// </summary>
         /// <returns></returns>
@@ -135,4 +144,102 @@ namespace Lexical.Localization
         public override string ToString()
             => System.IO.Path.Combine(Path, FilePattern.Pattern);
     }
+
+    /// <summary>
+    /// File observer
+    /// </summary>
+    public class FileObserver : IDisposable
+    {
+        /// <summary>
+        /// Associated source
+        /// </summary>
+        public readonly IAssetSource AssetSource;
+
+        /// <summary>
+        /// Associated observer
+        /// </summary>
+        IObserver<IAssetSourceEvent> Observer;
+
+        /// <summary>
+        /// File to observe
+        /// </summary>
+        public readonly string FilePath;
+
+        /// <summary>
+        /// Watcher class
+        /// </summary>
+        protected FileSystemWatcher watcher;
+
+        /// <summary>
+        /// Create observer for one file.
+        /// </summary>
+        /// <param name="assetSource"></param>
+        /// <param name="observer"></param>
+        /// <param name="filePath"></param>
+        public FileObserver(IAssetSource assetSource, IObserver<IAssetSourceEvent> observer, string filePath)
+        {
+            this.AssetSource = assetSource ?? throw new ArgumentNullException(nameof(assetSource));
+            Observer = observer ?? throw new ArgumentNullException(nameof(observer));
+            FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+            FileInfo fi = new FileInfo(filePath);
+            watcher = new FileSystemWatcher(fi.Directory.FullName, fi.Name);
+            watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime | NotifyFilters.FileName;
+            watcher.IncludeSubdirectories = false;
+            watcher.Changed += OnEvent;
+            watcher.Created += OnEvent;
+            watcher.Deleted += OnEvent;
+        }
+
+        /// <summary>
+        /// Forward event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void OnEvent(object sender, FileSystemEventArgs e)
+        {
+            var _observer = Observer;
+            if (_observer == null) return;
+            IAssetSourceEvent ae = new AssetSourceChangedEvent(AssetSource, e.ChangeType);
+            Observer.OnNext(ae);
+        }
+
+        /// <summary>
+        /// Dispose observer
+        /// </summary>
+        public void Dispose()
+        {
+            var _watcher = watcher;
+            var _observer = Observer;
+
+            StructList4<Exception> errors = new StructList4<Exception>();
+            if (_observer != null)
+            {
+                Observer = null;
+                try
+                {
+                    _observer.OnCompleted();
+                }
+                catch (Exception e)
+                {
+                    errors.Add(e);
+                }
+            }
+
+            if (_watcher != null)
+            {
+                watcher = null;
+                try
+                {
+                    _watcher.Dispose();
+                }
+                catch (Exception e)
+                {
+                    errors.Add(e);
+                }
+            }
+
+            if (errors.Count > 0) throw new AggregateException(errors);
+        }
+    }
+
 }

@@ -9,12 +9,15 @@ using System.IO;
 
 namespace Lexical.Localization
 {
+    using Lexical.Localization.Internal;
     using Microsoft.Extensions.FileProviders;
+    using Microsoft.Extensions.Primitives;
+    using System.Threading;
 
     /// <summary>
     /// Localization source and reader that reads lines from file provider.
     /// </summary>
-    public abstract class FileProviderSource : IAssetSource
+    public abstract class FileProviderSource : IAssetSource, IAssetSourceObservable
     {
         /// <summary>
         /// File provider
@@ -56,6 +59,14 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <returns></returns>
         public abstract IAsset PostBuild(IAsset asset);
+
+        /// <summary>
+        /// Subscribe source watcher.
+        /// </summary>
+        /// <param name="observer"></param>
+        /// <returns></returns>
+        public IDisposable Subscribe(IObserver<IAssetSourceEvent> observer)
+            => new FileProviderObserver(this, this.FileProvider, observer, this.FilePath);
 
         /// <summary>
         /// Print info of source
@@ -120,4 +131,126 @@ namespace Lexical.Localization
         public override string ToString()
             => System.IO.Path.Combine(Path, FilePattern.Pattern);
     }
+
+    /// <summary>
+    /// File provider observer
+    /// </summary>
+    public class FileProviderObserver : IDisposable
+    {
+        /// <summary>
+        /// Associated source
+        /// </summary>
+        protected IAssetSource assetSource;
+
+        /// <summary>
+        /// Associated observer
+        /// </summary>
+        protected IObserver<IAssetSourceEvent> observer;
+
+        /// <summary>
+        /// File provider
+        /// </summary>
+        protected IFileProvider fileProvider;
+
+        /// <summary>
+        /// File to observe
+        /// </summary>
+        public readonly string FilePath;
+
+        /// <summary>
+        /// Watcher class
+        /// </summary>
+        protected IDisposable watcher;
+
+        /// <summary>
+        /// Previous state of file existing.
+        /// </summary>
+        protected int existed;
+
+        /// <summary>
+        /// Create observer for one file.
+        /// </summary>
+        /// <param name="assetSource"></param>
+        /// <param name="fileProvider"></param>
+        /// <param name="observer"></param>
+        /// <param name="filePath"></param>
+        public FileProviderObserver(IAssetSource assetSource, IFileProvider fileProvider, IObserver<IAssetSourceEvent> observer, string filePath)
+        {
+            this.assetSource = assetSource ?? throw new ArgumentNullException(nameof(assetSource));
+            this.observer = observer ?? throw new ArgumentNullException(nameof(observer));
+            this.FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+            this.fileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
+            existed = fileProvider.GetFileInfo(filePath).Exists ? 1 : 0;
+            IChangeToken changeToken = fileProvider.Watch(filePath);
+            watcher = changeToken.RegisterChangeCallback(OnEvent, this);
+        }
+
+        /// <summary>
+        /// Forward event
+        /// </summary>
+        /// <param name="sender"></param>
+        void OnEvent(object sender)
+        {
+            var _observer = observer;
+            if (_observer == null) return;
+
+            // Figure out change type
+            bool exists = fileProvider.GetFileInfo(FilePath).Exists;
+            bool _existed = Interlocked.CompareExchange(ref existed, exists ? 1 : 0, existed) == 1;
+
+            WatcherChangeTypes changeType = default;
+            if (_existed)
+            {
+                changeType = exists ? WatcherChangeTypes.Changed : WatcherChangeTypes.Deleted;
+            }
+            else
+            {
+                changeType = exists ? WatcherChangeTypes.Created : WatcherChangeTypes.Deleted;
+            }
+
+            IAssetSourceEvent ae = new AssetSourceChangedEvent(assetSource, changeType);
+            observer.OnNext(ae);
+        }
+
+        /// <summary>
+        /// Dispose observer
+        /// </summary>
+        public void Dispose()
+        {
+            var _watcher = watcher;
+            var _observer = observer;
+
+            StructList4<Exception> errors = new StructList4<Exception>();
+            if (_observer != null)
+            {
+                observer = null;
+                try
+                {
+                    _observer.OnCompleted();
+                }
+                catch (Exception e)
+                {
+                    errors.Add(e);
+                }
+            }
+
+            if (_watcher != null)
+            {
+                watcher = null;
+                try
+                {
+                    _watcher.Dispose();
+                }
+                catch (Exception e)
+                {
+                    errors.Add(e);
+                }
+            }
+
+            if (errors.Count > 0) throw new AggregateException(errors);
+            fileProvider = null;
+        }
+    }
+
+
 }

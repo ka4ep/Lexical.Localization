@@ -222,7 +222,15 @@ namespace Lexical.Localization
         {
             if (x == null && y == null) return true;
             if (x == null || y == null) return false;
-            return false;
+            if (x == y) return true;
+            if (x.Status != y.Status) return false;
+            var x_parts = x.Parts;
+            var y_parts = y.Parts;
+            if (x_parts.Length != y_parts.Length) return false;
+            int c = x_parts.Length;
+            for (int i = 0; i < c; i++)
+                if (!partComparer.Equals(x_parts[i], y_parts[i])) return false;
+            return true;
         }
 
         /// <summary>
@@ -292,7 +300,32 @@ namespace Lexical.Localization
         {
             if (x == null && y == null) return true;
             if (x == null || y == null) return false;
-            return false;
+            if (x == y) return true;
+            if (x.Kind != y.Kind) return false;
+
+            if (x.Kind == FormulationStringPartKind.Text)
+            {
+                if (x.Text != y.Text) return false;
+            }
+
+            if (x.Kind == FormulationStringPartKind.Argument)
+            {
+                var x_arg = x as IFormulationStringArgument;
+                var y_arg = y as IFormulationStringArgument;
+                if (x_arg.ArgumentIndex != y_arg.ArgumentIndex) return false;
+                if (x_arg.ArgumentName != y_arg.ArgumentName) return false;
+                if (x_arg.DefaultValue == null && y_arg.DefaultValue == null) { }
+                else if (x_arg.DefaultValue != null && y_arg.DefaultValue != null)
+                {
+                    if (!x_arg.Equals(y_arg)) return false;
+                }
+                else return false;
+                if (x_arg.Alignment != y_arg.Alignment) return false;
+                if (x_arg.Format != y_arg.Format) return false;
+                if (x_arg.Function != y_arg.Function) return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -305,8 +338,11 @@ namespace Lexical.Localization
             if (o == null) return 0;
             int result = FNVHashBasis;
 
-            result ^= o.Text.GetHashCode();
-            result *= FNVHashPrime;
+            if (o.Kind == FormulationStringPartKind.Text)
+            {
+                result ^= o.Text.GetHashCode();
+                result *= FNVHashPrime;
+            }
 
             if (o.Kind == FormulationStringPartKind.Argument && o is IFormulationStringArgument arg)
             {

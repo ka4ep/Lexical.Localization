@@ -31,7 +31,7 @@ namespace Lexical.Localization
     /// 
     /// <see href="https://docs.microsoft.com/en-us/dotnet/api/system.string.format?view=netframework-4.7.2"/>
     /// </summary>
-    public class LexicalStringFormat : ILocalizationStringFormatParser
+    public class LexicalStringFormat : ILocalizationStringFormatParser, ILocalizationStringFormatPrinter
     {
         private static ILocalizationStringFormatParser instance => new LexicalStringFormat();
 
@@ -77,6 +77,16 @@ namespace Lexical.Localization
             if (formulationString == "") return Empty.Instance;
             if (FormatProvider != null) return new FormulationStringWithFormatProvider(formulationString, FormatProvider);
             return new FormulationString(formulationString);
+        }
+
+        /// <summary>
+        /// Print as string
+        /// </summary>
+        /// <param name="formulationString"></param>
+        /// <returns>string or null</returns>
+        public string Print(IFormulationString formulationString)
+        {
+            return formulationString?.Text;
         }
 
         /// <summary>
@@ -221,7 +231,7 @@ namespace Lexical.Localization
             /// <param name="obj"></param>
             /// <returns></returns>
             public override bool Equals(object obj)
-                => FormulationStringComparer.Instance.Equals(obj);
+                => obj is IFormulationString other ? FormulationStringComparer.Instance.Equals(this, other) : false;
 
             /// <summary>
             /// Formulation string.
@@ -279,6 +289,27 @@ namespace Lexical.Localization
             public IFormulationStringArgument[] Arguments => arguments;
             /// <summary />
             public IFormatProvider FormatProvider => null;
+
+            /// <summary>
+            /// Cached hashcode
+            /// </summary>
+            int hashcode => FormulationStringComparer.Instance.GetHashCode(this);
+
+            /// <summary>
+            /// Calculate hashcode
+            /// </summary>
+            /// <returns></returns>
+            public override int GetHashCode()
+                => hashcode;
+
+            /// <summary>
+            /// Compare for equality
+            /// </summary>
+            /// <param name="obj"></param>
+            /// <returns></returns>
+            public override bool Equals(object obj)
+                => obj is IFormulationString other ? FormulationStringComparer.Instance.Equals(this, other) : false;
+
         }
 
         /// <summary>
@@ -303,6 +334,26 @@ namespace Lexical.Localization
             public IFormulationStringArgument[] Arguments => arguments;
             /// <summary />
             public IFormatProvider FormatProvider => null;
+
+            /// <summary>
+            /// Cached hashcode
+            /// </summary>
+            int hashcode => FormulationStringComparer.Instance.GetHashCode(this);
+
+            /// <summary>
+            /// Calculate hashcode
+            /// </summary>
+            /// <returns></returns>
+            public override int GetHashCode()
+                => hashcode;
+
+            /// <summary>
+            /// Compare for equality
+            /// </summary>
+            /// <param name="obj"></param>
+            /// <returns></returns>
+            public override bool Equals(object obj)
+                => obj is IFormulationString other ? FormulationStringComparer.Instance.Equals(this, other) : false;
         }
 
         /// <summary>
