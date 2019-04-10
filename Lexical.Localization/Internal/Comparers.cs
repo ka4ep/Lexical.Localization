@@ -43,8 +43,8 @@ namespace Lexical.Localization.Internal
             return result;
         }
 
-        public const int FNVHashBasis = unchecked((int)2166136261);
-        public const int FNVHashPrime = 16777619;
+        const int FNVHashBasis = unchecked((int)2166136261);
+        const int FNVHashPrime = 16777619;
     }
 
 }

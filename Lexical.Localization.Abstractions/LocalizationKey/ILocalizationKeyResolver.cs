@@ -62,7 +62,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static LocalizationString ResolveString(this IAssetKey key)
         {
-            LocalizationString result = new LocalizationString(key, null, LocalizationStatus.NoResult, null);
+            LocalizationString result = new LocalizationString(key, null, LocalizationStatus.NoResult);
             for (IAssetKey k = key; k!=null; k=k.GetPreviousKey())
             {
                 ILocalizationResolver _formatter;
@@ -88,7 +88,7 @@ namespace Lexical.Localization
         /// otherwise return null</returns>
         public static LocalizationString ResolveFormulatedString(this IAssetKey key)
         {
-            LocalizationString result = new LocalizationString(key, null, LocalizationStatus.NoResult, null);
+            LocalizationString result = new LocalizationString(key, null, LocalizationStatus.NoResult);
             for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
             {
                 ILocalizationResolver _formatter;

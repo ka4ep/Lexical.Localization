@@ -42,9 +42,9 @@ namespace Lexical.Localization
             bool rootCultureTried = false;
             if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
             {
-                string languageString = null;
+                IFormulationString languageString = null;
                 // Get inlines
-                IDictionary<IAssetKey, string> inlines = key.FindInlines();
+                IDictionary<IAssetKey, IFormulationString> inlines = key.FindInlines();
                 foreach (CultureInfo culture in cultures)
                 {
                     bool rootCulture = culture.Name == "";
@@ -56,24 +56,24 @@ namespace Lexical.Localization
                     // Try key
                     if (languageString == null) languageString = culture_key.TryGetString();
                     // Return
-                    if (languageString != null) return new LocalizationString(key, languageString, 0UL, this);
+                    if (languageString != null) return new LocalizationString(key, languageString.Text, 0UL);
                 }
             }
 
             if (!rootCultureTried)
             {
-                string languageString = null;
+                IFormulationString languageString = null;
                 // Get inlines
-                IDictionary<IAssetKey, string> inlines = key.FindInlines();
+                IDictionary<IAssetKey, IFormulationString> inlines = key.FindInlines();
                 // Try inlines with key
                 if (languageString == null && inlines != null) inlines.TryGetValue(key, out languageString);
                 // Try asset with key
                 if (languageString == null) languageString = key.TryGetString();
                 // Return
-                if (languageString != null) return new LocalizationString(key, languageString, 0UL, this);
+                if (languageString != null) return new LocalizationString(key, languageString.Text, 0UL);
             }
 
-            return new LocalizationString(key, null, LocalizationStatus.NoResult, this);
+            return new LocalizationString(key, null, LocalizationStatus.NoResult);
         }
 
         /// <summary>
@@ -130,9 +130,9 @@ namespace Lexical.Localization
             IEnumerable<CultureInfo> cultures = null;
             if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
             {
-                string languageString = null;
+                IFormulationString languageString = null;
                 // Get inlines
-                IDictionary<IAssetKey, string> inlines = key.FindInlines();
+                IDictionary<IAssetKey, IFormulationString> inlines = key.FindInlines();
                 foreach (CultureInfo culture in cultures)
                 {
                     bool rootCulture = culture.Name == "";
@@ -165,18 +165,18 @@ namespace Lexical.Localization
                     // Try asset with fallback key
                     if (languageString == null) languageString = key_with_culture.TryGetString();
                     // Formulate language string
-                    if (languageString != null && format_args != null) languageString = String.Format(culture, languageString, format_args);
-                    // Return
-                    if (languageString != null) return new LocalizationString(key, languageString, 0UL, this);
+                    if (languageString != null && format_args != null) return Format(key, culture, languageString, format_args);
+                    // Return formulation without arguments applied
+                    if (languageString != null) return new LocalizationString(key, languageString.Text, 0UL);
                 }
             }
 
             // Try key as is
             if (!rootCultureTried)
             {
-                string languageString = null;
+                IFormulationString languageString = null;
                 // Get inlines
-                IDictionary<IAssetKey, string> inlines = key.FindInlines();
+                IDictionary<IAssetKey, IFormulationString> inlines = key.FindInlines();
                 // Try inlines with plurality key
                 if (languageString == null && inlines != null && pluralityKey != null) inlines.TryGetValue(pluralityKey, out languageString);
                 // Try inlines with plurality key permutations
@@ -201,15 +201,83 @@ namespace Lexical.Localization
                 // Try asset with fallback key
                 if (languageString == null) languageString = key.TryGetString();
                 // Formulate language string
-                if (languageString != null && format_args != null) languageString = String.Format(rootCulture, languageString, format_args);
-                // Return
-                if (languageString != null) return new LocalizationString(key, languageString, 0UL, this);
+                if (languageString != null && format_args != null) return Format(key, rootCulture, languageString, format_args);
+                // Return formulation without applying arguments
+                if (languageString != null) return new LocalizationString(key, languageString.Text, 0UL);
             }
 
-            return new LocalizationString(key, null, LocalizationStatus.NoResult, this);
+            return new LocalizationString(key, null, LocalizationStatus.NoResult);
         }
 
         static CultureInfo rootCulture = CultureInfo.GetCultureInfo("");
+
+        /// <summary>
+        /// Apply <paramref name="args"/> into <paramref name="formulationString"/>.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="culture"></param>
+        /// <param name="formulationString"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        static LocalizationString Format(IAssetKey key, CultureInfo culture, IFormulationString formulationString, object[] args)
+        {
+            // Convert to strings
+            string[] arg_strings = new string[formulationString.Arguments.Length];
+            for(int i=0; i< formulationString.Arguments.Length; i++)
+            {
+                IFormulationStringArgument argumentFormulation = formulationString.Arguments[i];
+                int argIndex = argumentFormulation.ArgumentIndex;
+                if (args!=null && argIndex >= 0 && argIndex < args.Length)
+                {
+                    arg_strings[i] = Format(args[argIndex], argumentFormulation.Format, culture);
+                }
+                else
+                {
+                    arg_strings[i] = "";
+                }
+            }
+
+            // Count characters
+            int c = 0;
+            foreach(var part in formulationString.Parts)
+            {
+                if (part.Kind == FormulationStringPartKind.Text) c += part.Length;
+                else if (part.Kind == FormulationStringPartKind.Argument && part is IFormulationStringArgument arg) c += arg_strings[arg.ArgumentsIndex].Length;
+            }
+
+            // Put together string
+            char[] chars = new char[c];
+            int ix = 0;
+            foreach (var part in formulationString.Parts)
+            {
+                if (part.Kind == FormulationStringPartKind.Text)
+                {
+                    formulationString.Text.CopyTo(part.Index, chars, ix, part.Length);
+                    ix += part.Length;
+                }
+                else if (part.Kind == FormulationStringPartKind.Argument && part is IFormulationStringArgument arg)
+                {
+                    string str = arg_strings[arg.ArgumentsIndex];
+                    if (str != null)
+                    {
+                        str.CopyTo(0, chars, ix, str.Length);
+                        ix += str.Length;
+                    }
+                }
+            }
+
+
+            return new LocalizationString(key, new String(chars), 0);
+        }
+
+        static string Format(object o, string format, IFormatProvider culture)
+        {
+            if (o == null) return "";
+            if (o is IFormattable formattable) return formattable.ToString(format, culture);
+            if (culture.GetFormat(typeof(ICustomFormatter)) is ICustomFormatter customFormatter_)
+                return customFormatter_.Format(format, o, culture);
+            return culture == null ? String.Format("{0:" + format + "}", o) : String.Format(culture, "{0:" + format + "}", o);
+        }
 
         /*
         public struct ArgumentLine
@@ -297,14 +365,6 @@ namespace Lexical.Localization
                     return null;
             }
             return null;
-        }
-
-        static string Format(object o, string format, IFormatProvider culture)
-        {
-            if (o is IFormattable formattable) return formattable.ToString(format, culture);
-            if (culture.GetFormat(typeof(ICustomFormatter)) is ICustomFormatter customFormatter_)
-                return customFormatter_.Format(format, o, culture);
-            return culture == null ? String.Format("{0:" + format + "}", o) : String.Format(culture, "{0:" + format + "}", o);
         }
 
         private static string GetPluralityKind<T>()

@@ -31,6 +31,6 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        IEnumerable<KeyValuePair<IAssetKey, string>> Filter(IEnumerable<KeyValuePair<IAssetKey, string>> lines);
+        IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> Filter(IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines);
     }
 }

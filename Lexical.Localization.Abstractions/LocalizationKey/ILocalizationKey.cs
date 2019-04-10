@@ -38,32 +38,32 @@ namespace Lexical.Localization
     public static partial class LocalizationKeyExtensions
     {
         /// <summary>
-        /// Find <see cref="IAsset"/> and get language string.
+        /// Find <see cref="IAsset"/> and get formulation string.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
         /// <see cref="ResolveString(IAssetKey)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>language string</returns>
+        /// <returns>formulation string</returns>
         /// <exception cref="AssetKeyException">If resolving failed or resolver was not found</exception>
-        public static string GetString(this IAssetKey key)
+        public static IFormulationString GetString(this IAssetKey key)
         {
             IAsset asset = key.FindAsset();
             if (asset == null) throw new AssetKeyException(key, "String resolver was not found.");
-            string str = asset.GetString(key);
+            IFormulationString str = asset.GetString(key);
             if (str == null) throw new AssetKeyException(key, "String was not found.");
             return str;
         }
 
         /// <summary>
-        /// Find <see cref="IAsset"/> and get language string.
+        /// Find <see cref="IAsset"/> and get formulation string.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
         /// <see cref="ResolveString(IAssetKey)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>language string, or null if language string was not found, or if resolver was not found</returns>
-        public static string TryGetString(this IAssetKey key)
+        /// <returns>formulation string, or null if formulation string was not found, or if resolver was not found</returns>
+        public static IFormulationString TryGetString(this IAssetKey key)
             => key.FindAsset()?.GetString(key);
 
 

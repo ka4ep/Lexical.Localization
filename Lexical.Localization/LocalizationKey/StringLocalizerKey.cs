@@ -303,12 +303,12 @@ namespace Lexical.Localization
             /// <summary>
             /// The value is here.
             /// </summary>
-            protected string _default;
+            protected IFormulationString _default;
 
             /// <summary>
             /// Dictionary of inlines other than default.
             /// </summary>
-            protected Dictionary<IAssetKey, string> inlines;
+            protected Dictionary<IAssetKey, IFormulationString> inlines;
             
             /// <summary>
             /// Create inlines.
@@ -329,15 +329,14 @@ namespace Lexical.Localization
                     foreach(var stringLine in stringLines)
                     {
                         IAssetKey key = ParameterNamePolicy.Instance.Parse(stringLine.Key);
-                        if (AssetKeyComparer.Default.Equals(key, this)) _default = stringLine.Value;
+                        if (AssetKeyComparer.Default.Equals(key, this)) _default = LexicalStringFormat.Instance.Parse(stringLine.Value);
                         else
                         {
-                            if (inlines == null) inlines = new Dictionary<IAssetKey, string>();
-                            inlines[key] = stringLine.Value;
+                            if (inlines == null) inlines = new Dictionary<IAssetKey, IFormulationString>(AssetKeyComparer.Default);
+                            inlines[key] = LexicalStringFormat.Instance.Parse(stringLine.Value);
                         }
                     }
                 }
-                this.inlines = stringLines.ToKeyLines(ParameterNamePolicy.Instance).ToDictionary(AssetKeyComparer.Default);
             }
 
             /// <summary>
@@ -349,9 +348,13 @@ namespace Lexical.Localization
             {
                 base.GetObjectData(info, context);
                 List<KeyValuePair<string, string>> lines = new List<KeyValuePair<string, string>>();
-                if (_default != null) lines.Add(new KeyValuePair<string, string>(ParameterNamePolicy.Instance.BuildName(this), _default));
-                if (inlines != null) lines.AddRange(inlines.ToStringLines(ParameterNamePolicy.Instance));
-                info.AddValue(nameof(inlines), inlines);
+                if (_default != null) lines.Add(new KeyValuePair<string, string>(ParameterNamePolicy.Instance.BuildName(this), _default.Text));
+                if (inlines != null)
+                {
+                    foreach(var line in inlines)
+                        lines.Add(new KeyValuePair<string, string>(ParameterNamePolicy.Instance.BuildName(line.Key), line.Value.Text));
+                }
+                info.AddValue(nameof(inlines), lines);
             }
 
             /// <summary>
@@ -361,7 +364,7 @@ namespace Lexical.Localization
             /// <returns></returns>
             /// <exception cref="ArgumentNullException"></exception>
             /// <exception cref="KeyNotFoundException"></exception>
-            public string this[IAssetKey key]
+            public IFormulationString this[IAssetKey key]
             {
                 get {
                     if (key == null) throw new ArgumentNullException(nameof(key));
@@ -377,7 +380,7 @@ namespace Lexical.Localization
                         if (inlines != null) inlines.Remove(key);
                     } else
                     {
-                        if (inlines == null) inlines = new Dictionary<IAssetKey, string>(AssetKeyComparer.Default);
+                        if (inlines == null) inlines = new Dictionary<IAssetKey, IFormulationString>(AssetKeyComparer.Default);
                         inlines[key] = value;
                     }
                 }
@@ -400,11 +403,11 @@ namespace Lexical.Localization
             /// <summary>
             /// Gets an System.Collections.Generic.ICollection`1 containing the values in the System.Collections.Generic.IDictionary`2.
             /// </summary>
-            public ICollection<string> Values
+            public ICollection<IFormulationString> Values
             {
                 get
                 {
-                    List<string> list = new List<string>(Count);
+                    List<IFormulationString> list = new List<IFormulationString>(Count);
                     if (_default != null) list.Add(_default);
                     if (inlines != null) list.AddRange(inlines.Values);
                     return list;
@@ -428,7 +431,7 @@ namespace Lexical.Localization
             /// <param name="value"></param>
             /// <exception cref="ArgumentNullException">key is null.</exception>
             /// <exception cref="ArgumentException">An element with the same key already exists in the System.Collections.Generic.IDictionary`2.</exception>
-            public void Add(IAssetKey key, string value)
+            public void Add(IAssetKey key, IFormulationString value)
             {
                 if (key == null) throw new ArgumentNullException(nameof(key));
                 if (AssetKeyComparer.Default.Equals(key, this))
@@ -437,7 +440,7 @@ namespace Lexical.Localization
                     _default = value;
                     return;
                 }
-                if (inlines == null) inlines = new Dictionary<IAssetKey, string>(AssetKeyComparer.Default);
+                if (inlines == null) inlines = new Dictionary<IAssetKey, IFormulationString>(AssetKeyComparer.Default);
                 inlines.Add(key, value);
             }
 
@@ -447,7 +450,7 @@ namespace Lexical.Localization
             /// <param name="item"></param>
             /// <exception cref="ArgumentNullException">key is null.</exception>
             /// <exception cref="ArgumentException">An element with the same key already exists in the System.Collections.Generic.IDictionary`2.</exception>
-            public void Add(KeyValuePair<IAssetKey, string> item)
+            public void Add(KeyValuePair<IAssetKey, IFormulationString> item)
                 => Add(item.Key, item.Value);
 
             /// <summary>
@@ -464,7 +467,7 @@ namespace Lexical.Localization
             /// </summary>
             /// <param name="line"></param>
             /// <returns></returns>
-            public bool Contains(KeyValuePair<IAssetKey, string> line)
+            public bool Contains(KeyValuePair<IAssetKey, IFormulationString> line)
             {
                 if (line.Key == null) return false;
                 if (_default != null && AssetKeyComparer.Default.Equals(this, line.Key)) return line.Value == _default;
@@ -493,10 +496,10 @@ namespace Lexical.Localization
             /// <exception cref="ArgumentNullException"></exception>
             /// <exception cref="ArgumentOutOfRangeException"></exception>
             /// <exception cref="ArgumentException"></exception>
-            public void CopyTo(KeyValuePair<IAssetKey, string>[] array, int arrayIndex)
+            public void CopyTo(KeyValuePair<IAssetKey, IFormulationString>[] array, int arrayIndex)
             {
-                if (_default != null) array[arrayIndex++] = new KeyValuePair<IAssetKey, string>(this, _default);
-                if (inlines != null) ((ICollection<KeyValuePair<IAssetKey, string>>)inlines).CopyTo(array, arrayIndex); 
+                if (_default != null) array[arrayIndex++] = new KeyValuePair<IAssetKey, IFormulationString>(this, _default);
+                if (inlines != null) ((ICollection<KeyValuePair<IAssetKey, IFormulationString>>)inlines).CopyTo(array, arrayIndex); 
             }
 
             /// <summary>
@@ -518,13 +521,13 @@ namespace Lexical.Localization
             /// </summary>
             /// <param name="line"></param>
             /// <returns>true if item was successfully removed</returns>
-            public bool Remove(KeyValuePair<IAssetKey, string> line)
+            public bool Remove(KeyValuePair<IAssetKey, IFormulationString> line)
             {
                 if (_default != null && AssetKeyComparer.Default.Equals(this, line.Key))
                 {
-                    if (_default == line.Value) { _default = null; return true; } else { return false; }
+                    if (FormulationStringComparer.Instance.Equals(_default, line.Value)) { _default = null; return true; } else { return false; }
                 }
-                if (inlines != null) return ((ICollection<KeyValuePair<IAssetKey, string>>)inlines).Remove(line);
+                if (inlines != null) return ((ICollection<KeyValuePair<IAssetKey, IFormulationString>>)inlines).Remove(line);
                 return false;
             }
 
@@ -535,7 +538,7 @@ namespace Lexical.Localization
             /// <param name="value"></param>
             /// <returns></returns>
             /// <exception cref="ArgumentNullException">key is null.</exception>
-            public bool TryGetValue(IAssetKey key, out string value)
+            public bool TryGetValue(IAssetKey key, out IFormulationString value)
             {
                 if (_default != null && AssetKeyComparer.Default.Equals(this, key)) { value = _default; return true; }
                 if (inlines != null) return inlines.TryGetValue(key, out value);
@@ -547,9 +550,9 @@ namespace Lexical.Localization
             /// Returns an enumerator that iterates through the collection.
             /// </summary>
             /// <returns></returns>
-            public IEnumerator<KeyValuePair<IAssetKey, string>> GetEnumerator()
+            public IEnumerator<KeyValuePair<IAssetKey, IFormulationString>> GetEnumerator()
             {
-                if (_default != null) yield return new KeyValuePair<IAssetKey, string>(this, _default);
+                if (_default != null) yield return new KeyValuePair<IAssetKey, IFormulationString>(this, _default);
                 if (inlines != null) foreach (var line in inlines) yield return line;
             }
 
@@ -559,7 +562,7 @@ namespace Lexical.Localization
             /// <returns></returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
-                if (_default != null) yield return new KeyValuePair<IAssetKey, string>(this, _default);
+                if (_default != null) yield return new KeyValuePair<IAssetKey, IFormulationString>(this, _default);
                 if (inlines != null) foreach (var line in inlines) yield return line;
             }
         }
@@ -1383,7 +1386,7 @@ namespace Lexical.Localization
                 IEnumerable<LocalizedString> result = null;
                 while (true)
                 {
-                    IEnumerable<KeyValuePair<string, string>> strs = collections?.GetAllStringLines(this);
+                    IEnumerable<KeyValuePair<string, IFormulationString>> strs = collections?.GetAllStringLines(this);
                     if (strs != null)
                     {
                         IEnumerable<LocalizedString> converted = ConvertStrings(strs);
@@ -1396,7 +1399,7 @@ namespace Lexical.Localization
             }
             else
             {
-                IEnumerable<KeyValuePair<string, string>> strs = collections?.GetAllStringLines(this);
+                IEnumerable<KeyValuePair<string, IFormulationString>> strs = collections?.GetAllStringLines(this);
                 return strs == null ? null : ConvertStrings(strs);
             }
         }
@@ -1406,11 +1409,11 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        IEnumerable<LocalizedString> ConvertStrings(IEnumerable<KeyValuePair<string, string>> lines)
+        IEnumerable<LocalizedString> ConvertStrings(IEnumerable<KeyValuePair<string, IFormulationString>> lines)
         {
             foreach(var kp in lines)
             {
-                string value = kp.Value; // <- What kind of value is expected? Is formulation expected?
+                string value = kp.Value.Text; // <- What kind of value is expected? Is formulation expected?
                 yield return new LocalizedString(kp.Key, value);
             }
         }

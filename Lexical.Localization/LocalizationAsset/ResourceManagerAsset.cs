@@ -21,6 +21,7 @@ namespace Lexical.Localization
     {
         public readonly ResourceManager ResourceManager;
         public readonly IAssetKeyNamePolicy namePolicy;
+        public readonly ILocalizationStringFormatParser ValueParser;
 
         /// <summary>
         /// Name policy where only "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
@@ -103,19 +104,22 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="resourceManager">source of language strings and resource files</param>
         /// <param name="namePolicy">policy that converts <see cref="IAssetKey"/> into keys that correlate with keys in <paramref name="resourceManager"/>.</param>
-        public ResourceManagerAsset(ResourceManager resourceManager, IAssetKeyNamePolicy namePolicy)
+        /// <param name="parser"></param>
+        public ResourceManagerAsset(ResourceManager resourceManager, IAssetKeyNamePolicy namePolicy, ILocalizationStringFormatParser parser = default)
         {
             this.ResourceManager = resourceManager ?? throw new ArgumentNullException(nameof(resourceManager));
             this.namePolicy = namePolicy ?? throw new ArgumentNullException(nameof(namePolicy));
+            this.ValueParser = parser ?? LexicalStringFormat.Instance;
         }
 
-        public string GetString(IAssetKey key)
+        public IFormulationString GetString(IAssetKey key)
         {
             string id = namePolicy.BuildName(key);
             CultureInfo culture = key.FindCulture();
             try
             {
-                return culture == null ? ResourceManager.GetString(id) : ResourceManager.GetString(id, culture);
+                string value = culture == null ? ResourceManager.GetString(id) : ResourceManager.GetString(id, culture);
+                return ValueParser.Parse(value);
             }
             catch (Exception e)
             {

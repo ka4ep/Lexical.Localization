@@ -39,7 +39,7 @@ namespace Lexical.Localization.Utils
         /// <param name="keyValues"></param>
         /// <param name="groupingPolicy"></param>
         /// <returns>tree root ""</returns>
-        public static KeyTree Create(IEnumerable<KeyValuePair<IAssetKey, string>> keyValues, IAssetNamePattern groupingPolicy)
+        public static KeyTree Create(IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> keyValues, IAssetNamePattern groupingPolicy)
         {
             KeyTree root = new KeyTree(Key.Root);
             root.AddRange(keyValues, groupingPolicy);
@@ -112,7 +112,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Associated values.
         /// </summary>
-        List<string> values;
+        List<IFormulationString> values;
 
         /// <summary>
         /// Child nodes
@@ -144,7 +144,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Get-or-create values list.
         /// </summary>
-        public List<string> Values => values ?? (values = new List<string>(1));
+        public List<IFormulationString> Values => values ?? (values = new List<IFormulationString>(1));
 
         /// <summary>
         /// Create new key tree node.
@@ -160,10 +160,10 @@ namespace Lexical.Localization.Utils
         /// </summary>
         /// <param name="parameter"></param>
         /// <param name="values">(optional) value to add</param>
-        public KeyTree(Key parameter, params string[] values)
+        public KeyTree(Key parameter, params IFormulationString[] values)
         {
             this.Key = parameter;
-            if (values != null) this.values = new List<string>(values);
+            if (values != null) this.values = new List<IFormulationString>(values);
         }
 
         /// <summary>
@@ -183,18 +183,17 @@ namespace Lexical.Localization.Utils
         /// <param name="parent"></param>
         /// <param name="parameter"></param>
         /// <param name="values"></param>
-        public KeyTree(KeyTree parent, Key parameter, params string[] values)
+        public KeyTree(KeyTree parent, Key parameter, params IFormulationString[] values)
         {
             this.Parent = parent;
             this.Key = parameter;
-            this.values = new List<string>(values);
+            this.values = new List<IFormulationString>(values);
         }
 
         /// <summary>
         /// Get-or-create immediate child.
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="parameterValue"></param>
         /// <returns></returns>
         public KeyTree GetOrCreateChild(Key key)
         {
@@ -222,7 +221,7 @@ namespace Lexical.Localization.Utils
 
         IKeyTree IKeyTree.Parent => Parent;
 
-        IList<string> IKeyTree.Values => this.Values;
+        IList<IFormulationString> IKeyTree.Values => this.Values;
         IReadOnlyCollection<IKeyTree> IKeyTree.Children => this.Children;
         IKeyTree IKeyTree.CreateChild() => this.CreateChild();
         static IKeyTree[] empty = new IKeyTree[0];
@@ -256,10 +255,10 @@ namespace Lexical.Localization.Utils
             {
                 sb.Append(" [");
                 int ix = 0;
-                foreach(string value in Values)
+                foreach(IFormulationString value in Values)
                 {
                     if (ix++ > 0) sb.Append(", ");
-                    sb.Append(value);
+                    sb.Append(value.Text);
                 }
                 sb.Append("]");
             }

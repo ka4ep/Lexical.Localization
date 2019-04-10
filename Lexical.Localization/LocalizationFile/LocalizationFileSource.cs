@@ -67,9 +67,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
-        IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
+        IEnumerator<KeyValuePair<string, IFormulationString>> IEnumerable<KeyValuePair<string, IFormulationString>>.GetEnumerator()
         {
-            IEnumerable<KeyValuePair<string, string>> lines = LocalizationReaderExtensions_.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable<KeyValuePair<string, IFormulationString>> lines = LocalizationReaderExtensions_.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 
@@ -80,7 +80,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
         {
-            IEnumerable<KeyValuePair<string, string>> lines = LocalizationReaderExtensions_.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable<KeyValuePair<string, IFormulationString>> lines = LocalizationReaderExtensions_.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 
@@ -128,9 +128,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
-        IEnumerator<KeyValuePair<IAssetKey, string>> IEnumerable<KeyValuePair<IAssetKey, string>>.GetEnumerator()
+        IEnumerator<KeyValuePair<IAssetKey, IFormulationString>> IEnumerable<KeyValuePair<IAssetKey, IFormulationString>>.GetEnumerator()
         {
-            IEnumerable<KeyValuePair<IAssetKey, string>> lines = LocalizationReaderExtensions_.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines = LocalizationReaderExtensions_.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 

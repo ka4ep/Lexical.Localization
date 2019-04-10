@@ -214,7 +214,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<IAssetKey, string>> Filter(IEnumerable<KeyValuePair<IAssetKey, string>> lines)
+        public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> Filter(IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines)
         {
             // Break key into effective non-canonical parameters, and to canonical parameters and occurance index
             // (ParameterName, occuranceIndex, ParameterValue)

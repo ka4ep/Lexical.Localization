@@ -216,11 +216,6 @@ namespace Lexical.Localization
         public String Value;
 
         /// <summary>
-        /// The object that formatted the result, or null if unavailable.
-        /// </summary>
-        public ILocalizationResolver Formatter;
-
-        /// <summary>
         /// Severity for the step that resolves <see cref="IAssetKey"/> into formulation string.
         /// 
         /// <list type="table">
@@ -375,13 +370,11 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <param name="status"></param>
-        /// <param name="formatter"></param>
-        public LocalizationString(IAssetKey key, string value, LocalizationStatus status, ILocalizationResolver formatter)
+        public LocalizationString(IAssetKey key, string value, LocalizationStatus status)
         {
             Key = key;
             Value = value;
             Status = status;
-            Formatter = formatter;
         }
 
         /// <summary>

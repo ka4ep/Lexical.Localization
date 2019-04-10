@@ -54,17 +54,24 @@ namespace Lexical.Localization
         public string Extension { get; protected set; }
 
         /// <summary>
+        /// Value string parser.
+        /// </summary>
+        public ILocalizationStringFormatParser ValueParser { get; protected set; }
+
+        /// <summary>
         /// Create new ini file reader.
         /// </summary>
-        public LocalizationIniReader() : this("ini") { }
+        public LocalizationIniReader() : this("ini", LexicalStringFormat.Instance) { }
 
         /// <summary>
         /// Create new ini file reader.
         /// </summary>
         /// <param name="ext"></param>
-        public LocalizationIniReader(string ext)
+        /// <param name="valueParser"></param>
+        public LocalizationIniReader(string ext, ILocalizationStringFormat valueParser)
         {
             this.Extension = ext;
+            this.ValueParser = valueParser as ILocalizationStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
         }
 
         /// <summary>
@@ -117,8 +124,9 @@ namespace Lexical.Localization
                             if (value != null)
                             {
                                 int ix = current.Values.Count;
-                                current.Values.Add(value);
-                                if (correspondence != null) correspondence.Values[new KeyTreeValue(current, value, ix)] = token;
+                                IFormulationString formulationString = ValueParser.Parse(value);
+                                current.Values.Add(formulationString);
+                                if (correspondence != null) correspondence.Values[new KeyTreeValue(current, formulationString, ix)] = token;
                             }
                         }
                         break;

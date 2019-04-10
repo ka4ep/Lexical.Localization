@@ -22,13 +22,32 @@ namespace Lexical.Localization.Internal
         /// <param name="lines"></param>
         /// <param name="policy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
         /// <returns>lines with <see cref="IAssetKey"/> keys</returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
+        public static IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IAssetKeyNamePolicy policy)
         {
             foreach (var line in lines)
             {
                 IAssetKey kk;
                 if (policy.TryParse(line.Key, out kk))
-                    yield return new KeyValuePair<IAssetKey, string>(kk, line.Value);
+                    yield return new KeyValuePair<IAssetKey, IFormulationString>(kk, line.Value);
+            }
+        }
+
+        /// <summary>
+        /// Parse string key of each line into <see cref="IAssetKey"/> by using <paramref name="keyPolicy"/>.
+        /// 
+        /// If parse fails, then skips the key, doesn't throw exception.
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="keyPolicy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
+        /// <param name="valueParser"></param>
+        /// <returns>lines with <see cref="IAssetKey"/> keys</returns>
+        public static IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy keyPolicy, ILocalizationStringFormatParser valueParser)
+        {
+            foreach (var line in lines)
+            {
+                IAssetKey kk;
+                if (keyPolicy.TryParse(line.Key, out kk))
+                    yield return new KeyValuePair<IAssetKey, IFormulationString>(kk, valueParser.Parse(line.Value));
             }
         }
 
@@ -38,7 +57,7 @@ namespace Lexical.Localization.Internal
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
+        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IAssetKeyNamePolicy policy)
             => KeyTree.Create(lines.ToKeyLines(policy), null);
 
         /// <summary>
@@ -49,7 +68,7 @@ namespace Lexical.Localization.Internal
         /// <param name="lines"></param>
         /// <param name="policy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
         /// <returns></returns>
-        public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
+        public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IAssetKeyNamePolicy policy)
             => new LocalizationAsset().Add(lines, policy).Load();
 
         /// <summary>
@@ -58,7 +77,7 @@ namespace Lexical.Localization.Internal
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy policy)
+        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IAssetKeyNamePolicy policy)
             => new LocalizationStringLinesSource(lines, policy);
 
         /// <summary>
@@ -67,10 +86,10 @@ namespace Lexical.Localization.Internal
         /// <param name="lines"></param>
         /// <param name="prefix"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, string>> AddKeyPrefix(this IEnumerable<KeyValuePair<string, string>> lines, string prefix)
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> AddKeyPrefix(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, string prefix)
         {
             if (string.IsNullOrEmpty(prefix) || lines == null) return lines;
-            return lines.Select(line => new KeyValuePair<string, string>(prefix + line.Key, line.Value));
+            return lines.Select(line => new KeyValuePair<string, IFormulationString>(prefix + line.Key, line.Value));
         }
 
     }

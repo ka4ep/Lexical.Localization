@@ -19,7 +19,7 @@ namespace Lexical.Localization
             Func = func ?? throw new ArgumentNullException(nameof(func));
         }
 
-        IEnumerable<KeyValuePair<string, string>> ILocalizationStringLinesEnumerable.GetAllStringLines(IAssetKey key)
+        IEnumerable<KeyValuePair<string, IFormulationString>> ILocalizationStringLinesEnumerable.GetAllStringLines(IAssetKey key)
             => (Func() as ILocalizationStringLinesEnumerable)?.GetAllStringLines(key);
 
         byte[] IAssetResourceProvider.GetResource(IAssetKey key)
@@ -28,7 +28,7 @@ namespace Lexical.Localization
         IEnumerable<string> IAssetResourceNamesEnumerable.GetResourceNames(IAssetKey key)
             => (Func() as IAssetResourceNamesEnumerable)?.GetResourceNames(key);
 
-        string ILocalizationStringProvider.GetString(IAssetKey key)
+        IFormulationString ILocalizationStringProvider.GetString(IAssetKey key)
             => (Func() as ILocalizationStringProvider)?.GetString(key);
 
         Stream IAssetResourceProvider.OpenStream(IAssetKey key)
@@ -37,13 +37,13 @@ namespace Lexical.Localization
         public override string ToString()
             => $"{GetType().Name}()";
 
-        public IEnumerable<KeyValuePair<string, string>> GetStringLines(IAssetKey filterKey = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(IAssetKey filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetStringLines(filterKey);
 
-        public IEnumerable<KeyValuePair<IAssetKey, string>> GetKeyLines(IAssetKey filterKey = null)
+        public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> GetKeyLines(IAssetKey filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetKeyLines(filterKey);
 
-        public IEnumerable<KeyValuePair<IAssetKey, string>> GetAllKeyLines(IAssetKey filterKey = null)
+        public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> GetAllKeyLines(IAssetKey filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetAllKeyLines(filterKey);
 
         public IEnumerable<string> GetAllResourceNames(IAssetKey filterKey = null)

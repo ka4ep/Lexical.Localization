@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. </param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ReadKeyLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ReadKeyLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read string key-values</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<string, string>> ReadStringLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read string key-values</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<string, string>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
     }
     #endregion Interface
 }

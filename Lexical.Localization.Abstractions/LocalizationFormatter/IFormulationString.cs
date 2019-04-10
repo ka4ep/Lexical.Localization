@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
+using System.Collections.Generic;
 
 namespace Lexical.Localization
 {
@@ -168,6 +169,160 @@ namespace Lexical.Localization
         /// (Optional) Default value, used if argument is not provided.
         /// </summary>
         string DefaultValue { get; }
+    }
+
+    /// <summary>
+    /// Compares formulation strings
+    /// </summary>
+    public class FormulationStringComparer : IEqualityComparer<IFormulationString>, IComparer<IFormulationString>
+    {
+        private static FormulationStringComparer instance = new FormulationStringComparer(FormulationStringPartComparer.Instance, FormulationStringPartComparer.Instance);
+
+        /// <summary>
+        /// Default instance
+        /// </summary>
+        public static FormulationStringComparer Instance => instance;
+
+        IEqualityComparer<IFormulationStringPart> partComparer;
+        IComparer<IFormulationStringPart> partComparer2;
+
+        /// <summary>
+        /// Create part comparer
+        /// </summary>
+        /// <param name="partComparer"></param>
+        /// <param name="partComparer2"></param>
+        public FormulationStringComparer(IEqualityComparer<IFormulationStringPart> partComparer, IComparer<IFormulationStringPart> partComparer2)
+        {
+            this.partComparer = partComparer;
+            this.partComparer2 = partComparer2;
+        }
+
+        /// <summary>
+        /// Compare formulation strings for sorting order
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>-1, 0, 1</returns>
+        public int Compare(IFormulationString x, IFormulationString y)
+        {
+            string _x = x?.Text, _y = y?.Text;
+            if (_x == null && _y == null) return 0;
+            if (_x == null) return -1;
+            if (_y == null) return 1;
+            return _x.CompareTo(_y);
+        }
+
+        /// <summary>
+        /// Compare formulation strings for equality.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public bool Equals(IFormulationString x, IFormulationString y)
+        {
+            if (x == null && y == null) return true;
+            if (x == null || y == null) return false;
+            return false;
+        }
+
+        /// <summary>
+        /// Calculate hashcode.
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        public int GetHashCode(IFormulationString o)
+        {
+            if (o == null) return 0;
+            int result = FNVHashBasis;
+
+            // Hash Status
+            result ^= (int) ((ulong)(o.Status & LocalizationStatus.FormulationMask) >> Shift.Formulation);
+            result *= FNVHashPrime;
+
+            // Hash FormatProvider
+            if (o.FormatProvider != null) { result ^= o.FormatProvider.GetHashCode(); result *= FNVHashPrime; }
+
+            // Hash Parts
+            foreach (var part in o.Parts)
+            {
+                result ^= partComparer.GetHashCode(part);
+                result *= FNVHashPrime;
+            }
+            return result;
+        }
+        
+        const int FNVHashBasis = unchecked((int)2166136261);
+        const int FNVHashPrime = 16777619;
+    }
+
+    /// <summary>
+    /// Compares formulation strings
+    /// </summary>
+    public class FormulationStringPartComparer : IEqualityComparer<IFormulationStringPart>, IComparer<IFormulationStringPart>
+    {
+        private static FormulationStringPartComparer instance = new FormulationStringPartComparer();
+
+        /// <summary>
+        /// Default instance
+        /// </summary>
+        public static FormulationStringPartComparer Instance => instance;
+
+        /// <summary>
+        /// Compare formulation string parts for sorting order
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns>-1, 0, 1</returns>
+        public int Compare(IFormulationStringPart x, IFormulationStringPart y)
+        {
+            string _x = x?.Text, _y = y?.Text;
+            if (_x == null && _y == null) return 0;
+            if (_x == null) return -1;
+            if (_y == null) return 1;
+            return _x.CompareTo(_y);
+        }
+
+        /// <summary>
+        /// Compare formulation strings for equality.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public bool Equals(IFormulationStringPart x, IFormulationStringPart y)
+        {
+            if (x == null && y == null) return true;
+            if (x == null || y == null) return false;
+            return false;
+        }
+
+        /// <summary>
+        /// Calculate hashcode.
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        public int GetHashCode(IFormulationStringPart o)
+        {
+            if (o == null) return 0;
+            int result = FNVHashBasis;
+
+            result ^= o.Text.GetHashCode();
+            result *= FNVHashPrime;
+
+            if (o.Kind == FormulationStringPartKind.Argument && o is IFormulationStringArgument arg)
+            {
+                if (arg.ArgumentIndex>=0) { result ^= arg.ArgumentIndex; result *= FNVHashPrime; }
+                if (arg.ArgumentName != null) { result ^= arg.ArgumentName.GetHashCode(); result *= FNVHashPrime; }
+                if (arg.DefaultValue != null) { result ^= arg.DefaultValue.GetHashCode(); result *= FNVHashPrime; }
+                if (arg.Alignment != 0) { result ^= arg.Alignment; result *= FNVHashPrime; }
+                if (arg.Format != null) { result ^= arg.Format.GetHashCode(); result *= FNVHashPrime; }
+                if (arg.Function != null) { result ^= arg.Function.GetHashCode(); result *= FNVHashPrime; }
+            }
+
+            return result;
+        }
+
+        const int FNVHashBasis = unchecked((int)2166136261);
+        const int FNVHashPrime = 16777619;
     }
 
 }

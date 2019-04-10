@@ -31,19 +31,23 @@ namespace Lexical.Localization
     {
         public readonly IStringLocalizer stringLocalizer;
         public readonly CultureInfo culture;
+        public readonly ILocalizationStringFormatParser ValueParser;
+
         protected ConcurrentDictionary<CultureInfo, StringLocalizerAsset> culture_map;
         protected Func<CultureInfo, StringLocalizerAsset> createFunc;
 
-        public StringLocalizerAsset(IStringLocalizer stringLocalizer)
+        public StringLocalizerAsset(IStringLocalizer stringLocalizer, ILocalizationStringFormatParser valueParser = default)
         {
             this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
             this.culture_map = new ConcurrentDictionary<CultureInfo, StringLocalizerAsset>();
             this.createFunc = ci => new StringLocalizerAsset(stringLocalizer.WithCulture(ci), ci);
+            this.ValueParser = ValueParser ?? LexicalStringFormat.Instance;
         }
-        public StringLocalizerAsset(IStringLocalizer stringLocalizer, CultureInfo culture)
+        public StringLocalizerAsset(IStringLocalizer stringLocalizer, CultureInfo culture, ILocalizationStringFormatParser valueParser = default)
         {
             this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
             this.createFunc = ci => new StringLocalizerAsset(stringLocalizer.WithCulture(ci), ci);
+            this.ValueParser = ValueParser ?? LexicalStringFormat.Instance;
             if (culture == null || culture.Name == "")
             {
                 this.culture_map = new ConcurrentDictionary<CultureInfo, StringLocalizerAsset>();
@@ -67,7 +71,7 @@ namespace Lexical.Localization
             /// <param name="basename">Embed location, e.g. "Resources" folder in an assembly</param>
             /// <param name="location">Assembly name</param>
             /// <param name="culture"></param>
-            public Type(IStringLocalizer stringLocalizer, System.Type type, CultureInfo culture) : base(stringLocalizer, culture)
+            public Type(IStringLocalizer stringLocalizer, System.Type type, CultureInfo culture, ILocalizationStringFormatParser valueParser = default) : base(stringLocalizer, culture, valueParser)
             {
                 this.type = type ?? throw new ArgumentNullException(nameof(type));
                 this.createFunc = ci => new Type(stringLocalizer.WithCulture(ci), type, ci);
@@ -88,7 +92,7 @@ namespace Lexical.Localization
             /// <param name="basename">Embed location, e.g. "Resources" folder in an assembly</param>
             /// <param name="location">Assembly name</param>
             /// <param name="culture"></param>
-            public Location(IStringLocalizer stringLocalizer, string basename, string location, CultureInfo culture) : base(stringLocalizer, culture)
+            public Location(IStringLocalizer stringLocalizer, string basename, string location, CultureInfo culture, ILocalizationStringFormatParser valueParser = default) : base(stringLocalizer, culture, valueParser)
             {
                 this.basename = basename ?? throw new ArgumentNullException(nameof(basename));
                 this.location = location ?? throw new ArgumentNullException(nameof(location));
@@ -117,7 +121,7 @@ namespace Lexical.Localization
             return null;
         }
 
-        public string GetString(IAssetKey key)
+        public IFormulationString GetString(IAssetKey key)
         {
             CultureInfo key_culture = key.FindCulture();
             if (key_culture != null)
@@ -202,10 +206,10 @@ namespace Lexical.Localization
             LocalizedString str = stringLocalizer[id];
 
             if (str.ResourceNotFound) return null;
-            return str.Value;
+            return ValueParser.Parse(str.Value);
         }
 
-        public IEnumerable<KeyValuePair<string, string>> GetStringLines(IAssetKey key = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(IAssetKey key = null)
         {
             CultureInfo key_culture = key?.FindCulture();
             IStringLocalizer localizer = key == null ? stringLocalizer : FindStringLocalizer(key, key_culture).stringLocalizer;
@@ -219,7 +223,7 @@ namespace Lexical.Localization
                 return localizer
                     .GetAllStrings(false)
                     ?.Where(str => !str.ResourceNotFound)
-                    ?.Select(str => new KeyValuePair<string, string>(prefix == null ? str.Name : prefix + str.Name, str.Value))
+                    ?.Select(str => new KeyValuePair<string, IFormulationString>(prefix == null ? str.Name : prefix + str.Name, ValueParser.Parse(str.Value)))
                     ?.Where(kp => kp.Value != null)
                     ?.ToArray();
             }
@@ -229,7 +233,7 @@ namespace Lexical.Localization
             }
         }
 
-        public IEnumerable<KeyValuePair<string, string>> GetAllStringLines(IAssetKey key = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(IAssetKey key = null)
         {
             return GetStringLines(key);
         }

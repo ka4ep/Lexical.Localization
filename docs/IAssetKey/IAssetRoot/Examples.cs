@@ -42,7 +42,7 @@ namespace docs
                 // Create reference
                 IAssetKey key = new LocalizationKey._Section(null, "Section").Key("Key");
                 // Retreieve with reference
-                string str = asset.GetString(key);
+                IFormulationString str = asset.GetString(key);
                 #endregion Snippet_5x
             }
 

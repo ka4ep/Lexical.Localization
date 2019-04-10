@@ -6,12 +6,8 @@
 using Lexical.Localization.Internal;
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using Lexical.Localization.Utils;
 using Newtonsoft.Json.Linq;
 
@@ -40,9 +36,14 @@ namespace Lexical.Localization
         public string Extension { get; protected set; }
 
         /// <summary>
+        /// Value string parser.
+        /// </summary>
+        public ILocalizationStringFormatParser ValueParser { get; protected set; }
+
+        /// <summary>
         /// Create new .json reader.
         /// </summary>
-        public LocalizationJsonReader() : this("json")
+        public LocalizationJsonReader() : this("json", LexicalStringFormat.Instance)
         {
         }
 
@@ -50,9 +51,11 @@ namespace Lexical.Localization
         /// Create new .json reader.
         /// </summary>
         /// <param name="ext"></param>
-        public LocalizationJsonReader(string ext)
+        /// <param name="valueParser"></param>
+        public LocalizationJsonReader(string ext, ILocalizationStringFormat valueParser)
         {
             this.Extension = ext;
+            this.ValueParser = valueParser as ILocalizationStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
         }
 
         /// <summary>
@@ -123,8 +126,9 @@ namespace Lexical.Localization
                             if (value != null)
                             {
                                 int ix = current.Values.Count;
-                                current.Values.Add(value);
-                                if (updateCorrespondence) correspondenceContext.Values[new KeyTreeValue(current, value, ix)] = (JValue) tokenReader.CurrentToken;
+                                IFormulationString formulationString = ValueParser.Parse(value);
+                                current.Values.Add(formulationString);
+                                if (updateCorrespondence) correspondenceContext.Values[new KeyTreeValue(current, formulationString, ix)] = (JValue) tokenReader.CurrentToken;
                             }
                         }
                         break;

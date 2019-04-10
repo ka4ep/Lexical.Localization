@@ -48,6 +48,19 @@ namespace Lexical.Localization
     }
 
     /// <summary>
+    /// Prints <see cref="IFormulationString"/> into the format.
+    /// </summary>
+    public interface ILocalizationStringFormatPrinter : ILocalizationStringFormat
+    {
+        /// <summary>
+        /// Print formulation string into string.
+        /// </summary>
+        /// <param name="formulationString"></param>
+        /// <returns>formulation string</returns>
+        string Print(IFormulationString formulationString);
+    }
+
+    /// <summary>
     /// A map of formats
     /// </summary>
     public interface ILocalizationStringFormats : IDictionary<string, ILocalizationStringFormat>
@@ -74,6 +87,18 @@ namespace Lexical.Localization
         {
             if (format is ILocalizationStringFormatParser parser) return parser.Parse(formulationString);
             throw new ArgumentException($"{format} doesn't implement {nameof(ILocalizationStringFormatParser)}.");
+        }
+
+        /// <summary>
+        /// Print formulation string into string.
+        /// </summary>
+        /// <param name="format"></param>
+        /// <param name="formulationString"></param>
+        /// <returns>formulation string</returns>
+        public static string Print(this ILocalizationStringFormat format, IFormulationString formulationString)
+        {
+            if (format is ILocalizationStringFormatPrinter printer) return printer.Print(formulationString);
+            throw new ArgumentException($"{format} doesn't implement {nameof(ILocalizationStringFormatPrinter)}.");
         }
 
         /// <summary>

@@ -20,7 +20,7 @@ namespace Lexical.Localization
         /// <param name="keyTree"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, string>> ToStringLines(this IKeyTree keyTree, IAssetKeyNamePolicy policy)
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IKeyTree keyTree, IAssetKeyNamePolicy policy)
             => keyTree.ToKeyLines().ToStringLines(policy);
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> ToKeyLines(this IKeyTree node)
+        public static IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ToKeyLines(this IKeyTree node)
         {
             Queue<(IKeyTree, IAssetKey)> queue = new Queue<(IKeyTree, IAssetKey)>();
             queue.Enqueue((node, node.Key));
@@ -40,8 +40,8 @@ namespace Lexical.Localization
                 // Yield values
                 if (current.Item2 != null && current.Item1.HasValues)
                 {
-                    foreach (string value in current.Item1.Values)
-                        yield return new KeyValuePair<IAssetKey, string>(current.Item2, value);
+                    foreach (IFormulationString value in current.Item1.Values)
+                        yield return new KeyValuePair<IAssetKey, IFormulationString>(current.Item2, value);
                 }
 
                 // Enqueue children
@@ -126,11 +126,13 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool HasValue(this IKeyTree tree, string value)
+        public static bool HasValue(this IKeyTree tree, IFormulationString value)
         {
             if (value == null) return false;
             if (!tree.HasValues) return false;
-            return tree.Values.Contains(value);
+            foreach(IFormulationString linevalue in tree.Values)
+                if (FormulationStringComparer.Instance.Equals(value, linevalue)) return true;
+            return false;
         }
 
         /// <summary>
@@ -184,11 +186,11 @@ namespace Lexical.Localization
         /// <param name="key">(optional) possible initial key to set.</param>
         /// <param name="value">(optional) possible initial value to add</param>
         /// <returns><paramref name="node"/></returns>
-        public static IKeyTree Add(this IKeyTree node, IAssetKey key, string value)
+        public static IKeyTree Add(this IKeyTree node, IAssetKey key, IFormulationString value)
         {
             IKeyTree n = node;
             if (key != null) n = n.GetChild(key);
-            if (value != null && !n.Values.Contains(value)) n.Values.Add(value);
+            if (value != null) n.Values.Add(value);
             return node;
         }
 
@@ -202,7 +204,7 @@ namespace Lexical.Localization
         /// <param name="key_parts">(optional) possible initial key to set.</param>
         /// <param name="value">(optional) possible initial value to add</param>
         /// <returns>the leaf node where the values was added</returns>
-        public static IKeyTree AddRecursive(this IKeyTree node, IEnumerable<IAssetKey> key_parts, string value)
+        public static IKeyTree AddRecursive(this IKeyTree node, IEnumerable<IAssetKey> key_parts, IFormulationString value)
         {
             // Drill into leaf
             IKeyTree leaf = node;

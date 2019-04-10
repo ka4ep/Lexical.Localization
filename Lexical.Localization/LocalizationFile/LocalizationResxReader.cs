@@ -20,16 +20,53 @@ namespace Lexical.Localization
     public class LocalizationResxReader : ILocalizationFileFormat, ILocalizationStringLinesStreamReader, ILocalizationStringLinesTextReader
     {
         private readonly static LocalizationResxReader instance = new LocalizationResxReader();
+
+        /// <summary>
+        /// Default instance
+        /// </summary>
         public static LocalizationResxReader Instance => instance;
+
+        /// <summary>
+        /// File extension, "resx" for default.
+        /// </summary>
         public string Extension { get; protected set; }
 
-        public LocalizationResxReader() : this("resx") { }
-        public LocalizationResxReader(string ext) {
+        /// <summary>
+        /// Value string parser.
+        /// </summary>
+        public ILocalizationStringFormatParser ValueParser { get; protected set; }
+
+        /// <summary>
+        /// Create new .resx reader instance with default values.
+        /// </summary>
+        public LocalizationResxReader() : this("resx", LexicalStringFormat.Instance) { }
+
+        /// <summary>
+        /// Create new .resx reader.
+        /// </summary>
+        /// <param name="ext"></param>
+        /// <param name="valueParser"></param>
+        public LocalizationResxReader(string ext, ILocalizationStringFormat valueParser)
+        {
             this.Extension = ext;
+            this.ValueParser = valueParser as ILocalizationStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
         }
 
-        public IEnumerable<KeyValuePair<string, string>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(stream).Root, namePolicy);
-        public IEnumerable<KeyValuePair<string, string>> ReadStringLines(TextReader text, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(text).Root, namePolicy);
+        /// <summary>
+        /// Read resx content from <paramref name="stream"/>.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(stream).Root, namePolicy);
+
+        /// <summary>
+        /// Read resx content from <paramref name="text"/>.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, IAssetKeyNamePolicy namePolicy = default) => ReadElement(XDocument.Load(text).Root, namePolicy);
 
         /// <summary>
         /// Reads lines from xml element.
@@ -37,7 +74,7 @@ namespace Lexical.Localization
         /// <param name="element">parent element that contains data elements</param>
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
-        public IEnumerable<KeyValuePair<string, string>> ReadElement(XElement element, IAssetKeyNamePolicy namePolicy)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadElement(XElement element, IAssetKeyNamePolicy namePolicy)
         {
             foreach (XElement dataNode in element.Elements("data"))
             {
@@ -50,18 +87,25 @@ namespace Lexical.Localization
                     {
                         if (textNode is XText text)
                         {
-                            string value = text?.Value;
+                            IFormulationString value = ValueParser.Parse(text?.Value);
                             if (value != null)
-                                yield return new KeyValuePair<string, string>(key, value);
+                                yield return new KeyValuePair<string, IFormulationString>(key, value);
                         }
                     }
                 }
             }
         }
 
-        public List<KeyValuePair<string, string>> ReadElement(XElement element, IAssetKeyNamePolicy namePolicy, ResXCorrespondence correspondence)
+        /// <summary>
+        /// Read lines from xml element, update <paramref name="correspondence"/>.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="namePolicy"></param>
+        /// <param name="correspondence"></param>
+        /// <returns></returns>
+        public List<KeyValuePair<string, IFormulationString>> ReadElement(XElement element, IAssetKeyNamePolicy namePolicy, ResXCorrespondence correspondence)
         {
-            List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
+            List<KeyValuePair<string, IFormulationString>> result = new List<KeyValuePair<string, IFormulationString>>();
 
             foreach (XElement dataNode in element.Elements("data"))
             {
@@ -75,11 +119,11 @@ namespace Lexical.Localization
                     {
                         if (textNode is XText text)
                         {
-                            string value = text?.Value;
+                            IFormulationString value = ValueParser.Parse(text?.Value);
                             if (value != null)
                             {
-                                result.Add(new KeyValuePair<string, string>(key, value));
-                                if (correspondence != null) correspondence.Values[new KeyValuePair<string, string>(key, value)] = dataNode;
+                                result.Add(new KeyValuePair<string, IFormulationString>(key, value));
+                                if (correspondence != null) correspondence.Values[new KeyValuePair<string, IFormulationString>(key, value)] = dataNode;
                             }
                         }
                     

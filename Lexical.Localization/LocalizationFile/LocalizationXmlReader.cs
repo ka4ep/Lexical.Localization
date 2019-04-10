@@ -42,7 +42,7 @@ namespace Lexical.Localization
         /// </summary>
         public const string URN_ = "urn:lexical.fi:";
 
-        private readonly static LocalizationXmlReader instance = new LocalizationXmlReader("xml");
+        private readonly static LocalizationXmlReader instance = new LocalizationXmlReader();
 
         /// <summary>
         /// Default xml reader instance
@@ -55,6 +55,11 @@ namespace Lexical.Localization
         public string Extension { get; protected set; }
 
         /// <summary>
+        /// Value string parser.
+        /// </summary>
+        public ILocalizationStringFormatParser ValueParser { get; protected set; }
+
+        /// <summary>
         /// Xml reader settings
         /// </summary>
         protected XmlReaderSettings xmlReaderSettings;
@@ -62,16 +67,18 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new xml reader
         /// </summary>
-        public LocalizationXmlReader() : this("xml", default) { }
+        public LocalizationXmlReader() : this("xml", LexicalStringFormat.Instance, default) { }
 
         /// <summary>
         /// Create new xml reader
         /// </summary>
         /// <param name="extension"></param>
+        /// <param name="valueParser"></param>
         /// <param name="xmlReaderSettings"></param>
-        public LocalizationXmlReader(string extension, XmlReaderSettings xmlReaderSettings = default)
+        public LocalizationXmlReader(string extension, ILocalizationStringFormat valueParser, XmlReaderSettings xmlReaderSettings = default)
         {
             this.Extension = extension;
+            this.ValueParser = valueParser as ILocalizationStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
             this.xmlReaderSettings = xmlReaderSettings ?? CreateXmlReaderSettings();
         }
 
@@ -172,10 +179,11 @@ namespace Lexical.Localization
                         string trimmedXmlValue = Trim(text?.Value);
                         if (!string.IsNullOrEmpty(trimmedXmlValue))
                         {
-                            node.Values.Add(trimmedXmlValue);
+                            IFormulationString formulationString = ValueParser.Parse(trimmedXmlValue);
+                            node.Values.Add( formulationString );
 
                             if (correspondenceContext != null)
-                                correspondenceContext.Values[new KeyTreeValue(node, trimmedXmlValue, node.Values.Count - 1)] = text;
+                                correspondenceContext.Values[new KeyTreeValue(node, formulationString, node.Values.Count - 1)] = text;
                         }
                     }
                 }

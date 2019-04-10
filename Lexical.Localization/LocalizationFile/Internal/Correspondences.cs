@@ -41,7 +41,7 @@ namespace Lexical.Localization.Internal
     public class ResXCorrespondence
     {
         public readonly Correspondence<string, XElement> Nodes = new Correspondence<string, XElement>();
-        public readonly Dictionary<KeyValuePair<string, string>, XElement> Values = new Dictionary<KeyValuePair<string, string>, XElement>(KeyValuePairEqualityComparer<string, string>.Default);
+        public readonly Dictionary<KeyValuePair<string, IFormulationString>, XElement> Values = new Dictionary<KeyValuePair<string, IFormulationString>, XElement>(KeyValuePairEqualityComparer<string, IFormulationString>.Default);
     }
 
     /// <summary>
@@ -50,10 +50,10 @@ namespace Lexical.Localization.Internal
     public struct KeyTreeValue : IEquatable<KeyTreeValue>
     {
         public readonly IKeyTree tree;
-        public readonly string value;
+        public readonly IFormulationString value;
         public readonly int valueIndex;
 
-        public KeyTreeValue(IKeyTree tree, string value, int valueIndex)
+        public KeyTreeValue(IKeyTree tree, IFormulationString value, int valueIndex)
         {
             this.tree = tree ?? throw new ArgumentNullException(nameof(tree));
             this.value = value;
@@ -61,15 +61,17 @@ namespace Lexical.Localization.Internal
         }
 
         public override bool Equals(object obj)
-            => obj is KeyTreeValue other ? tree == other.tree && value == other.value && valueIndex == other.valueIndex : false;
+            => obj is KeyTreeValue other ? tree == other.tree && FormulationStringComparer.Instance.Equals(value, other.value) && valueIndex == other.valueIndex : false;
+
         public bool Equals(KeyTreeValue other)
-            => tree == other.tree && value == other.value && valueIndex == other.valueIndex;
+            => tree == other.tree && FormulationStringComparer.Instance.Equals(value, other.value) && valueIndex == other.valueIndex;
+
         public override int GetHashCode()
         {
             int hash = -2128831035;
             hash ^= tree.GetHashCode();
             hash *= 0x1000193;
-            hash ^= value == null ? 0 : value.GetHashCode();
+            hash ^= FormulationStringComparer.Instance.GetHashCode(value);
             hash *= 0x1000193;
             hash ^= valueIndex;
             hash *= 0x1000193;
@@ -82,7 +84,7 @@ namespace Lexical.Localization.Internal
     public class KeyValueTreeComparer : IEqualityComparer<KeyTreeValue>
     {
         public bool Equals(KeyTreeValue x, KeyTreeValue y)
-            => x.tree == y.tree && x.value == y.value && x.valueIndex == y.valueIndex;
+            => x.tree == y.tree && FormulationStringComparer.Instance.Equals(x.value, y.value) && x.valueIndex == y.valueIndex;
 
         public int GetHashCode(KeyTreeValue obj)
             => obj.GetHashCode();

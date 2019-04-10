@@ -23,7 +23,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key that has inline value assignments.
     /// </summary>
-    public interface ILocalizationKeyInlines : ILocalizationKey, IDictionary<IAssetKey, string>
+    public interface ILocalizationKeyInlines : ILocalizationKey, IDictionary<IAssetKey, IFormulationString>
     {
     }
 
@@ -39,7 +39,7 @@ namespace Lexical.Localization
         public static ILocalizationKeyInlines Inline(this IAssetKey key, string text)
         {
             ILocalizationKeyInlines inlinesKey = key.GetOrCreateInlines();
-            if (text == null) inlinesKey.Remove(key); else inlinesKey[key] = text;
+            if (text == null) inlinesKey.Remove(key); else inlinesKey[key] = LexicalStringFormat.Instance.Parse(text);
             return inlinesKey;
         }
 
@@ -55,7 +55,7 @@ namespace Lexical.Localization
         {
             ILocalizationKeyInlines inlinesKey = key.GetOrCreateInlines();
             IAssetKey subKey = ParameterParser.Instance.Parse(subKeyText, key);
-            if (text == null) inlinesKey.Remove(subKey); else inlinesKey[subKey] = text;
+            if (text == null) inlinesKey.Remove(subKey); else inlinesKey[subKey] = LexicalStringFormat.Instance.Parse(text);
             return inlinesKey;
         }
 

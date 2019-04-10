@@ -18,6 +18,7 @@ namespace Lexical.Localization
     public class StringLocalizerFactoryAsset : ILocalizationStringProvider, IAssetReloadable
     {
         protected readonly IStringLocalizerFactory stringLocalizerFactory;
+        public readonly ILocalizationStringFormatParser ValueParser;
 
         protected ConcurrentDictionary<Type, StringLocalizerAsset.Type> map_by_type;
         protected ConcurrentDictionary<Pair<string, string>, StringLocalizerAsset.Location> map_by_location;
@@ -25,19 +26,20 @@ namespace Lexical.Localization
         Func<Type, StringLocalizerAsset.Type> createByTypeFunc;
         Func<Pair<string, string>, StringLocalizerAsset.Location> createByLocationFunc;
 
-        public StringLocalizerFactoryAsset(IStringLocalizerFactory stringLocalizerFactory)
+        public StringLocalizerFactoryAsset(IStringLocalizerFactory stringLocalizerFactory, ILocalizationStringFormatParser valueParser = default)
         {
             this.stringLocalizerFactory = stringLocalizerFactory ?? throw new ArgumentNullException(nameof(stringLocalizerFactory));
             this.map_by_type = new ConcurrentDictionary<Type, StringLocalizerAsset.Type>();
             this.map_by_location = new ConcurrentDictionary<Pair<String, String>, StringLocalizerAsset.Location>();
             createByTypeFunc = type => new StringLocalizerAsset.Type(stringLocalizerFactory.Create(type), type, null);
             createByLocationFunc = location => new StringLocalizerAsset.Location(stringLocalizerFactory.Create(location.a, location.b), location.a, location.b, null);
+            this.ValueParser = ValueParser ?? LexicalStringFormat.Instance;
         }
 
         public IAsset Create(Type type, CultureInfo culture = null)
-            => new StringLocalizerAsset.Type(stringLocalizerFactory.Create(type), type, culture);
+            => new StringLocalizerAsset.Type(stringLocalizerFactory.Create(type), type, culture, ValueParser);
         public IAsset Create(string basename, string location, CultureInfo culture = null)
-            => new StringLocalizerAsset.Location(stringLocalizerFactory.Create(basename, location), basename, location, culture);
+            => new StringLocalizerAsset.Location(stringLocalizerFactory.Create(basename, location), basename, location, culture, ValueParser);
 
         public StringLocalizerAsset GetHandlingAsset(IAssetKey key)
         {
@@ -51,7 +53,7 @@ namespace Lexical.Localization
                 null;
         }
 
-        public string GetString(IAssetKey key)
+        public IFormulationString GetString(IAssetKey key)
             => GetHandlingAsset(key)?.GetString(key);
 
         public IAsset Reload()

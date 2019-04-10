@@ -27,8 +27,18 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, string>> ToStringLines(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetKeyNamePolicy policy)
-            => lines.Select(line => new KeyValuePair<string, string>((policy ?? DefaultPolicy).BuildName(line.Key), line.Value));
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines, IAssetKeyNamePolicy policy)
+            => lines.Select(line => new KeyValuePair<string, IFormulationString>((policy ?? DefaultPolicy).BuildName(line.Key), line.Value));
+
+        /// <summary>
+        /// Convert <paramref name="lines"/> to asset key lines.
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="keyPolicy"></param>
+        /// <param name="valueParser"></param>
+        /// <returns></returns>
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetKeyNamePolicy keyPolicy, ILocalizationStringFormatParser valueParser)
+            => lines.Select(line => new KeyValuePair<string, IFormulationString>((keyPolicy ?? DefaultPolicy).BuildName(line.Key), valueParser.Parse(line.Value)));
 
         /// <summary>
         /// Convert <paramref name="lines"/> to Key Tree of one level.
@@ -36,7 +46,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetKeyNamePolicy namePolicy)
+        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines, IAssetKeyNamePolicy namePolicy)
         {
             KeyTree tree = new KeyTree(Key.Root, null);
             if (namePolicy is IAssetNamePattern pattern)
@@ -52,7 +62,7 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree tree, IEnumerable<KeyValuePair<IAssetKey, string>> lines)
+        public static IKeyTree AddRange(this IKeyTree tree, IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines)
         {
             foreach (var line in lines)
             {
@@ -86,7 +96,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="groupingRule"></param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, string>> lines, IAssetNamePattern groupingRule) // Todo separate to sortRule + groupingRule
+        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines, IAssetNamePattern groupingRule) // Todo separate to sortRule + groupingRule
         {
             // Use another method
             //if (groupingRule == null) { node.AddRange(lines); return node; }
@@ -211,7 +221,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public static IAsset ToAsset(this IEnumerable<KeyValuePair<IAssetKey, string>> lines)
+        public static IAsset ToAsset(this IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines)
             => new LocalizationAsset().Add(lines).Load();
 
         /// <summary>
@@ -219,7 +229,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<IAssetKey, string>> lines)
+        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines)
             => new LocalizationKeyLinesSource(lines);
 
         /// <summary>
@@ -228,9 +238,9 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="keyComparer">(optional) <see cref="IAssetKey"/> comparer</param>
         /// <returns></returns>
-        public static Dictionary<IAssetKey, string> ToDictionary(this IEnumerable<KeyValuePair<IAssetKey, string>> lines, IEqualityComparer<IAssetKey> keyComparer = default)
+        public static Dictionary<IAssetKey, IFormulationString> ToDictionary(this IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines, IEqualityComparer<IAssetKey> keyComparer = default)
         {
-            Dictionary<IAssetKey, string> result = new Dictionary<IAssetKey, string>(keyComparer ?? AssetKeyComparer.Default);
+            Dictionary<IAssetKey, IFormulationString> result = new Dictionary<IAssetKey, IFormulationString>(keyComparer ?? AssetKeyComparer.Default);
             foreach (var line in lines)
                 if (line.Key != null) result[line.Key] = line.Value;
             return result;

@@ -23,20 +23,20 @@ namespace Lexical.Localization
         /// <summary>
         /// Line source
         /// </summary>
-        public IEnumerable<KeyValuePair<string, string>> LineSource { get; protected set; }
+        public IEnumerable<KeyValuePair<string, IFormulationString>> LineSource { get; protected set; }
 
         /// <summary>
         /// Create adapter that adapts IEnumerable&lt;KeyValuePair&lt;String, String&gt;&gt; into <see cref="IAssetSource"/>.
         /// </summary>
         /// <param name="lineSource"></param>
         /// <param name="namePolicy"></param>
-        public LocalizationStringLinesSource(IEnumerable<KeyValuePair<string, string>> lineSource, IAssetKeyNamePolicy namePolicy)
+        public LocalizationStringLinesSource(IEnumerable<KeyValuePair<string, IFormulationString>> lineSource, IAssetKeyNamePolicy namePolicy)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
             this.KeyPolicy = namePolicy;
         }
 
-        IEnumerator<KeyValuePair<string, string>> IEnumerable<KeyValuePair<string, string>>.GetEnumerator()
+        IEnumerator<KeyValuePair<string, IFormulationString>> IEnumerable<KeyValuePair<string, IFormulationString>>.GetEnumerator()
             => LineSource.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator()
             => LineSource.GetEnumerator();
@@ -72,18 +72,18 @@ namespace Lexical.Localization
         /// <summary>
         /// Source of lines
         /// </summary>
-        public IEnumerable<KeyValuePair<IAssetKey, string>> LineSource { get; protected set; }
+        public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> LineSource { get; protected set; }
 
         /// <summary>
         /// Create adapter that adapts IEnumerable&lt;KeyValuePair&lt;IAssetKey, String&lt;&lt;.
         /// </summary>
         /// <param name="lineSource"></param>
-        public LocalizationKeyLinesSource(IEnumerable<KeyValuePair<IAssetKey, string>> lineSource)
+        public LocalizationKeyLinesSource(IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lineSource)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
         }
 
-        IEnumerator<KeyValuePair<IAssetKey, string>> IEnumerable<KeyValuePair<IAssetKey, string>>.GetEnumerator()
+        IEnumerator<KeyValuePair<IAssetKey, IFormulationString>> IEnumerable<KeyValuePair<IAssetKey, IFormulationString>>.GetEnumerator()
             => LineSource.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator()
             => LineSource.GetEnumerator();

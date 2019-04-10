@@ -18,17 +18,45 @@ namespace Lexical.Localization
     public class LocalizationResourcesReader : ILocalizationFileFormat, ILocalizationStringLinesStreamReader
     {
         private readonly static LocalizationResourcesReader instance = new LocalizationResourcesReader();
+
+        /// <summary>
+        /// Default instance
+        /// </summary>
         public static LocalizationResourcesReader Instance => instance;
 
+        /// <summary>
+        /// File extension
+        /// </summary>
         public string Extension { get; protected set; }
 
-        public LocalizationResourcesReader() : this("resources") { }
-        public LocalizationResourcesReader(string ext)
+        /// <summary>
+        /// Value string parser.
+        /// </summary>
+        public ILocalizationStringFormatParser ValueParser { get; protected set; }
+
+        /// <summary>
+        /// Create reader
+        /// </summary>
+        public LocalizationResourcesReader() : this("resources", LexicalStringFormat.Instance) { }
+
+        /// <summary>
+        /// Create reader
+        /// </summary>
+        /// <param name="ext"></param>
+        /// <param name="valueParser"></param>
+        public LocalizationResourcesReader(string ext, ILocalizationStringFormat valueParser)
         {
             this.Extension = ext;
+            this.ValueParser = valueParser as ILocalizationStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
         }
 
-        public IEnumerable<KeyValuePair<string, string>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default)
+        /// <summary>
+        /// Read string lines
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="namePolicy"></param>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default)
         {
             using (var reader = new System.Resources.ResourceReader(stream))
             {
@@ -46,7 +74,10 @@ namespace Lexical.Localization
                         throw new LocalizationException("Failed to read .resources file", e);
                     }
                     if (key != null && value != null)
-                        yield return new KeyValuePair<string, string>(key, value);
+                    {
+                        IFormulationString formulationString = ValueParser.Parse(value);
+                        yield return new KeyValuePair<string, IFormulationString>(key, formulationString);
+                    }
                 }
             }
         }

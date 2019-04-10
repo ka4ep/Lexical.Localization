@@ -34,14 +34,14 @@ namespace docs
 
             {
                 #region Snippet_1a
-                IEnumerable<KeyValuePair<IAssetKey, string>> key_lines = LocalizationReaderMap.Instance.ReadKeyLines(
+                IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines = LocalizationReaderMap.Instance.ReadKeyLines(
                     filename: "localization.ini", 
                     throwIfNotFound: true);
                 #endregion Snippet_1a
             }
             {
                 #region Snippet_1b
-                IEnumerable<KeyValuePair<string, string>> string_lines = LocalizationReaderMap.Instance.ReadStringLines(
+                IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LocalizationReaderMap.Instance.ReadStringLines(
                     filename: "localization.ini", 
                     namePolicy: ParameterNamePolicy.Instance,
                     throwIfNotFound: true);
@@ -57,7 +57,7 @@ namespace docs
 
             {
                 #region Snippet_2a
-                IEnumerable<KeyValuePair<IAssetKey, string>> key_lines_reader = 
+                IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines_reader = 
                     LocalizationReaderMap.Instance.FileReaderAsKeyLines(
                         filename: "localization.ini", 
                         throwIfNotFound: true);
@@ -65,7 +65,7 @@ namespace docs
             }
             {
                 #region Snippet_2b
-                IEnumerable<KeyValuePair<string, string>> string_lines_reader = 
+                IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader = 
                     LocalizationReaderMap.Instance.FileReaderAsStringLines(
                         filename: "localization.ini",
                         namePolicy: ParameterNamePolicy.Instance,
@@ -86,7 +86,7 @@ namespace docs
             {
                 #region Snippet_3a
                 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
-                IEnumerable<KeyValuePair<IAssetKey, string>> key_lines_reader = 
+                IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines_reader = 
                     LocalizationReaderMap.Instance.EmbeddedReaderAsKeyLines(
                         assembly: asm, 
                         resourceName: "docs.localization.ini", 
@@ -97,7 +97,7 @@ namespace docs
             {
                 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
                 #region Snippet_3b
-                IEnumerable<KeyValuePair<string, string>> string_lines_reader = 
+                IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader = 
                     LocalizationReaderMap.Instance.EmbeddedReaderAsStringLines(
                         assembly: asm, 
                         resourceName: "docs.localization.ini", 
@@ -121,7 +121,7 @@ namespace docs
             {
                 #region Snippet_4a
                 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-                IEnumerable<KeyValuePair<IAssetKey, string>> key_lines_reader = 
+                IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines_reader = 
                     LocalizationReaderMap.Instance.FileProviderReaderAsKeyLines(
                         fileProvider: fileProvider, 
                         filepath: "localization.ini", 
@@ -132,7 +132,7 @@ namespace docs
             {
                 #region Snippet_4b
                 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-                IEnumerable<KeyValuePair<string, string>> string_lines_reader = 
+                IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader = 
                     LocalizationReaderMap.Instance.FileProviderReaderAsStringLines(
                         fileProvider: fileProvider, 
                         filepath: "localization.ini", 
@@ -156,7 +156,7 @@ namespace docs
                 #region Snippet_5a
                 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
                 {
-                    IEnumerable<KeyValuePair<IAssetKey, string>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(s);
+                    IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(s);
                 }
                 #endregion Snippet_5a
             }
@@ -164,7 +164,7 @@ namespace docs
                 #region Snippet_5b
                 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
                 {
-                    IEnumerable<KeyValuePair<string, string>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
+                    IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
                         stream: s,
                         namePolicy: ParameterNamePolicy.Instance);
                 }
@@ -185,7 +185,7 @@ namespace docs
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
                 using (TextReader tr = new StringReader(text))
                 {
-                    IEnumerable<KeyValuePair<IAssetKey, string>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(tr);
+                    IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(tr);
                 }
                 #endregion Snippet_6a
             }
@@ -194,7 +194,7 @@ namespace docs
                 #region Snippet_6b
                 using (TextReader tr = new StringReader(text))
                 {
-                    IEnumerable<KeyValuePair<string, string>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
+                    IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
                         srcText: tr,
                         namePolicy: ParameterNamePolicy.Instance);
                 }
@@ -213,7 +213,7 @@ namespace docs
             {
                 #region Snippet_7a
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
-                IEnumerable<KeyValuePair<IAssetKey, string>> key_lines = 
+                IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> key_lines = 
                     LocalizationIniReader.Instance.ReadStringAsKeyLines(
                         srcText: text);
                 #endregion Snippet_7a
@@ -221,7 +221,7 @@ namespace docs
             {
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
                 #region Snippet_7b
-                IEnumerable<KeyValuePair<string, string>> string_lines = 
+                IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = 
                     LocalizationIniReader.Instance.ReadStringAsStringLines(
                         srcText: text,
                         namePolicy: ParameterNamePolicy.Instance);
@@ -370,12 +370,12 @@ namespace docs
     {
         public string Extension => "ext";
 
-        public IEnumerable<KeyValuePair<IAssetKey, string>> ReadKeyLines(
+        public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ReadKeyLines(
             TextReader text, 
             IAssetKeyNamePolicy namePolicy = null)
         {
             IAssetKey key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
-            yield return new KeyValuePair<IAssetKey, string>(key, "Hello World!");
+            yield return new KeyValuePair<IAssetKey, IFormulationString>(key, LexicalStringFormat.Instance.Parse("Hello World!"));
         }
     }
     #endregion Snippet_30

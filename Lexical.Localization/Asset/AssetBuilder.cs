@@ -79,14 +79,14 @@ namespace Lexical.Localization
             foreach (IAssetSource src in sources.Where(s => s is ILocalizationSource == false))
                 src.Build(list);
 
-            // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, string>> sources
+            // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> sources
             LocalizationAsset __asset = null;
             foreach (ILocalizationStringLinesSource src in sources.Where(s => s is ILocalizationStringLinesSource).Cast<ILocalizationStringLinesSource>())
             {
                 if (__asset == null) __asset = new LocalizationAsset();
                 __asset.Add(src, src.KeyPolicy);
             }
-            // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, string>> sources
+            // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> sources
             foreach (ILocalizationKeyLinesSource src in sources.Where(s => s is ILocalizationKeyLinesSource).Cast<ILocalizationKeyLinesSource>())
             {
                 if (__asset == null) __asset = new LocalizationAsset();

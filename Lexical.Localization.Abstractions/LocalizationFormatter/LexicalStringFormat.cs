@@ -178,7 +178,7 @@ namespace Lexical.Localization
                 var argumentsArray = new IFormulationStringArgument[argumentCount];
                 int j = 0;
                 for (int i = 0; i < parts.Count; i++) if (parts[i] is Argument argPart) argumentsArray[j++] = argPart;
-                Array.Sort(argumentsArray, ArgumentComparer.Instance);
+                Array.Sort(argumentsArray, ArgumentOrderComparer.Instance);
                 for (int i = 0; i < argumentsArray.Length; i++) ((Argument)argumentsArray[i]).ArgumentsIndex = i;
 
                 // Write status.
@@ -191,9 +191,9 @@ namespace Lexical.Localization
             /// <summary>
             /// Comparer that compares first by argument index, then by occurance index.
             /// </summary>
-            class ArgumentComparer : IComparer<IFormulationStringArgument>
+            class ArgumentOrderComparer : IComparer<IFormulationStringArgument>
             {
-                static IComparer<IFormulationStringArgument> instance = new ArgumentComparer();
+                static IComparer<IFormulationStringArgument> instance = new ArgumentOrderComparer();
                 public static IComparer<IFormulationStringArgument> Instance => instance;
 
                 public int Compare(IFormulationStringArgument x, IFormulationStringArgument y)
@@ -207,6 +207,21 @@ namespace Lexical.Localization
                     return c;
                 }
             }
+
+            /// <summary>
+            /// Calculate hashcode
+            /// </summary>
+            /// <returns></returns>
+            public override int GetHashCode() 
+                => FormulationStringComparer.Instance.GetHashCode(this);
+
+            /// <summary>
+            /// Compare for equality
+            /// </summary>
+            /// <param name="obj"></param>
+            /// <returns></returns>
+            public override bool Equals(object obj)
+                => FormulationStringComparer.Instance.Equals(obj);
 
             /// <summary>
             /// Formulation string.
@@ -348,6 +363,21 @@ namespace Lexical.Localization
             }
 
             /// <summary>
+            /// Calculate hashcode
+            /// </summary>
+            /// <returns></returns>
+            public override int GetHashCode() 
+                => FormulationStringPartComparer.Instance.GetHashCode(this);
+
+            /// <summary>
+            /// Compare for equality
+            /// </summary>
+            /// <param name="obj"></param>
+            /// <returns></returns>
+            public override bool Equals(object obj)
+                => FormulationStringPartComparer.Instance.Equals(obj);
+
+            /// <summary>
             /// The text part as it appears in the formulation string.
             /// </summary>
             public override string ToString() => FormulationString.Text.Substring(Index, Length);
@@ -452,6 +482,21 @@ namespace Lexical.Localization
                 ArgumentIndex = argumentIndex;
                 Alignment = alignment;
             }
+
+            /// <summary>
+            /// Calculate hashcode
+            /// </summary>
+            /// <returns></returns>
+            public override int GetHashCode()
+                => FormulationStringPartComparer.Instance.GetHashCode(this);
+
+            /// <summary>
+            /// Compare for equality
+            /// </summary>
+            /// <param name="obj"></param>
+            /// <returns></returns>
+            public override bool Equals(object obj)
+                => FormulationStringPartComparer.Instance.Equals(obj);
 
             /// <summary>
             /// Print argument formulation as it is in the formulation string. Example "{0:x2}".
