@@ -36,7 +36,7 @@ namespace Lexical.Localization
     public interface ILocalizationStringFormatParser : ILocalizationStringFormat
     {
         /// <summary>
-        /// Parse formulation string into an <see cref="ILocalizationFormulationString"/>.
+        /// Parse formulation string into an <see cref="IFormulationString"/>.
         /// 
         /// If parse fails this method should return an instance where state is <see cref="LocalizationStatus.FormulationErrorMalformed"/>.
         /// If parse succeeds, the returned instance should have state <see cref="LocalizationStatus.FormulationOk"/> or some other formulation state.
@@ -44,7 +44,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="formulationString"></param>
         /// <returns>formulation string</returns>
-        ILocalizationFormulationString Parse(string formulationString);
+        IFormulationString Parse(string formulationString);
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ namespace Lexical.Localization
     public static partial class LocalizationStringFormatExtensions
     {
         /// <summary>
-        /// Parse formulation string into an <see cref="ILocalizationFormulationString"/>.
+        /// Parse formulation string into an <see cref="IFormulationString"/>.
         /// 
         /// If parse fails this method should return an instance where state is <see cref="LocalizationStatus.FormulationErrorMalformed"/>.
         /// If parse succeeds, the returned instance should have state <see cref="LocalizationStatus.FormulationOk"/> or some other formulation state.
@@ -70,14 +70,14 @@ namespace Lexical.Localization
         /// <param name="formulationString"></param>
         /// <returns>formulation string</returns>
         /// <exception cref="ArgumentException">If <paramref name="format"/> doesn't implement <see cref="ILocalizationStringFormatParser"/></exception>
-        public static ILocalizationFormulationString Parse(this ILocalizationStringFormat format, string formulationString)
+        public static IFormulationString Parse(this ILocalizationStringFormat format, string formulationString)
         {
             if (format is ILocalizationStringFormatParser parser) return parser.Parse(formulationString);
             throw new ArgumentException($"{format} doesn't implement {nameof(ILocalizationStringFormatParser)}.");
         }
 
         /// <summary>
-        /// Parse formulation string into an <see cref="ILocalizationFormulationString"/>.
+        /// Parse formulation string into an <see cref="IFormulationString"/>.
         /// 
         /// If parse fails this method should return an instance where state is <see cref="LocalizationStatus.FormulationErrorMalformed"/>.
         /// If parse succeeds, the returned instance should have state <see cref="LocalizationStatus.FormulationOk"/> or some other formulation state.
@@ -88,7 +88,7 @@ namespace Lexical.Localization
         /// <param name="formulationString"></param>
         /// <returns>formulation string</returns>
         /// <exception cref="ArgumentException">If <paramref name="formatName"/> doesn't implement <see cref="ILocalizationStringFormatParser"/></exception>
-        public static ILocalizationFormulationString Parse(this IReadOnlyDictionary<string, ILocalizationStringFormat> formats, string formatName, string formulationString)
+        public static IFormulationString Parse(this IReadOnlyDictionary<string, ILocalizationStringFormat> formats, string formatName, string formulationString)
         {
             ILocalizationStringFormat format;
             if (!formats.TryGetValue(formatName, out format))

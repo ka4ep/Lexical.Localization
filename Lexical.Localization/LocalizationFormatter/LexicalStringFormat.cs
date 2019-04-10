@@ -71,7 +71,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="formulationString"></param>
         /// <returns>preparsed</returns>
-        public ILocalizationFormulationString Parse(string formulationString)
+        public IFormulationString Parse(string formulationString)
         {
             if (formulationString == null) return Null.Instance;
             if (formulationString == "") return Empty.Instance;
@@ -82,17 +82,17 @@ namespace Lexical.Localization
         /// <summary>
         /// Lazily parsed formulation string.
         /// </summary>
-        public class FormulationString : ILocalizationFormulationString
+        public class FormulationString : IFormulationString
         {
             /// <summary>
             /// Parsed arguments. Set in <see cref="Build"/>.
             /// </summary>
-            ILocalizationFormulationStringArgument[] arguments;
+            IFormulationStringArgument[] arguments;
 
             /// <summary>
             /// String as sequence of parts. Set in <see cref="Build"/>.
             /// </summary>
-            ILocalizationFormulationStringPart[] parts;
+            IFormulationStringPart[] parts;
 
             /// <summary>
             /// Parse status. Set in <see cref="Build"/>.
@@ -112,12 +112,12 @@ namespace Lexical.Localization
             /// <summary>
             /// Formulation string broken into sequence of text and argument parts.
             /// </summary>
-            public ILocalizationFormulationStringPart[] Parts { get { if (status == LocalizationStatus.FormulationFailedNoResult) Build(); return parts; } }
+            public IFormulationStringPart[] Parts { get { if (status == LocalizationStatus.FormulationFailedNoResult) Build(); return parts; } }
 
             /// <summary>
             /// Get the parsed arguments.
             /// </summary>
-            public ILocalizationFormulationStringArgument[] Arguments { get { if (status == LocalizationStatus.FormulationFailedNoResult) Build(); return arguments; } }
+            public IFormulationStringArgument[] Arguments { get { if (status == LocalizationStatus.FormulationFailedNoResult) Build(); return arguments; } }
 
             /// <summary>
             /// (optional) Get associated format provider. This is typically a plurality rules and  originates from a localization file.
@@ -139,7 +139,7 @@ namespace Lexical.Localization
             /// </summary>
             protected void Build()
             {
-                StructList8<ILocalizationFormulationStringPart> parts = new StructList8<ILocalizationFormulationStringPart>();
+                StructList8<IFormulationStringPart> parts = new StructList8<IFormulationStringPart>();
 
                 // Create parser
                 Parser parser = new Parser(this);
@@ -147,7 +147,7 @@ namespace Lexical.Localization
                 // Read parts
                 while (parser.HasMore)
                 {
-                    ILocalizationFormulationStringPart part = parser.ReadNext();
+                    IFormulationStringPart part = parser.ReadNext();
                     if (part != null) parts.Add(part);
                 }
 
@@ -163,7 +163,7 @@ namespace Lexical.Localization
                 }
 
                 // Create parts array
-                var partArray = new ILocalizationFormulationStringPart[parts.Count];
+                var partArray = new IFormulationStringPart[parts.Count];
                 parts.CopyTo(partArray, 0);
                 // Set PartsArrayIndex
                 for (int i = 0; i < partArray.Length; i++)
@@ -174,8 +174,8 @@ namespace Lexical.Localization
 
                 // Create arguments array
                 int argumentCount = 0;
-                for (int i = 0; i < parts.Count; i++) if (parts[i] is ILocalizationFormulationStringArgument) argumentCount++;
-                var argumentsArray = new ILocalizationFormulationStringArgument[argumentCount];
+                for (int i = 0; i < parts.Count; i++) if (parts[i] is IFormulationStringArgument) argumentCount++;
+                var argumentsArray = new IFormulationStringArgument[argumentCount];
                 int j = 0;
                 for (int i = 0; i < parts.Count; i++) if (parts[i] is Argument argPart) argumentsArray[j++] = argPart;
                 Array.Sort(argumentsArray, ArgumentComparer.Instance);
@@ -191,12 +191,12 @@ namespace Lexical.Localization
             /// <summary>
             /// Comparer that compares first by argument index, then by occurance index.
             /// </summary>
-            class ArgumentComparer : IComparer<ILocalizationFormulationStringArgument>
+            class ArgumentComparer : IComparer<IFormulationStringArgument>
             {
-                static IComparer<ILocalizationFormulationStringArgument> instance = new ArgumentComparer();
-                public static IComparer<ILocalizationFormulationStringArgument> Instance => instance;
+                static IComparer<IFormulationStringArgument> instance = new ArgumentComparer();
+                public static IComparer<IFormulationStringArgument> Instance => instance;
 
-                public int Compare(ILocalizationFormulationStringArgument x, ILocalizationFormulationStringArgument y)
+                public int Compare(IFormulationStringArgument x, IFormulationStringArgument y)
                 {
                     int c = x.ArgumentIndex - y.ArgumentIndex;
                     if (c < 0) return -1;
@@ -245,23 +245,23 @@ namespace Lexical.Localization
         /// <summary>
         /// Null formulation string.
         /// </summary>
-        public class Null : ILocalizationFormulationString
+        public class Null : IFormulationString
         {
-            static ILocalizationFormulationString instance => new Null();
-            static ILocalizationFormulationStringPart[] parts = new ILocalizationFormulationStringPart[0];
-            static ILocalizationFormulationStringArgument[] arguments = new ILocalizationFormulationStringArgument[0];
+            static IFormulationString instance => new Null();
+            static IFormulationStringPart[] parts = new IFormulationStringPart[0];
+            static IFormulationStringArgument[] arguments = new IFormulationStringArgument[0];
             /// <summary>
             /// Default instance.
             /// </summary>
-            public static ILocalizationFormulationString Instance => instance;
+            public static IFormulationString Instance => instance;
             /// <summary />
             public LocalizationStatus Status => LocalizationStatus.FormulationFailedNull;
             /// <summary />
             public string Text => null;
             /// <summary />
-            public ILocalizationFormulationStringPart[] Parts => parts;
+            public IFormulationStringPart[] Parts => parts;
             /// <summary />
-            public ILocalizationFormulationStringArgument[] Arguments => arguments;
+            public IFormulationStringArgument[] Arguments => arguments;
             /// <summary />
             public IFormatProvider FormatProvider => null;
         }
@@ -269,23 +269,23 @@ namespace Lexical.Localization
         /// <summary>
         /// Empty formulation string.
         /// </summary>
-        public class Empty : ILocalizationFormulationString
+        public class Empty : IFormulationString
         {
-            static ILocalizationFormulationString instance => new Empty();
-            static ILocalizationFormulationStringPart[] parts = new ILocalizationFormulationStringPart[0];
-            static ILocalizationFormulationStringArgument[] arguments = new ILocalizationFormulationStringArgument[0];
+            static IFormulationString instance => new Empty();
+            static IFormulationStringPart[] parts = new IFormulationStringPart[0];
+            static IFormulationStringArgument[] arguments = new IFormulationStringArgument[0];
             /// <summary>
             /// Default instance.
             /// </summary>
-            public static ILocalizationFormulationString Instance => instance;
+            public static IFormulationString Instance => instance;
             /// <summary />
             public LocalizationStatus Status => LocalizationStatus.FormulationFailedNull;
             /// <summary />
             public string Text => "";
             /// <summary />
-            public ILocalizationFormulationStringPart[] Parts => parts;
+            public IFormulationStringPart[] Parts => parts;
             /// <summary />
-            public ILocalizationFormulationStringArgument[] Arguments => arguments;
+            public IFormulationStringArgument[] Arguments => arguments;
             /// <summary />
             public IFormatProvider FormatProvider => null;
         }
@@ -293,7 +293,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Text part
         /// </summary>
-        public class TextPart : ILocalizationFormulationStringPart
+        public class TextPart : IFormulationStringPart
         {
             /// <summary>
             /// Unify two parts
@@ -307,12 +307,12 @@ namespace Lexical.Localization
             /// <summary>
             /// The 'parent' formulation string.
             /// </summary>
-            public ILocalizationFormulationString FormulationString { get; internal set; }
+            public IFormulationString FormulationString { get; internal set; }
 
             /// <summary>
             /// Part type
             /// </summary>
-            public LocalizationFormulationStringPartKind Kind => LocalizationFormulationStringPartKind.Text;
+            public FormulationStringPartKind Kind => FormulationStringPartKind.Text;
 
             /// <summary>
             /// Start index of first character of the argument in the formulation string.
@@ -340,7 +340,7 @@ namespace Lexical.Localization
             /// <param name="formulationString"></param>
             /// <param name="index">first character index</param>
             /// <param name="length">character length</param>
-            public TextPart(ILocalizationFormulationString formulationString, int index, int length)
+            public TextPart(IFormulationString formulationString, int index, int length)
             {
                 FormulationString = formulationString;
                 Index = index;
@@ -356,17 +356,17 @@ namespace Lexical.Localization
         /// <summary>
         /// Parsed argument info.
         /// </summary>
-        public class Argument : ILocalizationFormulationStringArgument
+        public class Argument : IFormulationStringArgument
         {
             /// <summary>
             /// The 'parent' formulation string.
             /// </summary>
-            public ILocalizationFormulationString FormulationString { get; internal set; }
+            public IFormulationString FormulationString { get; internal set; }
 
             /// <summary>
             /// Part type
             /// </summary>
-            public LocalizationFormulationStringPartKind Kind => LocalizationFormulationStringPartKind.Argument;
+            public FormulationStringPartKind Kind => FormulationStringPartKind.Argument;
 
             /// <summary>
             /// The whole argument definition as it appears in the formulation string.
@@ -441,7 +441,7 @@ namespace Lexical.Localization
             /// <param name="function">(optional)</param>
             /// <param name="format">(optional)</param>
             /// <param name="alignment"></param>
-            public Argument(ILocalizationFormulationString formulationString, int index, int length, int occuranceIndex, int argumentIndex, string function, string format, int alignment)
+            public Argument(IFormulationString formulationString, int index, int length, int occuranceIndex, int argumentIndex, string function, string format, int alignment)
             {
                 FormulationString = formulationString ?? throw new ArgumentNullException(nameof(formulationString));
                 Index = index;
@@ -526,13 +526,13 @@ namespace Lexical.Localization
             /// <summary>
             /// Formulation string
             /// </summary>
-            ILocalizationFormulationString formulationString;
+            IFormulationString formulationString;
 
             /// <summary>
             /// Initialize parser
             /// </summary>
             /// <param name="formulationString"></param>
-            public Parser(ILocalizationFormulationString formulationString)
+            public Parser(IFormulationString formulationString)
             {
                 this.formulationString = formulationString;
                 str = formulationString.Text;
@@ -558,7 +558,7 @@ namespace Lexical.Localization
             /// </summary>
             /// <param name="endIx">end index</param>
             /// <returns>new part or null</returns>
-            ILocalizationFormulationStringPart CompletePart(int endIx)
+            IFormulationStringPart CompletePart(int endIx)
             {
                 // Calculate character length
                 int length = endIx - partIx;
@@ -567,7 +567,7 @@ namespace Lexical.Localization
                 // Return text part
                 if (state == ParserState.Text)
                 {
-                    ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
+                    IFormulationStringPart part = new TextPart(formulationString, partIx, length);
                     ResetPartState(endIx);
                     return part;
                 }
@@ -575,7 +575,7 @@ namespace Lexical.Localization
                 if (state == ParserState.ArgumentStart || state == ParserState.Function)
                 {
                     status = LocalizationStatus.FormulationErrorMalformed;
-                    ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
+                    IFormulationStringPart part = new TextPart(formulationString, partIx, length);
                     ResetPartState(endIx);
                     return part;
                 }
@@ -602,7 +602,7 @@ namespace Lexical.Localization
                 // Error with argument index, return as text 
                 if (indexStartIx<0||indexEndIx<0||indexStartIx>=indexEndIx)
                 {
-                    ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
+                    IFormulationStringPart part = new TextPart(formulationString, partIx, length);
                     status = LocalizationStatus.FormulationErrorMalformed;
                     ResetPartState(endIx);
                     return part;
@@ -618,7 +618,7 @@ namespace Lexical.Localization
                 catch (Exception)
                 {
                     // Parse failed, probably too large number
-                    ILocalizationFormulationStringPart part = new TextPart(formulationString, partIx, length);
+                    IFormulationStringPart part = new TextPart(formulationString, partIx, length);
                     status = LocalizationStatus.FormulationErrorMalformed;
                     ResetPartState(endIx);
                     return part;
@@ -647,7 +647,7 @@ namespace Lexical.Localization
                 }
 
                 // Create argument part
-                ILocalizationFormulationStringPart argument = new Argument(formulationString, partIx, length, ++occuranceIx, argumentIndex, function, format, alignment);
+                IFormulationStringPart argument = new Argument(formulationString, partIx, length, ++occuranceIx, argumentIndex, function, format, alignment);
                 // Reset to 'Text' state
                 ResetPartState(endIx);
                 // Return the constructed argument
@@ -671,7 +671,7 @@ namespace Lexical.Localization
             /// Read next character
             /// </summary>
             /// <returns>possible part</returns>
-            public ILocalizationFormulationStringPart ReadNext()
+            public IFormulationStringPart ReadNext()
             {
                 while (HasMore)
                 {
@@ -693,7 +693,7 @@ namespace Lexical.Localization
                         if (state == ParserState.Text)
                         {
                             // Complate previous part, and reset state
-                            ILocalizationFormulationStringPart part = CompletePart(i);
+                            IFormulationStringPart part = CompletePart(i);
                             // Start argument
                             state = ParserState.ArgumentStart;
                             // 
@@ -717,7 +717,7 @@ namespace Lexical.Localization
                             // End argument
                             state = ParserState.ArgumentEnd;
                             // Complete previous part, and reset state
-                            ILocalizationFormulationStringPart part = CompletePart(i+1);
+                            IFormulationStringPart part = CompletePart(i+1);
                             //
                             return part;
                         }

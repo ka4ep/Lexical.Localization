@@ -13,9 +13,9 @@ namespace Lexical.Localization
     /// For example "Welcome, {0}!" is a formulation string. 
     /// When it's in parsed format the argument "{0}" is extracted and the string can be processed more efficiently.
     /// 
-    /// <see cref="ILocalizationFormulationString"/> is produced by <see cref="ILocalizationStringFormatParser"/>.
+    /// <see cref="IFormulationString"/> is produced by <see cref="ILocalizationStringFormatParser"/>.
     /// </summary>
-    public interface ILocalizationFormulationString
+    public interface IFormulationString
     {
         /// <summary>
         /// Parse result. One of:
@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Formulation string as sequence of text and argument parts.
         /// </summary>
-        ILocalizationFormulationStringPart[] Parts { get; }
+        IFormulationStringPart[] Parts { get; }
 
         /// <summary>
         /// Arguments ordered by argument index first, then occurance index.
@@ -47,7 +47,7 @@ namespace Lexical.Localization
         /// 
         /// They are parsed from <see cref="Text"/> by an <see cref="ILocalizationStringFormatParser"/>.
         /// </summary>
-        ILocalizationFormulationStringArgument[] Arguments { get; }
+        IFormulationStringArgument[] Arguments { get; }
 
         /// <summary>
         /// (optional) Formatters to apply to the formulation string.
@@ -62,7 +62,7 @@ namespace Lexical.Localization
         /// </list>
         /// 
         /// <see cref="ILocalizationResolver"/> combines format providers from asset and key.
-        /// The format provider that comes from <see cref="ILocalizationFormulationString"/> has the highest priority.
+        /// The format provider that comes from <see cref="IFormulationString"/> has the highest priority.
         /// </summary>
         IFormatProvider FormatProvider { get; }
     }
@@ -70,7 +70,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Type of string part
     /// </summary>
-    public enum LocalizationFormulationStringPartKind
+    public enum FormulationStringPartKind
     {
         /// <summary>
         /// Text
@@ -86,17 +86,17 @@ namespace Lexical.Localization
     /// <summary>
     /// A part in formulation string.
     /// </summary>
-    public interface ILocalizationFormulationStringPart
+    public interface IFormulationStringPart
     {
         /// <summary>
         /// The 'parent' formulation string.
         /// </summary>
-        ILocalizationFormulationString FormulationString { get; }
+        IFormulationString FormulationString { get; }
 
         /// <summary>
         /// Part type.
         /// </summary>
-        LocalizationFormulationStringPartKind Kind { get; }
+        FormulationStringPartKind Kind { get; }
 
         /// <summary>
         /// Character index in the formulation string where argument starts.
@@ -115,7 +115,7 @@ namespace Lexical.Localization
         string Text { get; }
 
         /// <summary>
-        /// The index in the <see cref="ILocalizationFormulationString.Parts"/>.
+        /// The index in the <see cref="IFormulationString.Parts"/>.
         /// </summary>
         int PartsIndex { get; }
     }
@@ -123,7 +123,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Formulation of an argument e.g. "{[function:]0[,alignment][:format]}"
     /// </summary>
-    public interface ILocalizationFormulationStringArgument : ILocalizationFormulationStringPart
+    public interface IFormulationStringArgument : IFormulationStringPart
     {
         /// <summary>
         /// Occurance index in formulation string.
@@ -138,7 +138,7 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Argument reference by index. -1 if arguments are not refered by index.
-        /// The index correspondes to index in <see cref="ILocalizationFormulationString.Arguments"/>.
+        /// The index correspondes to index in <see cref="IFormulationString.Arguments"/>.
         /// </summary>
         int ArgumentsIndex { get; }
 
@@ -168,11 +168,6 @@ namespace Lexical.Localization
         /// (Optional) Default value, used if argument is not provided.
         /// </summary>
         string DefaultValue { get; }
-    }
-
-    /// <summary/>
-    public static partial class LocalizationFormulationStringExtensions
-    {
     }
 
 }

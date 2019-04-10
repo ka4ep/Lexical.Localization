@@ -11,7 +11,7 @@ namespace Lexical.Localization
     public interface ILocalizationResolver
     {
         /// <summary>
-        /// Resolve <paramref name="key"/> into <see cref="ILocalizationFormulationString"/>, but don't apply arguments.
+        /// Resolve <paramref name="key"/> into <see cref="IFormulationString"/>, but don't apply arguments.
         /// 
         /// If <paramref name="key"/> contains arguments, then resolves into the applicable plurality case of the formulation string.
         /// </summary>
@@ -19,7 +19,7 @@ namespace Lexical.Localization
         LocalizationString ResolveString(IAssetKey key);
 
         /// <summary>
-        /// Resolve <paramref name="key"/> into <see cref="ILocalizationFormulationString"/>, and apply arguments.
+        /// Resolve <paramref name="key"/> into <see cref="IFormulationString"/>, and apply arguments.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
