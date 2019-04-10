@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Lexical.Localization
@@ -30,6 +31,25 @@ namespace Lexical.Localization
         public static ILocalizationKeyLoggerAssigned Logger(this IAssetKey key, TextWriter logger, int severity = 1)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationTextLogger(logger, severity));
+            throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
+        }
+
+        /// <summary>
+        /// Append <see cref="System.Diagnostics.Trace"/> logger. 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="severity">
+        ///     <list type="bullet">
+        ///         <item>0 - OK</item>
+        ///         <item>1 - Warning</item>
+        ///         <item>2 - Error</item>
+        ///         <item>3 - Failed</item>
+        ///     </list>
+        /// </param>
+        /// <returns></returns>
+        public static ILocalizationKeyLoggerAssigned DiagnosticsTrace(this IAssetKey key, int severity = 1)
+        {
+            if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationDiagnosticsTrace(severity));
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
         }
     }
@@ -97,6 +117,82 @@ namespace Lexical.Localization
                 _logger.Write(value.DebugInfo);
         }
     }
+
+    /// <summary>
+    /// Observes resolved keys and writes log lines to <see cref="Trace"/>.
+    /// </summary>
+    public class LocalizationDiagnosticsTrace : IObserver<LocalizationString>
+    {
+        /// <summary>
+        /// Severity to log
+        /// 
+        /// <list type="bullet">
+        ///     <item>0 - OK</item>
+        ///     <item>1 - Warning</item>
+        ///     <item>2 - Error</item>
+        ///     <item>3 - Failed</item>
+        /// </list>
+        /// </summary>
+        int severity;
+
+        /// <summary>
+        /// disposed
+        /// </summary>
+        bool disposed; 
+
+        /// <summary>
+        /// Create logger
+        /// </summary>
+        /// <param name="severity"></param>
+        public LocalizationDiagnosticsTrace(int severity)
+        {
+            this.severity = severity;
+        }
+
+        /// <summary>
+        /// Logging has ended
+        /// </summary>
+        public void OnCompleted()
+        {
+            disposed = true;
+        }
+
+        /// <summary>
+        /// Formatter produced exception
+        /// </summary>
+        /// <param name="error"></param>
+        public void OnError(Exception error)
+        {
+        }
+
+        /// <summary>
+        /// Formatter supplies formulation result.
+        /// </summary>
+        /// <param name="value"></param>
+        public void OnNext(LocalizationString value)
+        {
+            if (disposed) return;
+            // Get severity
+            int severity = value.Severity;
+            // Threshold
+            if (severity < this.severity) return;
+            // Write status
+            switch(severity)
+            {
+                case 0:
+                    Trace.TraceInformation(value.DebugInfo);
+                    return;
+                case 1:
+                    Trace.TraceWarning(value.DebugInfo);
+                    return;
+                case 2:
+                case 3:
+                    Trace.TraceError(value.DebugInfo);
+                    return;
+            }
+        }
+    }
+
 }
 
 namespace Lexical.Localization

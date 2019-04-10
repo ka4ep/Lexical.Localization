@@ -26,21 +26,21 @@ namespace Lexical.Localization
         /// <summary>Resolved string from inlines</summary>
         ResolveOkFromInline = 0x02UL << Shift.Resolve,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        ResolveWarning = 0x40UL << Shift.Resolve,
+        ResolveWarning = 0x20UL << Shift.Resolve,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        ResolveError = 0x80UL << Shift.Resolve,
+        ResolveError = 0x40UL << Shift.Resolve,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        ResolveFailed = 0xC0UL << Shift.Resolve,
+        ResolveFailed = 0x60UL << Shift.Resolve,
         /// <summary>Asset was found, but could not resolve key from it or inline</summary>
-        ResolveFailedNotFound = 0xC1UL << Shift.Resolve,
+        ResolveFailedNotFound = 0x61UL << Shift.Resolve,
         /// <summary>Asset was not found and could not resolve key inline</summary>
-        ResolveFailedNoAsset = 0xC2UL << Shift.Resolve,
+        ResolveFailedNoAsset = 0x62UL << Shift.Resolve,
         /// <summary>Result has not been processed</summary>
-        ResolveFailedNoResult = 0xffUL << Shift.Resolve,
+        ResolveFailedNoResult = 0x7FUL << Shift.Resolve,
         /// <summary>Mask for severity</summary>
-        ResolveSeverityMask = 0xC0UL << Shift.Resolve,
+        ResolveSeverityMask = 0x60UL << Shift.Resolve,
         /// <summary>Mask for resolve status</summary>
-        ResolveMask = 0xffUL << Shift.Resolve,
+        ResolveMask = 0x7FUL << Shift.Resolve,
 
         //// Culture - Step that matches active culture, culture policy to strings available in asset
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
@@ -50,21 +50,21 @@ namespace Lexical.Localization
         /// <summary>Key requested a culture, and it was found</summary>
         CultureOkMatched = 0x02UL << Shift.Culture,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        CultureWarning = 0x40UL << Shift.Culture,
+        CultureWarning = 0x20UL << Shift.Culture,
         /// <summary>Key requested a specific culture, but a fallback culture was used</summary>
-        CultureWarningFallback = 0x41UL << Shift.Culture,
+        CultureWarningFallback = 0x21UL << Shift.Culture,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        CultureError = 0x80UL << Shift.Culture,
+        CultureError = 0x40UL << Shift.Culture,
         /// <summary>Key requested a specific culture, but it was not found in asset, nor fallback culture</summary>
-        CultureErrorNotMatched = 0x81UL << Shift.Culture,
+        CultureErrorNotMatched = 0x41UL << Shift.Culture,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        CultureFailed = 0xC0UL << Shift.Culture,
+        CultureFailed = 0x60UL << Shift.Culture,
         /// <summary>Result has not been processed</summary>
-        CultureFailedNoResult = 0xffUL << Shift.Culture,
+        CultureFailedNoResult = 0x7FUL << Shift.Culture,
         /// <summary>Mask for severity</summary>
-        CultureSeverityMask = 0xC00UL << Shift.Culture,
+        CultureSeverityMask = 0x60UL << Shift.Culture,
         /// <summary>Mask for culture status</summary>
-        CultureMask = 0xffUL << Shift.Culture,
+        CultureMask = 0x7FUL << Shift.Culture,
 
         //// Plurality - Step that matches plurality cases
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
@@ -74,25 +74,25 @@ namespace Lexical.Localization
         /// <summary>String contained "plurality/ordinal/range" argument formulation(s), and the plurality cases were found in the asset/inlines and used</summary>
         PluralityOkMatched = 0x02UL << Shift.Plurality,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        PluralityWarning = 0x40UL << Shift.Plurality,
+        PluralityWarning = 0x20UL << Shift.Plurality,
         /// <summary>String contained "plurality/ordinal/range" argument formulation(s), and plurality cases were found for some arguments, but not all</summary>
-        PluralityWarningPartiallyMatched = 0x41UL << Shift.Plurality,
+        PluralityWarningPartiallyMatched = 0x21UL << Shift.Plurality,
         /// <summary>String contained "plurality/ordinal/range" argument formulation(s), but the plurality cases were not found in the asset/inlines, fallbacked to default string</summary>
-        PluralityWarningNotMatched = 0x42UL << Shift.Plurality,
+        PluralityWarningNotMatched = 0x22UL << Shift.Plurality,
         /// <summary>String contained "plurality/ordinal/range" argument formulation, but the provided value was not a number</summary>
-        PluralityWarningNotNumber = 0x43UL << Shift.Plurality,
+        PluralityWarningNotNumber = 0x23UL << Shift.Plurality,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        PluralityError = 0x80UL << Shift.Plurality,
+        PluralityError = 0x40UL << Shift.Plurality,
         /// <summary>String contained "plurality/ordinal/range" argument formulation(s), but the plurality rules were not found in the key or in the asset</summary>
-        PluralityErrorRulesNotFound = 0x81UL << Shift.Plurality,
+        PluralityErrorRulesNotFound = 0x41UL << Shift.Plurality,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        PluralityFailed = 0xC0UL << Shift.Plurality,
+        PluralityFailed = 0x60UL << Shift.Plurality,
         /// <summary>Result has not been processed</summary>
-        PluralityFailedNoResult = 0xffUL << Shift.Plurality,
+        PluralityFailedNoResult = 0x7FUL << Shift.Plurality,
         /// <summary>Mask for severity</summary>
-        PluralitySeverityMask = 0xC00UL << Shift.Plurality,
+        PluralitySeverityMask = 0x60UL << Shift.Plurality,
         /// <summary>Mask for plurality status</summary>
-        PluralityMask = 0xffUL << Shift.Plurality,
+        PluralityMask = 0x7FUL << Shift.Plurality,
 
         //// Argument - Step that converts argument objects into strings
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
@@ -102,21 +102,21 @@ namespace Lexical.Localization
         /// <summary>Request asked for the formulation string, without applying arguments to it.</summary>
         ArgumentOkNotApplied = 0x03L << Shift.Formulation,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        ArgumentWarning = 0x40UL << Shift.Argument,
+        ArgumentWarning = 0x20UL << Shift.Argument,
         /// <summary>No IFormattable implementation or ICustomFormatter was found, or they returned null, ToString was applied</summary>
-        ArgumentWarningToStringUsed = 0x41UL << Shift.Argument,
+        ArgumentWarningToStringUsed = 0x21UL << Shift.Argument,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        ArgumentError = 0x80UL << Shift.Argument,
+        ArgumentError = 0x40UL << Shift.Argument,
         /// <summary>The argument object did not match the type in formulation string</summary>
-        ArgumentErrorTypeMismatch = 0x88UL << Shift.Argument,
+        ArgumentErrorTypeMismatch = 0x48UL << Shift.Argument,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        ArgumentFailed = 0xC0UL << Shift.Argument,
+        ArgumentFailed = 0x60UL << Shift.Argument,
         /// <summary>Result has not been processed</summary>
-        ArgumentFailedNoResult = 0xffUL << Shift.Argument,
+        ArgumentFailedNoResult = 0x7FUL << Shift.Argument,
         /// <summary>Mask for severity</summary>
-        ArgumentSeverityMask = 0xC0UL << Shift.Argument,
+        ArgumentSeverityMask = 0x60UL << Shift.Argument,
         /// <summary>Mask for argument status</summary>
-        ArgumentMask = 0xffUL << Shift.Argument,
+        ArgumentMask = 0x7FUL << Shift.Argument,
 
         //// Formulation - Step that parses formulation string, inserts arguments, and builds into formulated string.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
@@ -126,59 +126,62 @@ namespace Lexical.Localization
         /// <summary>Request asked for the formulation string, without applying arguments to it.</summary>
         FormulationOkNotApplied = 0x03UL << Shift.Formulation,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        FormulationWarning = 0x40UL << Shift.Formulation,
+        FormulationWarning = 0x20UL << Shift.Formulation,
         /// <summary>Formulation string contained arguments, but too many arguments were provided</summary>
-        FormulationWarningTooManyArguments = 0x41UL << Shift.Formulation,
+        FormulationWarningTooManyArguments = 0x21UL << Shift.Formulation,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        FormulationError = 0x80UL << Shift.Formulation,
+        FormulationError = 0x40UL << Shift.Formulation,
         /// <summary>Formulation string contained arguments, but arguments were not provided</summary>
-        FormulationErrorNoArguments = 0x82UL << Shift.Formulation,
+        FormulationErrorNoArguments = 0x42UL << Shift.Formulation,
         /// <summary>Formulation string contained arguments, but too few arguments were provided. Using null values for missing arguments.</summary>
-        FormulationErrorTooFewArguments = 0x82UL << Shift.Formulation,
+        FormulationErrorTooFewArguments = 0x42UL << Shift.Formulation,
         /// <summary>Formulation string was malformed. Returning the malformed string as value.</summary>
-        FormulationErrorMalformed = 0x8fUL << Shift.Formulation,
+        FormulationErrorMalformed = 0x4fUL << Shift.Formulation,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        FormulationFailed = 0xC0UL << Shift.Formulation,
+        FormulationFailed = 0x60UL << Shift.Formulation,
         /// <summary>Formulation string is null</summary>
-        FormulationFailedNull = 0xC01L << Shift.Formulation,
+        FormulationFailedNull = 0x601L << Shift.Formulation,
         /// <summary>Result has not been processed</summary>
-        FormulationFailedNoResult = 0xffUL << Shift.Formulation,
+        FormulationFailedNoResult = 0x7FUL << Shift.Formulation,
         /// <summary>Mask for severity</summary>
-        FormulationSeverityMask = 0xC0UL << Shift.Formulation,
+        FormulationSeverityMask = 0x60UL << Shift.Formulation,
         /// <summary>Mask for argument status</summary>
-        FormulationMask = 0xffUL << Shift.Formulation,
+        FormulationMask = 0x7FUL << Shift.Formulation,
 
         //// Custom0 - ILocalizationResolver implementation specific status flags. Can be used for any purpose by the resolver.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         Custom0Ok = 0x00UL << Shift.Custom0,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        Custom0Warning = 0x40UL << Shift.Custom0,
+        Custom0Warning = 0x20UL << Shift.Custom0,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        Custom0Error = 0x80UL << Shift.Custom0,
+        Custom0Error = 0x40UL << Shift.Custom0,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        Custom0Failed = 0xC0UL << Shift.Custom0,
+        Custom0Failed = 0x60UL << Shift.Custom0,
         /// <summary>Result has not been processed</summary>
-        Custom0FailedNoResult = 0xffUL << Shift.Custom0,
+        Custom0FailedNoResult = 0x7FUL << Shift.Custom0,
         /// <summary>Mask for severity</summary>
-        Custom0SeverityMask = 0xC0UL << Shift.Custom0,
+        Custom0SeverityMask = 0x60UL << Shift.Custom0,
         /// <summary>Mask for argument status</summary>
-        Custom0Mask = 0xffUL << Shift.Custom0,
+        Custom0Mask = 0x7FUL << Shift.Custom0,
 
         //// Custom0 - ILocalizationResolver implementation specific status flags. Can be used for any purpose by the resolver.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         Custom1Ok = 0x00UL << Shift.Custom1,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        Custom1Warning = 0x40UL << Shift.Custom1,
+        Custom1Warning = 0x20UL << Shift.Custom1,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        Custom1Error = 0x80UL << Shift.Custom1,
+        Custom1Error = 0x40UL << Shift.Custom1,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        Custom1Failed = 0xC0UL << Shift.Custom1,
+        Custom1Failed = 0x60UL << Shift.Custom1,
         /// <summary>Result has not been processed</summary>
-        Custom1FailedNoResult = 0xffUL << Shift.Custom1,
+        Custom1FailedNoResult = 0x7FUL << Shift.Custom1,
         /// <summary>Mask for severity</summary>
-        Custom1SeverityMask = 0xC0UL << Shift.Custom1,
+        Custom1SeverityMask = 0x60UL << Shift.Custom1,
         /// <summary>Mask for argument status</summary>
-        Custom1Mask = 0xffUL << Shift.Custom1,
+        Custom1Mask = 0x7FUL << Shift.Custom1,
+
+        /// <summary>Last bit is unused</summary>
+        Reserved3 = 0x8000000000000000UL
     }
 
     /// <summary>
@@ -319,15 +322,16 @@ namespace Lexical.Localization
         {
             get
             {
-                int a = ResolveSeverity, b = CultureSeverity, c = PluralitySeverity, d = ArgumentSeverity, e = FormulationSeverity, g = Custom0Severity, h = Custom1Severity;
+                int a = ResolveSeverity, b = CultureSeverity, c = PluralitySeverity, d = ArgumentSeverity, e = FormulationSeverity, h = Custom0Severity, i = Custom1Severity;
                 int result = a;
                 if (b > result) result = b;
                 if (c > result) result = c;
                 if (d > result) result = d;
                 if (e > result) result = e;
                 // if (f > result) result = f;
-                if (g > result) result = g;
+                //if (g > result) result = g;
                 if (h > result) result = h;
+                if (i > result) result = i;
                 return result;
             }
         }
@@ -547,23 +551,25 @@ namespace Lexical.Localization
     {
         // bit-shifts for categories
         internal const int Resolve = 0;
-        internal const int Culture = 8;
-        internal const int Plurality = 16;
-        internal const int Argument = 24;
-        internal const int Formulation = 32;
-        internal const int Reserved = 40;  // Reserved for future use
-        internal const int Custom0 = 48;    // ILocalizationResolver implemtation can use for any custom purpose.
+        internal const int Culture = 7;
+        internal const int Plurality = 14;
+        internal const int Argument = 21;
+        internal const int Formulation = 28;
+        internal const int Reserved0 = 35;  // Reserved for future use
+        internal const int Reserved1 = 42;  // Reserved for future use
+        internal const int Custom0 = 49;    // ILocalizationResolver implemtation can use for any custom purpose.
         internal const int Custom1 = 56;    // ILocalizationResolver implemtation can use for any custom purpose.
 
         // bit shifts for severity bits (2bits) of each category.
-        internal const int ResolveSeverity = Resolve + 6;
-        internal const int CultureSeverity = Culture + 6;
-        internal const int PluralitySeverity = Plurality + 6;
-        internal const int ArgumentSeverity = Argument + 6;
-        internal const int FormulationSeverity = Formulation + 6;
-        internal const int ReservedSeverity = Reserved + 6;  // Reserved for future use
-        internal const int Custom0Severity = Custom0 + 6;
-        internal const int Custom1Severity = Custom1 + 6;
+        internal const int ResolveSeverity = Resolve + 5;
+        internal const int CultureSeverity = Culture + 5;
+        internal const int PluralitySeverity = Plurality + 5;
+        internal const int ArgumentSeverity = Argument + 5;
+        internal const int FormulationSeverity = Formulation + 5;
+        internal const int Reserved0Severity = Reserved0 + 5;  // Reserved for future use
+        internal const int Reserved1Severity = Reserved1 + 5;  // Reserved for future use
+        internal const int Custom0Severity = Custom0 + 5;
+        internal const int Custom1Severity = Custom1 + 5;
 
     }
 
