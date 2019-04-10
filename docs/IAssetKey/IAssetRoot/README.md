@@ -116,10 +116,7 @@ IStringLocalizer stringLocalizer = stringLocalizerFactory.Create(typeof(MyContro
 ```
 
 # Global static root
-In programming, the usage of global instances is typically refrained due to various downsides.
-However, these reasons don't apply for localization use. 
 Localized strings can be considered as constants because they are used the same way as regular strings. 
-Therefore global static instance for localization root is worth consideration.
 
 Lexical.Localization introduces a global static root **LocalizationRoot.Global**.
 

@@ -94,7 +94,7 @@ using Lexical.Localization;
 
 namespace TutorialLibrary1
 {
-    internal class LibraryLocalization : LocalizationRoot.LinkedTo, IAssetRoot
+    internal class LibraryLocalization : LocalizationRoot.LinkedTo
     {
         private static readonly LibraryLocalization instance = new LibraryLocalization(LocalizationRoot.Global);
 
@@ -108,7 +108,7 @@ namespace TutorialLibrary1
         /// </summary>
         public new static IAssetBuilder Builder => LocalizationRoot.Builder;
 
-        LibraryLocalization(IAssetRoot linkedTo) : base(linkedTo)
+        LibraryLocalization(IAssetRoot linkedTo) : base(linkedTo, null, null, null, null, null)
         {
             // Add library's internal assets here
             Builder.AddSources(new LibraryAssetSources());

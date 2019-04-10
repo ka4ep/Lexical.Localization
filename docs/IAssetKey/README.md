@@ -161,7 +161,7 @@ string str = key_formulated.ResolveFormulatedString();
 But, if needed an unformulated string can be resolved with **.ResolveString()**.
 
 ```csharp
-// Resolve to localized string "Error (Code=0x{0:X8})", but does not formulate.
+// Resolve to localized string "Error (Code=0x{0:X8})", but does not append arguments
 string str = key_formulated.ResolveString();
 ```
 
