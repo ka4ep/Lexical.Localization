@@ -16,7 +16,7 @@ namespace Lexical.Localization.Utils
     public class ParameterInfos : Dictionary<string, IParameterInfo>
     {
         private static IReadOnlyDictionary<string, IParameterInfo> instance = new ParameterInfos()
-            .Add("Root", isCanonicalCompare: false, isNonCanonicalCompare: false, isSection: false, sortingOrder: -8000, pattern: null)
+            .Add("", isCanonicalCompare: false, isNonCanonicalCompare: false, isSection: false, sortingOrder: -8000, pattern: null)
             .Add("Culture", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: -6000, pattern: new Regex(@"^([a-z]{2,5})(-([A-Za-z]{2,7}))?$", RegexOptions.CultureInvariant | RegexOptions.Compiled))
             .Add("Location", isCanonicalCompare: true, isNonCanonicalCompare: false, isSection: true, sortingOrder: -4000, pattern: null)
             .Add("Assembly", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: true, sortingOrder: -2000, pattern: null)

@@ -12,6 +12,7 @@ namespace Lexical.Localization
 {
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.DependencyInjection.Extensions;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Localization;
 
     public static partial class MsLocalizationExtensions
@@ -43,16 +44,19 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="serviceCollection"></param>
         /// <param name="addStringLocalizerService"></param>
-        /// <param name="addCulturePolicyService">Add instance of <see cref="CultureResolver"/></param>
+        /// <param name="addCulturePolicyService">Add instance of <see cref="CulturePolicy"/></param>
         /// <param name="useGlobalInstance"></param>
         /// <param name="addCache"></param>
+        /// <param name="addLogger">Add adapter for <see cref="ILogger"/></param>
         /// <returns></returns>
         public static IServiceCollection AddLexicalLocalization(
             this IServiceCollection serviceCollection, 
             bool addStringLocalizerService = true,
             bool addCulturePolicyService = true,
             bool useGlobalInstance = false,
-            bool addCache = false)
+            bool addCache = false,
+            bool addLogger = true
+            )
         {
             if (useGlobalInstance)
             {
@@ -89,6 +93,15 @@ namespace Lexical.Localization
                         ));
                 }
             }
+
+            // ILocalizationResolver
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILocalizationResolver>( LocalizationResolver.Instance ));
+
+            // UnicodePluralityRules as IFormatProvider
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton<IFormatProvider>((IFormatProvider)UnicodePluralityRules.Instance));
+
+            // ILogger<ILocalizationKey>
+            if (addLogger) serviceCollection.AddLoggerAdapter();
 
             // IAssetBuilder
             if (useGlobalInstance)
@@ -154,6 +167,22 @@ namespace Lexical.Localization
                 serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddCulturesCache()));
             }
 
+            return serviceCollection;
+        }
+
+        /// <summary>
+        /// Adds logger service to root.
+        /// </summary>
+        /// <param name="serviceCollection"></param>
+        /// <returns></returns>
+        static IServiceCollection AddLoggerAdapter(this IServiceCollection serviceCollection)
+        {
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IObserver<LocalizationString>), s =>
+            {
+                ILogger<ILocalizationKey> logger = s.GetService<ILogger<ILocalizationKey>>();
+                IObserver<LocalizationString> adapter = logger == null ? null : new LocalizationLogger(logger);
+                return adapter;
+            }));
             return serviceCollection;
         }
 

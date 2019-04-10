@@ -475,7 +475,7 @@ namespace Lexical.Localization
         /// "anysection" is converted to "Section".
         /// 
         /// Parameters are returned in the following order:
-        ///  "Root", "Culture", "Assembly", "Location", "Resource", "Type", "Section", other parts here in alphabetical order, "Key", "N", "N1", "N2", "N3", "N4", "N5", "N6", ....
+        ///  "Culture", "Assembly", "Location", "Resource", "Type", "Section", other parts here in alphabetical order, "Key", "N", "N1", "N2", "N3", "N4", "N5", "N6", ....
         ///  
         /// This is workaround as the order information is lost in the dictionary format.
         /// </summary>

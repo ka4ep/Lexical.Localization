@@ -17,7 +17,6 @@ namespace docs
                 IAssetKeyNamePolicy policy =
                     new AssetKeyNameProvider()
                         .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: "/") // Sorts parameters
-                        .Ignore("Root") // Ignore "Root"
                         .DefaultRule(true, prefixSeparator: "/"); // Default separator
                 // Create asset
                 IAsset asset = new LocalizationAsset(source, policy);

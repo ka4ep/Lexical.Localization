@@ -27,120 +27,218 @@ namespace Lexical.Localization
         IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned, ILocalizationKeyResolverAssigned,
         IStringLocalizer, IStringLocalizerFactory
     {
+        /// <summary>
+        /// (Optional) The assigned culture policy.
+        /// </summary>
         protected ICulturePolicy culturePolicy;
-        protected IAsset localizationAsset;
+
+        /// <summary>
+        /// (optional) The assigned asset.
+        /// </summary>
+        protected IAsset asset;
+
+        /// <summary>
+        /// (optional) The assigned resolver.
+        /// </summary>
         protected ILocalizationResolver resolver;
 
+        /// <summary>
+        /// (optional) The assigned format provider.
+        /// </summary>
+        protected IFormatProvider formatProvider;
+
+        /// <summary>
+        /// (optional) The assigned logger.
+        /// </summary>
+        protected IObservable<LocalizationString> logger;
+
+        /// <summary>
+        /// Culture policy. Writable if <see cref="Mutable"/>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">If writing to not <see cref="Mutable"/>.</exception>
         public virtual ICulturePolicy CulturePolicy { get => culturePolicy; set { throw new InvalidOperationException(); } }
-        public virtual IAsset Asset { get => localizationAsset; set { throw new InvalidOperationException(); } }
+
+        /// <summary>
+        /// Asset. Writable if <see cref="Mutable"/>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">If writing to not <see cref="Mutable"/>.</exception>
+        public virtual IAsset Asset { get => asset; set { throw new InvalidOperationException(); } }
+
+        /// <summary>
+        /// Resolver. Writable if <see cref="Mutable"/>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">If writing to not <see cref="Mutable"/>.</exception>
         public new virtual ILocalizationResolver Resolver { get => resolver; set { throw new InvalidOperationException(); } }
 
-        public static StringLocalizerRoot CreateDefault() => new StringLocalizerRoot(new AssetComposition(), new CulturePolicy());
+        /// <summary>
+        /// Format Provider. Writable if <see cref="Mutable"/>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">If writing to not <see cref="Mutable"/>.</exception>
+        public new virtual IFormatProvider FormatProvider { get => formatProvider; set { throw new InvalidOperationException(); } }
 
-        public StringLocalizerRoot() : this("", null, null, LocalizationResolver.Instance) { }
-        public StringLocalizerRoot(IAsset asset) : this("", asset, null, LocalizationResolver.Instance) { }
-        public StringLocalizerRoot(IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver = default) : this("", asset, culturePolicy, resolver ?? LocalizationResolver.Instance) { }
+        /// <summary>
+        /// Logger. Writable if <see cref="Mutable"/>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">If writing to not <see cref="Mutable"/>.</exception>
+        public virtual IObservable<LocalizationString> Logger { get => logger; set { throw new InvalidOperationException(); } }
 
-        protected StringLocalizerRoot(string name, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver) : base(null, name)
+        /// <summary>
+        /// Create new root with default settings
+        /// </summary>
+        /// <returns></returns>
+        public static StringLocalizerRoot CreateDefault() => new StringLocalizerRoot(new AssetComposition(), new CulturePolicy(), LocalizationResolver.Instance, null, null);
+
+        /// <summary>
+        /// Construct new root.
+        /// </summary>
+        public StringLocalizerRoot() : this(null, null, null, LocalizationResolver.Instance, null, null) { }
+
+        /// <summary>
+        /// Construct new root
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <param name="culturePolicy"></param>
+        /// <param name="resolver"></param>
+        /// <param name="formatProvider"></param>
+        /// <param name="logger"></param>
+        public StringLocalizerRoot(IAsset asset, ICulturePolicy culturePolicy = null, ILocalizationResolver resolver = default, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) : 
+            this(null, asset, culturePolicy, resolver ?? LocalizationResolver.Instance, formatProvider, logger)
+        {
+        }
+
+        /// <summary>
+        /// Construct root, for subclasses.
+        /// </summary>
+        /// <param name="prevKey"></param>
+        /// <param name="asset"></param>
+        /// <param name="culturePolicy"></param>
+        /// <param name="resolver"></param>
+        /// <param name="formatProvider"></param>
+        /// <param name="logger"></param>
+        protected StringLocalizerRoot(IAssetKey prevKey, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver, IFormatProvider formatProvider, IObservable<LocalizationString> logger) : base(prevKey, "")
         {
             this.culturePolicy = culturePolicy;
-            this.localizationAsset = asset;
-            this.resolver = resolver ?? LocalizationResolver.Instance;
+            this.asset = asset;
+            this.resolver = resolver;
+            this.formatProvider = formatProvider;
+            this.logger = logger;
+        }
+
+        /// <summary>
+        /// Root that is linked to another root.
+        /// </summary>
+        public class LinkedTo : StringLocalizerRoot
+        {
+            /// <summary>
+            /// Construct root, for subclasses.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="asset"></param>
+            /// <param name="culturePolicy"></param>
+            /// <param name="resolver"></param>
+            /// <param name="formatProvider"></param>
+            /// <param name="logger"></param>
+            public LinkedTo(IAssetKey prevKey, IAsset asset = null, ICulturePolicy culturePolicy = null, ILocalizationResolver resolver = null, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) :
+                base(prevKey, asset, culturePolicy, resolver, formatProvider, logger)
+            { }
         }
 
         /// <summary>
         /// Localization root where culture policy and localization asset can be changed.
+        /// 
+        /// Although, they must be changed with the setters of the properties. Calling assinable interface creates a new key.
         /// </summary>
         [Serializable]
-        public class Mutable : StringLocalizerRoot, IAssetKeyAssetAssignable, ILocalizationKeyCulturePolicyAssignable
+        public class Mutable : StringLocalizerRoot
         {
-            public override ICulturePolicy CulturePolicy { get => culturePolicy; set => SetCulturePolicy(culturePolicy); }
-            public override IAsset Asset { get => localizationAsset; set { SetAsset(value); } }
-            public override ILocalizationResolver Resolver { get => resolver; set { SetResolver(value); } }
-            public Mutable() : base(null, null) { }
-            public Mutable(IAsset languageStrings) : base(languageStrings, null) { }
-            public Mutable(IAsset languageStrings, ICulturePolicy culturePolicy, ILocalizationResolver resolver) : base(languageStrings, culturePolicy, resolver) { }
+            /// <summary>
+            /// CulturePolicy
+            /// </summary>
+            public override ICulturePolicy CulturePolicy { get => culturePolicy; set => culturePolicy = value; }
+
+            /// <summary>
+            /// Asset
+            /// </summary>
+            public override IAsset Asset { get => asset; set => asset = value; }
+
+            /// <summary>
+            /// Resolver
+            /// </summary>
+            public override ILocalizationResolver Resolver { get => resolver; set => resolver = value; }
+
+            /// <summary>
+            /// FormatProvider
+            /// </summary>
+            public override IFormatProvider FormatProvider { get => formatProvider; set => formatProvider = value; }
+
+            /// <summary>
+            /// Logger
+            /// </summary>
+            public override IObservable<LocalizationString> Logger { get => logger; set => logger = value; }
+
+            /// <summary>
+            /// Construct mutable root.
+            /// </summary>
+            public Mutable() : base(null, null, null, LocalizationResolver.Instance, null, null) { }
+
+            /// <summary>
+            /// Construct new root
+            /// </summary>
+            /// <param name="asset"></param>
+            /// <param name="culturePolicy"></param>
+            /// <param name="resolver"></param>
+            /// <param name="formatProvider"></param>
+            /// <param name="logger"></param>
+            public Mutable(IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver = default, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) :
+                this(null, asset, culturePolicy, resolver ?? LocalizationResolver.Instance, formatProvider, logger)
+            {
+            }
+
+            /// <summary>
+            /// Construct root, for subclasses.
+            /// </summary>
+            /// <param name="prevKey"></param>
+            /// <param name="asset"></param>
+            /// <param name="culturePolicy"></param>
+            /// <param name="resolver"></param>
+            /// <param name="formatProvider"></param>
+            /// <param name="logger"></param>
+            public Mutable(IAssetKey prevKey, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver, IFormatProvider formatProvider, IObservable<LocalizationString> logger) : 
+                base(prevKey, asset, culturePolicy, resolver, formatProvider, logger)
+            {
+            }
+
+            /// <summary>
+            /// Deserialize mutable root.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="context"></param>
             public Mutable(SerializationInfo info, StreamingContext context) : base(info, context) { }
-
-            ILocalizationKeyCulturePolicyAssigned ILocalizationKeyCulturePolicyAssignable.CulturePolicy(ICulturePolicy culturePolicy)
-                => SetCulturePolicy(culturePolicy);
-
-            public virtual ILocalizationKeyCulturePolicyAssigned SetCulturePolicy(ICulturePolicy culturePolicy)
-            {
-                this.culturePolicy = culturePolicy;
-                return this;
-            }
-
-            public IAssetKeyAssetAssigned SetAsset(IAsset languageStrings)
-            {
-                this.localizationAsset = languageStrings;
-                return this;
-            }
-
-            public ILocalizationKeyResolverAssigned SetResolver(ILocalizationResolver resolver)
-            {
-                this.resolver = resolver;
-                return this;
-            }
         }
 
         /// <summary>
-        /// Localization root where culture policy and localization asset are taken used another root.
+        /// Serialize root
         /// </summary>
-        [Serializable]
-        public class LinkedTo : StringLocalizerRoot, 
-            IAssetKeyAssignable, IAssetKeyAssetAssigned,
-            ILocalizationKeyCulturePolicyAssignable, ILocalizationKeyCulturePolicyAssigned
-        {
-            public readonly IAssetRoot link;
-            IAssetKeyAssetAssignable linkLocalizationAssetAssignable;
-            IAssetKeyAssetAssigned linkLocalizationAsset;
-            ILocalizationKeyCulturePolicyAssignable linkCulturePolicyAssignable;
-            ILocalizationKeyCulturePolicyAssigned linkCulturePolicy;
-
-            public override ICulturePolicy CulturePolicy { get => linkCulturePolicy != null ? linkCulturePolicy.CulturePolicy : link.FindCulturePolicy(); set { SetCulturePolicy(value); } }
-            public override IAsset Asset { get => linkLocalizationAsset != null ? linkLocalizationAsset.Asset : link.FindAsset(); set { SetAsset(value); } }
-
-            public LinkedTo(IAssetRoot link) : base(null, null)
-            {
-                this.link = link ?? throw new ArgumentNullException(nameof(link));
-                this.linkLocalizationAsset = link as IAssetKeyAssetAssigned;
-                this.linkLocalizationAssetAssignable = link as IAssetKeyAssetAssignable;
-                this.linkCulturePolicy = link as ILocalizationKeyCulturePolicyAssigned;
-                this.linkCulturePolicyAssignable = link as ILocalizationKeyCulturePolicyAssignable;
-            }
-
-            public virtual ILocalizationKeyCulturePolicyAssigned SetCulturePolicy(ICulturePolicy culturePolicy)
-            {
-                ILocalizationKeyCulturePolicyAssignable a = linkCulturePolicyAssignable != null ? linkCulturePolicyAssignable : link.Get<ILocalizationKeyCulturePolicyAssignable>();
-                a.CulturePolicy(culturePolicy);
-                return this;
-            }
-
-            ILocalizationKeyCulturePolicyAssigned ILocalizationKeyCulturePolicyAssignable.CulturePolicy(ICulturePolicy culturePolicy)
-                => SetCulturePolicy(culturePolicy);
-
-            public IAssetKeyAssetAssigned SetAsset(IAsset asset)
-            {
-                IAssetKeyAssetAssignable a = linkLocalizationAssetAssignable != null ? linkLocalizationAssetAssignable : link.Get<IAssetKeyAssetAssignable>();
-                a.SetAsset(asset);
-                return this;
-            }
-        }
-
+        /// <param name="info"></param>
+        /// <param name="context"></param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
             //info.AddValue(nameof(CulturePolicy), culturePolicy?.Cultures?.ToArray());
         }
 
+        /// <summary>
+        /// Deserialize root
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
         public StringLocalizerRoot(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             if (context.Context is IDictionary<string, object> ctx)
             {
-                Object langStringsObject = null;
-                ctx.TryGetValue(nameof(IAsset), out langStringsObject);
-                this.localizationAsset = langStringsObject as IAsset;
+                Object assetObject = null;
+                ctx.TryGetValue(nameof(IAsset), out assetObject);
+                this.asset = assetObject as IAsset;
 
                 Object culturePolicyObject = null;
                 ctx.TryGetValue(nameof(ICulturePolicy), out culturePolicyObject);

@@ -102,16 +102,14 @@ namespace Lexical.Localization
         /// Get all parameters as parameterName,parameterValue pairs.
         /// </summary>
         /// <param name="key">(optional) key to read parameters of</param>
-        /// <param name="skipRoot">if true then "Root" parameter is omited</param>
         /// <returns>array of parameters</returns>
-        public static KeyValuePair<string, string>[] GetParameters(this IAssetKey key, bool skipRoot = false)
+        public static KeyValuePair<string, string>[] GetParameters(this IAssetKey key)
         {
             int count = 0;
             for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
             {
                 string parameterName = k.GetParameterName(), parameterValue = k.Name;
                 if (string.IsNullOrEmpty(parameterName) || parameterValue == null) continue;
-                if (skipRoot && parameterName == "Root") continue;
                 count++;
             }
             if (count == 0) return no_parameters;
@@ -122,7 +120,6 @@ namespace Lexical.Localization
             {
                 string parameterName = k.GetParameterName(), parameterValue = k.Name;
                 if (string.IsNullOrEmpty(parameterName) || parameterValue == null) continue;
-                if (skipRoot && parameterName == "Root") continue;
                 result[--ix] = new KeyValuePair<string, string>(parameterName, parameterValue);
             }
 
@@ -220,7 +217,7 @@ namespace Lexical.Localization
                 if (k is IAssetKeyParameterAssigned parameter)
                 {
                     string parameterName = parameter.ParameterName, parameterValue = k.Name;
-                    if (string.IsNullOrEmpty(parameterName) || parameterValue == null || parameterName == "Root") continue;
+                    if (string.IsNullOrEmpty(parameterName) || parameterValue == null) continue;
 
                     // Check if parameterName of k already exists in "result"/"left".
                     if (k is IAssetKeyNonCanonicallyCompared && left.FindKeyByParameterName(parameterName) != null) continue;

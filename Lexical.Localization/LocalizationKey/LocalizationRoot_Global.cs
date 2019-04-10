@@ -8,12 +8,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Static global singleton instance.
     /// 
-    /// Localization is one of those cases where global singleton instance make sense.
-    /// Even in inversion of control use case.
-    /// 
-    /// This is because localized string is considered to be akin to interned string. 
-    /// They are both static and something that should be compile-time data. 
-    /// Language strings, however, are run-time data due to practical logistics.
+    /// Singleton localization string is akin to interned string, they are both static.
     /// </summary>
     public partial class LocalizationRoot
     {
@@ -29,7 +24,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Singleton instance to localization root. 
         /// </summary>
-        public static LocalizationRoot.Mutable Global => instance;
+        public static LocalizationRoot Global => instance;
 
         /// <summary>
         /// Asset builder. 

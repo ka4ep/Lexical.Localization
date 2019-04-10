@@ -22,7 +22,7 @@ namespace Lexical.Localization.Utils
     [DebuggerDisplay("{ToString()}")]
     public partial class Key : IAssetKey, IAssetKeyLinked, IAssetKeyParameterAssigned, IAssetKeyParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>, IAssetKeyDefaultHashCode
     {
-        private static readonly Key root = new Key("Root", "");
+        private static readonly Key root = new Key("", "");
 
         /// <summary>
         /// Default root key.

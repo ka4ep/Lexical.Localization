@@ -46,7 +46,6 @@ namespace Lexical.Localization
             return tree;
         }
 
-        // TODO "Root" key part is added, remove this
         /// <summary>
         /// Add lines of key,value pairs to tree. Lines will be added as flat first level nodes
         /// </summary>

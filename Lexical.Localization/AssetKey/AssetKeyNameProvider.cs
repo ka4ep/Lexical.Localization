@@ -44,7 +44,6 @@ namespace Lexical.Localization
         private static readonly AssetKeyNameProvider colon_colon_colon =
             new AssetKeyNameProvider()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
-                .Ignore("Root") // Ignore root
                 .DefaultRule(true, prefixSeparator: ":"); // Add policy for unknown parameters
 
         /// <summary>
@@ -56,7 +55,6 @@ namespace Lexical.Localization
         private static readonly AssetKeyNameProvider none_colon_colon =
             new AssetKeyNameProvider()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
-                .Ignore("Root") // Ignore root
                 .Ignore("Culture") // Ignore Culture
                 .DefaultRule(true, prefixSeparator: ":");
 
@@ -69,7 +67,6 @@ namespace Lexical.Localization
         private static readonly AssetKeyNameProvider colon_colon_dot = 
             new AssetKeyNameProvider()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
-                .Ignore("Root") // Ignore root
                 .Separator("Key", prefixSeparator: ".")
                 .DefaultRule(true, prefixSeparator: ":");
 
@@ -82,7 +79,6 @@ namespace Lexical.Localization
         private static readonly AssetKeyNameProvider dot_dot_dot = 
             new AssetKeyNameProvider()
             .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
-            .Ignore("Root") // Ignore root
             .DefaultRule(true, prefixSeparator: ".");
 
         /// <summary>
@@ -94,7 +90,6 @@ namespace Lexical.Localization
         private static readonly AssetKeyNameProvider none_dot_dot = 
             new AssetKeyNameProvider()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
-                .Ignore("Root") // Ignore root
                 .Ignore("Culture") // Ignore Culture
                 .DefaultRule(true, prefixSeparator: ".");
 
@@ -107,7 +102,6 @@ namespace Lexical.Localization
         private static readonly AssetKeyNameProvider colon_dot_dot =
             new AssetKeyNameProvider()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
-                .Ignore("Root") // Ignore root
                 .Separator("Culture", postfixSeparator: ":") // Print with ":"
                 .DefaultRule(true, prefixSeparator: ".");
 

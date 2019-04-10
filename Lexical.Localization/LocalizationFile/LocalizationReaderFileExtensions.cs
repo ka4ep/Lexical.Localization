@@ -62,8 +62,8 @@ namespace Lexical.Localization
             {
                 if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcFilename.ReadText(), namePolicy);
                 if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcFilename.ReadStream(), namePolicy);
-                if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcFilename.ReadText(), namePolicy).ToKeyLines(true);
-                if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(srcFilename.ReadStream(), namePolicy).ToKeyLines(true);
+                if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcFilename.ReadText(), namePolicy).ToKeyLines();
+                if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(srcFilename.ReadStream(), namePolicy).ToKeyLines();
                 if (fileFormat is ILocalizationStringLinesTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), namePolicy).ToKeyLines(namePolicy);
                 if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), namePolicy).ToKeyLines(namePolicy);
             }

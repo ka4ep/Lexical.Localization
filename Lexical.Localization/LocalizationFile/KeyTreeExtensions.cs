@@ -21,18 +21,17 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <returns></returns>
         public static IEnumerable<KeyValuePair<string, string>> ToStringLines(this IKeyTree keyTree, IAssetKeyNamePolicy policy)
-            => keyTree.ToKeyLines(true).ToStringLines(policy);
+            => keyTree.ToKeyLines().ToStringLines(policy);
 
         /// <summary>
         /// Flatten <paramref name="node"/> to key lines.
         /// </summary>
         /// <param name="node"></param>
-        /// <param name="skipRoot"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, string>> ToKeyLines(this IKeyTree node, bool skipRoot = true)
+        public static IEnumerable<KeyValuePair<IAssetKey, string>> ToKeyLines(this IKeyTree node)
         {
             Queue<(IKeyTree, IAssetKey)> queue = new Queue<(IKeyTree, IAssetKey)>();
-            queue.Enqueue((node, skipRoot && node.Key.Name == "Root" ? null : node.Key));
+            queue.Enqueue((node, node.Key));
             while (queue.Count > 0)
             {
                 // Next element
@@ -293,13 +292,12 @@ namespace Lexical.Localization
         /// List parameters from root to tail.
         /// </summary>
         /// <param name="node"></param>
-        /// <param name="skipRoot">should "Root" parameter be skipped</param>
         /// <returns>parameters</returns>
-        public static IEnumerable<KeyValuePair<string, string>> GetConcatenatedParameters(this IKeyTree node, bool skipRoot)
+        public static IEnumerable<KeyValuePair<string, string>> GetConcatenatedParameters(this IKeyTree node)
         {
             IEnumerable<KeyValuePair<string, string>> result = null;
-            if (node.Parent != null) result = node.Parent.GetConcatenatedParameters(skipRoot);
-            IEnumerable<KeyValuePair<string, string>> key = node.Key.GetParameters(skipRoot);
+            if (node.Parent != null) result = node.Parent.GetConcatenatedParameters();
+            IEnumerable<KeyValuePair<string, string>> key = node.Key.GetParameters();
             result = result == null ? key : result.Concat(key);
             return result;
         }
@@ -395,14 +393,14 @@ namespace Lexical.Localization
             for (IAssetKey k = concatenatedKeyOfNode; k != null; k = k.GetPreviousKey())
             {
                 string parameterName = k.GetParameterName();
-                if (parameterName == null || parameterName == "Root") continue;
+                if (parameterName == null) continue;
                 string parameterValue = k.Name;
 
                 bool parameterDetectedInSearchKey = false;
                 for (IAssetKey sk = searchKey; sk != null; sk = sk.GetPreviousKey())
                 {
                     string _parameterName = sk.GetParameterName();
-                    if (_parameterName == null || _parameterName == "Root") continue;
+                    if (_parameterName == null) continue;
                     string _parameterValue = sk.Name;
                     parameterDetectedInSearchKey |= _parameterValue == parameterValue;
                     if (parameterDetectedInSearchKey) break;

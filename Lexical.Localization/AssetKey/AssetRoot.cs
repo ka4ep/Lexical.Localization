@@ -18,7 +18,7 @@ namespace Lexical.Localization
     public partial class AssetRoot : AssetKey, IAssetRoot, IAssetKeyAssetAssigned, IAssetKeyParameterAssigned
     {
         protected IAsset localizationAsset;
-        String IAssetKeyParameterAssigned.ParameterName => "Root";
+        String IAssetKeyParameterAssigned.ParameterName => "";
 
         public virtual IAsset Asset { get => localizationAsset; set { throw new InvalidOperationException(); } }
 

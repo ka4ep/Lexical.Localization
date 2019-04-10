@@ -16,7 +16,7 @@ namespace Lexical.Localization.Utils
     /// <summary>
     /// Keys organized into a tree structure.
     /// 
-    /// The root key has single key Key("Root", "").
+    /// The root key has single key Key("", "").
     /// 
     /// Sub-nodes have one or more keys. For example an .ini file
     /// <code>
