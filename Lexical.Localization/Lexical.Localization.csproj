@@ -24,13 +24,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Unicode\unicode-license.txt" />
     <None Remove="Unicode\v35\ordinals.xml" />
     <None Remove="Unicode\v35\plurals.xml" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Unicode\unicode-license.txt" />
     <EmbeddedResource Include="Unicode\v35\ordinals.xml" />
     <EmbeddedResource Include="Unicode\v35\plurals.xml" />
   </ItemGroup>

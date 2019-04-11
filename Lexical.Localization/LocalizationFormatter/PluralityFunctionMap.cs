@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lexical.Localization
 {
@@ -13,7 +14,7 @@ namespace Lexical.Localization
     /// 
     /// The key is ISO 639-1 (two character) or ISO 639-2 (three character) language code.
     /// </summary>
-    public class PluralityRuleMap : Dictionary<string, IPluralityRules>, IPluralityRuleMap, ICloneable, IFormatProvider
+    public class PluralityRuleMap : Dictionary<CultureInfo, IPluralityRules>, IPluralityRuleMap, ICloneable, IFormatProvider
     {
         /// <summary>
         /// </summary>

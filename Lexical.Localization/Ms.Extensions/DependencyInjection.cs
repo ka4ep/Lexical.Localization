@@ -98,7 +98,7 @@ namespace Lexical.Localization
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILocalizationResolver>( LocalizationResolver.Instance ));
 
             // UnicodePluralityRules as IFormatProvider
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton<IFormatProvider>((IFormatProvider)UnicodePluralityRules.Instance));
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton<IFormatProvider>((IFormatProvider)UnicodeCLDR.Instance));
 
             // ILogger<ILocalizationKey>
             if (addLogger) serviceCollection.AddLoggerAdapter();

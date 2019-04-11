@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           4.7.2019
+// Date:           7.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
@@ -85,6 +85,14 @@ namespace Lexical.Localization
         PluralityError = 0x40UL << Shift.Plurality,
         /// <summary>String contained "plurality/ordinal/range" argument formulation(s), but the plurality rules were not found in the key or in the asset</summary>
         PluralityErrorRulesNotFound = 0x41UL << Shift.Plurality,
+        /// <summary>Argument is null, but expected a number</summary>
+        PluralityErrorArgumentNull = 0x42UL << Shift.Plurality,
+        /// <summary>Argument is not a number</summary>
+        PluralityErrorArgumentNotNumber = 0x43UL << Shift.Plurality,
+        /// <summary>Argument text is null, but expected a string</summary>
+        PluralityErrorArgumentTextNull = 0x44UL << Shift.Plurality,
+        /// <summary>Could not parse plurality information without CultureInfo or NumberFormatInfo</summary>
+        PluralityErrorArgumentNumberFormatNull = 0x45UL << Shift.Plurality,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PluralityFailed = 0x60UL << Shift.Plurality,
         /// <summary>Result has not been processed</summary>

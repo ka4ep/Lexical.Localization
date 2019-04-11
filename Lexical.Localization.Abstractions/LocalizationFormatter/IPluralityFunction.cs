@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lexical.Localization
 {
@@ -28,10 +29,8 @@ namespace Lexical.Localization
 
     /// <summary>
     /// Map that contains plurality rules.
-    /// 
-    /// The key of the map is is ISO 639-1 (two character) or ISO 639-2 (three character) language code.
     /// </summary>
-    public interface IPluralityRuleMap : IReadOnlyDictionary<string, IPluralityRules>
+    public interface IPluralityRuleMap : IReadOnlyDictionary<CultureInfo, IPluralityRules>
     {
     }
 
@@ -104,7 +103,7 @@ namespace Lexical.Localization
         /// <summary>
         /// The function this case is part of
         /// </summary>
-        IPluralityCategory Function { get; }
+        IPluralityCategory Category { get; }
 
         /// <summary>
         /// Index in <see cref="IPluralityCategory.Cases"/>.
