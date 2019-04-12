@@ -87,7 +87,7 @@ namespace Lexical.Localization.Unicode
         public LocalizationStatus Status;
 
         /// <summary>
-        /// Integer digits of <see cref="Text"/>. Trailing zeros are excluded.
+        /// Integer digits of <see cref="Text"/>. Preceding zeros are excluded.
         /// 
         /// Both values are -1, if integer digits are not detected.
         /// 
@@ -182,11 +182,7 @@ namespace Lexical.Localization.Unicode
             Status = LocalizationStatus.PluralityOk;
 
             // No need to scan integer
-            if (isInteger && !isFloat && Text != null)
-            {
-                i_start = 0; i_end = Text.Length;
-                return;
-            }
+            /*if (isInteger && !isFloat && Text != null) { i_start = 0; i_end = Text.Length; return; }*/
 
             ScanState state = ScanState.Zero;
             for (int i = 0; i < text.Length; i++)
@@ -194,7 +190,7 @@ namespace Lexical.Localization.Unicode
                 char ch = text[i];
                 if (ch == '-') continue;
                 if (ch == ' ') continue;
-                if (isFloat && (ch == 'e' || ch == 'E')) { state = ScanState.Exponent; continue; }
+                if (!isHex && (ch == 'e' || ch == 'E')) { state = ScanState.Exponent; continue; }
 
                 if (state == ScanState.Zero)
                 {
@@ -225,7 +221,7 @@ namespace Lexical.Localization.Unicode
                 if (state == ScanState.Zero || state == ScanState.Integer)
                 {
                     // ',' or '.' decimal separator
-                    if (isFloat && (MatchString(i, numberFormat.NumberDecimalSeparator) || MatchString(i, numberFormat.PercentDecimalSeparator) || MatchString(i, numberFormat.CurrencyDecimalSeparator))) // <- this may cause problems
+                    if ((MatchString(i, numberFormat.NumberDecimalSeparator) || MatchString(i, numberFormat.PercentDecimalSeparator) || MatchString(i, numberFormat.CurrencyDecimalSeparator))) // <- 3 separators this may cause problems, if they differ
                     {
                         state = ScanState.Fraction;
                         f_start = i + 1; f_end = i + 1;
@@ -291,7 +287,7 @@ namespace Lexical.Localization.Unicode
         /// </summary>
         /// <param name="parameterName">One of 'n', 'i', 'f', 'v', 't', 'w'</param>
         /// <returns></returns>
-        public PluralityParameter this[char parameterName]
+        public TextNumberValue this[char parameterName]
         {
             get
             {
@@ -299,22 +295,14 @@ namespace Lexical.Localization.Unicode
                 {
                     // Absolute number
                     case 'n':
-                        bool isFloat = false;
-                        switch (Number == null ? TypeCode.DBNull : Type.GetTypeCode(Number.GetType()))
-                        {
-                            case TypeCode.Single:
-                            case TypeCode.Decimal:
-                            case TypeCode.Double:
-                                isFloat = true;
-                                break;
-                        }
-
-                        if (Text == null) return new PluralityParameter { Number = N, Text = Text, startIx = -1, endIx = -1, isFloat = isFloat };
-                        return new PluralityParameter { Number = N, Text = Text, startIx = 0, endIx = Text.Length, isFloat = isFloat };
+                        // Has fractional digits, return the whole float
+                        if (w>0) return new TextNumberValue { Number = N, Text = Text, startIx = 0, endIx = Text.Length, isFloat = true };
+                        // No fractional digits, return the integer part
+                        return new TextNumberValue { Number = N, Text = Text, startIx = i_start, endIx = i_end, isFloat = false };
 
                     // Integer digits
                     case 'i':
-                        if (Number == null) return new PluralityParameter { Number = null, Text = Text, startIx = i_start, endIx = i_end, isFloat = false };
+                        if (Number == null) return new TextNumberValue { Number = null, Text = Text, startIx = i_start, endIx = i_end, isFloat = false };
                         switch (Number == null ? TypeCode.DBNull : Type.GetTypeCode(Number.GetType()))
                         {
                             case TypeCode.Byte:
@@ -325,34 +313,34 @@ namespace Lexical.Localization.Unicode
                             case TypeCode.Int16:
                             case TypeCode.Int32:
                             case TypeCode.Int64:
-                                return new PluralityParameter { Number = N, Text = Text, startIx = i_start, endIx = i_end, isFloat = false };
+                                return new TextNumberValue { Number = N, Text = Text, startIx = i_start, endIx = i_end, isFloat = false };
                             case TypeCode.Single:
                             case TypeCode.Decimal:
                             case TypeCode.Double:
                             default:
-                                return new PluralityParameter { Number = null, Text = Text, startIx = i_start, endIx = i_end, isFloat = false };
+                                return new TextNumberValue { Number = null, Text = Text, startIx = i_start, endIx = i_end, isFloat = false };
                         }
 
                     // Visible fractional digit characters of <see cref="Text"/>, with trailing zeros.
-                    case 'f': return new PluralityParameter { Number = null, Text = Text, startIx = f_start, endIx = f_end, isFloat = false };
+                    case 'f': return new TextNumberValue { Number = null, Text = Text, startIx = f_start, endIx = f_end, isFloat = false };
                     // Visible fractional digit characters of <see cref="Text"/>, without trailing zeros.
-                    case 't': return new PluralityParameter { Number = null, Text = Text, startIx = t_start, endIx = t_end, isFloat = false };
+                    case 't': return new TextNumberValue { Number = null, Text = Text, startIx = t_start, endIx = t_end, isFloat = false };
                     // Number of visible fraction digits of <see cref="Text"/> , with trailing zeroes.
-                    case 'v': return new PluralityParameter { Number = v, Text = null, startIx = -1, endIx = -1 };
+                    case 'v': return new TextNumberValue { Number = v, Text = null, startIx = -1, endIx = -1 };
                     // Number of visible fraction digits of <see cref="Text"/> , without trailing zeroes.
-                    case 'w': return new PluralityParameter { Number = w, Text = null, startIx = -1, endIx = -1 };
+                    case 'w': return new TextNumberValue { Number = w, Text = null, startIx = -1, endIx = -1 };
                     // error
                     default:
-                        return new PluralityParameter { Number = null, Text = null, startIx = -1, endIx = -1, isFloat = false };
+                        return new TextNumberValue { Number = null, Text = null, startIx = -1, endIx = -1, isFloat = false };
                 }
             }
         }
     }
 
     /// <summary>
-    /// Parameter values
+    /// A value that can originate from text, or number. 
     /// </summary>
-    public struct PluralityParameter
+    public struct TextNumberValue
     {
         /// <summary>
         /// (optional) Absolute number
@@ -441,7 +429,7 @@ namespace Lexical.Localization.Unicode
                     return true;
             }
 
-            // Value is ""
+            // "" is 0
             if (Text != null && startIx >= 0 && endIx == startIx) { value = 0; return true; }
 
             if (Text == null || startIx < 0 || endIx < 0 || endIx <= startIx) { value = 0; return false; }
@@ -452,7 +440,7 @@ namespace Lexical.Localization.Unicode
 
             // Parse
             ulong result = 0UL;
-            for (int i = endIx - 1; i >= startIx; i--)
+            for (int i = _startix; i < endIx; i++)
             {
                 char ch = Text[i];
                 if (ch >= '0' && ch <= '9')
@@ -511,7 +499,7 @@ namespace Lexical.Localization.Unicode
                     return true;
             }
 
-            // Value is ""
+            // "" is 0
             if (Text != null && startIx >= 0 && endIx == startIx) { value = 0m; return true; }
 
             if (Text == null || startIx < 0 || endIx < 0 || endIx <= startIx) { value = 0m; return false; }
@@ -522,7 +510,7 @@ namespace Lexical.Localization.Unicode
 
             // Parse
             decimal result = 0m;
-            for (int i = endIx - 1; i >= startIx; i--)
+            for (int i = _startix; i < endIx; i++)
             {
                 char ch = Text[i];
                 if (ch >= '0' && ch <= '9')
@@ -668,7 +656,7 @@ namespace Lexical.Localization.Unicode
         /// <returns></returns>
         public override string ToString()
         {
-            if (Text != null) return Text;
+            if (Text != null && startIx>=0 && endIx>=0 && startIx<=endIx) return Text.Substring(startIx, endIx-startIx);
             if (Number != null) return Number.ToString();
             return "";
         }
