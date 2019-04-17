@@ -54,7 +54,7 @@ namespace Lexical.Localization
     [Serializable]
     public class StringLocalizerKey :  
 <#= srcInterfaces #>,
-        IStringLocalizer, IStringLocalizerFactory
+        IStringLocalizer, IStringLocalizerFactory, IStringLocalizerKey
     {
 <#= srcCode #>
 
@@ -155,7 +155,7 @@ namespace Lexical.Localization
                 IEnumerable<LocalizedString> result = null;
                 while (true)
                 {
-                    IEnumerable<KeyValuePair<string, string>> strs = collections?.GetAllStringLines(this);
+                    IEnumerable<KeyValuePair<string, IFormulationString>> strs = collections?.GetAllStringLines(this);
                     if (strs != null)
                     {
                         IEnumerable<LocalizedString> converted = ConvertStrings(strs);
@@ -168,7 +168,7 @@ namespace Lexical.Localization
             }
             else
             {
-                IEnumerable<KeyValuePair<string, string>> strs = collections?.GetAllStringLines(this);
+                IEnumerable<KeyValuePair<string, IFormulationString>> strs = collections?.GetAllStringLines(this);
                 return strs == null ? null : ConvertStrings(strs);
             }
         }
@@ -178,11 +178,11 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        IEnumerable<LocalizedString> ConvertStrings(IEnumerable<KeyValuePair<string, string>> lines)
+        IEnumerable<LocalizedString> ConvertStrings(IEnumerable<KeyValuePair<string, IFormulationString>> lines)
         {
             foreach(var kp in lines)
             {
-                string value = kp.Value; // <- What kind of value is expected? Is formulation expected?
+                string value = kp.Value.Text; // <- What kind of value is expected? Is formulation expected?
                 yield return new LocalizedString(kp.Key, value);
             }
         }

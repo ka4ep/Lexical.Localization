@@ -3,6 +3,7 @@
 // Date:           10.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Plurality;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,13 +23,13 @@ namespace Lexical.Localization
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class UnicodeCLDR : PluralityRuleMap
+    public class UnicodeCLDR : Dictionary<String, IPluralRules>, IPluralRuleSetMap
     {
         /// <summary>
         /// Version 35 lazy loader.
         /// </summary>
-        private static readonly Lazy<IReadOnlyDictionary<CultureInfo, IPluralityRules>> v35 =
-            new Lazy<IReadOnlyDictionary<CultureInfo, IPluralityRules>>(
+        private static readonly Lazy<IReadOnlyDictionary<String, IPluralRules>> v35 =
+            new Lazy<IReadOnlyDictionary<String, IPluralRules>>(
                 () => new UnicodeCLDR()
                       .Load(ReadEmbedded("Lexical.Localization.Unicode.v35.plurals.xml").Root)
                       .Load(ReadEmbedded("Lexical.Localization.Unicode.v35.ordinals.xml").Root));
@@ -53,12 +54,12 @@ namespace Lexical.Localization
         /// Reads embedded cldr data files.
         /// Data files are licensed under <see href="https://unicode.org/repos/cldr/tags/release-35/unicode-license.txt"/>.
         /// </summary>
-        public static IReadOnlyDictionary<CultureInfo, IPluralityRules> V35 => v35.Value;
+        public static IReadOnlyDictionary<String, IPluralRules> V35 => v35.Value;
 
         /// <summary>
         /// Newest Unicode CLDR available
         /// </summary>
-        public static IReadOnlyDictionary<CultureInfo, IPluralityRules> Instance => v35.Value;
+        public static IReadOnlyDictionary<String, IPluralRules> Instance => v35.Value;
 
         /// <summary>
         /// Create rules

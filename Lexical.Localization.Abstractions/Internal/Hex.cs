@@ -132,6 +132,70 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Try to parse a string to decimal number.
+        /// String must not start with '0x'.
+        /// Decimal can accomodate only 24 meaningful hexnumbers. 
+        /// Although, the string can precede any number of zeroes, e.g. "0000000000000000000000000000000000000000000000000000000000000123123abff".
+        /// </summary>
+        /// <param name="str">string of hexadecimal characters [0-9a-fA-F]</param>
+        /// <param name="value">result value</param>
+        /// <returns>false if contains non-hex characters, or if number of meaningful hexnumbers is over 24.</returns>
+        public static bool TryParseToDecimal(String str, out decimal value)
+        {
+            HexEnumerator stream = new HexEnumerator(str.GetEnumerator());
+
+            // Calculate hex character count
+            int count = 0;
+            // Calculate meaningful number characters
+            int meaningfulDigits = 0;
+            for (int i = 0; i < 999 && stream.MoveNext(); i++)
+            {
+                // Got non-hex value.
+                if (stream.Current < 0) { value = 0; return false; }
+                // Start calculating after first non-zero.
+                if (meaningfulDigits > 0 || stream.Current != 0) meaningfulDigits++;
+                // Total character count.
+                count++;
+            }
+
+            // Found non-zero value.
+            if (stream.Error) { value = 0; return false; }
+
+            // Restart
+            stream.Reset();
+
+            // Too many characters
+            if (meaningfulDigits >= 25) { value = 0; return false; }
+
+            int lo = 0, mid = 0, hi = 0;
+            while (count > 24 && stream.MoveNext())
+            {
+                // decimal can fit 96bit value, any non-zero over 96bits cannot be parsed.
+                if (stream.Current != 0) { value = 0; return false; }
+                count--;
+            }
+            while (count > 16 && stream.MoveNext())
+            {
+                hi = (hi << 4) | stream.Current;
+                count--;
+            }
+            while (count > 8 && stream.MoveNext())
+            {
+                mid = (mid << 4) | stream.Current;
+                count--;
+            }
+            while (count > 0 && stream.MoveNext())
+            {
+                lo = (lo << 4) | stream.Current;
+                count--;
+            }
+
+            value = new decimal(lo, mid, hi, false, 0);
+            return !stream.Error;
+        }
+
+
+        /// <summary>
         /// Parse a string to long. String must not start with '0x'.
         /// Long can accomodate only 16 meaningful hex-decimals.
         /// </summary>

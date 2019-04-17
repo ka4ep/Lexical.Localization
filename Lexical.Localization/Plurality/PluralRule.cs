@@ -3,7 +3,7 @@
 // Date:           11.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Unicode;
+using Lexical.Localization.Plurality;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// <summary>
     /// 
     /// </summary>
-    public class PluralRule : IPluralityCase
+    public class PluralRule : IPluralCase
     {
         string name;
 
@@ -28,7 +28,7 @@ namespace Lexical.Localization
             this.name = name;
         }
 
-        public IPluralityCategory Category => throw new NotImplementedException();
+        public IPluralCategory Category => throw new NotImplementedException();
 
         public int CaseIndex => throw new NotImplementedException();
 

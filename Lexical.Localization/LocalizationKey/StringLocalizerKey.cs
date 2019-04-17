@@ -32,7 +32,7 @@ namespace Lexical.Localization
     [Serializable]
     public class StringLocalizerKey :  
         ILocalizationKey, IAssetKeyAssignable, ILocalizationKeyInlineAssignable, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, ILocalizationKeyResolverAssignable, ILocalizationKeyFormatProviderAssignable, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyParameterAssignable, ILocalizationKeyPluralityAssignable, ISerializable, IDynamicMetaObjectProvider, IAssetKeyDefaultHashCode,
-        IStringLocalizer, IStringLocalizerFactory
+        IStringLocalizer, IStringLocalizerFactory, IStringLocalizerKey
     {
         /// <summary>
         /// Local name of this key.
