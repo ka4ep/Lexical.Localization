@@ -10,6 +10,7 @@ using System.Text;
 
 namespace Lexical.Localization.Unicode
 {
+    /*
     /// <summary>
     /// Expression that describes a formula.
     /// It can evaluate, if value matches the expression.
@@ -25,16 +26,16 @@ namespace Lexical.Localization.Unicode
         /// <returns></returns>
         public bool Evaluate(object value, string formattedValue, NumberFormatInfo numberFormat)
         {
-            PluralFeatures features = new PluralFeatures(value, formattedValue, numberFormat);
-            return Evaluate(ref features);
+            IPluralNumber number = new IPluralNumber(value, formattedValue, numberFormat);
+            return Evaluate(ref number);
         }
 
         /// <summary>
-        /// Evaluate with <paramref name="features"/>.
+        /// Evaluate with <paramref name="number"/>.
         /// </summary>
-        /// <param name="features"></param>
+        /// <param name="number"></param>
         /// <returns></returns>
-        protected abstract bool Evaluate(ref PluralFeatures features);
+        protected abstract bool Evaluate(IPluralNumber number);
 
         /// <summary>
         /// And operator
@@ -58,12 +59,12 @@ namespace Lexical.Localization.Unicode
             /// <summary>
             /// Evaluate
             /// </summary>
-            /// <param name="features"></param>
+            /// <param name="number"></param>
             /// <returns></returns>
-            protected override bool Evaluate(ref PluralFeatures features)
+            protected override bool Evaluate(IPluralNumber number)
             {
                 foreach (var exp in exps)
-                    if (!exp.Evaluate(ref features)) return false;
+                    if (!exp.Evaluate(ref number)) return false;
                 return true;
             }
         }
@@ -90,12 +91,12 @@ namespace Lexical.Localization.Unicode
             /// <summary>
             /// Evaluate
             /// </summary>
-            /// <param name="features"></param>
+            /// <param name="number"></param>
             /// <returns></returns>
-            protected override bool Evaluate(ref PluralFeatures features)
+            protected override bool Evaluate(IPluralNumber number)
             {
                 foreach (var exp in exps)
-                    if (exp.Evaluate(ref features)) return true;
+                    if (exp.Evaluate(ref number)) return true;
                 return false;
             }
         }
@@ -122,15 +123,15 @@ namespace Lexical.Localization.Unicode
             /// <summary>
             /// Evaluate
             /// </summary>
-            /// <param name="features"></param>
+            /// <param name="number"></param>
             /// <returns></returns>
-            protected override bool Evaluate(ref PluralFeatures features)
-                => !exp.Evaluate(ref features);
+            protected override bool Evaluate(IPluralNumber number)
+                => !exp.Evaluate(ref number);
         }
 
         public abstract class PluralityValueExpression
         {
-            public abstract TextNumberValue Evaluate(ref PluralFeatures features);
+            public abstract IPluralNumber Evaluate(IPluralNumber number);
 
             public class Operand : PluralityValueExpression
             {
@@ -140,8 +141,8 @@ namespace Lexical.Localization.Unicode
                     this.operand = operand;
                 }
 
-                public override TextNumberValue Evaluate(ref PluralFeatures features)
-                    => features[operand];
+                public override IPluralNumber Evaluate(IPluralNumber number)
+                    => number[operand];
             }
 
             public class IntegerValue : PluralityValueExpression
@@ -155,8 +156,8 @@ namespace Lexical.Localization.Unicode
                     this.valueText = valueObj is IFormattable formattable ? formattable.ToString("", CultureInfo.InvariantCulture) : valueObj.ToString();
                 }
 
-                public override TextNumberValue Evaluate(ref PluralFeatures features)
-                    => new TextNumberValue { Text = valueText, startIx = 0, endIx = valueText.Length, Number = valueObj, isFloat = false };
+                public override IPluralNumber Evaluate(IPluralNumber number)
+                    => new IntegerValue();
             }
 
             public class DecimalValue : PluralityValueExpression
@@ -170,10 +171,10 @@ namespace Lexical.Localization.Unicode
                     this.valueText = value is IFormattable formattable ? formattable.ToString("", CultureInfo.InvariantCulture) : value.ToString();
                 }
 
-                public override TextNumberValue Evaluate(ref PluralFeatures features)
-                    => new TextNumberValue { Text = valueText, startIx = 0, endIx = valueText.Length, Number = valueObj, isFloat = true };
+                public override DecimalValue Evaluate(IPluralNumber number)
+                    => new DecimalValue { Text = valueText, startIx = 0, endIx = valueText.Length, Number = valueObj, isFloat = true };
             }
         }
 
-    }
+    }*/
 }

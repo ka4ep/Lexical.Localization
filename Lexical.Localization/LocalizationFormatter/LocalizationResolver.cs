@@ -118,7 +118,7 @@ namespace Lexical.Localization
                     else
                     {
                         pluralityKey = null;
-                        pluralityKeys = CreatePluralityKeyPermutations(key: key, maxArgumentCount: Plurality.MAX_NUMERIC_ARGUMENTS_TO_PERMUTATE, args: format_args); // 2^5 = 32 keys
+                        pluralityKeys = CreatePluralityKeyPermutations(key: key, maxArgumentCount: Plurality_.MAX_NUMERIC_ARGUMENTS_TO_PERMUTATE, args: format_args); // 2^5 = 32 keys
                         break;
                     }
                 }
@@ -307,59 +307,59 @@ namespace Lexical.Localization
             {
                 case TypeCode.Byte:
                     byte _byte = (byte)o;
-                    if (_byte == 0) return Plurality.Zero;
-                    if (_byte == 1) return Plurality.One;
-                    return Plurality.Plural;
+                    if (_byte == 0) return Plurality_.Zero;
+                    if (_byte == 1) return Plurality_.One;
+                    return Plurality_.Plural;
                 case TypeCode.SByte:
                     sbyte _sbyte = (sbyte)o;
-                    if (_sbyte == 0) return Plurality.Zero;
-                    if (_sbyte == 1) return Plurality.One;
-                    return Plurality.Plural;
+                    if (_sbyte == 0) return Plurality_.Zero;
+                    if (_sbyte == 1) return Plurality_.One;
+                    return Plurality_.Plural;
                 case TypeCode.Decimal:
                     decimal _decimal = (decimal)o;
-                    if (_decimal == 0) return Plurality.Zero;
-                    if (_decimal == 1) return Plurality.One;
-                    return Plurality.Plural;
+                    if (_decimal == 0) return Plurality_.Zero;
+                    if (_decimal == 1) return Plurality_.One;
+                    return Plurality_.Plural;
                 case TypeCode.Int16:
                     Int16 _int16 = (Int16)o;
-                    if (_int16 == 0) return Plurality.Zero;
-                    if (_int16 == 1) return Plurality.One;
-                    return Plurality.Plural;
+                    if (_int16 == 0) return Plurality_.Zero;
+                    if (_int16 == 1) return Plurality_.One;
+                    return Plurality_.Plural;
                 case TypeCode.Int32:
                     Int32 _int32 = (Int32)o;
-                    if (_int32 == 0) return Plurality.Zero;
-                    if (_int32 == 1) return Plurality.One;
-                    return Plurality.Plural;
+                    if (_int32 == 0) return Plurality_.Zero;
+                    if (_int32 == 1) return Plurality_.One;
+                    return Plurality_.Plural;
                 case TypeCode.Int64:
                     Int64 _int64 = (Int64)o;
-                    if (_int64 == 0L) return Plurality.Zero;
-                    if (_int64 == 1L) return Plurality.One;
-                    return Plurality.Plural;
+                    if (_int64 == 0L) return Plurality_.Zero;
+                    if (_int64 == 1L) return Plurality_.One;
+                    return Plurality_.Plural;
                 case TypeCode.Single:
                     Single _single = (Single)o;
-                    if (_single == 0.0f) return Plurality.Zero;
-                    if (_single == 1.0f) return Plurality.One;
-                    return Plurality.Plural;
+                    if (_single == 0.0f) return Plurality_.Zero;
+                    if (_single == 1.0f) return Plurality_.One;
+                    return Plurality_.Plural;
                 case TypeCode.Double:
                     double _double = (double)o;
-                    if (_double == 0.0) return Plurality.Zero;
-                    if (_double == 1.0) return Plurality.One;
-                    return Plurality.Plural;
+                    if (_double == 0.0) return Plurality_.Zero;
+                    if (_double == 1.0) return Plurality_.One;
+                    return Plurality_.Plural;
                 case TypeCode.UInt16:
                     UInt16 _uint16 = (UInt16)o;
-                    if (_uint16 == 0) return Plurality.Zero;
-                    if (_uint16 == 1) return Plurality.One;
-                    return Plurality.Plural;
+                    if (_uint16 == 0) return Plurality_.Zero;
+                    if (_uint16 == 1) return Plurality_.One;
+                    return Plurality_.Plural;
                 case TypeCode.UInt32:
                     UInt32 _uint32 = (UInt32)o;
-                    if (_uint32 == 0) return Plurality.Zero;
-                    if (_uint32 == 1) return Plurality.One;
-                    return Plurality.Plural;
+                    if (_uint32 == 0) return Plurality_.Zero;
+                    if (_uint32 == 1) return Plurality_.One;
+                    return Plurality_.Plural;
                 case TypeCode.UInt64:
                     UInt64 _uint64 = (UInt32)o;
-                    if (_uint64 == 0UL) return Plurality.Zero;
-                    if (_uint64 == 1UL) return Plurality.One;
-                    return Plurality.Plural;
+                    if (_uint64 == 0UL) return Plurality_.Zero;
+                    if (_uint64 == 1UL) return Plurality_.One;
+                    return Plurality_.Plural;
                 case TypeCode.Object:
                     if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) return GetPluralityKind(Nullable.GetUnderlyingType(type));
                     return null;

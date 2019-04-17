@@ -248,7 +248,7 @@ namespace Lexical.Localization
         public int CultureSeverity => (int)((ulong)Status >> Shift.CultureSeverity) & 3;
 
         /// <summary>
-        /// Severity for the step applies plurality.
+        /// Severity for the step applies Plurality_.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
