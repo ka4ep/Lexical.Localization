@@ -3,6 +3,7 @@
 // Date:           3.3.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Exp;
 using System;
 using System.Collections.Generic;
 
@@ -136,6 +137,29 @@ namespace Lexical.Localization.Plurality
         /// Get (possibly) assigned rule-sets.
         /// </summary>
         String PluralityRules { get; }
+    }
+
+    /// <summary>
+    /// Plural rules expression.
+    /// 
+    /// e.g. "§one i = 1 and v = 0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
+    /// 
+    /// or 
+    /// "#en #fi #sw §one i = 1 and v = 0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
+    /// </summary>
+    public interface IPluralRulesExpression : IExpression, IPluralRule
+    {
+        /// <summary>
+        /// (Optional) Culture names
+        /// 
+        /// e.g. "#en #fi #sw"
+        /// </summary>
+        String[] Names { get; }
+
+        /// <summary>
+        /// Rules
+        /// </summary>
+        IPluralRuleExpression[] Rules { get; }
     }
 
 }

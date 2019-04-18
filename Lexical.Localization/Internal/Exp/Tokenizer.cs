@@ -84,7 +84,7 @@ namespace Lexical.Localization.Exp
         /// <summary>63 ?</summary>
         Questionmark = 1UL << 34,
         /// <summary>35 #</summary>
-        Numbersign = 1UL << 35,
+        Hash = 1UL << 35,
         /// <summary>45 -</summary>
         Minus = 1UL << 36,
         /// <summary>92 \</summary>
@@ -121,6 +121,17 @@ namespace Lexical.Localization.Exp
         Gt2 = 1UL << 52,
         /// <summary>pow</summary>
         Pow = 1UL << 53,
+        /// <summary>@</summary>
+        At = 1UL << 54,
+        /// <summary>§</summary>
+        Section = 1UL << 55,
+        /// <summary>…</summary>
+        Ellipsis = 1UL << 56,
+        /// <summary>$</summary>
+        Dollar = 1UL << 57,
+        /// <summary>..</summary>
+        Range = 1UL << 58,
+
         /// <summary></summary>
         Unknown = 1UL << 63,
 
@@ -170,8 +181,8 @@ namespace Lexical.Localization.Exp
                 {
                     case TokenKind.IntegerLiteral:
                         {
-                            decimal value;
-                            if (Decimal.TryParse(Text, NumberStyles.Number, CultureInfo.InvariantCulture, out value)) cachedValue = value;
+                            long value;
+                            if (long.TryParse(Text, NumberStyles.Number, CultureInfo.InvariantCulture, out value)) cachedValue = value;
                             return cachedValue;
                             // Returns null if string doesn't fit into decimal.
                         }
@@ -244,6 +255,10 @@ namespace Lexical.Localization.Exp
         public static Regex Linefeed = new Regex(@"^\r*\n", opts);
         /// <summary></summary>
         public static Regex Pow = new Regex(@"^pow", opts);
+        /// <summary></summary>
+        public static Regex Ellipsis = new Regex(@"^(…|\.\.\.)", opts);
+        /// <summary></summary>
+        public static Regex Range = new Regex(@"^\.\.", opts);
 
         /// <summary></summary>
         public static Regex NameLiteral = new Regex(@"^(\\[0-9])?([^\./\\:\!#\-\+\^(\)\{\}\[\]&\<\>\|"",\n\t\r=\*\^\?; ]|(\\[\."",ntr/\\:\!#&\-\+\^,\(\)\{\}\[\]\|=\*\^\?; ]))+", opts);
@@ -567,6 +582,16 @@ namespace Lexical.Localization.Exp
                 column += match.Length;
                 current.Kind = TokenKind.Pow;
             }
+            else if ((match = stream.Take(TokenUtils.Ellipsis)) != null)
+            {
+                column += match.Length;
+                current.Kind = TokenKind.Ellipsis;
+            }
+            else if ((match = stream.Take(TokenUtils.Range)) != null)
+            {
+                column += match.Length;
+                current.Kind = TokenKind.Range;
+            }
             else
             {
                 char ch = stream.TakeChar();
@@ -607,7 +632,7 @@ namespace Lexical.Localization.Exp
                         break;
                     case '*': current.Kind = TokenKind.Asterisk; break;
                     case '?': current.Kind = TokenKind.Questionmark; break;
-                    case '#': current.Kind = TokenKind.Numbersign; break;
+                    case '#': current.Kind = TokenKind.Hash; break;
                     case '+': current.Kind = TokenKind.Plus; break;
                     case '-': current.Kind = TokenKind.Minus; break;
                     case '\\': current.Kind = TokenKind.Backslash; break;
@@ -618,6 +643,10 @@ namespace Lexical.Localization.Exp
                     case '|': current.Kind = TokenKind.Pipe; break;
                     case '%': current.Kind = TokenKind.Percent; break;
                     case '~': current.Kind = TokenKind.Tilde; break;
+                    case '@': current.Kind = TokenKind.At; break;
+                    case '§': current.Kind = TokenKind.Section; break;
+                    case '$': current.Kind = TokenKind.Dollar; break;
+                    case '…': current.Kind = TokenKind.Ellipsis; break;
                     default: current.Kind = TokenKind.Unknown; break;
                 }
                 column++;

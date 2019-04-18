@@ -18,6 +18,17 @@ namespace Lexical.Localization.Exp
     }
 
     /// <summary>
+    /// Parenthesis expression "(exp)"
+    /// </summary>
+    public interface IParenthesisExpression : IExpression
+    {
+        /// <summary>
+        /// Inner expression
+        /// </summary>
+        IExpression Element { get; }
+    }
+
+    /// <summary>
     /// 
     /// </summary>
     public enum UnaryOp {
@@ -40,7 +51,7 @@ namespace Lexical.Localization.Exp
         /// <summary>+</summary>
         Add,
         /// <summary>-</summary>
-        Subtract,                         // x = 2-2
+        Subtract,
         /// <summary>*</summary>
         Multiply,
         /// <summary>/</summary>
@@ -199,24 +210,5 @@ namespace Lexical.Localization.Exp
         IExpression[] Values { get; }
     }
 
-    /// <summary>
-    /// e.g. "@decimal 1.0, 1.00, 1.000, 1.0000"
-    /// </summary>
-    public interface ISamplesExpression : IExpression
-    {
-        /// <summary>
-        /// Name of sample group, e.g. "decimal"
-        /// </summary>
-        String Name { get; }
-
-        /// <summary>
-        /// Each value is one of:
-        /// <list>
-        /// <item><see cref="IConstantExpression"/></item>
-        /// <item><see cref="IRangeExpression"/></item>
-        /// </list>
-        /// </summary>
-        IExpression[] Samples { get; }
-    }
 
 }

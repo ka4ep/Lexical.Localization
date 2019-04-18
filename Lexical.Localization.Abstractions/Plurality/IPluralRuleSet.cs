@@ -3,6 +3,7 @@
 // Date:           3.3.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Exp;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -90,6 +91,24 @@ namespace Lexical.Localization.Plurality
         /// Get (possibly) assigned rule-sets.
         /// </summary>
         String PluralityRuleSet { get; }
+    }
+
+    /// <summary>
+    /// Plural rule set expression that contains rules for multiple cultures.
+    /// 
+    /// e.g. "$CLDRv35 #ast ca de en et fi fy gl ia io it ji nl pt_PT sc scn sv sw ur yi §one i = 1 and v = 0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
+    /// </summary>
+    public interface IPluralRuleSetExpression : IExpression, IPluralRuleSet
+    {
+        /// <summary>
+        /// Name of the rule set, e.g. "CLDRv35"
+        /// </summary>
+        String Name { get; }
+
+        /// <summary>
+        /// Rules list
+        /// </summary>
+        IPluralRulesExpression[] RulesList { get; }
     }
 
     /// <summary>

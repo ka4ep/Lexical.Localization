@@ -68,10 +68,17 @@ namespace Lexical.Localization.Plurality
     }
 
     /// <summary>
-    /// Plural rule, e.g. "v = 0 and i % 10 = 1".
+    /// Plural rule expression.
+    /// 
+    /// e.g. "§one v = 0 and i % 10 = 1 @integer 0, 1, 2, 3, … @decimal 0.0~1.5, 10.0, …".
     /// </summary>
     public interface IPluralRuleExpression : IExpression, IPluralRule
     {
+        /// <summary>
+        /// (Optional) Name of the expression. "§One" "§Other"
+        /// </summary>
+        string Name { get; }
+
         /// <summary>
         /// Rule expression that can evaluate parameter
         /// </summary>
@@ -81,6 +88,39 @@ namespace Lexical.Localization.Plurality
         /// Samples
         /// </summary>
         ISamplesExpression[] Samples { get; }
+    }
+
+    /// <summary>
+    /// e.g. "@decimal 1.0, 1.00, 1.000, 1.0000"
+    /// </summary>
+    public interface ISamplesExpression : IExpression
+    {
+        /// <summary>
+        /// Name of sample group, e.g. "decimal"
+        /// </summary>
+        String Name { get; }
+
+        /// <summary>
+        /// Each value is one of:
+        /// <list>
+        /// <item><see cref="IConstantExpression"/></item>
+        /// <item><see cref="IRangeExpression"/></item>
+        /// <item><see cref="IInfiniteExpression"/></item>
+        /// </list>
+        /// 
+        /// If list ends with <see cref="IInfiniteExpression"/> then there are infinite possible values.
+        /// If not, then all the possible samples are listed in the samples list.
+        /// </summary>
+        IExpression[] Samples { get; }
+    }
+
+    /// <summary>
+    /// Marks the list as infinite.
+    /// 
+    /// "…" or "..."
+    /// </summary>
+    public interface IInfiniteExpression : IExpression
+    {
     }
 
 }
