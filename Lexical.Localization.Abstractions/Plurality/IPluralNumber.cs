@@ -143,14 +143,14 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Number of visible fraction digits, with trailing zeroes.
         /// 
-        /// Same as 'v' in Unicode CLDR plural.xml.
+        /// Corresponds to 'v' attribute in Unicode CLDR plural.xml.
         /// </summary>
         int F_Digits { get; }
 
         /// <summary>
         /// Number of visible fraction digits, without trailing zeros.
         /// 
-        /// Same as 'w' in Unicode CLDR plural.xml.
+        /// Corresponds to 'w' attribute in Unicode CLDR plural.xml.
         /// </summary>
         int T_Digits { get; }
 

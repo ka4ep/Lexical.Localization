@@ -25,12 +25,22 @@ namespace Lexical.Localization.Plurality
         /// <param name="str"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
+        /// <typeparam name="Exp">
+        ///     <see cref="IPluralRuleExpression"/>
+        ///     <see cref="IPluralRulesExpression"/>
+        ///     <see cref="IPluralRuleSetExpression"/>
+        ///     <see cref="IPluralRuleSetsExpression"/>
+        /// </typeparam>
         public static Exp Parse<Exp>(string str) where Exp : class, IExpression
         {
             Tokens reader = new Tokens(str);
             int ix = reader.Index;
             Tokens.Taker0<Exp> taker;
-            if (typeof(Exp) == typeof(IPluralRulesExpression)) taker = (Tokens.Taker0<Exp>) (object)PluralRules;
+
+            if (typeof(Exp) == typeof(IPluralRulesExpression)) taker = (Tokens.Taker0<Exp>)(object)PluralRules;
+            else if (typeof(Exp) == typeof(IPluralRuleSetExpression)) taker = (Tokens.Taker0<Exp>)(object)PluralRuleSet;
+            else if (typeof(Exp) == typeof(IPluralRuleSetsExpression)) taker = (Tokens.Taker0<Exp>)(object)PluralRuleSets;
+            else if (typeof(Exp) == typeof(IPluralRuleExpression)) taker = (Tokens.Taker0<Exp>)(object)PluralRule;
             else throw new ArgumentException($"Cannot parse {nameof(Exp)}.");
             Exp exp = reader.Take<Exp>(taker);
             if (exp == null) throw new ArgumentException($"Could not parse {nameof(Exp)} \"{exp}\"");
@@ -46,7 +56,7 @@ namespace Lexical.Localization.Plurality
         /// Or
         /// "#en #fi §one §one i=1 and v=0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
         /// </summary>
-        public static Tokens.Taker0<IPluralRulesExpression> PluralRules = (ref Tokens reader) =>
+        static Tokens.Taker0<IPluralRulesExpression> PluralRules = (ref Tokens reader) =>
         {
             int ix = reader.Index;
 
@@ -87,7 +97,7 @@ namespace Lexical.Localization.Plurality
         /// 
         /// e.g. "$CLDRv35 #ast ca de en et fi fy gl ia io it ji nl pt_PT sc scn sv sw ur yi §one i = 1 and v = 0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
         /// </summary>
-        public static Tokens.Taker0<IPluralRuleSetExpression> PluralRuleSet = (ref Tokens reader) =>
+        static Tokens.Taker0<IPluralRuleSetExpression> PluralRuleSet = (ref Tokens reader) =>
         {
             int ix = reader.Index;
 
@@ -121,7 +131,7 @@ namespace Lexical.Localization.Plurality
         /// 
         /// e.g. "$CLDRv35 #fi §other $CLDRv34 #fi §other".
         /// </summary>
-        public static Tokens.Taker0<IPluralRuleSetsExpression> PluralRuleSets = (ref Tokens reader) =>
+        static Tokens.Taker0<IPluralRuleSetsExpression> PluralRuleSets = (ref Tokens reader) =>
         {
             int ix = reader.Index;
 
@@ -145,7 +155,7 @@ namespace Lexical.Localization.Plurality
         /// 
         /// "§one v = 0 and i % 10 = 1 @integer 0, 1, 2, 3, … @decimal 0.0~1.5, 10.0, …".
         /// </summary>
-        public static Tokens.Taker0<IPluralRuleExpression> PluralRule = (ref Tokens reader) =>
+        static Tokens.Taker0<IPluralRuleExpression> PluralRule = (ref Tokens reader) =>
         {
             // Whitespace
             reader.TakeAll(TokenKind.NonEssential);
@@ -183,7 +193,7 @@ namespace Lexical.Localization.Plurality
         /// 
         /// "@integer 0, 1, 2, 3, …"
         /// </summary>
-        public static Tokens.Taker0<ISamplesExpression> SamplesExpression = (ref Tokens reader) =>
+        static Tokens.Taker0<ISamplesExpression> SamplesExpression = (ref Tokens reader) =>
         {
             reader.TakeAll(TokenKind.NonEssential);
 
@@ -229,40 +239,107 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Read boolean expression
         /// </summary>
-        public static Tokens.Taker0<IExpression> BooleanExpression = (ref Tokens reader) =>
+        static Tokens.Taker0<IExpression> BooleanExpression = (ref Tokens reader) =>
         {
             int ix = reader.Index;
-            reader.TakeAll(TokenKind.NonEssential);
 
-            // Try read binary
-            // Try read unary
-            // Try read literal
+            // Boolean exp
+            IExpression exp = null;
 
+            // exp1 ¤ exp2
             IExpression exp1 = reader.Take(ValueExpression);
-            if (exp1 == null) { reader.Index = ix; return null; }
-
-            // Binary Op
-            Token token = reader.Take(TokenKind.NameLiteral|TokenKind.Equals|TokenKind.InEquals2);
-            if (token == null) { reader.Index = ix; return null; }
-
-            if (token.Kind == TokenKind.NameLiteral && token.Value is String name)
+            if (exp1 == null)
             {
-                if (name == "and")
-                {
+                int ix_ = reader.Index;
+                // Binary Op
+                Token token = reader.Take(TokenKind.NameLiteral | TokenKind.Equals | TokenKind.InEquals2 | TokenKind.Lt | TokenKind.Gt | TokenKind.LtOrEq | TokenKind.GtOrEq);
+                if (token == null) { reader.Index = ix; return null; }
 
-                } else if (name == "not")
+                // Value
+                reader.TakeAll(TokenKind.NonEssential);
+                IExpression exp2 = reader.Take(ValueExpression);
+                if (exp2 != null)
                 {
-
-                } else
-                {
-                    reader.Index = ix; return null;
+                    // exp1 and exp2
+                    if (token.Kind == TokenKind.NameLiteral && token.Value is String name_ && name_ == "and") exp = new BinaryOpExpression(BinaryOp.And, exp1, exp2);
+                    // exp1 or exp2
+                    else if (token.Kind == TokenKind.NameLiteral && token.Value is String name__ && name__ == "or") exp = new BinaryOpExpression(BinaryOp.Or, exp1, exp2);
+                    // exp1 = exp2
+                    else if (token.Kind == TokenKind.Equals) new BinaryOpExpression(BinaryOp.Equal, exp1, exp2);
+                    // exp1 != exp2
+                    else if (token.Kind == TokenKind.InEquals2) new BinaryOpExpression(BinaryOp.NotEqual, exp1, exp2);
+                    // exp1 < exp2
+                    else if (token.Kind == TokenKind.Lt) new BinaryOpExpression(BinaryOp.LessThan, exp1, exp2);
+                    // exp1 <= exp2
+                    else if (token.Kind == TokenKind.LtOrEq) new BinaryOpExpression(BinaryOp.LessThanOrEqual, exp1, exp2);
+                    // exp1 > exp2
+                    else if (token.Kind == TokenKind.Gt) new BinaryOpExpression(BinaryOp.GreaterThan, exp1, exp2);
+                    // exp1 >= exp2
+                    else if (token.Kind == TokenKind.GtOrEq) new BinaryOpExpression(BinaryOp.GreaterThanOrEqual, exp1, exp2);
+                    // Revert
+                    else reader.Index = ix_;
                 }
             }
 
+            // No boolean expression
+            if (exp == null) { reader.Index = ix; return null; }
 
+            // Boolean op
+            {
+                int ix2 = reader.Index;
+                reader.TakeAll(TokenKind.NonEssential);
+                Token token = reader.Take(TokenKind.Exclamation|TokenKind.NameLiteral);
+                // not exp
+                if (token.Kind == TokenKind.NameLiteral && token.Value is String name && name == "not") exp = new UnaryOpExpression(UnaryOp.Not, exp);
+                else reader.Index = ix2;
+            }
+
+            // Return boolean exp
+            if (exp != null) return exp;
+
+            // Revert
+            reader.Index = ix;
             return null;
         };
 
+        /// <summary>
+        /// Read any expression that returns a value.
+        /// 
+        /// One of:
+        /// <see cref="IConstantExpression"/>
+        /// <see cref="IRangeExpression"/>
+        /// <see cref="IGroupExpression"/>
+        /// <see cref="IArgumentNameExpression"/>
+        /// <see cref="IBinaryOpExpression"/>
+        /// <see cref="IParenthesisExpression"/>
+        /// </summary>
+        static Tokens.Taker0<IExpression> ValueExpression = (ref Tokens reader) =>
+        {
+            int ix = reader.Index;
+            IExpression exp = reader.Take(ValueExpressionWithoutGroup);
+            if (exp == null) return null;
+
+            // GroupExpression: ',' <value>.
+            StructList16<IExpression> groupExpressions = new StructList16<IExpression>();
+            groupExpressions.Add(exp);
+            reader.TakeAll(TokenKind.NonEssential);
+            Token groupSeparatorToken = null;
+            while ((groupSeparatorToken = reader.Take(TokenKind.Comma)) != null)
+            {
+                // Read next 
+                IExpression nextValue = reader.Take(ValueExpression);
+                // Failed to read next expression after comma
+                if (nextValue == null) { reader.Index = ix; return null; }
+                // 
+                groupExpressions.Add(nextValue);
+                // 
+                reader.TakeAll(TokenKind.NonEssential);
+            }
+            if (groupExpressions.Count == 1) return exp;
+
+            // Create group expression
+            return new GroupExpression(groupExpressions.ToArray());
+        };
 
         /// <summary>
         /// Read any expression that returns a value.
@@ -274,7 +351,7 @@ namespace Lexical.Localization.Plurality
         /// <see cref="IBinaryOpExpression"/>
         /// <see cref="IParenthesisExpression"/>
         /// </summary>
-        public static Tokens.Taker0<IExpression> ValueExpression = (ref Tokens reader) =>
+        static Tokens.Taker0<IExpression> ValueExpressionWithoutGroup = (ref Tokens reader) =>
         {
             int ix = reader.Index;
             reader.TakeAll(TokenKind.NonEssential);
@@ -300,9 +377,15 @@ namespace Lexical.Localization.Plurality
             // Argument name
             if (token.Kind == TokenKind.NameLiteral && token.Value is string name)
             {
-                exp = new ArgumentNameExpression(name);
-
-                // TODO assert name is : 'n' | 'i' | 'f' | 't' | 'v' | 'w'
+                // Argument expression
+                if (name == "n" || name == "i" || name == "f" || name == "t" || name == "v" || name == "w" || name == "e")
+                {
+                    exp = new ArgumentNameExpression(name);
+                } else
+                {
+                    // Failed
+                    reader.Index = ix; return null;
+                }
             }
             // Integer or Integer Range
             else if (token.Kind == TokenKind.IntegerLiteral)
@@ -353,8 +436,6 @@ namespace Lexical.Localization.Plurality
             }
             // Failed
             else { reader.Index = ix; return null; }
-
-            // TODO Add list: ',' <value> along with range
 
             // Binary Op: %
             reader.TakeAll(TokenKind.NonEssential);
