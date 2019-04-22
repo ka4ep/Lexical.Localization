@@ -191,12 +191,12 @@ namespace Lexical.Localization.Exp
         /// <summary>
         /// Start of range (inclusive)
         /// </summary>
-        IConstantExpression MinValue { get; }
+        IExpression MinValue { get; }
 
         /// <summary>
         /// End of range (inclusive)
         /// </summary>
-        IConstantExpression MaxValue { get; }
+        IExpression MaxValue { get; }
     }
 
     /// <summary>

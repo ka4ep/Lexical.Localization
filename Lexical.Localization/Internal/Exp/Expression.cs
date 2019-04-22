@@ -133,20 +133,21 @@ namespace Lexical.Localization.Exp
     }
 
     /// <summary>
-    /// 
+    /// Range expression.
     /// </summary>
     public class RangeExpression : Expression, IRangeExpression
     {
         /// <summary> </summary>
-        public IConstantExpression MinValue { get; internal set; }
+        public IExpression MinValue { get; internal set; }
         /// <summary> </summary>
-        public IConstantExpression MaxValue { get; internal set; }
+        public IExpression MaxValue { get; internal set; }
+
         /// <summary>
-        /// 
+        /// Create range expression
         /// </summary>
         /// <param name="minValue"></param>
         /// <param name="maxValue"></param>
-        public RangeExpression(IConstantExpression minValue, IConstantExpression maxValue)
+        public RangeExpression(IExpression minValue, IExpression maxValue)
         {
             MinValue = minValue ?? throw new ArgumentNullException(nameof(minValue));
             MaxValue = maxValue ?? throw new ArgumentNullException(nameof(maxValue));

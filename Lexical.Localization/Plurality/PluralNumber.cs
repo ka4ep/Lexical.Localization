@@ -280,7 +280,7 @@ namespace Lexical.Localization.Plurality
             /// <summary>
             /// Text representation of the value.
             /// </summary>
-            public override Text AsText => text ?? (text = new Text(Value.ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture, NumberStyles.Integer));
+            public override Text AsText => text ?? (text = new Text(Value.ToString(CultureInfo.InvariantCulture), CultureInfo.InvariantCulture, NumberStyles.Float));
 
             /// <summary>
             /// Create double number
@@ -301,7 +301,7 @@ namespace Lexical.Localization.Plurality
             /// <inheritdoc />
             public override int Sign => Value < 0d ? -1 : Value == 0d ? 0 : 1;
             /// <inheritdoc />
-            public override IPluralNumber N => Value < 0d ? new Double(-Value) : this;
+            public override IPluralNumber N => Value < 0d ? new Double(-Value, new Text(text.String, text.n_start, text.n_end, text.cultureInfo, text.numberStyle, text.NumberBase)) : this;
             /// <inheritdoc />
             public override IPluralNumber I => AsText.I;
             /// <inheritdoc />
@@ -315,7 +315,7 @@ namespace Lexical.Localization.Plurality
             /// <inheritdoc />
             public override int T_Digits => AsText.T_Digits;
             /// <inheritdoc />
-            public override int Base => throw new NotImplementedException();
+            public override int Base => 10;
             /// <inheritdoc />
             public override int I_Digits => AsText.I_Digits;
             /// <inheritdoc />
@@ -808,14 +808,14 @@ namespace Lexical.Localization.Plurality
                     }
 
                 // Make n positive number region
-                if (i_start >= 0 && i_start > n_start) n_start = i_start;
-                if (f_start >= 0 && f_start > n_start) n_start = f_start;
-                if (e_start >= 0 && e_start > n_start) n_start = e_start;
-                if (t_start >= 0 && t_start > n_start) n_start = t_start;
-                if (i_end >= 0 && i_end > n_end) n_end = i_end;
-                if (f_end >= 0 && f_end > n_end) n_end = f_end;
-                if (e_end >= 0 && e_end > n_end) n_end = e_end;
-                if (t_end >= 0 && t_end > n_end) n_end = t_end;
+                if (i_start >= 0 && (n_start<0 || i_start < n_start)) n_start = i_start;
+                if (f_start >= 0 && (n_start<0 || f_start < n_start)) n_start = f_start;
+                if (e_start >= 0 && (n_start < 0 || e_start < n_start)) n_start = e_start;
+                if (t_start >= 0 && (n_start < 0 || t_start < n_start)) n_start = t_start;
+                if (i_end >= 0 && (n_end < 0 || i_end > n_end)) n_end = i_end;
+                if (f_end >= 0 && (n_end < 0 || f_end > n_end)) n_end = f_end;
+                if (e_end >= 0 && (n_end < 0 || e_end > n_end)) n_end = e_end;
+                if (t_end >= 0 && (n_end < 0 || t_end > n_end)) n_end = t_end;
 
                 // Set sign
                 this.sign = zero ? 0 : negative ? -1 : 1;
@@ -837,7 +837,7 @@ namespace Lexical.Localization.Plurality
                 => ch >= '1' && ch <= '9' || ((NumberBase == 16) && ((ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F')));
 
             /// <summary>
-            /// Get digit value basd on <see cref="NumberBase"/>.
+            /// Get digit value based on <see cref="NumberBase"/>.
             /// </summary>
             /// <param name="ch"></param>
             /// <returns>value, or -1 if was not digit</returns>
@@ -845,21 +845,31 @@ namespace Lexical.Localization.Plurality
             {
                 if (ch >= '0' && ch <= '9') return (int)(ch - '0');
                 if (NumberBase == 16 && (ch >= 'a' && ch <= 'f')) return (int)(ch - 'a') + 10;
-                if (NumberBase == 16 && (ch >= 'A' && ch <= 'F')) return (int)(ch - 'a') + 10;
+                if (NumberBase == 16 && (ch >= 'A' && ch <= 'F')) return (int)(ch - 'A') + 10;
                 return -1;
             }
 
             /// <inheritdoc />
             public override IEnumerator<char> GetEnumerator()
             {
+                if (Sign < 0) yield return '-';
+
                 // Exponent value
                 long e = 0L;
+
                 // If exponent digit read fails, use other methods
                 TryGetExponent(out e);
 
                 IEnumerator<char> digits = GetDigits(i_digits, (int)e);
-                if (Sign < 0) yield return '-';
-                while (digits.MoveNext()) yield return digits.Current;
+                if (e < 0) { yield return '.'; e--; }
+                while (e++ < 0) yield return '0';
+                while (digits.MoveNext())
+                {
+                    yield return digits.Current;
+                    e--;
+                }
+
+                while (e-- > 0) yield return '0';
             }
 
             string canonicalizedString;
@@ -870,14 +880,8 @@ namespace Lexical.Localization.Plurality
                 if (canonicalizedString == null)
                 {
                     StringBuilder sb = new StringBuilder(i_digits+f_digits+2);
-                    // Exponent value
-                    long e = 0L;
-                    // If exponent digit read fails, use other methods
-                    TryGetExponent(out e);
-
-                    IEnumerator<char> digits = GetDigits(i_digits, (int)e);
-                    if (Sign < 0) sb.Append('-');
-                    while (digits.MoveNext()) sb.Append(digits.Current);
+                    var etor = GetEnumerator();
+                    while (etor.MoveNext()) sb.Append(etor.Current);
                     canonicalizedString = sb.ToString();
                 }
                 return canonicalizedString;

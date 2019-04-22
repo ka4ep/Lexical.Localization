@@ -157,22 +157,25 @@ namespace Lexical.Localization.Plurality
         /// </summary>
         static Tokens.Taker0<IPluralRuleExpression> PluralRule = (ref Tokens reader) =>
         {
+            int ix = reader.Index;
+
             // Whitespace
             reader.TakeAll(TokenKind.NonEssential);
 
             // (Optional) §Name
             string name = null;
-            int ix = reader.Index;
+            int _ix = reader.Index;
             Token t = reader.Take(TokenKind.Section);
             if (t != null) {
-                reader.Index = ix;
+                reader.Index = _ix;
                 name = reader.Take(TokenKind.NameLiteral)?.Value?.ToString();
-                if (name == null) { reader.Index = ix; }
+                if (name == null) { reader.Index = _ix; }
             }
 
             // Try read boolean expression
             reader.TakeAll(TokenKind.NonEssential);
             IExpression rule = reader.Take(BooleanExpression);
+            if (rule == null) { reader.Index = ix; return null; }
             reader.TakeAll(TokenKind.NonEssential);
 
             // Try read samples
@@ -248,7 +251,7 @@ namespace Lexical.Localization.Plurality
 
             // exp1 ¤ exp2
             IExpression exp1 = reader.Take(ValueExpression);
-            if (exp1 == null)
+            if (exp1 != null)
             {
                 int ix_ = reader.Index;
                 // Binary Op
@@ -265,17 +268,17 @@ namespace Lexical.Localization.Plurality
                     // exp1 or exp2
                     else if (token.Kind == TokenKind.NameLiteral && token.Value is String name__ && name__ == "or") exp = new BinaryOpExpression(BinaryOp.Or, exp1, exp2);
                     // exp1 = exp2
-                    else if (token.Kind == TokenKind.Equals) new BinaryOpExpression(BinaryOp.Equal, exp1, exp2);
+                    else if (token.Kind == TokenKind.Equals) exp = new BinaryOpExpression(BinaryOp.Equal, exp1, exp2);
                     // exp1 != exp2
-                    else if (token.Kind == TokenKind.InEquals2) new BinaryOpExpression(BinaryOp.NotEqual, exp1, exp2);
+                    else if (token.Kind == TokenKind.InEquals2) exp = new BinaryOpExpression(BinaryOp.NotEqual, exp1, exp2);
                     // exp1 < exp2
-                    else if (token.Kind == TokenKind.Lt) new BinaryOpExpression(BinaryOp.LessThan, exp1, exp2);
+                    else if (token.Kind == TokenKind.Lt) exp = new BinaryOpExpression(BinaryOp.LessThan, exp1, exp2);
                     // exp1 <= exp2
-                    else if (token.Kind == TokenKind.LtOrEq) new BinaryOpExpression(BinaryOp.LessThanOrEqual, exp1, exp2);
+                    else if (token.Kind == TokenKind.LtOrEq) exp = new BinaryOpExpression(BinaryOp.LessThanOrEqual, exp1, exp2);
                     // exp1 > exp2
-                    else if (token.Kind == TokenKind.Gt) new BinaryOpExpression(BinaryOp.GreaterThan, exp1, exp2);
+                    else if (token.Kind == TokenKind.Gt) exp = new BinaryOpExpression(BinaryOp.GreaterThan, exp1, exp2);
                     // exp1 >= exp2
-                    else if (token.Kind == TokenKind.GtOrEq) new BinaryOpExpression(BinaryOp.GreaterThanOrEqual, exp1, exp2);
+                    else if (token.Kind == TokenKind.GtOrEq) exp = new BinaryOpExpression(BinaryOp.GreaterThanOrEqual, exp1, exp2);
                     // Revert
                     else reader.Index = ix_;
                 }
@@ -290,7 +293,7 @@ namespace Lexical.Localization.Plurality
                 reader.TakeAll(TokenKind.NonEssential);
                 Token token = reader.Take(TokenKind.Exclamation|TokenKind.NameLiteral);
                 // not exp
-                if (token.Kind == TokenKind.NameLiteral && token.Value is String name && name == "not") exp = new UnaryOpExpression(UnaryOp.Not, exp);
+                if (token != null && token.Kind == TokenKind.NameLiteral && token.Value is String name && name == "not") exp = new UnaryOpExpression(UnaryOp.Not, exp);
                 else reader.Index = ix2;
             }
 
@@ -402,13 +405,13 @@ namespace Lexical.Localization.Plurality
                     if (rangeEndToken.Kind == TokenKind.IntegerLiteral)
                     {
                         ConstantExpression rangeStart = new ConstantExpression(new DecimalNumber.Long((long)token.Value));
-                        ConstantExpression rangeEnd = new ConstantExpression(new DecimalNumber.Long((long)token.Value));
+                        ConstantExpression rangeEnd = new ConstantExpression(new DecimalNumber.Long((long)rangeEndToken.Value));
                         exp = new RangeExpression(rangeStart, rangeEnd);
                     }
                     else
                     {
                         ConstantExpression rangeStart = new ConstantExpression(new DecimalNumber.Double((double)(long)token.Value));
-                        ConstantExpression rangeEnd = new ConstantExpression(new DecimalNumber.Double((double)token.Value));
+                        ConstantExpression rangeEnd = new ConstantExpression(new DecimalNumber.Double((double)rangeEndToken.Value));
                         exp = new RangeExpression(rangeStart, rangeEnd);
                     }
                 }
@@ -430,7 +433,7 @@ namespace Lexical.Localization.Plurality
                     reader.TakeAll(TokenKind.NonEssential);
                     Token rangeEndToken = reader.Take(TokenKind.FloatLiteral);
                     if (rangeEndToken == null) { reader.Index = ix; return null; }
-                    ConstantExpression rangeEndExp = new ConstantExpression(new DecimalNumber.Double((double)token.Value));
+                    ConstantExpression rangeEndExp = new ConstantExpression(new DecimalNumber.Double((double)rangeEndToken.Value));
                     exp = new RangeExpression(exp as IConstantExpression, rangeEndExp);
                 }
             }

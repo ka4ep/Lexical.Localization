@@ -12,6 +12,8 @@ namespace Lexical.Localization.Plurality
 {
     /// <summary>
     /// Rule expression evaluator.
+    /// 
+    /// <see href="https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_rules_syntax"/>
     /// </summary>
     public struct PluralRuleEvaluator
     {
@@ -19,6 +21,16 @@ namespace Lexical.Localization.Plurality
         /// Number to evaluate
         /// </summary>
         public IPluralNumber Number;
+
+        /// <summary>
+        /// Create plural number evaluator
+        /// </summary>
+        /// <param name="number"></param>
+        /// <exception cref="ArgumentNullException">null</exception>
+        public PluralRuleEvaluator(IPluralNumber number)
+        {
+            Number = number ?? throw new ArgumentNullException(nameof(number));
+        }
 
         /// <summary>
         /// Evaluate rule to number.
@@ -41,13 +53,7 @@ namespace Lexical.Localization.Plurality
                     BinaryOp.And => EvaluateBoolean(bop.Left) && EvaluateBoolean(bop.Right),
                     BinaryOp.Or => EvaluateBoolean(bop.Left) || EvaluateBoolean(bop.Right),
                     BinaryOp.ExclusiveOr => EvaluateBoolean(bop.Left) ^ EvaluateBoolean(bop.Right),
-                    BinaryOp.Equal => false,
-                    BinaryOp.NotEqual => false,
-                    BinaryOp.LessThan => false,
-                    BinaryOp.LessThanOrEqual => false,
-                    BinaryOp.GreaterThan => false,
-                    BinaryOp.GreaterThanOrEqual => false,
-                    _ => throw new NotSupportedException($"Cannote valuate {nameof(IBinaryOpExpression)} with Op={bop.Op} to boolean result")
+                    _ => EvaluateBinaryOp(bop.Op, bop.Left, bop.Right),
                 },
                 _ => false
             };
@@ -55,20 +61,22 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Evaluate rule to number.
         /// </summary>
-        /// <param name="rule">Rule to evaluate against.</param>
-        /// <returns>number</returns>
+        /// <param name="exp">Rule to evaluate against.</param>
+        /// <returns>number range (min, max(inclusive))</returns>
         /// <exception cref="NotSupportedException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public IPluralNumber EvaluateAsNumber(IExpression rule)
-            => rule switch
+        public IPluralNumber EvaluateAsNumber(IExpression exp)
+            => exp switch
             {
                 //IUnaryOpExpression uop => uop.Op switch { UnaryOp. },
                 IParenthesisExpression pexp => EvaluateAsNumber(pexp.Element),
                 IBinaryOpExpression bop => bop.Op switch { BinaryOp.Modulo => Modulo(EvaluateAsNumber(bop.Left), EvaluateAsNumber(bop.Right)), _ => throw new NotSupportedException($"BinaryOpExpression '{bop.Op}' is not supported") },
                 IArgumentNameExpression arg => arg.Name switch { "n" => Number.N, "i" => Number.I, "e" => Number.E, "f" => Number.F, "t" => Number.T, "v" => new DecimalNumber.Long(Number.F_Digits), "w" => new DecimalNumber.Long(Number.T_Digits), _ => throw new NotSupportedException($"Argument '{arg.Name}' is not supported") },
                 IConstantExpression c => (IPluralNumber)c.Value,
-                _ => throw new NotSupportedException($"{rule.GetType()} not supported.")
+                _ => throw new NotSupportedException($"{exp.GetType()} not supported.")
             };
+
+        static (IPluralNumber, IPluralNumber) Dup(IPluralNumber n) => (n, n);
 
         /// <summary>
         /// Evaluate modulo operation
@@ -85,7 +93,87 @@ namespace Lexical.Localization.Plurality
             return left.Modulo((int)rightValue);
         }
 
-        //bool EvaluateBinaryOp(BinaryOp bop, IPlural)
+        bool EvaluateBinaryOp(BinaryOp bop, IExpression leftExp, IExpression rightExp)
+        {
+            // Group
+            if (leftExp is IGroupExpression lGroup)
+            {
+                foreach (IExpression lGroupItem in lGroup.Values)
+                {
+                    if (EvaluateBinaryOp(bop, lGroupItem, rightExp)) return true;
+                }
+                return false;
+            }
+            if (rightExp is IGroupExpression rGroup)
+            {
+                foreach (IExpression rGroupItem in rGroup.Values)
+                {
+                    if (EvaluateBinaryOp(bop, leftExp, rGroupItem)) return true;
+                }
+                return false;
+            }
+
+            // Evaluate into number ranges
+            PluralNumberComparer comparer = PluralNumberComparer.Instance;
+            if (leftExp is IRangeExpression lr)
+            {
+                IPluralNumber min = EvaluateAsNumber(lr.MinValue), max = EvaluateAsNumber(lr.MaxValue), number = EvaluateAsNumber(rightExp);
+
+                // As per contract in https://www.unicode.org/reports/tr35/tr35-numbers.html#Relations
+                // "The positive relations are of the format x = y and x = y mod z. 
+                //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
+                //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
+                if (number.F_Digits > 0) number = number.N;
+
+                return bop switch
+                {
+                    BinaryOp.Equal => comparer.Compare(min, number) <= 0 && comparer.Compare(number, max) <= 0,
+                    BinaryOp.NotEqual => comparer.Compare(min, number) > 0 && comparer.Compare(number, max) > 0,
+                    BinaryOp.LessThan => comparer.Compare(number, min) < 0 && comparer.Compare(number, max) < 0,
+                    BinaryOp.LessThanOrEqual => comparer.Compare(number, min) <= 0 && comparer.Compare(number, max) <= 0,
+                    BinaryOp.GreaterThan => comparer.Compare(number, min) > 0 && comparer.Compare(number, max) > 0,
+                    BinaryOp.GreaterThanOrEqual => comparer.Compare(number, min) >= 0 && comparer.Compare(number, max) >= 0,
+                    _ => throw new InvalidOperationException($"BinaryOperand {bop} is not supported for boolean result")
+                };
+            } else
+            if (rightExp is IRangeExpression rr)
+            {
+                // Range comparison
+                IPluralNumber min = EvaluateAsNumber(rr.MinValue), max = EvaluateAsNumber(rr.MaxValue), number = EvaluateAsNumber(leftExp);
+
+                // As per contract in https://www.unicode.org/reports/tr35/tr35-numbers.html#Relations
+                // "The positive relations are of the format x = y and x = y mod z. 
+                //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
+                //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
+                if (number.F_Digits > 0) number = number.N;
+
+                return bop switch
+                {
+                    BinaryOp.Equal => comparer.Compare(min, number) <= 0 && comparer.Compare(number, max) <= 0,
+                    BinaryOp.NotEqual => comparer.Compare(min, number) > 0 && comparer.Compare(number, max) > 0,
+                    BinaryOp.LessThan => comparer.Compare(number, min) < 0 && comparer.Compare(number, max) < 0,
+                    BinaryOp.LessThanOrEqual => comparer.Compare(number, min) <= 0 && comparer.Compare(number, max) <= 0,
+                    BinaryOp.GreaterThan => comparer.Compare(number, min) > 0 && comparer.Compare(number, max) > 0,
+                    BinaryOp.GreaterThanOrEqual => comparer.Compare(number, min) >= 0 && comparer.Compare(number, max) >= 0,
+                    _ => throw new InvalidOperationException($"BinaryOperand {bop} is not supported for boolean result")
+                };
+            }
+            else
+            {
+                IPluralNumber l = EvaluateAsNumber(leftExp), r = EvaluateAsNumber(rightExp);
+                return bop switch
+                {
+                    BinaryOp.Equal => comparer.Compare(l, r) == 0,
+                    BinaryOp.NotEqual => comparer.Compare(l, r) != 0,
+                    BinaryOp.LessThan => comparer.Compare(l, r) < 0,
+                    BinaryOp.LessThanOrEqual => comparer.Compare(l, r) <= 0,
+                    BinaryOp.GreaterThan => comparer.Compare(l, r) > 0,
+                    BinaryOp.GreaterThanOrEqual => comparer.Compare(l, r) >= 0,
+                    _ => throw new InvalidOperationException($"BinaryOperand {bop} is not supported for boolean result")
+                };
+            }
+        }
+
     }
 
 }
