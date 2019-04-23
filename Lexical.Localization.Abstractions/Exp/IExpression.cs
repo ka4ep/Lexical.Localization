@@ -11,7 +11,9 @@ using System.Text;
 namespace Lexical.Localization.Exp
 {
     /// <summary>
-    /// Simple expression. Used for string format functions and plural rules.
+    /// General purpose expression interface.
+    /// 
+    /// The actual rules of printing, parsing and evaluation depends on the context the expression is used in.
     /// </summary>
     public interface IExpression
     {
@@ -60,14 +62,18 @@ namespace Lexical.Localization.Exp
         Modulo,
         /// <summary>pow</summary>
         Power,
-
-        // Logical operands
         /// <summary>&amp;</summary>
         And,
         /// <summary>|</summary>
         Or,
         /// <summary>^</summary>
-        ExclusiveOr,
+        Xor,
+
+        // Logical operands
+        /// <summary>&amp;&amp;</summary>
+        LogicalAnd,
+        /// <summary>||</summary>
+        LogicalOr,
 
         // Other operands
         /// <summary>&lt;&lt;</summary>
@@ -159,7 +165,12 @@ namespace Lexical.Localization.Exp
     public interface IFunctionExpression : IExpression
     {
         /// <summary>
-        /// 
+        /// Function name
+        /// </summary>
+        String Name { get; }
+
+        /// <summary>
+        /// Function arguments
         /// </summary>
         IExpression[] Args { get; }
     }

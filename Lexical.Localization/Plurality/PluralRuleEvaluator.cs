@@ -46,13 +46,16 @@ namespace Lexical.Localization.Plurality
                     uop.Op switch
                     {
                         UnaryOp.Not => !EvaluateBoolean(uop.Element),
+                        UnaryOp.OnesComplement => !EvaluateBoolean(uop.Element),
                         _ => throw new NotSupportedException($"Cannote valuate {nameof(IUnaryOpExpression)} with Op={uop.Op} to boolean result")
                     },
                 IBinaryOpExpression bop => bop.Op switch
                 {
-                    BinaryOp.And => EvaluateBoolean(bop.Left) && EvaluateBoolean(bop.Right),
-                    BinaryOp.Or => EvaluateBoolean(bop.Left) || EvaluateBoolean(bop.Right),
-                    BinaryOp.ExclusiveOr => EvaluateBoolean(bop.Left) ^ EvaluateBoolean(bop.Right),
+                    BinaryOp.LogicalAnd => EvaluateBoolean(bop.Left) && EvaluateBoolean(bop.Right),
+                    BinaryOp.LogicalOr => EvaluateBoolean(bop.Left) || EvaluateBoolean(bop.Right),
+                    BinaryOp.Xor => EvaluateBoolean(bop.Left) ^ EvaluateBoolean(bop.Right),
+                    BinaryOp.Equal => EvaluateEquals(bop.Left, bop.Right),
+                    BinaryOp.NotEqual => EvaluateNotEqual(bop.Left, bop.Right),
                     _ => EvaluateBinaryOp(bop.Op, bop.Left, bop.Right),
                 },
                 _ => false
@@ -75,8 +78,6 @@ namespace Lexical.Localization.Plurality
                 IConstantExpression c => (IPluralNumber)c.Value,
                 _ => throw new NotSupportedException($"{exp.GetType()} not supported.")
             };
-
-        static (IPluralNumber, IPluralNumber) Dup(IPluralNumber n) => (n, n);
 
         /// <summary>
         /// Evaluate modulo operation
@@ -123,7 +124,7 @@ namespace Lexical.Localization.Plurality
                 // "The positive relations are of the format x = y and x = y mod z. 
                 //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
                 //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
-                if (number.F_Digits > 0) number = number.N;
+                if (number.F_Digits > 0) return false;
 
                 return bop switch
                 {
@@ -145,12 +146,12 @@ namespace Lexical.Localization.Plurality
                 // "The positive relations are of the format x = y and x = y mod z. 
                 //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
                 //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
-                if (number.F_Digits > 0) number = number.N;
+                if (number.F_Digits > 0) return false;
 
                 return bop switch
                 {
-                    BinaryOp.Equal => comparer.Compare(min, number) <= 0 && comparer.Compare(number, max) <= 0,
-                    BinaryOp.NotEqual => comparer.Compare(min, number) > 0 && comparer.Compare(number, max) > 0,
+                    //BinaryOp.Equal => comparer.Compare(min, number) <= 0 && comparer.Compare(number, max) <= 0,
+                    //BinaryOp.NotEqual => comparer.Compare(min, number) > 0 && comparer.Compare(number, max) > 0,
                     BinaryOp.LessThan => comparer.Compare(number, min) < 0 && comparer.Compare(number, max) < 0,
                     BinaryOp.LessThanOrEqual => comparer.Compare(number, min) <= 0 && comparer.Compare(number, max) <= 0,
                     BinaryOp.GreaterThan => comparer.Compare(number, min) > 0 && comparer.Compare(number, max) > 0,
@@ -163,14 +164,144 @@ namespace Lexical.Localization.Plurality
                 IPluralNumber l = EvaluateAsNumber(leftExp), r = EvaluateAsNumber(rightExp);
                 return bop switch
                 {
-                    BinaryOp.Equal => comparer.Compare(l, r) == 0,
-                    BinaryOp.NotEqual => comparer.Compare(l, r) != 0,
+                    //BinaryOp.Equal => comparer.Compare(l, r) == 0,
+                    //BinaryOp.NotEqual => comparer.Compare(l, r) != 0,
                     BinaryOp.LessThan => comparer.Compare(l, r) < 0,
                     BinaryOp.LessThanOrEqual => comparer.Compare(l, r) <= 0,
                     BinaryOp.GreaterThan => comparer.Compare(l, r) > 0,
                     BinaryOp.GreaterThanOrEqual => comparer.Compare(l, r) >= 0,
                     _ => throw new InvalidOperationException($"BinaryOperand {bop} is not supported for boolean result")
                 };
+            }
+        }
+
+        /// <summary>
+        /// Evaluate equals <see cref="BinaryOpExpression"/>. 
+        /// 
+        /// As a special rule, CLDR Equals handles <see cref="IGroupExpression"/> and <see cref="IRangeExpression"/>s.
+        /// Group and range expressions returns true, if one of the values matches. 
+        /// For example "i % 100 = 0,20,40,60,80" is true for i==20.
+        /// </summary>
+        /// <param name="leftExp"></param>
+        /// <param name="rightExp"></param>
+        /// <returns></returns>
+        bool EvaluateEquals(IExpression leftExp, IExpression rightExp)
+        {
+            // Group, recurse into each element
+            if (leftExp is IGroupExpression lGroup)
+            {
+                foreach (IExpression lGroupItem in lGroup.Values)
+                    if (EvaluateEquals(lGroupItem, rightExp)) return true;
+                return false;
+            }
+            if (rightExp is IGroupExpression rGroup)
+            {
+                foreach (IExpression rGroupItem in rGroup.Values)
+                    if (EvaluateEquals(leftExp, rGroupItem)) return true;
+                return false;
+            }
+
+            // Evaluate into number ranges
+            PluralNumberComparer comparer = PluralNumberComparer.Instance;
+            if (leftExp is IRangeExpression lr)
+            {
+                // Evaluate number.
+                IPluralNumber number = EvaluateAsNumber(rightExp);
+                // As per contract in https://www.unicode.org/reports/tr35/tr35-numbers.html#Relations
+                // "The positive relations are of the format x = y and x = y mod z. 
+                //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
+                //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
+                if (number.F_Digits > 0) return false;
+
+                IPluralNumber min = EvaluateAsNumber(lr.MinValue), max = EvaluateAsNumber(lr.MaxValue);
+                return comparer.Compare(min, number) <= 0 && comparer.Compare(number, max) <= 0;
+            }
+            else
+            if (rightExp is IRangeExpression rr)
+            {
+                // Evaluate number
+                IPluralNumber number = EvaluateAsNumber(leftExp);
+
+                // As per contract in https://www.unicode.org/reports/tr35/tr35-numbers.html#Relations
+                // "The positive relations are of the format x = y and x = y mod z. 
+                //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
+                //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
+                if (number.F_Digits > 0) return false;
+
+                // Range comparison
+                IPluralNumber min = EvaluateAsNumber(rr.MinValue), max = EvaluateAsNumber(rr.MaxValue);
+
+                return comparer.Compare(min, number) <= 0 && comparer.Compare(number, max) <= 0;
+            }
+            else
+            {
+                IPluralNumber l = EvaluateAsNumber(leftExp), r = EvaluateAsNumber(rightExp);
+                return comparer.Compare(l, r) == 0;
+            }
+        }
+
+        /// <summary>
+        /// Evaluate not-equals "!=" <see cref="BinaryOpExpression"/>. 
+        /// 
+        /// As a special rule, CLDR Equals handles <see cref="IGroupExpression"/> and <see cref="IRangeExpression"/>s.
+        /// Group and range expressions returns false, if none of the group item matches. 
+        /// For example "i % 100 != 0,20,40,60,80" is false if i is none of the group.
+        /// </summary>
+        /// <param name="leftExp"></param>
+        /// <param name="rightExp"></param>
+        /// <returns></returns>
+        bool EvaluateNotEqual(IExpression leftExp, IExpression rightExp)
+        {
+            // Group, recurse into each element
+            if (leftExp is IGroupExpression lGroup)
+            {
+                foreach (IExpression lGroupItem in lGroup.Values)
+                    if (!EvaluateNotEqual(lGroupItem, rightExp)) return false;
+                return true;
+            }
+            if (rightExp is IGroupExpression rGroup)
+            {
+                foreach (IExpression rGroupItem in rGroup.Values)
+                    if (!EvaluateNotEqual(leftExp, rGroupItem)) return false;
+                return true;
+            }
+
+            // Evaluate into number ranges
+            PluralNumberComparer comparer = PluralNumberComparer.Instance;
+            if (leftExp is IRangeExpression lr)
+            {
+                // Evaluate number.
+                IPluralNumber number = EvaluateAsNumber(rightExp);
+                // As per contract in https://www.unicode.org/reports/tr35/tr35-numbers.html#Relations
+                // "The positive relations are of the format x = y and x = y mod z. 
+                //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
+                //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
+                if (number.F_Digits > 0) return false;
+
+                IPluralNumber min = EvaluateAsNumber(lr.MinValue), max = EvaluateAsNumber(lr.MaxValue);
+                return comparer.Compare(min, number) > 0 || comparer.Compare(number, max) > 0;
+            }
+            else
+            if (rightExp is IRangeExpression rr)
+            {
+                // Evaluate number
+                IPluralNumber number = EvaluateAsNumber(leftExp);
+
+                // As per contract in https://www.unicode.org/reports/tr35/tr35-numbers.html#Relations
+                // "The positive relations are of the format x = y and x = y mod z. 
+                //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
+                //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
+                if (number.F_Digits > 0) return false;
+
+                // Range comparison
+                IPluralNumber min = EvaluateAsNumber(rr.MinValue), max = EvaluateAsNumber(rr.MaxValue);
+
+                return comparer.Compare(min, number) > 0 || comparer.Compare(number, max) > 0;
+            }
+            else
+            {
+                IPluralNumber l = EvaluateAsNumber(leftExp), r = EvaluateAsNumber(rightExp);
+                return comparer.Compare(l, r) != 0;
             }
         }
 

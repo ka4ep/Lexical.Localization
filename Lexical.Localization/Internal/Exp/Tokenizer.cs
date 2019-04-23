@@ -261,7 +261,7 @@ namespace Lexical.Localization.Exp
         public static Regex Range = new Regex(@"^\.\.", opts);
 
         /// <summary></summary>
-        public static Regex NameLiteral = new Regex(@"^(\\[0-9])?([^\./\\:\!#\-\+\^(\)\{\}\[\]&\<\>\|"",\n\t\r=\*\^\?; ]|(\\[\."",ntr/\\:\!#&\-\+\^,\(\)\{\}\[\]\|=\*\^\?; ]))+", opts);
+        public static Regex NameLiteral = new Regex(@"^(\\[0-9])?([^\./\\:\!#\-\+\^(\)\{\}\[\]&\<\>\|"",\n\t\r=\*\^\?;§…\$% ]|(\\[\."",ntr/\\:\!#&\-\+\^,\(\)\{\}\[\]\|=\*\^\?;§…\$% ]))+", opts);
         /// <summary></summary>
         public static Regex AtNameLiteral = new Regex(@"@([^/\\:\!#-\+\^(\)\{\}\[\]&\<\>\|"",\n\t\r=\*\^\? ]|(\\["",ntr/\\:\!#&-\+\^,\(\)\{\}\[\]\|=\*\^\? ]))+", opts);
         /// <summary></summary>
