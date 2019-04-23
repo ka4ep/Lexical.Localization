@@ -14,12 +14,18 @@ namespace Lexical.Localization.Plurality
     /// <list type="bullet">
     ///   <item><see cref="IPluralCase"/></item>
     ///   <item><see cref="IPluralCategoryPart"/></item>
-    ///   <item><see cref="IPluralRuleEvaluator"/></item>
+    ///   <item><see cref="IPluralRuleEvaluatable"/></item>
     ///   <item><see cref="IPluralRuleExpression"/></item>
     /// </list>
     /// </summary>
     public interface IPluralRule
     {
+        /// <summary>
+        /// (Optional) Name of the rule. "§One" "§Other".
+        /// 
+        /// E.g. "zero", "one".
+        /// </summary>
+        string Name { get; }
     }
 
     /// <summary>
@@ -28,18 +34,13 @@ namespace Lexical.Localization.Plurality
     public interface IPluralCase : IPluralRule
     {
         /// <summary>
-        /// Name of the case, e.g. "Zero", "One"
-        /// </summary>
-        String Name { get; }
-
-        /// <summary>
         /// Is case optional.
         /// </summary>
         bool Optional { get; }
     }
 
     /// <summary>
-    /// A single case of a <see cref="IPluralCategory"/>.
+    /// A plural case that carries info about its part as member of <see cref="IPluralCategory"/>.
     /// </summary>
     public interface IPluralCategoryPart : IPluralRule
     {
@@ -57,7 +58,7 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// Interface for classes that evaluate whether argument value and text matches the plurality case.
     /// </summary>
-    public interface IPluralRuleEvaluator : IPluralRule
+    public interface IPluralRuleEvaluatable : IPluralRule
     {
         /// <summary>
         /// Evaluate whether the case applies to <paramref name="number"/>.
@@ -75,11 +76,6 @@ namespace Lexical.Localization.Plurality
     public interface IPluralRuleExpression : IExpression, IPluralRule
     {
         /// <summary>
-        /// (Optional) Name of the expression. "§One" "§Other"
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
         /// Rule expression that can evaluate parameter
         /// </summary>
         IExpression Rule { get; }
@@ -96,7 +92,13 @@ namespace Lexical.Localization.Plurality
     public interface ISamplesExpression : IExpression
     {
         /// <summary>
-        /// Name of sample group, e.g. "decimal"
+        /// Name of sample group, e.g. "integer" and "decimal"
+        /// 
+        /// Known groups:
+        /// <list type="bullet">
+        ///     <item>integer</item>
+        ///     <item>decimal</item>
+        /// </list>
         /// </summary>
         String Name { get; }
 

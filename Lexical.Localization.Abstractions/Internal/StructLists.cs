@@ -224,6 +224,22 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Create array.
+        /// </summary>
+        /// <returns></returns>
+        public T[] ToArray()
+        {
+            T[] result = new T[count];
+            if (count >= 1) result[0] = _0;
+            if (count > 1)
+            {
+                for (int i = 1; i < count; i++)
+                    result[i] = rest[i - 1];
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
@@ -479,6 +495,23 @@ namespace Lexical.Localization.Internal
             if (count >= 1) array[arrayIndex++] = _0;
             if (count >= 2) array[arrayIndex++] = _1;
             if (rest != null) rest.CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// Create array.
+        /// </summary>
+        /// <returns></returns>
+        public T[] ToArray()
+        {
+            T[] result = new T[count];
+            if (count >= 1) result[0] = _0;
+            if (count >= 2) result[1] = _1;
+            if (count > 2)
+            {
+                for (int i = 2; i < count; i++)
+                    result[i] = rest[i - 2];
+            }
+            return result;
         }
 
         /// <summary>
@@ -750,6 +783,24 @@ namespace Lexical.Localization.Internal
             if (count >= 2) array[arrayIndex++] = _1;
             if (count >= 3) array[arrayIndex++] = _2;
             if (rest != null) rest.CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// Create array.
+        /// </summary>
+        /// <returns></returns>
+        public T[] ToArray()
+        {
+            T[] result = new T[count];
+            if (count >= 1) result[0] = _0;
+            if (count >= 2) result[1] = _1;
+            if (count >= 3) result[2] = _2;
+            if (count > 3)
+            {
+                for (int i = 3; i < count; i++)
+                    result[i] = rest[i - 3];
+            }
+            return result;
         }
 
         /// <summary>
@@ -1034,6 +1085,25 @@ namespace Lexical.Localization.Internal
             if (count >= 3) array[arrayIndex++] = _2;
             if (count >= 4) array[arrayIndex++] = _3;
             if (rest != null) rest.CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// Create array.
+        /// </summary>
+        /// <returns></returns>
+        public T[] ToArray()
+        {
+            T[] result = new T[count];
+            if (count >= 1) result[0] = _0;
+            if (count >= 2) result[1] = _1;
+            if (count >= 3) result[2] = _2;
+            if (count >= 4) result[3] = _3;
+            if (count > 4)
+            {
+                for (int i = 4; i < count; i++)
+                    result[i] = rest[i - 4];
+            }
+            return result;
         }
 
         /// <summary>
@@ -1364,6 +1434,29 @@ namespace Lexical.Localization.Internal
             if (count >= 7) array[arrayIndex++] = _6;
             if (count >= 8) array[arrayIndex++] = _7;
             if (rest != null) rest.CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// Create array.
+        /// </summary>
+        /// <returns></returns>
+        public T[] ToArray()
+        {
+            T[] result = new T[count];
+            if (count >= 1) result[0] = _0;
+            if (count >= 2) result[1] = _1;
+            if (count >= 3) result[2] = _2;
+            if (count >= 4) result[3] = _3;
+            if (count >= 5) result[4] = _4;
+            if (count >= 6) result[5] = _5;
+            if (count >= 7) result[6] = _6;
+            if (count >= 8) result[7] = _7;
+            if (count > 8)
+            {
+                for (int i = 8; i < count; i++)
+                    result[i] = rest[i - 8];
+            }
+            return result;
         }
 
         /// <summary>
@@ -1746,6 +1839,33 @@ namespace Lexical.Localization.Internal
             if (count >= 11) array[arrayIndex++] = _10;
             if (count >= 12) array[arrayIndex++] = _11;
             if (rest != null) rest.CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// Create array.
+        /// </summary>
+        /// <returns></returns>
+        public T[] ToArray()
+        {
+            T[] result = new T[count];
+            if (count >= 1) result[0] = _0;
+            if (count >= 2) result[1] = _1;
+            if (count >= 3) result[2] = _2;
+            if (count >= 4) result[3] = _3;
+            if (count >= 5) result[4] = _4;
+            if (count >= 6) result[5] = _5;
+            if (count >= 7) result[6] = _6;
+            if (count >= 8) result[7] = _7;
+            if (count >= 9) result[8] = _8;
+            if (count >= 10) result[9] = _9;
+            if (count >= 11) result[10] = _10;
+            if (count >= 12) result[11] = _11;
+            if (count > 12)
+            {
+                for (int i = 12; i < count; i++)
+                    result[i] = rest[i - 12];
+            }
+            return result;
         }
 
         /// <summary>
@@ -2180,6 +2300,37 @@ namespace Lexical.Localization.Internal
             if (count >= 15) array[arrayIndex++] = _14;
             if (count >= 16) array[arrayIndex++] = _15;
             if (rest != null) rest.CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// Create array.
+        /// </summary>
+        /// <returns></returns>
+        public T[] ToArray()
+        {
+            T[] result = new T[count];
+            if (count >= 1) result[0] = _0;
+            if (count >= 2) result[1] = _1;
+            if (count >= 3) result[2] = _2;
+            if (count >= 4) result[3] = _3;
+            if (count >= 5) result[4] = _4;
+            if (count >= 6) result[5] = _5;
+            if (count >= 7) result[6] = _6;
+            if (count >= 8) result[7] = _7;
+            if (count >= 9) result[8] = _8;
+            if (count >= 10) result[9] = _9;
+            if (count >= 11) result[10] = _10;
+            if (count >= 12) result[11] = _11;
+            if (count >= 13) result[12] = _12;
+            if (count >= 14) result[13] = _13;
+            if (count >= 15) result[14] = _14;
+            if (count >= 16) result[15] = _15;
+            if (count > 16)
+            {
+                for (int i = 16; i < count; i++)
+                    result[i] = rest[i - 16];
+            }
+            return result;
         }
 
         /// <summary>

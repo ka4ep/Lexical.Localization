@@ -12,7 +12,7 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// See subinterfaces:
     /// <list type="bullet">
-    /// <item><see cref="IPluralRulesEvaluator"/>Evaluates number</item>
+    /// <item><see cref="IPluralRulesEvaluatable"/>Evaluates number</item>
     /// <item><see cref="IPluralRulesCaseMap"/>Cases in map</item>
     /// <item><see cref="IPluralCategory"/>Lists cases</item>
     /// </list>
@@ -31,7 +31,7 @@ namespace Lexical.Localization.Plurality
     public interface IPluralCategory : IPluralRules
     {
         /// <summary>
-        /// Category name, e.g. "plural" "ordinal", "optional"
+        /// (Optional) Category name, e.g. "plural" "ordinal", "optional"
         /// </summary>
         String Name { get; }
 
@@ -67,7 +67,7 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// Evaluates a <see cref="IPluralNumber"/> 
     /// </summary>
-    public interface IPluralRulesEvaluator : IPluralRules
+    public interface IPluralRulesEvaluatable : IPluralRules
     {
         /// <summary>
         /// Tests whether case(s) matches to the value. 
@@ -85,7 +85,6 @@ namespace Lexical.Localization.Plurality
         /// <returns>Matching cases, first ones are optional, the last one is always mandatory (and only mandatory). If null, then rule is not completely configured.</returns>
         IPluralCase[] Evaluate(IPluralNumber number);
     }
-
 
     /// <summary>
     /// Key where an explicit <see cref="IPluralRules"/> can be assigned.

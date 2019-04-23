@@ -15,7 +15,41 @@ using System.Xml.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Unicode CLDR Plurality Rules.
+    /// Unicode CLDR v35 Plurality Rules.
+    /// 
+    /// <see href="https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules"/>
+    /// <see href="https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html"/>
+    /// <see href="http://cldr.unicode.org/translation/plurals"/>
+    /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
+    /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
+    /// </summary>
+    public class UnicodeCLDRv35 : Dictionary<String, IPluralRules>, IPluralRuleSetMap
+    {
+        /// <summary>
+        /// Version 35 lazy loader.
+        /// </summary>
+        private static readonly Lazy<UnicodeCLDRv35> instance = new Lazy<UnicodeCLDRv35>();
+
+        /// <summary>
+        /// Unicode CLDR v35.
+        /// 
+        /// Reads embedded CLDR plural data files.
+        /// Data files are licensed under <see href="https://unicode.org/repos/cldr/tags/release-35/unicode-license.txt"/>.
+        /// </summary>
+        public static UnicodeCLDRv35 Instance => instance.Value;
+
+        /// <summary>
+        /// Create v35 of Unicode CLDR Plural rules.
+        /// </summary>
+        public UnicodeCLDRv35() : base()
+        {
+            UnicodeCLDR.Load(UnicodeCLDR.ReadEmbedded("Lexical.Localization.Unicode.v35.plurals.xml").Root, this);
+            UnicodeCLDR.Load(UnicodeCLDR.ReadEmbedded("Lexical.Localization.Unicode.v35.ordinals.xml").Root, this);
+        }
+    }
+
+    /// <summary>
+    /// Unicode CLDR latest version of plurality Rules.
     /// 
     /// <see href="https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules"/>
     /// <see href="https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html"/>
@@ -26,20 +60,11 @@ namespace Lexical.Localization
     public class UnicodeCLDR : Dictionary<String, IPluralRules>, IPluralRuleSetMap
     {
         /// <summary>
-        /// Version 35 lazy loader.
-        /// </summary>
-        private static readonly Lazy<IReadOnlyDictionary<String, IPluralRules>> v35 =
-            new Lazy<IReadOnlyDictionary<String, IPluralRules>>(
-                () => new UnicodeCLDR()
-                      .Load(ReadEmbedded("Lexical.Localization.Unicode.v35.plurals.xml").Root)
-                      .Load(ReadEmbedded("Lexical.Localization.Unicode.v35.ordinals.xml").Root));
-
-        /// <summary>
         /// Read embedded resource.
         /// </summary>
         /// <param name="resource"></param>
         /// <returns>documents</returns>
-        static XDocument ReadEmbedded(string resource)
+        public static XDocument ReadEmbedded(string resource)
         {
             using (Stream s = typeof(UnicodeCLDR).Assembly.GetManifestResourceStream(resource))
             {
@@ -49,22 +74,21 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Unicode CLDR v35.
-        /// 
-        /// Reads embedded cldr data files.
-        /// Data files are licensed under <see href="https://unicode.org/repos/cldr/tags/release-35/unicode-license.txt"/>.
+        /// Version 35 lazy loader.
         /// </summary>
-        public static IReadOnlyDictionary<String, IPluralRules> V35 => v35.Value;
+        private static readonly Lazy<UnicodeCLDR> instance = new Lazy<UnicodeCLDR>();
 
         /// <summary>
-        /// Newest Unicode CLDR available
+        /// Unicode CLDR v35.
+        /// 
+        /// Reads embedded CLDR plural data files.
+        /// Data files are licensed under <see href="https://unicode.org/repos/cldr/tags/release-35/unicode-license.txt"/>.
         /// </summary>
-        public static IReadOnlyDictionary<String, IPluralRules> Instance => v35.Value;
+        public static UnicodeCLDR Instance => instance.Value;
 
         /// <summary>
         /// Create rules
         /// </summary>
-        /// <param name="rules"></param>
         public UnicodeCLDR()
         {
         }
@@ -73,8 +97,9 @@ namespace Lexical.Localization
         /// Load rules from <paramref name="rootElement"/>.
         /// </summary>
         /// <param name="rootElement"></param>
+        /// <param name="rules">target rules</param>
         /// <returns></returns>
-        public UnicodeCLDR Load(XElement rootElement)
+        public static IDictionary<String, IPluralRules> Load(XElement rootElement, IDictionary<String, IPluralRules> rules)
         {
             foreach (XElement pluralsElement in rootElement.Elements("plurals"))
             {
@@ -99,7 +124,7 @@ namespace Lexical.Localization
 
                 }
             }
-            return this;
+            return rules;
         }
 
     }

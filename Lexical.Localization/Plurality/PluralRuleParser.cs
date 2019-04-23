@@ -6,9 +6,7 @@
 using Lexical.Localization.Exp;
 using Lexical.Localization.Internal;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Lexical.Localization.Plurality
 {
@@ -56,7 +54,7 @@ namespace Lexical.Localization.Plurality
         /// Or
         /// "#en #fi §one §one i=1 and v=0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
         /// </summary>
-        static Tokens.Taker0<IPluralRulesExpression> PluralRules = (ref Tokens reader) =>
+        public readonly static Tokens.Taker0<IPluralRulesExpression> PluralRules = (ref Tokens reader) =>
         {
             int ix = reader.Index;
 
@@ -97,7 +95,7 @@ namespace Lexical.Localization.Plurality
         /// 
         /// e.g. "$CLDRv35 #ast ca de en et fi fy gl ia io it ji nl pt_PT sc scn sv sw ur yi §one i = 1 and v = 0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
         /// </summary>
-        static Tokens.Taker0<IPluralRuleSetExpression> PluralRuleSet = (ref Tokens reader) =>
+        public readonly static Tokens.Taker0<IPluralRuleSetExpression> PluralRuleSet = (ref Tokens reader) =>
         {
             int ix = reader.Index;
 
@@ -131,7 +129,7 @@ namespace Lexical.Localization.Plurality
         /// 
         /// e.g. "$CLDRv35 #fi §other $CLDRv34 #fi §other".
         /// </summary>
-        static Tokens.Taker0<IPluralRuleSetsExpression> PluralRuleSets = (ref Tokens reader) =>
+        public readonly static Tokens.Taker0<IPluralRuleSetsExpression> PluralRuleSets = (ref Tokens reader) =>
         {
             int ix = reader.Index;
 
@@ -155,7 +153,7 @@ namespace Lexical.Localization.Plurality
         /// 
         /// "§one v = 0 and i % 10 = 1 @integer 0, 1, 2, 3, … @decimal 0.0~1.5, 10.0, …".
         /// </summary>
-        static Tokens.Taker0<IPluralRuleExpression> PluralRule = (ref Tokens reader) =>
+        public readonly static Tokens.Taker0<IPluralRuleExpression> PluralRule = (ref Tokens reader) =>
         {
             int ix = reader.Index;
 
@@ -196,7 +194,7 @@ namespace Lexical.Localization.Plurality
         /// 
         /// "@integer 0, 1, 2, 3, …"
         /// </summary>
-        static Tokens.Taker0<ISamplesExpression> SamplesExpression = (ref Tokens reader) =>
+        public readonly static Tokens.Taker0<ISamplesExpression> SamplesExpression = (ref Tokens reader) =>
         {
             reader.TakeAll(TokenKind.NonEssential);
 
@@ -245,7 +243,7 @@ namespace Lexical.Localization.Plurality
         /// Rules:
         ///  "and" binds more tightly than "or". So X or Y and Z is interpreted as (X or (Y and Z)).
         /// </summary>
-        static Tokens.Taker0<IExpression> BooleanExpression = (ref Tokens reader) =>
+        public readonly static Tokens.Taker0<IExpression> BooleanExpression = (ref Tokens reader) =>
         {
             int ix = reader.Index;
 
@@ -326,7 +324,7 @@ namespace Lexical.Localization.Plurality
         /// Rules:
         ///  "and" binds more tightly than "or". So X or Y and Z is interpreted as (X or (Y and Z)).
         /// </summary>
-        static Tokens.Taker1<IExpression, IExpression> BooleanBinaryOp = (ref Tokens reader, IExpression leftExp) =>
+        public readonly static Tokens.Taker1<IExpression, IExpression> BooleanBinaryOp = (ref Tokens reader, IExpression leftExp) =>
         {
             if (leftExp == null) return null;
 
@@ -373,7 +371,7 @@ namespace Lexical.Localization.Plurality
         /// <see cref="IBinaryOpExpression"/>
         /// <see cref="IParenthesisExpression"/>
         /// </summary>
-        static Tokens.Taker0<IExpression> ValueExpression = (ref Tokens reader) =>
+        public readonly static Tokens.Taker0<IExpression> ValueExpression = (ref Tokens reader) =>
         {
             int ix = reader.Index;
             IExpression exp = reader.Take(ValueExpressionWithoutGroup);
@@ -411,7 +409,7 @@ namespace Lexical.Localization.Plurality
         /// <see cref="IBinaryOpExpression"/>
         /// <see cref="IParenthesisExpression"/>
         /// </summary>
-        static Tokens.Taker0<IExpression> ValueExpressionWithoutGroup = (ref Tokens reader) =>
+        public readonly static Tokens.Taker0<IExpression> ValueExpressionWithoutGroup = (ref Tokens reader) =>
         {
             int ix = reader.Index;
             reader.TakeAll(TokenKind.NonEssential);
@@ -511,7 +509,7 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Read binary op for values
         /// </summary>
-        static Tokens.Taker1<IExpression, IExpression> ValueBinaryOp = (ref Tokens reader, IExpression leftExp) =>
+        public readonly static Tokens.Taker1<IExpression, IExpression> ValueBinaryOp = (ref Tokens reader, IExpression leftExp) =>
         {
             int ix = reader.Index;
             reader.TakeAll(TokenKind.NonEssential);
