@@ -60,7 +60,7 @@ namespace Lexical.Localization.Plurality
     ///      Case "":        "{optional:0} cars"
     ///      Case "N0:null": "No cars"                      when {0}=null
     /// </summary>
-    public interface IPluralRulesCaseMap : IPluralRules, IReadOnlyDictionary<string, IPluralCase>
+    public interface IPluralRulesCaseMap : IPluralRules, IReadOnlyDictionary<string, IPluralRule>
     {
     }
 
@@ -83,7 +83,7 @@ namespace Lexical.Localization.Plurality
         /// </summary>
         /// <param name="number">numeric and text representation of numberic value</param>
         /// <returns>Matching cases, first ones are optional, the last one is always mandatory (and only mandatory). If null, then rule is not completely configured.</returns>
-        IPluralCase[] Evaluate(IPluralNumber number);
+        IPluralRule[] Evaluate(IPluralNumber number);
     }
 
     /// <summary>
@@ -146,7 +146,7 @@ namespace Lexical.Localization.Plurality
     /// or 
     /// "#en #fi #sw §one i = 1 and v = 0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
     /// </summary>
-    public interface IPluralRulesExpression : IExpression, IPluralRule
+    public interface IPluralRulesExpression : IExpression, IPluralRules
     {
         /// <summary>
         /// (Optional) Culture names

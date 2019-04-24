@@ -23,7 +23,7 @@ namespace Lexical.Localization
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class UnicodeCLDRv35 : Dictionary<String, IPluralRules>, IPluralRuleSetMap
+    public class UnicodeCLDRv35 : PluralRuleSet
     {
         /// <summary>
         /// Version 35 lazy loader.
@@ -39,12 +39,18 @@ namespace Lexical.Localization
         public static UnicodeCLDRv35 Instance => instance.Value;
 
         /// <summary>
+        /// Load embedded files and convert into <see cref="IPluralRules"/>.
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<IPluralRules> LoadRules()
+            => UnicodeCLDR.Load(UnicodeCLDR.ReadEmbedded("Lexical.Localization.Unicode.v35.plurals.xml").Root)
+               .Concat(UnicodeCLDR.Load(UnicodeCLDR.ReadEmbedded("Lexical.Localization.Unicode.v35.ordinals.xml").Root));
+
+        /// <summary>
         /// Create v35 of Unicode CLDR Plural rules.
         /// </summary>
-        public UnicodeCLDRv35() : base()
+        public UnicodeCLDRv35() : base(typeof(UnicodeCLDRv35).FullName, LoadRules())
         {
-            UnicodeCLDR.Load(UnicodeCLDR.ReadEmbedded("Lexical.Localization.Unicode.v35.plurals.xml").Root, this);
-            UnicodeCLDR.Load(UnicodeCLDR.ReadEmbedded("Lexical.Localization.Unicode.v35.ordinals.xml").Root, this);
         }
     }
 
@@ -57,7 +63,7 @@ namespace Lexical.Localization
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class UnicodeCLDR : Dictionary<String, IPluralRules>, IPluralRuleSetMap
+    public class UnicodeCLDR : PluralRuleSet
     {
         /// <summary>
         /// Read embedded resource.
@@ -89,7 +95,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create rules
         /// </summary>
-        public UnicodeCLDR()
+        public UnicodeCLDR() : base(typeof(UnicodeCLDR).FullName)
         {
         }
 
@@ -97,34 +103,52 @@ namespace Lexical.Localization
         /// Load rules from <paramref name="rootElement"/>.
         /// </summary>
         /// <param name="rootElement"></param>
-        /// <param name="rules">target rules</param>
         /// <returns></returns>
-        public static IDictionary<String, IPluralRules> Load(XElement rootElement, IDictionary<String, IPluralRules> rules)
+        public static IEnumerable<IPluralRules> Load(XElement rootElement)
         {
+            List<IPluralRule> list = new List<IPluralRule>();
             foreach (XElement pluralsElement in rootElement.Elements("plurals"))
             {
-                string type = pluralsElement.Attribute("type")?.Value;
-                if (type == null) throw new ArgumentException($"Xml element {pluralsElement} does not have expected attribute \"type\".");
+                string rulesName = pluralsElement.Attribute("type")?.Value;
+                if (rulesName == null) throw new ArgumentException($"Xml element {pluralsElement} does not have expected attribute \"type\".");
                 foreach (XElement pluralRulesElement in pluralsElement.Elements("pluralRules"))
                 {
                     string localesText = pluralRulesElement.Attribute("locales")?.Value;
                     if (localesText == null) throw new ArgumentException($"Xml element {pluralRulesElement} does not have expected attribute \"locales\".");
                     string[] locales = localesText.Split(' ').Select(l => l.Replace('_', '-')).ToArray();
 
-                    PluralRules pluralRules = new PluralRules();
+                    list.Clear();
+                    int otherCaseIx = -1, zeroCaseIx = -1;
                     foreach (XElement pluralRuleElement in pluralRulesElement.Elements("pluralRule"))
                     {
-                        string countText = pluralRuleElement.Attribute("count")?.Value;
-                        if (countText == null) throw new ArgumentException($"Xml element {pluralRuleElement} does not have expected attribute \"count\".");
+                        string ruleName = pluralRuleElement.Attribute("count")?.Value;
+                        if (ruleName == null) throw new ArgumentException($"Xml element {pluralRuleElement} does not have expected attribute \"count\".");
                         string text = pluralRuleElement.Value;
                         if (text == null) throw new ArgumentException($"Xml element {pluralRuleElement} does not have expected text.");
 
-                        PluralRule pluralRule = new PluralRule(countText, text);
+                        IPluralRuleExpression exp = PluralRuleParser.Parse<IPluralRuleExpression>(text);
+                        IPluralRule rule;
+                        if (exp.Rule == null && ruleName == "other") rule = PluralCase.True.other;
+                        else rule = new PluralExpressionCase(ruleName, false, exp);
+                        if (ruleName == "other") otherCaseIx = list.Count;
+                        if (ruleName == "zero") zeroCaseIx = list.Count;
+                        list.Add(rule);
                     }
 
+                    // Move "other" rule as last
+                    if (otherCaseIx>=0 && otherCaseIx<list.Count-1)
+                    {
+                        IPluralRule otherCase = list[otherCaseIx];
+                        list.RemoveAt(otherCaseIx);
+                        list.Add(otherCase);
+                    }
+                    // Add optional "zero" rule, if doesn't exist.
+                    if (zeroCaseIx < 0) list.Insert(0, PluralCase.Zero._zero);
+
+                    // Create rules
+                    yield return new PluralRulesEvaluatable(list);
                 }
             }
-            return rules;
         }
 
     }

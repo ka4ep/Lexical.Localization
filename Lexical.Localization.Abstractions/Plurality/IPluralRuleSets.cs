@@ -16,11 +16,14 @@ namespace Lexical.Localization.Plurality
     /// See subinterfaces:
     /// <list type="bullet">
     /// <item><see cref="IPluralRuleSetsMap"/>Map of rule-sets</item>
-    /// <item><see cref="IPluralRuleSetInfo"/>Info about rule-set</item>
     /// </list>
     /// </summary>
     public interface IPluralRuleSets
     {
+        /// <summary>
+        /// All rule-sets
+        /// </summary>
+        IPluralRuleSet[] RuleSets { get; }
     }
 
     /// <summary>
@@ -59,7 +62,7 @@ namespace Lexical.Localization.Plurality
     /// 
     /// e.g. "$CLDRv35 #en #fi #sw §one i = 1 and v = 0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
     /// </summary>
-    public interface IPluralRuleSetsExpression : IExpression, IPluralRuleSets
+    public interface IPluralRuleSetsExpression : IExpression
     {
         /// <summary>
         /// Rules list

@@ -13,7 +13,6 @@ namespace Lexical.Localization.Plurality
     /// 
     /// <list type="bullet">
     ///   <item><see cref="IPluralCase"/></item>
-    ///   <item><see cref="IPluralCategoryPart"/></item>
     ///   <item><see cref="IPluralRuleEvaluatable"/></item>
     ///   <item><see cref="IPluralRuleExpression"/></item>
     /// </list>
@@ -37,22 +36,6 @@ namespace Lexical.Localization.Plurality
         /// Is case optional.
         /// </summary>
         bool Optional { get; }
-    }
-
-    /// <summary>
-    /// A plural case that carries info about its part as member of <see cref="IPluralCategory"/>.
-    /// </summary>
-    public interface IPluralCategoryPart : IPluralRule
-    {
-        /// <summary>
-        /// The the category this case is part of.
-        /// </summary>
-        IPluralCategory Category { get; }
-
-        /// <summary>
-        /// Index in <see cref="IPluralCategory.Cases"/>.
-        /// </summary>
-        int CaseIndex { get; }
     }
 
     /// <summary>
