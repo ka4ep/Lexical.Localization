@@ -4,207 +4,49 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Exp;
-using Lexical.Localization.Plurality;
 using System;
 
 namespace Lexical.Localization.Plurality
 {
     /// <summary>
-    /// Abstract plural rule with name.
+    /// Basic plural rule info.
     /// </summary>
-    public class PluralRule : IPluralRule
+    public class PluralRule : IPluralRule, IPluralRuleEvaluatable
     {
         /// <summary>
-        /// (optional) Name of the rule.
+        /// Plural rule info
         /// </summary>
-        public string Name { get; internal set; }
+        public PluralRuleInfo Info { get; protected set; }
 
         /// <summary>
-        /// Create abstract rule.
+        /// Create rule.
         /// </summary>
-        /// <param name="name">(optional)</param>
-        public PluralRule(string name)
+        /// <param name="info">info</param>
+        public PluralRule(PluralRuleInfo info)
         {
-            Name = name;
-        }
-    }
-
-    /// <summary>
-    /// Plural rule that is evaluatable.
-    /// </summary>
-    public class PluralRuleEvaluatable : PluralRule, IPluralRuleEvaluatable, IPluralRuleExpression
-    {
-        /// <summary>
-        /// Rule expression that is evaluated.
-        /// </summary>
-        public IExpression Rule { get; internal set; }
-
-        /// <summary>
-        /// Samples.
-        /// </summary>
-        public ISamplesExpression[] Samples { get; internal set; }
-
-        /// <summary>
-        /// No samples
-        /// </summary>
-        public static ISamplesExpression[] NO_SAMPLES = new ISamplesExpression[0];
-
-        /// <summary>
-        /// Wrap <paramref name="rule"/> into evaluatable.
-        /// </summary>
-        /// <param name="name">(optional)</param>
-        /// <param name="rule"></param>
-        /// <param name="samples">(optional)</param>
-        public PluralRuleEvaluatable(string name, IExpression rule, ISamplesExpression[] samples = default) : base(name)
-        {
-            Rule = rule ?? throw new ArgumentNullException(nameof(rule));
-            Samples = samples ?? NO_SAMPLES;
+            this.Info = info;
         }
 
-
         /// <summary>
-        /// Wrap <paramref name="expression"/> into evaluatable.
-        /// </summary>
-        /// <param name="name">(optional)</param>
-        /// <param name="expression"></param>
-        public PluralRuleEvaluatable(string name, IPluralRuleExpression expression) : this(name, expression.Rule, expression.Samples) { }
-
-        /// <summary>
-        /// Evaluate number against the rule expression.
+        /// Evaluate number to the rule.
         /// </summary>
         /// <param name="number"></param>
         /// <returns></returns>
-        public bool Evaluate(IPluralNumber number)
-        {
-            PluralRuleEvaluator evaluator = new PluralRuleEvaluator(number);
-            return evaluator.EvaluateBoolean(Rule);
-        }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public class PluralExpressionCase : PluralRuleEvaluatable, IPluralCase
-    {
-        /// <summary>
-        /// Is this case optional
-        /// </summary>
-        public bool Optional { get; internal set; }
-
-        /// <summary>
-        /// Adapt expression into <see cref="IPluralCase"/> with name.
-        /// </summary>
-        /// <param name="name">(optional) name</param>
-        /// <param name="optional">Is case optional for translator to supply</param>
-        /// <param name="rule">rule expression</param>
-        /// <param name="samples">(optional) samples</param>
-        public PluralExpressionCase(string name, bool optional, IExpression rule, ISamplesExpression[] samples = default) : base(name, rule, samples)
-        {
-            Optional = optional;
-        }
-
-        /// <summary>
-        /// Adapt expression into <see cref="IPluralCase"/> with name.
-        /// </summary>
-        /// <param name="name">(optional) name</param>
-        /// <param name="expression">expression</param>
-        public PluralExpressionCase(string name, bool optional, IPluralRuleExpression expression) : this(name, optional, expression.Rule, expression.Samples)
-        {
-        }
-    }
-
-    /// <summary>
-    /// Abstract plural Case, without expression.
-    /// </summary>
-    public abstract class PluralCase : IPluralCase, IPluralRuleEvaluatable
-    {
-        /// <summary>
-        /// Name
-        /// </summary>
-        public string Name { get; internal set; }
-
-        /// <summary>
-        /// Is this case optional
-        /// </summary>
-        public bool Optional { get; internal set; }
-
-        /// <summary>
-        /// Evaluate number whether it matches the case.
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        public abstract bool Evaluate(IPluralNumber number);
-
-        /// <summary>
-        /// Adapt expression into <see cref="IPluralCase"/> with name.
-        /// </summary>
-        /// <param name="name">(optional) name</param>
-        /// <param name="optional">Is case optional for translator to supply</param>
-        public PluralCase(string name, bool optional) 
-        {
-            this.Name = name;
-            this.Optional = optional;
-        }
+        public virtual bool Evaluate(IPluralNumber number)
+            => false;
 
         /// <summary>
         /// Zero case that matches when number is 0.
         /// </summary>
-        public class Zero : PluralCase
+        public class ZeroCase : PluralRule
         {
-            private static readonly Zero __zero = new Zero("zero");
-            private static readonly Zero __Zero = new Zero("Zero");
-
             /// <summary>
-            /// Zero case "zero"
+            /// Create rule that compares to zero value.
             /// </summary>
-            public static Zero _zero => __zero;
-
-            /// <summary>
-            /// Zero case "Zero"
-            /// </summary>
-            public static Zero _Zero => __Zero;
-
-            /// <summary>
-            /// Create zero case
-            /// </summary>
-            /// <param name="name"></param>
-            public Zero(string name) : base(name, true) { }
-
-            /// <summary>
-            /// Compare to zero.
-            /// </summary>
-            /// <param name="number"></param>
-            /// <returns></returns>
-            public override bool Evaluate(IPluralNumber number)
+            /// <param name="info"></param>
+            public ZeroCase(PluralRuleInfo info) : base(info)
             {
-                if (number == null) return false;
-                return PluralNumberComparer.Instance.Equals(number, DecimalNumber._0);
             }
-        }
-
-        /// <summary>
-        /// Null case that matches when number is null.
-        /// </summary>
-        public class Null : PluralCase
-        {
-            private static readonly Null __null = new Null("null");
-            private static readonly Null __Null = new Null("Null");
-
-            /// <summary>
-            /// Null case "null"
-            /// </summary>
-            public static Null _null => __null;
-
-            /// <summary>
-            /// Null case "Null"
-            /// </summary>
-            public static Null _Null => __Null;
-
-            /// <summary>
-            /// Create case.
-            /// </summary>
-            /// <param name="name"></param>
-            public Null(string name) : base(name, true) { }
 
             /// <summary>
             /// Compare to zero.
@@ -212,42 +54,123 @@ namespace Lexical.Localization.Plurality
             /// <param name="number"></param>
             /// <returns></returns>
             public override bool Evaluate(IPluralNumber number)
-                => number == null || PluralNumberComparer.Instance.Equals(number, DecimalNumber.Empty);
+                => number != null && number.Sign == 0;
         }
 
         /// <summary>
-        /// True case that matches always.
+        /// Null case that matches when number is null or empty.
         /// </summary>
-        public class True : PluralCase
+        public class EmptyCase : PluralRule
         {
-            private static readonly True __other = new True("other");
-            private static readonly True __Other = new True("Other");
-
             /// <summary>
-            /// True case "true"
+            /// Create rule
             /// </summary>
-            public static True other => __other;
+            /// <param name="info"></param>
+            public EmptyCase(PluralRuleInfo info) : base(info)
+            {
+            }
 
             /// <summary>
-            /// True case "True"
+            /// Compare to null.
             /// </summary>
-            public static True Other => __Other;
+            /// <param name="number"></param>
+            /// <returns></returns>
+            public override bool Evaluate(IPluralNumber number)
+                => number == null || (number.I_Digits == 0 && number.F_Digits == 0 && number.E_Digits == 0 && number.Sign == 0);
+        }
 
+        /// <summary>
+        /// Case that always evaluates to true value.
+        /// Used for fallback case "other".
+        /// </summary>
+        public class TrueCase : PluralRule
+        {
             /// <summary>
-            /// Create case.
+            /// Create rule that always evaluates to true.
             /// </summary>
-            /// <param name="name"></param>
-            public True(string name) : base(name, true) { }
+            /// <param name="info"></param>
+            public TrueCase(PluralRuleInfo info) : base(info)
+            {
+            }
 
             /// <summary>
-            /// Compare to zero.
+            /// Always true
             /// </summary>
             /// <param name="number"></param>
             /// <returns></returns>
             public override bool Evaluate(IPluralNumber number)
                 => true;
         }
-    }
 
+        /// <summary>
+        /// Rule that evaluates against an expression
+        /// </summary>
+        public class ExpressionCase : PluralRule, IPluralRuleEvaluatable, IPluralRuleExpression
+        {
+            /// <summary>
+            /// Info expressions
+            /// </summary>
+            public IPluralRuleInfosExpression Infos { get; protected set; }
+
+            /// <summary>
+            /// Rule expression that can evaluate a number
+            /// </summary>
+            public IExpression Rule { get; protected set; }
+
+            /// <summary>
+            /// Samples
+            /// </summary>
+            public ISamplesExpression[] Samples { get; protected set; }
+
+            /// <summary>
+            /// No samples
+            /// </summary>
+            public static ISamplesExpression[] NO_SAMPLES = new ISamplesExpression[0];
+
+            /// <summary>
+            /// Convert <see cref="IPluralRuleInfosExpression"/> to <see cref="PluralRuleInfo"/>.
+            /// </summary>
+            /// <param name="infoExps"></param>
+            /// <returns></returns>
+            public static PluralRuleInfo Convert(IPluralRuleInfosExpression infoExps)
+            {
+                string ruleset = "", category = "", culture = "", @case = "";
+                if (infoExps != null && infoExps.Infos!=null)
+                {
+                    foreach(var infoExp in infoExps.Infos)
+                    {
+                        if (infoExp.Name == "RuleSet") ruleset = infoExp.Value ?? "";
+                        else if (infoExp.Name == "Category") category = infoExp.Value ?? "";
+                        else if (infoExp.Name == "Culture") culture = infoExp.Value ?? "";
+                        else if (infoExp.Name == "Case") @case = infoExp.Value ?? "";
+                    }
+                }
+                return new PluralRuleInfo(ruleset, category, culture, @case, 0);
+            }
+
+            /// <summary>
+            /// Create rule that evaluates with <paramref name="expressionRule"/>.
+            /// </summary>
+            /// <param name="infos"></param>
+            /// <param name="expressionRule"></param>
+            /// <param name="samples"></param>
+            public ExpressionCase(IPluralRuleInfosExpression infos, IExpression expressionRule, ISamplesExpression[] samples) : base(Convert(infos))
+            {
+                this.Infos = infos;
+                this.Rule = expressionRule;
+                this.Samples = samples ?? NO_SAMPLES;
+            }
+
+            /// <summary>
+            /// Evaluate <paramref name="number"/> against <see cref="Rule"/>.
+            /// </summary>
+            /// <param name="number"></param>
+            /// <returns></returns>
+            public override bool Evaluate(IPluralNumber number)
+                => Rule == null ? true : new PluralRuleExpressionEvaluator(number).EvaluateBoolean(Rule);
+
+        }
+
+    }
 
 }

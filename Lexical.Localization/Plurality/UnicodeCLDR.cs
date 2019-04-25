@@ -14,6 +14,7 @@ using System.Xml.Linq;
 
 namespace Lexical.Localization
 {
+    /*
     /// <summary>
     /// Unicode CLDR v35 Plurality Rules.
     /// 
@@ -151,5 +152,5 @@ namespace Lexical.Localization
             }
         }
 
-    }
+    }*/
 }

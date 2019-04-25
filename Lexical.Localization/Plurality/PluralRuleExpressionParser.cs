@@ -6,146 +6,97 @@
 using Lexical.Localization.Exp;
 using Lexical.Localization.Internal;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Lexical.Localization.Plurality
 {
     /// <summary>
-    /// Parses rule string into expression
+    /// Plural rule expression parser.
     /// 
     /// <see href="https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_rules_syntax"/>
     /// </summary>
-    public class PluralRuleParser
+    public class PluralRuleExpressionParser
     {
         /// <summary>
-        /// Parse string into expression.
+        /// Parse string into expressions.
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        /// <typeparam name="Exp">
-        ///     <see cref="IPluralRuleExpression"/>
-        ///     <see cref="IPluralRulesExpression"/>
-        ///     <see cref="IPluralRuleSetExpression"/>
-        ///     <see cref="IPluralRuleSetsExpression"/>
-        /// </typeparam>
-        public static Exp Parse<Exp>(string str) where Exp : class, IExpression
+        /// <exception cref="ArgumentException">error with string</exception>
+        public static IEnumerable<IPluralRuleExpression> CreateParser(string str)
         {
             Tokens reader = new Tokens(str);
             int ix = reader.Index;
-            Tokens.Taker0<Exp> taker;
-
-            if (typeof(Exp) == typeof(IPluralRulesExpression)) taker = (Tokens.Taker0<Exp>)(object)PluralRules;
-            else if (typeof(Exp) == typeof(IPluralRuleSetExpression)) taker = (Tokens.Taker0<Exp>)(object)PluralRuleSet;
-            else if (typeof(Exp) == typeof(IPluralRuleSetsExpression)) taker = (Tokens.Taker0<Exp>)(object)PluralRuleSets;
-            else if (typeof(Exp) == typeof(IPluralRuleExpression)) taker = (Tokens.Taker0<Exp>)(object)PluralRule;
-            else throw new ArgumentException($"Cannot parse {nameof(Exp)} \"{str}\".");
-            Exp exp = reader.Take<Exp>(taker);
-            if (exp == null) throw new ArgumentException($"Could not parse {nameof(Exp)} \"{str}\"");
+            IPluralRuleExpression exp;
+            while ((exp = reader.Take(PluralRule))!=null)
+                yield return exp;
             reader.TakeAll(TokenKind.NonEssential);
             if (reader.Index!=reader.EndIndex) throw new ArgumentException($"Could not fully parse {nameof(Exp)} \"{str}\", index at {reader.Index}");
-            return exp;
         }
 
         /// <summary>
-        /// Read <see cref="IPluralRuleExpression"/>.
+        /// Read <see cref="IPluralRuleInfosExpression"/>.
         /// 
-        /// "§one i=1 and v=0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
-        /// Or
-        /// "#en #fi §one §one i=1 and v=0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
+        /// e.g. "[RuleSet=Unicode.CLDRv35,Category=cardinal,Culture=fi,Case=one]"
         /// </summary>
-        public readonly static Tokens.Taker0<IPluralRulesExpression> PluralRules = (ref Tokens reader) =>
+        public readonly static Tokens.Taker0<IPluralRuleInfosExpression> PluralRuleInfos = (ref Tokens reader) =>
         {
             int ix = reader.Index;
 
-            // Names
-            StructList16<string> names = new StructList16<string>();
+            // [
+            reader.Take(TokenKind.NonEssential);
+            Token t = reader.Take(TokenKind.LBracket);
+            if (t == null) { reader.Index = ix; return null; }
+
+            StructList8<IPluralRuleInfoExpression> infos = new StructList8<IPluralRuleInfoExpression>();
             while (true)
             {
-                // #
-                reader.TakeAll(TokenKind.NonEssential);
-                Token t = reader.Take(TokenKind.Hash);
+                IPluralRuleInfoExpression info = reader.Take(PluralRuleInfo);
+                if (info == null) break;
+
+                reader.Take(TokenKind.NonEssential);
+                t = reader.Take(TokenKind.Comma);
                 if (t == null) break;
-
-                // Name
-                string name = reader.Take(TokenKind.NameLiteral)?.Value?.ToString();
-                if (name == null) { reader.Index = ix; return null; }
-
-                // Add name
-                names.Add(name);
             }
 
-            // Rules
-            StructList8<IPluralRuleExpression> rules = new StructList8<IPluralRuleExpression>();
-            while (true)
-            {
-                reader.TakeAll(TokenKind.NonEssential);
-                IPluralRuleExpression rule = reader.Take(PluralRule);
-                if (rule == null) break;
-                rules.Add(rule);
-            }
-            reader.TakeAll(TokenKind.NonEssential);
+            // ]
+            reader.Take(TokenKind.NonEssential);
+            t = reader.Take(TokenKind.RBracket);
+            if (t == null) { reader.Index = ix; return null; }
 
             // Create expression
-            return new PluralRulesExpression(names.ToArray(), rules.ToArray());
+            return new PluralRuleInfosExpression(infos.ToArray());
         };
 
+
         /// <summary>
-        /// Read rule set.
+        /// Read <see cref="IPluralRuleInfoExpression"/>.
         /// 
-        /// e.g. "$CLDRv35 #ast ca de en et fi fy gl ia io it ji nl pt_PT sc scn sv sw ur yi §one i = 1 and v = 0 @integer 1 §other @integer 0, 2~16, 100, 1000, 10000, 100000, 1000000, … @decimal 0.0~1.5, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, …".
+        /// e.g. "RuleSet=Unicode.CLDRv35"
         /// </summary>
-        public readonly static Tokens.Taker0<IPluralRuleSetExpression> PluralRuleSet = (ref Tokens reader) =>
+        public readonly static Tokens.Taker0<IPluralRuleInfoExpression> PluralRuleInfo = (ref Tokens reader) =>
         {
             int ix = reader.Index;
 
-            // (Optional) $Name
-            string name = null;
-            Token t = reader.Take(TokenKind.Dollar);
-            if (t != null)
-            {
-                reader.Index = ix;
-                name = reader.Take(TokenKind.NameLiteral)?.Value?.ToString();
-                if (name == null) { reader.Index = ix; }
-            }
+            // Name
+            reader.Take(TokenKind.NonEssential);
+            Token t = reader.Take(TokenKind.NameLiteral | TokenKind.AtNameLiteral | TokenKind.AtQuotedNameLiteral | TokenKind.AtLongQuotedNameLiteral);
+            string name = t?.Value?.ToString();
+            if (name == null) { reader.Index = ix; return null; }
 
-            // Rules
-            StructList8<IPluralRulesExpression> rulesList = new StructList8<IPluralRulesExpression>();
-            while (true)
-            {
-                reader.TakeAll(TokenKind.NonEssential);
-                IPluralRulesExpression rules = reader.Take(PluralRules);
-                if (rules == null) break;
-                rulesList.Add(rules);
-            }
-            reader.TakeAll(TokenKind.NonEssential);
+            // =
+            reader.Take(TokenKind.NonEssential);
+            t = reader.Take(TokenKind.Equals);
+            if (t == null) { reader.Index = ix; return null; }
 
-            // Create expression
-            return new PluralRuleSetExpression(name, rulesList.ToArray());
-        };
+            // Value
+            reader.Take(TokenKind.NonEssential);
+            t = reader.Take(TokenKind.NameLiteral | TokenKind.AtNameLiteral | TokenKind.AtQuotedNameLiteral | TokenKind.AtLongQuotedNameLiteral);
+            string value = t?.Value?.ToString();
+            if (value == null) { reader.Index = ix; return null; }
 
-        /// <summary>
-        /// Read rule sets.
-        /// 
-        /// e.g. "$CLDRv35 #fi §other $CLDRv34 #fi §other".
-        /// </summary>
-        public readonly static Tokens.Taker0<IPluralRuleSetsExpression> PluralRuleSets = (ref Tokens reader) =>
-        {
-            int ix = reader.Index;
-
-            // Rulesetes
-            StructList8<IPluralRuleSetExpression> rulesList = new StructList8<IPluralRuleSetExpression>();
-            while (true)
-            {
-                reader.TakeAll(TokenKind.NonEssential);
-                IPluralRuleSetExpression rules = reader.Take(PluralRuleSet);
-                if (rules == null) break;
-                rulesList.Add(rules);
-            }
-            reader.TakeAll(TokenKind.NonEssential);
-
-            // Create expression
-            return new PluralRuleSetsExpression(rulesList.ToArray());
+            return new PluralRuleInfoExpression(name, value);
         };
 
         /// <summary>
@@ -157,18 +108,9 @@ namespace Lexical.Localization.Plurality
         {
             int ix = reader.Index;
 
-            // Whitespace
+            // infos, e.g. "[RuleSet=Unicode.CLDRv35,Category=cardinal,Culture=fi,Case=one]"
             reader.TakeAll(TokenKind.NonEssential);
-
-            // (Optional) §Name
-            string name = null;
-            int _ix = reader.Index;
-            Token t = reader.Take(TokenKind.Section);
-            if (t != null) {
-                reader.Index = _ix;
-                name = reader.Take(TokenKind.NameLiteral)?.Value?.ToString();
-                if (name == null) { reader.Index = _ix; }
-            }
+            IPluralRuleInfosExpression infos = reader.Take(PluralRuleInfos);            
 
             // Try read boolean expression
             reader.TakeAll(TokenKind.NonEssential);
@@ -186,7 +128,7 @@ namespace Lexical.Localization.Plurality
             }
 
             // Create expression
-            return new PluralRuleExpression(name, rule, samplesList.ToArray());
+            return new PluralRuleExpression(infos, rule, samplesList.ToArray());
         };
 
         /// <summary>

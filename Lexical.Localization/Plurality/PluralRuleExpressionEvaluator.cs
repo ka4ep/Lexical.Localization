@@ -15,7 +15,7 @@ namespace Lexical.Localization.Plurality
     /// 
     /// <see href="https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_rules_syntax"/>
     /// </summary>
-    public struct PluralRuleEvaluator
+    public struct PluralRuleExpressionEvaluator
     {
         /// <summary>
         /// Number to evaluate
@@ -27,7 +27,7 @@ namespace Lexical.Localization.Plurality
         /// </summary>
         /// <param name="number"></param>
         /// <exception cref="ArgumentNullException">null</exception>
-        public PluralRuleEvaluator(IPluralNumber number)
+        public PluralRuleExpressionEvaluator(IPluralNumber number)
         {
             Number = number ?? throw new ArgumentNullException(nameof(number));
         }

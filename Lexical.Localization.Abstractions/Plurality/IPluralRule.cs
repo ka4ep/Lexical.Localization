@@ -12,30 +12,15 @@ namespace Lexical.Localization.Plurality
     /// Description of plurality rule.
     /// 
     /// <list type="bullet">
-    ///   <item><see cref="IPluralCase"/></item>
     ///   <item><see cref="IPluralRuleEvaluatable"/></item>
-    ///   <item><see cref="IPluralRuleExpression"/></item>
     /// </list>
     /// </summary>
     public interface IPluralRule
     {
         /// <summary>
-        /// (Optional) Name of the rule. "§One" "§Other".
-        /// 
-        /// E.g. "zero", "one".
+        /// Metadata info record.
         /// </summary>
-        string Name { get; }
-    }
-
-    /// <summary>
-    /// Plurality case.
-    /// </summary>
-    public interface IPluralCase : IPluralRule
-    {
-        /// <summary>
-        /// Is case optional.
-        /// </summary>
-        bool Optional { get; }
+        PluralRuleInfo Info { get; }
     }
 
     /// <summary>
@@ -44,68 +29,11 @@ namespace Lexical.Localization.Plurality
     public interface IPluralRuleEvaluatable : IPluralRule
     {
         /// <summary>
-        /// Evaluate whether the case applies to <paramref name="number"/>.
+        /// Evaluate whether the rule applies to <paramref name="number"/>.
         /// </summary>
         /// <param name="number">numeric and text representation of numberic value</param>
         /// <returns>true or false</returns>
         bool Evaluate(IPluralNumber number);
-    }
-
-    /// <summary>
-    /// Plural rule expression.
-    /// 
-    /// e.g. "§one v = 0 and i % 10 = 1 @integer 0, 1, 2, 3, … @decimal 0.0~1.5, 10.0, …".
-    /// </summary>
-    public interface IPluralRuleExpression : IExpression, IPluralRule
-    {
-        /// <summary>
-        /// Rule expression that can evaluate parameter
-        /// </summary>
-        IExpression Rule { get; }
-
-        /// <summary>
-        /// Samples
-        /// </summary>
-        ISamplesExpression[] Samples { get; }
-    }
-
-    /// <summary>
-    /// e.g. "@decimal 1.0, 1.00, 1.000, 1.0000"
-    /// </summary>
-    public interface ISamplesExpression : IExpression
-    {
-        /// <summary>
-        /// Name of sample group, e.g. "integer" and "decimal"
-        /// 
-        /// Known groups:
-        /// <list type="bullet">
-        ///     <item>integer</item>
-        ///     <item>decimal</item>
-        /// </list>
-        /// </summary>
-        String Name { get; }
-
-        /// <summary>
-        /// Each value is one of:
-        /// <list>
-        /// <item><see cref="IConstantExpression"/></item>
-        /// <item><see cref="IRangeExpression"/></item>
-        /// <item><see cref="IInfiniteExpression"/></item>
-        /// </list>
-        /// 
-        /// If list ends with <see cref="IInfiniteExpression"/> then there are infinite possible values.
-        /// If not, then all the possible samples are listed in the samples list.
-        /// </summary>
-        IExpression[] Samples { get; }
-    }
-
-    /// <summary>
-    /// Marks the list as infinite.
-    /// 
-    /// "…" or "..."
-    /// </summary>
-    public interface IInfiniteExpression : IExpression
-    {
     }
 
 }
