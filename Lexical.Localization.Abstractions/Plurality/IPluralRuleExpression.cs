@@ -102,4 +102,37 @@ namespace Lexical.Localization.Plurality
         String Value { get; }
     }
 
+    /// <summary>
+    /// Expression for multiple values.
+    /// </summary>
+    public interface IValuesExpression : IExpression
+    {
+    }
+
+    /// <summary>
+    /// Range of interger values.
+    /// </summary>
+    public interface IRangeExpression : IValuesExpression
+    {
+        /// <summary>
+        /// Start of range (inclusive)
+        /// </summary>
+        IExpression MinValue { get; }
+
+        /// <summary>
+        /// End of range (inclusive)
+        /// </summary>
+        IExpression MaxValue { get; }
+    }
+
+    /// <summary>
+    /// Group of values.
+    /// </summary>
+    public interface IGroupExpression : IValuesExpression
+    {
+        /// <summary>
+        /// Values.
+        /// </summary>
+        IExpression[] Values { get; }
+    }
 }

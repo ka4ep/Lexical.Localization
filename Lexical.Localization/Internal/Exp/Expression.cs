@@ -224,64 +224,6 @@ namespace Lexical.Localization.Exp
     }
 
     /// <summary>
-    /// Range expression.
-    /// </summary>
-    public class RangeExpression : Expression, IRangeExpression
-    {
-        /// <summary> </summary>
-        public IExpression MinValue { get; internal set; }
-        /// <summary> </summary>
-        public IExpression MaxValue { get; internal set; }
-
-        /// <summary>
-        /// Create range expression
-        /// </summary>
-        /// <param name="minValue"></param>
-        /// <param name="maxValue"></param>
-        public RangeExpression(IExpression minValue, IExpression maxValue)
-        {
-            MinValue = minValue ?? throw new ArgumentNullException(nameof(minValue));
-            MaxValue = maxValue ?? throw new ArgumentNullException(nameof(maxValue));
-        }
-
-        /// <inheritdoc/>
-        public override void Append(StringBuilder sb)
-        {
-            AppendExp(sb, MinValue);
-            sb.Append("..");
-            AppendExp(sb, MaxValue);
-        }
-
-    }
-
-    /// <summary>
-    /// Group expression
-    /// </summary>
-    public class GroupExpression : Expression, IGroupExpression
-    {
-        /// <summary> </summary>
-        public IExpression[] Values { get; internal set; }
-        /// <summary>
-        /// Create group
-        /// </summary>
-        /// <param name="values"></param>
-        public GroupExpression(IExpression[] values)
-        {
-            Values = values ?? throw new ArgumentNullException(nameof(values));
-        }
-
-        /// <inheritdoc/>
-        public override void Append(StringBuilder sb)
-        {
-            for (int i = 0; i < Values.Length; i++)
-            {
-                if (i > 0) sb.Append(", ");
-                AppendExp(sb, Values[i]);
-            }
-        }
-    }
-
-    /// <summary>
     /// Parenthesis expression.
     /// </summary>
     public class ParenthesisExpression : Expression, IParenthesisExpression
