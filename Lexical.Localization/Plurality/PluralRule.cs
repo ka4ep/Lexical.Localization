@@ -36,15 +36,22 @@ namespace Lexical.Localization.Plurality
             => false;
 
         /// <summary>
+        /// Print debug info
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            => $"{GetType().Name}[{Info}]";
+
+        /// <summary>
         /// Zero case that matches when number is 0.
         /// </summary>
-        public class ZeroCase : PluralRule
+        public class Zero : PluralRule
         {
             /// <summary>
             /// Create rule that compares to zero value.
             /// </summary>
             /// <param name="info"></param>
-            public ZeroCase(PluralRuleInfo info) : base(info)
+            public Zero(PluralRuleInfo info) : base(info)
             {
             }
 
@@ -60,13 +67,13 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Null case that matches when number is null or empty.
         /// </summary>
-        public class EmptyCase : PluralRule
+        public class Empty : PluralRule
         {
             /// <summary>
             /// Create rule
             /// </summary>
             /// <param name="info"></param>
-            public EmptyCase(PluralRuleInfo info) : base(info)
+            public Empty(PluralRuleInfo info) : base(info)
             {
             }
 
@@ -83,14 +90,50 @@ namespace Lexical.Localization.Plurality
         /// Case that always evaluates to true value.
         /// Used for fallback case "other".
         /// </summary>
-        public class TrueCase : PluralRule
+        public class True : PluralRule
         {
             /// <summary>
             /// Create rule that always evaluates to true.
             /// </summary>
             /// <param name="info"></param>
-            public TrueCase(PluralRuleInfo info) : base(info)
+            public True(PluralRuleInfo info) : base(info)
             {
+            }
+
+            /// <summary>
+            /// Always true
+            /// </summary>
+            /// <param name="number"></param>
+            /// <returns></returns>
+            public override bool Evaluate(IPluralNumber number)
+                => true;
+        }
+
+        /// <summary>
+        /// Case that always evaluates to true value.
+        /// Used for fallback case "other".
+        /// </summary>
+        public class TrueWithExpression : PluralRule, IPluralRuleExpression
+        {
+            /// <summary/>
+            public IPluralRuleInfosExpression Infos { get; internal set; }
+            /// <summary/>
+            public IExpression Rule { get; internal set; }
+            /// <summary/>
+            public ISamplesExpression[] Samples { get; internal set; }
+
+            /// <summary>
+            /// Create rule that always evaluates to true.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="infosExp"></param>
+            /// <param name="ruleExp"></param>
+            /// <param name="samplesExps"></param>
+            public TrueWithExpression(PluralRuleInfo info, IPluralRuleInfosExpression infosExp, IExpression ruleExp, ISamplesExpression[] samplesExps) : base(info)
+            {
+                this.Infos = infosExp;
+                this.Rule = ruleExp;
+                this.Samples = samplesExps;
             }
 
             /// <summary>
@@ -105,7 +148,7 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Rule that evaluates against an expression
         /// </summary>
-        public class ExpressionCase : PluralRule, IPluralRuleEvaluatable, IPluralRuleExpression
+        public class Expression : PluralRule, IPluralRuleEvaluatable, IPluralRuleExpression
         {
             /// <summary>
             /// Info expressions
@@ -150,16 +193,32 @@ namespace Lexical.Localization.Plurality
             }
 
             /// <summary>
-            /// Create rule that evaluates with <paramref name="expressionRule"/>.
+            /// Create rule that evaluates with <paramref name="ruleExpression"/>.
+            /// 
+            /// Extracts <see cref="PluralRuleInfo" from <paramref name="infoExpression"/> expression.
             /// </summary>
-            /// <param name="infos"></param>
-            /// <param name="expressionRule"></param>
-            /// <param name="samples"></param>
-            public ExpressionCase(IPluralRuleInfosExpression infos, IExpression expressionRule, ISamplesExpression[] samples) : base(Convert(infos))
+            /// <param name="infoExpression">info expression</param>
+            /// <param name="ruleExpression"></param>
+            /// <param name="samplesExpression"></param>
+            public Expression(IPluralRuleInfosExpression infoExpression, IExpression ruleExpression, ISamplesExpression[] samplesExpression) : base(Convert(infoExpression))
             {
-                this.Infos = infos;
-                this.Rule = expressionRule;
-                this.Samples = samples ?? NO_SAMPLES;
+                this.Infos = infoExpression;
+                this.Rule = ruleExpression;
+                this.Samples = samplesExpression ?? NO_SAMPLES;
+            }
+
+            /// <summary>
+            /// Create rule that evaluates with <paramref name="ruleExpression"/>.
+            /// </summary>
+            /// <param name="info"></param>
+            /// <param name="infoExpression">info expression</param>
+            /// <param name="ruleExpression"></param>
+            /// <param name="samplesExpression"></param>
+            public Expression(PluralRuleInfo info, IPluralRuleInfosExpression infoExpression, IExpression ruleExpression, ISamplesExpression[] samplesExpression) : base(info)
+            {
+                this.Infos = infoExpression;
+                this.Rule = ruleExpression;
+                this.Samples = samplesExpression ?? NO_SAMPLES;
             }
 
             /// <summary>

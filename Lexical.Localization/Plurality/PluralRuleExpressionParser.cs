@@ -115,7 +115,7 @@ namespace Lexical.Localization.Plurality
             // Try read boolean expression
             reader.TakeAll(TokenKind.NonEssential);
             IExpression rule = reader.Take(BooleanExpression);
-            if (rule == null) { reader.Index = ix; return null; }
+            //if (rule == null) { reader.Index = ix; return null; }
             reader.TakeAll(TokenKind.NonEssential);
 
             // Try read samples
@@ -128,7 +128,7 @@ namespace Lexical.Localization.Plurality
             }
 
             // No result
-            if (infos == null && rule == null) { reader.Index = ix; return null; }
+            if (infos == null && rule == null && samplesList.Count == 0) { reader.Index = ix; return null; }
 
             // Create expression
             return new PluralRuleExpression(infos, rule, samplesList.ToArray());
@@ -141,15 +141,12 @@ namespace Lexical.Localization.Plurality
         /// </summary>
         public readonly static Tokens.Taker0<ISamplesExpression> SamplesExpression = (ref Tokens reader) =>
         {
+            int ix = reader.Index;
             reader.TakeAll(TokenKind.NonEssential);
 
-            // @
-            int ix = reader.Index;
-            Token t = reader.Take(TokenKind.At);
-            if (t == null) { reader.Index = ix; return null; }
-
-            // Name
-            string name = reader.Take(TokenKind.NameLiteral)?.Value?.ToString();
+            // @Name
+            Token t = reader.Take(TokenKind.AtNameLiteral);
+            string name = t?.Value?.ToString();
             if (name == null) { reader.Index = ix; return null; }
 
             // Read integer and float samples
@@ -157,7 +154,7 @@ namespace Lexical.Localization.Plurality
             StructList16<IExpression> exps = new StructList16<IExpression>();
             Token token;
             bool tilde = false;
-            while ((token = reader.Take(TokenKind.IntegerLiteral | TokenKind.FloatLiteral | TokenKind.Ellipsis | TokenKind.Tilde)) != null)
+            while ((token = reader.Take(TokenKind.IntegerLiteral | TokenKind.FloatLiteral | TokenKind.Ellipsis | TokenKind.Tilde | TokenKind.Comma)) != null)
             { 
                 if (token.Kind == TokenKind.IntegerLiteral || token.Kind == TokenKind.FloatLiteral)
                 {
@@ -174,9 +171,14 @@ namespace Lexical.Localization.Plurality
                 } else if (token.Kind == TokenKind.Tilde)
                 {
                     tilde = true;
+                } else if (token.Kind == TokenKind.Comma)
+                {
+                    // move to next
+                    if (tilde) throw new ArgumentException("Sample range '~' left open.");
                 }
                 reader.TakeAll(TokenKind.NonEssential);
             }
+            if (tilde) throw new ArgumentException("Sample range '~' left open.");
 
             // Create samples expression
             return new SamplesExpression(name, exps.ToArray());

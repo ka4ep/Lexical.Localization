@@ -114,10 +114,10 @@ namespace Lexical.Localization.Plurality
         {
             StringBuilder sb = new StringBuilder();
             if (RuleSet != null) { sb.Append(nameof(RuleSet)); sb.Append('='); sb.Append(RuleSet); }
-            if (Category != null) { sb.Append(nameof(Category)); sb.Append('='); sb.Append(Category); }
-            if (Culture != null) { sb.Append(nameof(Culture)); sb.Append('='); sb.Append(Culture); }
-            if (Case != null) { sb.Append(nameof(Case)); sb.Append('='); sb.Append(Case); }
-            if (Optional != -1) { sb.Append(nameof(Optional)); sb.Append('='); sb.Append(Optional); }
+            if (Category != null) { if (sb.Length > 0) sb.Append(", "); sb.Append(nameof(Category)); sb.Append('='); sb.Append(Category); }
+            if (Culture != null) { if (sb.Length > 0) sb.Append(", "); sb.Append(nameof(Culture)); sb.Append('='); sb.Append(Culture); }
+            if (Case != null) { if (sb.Length > 0) sb.Append(", "); sb.Append(nameof(Case)); sb.Append('='); sb.Append(Case); }
+            if (Optional != -1) { if (sb.Length > 0) sb.Append(", "); sb.Append(nameof(Optional)); sb.Append('='); sb.Append(Optional); }
             return sb.ToString();
         }
 

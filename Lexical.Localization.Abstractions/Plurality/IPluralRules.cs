@@ -55,7 +55,7 @@ namespace Lexical.Localization.Plurality
         /// Query a collection of rules.
         /// </summary>
         /// <param name="filterCriteria">filter criteria</param>
-        /// <returns>enumerable of rules</returns>
+        /// <returns>enumerable of rules, or null if could not run query with the <paramref name="filterCriteria"/></returns>
         IPluralRulesEnumerable Query(PluralRuleInfo filterCriteria);
     }
 

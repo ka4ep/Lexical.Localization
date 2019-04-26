@@ -13,20 +13,20 @@ using System.Reflection;
 namespace Lexical.Localization.Plurality
 {
     /// <summary>
-    /// Resolver that instantiates "RuleSet" parameter by
-    /// instantiating assembly qualitifed type name, or by parsing expression string.
+    /// Resolver that instantiates "PluralRules" parameter by
+    /// instantiating class (assembly qualitifed type name), or by parsing as expression string.
     /// </summary>
-    public class PluralRulesResolver : IPluralRulesEvaluatable
+    public class PluralRulesResolver : IPluralRulesEvaluatable, IPluralRulesQueryable
     {
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static readonly PluralRulesResolver instance = new PluralRulesResolver();
+        public static readonly Lazy<PluralRulesResolver> instance = new Lazy<PluralRulesResolver>();
 
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static PluralRulesResolver Instance => instance;
+        public static PluralRulesResolver Instance => instance.Value;
 
         /// <summary>
         /// Function that resolves type name into <see cref="Type"/>.
@@ -37,6 +37,11 @@ namespace Lexical.Localization.Plurality
         /// Function that reads assembly from file.
         /// </summary>
         protected Func<AssemblyName, Assembly> assemblyResolver;
+
+        /// <summary>
+        /// Function that converts enumerable to <see cref="IPluralRules"/>.
+        /// </summary>
+        protected Func<IEnumerable<IPluralRule>, IPluralRulesEnumerable> rulesFactory;
 
         /// <summary>
         /// Function that parses expressions.
@@ -59,7 +64,7 @@ namespace Lexical.Localization.Plurality
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public PluralRulesResolver() : this(LocalAssemblyResolver, TypeResolver, RuleExpressionParser)
+        public PluralRulesResolver() : this(LocalAssemblyResolver, TypeResolver, RuleExpressionParser, RulesFactory)
         {
         }
 
@@ -69,11 +74,13 @@ namespace Lexical.Localization.Plurality
         /// <param name="assemblyLoader">(optional) function that reads assembly from file.</param>
         /// <param name="typeResolver">(optional) Function that resolves type name into <see cref="Type"/>.</param>
         /// <param name="ruleExpressionParser">(optional) rule parser. If null, will not parser expressions.</param>
-        public PluralRulesResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver, Func<string, IEnumerable<IPluralRule>> ruleExpressionParser)
+        /// <param name="rulesFactory">(optional) Function that converts enumerable to <see cref="IPluralRules"/></param>
+        public PluralRulesResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver, Func<string, IEnumerable<IPluralRule>> ruleExpressionParser, Func<IEnumerable<IPluralRule>, IPluralRulesEnumerable> rulesFactory)
         {
             this.assemblyResolver = assemblyLoader;
             this.typeResolver = typeResolver;
             this.ruleExpressionParser = ruleExpressionParser;
+            this.rulesFactory = rulesFactory;
             this.resolveFunc = (string rules) =>
             {
                 try
@@ -81,23 +88,28 @@ namespace Lexical.Localization.Plurality
                     // Empty 
                     if (String.IsNullOrEmpty(rules)) return new ResultLine { Rules = null, Error = null };
 
+                    // Enumerable
+                    IEnumerable<IPluralRule> enumr = null;
                     // Parse Expression
                     if (rules[0]=='[')
                     {
                         // Assert ruleExpressionParser is not null
                         if (ruleExpressionParser == null) throw new InvalidOperationException($"{nameof(ruleExpressionParser)} is null");
                         // Parse
-                        IEnumerable<IPluralRule> enumr = this.ruleExpressionParser(rules);
-                        // Cast
-                        IPluralRulesEnumerable rulesEnumr = enumr is IPluralRulesEnumerable casted ? casted : new PluralRules(enumr);
-                        // Result
-                        return new ResultLine { Rules = rulesEnumr };
+                        enumr = this.ruleExpressionParser(rules);
                     } else
                     // Resolve class
                     {
-                        IPluralRulesEnumerable enumr = ResolveRulesClass(rules);
-                        return new ResultLine { Rules = enumr };
+                        enumr = ResolveRulesClass(rules);
                     }
+
+                    // No result
+                    if (enumr == null) return new ResultLine { Error = null, Rules = null };
+                    // Cast
+                    IPluralRulesEnumerable rulesEnumr = rulesFactory(enumr);
+                    // Result
+                    return new ResultLine { Rules = rulesEnumr };
+
                 }
                 catch (Exception e)
                 {
@@ -116,9 +128,9 @@ namespace Lexical.Localization.Plurality
             // Create expression parser
             IEnumerable<IPluralRuleExpression> expressionParser = PluralRuleExpressionParser.CreateParser(rulesExpression);
             // Convert to rules
-            IEnumerable<IPluralRule> rules = expressionParser.Select(exp => new PluralRule.ExpressionCase(exp.Infos, exp.Rule, exp.Samples));
+            IEnumerable<IPluralRule> rules = expressionParser.Select(exp => new PluralRule.Expression(exp.Infos, exp.Rule, exp.Samples));
             // Read into array
-            return new PluralRules(rules);
+            return rules;
         };
 
         /// <summary>
@@ -152,14 +164,16 @@ namespace Lexical.Localization.Plurality
 
         /// <summary>
         /// Default type resolver that does following name mapping.
-        /// 
-        /// Converts "Unicode.CLDR" -> "Lexical.Localization.UnicodeCLDR"
         /// </summary>
-        public static Func<Assembly, string, bool, Type> TypeResolver = (Assembly a, string typename, bool throwOnError) =>
-        {
-            if (typename.StartsWith("Unicode.CLDR")) typename = "Lexical.Localization.UnicodeCLDR" + typename.Substring("Unicode.CLDR".Length);
-            return a.GetType(typename);
-        };
+        public static Func<Assembly, string, bool, Type> TypeResolver = (Assembly a, string typename, bool throwOnError) => a.GetType(typename);
+
+        /// <summary>
+        /// Function that converts enumerable to <see cref="IPluralRules"/>.
+        /// </summary>
+        public static Func<IEnumerable<IPluralRule>, IPluralRulesEnumerable> RulesFactory => 
+            enumr => enumr is IPluralRulesEnumerable casted ? 
+                casted : 
+                new PluralRulesIndexed(enumr);
 
         /// <summary>
         /// Get-cached-or-resolve rules into <see cref="IPluralRulesEnumerable"/>
@@ -167,7 +181,7 @@ namespace Lexical.Localization.Plurality
         /// <paramref name="rules"/> is either:
         /// <list type="bullet">
         ///     <item>Assign assembly qualified type name of <see cref="IPluralRules"/>, e.g. "Unicode.CLDRv35"</item>
-        ///     <item>Plural rules expression (starts with '['), e.g. "[Category=cardinal,Case=One,Optional=1]n=0[Category=cardinal,Case=One]n=1[Category=cardinal,Case=Other]true"</item>
+        ///     <item>Plural rules expression (starts with '['), e.g. "[Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true"</item>
         /// </list>
         /// 
         /// </summary>
@@ -178,10 +192,12 @@ namespace Lexical.Localization.Plurality
 
         /// <summary>
         /// Resolve rules class into <see cref="IPluralRulesEnumerable"/>. Does not use cache. Please use <see cref="GetRules(string)"/> instead as it caches result.
+        /// 
+        /// Converts "Unicode.CLDR*" -> "Lexical.Localization.UnicodeCLDR*,Lexical.Localization"
         /// </summary>
-        /// <param name="rulesetTypeName"></param>
-        /// <returns>rules</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="rulesetTypeName"/> is null</exception>
+        /// <param name="typeName"></param>
+        /// <returns>rules enumerable</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="typeName"/> is null</exception>
         /// <exception cref="TargetInvocationException">A class initializer is invoked and throws an exception.</exception>
         /// <exception cref="TypeLoadException">type is not found</exception>
         /// <exception cref="ArgumentException">An error occurs when typeName is parsed into a type name and an name contains invalid syntax </exception>
@@ -189,24 +205,26 @@ namespace Lexical.Localization.Plurality
         /// <exception cref="FileLoadException">The assembly or one of its dependencies was found, but could not be loaded.</exception>
         /// <exception cref="BadImageFormatException">The assembly or one of its dependencies is not valid</exception>
         /// <exception cref="InvalidCastException">If ruleset doesn't implement IEnumerable&lt;IPluralRule&gt;</exception>
-        public IPluralRulesEnumerable ResolveRulesClass(string rulesetTypeName)
+        public IEnumerable<IPluralRule> ResolveRulesClass(string typeName)
         {
             // Assert assemblyResolver is not null
             if (assemblyResolver == null) throw new InvalidOperationException($"{nameof(assemblyResolver)} is null");
             // Assert typeResolver is not null
             if (typeResolver == null) throw new InvalidOperationException($"{nameof(typeResolver)} is null");
+            // "Unicode.CLDR*" -> "Lexical.Localization.UnicodeCLDR*,Lexical.Localization"
+            if (typeName.StartsWith("Unicode.CLDR")&&!typeName.Contains(",")) typeName = "Lexical.Localization.UnicodeCLDR" + typeName.Substring("Unicode.CLDR".Length)+",Lexical.Localization";
             // Try get type
-            Type type = Type.GetType(rulesetTypeName, assemblyResolver, typeResolver, true);
+            Type type = Type.GetType(typeName, assemblyResolver, typeResolver, true);
             // Assert type was loaded
-            if (type == null) throw new TypeLoadException($"Could not resolve Type {rulesetTypeName}.");
+            if (type == null) throw new TypeLoadException($"Could not resolve Type {typeName}.");
             // Assert type is assignable
-            if (!typeof(IEnumerable<IPluralRule>).IsAssignableFrom(type)) throw new InvalidCastException($"{rulesetTypeName} doesn't implement {nameof(IEnumerable<IPluralRule>)}");
+            if (!typeof(IEnumerable<IPluralRule>).IsAssignableFrom(type)) throw new InvalidCastException($"{typeName} doesn't implement {nameof(IEnumerable<IPluralRule>)}");
             // Instantiate type
             object obj = Activator.CreateInstance(type);
             // Cast
             IEnumerable<IPluralRule> enumr = (IEnumerable<IPluralRule>)obj;
             // Read into array
-            return new PluralRules(enumr);
+            return enumr;
         }
 
         /// <summary>
@@ -224,6 +242,26 @@ namespace Lexical.Localization.Plurality
                 if (line.Error != null) throw new Exception(line.Error.Message, line.Error);
                 if (line.Rules is IPluralRulesEvaluatable eval) return eval.Evaluate(subset, number);
             }
+            return null;
+        }
+
+        /// <summary>
+        /// Query rules.
+        /// 
+        /// If RuleSet is null, then returns null.
+        /// </summary>
+        /// <param name="filterCriteria"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception">Wrapped error</exception>
+        public IPluralRulesEnumerable Query(PluralRuleInfo filterCriteria)
+        {
+            if (filterCriteria.RuleSet == null) return null;
+
+            ResultLine line = GetRules(filterCriteria.RuleSet);
+            if (line.Error != null) throw new Exception(line.Error.Message, line.Error);
+            if (line.Rules == null) return null;
+
+            if (line.Rules is IPluralRulesQueryable queryable) return queryable.Query(filterCriteria);
             return null;
         }
 

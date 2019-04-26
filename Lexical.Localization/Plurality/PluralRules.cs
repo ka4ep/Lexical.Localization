@@ -123,7 +123,7 @@ namespace Lexical.Localization.Plurality
             else result = new PluralRules(list.ToArray());
 
             // Write to cache, if is still new
-            lock (m_lock) if (!queries.TryGetValue(filterCriteria, out result)) queries[filterCriteria] = result;
+            lock (m_lock) if (!queries.ContainsKey(filterCriteria)) queries[filterCriteria] = result;
 
             // Return result
             return result;
@@ -180,14 +180,14 @@ namespace Lexical.Localization.Plurality
             // Add optional cases
             foreach (IPluralRule rule in rules)
             {
-                if (rule.Info.Optional == 1 && rule is IPluralRulesEvaluatable)
+                if (rule.Info.Optional == 1 && rule is IPluralRuleEvaluatable)
                     yield return rule;
             }
 
             // Add required cases
             foreach (IPluralRule rule in rules)
             {
-                if (rule.Info.Optional == 0 && rule is IPluralRulesEvaluatable) yield return rule;
+                if (rule.Info.Optional == 0 && rule is IPluralRuleEvaluatable) yield return rule;
             }
         }
 
@@ -221,7 +221,7 @@ namespace Lexical.Localization.Plurality
             this.EvaluatableCases = evaluatables.ToArray();
             this.OptionalCaseCount = firstNonOptionalCase;
             if (OptionalCaseCount > 10) throw new ArgumentException($"Maximum number of optional cases is 10, got {OptionalCaseCount}");
-            OptionalCasePerumutationCount = (1 << OptionalCaseCount) - 1;
+            OptionalCasePerumutationCount = (1 << OptionalCaseCount);
 
             // Add non-optional
             StructList12<IPluralRule> list = new StructList12<IPluralRule>();
@@ -236,7 +236,7 @@ namespace Lexical.Localization.Plurality
                 {
                     list.Clear();
                     for (int j = 0; j < OptionalCaseCount; j++)
-                        if ((i & (1 << j)) != 0) list.Add(list[j]);
+                        if ((i & (1 << j)) != 0) list.Add(Rules[j]);
                     list.Add(c);
                     line.OptionalRulePermutations[i] = list.ToArray();
                 }

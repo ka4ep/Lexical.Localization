@@ -194,7 +194,7 @@ namespace Lexical.Localization.Exp
                             return cachedValue;
                             // Returns null if string doesn't fit into double.
                         }
-                    case TokenKind.AtNameLiteral: return cachedValue = TokenUtils.NameLiteralUnescape.Replace(Text.Str.Substring(1), TokenUtils.UnescapeChar);
+                    case TokenKind.AtNameLiteral: return cachedValue = TokenUtils.NameLiteralUnescape.Replace(Text.Str.Substring(Text.Index+1, Text.Length-1), TokenUtils.UnescapeChar);
                     case TokenKind.AtQuotedNameLiteral: return cachedValue = TokenUtils.UnescapeStringLiteral(Text.Str.Substring(Text.Index + 2, Text.Length - 3));
                     case TokenKind.AtLongQuotedNameLiteral: return cachedValue = TokenUtils.UnescapeStringLiteral(Text.Str.Substring(Text.Index + 4, Text.Length - 7));
                     case TokenKind.NameLiteral: return cachedValue = TokenUtils.UnescapeNameLiteral(Text);
@@ -261,7 +261,7 @@ namespace Lexical.Localization.Exp
         public static Regex Range = new Regex(@"^\.\.", opts);
 
         /// <summary></summary>
-        public static Regex NameLiteral = new Regex(@"^(\\[0-9])?([^\./\\:\!#\-\+\^(\)\{\}\[\]&\<\>\|"",\n\t\r=\*\^\?;§…\$% ]|(\\[\."",ntr/\\:\!#&\-\+\^,\(\)\{\}\[\]\|=\*\^\?;§…\$% ]))+", opts);
+        public static Regex NameLiteral = new Regex(@"^(\\[0-9])?([^\./\\:\!#\-\+\^(\)\{\}\[\]&\<\>\|"",\n\t\r=\*\^\?;§…\$%~ ]|(\\[\."",ntr/\\:\!#&\-\+\^,\(\)\{\}\[\]\|=\*\^\?;§…\$%~ ]))+", opts);
         /// <summary></summary>
         public static Regex AtNameLiteral = new Regex(@"@([^/\\:\!#-\+\^(\)\{\}\[\]&\<\>\|"",\n\t\r=\*\^\? ]|(\\["",ntr/\\:\!#&-\+\^,\(\)\{\}\[\]\|=\*\^\? ]))+", opts);
         /// <summary></summary>
