@@ -41,6 +41,7 @@ namespace Lexical.Localization.Plurality
         public bool EvaluateBoolean(IExpression rule)
             => rule switch
             {
+                IConstantExpression cnst => (bool)cnst.Value,
                 IParenthesisExpression pexp => EvaluateBoolean(pexp.Element),
                 IUnaryOpExpression uop =>
                     uop.Op switch

@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Collections;
+using Lexical.Localization.Plurality;
 
 namespace Lexical.Localization
 {    
@@ -25,7 +26,7 @@ namespace Lexical.Localization
     [DebuggerDisplay("{DebugPrint()}")]
     public class LocalizationKey :
 #region Interfaces
-        ILocalizationKey, IAssetKeyAssignable, ILocalizationKeyInlineAssignable, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, ILocalizationKeyResolverAssignable, ILocalizationKeyFormatProviderAssignable, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyParameterAssignable, ILocalizationKeyPluralityAssignable, ISerializable, IDynamicMetaObjectProvider, IAssetKeyDefaultHashCode
+        ILocalizationKey, IAssetKeyAssignable, ILocalizationKeyInlineAssignable, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, ILocalizationKeyResolverAssignable, ILocalizationKeyFormatProviderAssignable, IAssetKeyLinked, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, IAssetKeyParameterAssignable, IPluralRulesAssignableKey, ISerializable, IDynamicMetaObjectProvider, IAssetKeyDefaultHashCode
     #endregion Interfaces
     {
         #region Code
@@ -620,102 +621,60 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Append plurality key part.
+        /// Append plural rules
         /// </summary>
-        /// <param name="argumentIndex"></param>
-        /// <param name="pluralityKind"></param>
+        /// <param name="rules"></param>
         /// <returns></returns>
-        public _N N(int argumentIndex, string pluralityKind) => new _N(_N.BackUp(this, argumentIndex), argumentIndex, pluralityKind);
+        public IPluralRulesAssignedKey PluralRules(IPluralRules rules) => new _PluralRules(this, rules);
 
         /// <summary>
-        /// Append plurality key part.
+        /// Append plural rules
         /// </summary>
-        /// <param name="argumentIndex"></param>
-        /// <param name="pluralityKind"></param>
+        /// <param name="rules"></param>
         /// <returns></returns>
-        ILocalizationKeyPluralityAssigned ILocalizationKeyPluralityAssignable.N(int argumentIndex, string pluralityKind) => new _N(_N.BackUp(this, argumentIndex), argumentIndex, pluralityKind);
+        IPluralRulesAssignedKey IPluralRulesAssignableKey.PluralRules(IPluralRules rules) => new _PluralRules(this, rules);
 
         /// <summary>
-        /// Plurality key part.
+        /// Plural Rules key.
         /// </summary>
         [Serializable]
-        public class _N : LocalizationKey, IAssetKeySectionAssigned, IAssetKeyParameterAssigned, IAssetKeyNonCanonicallyCompared, ILocalizationKeyPluralityAssigned
+        public class _PluralRules : LocalizationKey, IPluralRulesAssignedKey
         {
             /// <summary>
-            /// Argument index the plurality applies to.
+            /// Assigned rules
             /// </summary>
-            int argumentIndex;
+            protected IPluralRules rules;
 
             /// <summary>
-            /// Argument index the plurality applies to.
+            /// Assigned rules
             /// </summary>
-            int ILocalizationKeyPluralityAssigned.ArgumentIndex => argumentIndex;
+            public IPluralRules PluralRules => rules;
 
             /// <summary>
-            /// Create plurality key part.
+            /// Create new culture key.
             /// </summary>
             /// <param name="prevKey"></param>
-            /// <param name="argumentIndex"></param>
-            /// <param name="pluralityKind"></param>
-            public _N(IAssetKey prevKey, int argumentIndex, string pluralityKind) : base(prevKey, pluralityKind)
+            /// <param name="rules"></param>
+            public _PluralRules(IAssetKey prevKey, IPluralRules rules) : base(prevKey, null)
             {
-                if (argumentIndex < 0) throw new ArgumentException(nameof(argumentIndex));
-                this.argumentIndex = argumentIndex;
             }
 
             /// <summary>
-            /// Deserialize plurality key part.
+            /// Deserialize culture key.
             /// </summary>
             /// <param name="info"></param>
             /// <param name="context"></param>
-            public _N(SerializationInfo info, StreamingContext context) : base(info, context) {
-                this.argumentIndex = info.GetInt32("ArgumentIndex");
-            }
+            public _PluralRules(SerializationInfo info, StreamingContext context) : base(info, context) { this.rules = info.GetValue(nameof(PluralRules), typeof(IPluralRules)) as IPluralRules; }
 
             /// <summary>
-            /// Serialize plurality key part.
+            /// Serialize culture key.
             /// </summary>
             /// <param name="info"></param>
             /// <param name="context"></param>
             public override void GetObjectData(SerializationInfo info, StreamingContext context)
-            {                
-                info.AddValue("ArgumentIndex", argumentIndex);
-                base.GetObjectData(info, context);
-            }
-
-            /// <summary>
-            /// ParameterName
-            /// </summary>
-            public virtual String ParameterName => GetParameterName(argumentIndex);
-
-            /// <summary>
-            /// Static parameter names for plurality keys.
-            /// </summary>
-            private static string[] ParameterNames = new string[] { "N", "N1", "N2", "N3", "N4", "N5", "N6", "N7", "N8", "N9" };
-
-            /// <summary>
-            /// Get or create parameter name for argument index.
-            /// </summary>
-            /// <param name="argumentIndex"></param>
-            /// <returns></returns>
-            public static string GetParameterName(int argumentIndex) => argumentIndex < ParameterNames.Length ? ParameterNames[argumentIndex] : "N" + argumentIndex;
-
-            /// <summary>
-            /// Go back in key chain and find Plurality key.
-            /// </summary>
-            /// <param name="key"></param>
-            /// <param name="argumentIndex"></param>
-            /// <returns></returns>
-            internal static IAssetKey BackUp(IAssetKey key, int argumentIndex)
             {
-                string parameterNameToSearch = _N.GetParameterName(argumentIndex);
-                IAssetKey result = null;
-                for (IAssetKey k = key; k!=null; k=k.GetPreviousKey())
-                {
-                    if (k.GetParameterName() == parameterNameToSearch) result = k;
-                }
-                result = result?.GetPreviousKey();
-                return result ?? key;
+                base.GetObjectData(info, context);
+                info.AddValue(nameof(PluralRules), PluralRules);
             }
         }
 

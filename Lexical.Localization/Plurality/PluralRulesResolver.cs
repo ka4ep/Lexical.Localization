@@ -44,24 +44,14 @@ namespace Lexical.Localization.Plurality
         protected Func<string, IEnumerable<IPluralRule>> ruleExpressionParser;
 
         /// <summary>
-        /// Cache of type-resolved rule sets.
+        /// Cache of resolved rules.
         /// </summary>
-        protected ConcurrentDictionary<string, ResultLine> resolvedRulesetCache = new ConcurrentDictionary<string, ResultLine>();
+        protected ConcurrentDictionary<string, ResultLine> cache = new ConcurrentDictionary<string, ResultLine>();
 
         /// <summary>
-        /// Cache of parsed rule sets.
+        /// Function that resolves rules.
         /// </summary>
-        protected ConcurrentDictionary<string, ResultLine> parsedRulesCache = new ConcurrentDictionary<string, ResultLine>();
-
-        /// <summary>
-        /// Function that resolves type name to ruless.
-        /// </summary>
-        protected Func<string, ResultLine> resolveRuleSetFunc;
-
-        /// <summary>
-        /// Function that resolves expression to rules.
-        /// </summary>
-        protected Func<string, ResultLine> parseRulesFunc;
+        protected Func<string, ResultLine> resolveFunc;
 
         /// <summary>
         /// Create rule resolver with default settings.
@@ -84,38 +74,36 @@ namespace Lexical.Localization.Plurality
             this.assemblyResolver = assemblyLoader;
             this.typeResolver = typeResolver;
             this.ruleExpressionParser = ruleExpressionParser;
-            this.resolveRuleSetFunc = (string rulesetName) =>
+            this.resolveFunc = (string rules) =>
             {
                 try
                 {
-                    IPluralRulesEnumerable enumr = ResolveRuleSet(rulesetName);
-                    return new ResultLine { Rules = enumr };
-                }
-                catch (Exception e)
-                {
-                    return new ResultLine { Error = e };
-                }
-            };
-            this.parseRulesFunc = (string exp) =>
-            {
-                try
-                {
-                    // Assert ruleExpressionParser is not null
-                    if (ruleExpressionParser == null) throw new InvalidOperationException($"{nameof(ruleExpressionParser)} is null");
-                    // Parse
-                    IEnumerable<IPluralRule> enumr = this.ruleExpressionParser(exp);
-                    // Cast
-                    IPluralRulesEnumerable rulesEnumr = enumr is IPluralRulesEnumerable casted ? casted : new PluralRules(enumr);
-                    // Result
-                    return new ResultLine { Rules = rulesEnumr };
-                }
-                catch (Exception e)
-                {
-                    // Error result
-                    return new ResultLine { Error = e };
-                }
-            };
+                    // Empty 
+                    if (String.IsNullOrEmpty(rules)) return new ResultLine { Rules = null, Error = null };
 
+                    // Parse Expression
+                    if (rules[0]=='[')
+                    {
+                        // Assert ruleExpressionParser is not null
+                        if (ruleExpressionParser == null) throw new InvalidOperationException($"{nameof(ruleExpressionParser)} is null");
+                        // Parse
+                        IEnumerable<IPluralRule> enumr = this.ruleExpressionParser(rules);
+                        // Cast
+                        IPluralRulesEnumerable rulesEnumr = enumr is IPluralRulesEnumerable casted ? casted : new PluralRules(enumr);
+                        // Result
+                        return new ResultLine { Rules = rulesEnumr };
+                    } else
+                    // Resolve class
+                    {
+                        IPluralRulesEnumerable enumr = ResolveRulesClass(rules);
+                        return new ResultLine { Rules = enumr };
+                    }
+                }
+                catch (Exception e)
+                {
+                    return new ResultLine { Error = e };
+                }
+            };
         }
 
         /// <summary>
@@ -174,23 +162,22 @@ namespace Lexical.Localization.Plurality
         };
 
         /// <summary>
-        /// Get-cached-or-resolve ruleset name into <see cref="IPluralRulesEnumerable"/>
+        /// Get-cached-or-resolve rules into <see cref="IPluralRulesEnumerable"/>
+        /// 
+        /// <paramref name="rules"/> is either:
+        /// <list type="bullet">
+        ///     <item>Assign assembly qualified type name of <see cref="IPluralRules"/>, e.g. "Unicode.CLDRv35"</item>
+        ///     <item>Plural rules expression (starts with '['), e.g. "[Category=cardinal,Case=One,Optional=1]n=0[Category=cardinal,Case=One]n=1[Category=cardinal,Case=Other]true"</item>
+        /// </list>
+        /// 
         /// </summary>
-        /// <param name="rulesetTypeName"></param>
+        /// <param name="rules"></param>
         /// <returns>resolve result</returns>
-        public ResultLine GetOrResolveRuleSet(string rulesetTypeName)
-            => resolvedRulesetCache.GetOrAdd(rulesetTypeName, resolveRuleSetFunc);
+        public ResultLine GetRules(string rules)
+            => cache.GetOrAdd(rules, resolveFunc);
 
         /// <summary>
-        /// Get-cached-or-parse rule expresion into <see cref="IPluralRulesEnumerable"/>
-        /// </summary>
-        /// <param name="rulesExpression"></param>
-        /// <returns>parse result</returns>
-        public ResultLine GetOrParseRules(string rulesExpression)
-            => parsedRulesCache.GetOrAdd(rulesExpression, parseRulesFunc);
-
-        /// <summary>
-        /// Resolve ruleset name into <see cref="IPluralRulesEnumerable"/>. Does not use cache. Please use <see cref="GetOrResolveRuleSet(string)"/> instead as it caches result.
+        /// Resolve rules class into <see cref="IPluralRulesEnumerable"/>. Does not use cache. Please use <see cref="GetRules(string)"/> instead as it caches result.
         /// </summary>
         /// <param name="rulesetTypeName"></param>
         /// <returns>rules</returns>
@@ -202,7 +189,7 @@ namespace Lexical.Localization.Plurality
         /// <exception cref="FileLoadException">The assembly or one of its dependencies was found, but could not be loaded.</exception>
         /// <exception cref="BadImageFormatException">The assembly or one of its dependencies is not valid</exception>
         /// <exception cref="InvalidCastException">If ruleset doesn't implement IEnumerable&lt;IPluralRule&gt;</exception>
-        public IPluralRulesEnumerable ResolveRuleSet(string rulesetTypeName)
+        public IPluralRulesEnumerable ResolveRulesClass(string rulesetTypeName)
         {
             // Assert assemblyResolver is not null
             if (assemblyResolver == null) throw new InvalidOperationException($"{nameof(assemblyResolver)} is null");
@@ -223,7 +210,7 @@ namespace Lexical.Localization.Plurality
         }
 
         /// <summary>
-        /// Try to ruleset and number.
+        /// Try to resolve ruleset and evaluate number.
         /// </summary>
         /// <param name="subset"></param>
         /// <param name="number"></param>
@@ -233,7 +220,7 @@ namespace Lexical.Localization.Plurality
         {
             if (subset.RuleSet != null)
             {
-                ResultLine line = GetOrResolveRuleSet(subset.RuleSet);
+                ResultLine line = GetRules(subset.RuleSet);
                 if (line.Error != null) throw new Exception(line.Error.Message, line.Error);
                 if (line.Rules is IPluralRulesEvaluatable eval) return eval.Evaluate(subset, number);
             }

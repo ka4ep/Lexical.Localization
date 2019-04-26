@@ -134,7 +134,7 @@ namespace Lexical.Localization.Plurality
             /// <returns></returns>
             public static PluralRuleInfo Convert(IPluralRuleInfosExpression infoExps)
             {
-                string ruleset = "", category = "", culture = "", @case = "";
+                string ruleset = "", category = "", culture = "", @case = ""; int optional = 0;
                 if (infoExps != null && infoExps.Infos!=null)
                 {
                     foreach(var infoExp in infoExps.Infos)
@@ -143,6 +143,7 @@ namespace Lexical.Localization.Plurality
                         else if (infoExp.Name == "Category") category = infoExp.Value ?? "";
                         else if (infoExp.Name == "Culture") culture = infoExp.Value ?? "";
                         else if (infoExp.Name == "Case") @case = infoExp.Value ?? "";
+                        else if (infoExp.Name == "Optional" && !string.IsNullOrEmpty(infoExp.Value)) optional = Int32.Parse(infoExp.Value);
                     }
                 }
                 return new PluralRuleInfo(ruleset, category, culture, @case, 0);

@@ -38,6 +38,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Lexical.Localization;
+using Lexical.Localization.Plurality;
 using Lexical.Localization.Internal;
 
 namespace Lexical.Localization

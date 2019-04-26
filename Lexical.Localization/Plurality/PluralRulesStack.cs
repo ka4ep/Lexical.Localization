@@ -13,7 +13,7 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// A stack of rules. 
     /// </summary>
-    public struct PluralRulesScope : IPluralRules, IPluralRulesEvaluatable
+    public struct PluralRulesStack : IPluralRules, IPluralRulesEvaluatable
     {
         StructList4<IPluralRules> stack;
 

@@ -127,6 +127,9 @@ namespace Lexical.Localization.Plurality
                 reader.TakeAll(TokenKind.NonEssential);
             }
 
+            // No result
+            if (infos == null && rule == null) { reader.Index = ix; return null; }
+
             // Create expression
             return new PluralRuleExpression(infos, rule, samplesList.ToArray());
         };
@@ -192,16 +195,28 @@ namespace Lexical.Localization.Plurality
             // Boolean exp
             IExpression exp = null;
 
-            // Read UnaryOp
+            // Read UnaryOp or constant "true" or "false"
             {
                 int ix2 = reader.Index;
                 reader.TakeAll(TokenKind.NonEssential);
                 Token token = reader.Take(TokenKind.Exclamation | TokenKind.NameLiteral);
-                // not exp
-                if (token != null && token.Kind == TokenKind.NameLiteral && token.Value is String name && name == "not")
+                // "true"
+                if (token != null && token.Kind == TokenKind.NameLiteral && token.Value is String name)
                 {
-                    IExpression nextExp = reader.Take(BooleanExpression);
-                    if (nextExp != null) exp = new UnaryOpExpression(UnaryOp.Not, nextExp); else reader.Index = ix2;
+                    if (name == "true")
+                    {
+                        exp = new ConstantExpression(true);
+                    } else if (name == "false")
+                    {
+                        exp = new ConstantExpression(false);
+                    } else if (name == "not")
+                    {
+                        IExpression nextExp = reader.Take(BooleanExpression);
+                        if (nextExp != null) exp = new UnaryOpExpression(UnaryOp.Not, nextExp); else reader.Index = ix2;
+                    } else
+                    {
+                        reader.Index = ix2;
+                    }
                 }
                 else if (token != null && token.Kind == TokenKind.Exclamation)
                 {

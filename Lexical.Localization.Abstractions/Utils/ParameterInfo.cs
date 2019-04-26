@@ -39,6 +39,14 @@ namespace Lexical.Localization.Utils
             .Add("N12", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9200, pattern: null)
             .Add("N13", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9300, pattern: null)
             .Add("N14", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9400, pattern: null)
+            .Add("N15", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9500, pattern: null)
+            .Add("N16", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9600, pattern: null)
+            .Add("N17", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9700, pattern: null)
+            .Add("N18", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9800, pattern: null)
+            .Add("N19", isCanonicalCompare: false, isNonCanonicalCompare: true, isSection: false, sortingOrder: 9900, pattern: null)
+            .Add("PluralRules", isCanonicalCompare: false, isNonCanonicalCompare: false, isSection: false, sortingOrder: -22000, pattern: null)
+            .Add("StringFormatFunctions", isCanonicalCompare: false, isNonCanonicalCompare: false, isSection: false, sortingOrder: -21000, pattern: null)
+            .Add("StringFormat", isCanonicalCompare: false, isNonCanonicalCompare: false, isSection: false, sortingOrder: -200000, pattern: null)
             as IReadOnlyDictionary<string, IParameterInfo>;
 
         /// <summary>
