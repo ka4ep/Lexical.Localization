@@ -156,9 +156,10 @@ namespace Lexical.Localization.Plurality
     /// all the cases - optional and required - that match the requested <see cref="IPluralNumber" />.
     /// </summary>
     public class PluralRulesEvaluatable : PluralRules, IPluralRulesEvaluatable
-    {        /// <summary>
-             /// List of evaluatable cases in order of: 1. optional, 2. required.
-             /// </summary>
+    {
+        /// <summary>
+        /// List of evaluatable cases in order of: 1. optional, 2. required.
+        /// </summary>
         public readonly IPluralRuleEvaluatable[] EvaluatableCases;
 
         /// <summary>

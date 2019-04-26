@@ -13,8 +13,8 @@ using System.Reflection;
 namespace Lexical.Localization.Plurality
 {
     /// <summary>
-    /// Resolver that instantiates "PluralRules" parameter by
-    /// instantiating class (assembly qualitifed type name), or by parsing as expression string.
+    /// Resolver that creates "PluralRules" parameter value by
+    /// instantiating as class (assembly qualitifed type name), or by parsing as expression string.
     /// </summary>
     public class PluralRulesResolver : IPluralRulesEvaluatable, IPluralRulesQueryable
     {
@@ -97,8 +97,6 @@ namespace Lexical.Localization.Plurality
                         if (ruleExpressionParser == null) throw new InvalidOperationException($"{nameof(ruleExpressionParser)} is null");
                         // Create parse
                         enumr = this.ruleExpressionParser(rules);
-                        // Read into array
-                        enumr = new PluralRules(enumr);
                     } else
                     // Resolve class
                     {
@@ -126,14 +124,7 @@ namespace Lexical.Localization.Plurality
         /// <returns>parsed rules</returns>
         /// <exception cref="ArgumentException">error with string</exception>
         public static Func<string, IEnumerable<IPluralRule>> RuleExpressionParser = (string rulesExpression) =>
-        {
-            // Create expression parser
-            IEnumerable<IPluralRuleExpression> expressionParser = PluralRuleExpressionParser.CreateParser(rulesExpression);
-            // Convert to rules
-            IEnumerable<IPluralRule> rules = expressionParser.Select(exp => new PluralRule.Expression(exp.Infos, exp.Rule, exp.Samples));
-            // Read into array
-            return rules;
-        };
+            PluralRuleExpressionParser.CreateParser(rulesExpression).Select(exp => new PluralRule.Expression(exp.Infos, exp.Rule, exp.Samples));
 
         /// <summary>
         /// Assembly resolver that looks into AppDomain, but will not load external file.
