@@ -95,8 +95,10 @@ namespace Lexical.Localization.Plurality
                     {
                         // Assert ruleExpressionParser is not null
                         if (ruleExpressionParser == null) throw new InvalidOperationException($"{nameof(ruleExpressionParser)} is null");
-                        // Parse
+                        // Create parse
                         enumr = this.ruleExpressionParser(rules);
+                        // Read into array
+                        enumr = new PluralRules(enumr);
                     } else
                     // Resolve class
                     {
