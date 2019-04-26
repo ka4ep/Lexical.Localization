@@ -189,7 +189,7 @@ namespace Lexical.Localization.Plurality
                         else if (infoExp.Name == "Optional" && !string.IsNullOrEmpty(infoExp.Value)) optional = Int32.Parse(infoExp.Value);
                     }
                 }
-                return new PluralRuleInfo(ruleset, category, culture, @case, 0);
+                return new PluralRuleInfo(ruleset, category, culture, @case, optional);
             }
 
             /// <summary>

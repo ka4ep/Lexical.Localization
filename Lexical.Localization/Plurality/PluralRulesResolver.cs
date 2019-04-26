@@ -173,7 +173,7 @@ namespace Lexical.Localization.Plurality
         public static Func<IEnumerable<IPluralRule>, IPluralRulesEnumerable> RulesFactory => 
             enumr => enumr is IPluralRulesEnumerable casted ? 
                 casted : 
-                new PluralRulesIndexed(enumr);
+                new PluralRulesCached(enumr);
 
         /// <summary>
         /// Get-cached-or-resolve rules into <see cref="IPluralRulesEnumerable"/>

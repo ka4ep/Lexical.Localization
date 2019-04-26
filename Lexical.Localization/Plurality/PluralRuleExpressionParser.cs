@@ -54,6 +54,7 @@ namespace Lexical.Localization.Plurality
             {
                 IPluralRuleInfoExpression info = reader.Take(PluralRuleInfo);
                 if (info == null) break;
+                infos.Add(info);
 
                 reader.Take(TokenKind.NonEssential);
                 t = reader.Take(TokenKind.Comma);
@@ -92,7 +93,7 @@ namespace Lexical.Localization.Plurality
 
             // Value
             reader.Take(TokenKind.NonEssential);
-            t = reader.Take(TokenKind.NameLiteral | TokenKind.AtNameLiteral | TokenKind.AtQuotedNameLiteral | TokenKind.AtLongQuotedNameLiteral);
+            t = reader.Take(TokenKind.NameLiteral | TokenKind.AtNameLiteral | TokenKind.AtQuotedNameLiteral | TokenKind.AtLongQuotedNameLiteral | TokenKind.IntegerLiteral);
             string value = t?.Value?.ToString();
             if (value == null) { reader.Index = ix; return null; }
 

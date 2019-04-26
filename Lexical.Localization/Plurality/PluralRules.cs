@@ -61,9 +61,9 @@ namespace Lexical.Localization.Plurality
     }
 
     /// <summary>
-    /// Collection of <see cref="IPluralRule"/> that indexes queries.
+    /// Collection of <see cref="IPluralRule"/> that caches queries.
     /// </summary>
-    public class PluralRulesIndexed : PluralRules, IPluralRules, IPluralRulesEvaluatable
+    public class PluralRulesCached : PluralRules, IPluralRules, IPluralRulesEvaluatable
     {
         /// <summary>
         /// Cached queries
@@ -79,7 +79,7 @@ namespace Lexical.Localization.Plurality
         /// Create rules
         /// </summary>
         /// <param name="rules"></param>
-        public PluralRulesIndexed(params IPluralRule[] rules) : base(rules) 
+        public PluralRulesCached(params IPluralRule[] rules) : base(rules) 
         {
         }
 
@@ -87,7 +87,7 @@ namespace Lexical.Localization.Plurality
         /// Create rules.
         /// </summary>
         /// <param name="rules"></param>
-        public PluralRulesIndexed(IEnumerable<IPluralRule> rules) : base(rules)
+        public PluralRulesCached(IEnumerable<IPluralRule> rules) : base(rules)
         {
         }
 

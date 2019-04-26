@@ -20,7 +20,7 @@ namespace Lexical.Localization
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class UnicodeCLDRv35 : PluralRulesIndexed
+    public class UnicodeCLDRv35 : PluralRulesCached
     {
         /// <summary>
         /// Version 35 lazy loader.
