@@ -107,6 +107,14 @@ namespace Lexical.Localization.Plurality
         }
 
         /// <summary>
+        /// Change ruleset value.
+        /// </summary>
+        /// <param name="newRuleSet"></param>
+        /// <returns></returns>
+        public PluralRuleInfo ChangeRuleSet(string newRuleSet)
+            => new PluralRuleInfo(newRuleSet, Category, Culture, Case, Optional);
+
+        /// <summary>
         /// Print debug info.
         /// </summary>
         /// <returns></returns>

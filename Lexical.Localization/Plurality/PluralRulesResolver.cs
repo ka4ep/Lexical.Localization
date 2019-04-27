@@ -233,7 +233,11 @@ namespace Lexical.Localization.Plurality
             {
                 ResultLine line = GetRules(subset.RuleSet);
                 if (line.Error != null) throw new Exception(line.Error.Message, line.Error);
-                if (line.Rules is IPluralRulesEvaluatable eval) return eval.Evaluate(subset, number);
+                if (line.Rules is IPluralRulesEvaluatable eval)
+                {
+                    // Set RuleSet to null
+                    return eval.Evaluate(subset.ChangeRuleSet(null), number);
+                }
             }
             return null;
         }
@@ -254,7 +258,11 @@ namespace Lexical.Localization.Plurality
             if (line.Error != null) throw new Exception(line.Error.Message, line.Error);
             if (line.Rules == null) return null;
 
-            if (line.Rules is IPluralRulesQueryable queryable) return queryable.Query(filterCriteria);
+            if (line.Rules is IPluralRulesQueryable queryable)
+            {
+                // Set RuleSet to null
+                return queryable.Query(filterCriteria.ChangeRuleSet(null));
+            }
             return null;
         }
 

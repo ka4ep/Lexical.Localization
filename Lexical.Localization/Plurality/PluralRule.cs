@@ -62,6 +62,13 @@ namespace Lexical.Localization.Plurality
             /// <returns></returns>
             public override bool Evaluate(IPluralNumber number)
                 => number != null && number.Sign == 0;
+
+            /// <summary>
+            /// Print string
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+                => "[" + Info + "] n=0"; 
         }
 
         /// <summary>
@@ -84,6 +91,13 @@ namespace Lexical.Localization.Plurality
             /// <returns></returns>
             public override bool Evaluate(IPluralNumber number)
                 => number == null || (number.I_Digits == 0 && number.F_Digits == 0 && number.E_Digits == 0 && number.Sign == 0);
+
+            /// <summary>
+            /// Print string
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+                => "[" + Info + "] n=null";
         }
 
         /// <summary>
@@ -107,6 +121,13 @@ namespace Lexical.Localization.Plurality
             /// <returns></returns>
             public override bool Evaluate(IPluralNumber number)
                 => true;
+
+            /// <summary>
+            /// Print string
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+                => "[" + Info + "] true";
         }
 
         /// <summary>
@@ -143,6 +164,19 @@ namespace Lexical.Localization.Plurality
             /// <returns></returns>
             public override bool Evaluate(IPluralNumber number)
                 => true;
+
+            /// <summary>
+            /// Print rule expression
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+            {
+                var printer = new PluralRuleExpressionStringPrinter();
+                if (Infos == null) printer.Append('[').Append(Info.ToString()).Append("] true"); else printer.Append(Infos);
+                if (Samples != null) printer.Append(' ').Append(Samples, " ");
+                return printer.ToString();
+            }
+
         }
 
         /// <summary>
@@ -229,6 +263,19 @@ namespace Lexical.Localization.Plurality
             public override bool Evaluate(IPluralNumber number)
                 => Rule == null ? true : new PluralRuleExpressionEvaluator(number).EvaluateBoolean(Rule);
 
+            /// <summary>
+            /// Print rule expression
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+            {
+                var printer = new PluralRuleExpressionStringPrinter();
+                if (Infos == null) printer.Append('[').Append(Info.ToString()).Append("] ");
+                printer.Append(this);
+                return printer.ToString();
+            }
+                
+                
         }
 
     }

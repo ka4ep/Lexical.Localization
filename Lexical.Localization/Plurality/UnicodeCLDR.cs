@@ -23,12 +23,12 @@ namespace Lexical.Localization
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class UnicodeCLDRv35 : UnicodeCLDRXml, IEnumerable<IPluralRule>
+    public class UnicodeCLDRv35Xml : UnicodeCLDRXml, IEnumerable<IPluralRule>
     {
         /// <summary>
         /// Version 35 lazy loader.
         /// </summary>
-        private static readonly Lazy<UnicodeCLDRv35> instance = new Lazy<UnicodeCLDRv35>();
+        private static readonly Lazy<UnicodeCLDRv35Xml> instance = new Lazy<UnicodeCLDRv35Xml>();
 
         /// <summary>
         /// Unicode CLDR v35.
@@ -36,12 +36,12 @@ namespace Lexical.Localization
         /// Reads embedded CLDR plural data files.
         /// Data files are licensed under <see href="https://unicode.org/repos/cldr/tags/release-35/unicode-license.txt"/>.
         /// </summary>
-        public static UnicodeCLDRv35 Instance => instance.Value;
+        public static UnicodeCLDRv35Xml Instance => instance.Value;
 
         /// <summary>
         /// Create cldr reader that (re-)reads from embedded resources.
         /// </summary>
-        public UnicodeCLDRv35() : base("Unicode.CLDRv35", typeof(UnicodeCLDRv35).Assembly, "Lexical.Localization.Unicode.v35.plurals.xml", "Lexical.Localization.Unicode.v35.ordinals.xml")
+        public UnicodeCLDRv35Xml() : base("Unicode.CLDRv35", typeof(UnicodeCLDRv35Xml).Assembly, "Lexical.Localization.Unicode.v35.plurals.xml", "Lexical.Localization.Unicode.v35.ordinals.xml")
         {
         }
 
@@ -51,7 +51,7 @@ namespace Lexical.Localization
         /// <paramref name="pluralsFile"/>
         /// <paramref name="ordinalsFile"/>
         /// </summary>
-        public UnicodeCLDRv35(string pluralsFile, string ordinalsFile) : base("Unicode.CLDRv35", pluralsFile, ordinalsFile)
+        public UnicodeCLDRv35Xml(string pluralsFile, string ordinalsFile) : base("Unicode.CLDRv35", pluralsFile, ordinalsFile)
         {
         }
     }

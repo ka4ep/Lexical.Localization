@@ -159,7 +159,7 @@ namespace Lexical.Localization.Plurality
             { 
                 if (token.Kind == TokenKind.IntegerLiteral || token.Kind == TokenKind.FloatLiteral)
                 {
-                    ConstantExpression exp = new ConstantExpression(token.Value);
+                    ConstantExpression exp = new ConstantExpression(token.Text);
                     if (tilde && exps.Count > 0 && exps[exps.Count - 1] is ConstantExpression prevExp)
                         exps[exps.Count - 1] = new RangeExpression(prevExp, exp);
                     else

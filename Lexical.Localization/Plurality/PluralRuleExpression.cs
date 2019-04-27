@@ -40,26 +40,7 @@ namespace Lexical.Localization.Plurality
 
         /// <inheritdoc/>
         public override void Append(StringBuilder sb)
-        {
-            bool hasPrev = false;
-            if (Infos != null)
-            {
-                AppendExp(sb, Infos);
-                hasPrev = true;
-            }
-
-            if (Rule != null)
-            {
-                if (hasPrev) { sb.Append(' '); hasPrev = false; }
-                AppendExp(sb, Rule);
-            }
-
-            foreach (ISamplesExpression samples in Samples)
-            {
-                sb.Append(" ");
-                AppendExp(sb, samples);
-            }
-        }
+            => new PluralRuleExpressionStringPrinter(sb).Append(this);
     }
 
     /// <summary>
@@ -85,18 +66,8 @@ namespace Lexical.Localization.Plurality
 
         /// <inheritdoc/>
         public override void Append(StringBuilder sb)
-        {
-            if (Infos != null)
-            {
-                sb.Append('[');
-                for (int i = 0; i < Infos.Length; i++)
-                {
-                    if (i > 0) sb.Append(",");
-                    AppendExp(sb, Infos[i]);
-                }
-                sb.Append(']');
-            }
-        }
+            => new PluralRuleExpressionStringPrinter(sb).Append(this);
+
     }
 
     /// <summary>
@@ -127,11 +98,8 @@ namespace Lexical.Localization.Plurality
 
         /// <inheritdoc/>
         public override void Append(StringBuilder sb)
-        {
-            sb.Append(Name);
-            sb.Append('=');
-            sb.Append(Value);
-        }
+            => new PluralRuleExpressionStringPrinter(sb).Append(this);
+
     }
 
     /// <summary>
@@ -156,19 +124,8 @@ namespace Lexical.Localization.Plurality
 
         /// <inheritdoc/>
         public override void Append(StringBuilder sb)
-        {
-            if (Name != null)
-            {
-                sb.Append('@');
-                sb.Append(Name);
-                sb.Append(' ');
-            }
-            for (int i = 0; i < Samples.Length; i++)
-            {
-                if (i > 0) sb.Append(" ");
-                AppendExp(sb, Samples[i]);
-            }
-        }
+            => new PluralRuleExpressionStringPrinter(sb).Append(this);
+
 
     }
 
@@ -212,11 +169,8 @@ namespace Lexical.Localization.Plurality
 
         /// <inheritdoc/>
         public override void Append(StringBuilder sb)
-        {
-            AppendExp(sb, MinValue);
-            sb.Append("..");
-            AppendExp(sb, MaxValue);
-        }
+            => new PluralRuleExpressionStringPrinter(sb).Append(this);
+
 
     }
 
@@ -238,13 +192,8 @@ namespace Lexical.Localization.Plurality
 
         /// <inheritdoc/>
         public override void Append(StringBuilder sb)
-        {
-            for (int i = 0; i < Values.Length; i++)
-            {
-                if (i > 0) sb.Append(", ");
-                AppendExp(sb, Values[i]);
-            }
-        }
+            => new PluralRuleExpressionStringPrinter(sb).Append(this);
+
     }
 
 
