@@ -65,7 +65,7 @@ namespace Lexical.Localization.Plurality
     /// 
     /// Every time a query is not found, it will re-read the source from <see cref="ruleReader"/>.
     /// </summary>
-    public class PluralRulesCached : IPluralRules, IPluralRulesEvaluatable, IPluralRulesQueryable, IPluralRulesEnumerable
+    public class PluralRulesIndexed : IPluralRules, IPluralRulesEvaluatable, IPluralRulesQueryable, IPluralRulesEnumerable
     {
         /// <summary>
         /// Cached queries
@@ -86,7 +86,7 @@ namespace Lexical.Localization.Plurality
         /// Create rules
         /// </summary>
         /// <param name="ruleReader">source of rules</param>
-        public PluralRulesCached(IEnumerable<IPluralRule> ruleReader)
+        public PluralRulesIndexed(IEnumerable<IPluralRule> ruleReader)
         {
             this.ruleReader = ruleReader ?? throw new ArgumentNullException(nameof(ruleReader));
         }

@@ -131,6 +131,8 @@ namespace Lexical.Localization.Exp
         Dollar = 1UL << 57,
         /// <summary>..</summary>
         Range = 1UL << 58,
+        /// <summary>??</summary>
+        Coalesce = 1UL << 59,
 
         /// <summary></summary>
         Unknown = 1UL << 63,
@@ -259,6 +261,8 @@ namespace Lexical.Localization.Exp
         public static Regex Ellipsis = new Regex(@"^(…|\.\.\.)", opts);
         /// <summary></summary>
         public static Regex Range = new Regex(@"^\.\.", opts);
+        /// <summary></summary>
+        public static Regex Coalesce = new Regex(@"^\?\?", opts);
 
         /// <summary></summary>
         public static Regex NameLiteral = new Regex(@"^(\\[0-9])?([^\./\\:\!#\-\+\^(\)\{\}\[\]&\<\>\|"",\n\t\r=\*\^\?;§…\$%~ ]|(\\[\."",ntr/\\:\!#&\-\+\^,\(\)\{\}\[\]\|=\*\^\?;§…\$%~ ]))+", opts);
@@ -591,6 +595,11 @@ namespace Lexical.Localization.Exp
             {
                 column += match.Length;
                 current.Kind = TokenKind.Range;
+            }
+            else if ((match = stream.Take(TokenUtils.Coalesce)) != null)
+            {
+                column += match.Length;
+                current.Kind = TokenKind.Coalesce;
             }
             else
             {

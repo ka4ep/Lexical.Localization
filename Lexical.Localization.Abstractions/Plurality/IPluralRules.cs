@@ -87,7 +87,7 @@ namespace Lexical.Localization.Plurality
         /// </summary>
         /// <param name="rules"></param>
         /// <returns></returns>
-        public static IEnumerable<string> RuleSets(this IPluralRules rules)
+        public static IEnumerable<string> RuleSets(this IEnumerable<IPluralRule> rules)
         {
             if (rules == null) throw new ArgumentNullException(nameof(rules));
             if (rules is IEnumerable<IPluralRule> enumr) return enumr.Select(r => r.Info.RuleSet).Where(rs => rs != null).Distinct();
@@ -99,7 +99,7 @@ namespace Lexical.Localization.Plurality
         /// </summary>
         /// <param name="rules"></param>
         /// <returns></returns>
-        public static IEnumerable<string> Categories(this IPluralRules rules)
+        public static IEnumerable<string> Categories(this IEnumerable<IPluralRule> rules)
         {
             if (rules == null) throw new ArgumentNullException(nameof(rules));
             if (rules is IEnumerable<IPluralRule> enumr) return enumr.Select(r => r.Info.Category).Where(c => c != null).Distinct();
@@ -111,7 +111,7 @@ namespace Lexical.Localization.Plurality
         /// </summary>
         /// <param name="rules"></param>
         /// <returns></returns>
-        public static IEnumerable<string> Cultures(this IPluralRules rules)
+        public static IEnumerable<string> Cultures(this IEnumerable<IPluralRule> rules)
         {
             if (rules == null) throw new ArgumentNullException(nameof(rules));
             if (rules is IEnumerable<IPluralRule> enumr) return enumr.Select(r => r.Info.Culture).Where(c => c != null).Distinct();
@@ -123,7 +123,7 @@ namespace Lexical.Localization.Plurality
         /// </summary>
         /// <param name="rules"></param>
         /// <returns></returns>
-        public static IEnumerable<string> Case(this IPluralRules rules)
+        public static IEnumerable<string> Cases(this IEnumerable<IPluralRule> rules)
         {
             if (rules == null) throw new ArgumentNullException(nameof(rules));
             if (rules is IEnumerable<IPluralRule> enumr) return enumr.Select(r => r.Info.Case).Where(c => c != null).Distinct();

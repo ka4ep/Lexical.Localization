@@ -110,11 +110,62 @@ namespace Lexical.Localization.Exp
                 BinaryOp.GreaterThan=>">", BinaryOp.GreaterThanOrEqual=>">=", BinaryOp.In => "=", BinaryOp.LeftShift => "<<", BinaryOp.LessThan => "<", BinaryOp.LessThanOrEqual => "<=",
                 BinaryOp.Modulo=>"%", BinaryOp.Multiply=>"*", BinaryOp.NotEqual=>"!=", BinaryOp.Power=>"^", BinaryOp.RightShift=>">>", 
                 BinaryOp.Subtract=>"-",
-                _ => "??" });
+                BinaryOp.Coalesce=> "??",
+                _ => throw new NotImplementedException($"{nameof(BinaryOpExpression)}: {Op} is not implemented") });
             sb.Append(' ');
             AppendExp(sb, Right);
         }
+    }
 
+    /// <summary>
+    /// Trinary operation expression
+    /// </summary>
+    public class TrinaryOpExpression : Expression, ITrinaryOpExpression
+    {
+        /// <summary> </summary>
+        public TrinaryOp Op { get; internal set; }
+        /// <summary> </summary>
+        public IExpression A { get; internal set; }
+        /// <summary> </summary>
+        public IExpression B { get; internal set; }
+        /// <summary> </summary>
+        public IExpression C { get; internal set; }
+
+        /// <summary>
+        /// Create expression
+        /// </summary>
+        /// <param name="op"></param>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        public TrinaryOpExpression(TrinaryOp op, IExpression a, IExpression b, IExpression c)
+        {
+            Op = op;
+            A = a ?? throw new ArgumentNullException(nameof(a));
+            B = b ?? throw new ArgumentNullException(nameof(b));
+            C = c ?? throw new ArgumentNullException(nameof(c));
+        }
+
+        /// <inheritdoc/>
+        public override void Append(StringBuilder sb)
+        {
+            AppendExp(sb, A);
+            sb.Append(' ');
+            sb.Append(Op switch
+            {
+                TrinaryOp.Condition => "?",
+                _ => throw new NotImplementedException($"{nameof(TrinaryOpExpression)}: {Op} is not implemented")
+            });
+            sb.Append(' ');
+            AppendExp(sb, B);
+            sb.Append(' ');
+            sb.Append(Op switch
+            {
+                TrinaryOp.Condition => ":",
+                _ => throw new NotImplementedException($"{nameof(TrinaryOpExpression)}: {Op} is not implemented")
+            });
+            sb.Append(' ');
+            AppendExp(sb, C);
+        }
     }
 
     /// <summary>

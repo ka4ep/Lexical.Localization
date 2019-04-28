@@ -17,7 +17,7 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Start value
         /// </summary>
-        public const int FNVHashBasis = unchecked((int)0x811C9DC5);
+        public static readonly PluralRuleExpressionHashCode Initial = unchecked((int)0x811C9DC5);
 
         /// <summary>
         /// Prime factor
@@ -120,6 +120,7 @@ namespace Lexical.Localization.Plurality
                 IParenthesisExpression par => Hash(par.Element),
                 IUnaryOpExpression uop => Hash((int)uop.Op).Hash(uop.Element),
                 IBinaryOpExpression bop => Hash((int)bop.Op).Hash(bop.Left).Hash(bop.Right),
+                ITrinaryOpExpression top => Hash((int)top.Op).Hash(top.A).Hash(top.B).Hash(top.C),
                 _ => this
             };
 

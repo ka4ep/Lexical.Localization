@@ -115,7 +115,7 @@ namespace Lexical.Localization.Plurality
 
             // Try read boolean expression
             reader.TakeAll(TokenKind.NonEssential);
-            IExpression rule = reader.Take(BooleanExpression);
+            IExpression rule = reader.Take(BooleanBinaryOp, null);
             //if (rule == null) { reader.Index = ix; return null; }
             reader.TakeAll(TokenKind.NonEssential);
 
@@ -159,7 +159,7 @@ namespace Lexical.Localization.Plurality
             { 
                 if (token.Kind == TokenKind.IntegerLiteral || token.Kind == TokenKind.FloatLiteral)
                 {
-                    ConstantExpression exp = new ConstantExpression(token.Text);
+                    ConstantExpression exp = new ConstantExpression(token.Text.ToString());
                     if (tilde && exps.Count > 0 && exps[exps.Count - 1] is ConstantExpression prevExp)
                         exps[exps.Count - 1] = new RangeExpression(prevExp, exp);
                     else
@@ -202,9 +202,20 @@ namespace Lexical.Localization.Plurality
             {
                 int ix2 = reader.Index;
                 reader.TakeAll(TokenKind.NonEssential);
-                Token token = reader.Take(TokenKind.Exclamation | TokenKind.NameLiteral);
+                Token token = reader.Take(TokenKind.Exclamation | TokenKind.NameLiteral | TokenKind.LParenthesis);
+                // Parenthesis
+                if (token != null && token.Kind == TokenKind.LParenthesis)
+                {
+                    reader.TakeAll(TokenKind.NonEssential);
+                    IExpression _exp = reader.Take(BooleanBinaryOp, null);
+                    if (_exp == null) { reader.Index = ix; return null; }
+                    reader.TakeAll(TokenKind.NonEssential);
+                    Token _rparenthesis = reader.Take(TokenKind.RParenthesis);
+                    if (_rparenthesis == null) { reader.Index = ix; return null; }
+                    return new ParenthesisExpression(_exp);
+                }
                 // "true"
-                if (token != null && token.Kind == TokenKind.NameLiteral && token.Value is String name)
+                else if (token != null && token.Kind == TokenKind.NameLiteral && token.Value is String name)
                 {
                     if (name == "true")
                     {
@@ -263,14 +274,6 @@ namespace Lexical.Localization.Plurality
                 }
             }
 
-            // Continue boolean expression
-            if (exp != null)
-            {
-                int ix2 = reader.Index;
-                IExpression exp2 = reader.Take(BooleanBinaryOp, exp);
-                if (exp2 != null) exp = exp2; else reader.Index = ix2;
-            }
-
             // No boolean expression
             if (exp == null) { reader.Index = ix; return null; }
 
@@ -284,35 +287,59 @@ namespace Lexical.Localization.Plurality
         /// Rules:
         ///  "and" binds more tightly than "or". So X or Y and Z is interpreted as (X or (Y and Z)).
         /// </summary>
-        public readonly static Tokens.Taker1<IExpression, IExpression> BooleanBinaryOp = (ref Tokens reader, IExpression leftExp) =>
+        public readonly static Tokens.Taker1<IExpression, IExpression> BooleanBinaryOp = (ref Tokens reader, IExpression exp) =>
         {
-            if (leftExp == null) return null;
+            // Read exp
+            if (exp == null)
+            {
+                exp = reader.Take(BooleanExpression);
+                if (exp == null) return null;
+            }
 
             int ix = reader.Index;
 
-            // Boolean exp
-            IExpression exp = null;
-
             // ¤
-            Token token = reader.Take(TokenKind.NameLiteral | TokenKind.Equals2 | TokenKind.InEquals2);
-            if (token == null) { reader.Index = ix; return leftExp; }
-
-            // Expression
             reader.TakeAll(TokenKind.NonEssential);
-            IExpression rightExp = reader.Take(BooleanExpression);
-            if (rightExp != null)
+            Token token = reader.Take(TokenKind.NameLiteral | TokenKind.Equals2 | TokenKind.InEquals2);
+            if (token == null) { reader.Index = ix; return exp; }
+
+            // " and " 
+            if (token.Kind == TokenKind.NameLiteral && token.Value as String == "and")
             {
-                // exp1 and exp2
-                if (token.Kind == TokenKind.NameLiteral && token.Value is String name_ && name_ == "and") exp = new BinaryOpExpression(BinaryOp.LogicalAnd, leftExp, rightExp);
-                // exp1 or exp2
-                else if (token.Kind == TokenKind.NameLiteral && token.Value is String name__ && name__ == "or") exp = new BinaryOpExpression(BinaryOp.LogicalOr, leftExp, rightExp);
-                // exp1 == exp2
-                else if (token.Kind == TokenKind.Equals2) exp = new BinaryOpExpression(BinaryOp.Equal, leftExp, rightExp);
-                // exp1 != exp2
-                else if (token.Kind == TokenKind.InEquals2) exp = new BinaryOpExpression(BinaryOp.NotEqual, leftExp, rightExp);
-                // No exp
-                else { reader.Index = ix; return null; }
-            } else { reader.Index = ix; return null; }
+                while (token != null && token.Kind == TokenKind.NameLiteral && token.Value as String == "and")
+                {
+                    IExpression nextExp = reader.Take(BooleanExpression);
+                    if (nextExp == null) { reader.Index = ix; return exp; }
+                    exp = new BinaryOpExpression(BinaryOp.LogicalAnd, exp, nextExp);
+                    int ix2 = reader.Index;
+                    reader.TakeAll(TokenKind.NonEssential);
+                    token = reader.Take(TokenKind.NameLiteral);
+                    if (token == null || token.Value as string != "and") { reader.Index = ix2; }
+                }
+            }
+            // exp1 or exp2
+            else if (token.Kind == TokenKind.NameLiteral && token.Value as String == "or")
+            {
+                IExpression rightExp = reader.Take(BooleanBinaryOp, null);
+                if (rightExp == null) { reader.Index = ix; return exp; }
+                exp = new BinaryOpExpression(BinaryOp.LogicalOr, exp, rightExp);
+            }
+            // exp1 == exp2
+            else if (token.Kind == TokenKind.Equals2)
+            {
+                IExpression rightExp = reader.Take(BooleanBinaryOp, null);
+                if (rightExp == null) { reader.Index = ix; return exp; }
+                exp = new BinaryOpExpression(BinaryOp.Equal, exp, rightExp);
+            }
+            // exp1 != exp2
+            else if (token.Kind == TokenKind.InEquals2)
+            {
+                IExpression rightExp = reader.Take(BooleanBinaryOp, null);
+                if (rightExp == null) { reader.Index = ix; return exp; }
+                exp = new BinaryOpExpression(BinaryOp.NotEqual, exp, rightExp);
+            }
+            // No exp
+            else { reader.Index = ix; return null; }
 
             // Keep reading boolean expressions
             exp = reader.Take(BooleanBinaryOp, exp);

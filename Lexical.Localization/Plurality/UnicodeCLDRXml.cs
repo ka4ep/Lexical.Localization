@@ -23,48 +23,6 @@ namespace Lexical.Localization
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class UnicodeCLDRv35Xml : UnicodeCLDRXml, IEnumerable<IPluralRule>
-    {
-        /// <summary>
-        /// Version 35 lazy loader.
-        /// </summary>
-        private static readonly Lazy<UnicodeCLDRv35Xml> instance = new Lazy<UnicodeCLDRv35Xml>();
-
-        /// <summary>
-        /// Unicode CLDR v35.
-        /// 
-        /// Reads embedded CLDR plural data files.
-        /// Data files are licensed under <see href="https://unicode.org/repos/cldr/tags/release-35/unicode-license.txt"/>.
-        /// </summary>
-        public static UnicodeCLDRv35Xml Instance => instance.Value;
-
-        /// <summary>
-        /// Create cldr reader that (re-)reads from embedded resources.
-        /// </summary>
-        public UnicodeCLDRv35Xml() : base("Unicode.CLDRv35", typeof(UnicodeCLDRv35Xml).Assembly, "Lexical.Localization.Unicode.v35.plurals.xml", "Lexical.Localization.Unicode.v35.ordinals.xml")
-        {
-        }
-
-
-        /// <summary>
-        /// Create cldr reader that (re-)reads from external resources.
-        /// <paramref name="pluralsFile"/>
-        /// <paramref name="ordinalsFile"/>
-        /// </summary>
-        public UnicodeCLDRv35Xml(string pluralsFile, string ordinalsFile) : base("Unicode.CLDRv35", pluralsFile, ordinalsFile)
-        {
-        }
-    }
-
-    /// <summary>
-    /// Unicode CLDR v35 Plurality Rules reader.
-    /// 
-    /// <see href="https://www.unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules"/>
-    /// <see href="https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html"/>
-    /// <see href="http://cldr.unicode.org/translation/plurals"/>
-    /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
-    /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
-    /// </summary>
     public class UnicodeCLDRXml : IEnumerable<IPluralRule>
     {
         /// <summary>

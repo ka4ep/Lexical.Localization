@@ -212,7 +212,7 @@ namespace Lexical.Localization.Plurality
                 // "The positive relations are of the format x = y and x = y mod z. 
                 //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
                 //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
-                if (number.F_Digits > 0) return false;
+                if (number.T_Digits > 0) return false;
 
                 IPluralNumber min = EvaluateAsNumber(lr.MinValue), max = EvaluateAsNumber(lr.MaxValue);
                 return comparer.Compare(min, number) <= 0 && comparer.Compare(number, max) <= 0;
@@ -227,7 +227,7 @@ namespace Lexical.Localization.Plurality
                 // "The positive relations are of the format x = y and x = y mod z. 
                 //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
                 //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
-                if (number.F_Digits > 0) return false;
+                if (number.T_Digits > 0) return false;
 
                 // Range comparison
                 IPluralNumber min = EvaluateAsNumber(rr.MinValue), max = EvaluateAsNumber(rr.MaxValue);
@@ -277,7 +277,7 @@ namespace Lexical.Localization.Plurality
                 // "The positive relations are of the format x = y and x = y mod z. 
                 //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
                 //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
-                if (number.F_Digits > 0) return false;
+                if (number.T_Digits > 0) return true;
 
                 IPluralNumber min = EvaluateAsNumber(lr.MinValue), max = EvaluateAsNumber(lr.MaxValue);
                 return comparer.Compare(min, number) > 0 || comparer.Compare(number, max) > 0;
@@ -292,7 +292,7 @@ namespace Lexical.Localization.Plurality
                 // "The positive relations are of the format x = y and x = y mod z. 
                 //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
                 //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
-                if (number.F_Digits > 0) return false;
+                if (number.T_Digits > 0) return true;
 
                 // Range comparison
                 IPluralNumber min = EvaluateAsNumber(rr.MinValue), max = EvaluateAsNumber(rr.MaxValue);

@@ -246,6 +246,7 @@ namespace Lexical.Localization.Plurality
                         BinaryOp.Power => " pow ",
                         BinaryOp.Xor => "^",
                         BinaryOp.Subtract => "-",
+                        BinaryOp.Coalesce => "??",
                         _ => "¤"
                     }).Append(bop.Right),
                 _ => this

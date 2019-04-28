@@ -59,12 +59,64 @@ namespace Lexical.Localization.Plurality
         protected Func<string, ResultLine> resolveFunc;
 
         /// <summary>
+        /// Function that parses ruleset expression into <see cref="IEnumerable{T}"/>.
+        /// </summary>
+        /// <returns>parsed rules</returns>
+        /// <exception cref="ArgumentException">error with string</exception>
+        public static Func<string, IEnumerable<IPluralRule>> DefaultRuleExpressionParser = (string rulesExpression) =>
+            PluralRuleExpressionParser.CreateParser(rulesExpression).Select(exp => new PluralRule.Expression(exp.Infos, exp.Rule, exp.Samples));
+
+        /// <summary>
+        /// Assembly resolver that looks into AppDomain, but will not load external file.
+        /// </summary>
+        public static Func<AssemblyName, Assembly> DefaultAssemblyResolver = asmName => Assembly.Load(asmName);
+
+        /// <summary>
+        /// Assembly resolver that searches dlls from application directory.
+        /// </summary>
+        public static Func<AssemblyName, Assembly> FileAssemblyResolver = asmName =>
+        {
+            try
+            {
+                Assembly a = Assembly.Load(asmName);
+                if (a != null) return a;
+            }
+            catch (Exception)
+            {
+            }
+
+            string dir = typeof(PluralRulesResolver).Assembly.Location;
+            if (dir != null)
+            {
+                string dllName = asmName.Name + ".dll";
+                string dllPath = Path.Combine(dir, asmName.Name + ".dll");
+                if (!File.Exists(dllPath)) throw new FileNotFoundException(dllName);
+                return Assembly.LoadFile(dllPath);
+            }
+            return null;
+        };
+
+        /// <summary>
+        /// Default type resolver that does following name mapping.
+        /// </summary>
+        public static Func<Assembly, string, bool, Type> DefaultTypeResolver = (Assembly a, string typename, bool throwOnError)
+            => a != null ? a.GetType(typename) : Type.GetType(typename);
+
+        /// <summary>
+        /// Function that converts enumerable to <see cref="IPluralRules"/>.
+        /// </summary>
+        public static Func<IEnumerable<IPluralRule>, IPluralRulesEnumerable> DefaultRulesFactory =>
+            enumr => enumr is IPluralRulesEnumerable casted ?
+                casted :
+                new PluralRulesIndexed(enumr);
+
+        /// <summary>
         /// Create rule resolver with default settings.
         /// 
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public PluralRulesResolver() : this(LocalAssemblyResolver, TypeResolver, RuleExpressionParser, RulesFactory)
+        public PluralRulesResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver, DefaultRuleExpressionParser, DefaultRulesFactory)
         {
         }
 
@@ -117,56 +169,6 @@ namespace Lexical.Localization.Plurality
                 }
             };
         }
-
-        /// <summary>
-        /// Function that parses ruleset expression into <see cref="IEnumerable{T}"/>.
-        /// </summary>
-        /// <returns>parsed rules</returns>
-        /// <exception cref="ArgumentException">error with string</exception>
-        public static Func<string, IEnumerable<IPluralRule>> RuleExpressionParser = (string rulesExpression) =>
-            PluralRuleExpressionParser.CreateParser(rulesExpression).Select(exp => new PluralRule.Expression(exp.Infos, exp.Rule, exp.Samples));
-
-        /// <summary>
-        /// Assembly resolver that looks into AppDomain, but will not load external file.
-        /// </summary>
-        public static Func<AssemblyName, Assembly> LocalAssemblyResolver = asmName => Assembly.Load(asmName);
-
-        /// <summary>
-        /// Assembly resolver that searches dlls from application directory.
-        /// </summary>
-        public static Func<AssemblyName, Assembly> FileAssemblyResolver = asmName =>
-        {
-            try
-            {
-                Assembly a = Assembly.Load(asmName);
-                if (a != null) return a;
-            } catch (Exception)
-            {
-            }
-
-            string dir = typeof(PluralRulesResolver).Assembly.Location;
-            if (dir != null)
-            {
-                string dllName = asmName.Name + ".dll";
-                string dllPath = Path.Combine(dir, asmName.Name + ".dll");
-                if (!File.Exists(dllPath)) throw new FileNotFoundException(dllName);
-                return Assembly.LoadFile(dllPath);
-            }
-            return null;
-        };
-
-        /// <summary>
-        /// Default type resolver that does following name mapping.
-        /// </summary>
-        public static Func<Assembly, string, bool, Type> TypeResolver = (Assembly a, string typename, bool throwOnError) => a.GetType(typename);
-
-        /// <summary>
-        /// Function that converts enumerable to <see cref="IPluralRules"/>.
-        /// </summary>
-        public static Func<IEnumerable<IPluralRule>, IPluralRulesEnumerable> RulesFactory => 
-            enumr => enumr is IPluralRulesEnumerable casted ? 
-                casted : 
-                new PluralRulesCached(enumr);
 
         /// <summary>
         /// Get-cached-or-resolve rules into <see cref="IPluralRulesEnumerable"/>

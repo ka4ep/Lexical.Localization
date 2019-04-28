@@ -94,11 +94,23 @@ namespace Lexical.Localization.Exp
         NotEqual,
         /// <summary>==</summary>
         Equal,
+        /// <summary>??</summary>
+        Coalesce,
 
         /// <summary>=, in group (right side) comparer</summary>
         In,
     };
 
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum TrinaryOp
+    {
+        /// <summary>
+        /// ?: condition operator, e.g. "condition_exp ? true_exp : false_exp"
+        /// </summary>
+        Condition
+    }
 
     /// <summary>
     /// 
@@ -135,6 +147,32 @@ namespace Lexical.Localization.Exp
         /// 
         /// </summary>
         IExpression Right { get; }
+    }
+
+    /// <summary>
+    /// "b ? x : y" 
+    /// </summary>
+    public interface ITrinaryOpExpression : IExpression
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        TrinaryOp Op { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        IExpression A { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        IExpression B { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        IExpression C { get; }
     }
 
     /// <summary>
