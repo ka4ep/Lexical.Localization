@@ -230,7 +230,7 @@ namespace Lexical.Localization.Exp
         /// </summary>
         /// <param name="name"></param>
         /// <param name="args"></param>
-        public FunctionExpression(string name, IExpression[] args)
+        public FunctionExpression(string name, params IExpression[] args)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Args = args ?? throw new ArgumentNullException(nameof(args));

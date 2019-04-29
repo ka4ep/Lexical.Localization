@@ -72,6 +72,37 @@ namespace Lexical.Localization.Plurality
         }
 
         /// <summary>
+        /// Zero case that matches when number is 1.
+        /// </summary>
+        public class One : PluralRule
+        {
+            readonly static IPluralNumber _one = new DecimalNumber.Long(1L);
+
+            /// <summary>
+            /// Create rule that compares to zero value.
+            /// </summary>
+            /// <param name="info"></param>
+            public One(PluralRuleInfo info) : base(info)
+            {
+            }
+
+            /// <summary>
+            /// Compare to zero.
+            /// </summary>
+            /// <param name="number"></param>
+            /// <returns></returns>
+            public override bool Evaluate(IPluralNumber number)
+                => PluralNumberComparer.Instance.Equals(number, _one);
+
+            /// <summary>
+            /// Print string
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+                => "[" + Info + "] n=1";
+        }
+
+        /// <summary>
         /// Null case that matches when number is null or empty.
         /// </summary>
         public class Empty : PluralRule
@@ -150,7 +181,7 @@ namespace Lexical.Localization.Plurality
             /// <param name="infosExp"></param>
             /// <param name="ruleExp"></param>
             /// <param name="samplesExps"></param>
-            public TrueWithExpression(PluralRuleInfo info, IPluralRuleInfosExpression infosExp, IExpression ruleExp, ISamplesExpression[] samplesExps) : base(info)
+            public TrueWithExpression(PluralRuleInfo info, IPluralRuleInfosExpression infosExp, IExpression ruleExp, params ISamplesExpression[] samplesExps) : base(info)
             {
                 this.Infos = infosExp;
                 this.Rule = ruleExp;
@@ -234,7 +265,7 @@ namespace Lexical.Localization.Plurality
             /// <param name="infoExpression">info expression</param>
             /// <param name="ruleExpression"></param>
             /// <param name="samplesExpression"></param>
-            public Expression(IPluralRuleInfosExpression infoExpression, IExpression ruleExpression, ISamplesExpression[] samplesExpression) : base(Convert(infoExpression))
+            public Expression(IPluralRuleInfosExpression infoExpression, IExpression ruleExpression, params ISamplesExpression[] samplesExpression) : base(Convert(infoExpression))
             {
                 this.Infos = infoExpression;
                 this.Rule = ruleExpression;
@@ -248,7 +279,7 @@ namespace Lexical.Localization.Plurality
             /// <param name="infoExpression">info expression</param>
             /// <param name="ruleExpression"></param>
             /// <param name="samplesExpression"></param>
-            public Expression(PluralRuleInfo info, IPluralRuleInfosExpression infoExpression, IExpression ruleExpression, ISamplesExpression[] samplesExpression) : base(info)
+            public Expression(PluralRuleInfo info, IPluralRuleInfosExpression infoExpression, IExpression ruleExpression, params ISamplesExpression[] samplesExpression) : base(info)
             {
                 this.Infos = infoExpression;
                 this.Rule = ruleExpression;

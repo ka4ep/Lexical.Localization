@@ -16,7 +16,7 @@ namespace Lexical.Localization.Plurality
     /// 
     /// Implements queryable, but does not cache indices.
     /// </summary>
-    public class PluralRules : IPluralRules, IPluralRulesEnumerable, IPluralRulesQueryable
+    public class PluralRulesArray : IPluralRules, IPluralRulesEnumerable, IPluralRulesQueryable
     {
         /// <summary>
         /// Array of rules
@@ -27,7 +27,7 @@ namespace Lexical.Localization.Plurality
         /// Create rules
         /// </summary>
         /// <param name="rules"></param>
-        public PluralRules(params IPluralRule[] rules)
+        public PluralRulesArray(params IPluralRule[] rules)
         {
             Rules = rules ?? throw new ArgumentNullException(nameof(rules));
         }
@@ -36,7 +36,7 @@ namespace Lexical.Localization.Plurality
         /// Create rules.
         /// </summary>
         /// <param name="rules"></param>
-        public PluralRules(IEnumerable<IPluralRule> rules)
+        public PluralRulesArray(IEnumerable<IPluralRule> rules)
         {
             Rules = (rules ?? throw new ArgumentNullException(nameof(rules))).ToArray();
         }
@@ -49,15 +49,88 @@ namespace Lexical.Localization.Plurality
             => ((IEnumerable<IPluralRule>)Rules).GetEnumerator();
 
         /// <summary>
-        /// Filter rules by <paramref name="filterCriteria"/>.
         /// </summary>
         /// <param name="filterCriteria"></param>
         /// <returns></returns>
         public virtual IPluralRulesEnumerable Query(PluralRuleInfo filterCriteria)
-            => new PluralRules(Rules.Where(r => filterCriteria.FilterMatch(r.Info)));
+        {
+            if (filterCriteria.Equals(PluralRuleInfo.Empty)) return this;
+
+            int c = 0;
+            foreach (var rule in this)
+                if (filterCriteria.FilterMatch(rule.Info)) c++;
+            IPluralRule[] result = new IPluralRule[c];
+
+            int i = 0;
+            foreach (var rule in this)
+                if (filterCriteria.FilterMatch(rule.Info))
+                    result[i++] = rule;
+
+            return new PluralRulesArray(result);
+        }
 
         IEnumerator IEnumerable.GetEnumerator()
             => ((IEnumerable)Rules).GetEnumerator();
+    }
+
+    /// <summary>
+    /// Simple immutable collection of plural rules.
+    /// 
+    /// Implements queryable, but does not cache indices.
+    /// </summary>
+    public class PluralRulesList : List<IPluralRule>, IPluralRules, IPluralRulesEnumerable, IPluralRulesQueryable
+    {
+        /// <summary>
+        /// Create rules
+        /// </summary>
+        public PluralRulesList() : base()
+        {
+        }
+
+        /// <summary>
+        /// Create rules
+        /// </summary>
+        public PluralRulesList(int capacity) : base(capacity)
+        {
+        }
+
+        /// <summary>
+        /// Create rules
+        /// </summary>
+        /// <param name="rules"></param>
+        public PluralRulesList(params IPluralRule[] rules) : base(rules)
+        {
+        }
+
+        /// <summary>
+        /// Create rules.
+        /// </summary>
+        /// <param name="rules"></param>
+        public PluralRulesList(IEnumerable<IPluralRule> rules) : base(rules)
+        {
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="filterCriteria"></param>
+        /// <returns></returns>
+        public virtual IPluralRulesEnumerable Query(PluralRuleInfo filterCriteria)
+        {
+            if (filterCriteria.Equals(PluralRuleInfo.Empty)) return this;
+
+            int c = 0;
+            foreach (var rule in this)
+                if (filterCriteria.FilterMatch(rule.Info)) c++;
+            IPluralRule[] result = new IPluralRule[c];
+
+            int i = 0;
+            foreach (var rule in this)
+                if (filterCriteria.FilterMatch(rule.Info))
+                    result[i++] = rule;
+
+            return new PluralRulesArray(result);
+        }
+
     }
 
     /// <summary>
@@ -95,7 +168,7 @@ namespace Lexical.Localization.Plurality
         /// Filter rules by <paramref name="filterCriteria"/>.
         /// </summary>
         /// <param name="filterCriteria"></param>
-        /// <returns><see cref="PluralRulesEvaluatable"/> or <see cref="PluralRules"/>, or null if content is empty</returns>
+        /// <returns><see cref="PluralRulesEvaluatable"/> or <see cref="PluralRulesArray"/>, or null if content is empty</returns>
         public IPluralRulesEnumerable Query(PluralRuleInfo filterCriteria)
         {
             // Try get
@@ -120,7 +193,7 @@ namespace Lexical.Localization.Plurality
             // Instantiate PluralRulesEvaluatable
             else if (rulesets.Count <= 1 && filterCriteria.Category != null && filterCriteria.Culture != null && filterCriteria.Case == null && filterCriteria.Optional == -1) result = new PluralRulesEvaluatable(list.ToArray());
             // Instantiate PluralRules.
-            else result = new PluralRules(list.ToArray());
+            else result = new PluralRulesArray(list.ToArray());
 
             // Write to cache, if is still new
             lock (m_lock) if (!queries.ContainsKey(filterCriteria)) queries[filterCriteria] = result;
@@ -155,7 +228,7 @@ namespace Lexical.Localization.Plurality
     /// This class evaluates an array of <see cref="IPluralRuleEvaluatable"/> as a whole, and returns
     /// all the cases - optional and required - that match the requested <see cref="IPluralNumber" />.
     /// </summary>
-    public class PluralRulesEvaluatable : PluralRules, IPluralRulesEvaluatable
+    public class PluralRulesEvaluatable : PluralRulesArray, IPluralRulesEvaluatable
     {
         /// <summary>
         /// List of evaluatable cases in order of: 1. optional, 2. required.

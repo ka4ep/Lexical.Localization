@@ -16,6 +16,11 @@ namespace Lexical.Localization.Plurality
     public struct PluralRuleInfo
     {
         /// <summary>
+        /// No values
+        /// </summary>
+        public static readonly PluralRuleInfo Empty = new PluralRuleInfo(null, null, null, null, -1);
+
+        /// <summary>
         /// Name of ruleset as assembly qualified type name.
         ///
         /// e.g. "Unicode.CLDRv35".

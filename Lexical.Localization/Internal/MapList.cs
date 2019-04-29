@@ -34,7 +34,6 @@ namespace Lexical.Localization.Internal
                 if (list.Count == 0) Remove(key);
             }
             return this;
-
         }
 
         public IEnumerable<Value> GetEnumerable(Key key)
@@ -49,6 +48,12 @@ namespace Lexical.Localization.Internal
             List<Value> result;
             if (TryGetValue(key, out result)) return result;
             return null;
+        }
+
+        public bool Contains(Key key, Value value)
+        {
+            List<Value> values;
+            return TryGetValue(key, out values) && values.Contains(value);
         }
 
         public List<Value> GetList(Key key)

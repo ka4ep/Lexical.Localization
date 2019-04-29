@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using Lexical.Localization.Exp;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace Lexical.Localization.Plurality
@@ -31,7 +32,7 @@ namespace Lexical.Localization.Plurality
         /// <param name="infos">(optional) name of the expression</param>
         /// <param name="rule"></param>
         /// <param name="samples"></param>
-        public PluralRuleExpression(IPluralRuleInfosExpression infos, IExpression rule, ISamplesExpression[] samples)
+        public PluralRuleExpression(IPluralRuleInfosExpression infos, IExpression rule, params ISamplesExpression[] samples)
         {
             Infos = infos;
             Rule = rule;
@@ -59,7 +60,7 @@ namespace Lexical.Localization.Plurality
         /// Create infos
         /// </summary>
         /// <param name="infos"></param>
-        public PluralRuleInfosExpression(IPluralRuleInfoExpression[] infos)
+        public PluralRuleInfosExpression(params IPluralRuleInfoExpression[] infos)
         {
             Infos = infos;
         }
@@ -111,12 +112,21 @@ namespace Lexical.Localization.Plurality
         public string Name { get; internal set; }
         /// <summary> </summary>
         public IExpression[] Samples { get; internal set; }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="name"></param>
         /// <param name="samples"></param>
-        public SamplesExpression(string name, IExpression[] samples)
+        public static SamplesExpression Create(string name, params Object[] samples)
+            => new SamplesExpression(name, samples.Select(s => new ConstantExpression(s)).ToArray());
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="samples"></param>
+        public SamplesExpression(string name, params IExpression[] samples)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Samples = samples ?? throw new ArgumentNullException(nameof(samples));
@@ -185,7 +195,7 @@ namespace Lexical.Localization.Plurality
         /// Create group
         /// </summary>
         /// <param name="values"></param>
-        public GroupExpression(IExpression[] values)
+        public GroupExpression(params IExpression[] values)
         {
             Values = values ?? throw new ArgumentNullException(nameof(values));
         }

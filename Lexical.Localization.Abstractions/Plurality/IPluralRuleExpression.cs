@@ -29,7 +29,7 @@ namespace Lexical.Localization.Plurality
         IExpression Rule { get; }
 
         /// <summary>
-        /// (Optioanl) Samples
+        /// (Optional) Samples
         /// </summary>
         ISamplesExpression[] Samples { get; }
     }

@@ -23,7 +23,7 @@ namespace Lexical.Localization
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class UnicodeCLDRXml : IEnumerable<IPluralRule>
+    public class CLDRXml : IEnumerable<IPluralRule>
     {
         /// <summary>
         /// RuleSet name
@@ -38,11 +38,11 @@ namespace Lexical.Localization
         /// <summary>
         /// Create cldr reader that (re-)reads from embedded resources.
         /// </summary>
-        public UnicodeCLDRXml(string ruleSet, Assembly assembly, string pluralsEmbeddedResource, string ordinalsEmbeddedResource)
+        public CLDRXml(string ruleSet, Assembly assembly, string pluralsEmbeddedResource, string ordinalsEmbeddedResource)
         {
             this.RuleSet = ruleSet ?? throw new ArgumentNullException(nameof(ruleSet));
-            this.ruleReader = UnicodeCLDRXml.Read(new EmbeddedXmlReader(assembly, pluralsEmbeddedResource), RuleSet, true)
-                    .Concat(UnicodeCLDRXml.Read(new EmbeddedXmlReader(assembly, ordinalsEmbeddedResource), RuleSet, false));
+            this.ruleReader = Read(new EmbeddedXmlReader(assembly, pluralsEmbeddedResource), RuleSet, true, true)
+                    .Concat(Read(new EmbeddedXmlReader(assembly, ordinalsEmbeddedResource), RuleSet, false, true));
         }
 
         /// <summary>
@@ -51,10 +51,10 @@ namespace Lexical.Localization
         /// <param name="ruleSet">"RuleSet" parameter for <see cref="PluralRuleInfo"/></param>
         /// <param name="ordinalsFile"></param>
         /// <param name="pluralsFile"></param>
-        public UnicodeCLDRXml(string ruleSet, string pluralsFile, string ordinalsFile)
+        public CLDRXml(string ruleSet, string pluralsFile, string ordinalsFile)
         {
-            ruleReader = Read(new FileXmlReader(pluralsFile), RuleSet, true)
-                    .Concat(Read(new FileXmlReader(ordinalsFile), RuleSet, false));
+            ruleReader = Read(new FileXmlReader(pluralsFile), RuleSet, true, true)
+                    .Concat(Read(new FileXmlReader(ordinalsFile), RuleSet, false, true));
         }
 
         /// <summary>
@@ -63,8 +63,9 @@ namespace Lexical.Localization
         /// <param name="rootElements"></param>
         /// <param name="ruleset">The "RuleSet" parameter that is added to every instantiated <see cref="IPluralRule"/></param>
         /// <param name="addOptionalZero">If true, then always adds "zero" case (as optional) if it didn't exist.</param>
+        /// <param name="addOptionalOne">If true, then always adds "one" case (as optional) if it didn't exist.</param>
         /// <returns></returns>
-        public static IEnumerable<IPluralRule> Read(IEnumerable<XElement> rootElements, string ruleset, bool addOptionalZero)
+        public static IEnumerable<IPluralRule> Read(IEnumerable<XElement> rootElements, string ruleset, bool addOptionalZero, bool addOptionalOne)
         {
             List<(string, IPluralRuleExpression)> list = new List<(string, IPluralRuleExpression)>();
             foreach (XElement rootElement in rootElements)
@@ -80,7 +81,7 @@ namespace Lexical.Localization
 
                         // Read expressions into list
                         list.Clear();
-                        int otherCaseIx = -1, zeroCaseIx = -1;
+                        int otherCaseIx = -1, zeroCaseIx = -1, oneCaseIx = -1;
                         foreach (XElement pluralRuleElement in pluralRulesElement.Elements("pluralRule"))
                         {
                             string @case = pluralRuleElement.Attribute("count")?.Value;
@@ -96,6 +97,7 @@ namespace Lexical.Localization
                                 list.Add((@case, exp));
                                 if (@case == "other") otherCaseIx = list.Count;
                                 if (@case == "zero") zeroCaseIx = list.Count;
+                                if (@case == "one") oneCaseIx = list.Count;
                                 expCountInText++;
                             }
                             if (expCountInText == 0) list.Add((@case, null));
@@ -118,6 +120,12 @@ namespace Lexical.Localization
                             {
                                 PluralRuleInfo info = new PluralRuleInfo(ruleset, category, culture, "zero", 1);
                                 yield return new PluralRule.Zero(info);
+                            }
+                            // Add optional "one" rule, if doesn't exist.
+                            if (addOptionalOne && oneCaseIx < 0)
+                            {
+                                PluralRuleInfo info = new PluralRuleInfo(ruleset, category, culture, "one", 1);
+                                yield return new PluralRule.One(info);
                             }
                             // Add mandatory rules
                             foreach ((string @case, IPluralRuleExpression exp) in list)

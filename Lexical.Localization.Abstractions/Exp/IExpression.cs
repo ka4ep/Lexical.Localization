@@ -224,7 +224,4 @@ namespace Lexical.Localization.Exp
         object Value { get; }
     }
 
-
-
-
 }
