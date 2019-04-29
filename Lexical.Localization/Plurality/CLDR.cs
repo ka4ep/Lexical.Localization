@@ -101,7 +101,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EBD4F1E10, EB9143B55, EE9057C68));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E4B5D780D, E9A0E44B4));
                 }
                 // ak, bh, guw, ln, mg, nso, pa, ti, wa
                 foreach (string culture in c_766a620a)
@@ -109,7 +109,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E3987DFFC, EF758082A, E214176C0));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, EE6CB67EF, ED3125EE4));
                 }
                 // am, as, bn, fa, gu, hi, kn, zu
                 foreach (string culture in c_c5bed141)
@@ -117,7 +117,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E0A18C452, EF758082A, E7143B999));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, EE6CB67EF, EC0BDA170));
                 }
                 // ar, ars
                 foreach (string culture in c_a5a38d0e)
@@ -128,7 +128,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "two", 0), null, E3F0B167B, EB614369C, E26C984B0));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E5738BF6D, E2C0A6AD4, E8B31405B));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, E3EC25B77, E463CD75D, E128CE41A));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E4D1CEB1A, EDD390F19));
                 }
                 // ast, ca, de, en, et, fi, fy, gl, ia, io, it, ji, nl, pt-PT, sc, scn, sv, sw, ur, yi
                 foreach (string culture in c_a34e8318)
@@ -136,7 +136,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EFFFC2537, EB9143B55));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E4B5D780D, E4320FAC8));
                 }
                 // be
                 foreach (string culture in c_382ba080)
@@ -146,7 +146,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E84A1942F, EB152352E, E68B1E329));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, EE89E9716, EDBD924C8, ECD444539));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, EDD8F92EE, E8148790B, E98DA6EDC));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, EE2A81867));
                 }
                 // bm, bo, dz, id, ig, ii, in, ja, jbo, jv, jw, kde, kea, km, ko, lkt, lo, ms, my, nqo, root, sah, ses, sg, th, to, vi, wo, yo, yue, zh
                 foreach (string culture in c_88a620b1)
@@ -154,7 +154,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.One(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 1)));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E982833E3, E4320FAC8));
                 }
                 // br
                 foreach (string culture in c_4f2bc4b5)
@@ -165,7 +165,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "two", 0), null, ECC2A9E1D, EC91BCA52, E0943D865));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, ED6218FB7, E7421E24A, E2ED8B14F));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, E4D83051C, E260F6011, E915FF900));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E7FEF7670, EDD06EF4E));
                 }
                 // bs, hr, sh, sr
                 foreach (string culture in c_7100128a)
@@ -174,7 +174,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E71BE1840, EB152352E, EF13564AD));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E802DCD2C, EDBD924C8, E3FA7CA56));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E8148790B, ED48DC621));
                 }
                 // ceb, fil, tl
                 foreach (string culture in c_372eafd4)
@@ -182,7 +182,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E77C90E06, E4E67F0DD, E50D6947E));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, EF0161866, E1B284677));
                 }
                 // cs, sk
                 foreach (string culture in c_e3f5abf1)
@@ -192,7 +192,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EFFFC2537, EB9143B55));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E264ACB7C, E15E3D309));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, E7D97B2C4, E4320FAC8));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E8148790B));
                 }
                 // cy
                 foreach (string culture in c_502987b1)
@@ -203,7 +203,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "two", 0), null, E3F0B167B, EB614369C, E26C984B0));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, EC153A18A, EB714382F, EEC063218));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, E3F4C191F, EB2143050, ED3A073F0));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, EF7179B11, ED3125EE4));
                 }
                 // da
                 foreach (string culture in c_581cc856)
@@ -211,7 +211,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E26C25720, EB9143B55, E4CBE7CF4));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E4B5D780D, EB73D72FE));
                 }
                 // dsb, hsb
                 foreach (string culture in c_e8c1d0bb)
@@ -221,7 +221,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E81365D4D, E441A5A7E, EF13564AD));
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "two", 0), null, EF0ACC361, EB8582B29, E21525782));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E40592561, E16FDB0A4, E99F271AF));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E8148790B, ED48DC621));
                 }
                 // ff, fr, hy, kab, pt
                 foreach (string culture in c_a5c3e674)
@@ -229,7 +229,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EE5C8BDA7, EF758082A, ED7798032));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, EE6CB67EF, E47A544D8));
                 }
                 // ga
                 foreach (string culture in c_40207425)
@@ -240,7 +240,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "two", 0), null, E3F0B167B, EB614369C, E26C984B0));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E2951DF68, E580D87B4, E6584DA98));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, E5033232B, E42E4C727, E713D3C18));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E263C5779, E49A0C5A9));
                 }
                 // gd
                 foreach (string culture in c_3b206c46)
@@ -250,7 +250,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EE6FFFCD6, E62152D88, E228C2FD7));
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "two", 0), null, ECB109DEE, EA7D89E52, ED379571C));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E80C36837, E81F8FA2D, E0742DB5F));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, EF419640F, E49A0C5A9));
                 }
                 // gv
                 foreach (string culture in c_49208250)
@@ -261,7 +261,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "two", 0), null, E3E2A37EA, ED71F448B));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E8CF84894, E4CAB1716));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, E7D97B2C4, E4320FAC8));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E620AB079));
                 }
                 // he, iw
                 foreach (string culture in c_337e680e)
@@ -271,7 +271,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EFFFC2537, EB9143B55));
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "two", 0), null, E95A4B850, EB614369C));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, EE978F1CF, EEB8A4639));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E534B3B37, E4320FAC8));
                 }
                 // is
                 foreach (string culture in c_4e388f15)
@@ -279,7 +279,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, ED296C19F, EB152352E, E7AEF0F49));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E4B5D780D, E7D97AA09));
                 }
                 // iu, naq, se, sma, smi, smj, smn, sms
                 foreach (string culture in c_f918c364)
@@ -288,7 +288,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EBD4F1E10, EB9143B55, EE9057C68));
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "two", 0), null, E3F0B167B, EB614369C, E26C984B0));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, EB3062ECF, E9A0E44B4));
                 }
                 // ksh
                 foreach (string culture in c_752de1c9)
@@ -296,7 +296,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 0), null, EC3516619, EB81439C2, E6B373360));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EBD4F1E10, EB9143B55, EE9057C68));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, EE6CB67EF, ED3125EE4));
                 }
                 // kw
                 foreach (string culture in c_5a3d1f27)
@@ -307,7 +307,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "two", 0), null, EE2596300, EA6A336DC, E8E8728DF));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, EABEE7EEC, EE8CE77D1, E12D0CC0E));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, EDC252060, EC437968E, E70EF10E9));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E53EAFB8F, E5EE15A4E));
                 }
                 // lag
                 foreach (string culture in c_5f608e3b)
@@ -315,7 +315,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 0), null, EC3516619, EB81439C2, E6B373360));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E8ADA7F20, EB9143B55, E4CBE7CF4));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, EE6CB67EF, E47A544D8));
                 }
                 // lt
                 foreach (string culture in c_5d31eaed)
@@ -325,7 +325,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, ED141DA67, EB152352E, E68B1E329));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E03CAF549, E24E4BF2D, E00CE1EE9));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, E44CCE0D4, EE2A81867));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E7B6DDDF3, EC9D009EA));
                 }
                 // lv, prg
                 foreach (string culture in c_66d93ae6)
@@ -333,7 +333,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 0), null, EEA009B9F, E7B6DDDF3, EC9D009EA));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E5B3EA793, EB152352E, E48928607));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E24E4BF2D, E17DD8CF2));
                 }
                 // mk
                 foreach (string culture in c_5e2e1ae9)
@@ -341,7 +341,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E71BE1840, EB152352E, EF13564AD));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E4B5D780D, E2C671DE9));
                 }
                 // mo, ro
                 foreach (string culture in c_f255519e)
@@ -350,7 +350,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EFFFC2537, EB9143B55));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E062AAF64, E7FB07C93, E4320FAC8));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E90131C27));
                 }
                 // mt
                 foreach (string culture in c_572e0fe4)
@@ -360,7 +360,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EBD4F1E10, EB9143B55, EE9057C68));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, EC15E4BFF, EE30B61D6, EC3CA1B79));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, E9338945F, E6BB4A5DD, E128CE41A));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E90131C27, EDD390F19));
                 }
                 // pl
                 foreach (string culture in c_454e4739)
@@ -370,7 +370,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EFFFC2537, EB9143B55));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E4E88644C, EDBD924C8));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, E0CAFD5D4, E8148790B));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E4320FAC8));
                 }
                 // ru, uk
                 foreach (string culture in c_0a441d2c)
@@ -380,7 +380,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, ECAB49249, EB152352E));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E4E88644C, EDBD924C8));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "many", 0), null, E35C79881, E8148790B));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E4320FAC8));
                 }
                 // shi
                 foreach (string culture in c_e52df395)
@@ -389,7 +389,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E0A18C452, EF758082A, E7143B999));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, EBF96A952, E20ACF1F6, E6E411094));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E8AA9704B, E032410E9));
                 }
                 // si
                 foreach (string culture in c_405210f1)
@@ -397,7 +397,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, EDA9A4B53, EF758082A, E791DD688));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, EE6CB67EF, ECE70A2D4));
                 }
                 // sl
                 foreach (string culture in c_435215aa)
@@ -407,7 +407,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, E4FADB3DD, E441A5A7E));
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "two", 0), null, E19B77C72, EB8582B29));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "few", 0), null, E2617C675, E16FDB0A4, E4320FAC8));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E8148790B));
                 }
                 // tzm
                 foreach (string culture in c_c0315742)
@@ -415,7 +415,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "zero") result.Add(new PluralRule.Zero(new PluralRuleInfo(RuleSet, "cardinal", culture, "zero", 1)));
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "cardinal", culture, "one", 0), null, ED1051BB7, EFC992FDE, E37BE0A31));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "cardinal", culture, "other", 0), null, null, E6BAD1FB4, ED3125EE4));
                 }
             }
             if (f.Category == null || f.Category == "ordinal")
@@ -425,7 +425,7 @@ namespace Lexical.Localization.Plurality
                 {
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.One(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 1)));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E982833E3));
                 }
                 // as, bn
                 foreach (string culture in c_20ca8aa9)
@@ -435,7 +435,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "two", 0), null, E27804086, EA02DA6BA));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, E4360D23D, EB4143376));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "many", 0), null, E3F4C191F, EB2143050));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E263C5779));
                 }
                 // az
                 foreach (string culture in c_55251262)
@@ -444,7 +444,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, E7909FE8D, E2170F568));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, E72EAC562, EF4866074));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "many", 0), null, E91FCEE49, E043D1268));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, EA8538A54));
                 }
                 // be
                 foreach (string culture in c_382ba080)
@@ -452,7 +452,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.One(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 1)));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, E374D1302, E2B1D626B));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, EFA63AF5A));
                 }
                 // ca
                 foreach (string culture in c_58299449)
@@ -461,7 +461,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, E3D53A975, EE7CAAE43));
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "two", 0), null, E3F0B167B, EB614369C));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, E4360D23D, EB4143376));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E8148790B));
                 }
                 // cy
                 foreach (string culture in c_502987b1)
@@ -472,7 +472,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "two", 0), null, E3F0B167B, EB614369C));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, E1E3A2A10, E6440295C));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "many", 0), null, E0D7D2C88, EBC300370));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, EAC450D5F));
                 }
                 // en
                 foreach (string culture in c_411a658a)
@@ -481,14 +481,14 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, E84A1942F, EB152352E));
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "two", 0), null, E199BF7AF, E7BC3E6A8));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, ECD38005F, EA26DC2F6));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E9B8D06B5));
                 }
                 // fil, fr, ga, hy, lo, mo, ms, ro, tl, vi
                 foreach (string culture in c_b59fa1f0)
                 {
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, EBD4F1E10, EB9143B55));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E4B5D780D));
                 }
                 // gd
                 foreach (string culture in c_3b206c46)
@@ -497,7 +497,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, EE6FFFCD6, E62152D88));
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "two", 0), null, ECB109DEE, EA7D89E52));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, E7574BF5A, EA7F98EB0));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, ECE306B2B));
                 }
                 // gu, hi
                 foreach (string culture in c_559dfe2e)
@@ -507,14 +507,14 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "two", 0), null, E27804086, EA02DA6BA));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, E4360D23D, EB4143376));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "many", 0), null, E3F4C191F, EB2143050));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E32E02E0D));
                 }
                 // hu
                 foreach (string culture in c_4c3aca86)
                 {
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, E19478C3F, EEDCAB7B5));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E0060D900));
                 }
                 // it, sc, scn
                 foreach (string culture in c_dd9192a6)
@@ -522,7 +522,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.One(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 1)));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "many", 0), null, E2E2A901D, EB84947E1));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, EA02B52DF));
                 }
                 // ka
                 foreach (string culture in c_483d02d1)
@@ -530,7 +530,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, E49A58121, EB9143B55));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "many", 0), null, E669B110C, E7FB07C93));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E1C8A142B));
                 }
                 // kk
                 foreach (string culture in c_3e3cf313)
@@ -538,7 +538,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.One(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 1)));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "many", 0), null, E4C5775FB, E818EAD2B));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, EBFEA5C82));
                 }
                 // kw
                 foreach (string culture in c_5a3d1f27)
@@ -546,7 +546,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, EB8D55BD0, EFD50E885));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "many", 0), null, EEED9E998, E78162D52));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, EE783DF46));
                 }
                 // mk
                 foreach (string culture in c_5e2e1ae9)
@@ -555,7 +555,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, EFE72E477, EB152352E));
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "two", 0), null, E6EE6DFCF, E7BC3E6A8));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "many", 0), null, EF4449A1A, EBEA662F3));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, EC4967A7E));
                 }
                 // mr
                 foreach (string culture in c_552e0cbe)
@@ -564,14 +564,14 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, EBD4F1E10, EB9143B55));
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "two", 0), null, E27804086, EA02DA6BA));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, E4360D23D, EB4143376));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E8148790B));
                 }
                 // ne
                 foreach (string culture in c_5836603c)
                 {
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, E4FE21A9C, E95A531B4));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E8148790B));
                 }
                 // or
                 foreach (string culture in c_5d342984)
@@ -581,7 +581,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Category == null || f.Category == "two") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "two", 0), null, E27804086, EA02DA6BA));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, E4360D23D, EB4143376));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "many", 0), null, E3F4C191F, EB2143050));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E5F659133));
                 }
                 // sq
                 foreach (string culture in c_48521d89)
@@ -589,14 +589,14 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, EBD4F1E10, EB9143B55));
                     if (f.Category == null || f.Category == "many") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "many", 0), null, EFB5AAB57, E64D7705C));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E1CCB859A));
                 }
                 // sv
                 foreach (string culture in c_49521f1c)
                 {
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 0), null, EC3E62A5A, E26F9940B));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, EB3062ECF));
                 }
                 // tk
                 foreach (string culture in c_3e4541d8)
@@ -604,7 +604,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.One(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 1)));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, E43CCD76C, E74312601));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E14FF0595));
                 }
                 // uk
                 foreach (string culture in c_5e4335a1)
@@ -612,7 +612,7 @@ namespace Lexical.Localization.Plurality
                     if (f.Culture != null && f.Culture != culture) continue;
                     if (f.Category == null || f.Category == "one") result.Add(new PluralRule.One(new PluralRuleInfo(RuleSet, "ordinal", culture, "one", 1)));
                     if (f.Category == null || f.Category == "few") result.Add(new PluralRule.Expression(new PluralRuleInfo(RuleSet, "ordinal", culture, "few", 0), null, ECD38005F, EA26DC2F6));
-                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.True(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0)));
+                    if (f.Category == null || f.Category == "other") result.Add(new PluralRule.TrueWithExpression(new PluralRuleInfo(RuleSet, "ordinal", culture, "other", 0), null, null, E2B0C4A40));
                 }
             }
 
@@ -2269,7 +2269,7 @@ namespace Lexical.Localization.Plurality
         protected IExpression E30F67918 => _30f67918 ?? (_30f67918 = new ConstantExpression(new DecimalNumber.Text("0.00")));
 
         /// <summary></summary>
-        protected ISamplesExpression _32e02e0d, _37be0a31, _3fa7ca56, _42e4c727, _4320fac8, _441a5a7e, _463cd75d, _47a544d8, _48928607, _49a0c5a9, _4b5d780d, _4cab1716, _4cbe7cf4, _4d1ceb1a, _4e67f0dd, _50d6947e, _534b3b37, _53eafb8f, _571d9611, _580d87b4, _5f659133, _620ab079, _62152d88, _63345f3f, _6440295c, _64d7705c, _6584da98, _68b1e329, _6b373360, _6bad1fb4, _6bb4a5dd, _6e411094, _70ef10e9, _713d3c18, _7143b999, _7421e24a, _74312601, _78162d52, _791dd688, _7aef0f49, _7b6dddf3, _7bc3e6a8, _7d97aa09, _7fb07c93, _7fef7670, _8148790b, _818ead2b, _81f8fa2d, _8aa9704b, _8b31405b, _8e8728df, _90131c27, _915ff900, _95a531b4, _982833e3, _98da6edc, _99f271af, _9a0e44b4, _9b8d06b5, _a02b52df, _a02da6ba, _a26dc2f6, _a6a336dc, _a7d89e52, _a7f98eb0, _a8538a54, _ac450d5f, _b152352e, _b1cdea56, _b2143050, _b3062ecf, _b4143376, _b614369c, _b714382f, _b73d72fe, _b81439c2, _b84947e1, _b8582b29, _b9143b55, _bc300370, _bea662f3, _bfea5c82, _c0345761, _c0bda170, _c3ca1b79, _c437968e, _c4967a7e, _c91bca52, _c9d009ea, _cd444539, _ce306b2b, _ce70a2d4, _d3125ee4, _d379571c, _d3a073f0, _d48dc621, _d71f448b, _d7798032, _dbd924c8, _dd06ef4e, _dd390f19, _e2a81867, _e30b61d6, _e6cb67ef, _e783df46, _e7caae43, _e8ce77d1, _e9057c68, _eb8a4639, _ec063218, _edcab7b5, _f0161866, _f13564ad, _f35205fb, _f419640f, _f4866074, _f7179b11, _f758082a, _fa63af5a, _fc992fde, _fd50e885, _0060d900, _00ce1ee9, _032410e9, _043d1268, _0742db5f, _0943d865, _128ce41a, _12d0cc0e, _14ff0595, _15e3d309, _16fdb0a4, _17dd8cf2, _1b284677, _1c8a142b, _1ccb859a, _1f378bf0, _20acf1f6, _214176c0, _21525782, _2170f568, _228c2fd7, _24e4bf2d, _260f6011, _263c5779, _26c984b0, _26f9940b, _2b0c4a40, _2b1d626b, _2c0a6ad4, _2c671de9, _2ed8b14f;
+        protected ISamplesExpression _32e02e0d, _37be0a31, _3fa7ca56, _42e4c727, _4320fac8, _441a5a7e, _463cd75d, _47a544d8, _48928607, _49a0c5a9, _4b5d780d, _4cab1716, _4cbe7cf4, _4d1ceb1a, _4e67f0dd, _50d6947e, _534b3b37, _53eafb8f, _571d9611, _580d87b4, _5ee15a4e, _5f659133, _620ab079, _62152d88, _63345f3f, _6440295c, _64d7705c, _6584da98, _68b1e329, _6b373360, _6bad1fb4, _6bb4a5dd, _6e411094, _70ef10e9, _713d3c18, _7143b999, _7421e24a, _74312601, _78162d52, _791dd688, _7aef0f49, _7b6dddf3, _7bc3e6a8, _7d97aa09, _7fb07c93, _7fef7670, _8148790b, _818ead2b, _81f8fa2d, _8aa9704b, _8b31405b, _8e8728df, _90131c27, _915ff900, _95a531b4, _982833e3, _98da6edc, _99f271af, _9a0e44b4, _9b8d06b5, _a02b52df, _a02da6ba, _a26dc2f6, _a6a336dc, _a7d89e52, _a7f98eb0, _a8538a54, _ac450d5f, _b152352e, _b1cdea56, _b2143050, _b3062ecf, _b4143376, _b614369c, _b714382f, _b73d72fe, _b81439c2, _b84947e1, _b8582b29, _b9143b55, _bc300370, _bea662f3, _bfea5c82, _c0345761, _c0bda170, _c3ca1b79, _c437968e, _c4967a7e, _c91bca52, _c9d009ea, _cd444539, _ce306b2b, _ce70a2d4, _d3125ee4, _d379571c, _d3a073f0, _d48dc621, _d71f448b, _d7798032, _dbd924c8, _dd06ef4e, _dd390f19, _e2a81867, _e30b61d6, _e6cb67ef, _e783df46, _e7caae43, _e8ce77d1, _e9057c68, _eb8a4639, _ec063218, _edcab7b5, _f0161866, _f13564ad, _f35205fb, _f419640f, _f4866074, _f7179b11, _f758082a, _fa63af5a, _fc992fde, _fd50e885, _0060d900, _00ce1ee9, _032410e9, _043d1268, _0742db5f, _0943d865, _128ce41a, _12d0cc0e, _14ff0595, _15e3d309, _16fdb0a4, _17dd8cf2, _1b284677, _1c8a142b, _1ccb859a, _1f378bf0, _20acf1f6, _214176c0, _21525782, _2170f568, _228c2fd7, _24e4bf2d, _260f6011, _263c5779, _26c984b0, _26f9940b, _2b0c4a40, _2b1d626b, _2c0a6ad4, _2c671de9, _2ed8b14f;
         /// <summary>@integer 0, 5, 7~20, 100, 1000, 10000, 100000, 1000000, …</summary>
         protected ISamplesExpression E32E02E0D => _32e02e0d ?? (_32e02e0d = new SamplesExpression("integer", EC8E67366, ECDE67B45, E8B1ED530, E52BF9741, EB49B66E3, E23A2DE29, E3263A15B, EBDD71B71, E233EEC59));
         /// <summary>@decimal 0.0, 1.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0</summary>
@@ -2310,6 +2310,8 @@ namespace Lexical.Localization.Plurality
         protected ISamplesExpression E571D9611 => _571d9611 ?? (_571d9611 = new SamplesExpression("integer", EC9E674F9, E9DC9D6D8, E8DC301E3, E91C546C6, E11D14939, E95D4579C, E25CCEB87, E29CF306A, E51BF95AE, EB39B6550, E233EEC59));
         /// <summary>@integer 3~6</summary>
         protected ISamplesExpression E580D87B4 => _580d87b4 ?? (_580d87b4 = new SamplesExpression("integer", E8803BD20));
+        /// <summary>@decimal 0.1~0.9, 1.1~1.7, 10.0, 100.0, 1000000.0, …</summary>
+        protected ISamplesExpression E5EE15A4E => _5ee15a4e ?? (_5ee15a4e = new SamplesExpression("decimal", E320DA9FF, E59E82881, E5064AF7D, EB79DB6F7, EE103CB87, E233EEC59));
         /// <summary>@integer 0, 10~24, 100, 1000, 10000, 100000, 1000000, …</summary>
         protected ISamplesExpression E5F659133 => _5f659133 ?? (_5f659133 = new SamplesExpression("integer", EC8E67366, E88BD1628, E52BF9741, EB49B66E3, E23A2DE29, E3263A15B, EBDD71B71, E233EEC59));
         /// <summary>@integer 3~10, 13~19, 23, 103, 1003, …</summary>
