@@ -113,9 +113,9 @@ namespace Lexical.Localization.Plurality
         /// Function that converts enumerable to <see cref="IPluralRules"/>.
         /// </summary>
         public static Func<IEnumerable<IPluralRule>, IPluralRulesEnumerable> DefaultRulesFactory =
-            enumr => enumr is PluralRulesCachedEvaluatable casted ?
+            enumr => enumr is PluralRulesEvaluatable casted ?
                 casted :
-                new PluralRulesCachedEvaluatable(enumr);
+                new PluralRulesEvaluatable(enumr);
 
         /// <summary>
         /// Create rule resolver with default settings.

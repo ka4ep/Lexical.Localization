@@ -136,9 +136,12 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// Collection of <see cref="IPluralRule"/> that caches queries.
     /// 
-    /// Every time a query is not found, it will re-read the source from <see cref="ruleSource"/>.
+    /// IF query is not found i cache, it is read from the <see cref="ruleSource"/>, and then result cached.
+    /// 
+    /// If query involes cases of one set of ruleset,cagetory,culture, and it doesn't implement <see cref="IPluralRulesEvaluatable"/>,
+    /// then the result is wrapped into <see cref="PluralRulesCasesEvaluatable"/>.
     /// </summary>
-    public class PluralRulesCachedEvaluatable : IPluralRules, IPluralRulesEvaluatable, IPluralRulesQueryable, IPluralRulesEnumerable
+    public class PluralRulesEvaluatable : IPluralRules, IPluralRulesEvaluatable, IPluralRulesQueryable, IPluralRulesEnumerable
     {
         /// <summary>
         /// Cached queries
@@ -159,7 +162,7 @@ namespace Lexical.Localization.Plurality
         /// Create rules
         /// </summary>
         /// <param name="ruleReader">source of rules</param>
-        public PluralRulesCachedEvaluatable(IEnumerable<IPluralRule> ruleReader)
+        public PluralRulesEvaluatable(IEnumerable<IPluralRule> ruleReader)
         {
             this.ruleSource = ruleReader ?? throw new ArgumentNullException(nameof(ruleReader));
         }
@@ -167,8 +170,8 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Create rules
         /// </summary>
-        /// <param name="rules">source of rules</param>
-        public PluralRulesCachedEvaluatable(IPluralRules rules)
+        /// <param name="rules">source of rules that implements <see cref="IPluralRulesQueryable"/> or <see cref="IPluralRulesEnumerable"/></param>
+        public PluralRulesEvaluatable(IPluralRules rules)
         {
             this.ruleSource = rules ?? throw new ArgumentNullException(nameof(rules));
         }
@@ -177,7 +180,7 @@ namespace Lexical.Localization.Plurality
         /// Filter rules by <paramref name="filterCriteria"/>.
         /// </summary>
         /// <param name="filterCriteria"></param>
-        /// <returns><see cref="PluralRulesEvaluatable"/> or <see cref="PluralRulesArray"/>, or null if content is empty</returns>
+        /// <returns><see cref="PluralRulesCasesEvaluatable"/> or <see cref="PluralRulesArray"/>, or null if content is empty</returns>
         public IPluralRulesEnumerable Query(PluralRuleInfo filterCriteria)
         {
             // Try get
@@ -189,7 +192,7 @@ namespace Lexical.Localization.Plurality
             {
                 result = queryable.Query(filterCriteria);
                 // Wrap into PluralRulesEvaluatable
-                if (result != null && filterCriteria.Category != null && filterCriteria.Culture != null && filterCriteria.Case == null && filterCriteria.Optional == -1) result = new PluralRulesEvaluatable(result);
+                if (result != null && filterCriteria.Category != null && filterCriteria.Culture != null && filterCriteria.Case == null && filterCriteria.Optional == -1) result = new PluralRulesCasesEvaluatable(result);
             }
             else if (ruleSource is IEnumerable<IPluralRule> enumr)
             {
@@ -208,7 +211,7 @@ namespace Lexical.Localization.Plurality
                 // No result
                 if (list.Count == 0) result = null;
                 // Instantiate PluralRulesEvaluatable
-                else if (rulesets.Count <= 1 && filterCriteria.Category != null && filterCriteria.Culture != null && filterCriteria.Case == null && filterCriteria.Optional == -1) result = new PluralRulesEvaluatable(list.ToArray());
+                else if (rulesets.Count <= 1 && filterCriteria.Category != null && filterCriteria.Culture != null && filterCriteria.Case == null && filterCriteria.Optional == -1) result = new PluralRulesCasesEvaluatable(list.ToArray());
                 // Instantiate PluralRules.
                 else result = new PluralRulesArray(list.ToArray());
             }
@@ -247,12 +250,12 @@ namespace Lexical.Localization.Plurality
     }
 
     /// <summary>
-    /// Indexed rules and evaluator for a specific (RuleSet,Culture,Category). 
+    /// Indexed rules and evaluator for cases of one combination of { RuleSet,Culture,Category }.
     /// 
     /// This class evaluates an array of <see cref="IPluralRuleEvaluatable"/> as a whole, and returns
     /// all the cases - optional and required - that match the requested <see cref="IPluralNumber" />.
     /// </summary>
-    public class PluralRulesEvaluatable : PluralRulesArray, IPluralRulesEvaluatable
+    public class PluralRulesCasesEvaluatable : PluralRulesArray, IPluralRulesEvaluatable
     {
         /// <summary>
         /// List of evaluatable cases in order of: 1. optional, 2. required.
@@ -306,7 +309,7 @@ namespace Lexical.Localization.Plurality
         /// It will be used as fallback result, if no evaluatable cases match.
         /// </summary>
         /// <param name="evaluatableRule">cases that implement <see cref="IPluralRuleEvaluatable"></see></param>
-        public PluralRulesEvaluatable(params IPluralRule[] evaluatableRule) : this((IEnumerable<IPluralRule>)evaluatableRule) { }
+        public PluralRulesCasesEvaluatable(params IPluralRule[] evaluatableRule) : this((IEnumerable<IPluralRule>)evaluatableRule) { }
 
         /// <summary>
         /// Create evaluatable rules from a list of cases.
@@ -315,7 +318,7 @@ namespace Lexical.Localization.Plurality
         /// It will be used as fallback result, if no evaluatable cases match.
         /// </summary>
         /// <param name="evaluatableCases">cases that implement <see cref="IPluralRuleEvaluatable"></see></param>
-        public PluralRulesEvaluatable(IEnumerable<IPluralRule> evaluatableCases) : base(ReorderAndFilter(evaluatableCases))
+        public PluralRulesCasesEvaluatable(IEnumerable<IPluralRule> evaluatableCases) : base(ReorderAndFilter(evaluatableCases))
         {
             StructList12<IPluralRuleEvaluatable> evaluatables = new StructList12<IPluralRuleEvaluatable>();
             int firstNonOptionalCase = -1;
