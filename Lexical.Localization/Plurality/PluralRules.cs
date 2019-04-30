@@ -136,9 +136,9 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// Collection of <see cref="IPluralRule"/> that caches queries.
     /// 
-    /// Every time a query is not found, it will re-read the source from <see cref="ruleReader"/>.
+    /// Every time a query is not found, it will re-read the source from <see cref="ruleSource"/>.
     /// </summary>
-    public class PluralRulesIndexed : IPluralRules, IPluralRulesEvaluatable, IPluralRulesQueryable, IPluralRulesEnumerable
+    public class PluralRulesCachedEvaluatable : IPluralRules, IPluralRulesEvaluatable, IPluralRulesQueryable, IPluralRulesEnumerable
     {
         /// <summary>
         /// Cached queries
@@ -153,15 +153,24 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Source of rules.
         /// </summary>
-        protected readonly IEnumerable<IPluralRule> ruleReader;
+        protected readonly object ruleSource;
 
         /// <summary>
         /// Create rules
         /// </summary>
         /// <param name="ruleReader">source of rules</param>
-        public PluralRulesIndexed(IEnumerable<IPluralRule> ruleReader)
+        public PluralRulesCachedEvaluatable(IEnumerable<IPluralRule> ruleReader)
         {
-            this.ruleReader = ruleReader ?? throw new ArgumentNullException(nameof(ruleReader));
+            this.ruleSource = ruleReader ?? throw new ArgumentNullException(nameof(ruleReader));
+        }
+
+        /// <summary>
+        /// Create rules
+        /// </summary>
+        /// <param name="rules">source of rules</param>
+        public PluralRulesCachedEvaluatable(IPluralRules rules)
+        {
+            this.ruleSource = rules ?? throw new ArgumentNullException(nameof(rules));
         }
 
         /// <summary>
@@ -175,26 +184,39 @@ namespace Lexical.Localization.Plurality
             IPluralRulesEnumerable result = null;
             lock (m_lock) if (queries.TryGetValue(filterCriteria, out result)) return result;
 
-            // Filter rules
-            StructList8<IPluralRule> list = new StructList8<IPluralRule>();
-            StructList8<string> rulesets = new StructList8<string>();
-            foreach (IPluralRule rule in ruleReader)
+            // Query
+            if (ruleSource is IPluralRulesQueryable queryable)
             {
-                // Filter by criteria
-                if (!filterCriteria.FilterMatch(rule.Info)) continue;
-                // Gather a list of rulesets
-                if (rule.Info.RuleSet != null && !rulesets.Contains(rule.Info.RuleSet)) rulesets.Add(rule.Info.RuleSet);
-                // Add to list
-                list.Add(rule);
+                result = queryable.Query(filterCriteria);
+                // Wrap into PluralRulesEvaluatable
+                if (result != null && filterCriteria.Category != null && filterCriteria.Culture != null && filterCriteria.Case == null && filterCriteria.Optional == -1) result = new PluralRulesEvaluatable(result);
             }
-
-            // No result
-            if (list.Count == 0) result = null;
-            // Instantiate PluralRulesEvaluatable
-            else if (rulesets.Count <= 1 && filterCriteria.Category != null && filterCriteria.Culture != null && filterCriteria.Case == null && filterCriteria.Optional == -1) result = new PluralRulesEvaluatable(list.ToArray());
-            // Instantiate PluralRules.
-            else result = new PluralRulesArray(list.ToArray());
-
+            else if (ruleSource is IEnumerable<IPluralRule> enumr)
+            {
+                // Filter rules
+                StructList8<IPluralRule> list = new StructList8<IPluralRule>();
+                StructList8<string> rulesets = new StructList8<string>();
+                foreach (IPluralRule rule in enumr)
+                {
+                    // Filter by criteria
+                    if (!filterCriteria.FilterMatch(rule.Info)) continue;
+                    // Gather a list of rulesets
+                    if (rule.Info.RuleSet != null && !rulesets.Contains(rule.Info.RuleSet)) rulesets.Add(rule.Info.RuleSet);
+                    // Add to list
+                    list.Add(rule);
+                }
+                // No result
+                if (list.Count == 0) result = null;
+                // Instantiate PluralRulesEvaluatable
+                else if (rulesets.Count <= 1 && filterCriteria.Category != null && filterCriteria.Culture != null && filterCriteria.Case == null && filterCriteria.Optional == -1) result = new PluralRulesEvaluatable(list.ToArray());
+                // Instantiate PluralRules.
+                else result = new PluralRulesArray(list.ToArray());
+            }
+            // Could not read source
+            else
+            {
+                result = null;
+            }
             // Write to cache, if is still new
             lock (m_lock) if (!queries.ContainsKey(filterCriteria)) queries[filterCriteria] = result;
 
@@ -216,10 +238,12 @@ namespace Lexical.Localization.Plurality
         /// </summary>
         /// <returns></returns>
         public IEnumerator<IPluralRule> GetEnumerator()
-            => ruleReader.GetEnumerator();
+            => ruleSource is IEnumerable<IPluralRule> enumr ? enumr.GetEnumerator() : no_rules.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-            => ruleReader.GetEnumerator();
+            => ruleSource is IEnumerable enumr ? enumr.GetEnumerator() : no_rules.GetEnumerator();
+
+        static IEnumerable<IPluralRule> no_rules = new IPluralRule[0];
     }
 
     /// <summary>

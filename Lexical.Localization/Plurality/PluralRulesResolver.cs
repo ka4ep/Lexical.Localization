@@ -99,16 +99,23 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Default type resolver that does following name mapping.
         /// </summary>
-        public static Func<Assembly, string, bool, Type> DefaultTypeResolver = (Assembly a, string typename, bool throwOnError)
-            => a != null ? a.GetType(typename) : Type.GetType(typename);
+        public static Func<Assembly, string, bool, Type> DefaultTypeResolver = (Assembly a, string typename, bool throwOnError) => 
+        {
+            // Transform "Unicode.CLDR35", "Unicode.CLDR35,Lexical.Localization" -> "Lexical.Localization.Unicode.CLDR35"
+            if ( (a == null || a.GetName().Name == "Lexical.Localization") && typename.StartsWith("Unicode.CLDR")) typename = "Lexical.Localization." + typename;
+            // Assembly name was specified and it was resolved into Assembly, now try to load the Type from there
+            if (a != null) return a.GetType(typename);
+            // There was no assembly name specified in the type name
+            else return Type.GetType(typename);
+        };
 
         /// <summary>
         /// Function that converts enumerable to <see cref="IPluralRules"/>.
         /// </summary>
-        public static Func<IEnumerable<IPluralRule>, IPluralRulesEnumerable> DefaultRulesFactory =>
-            enumr => enumr is IPluralRulesEnumerable casted ?
+        public static Func<IEnumerable<IPluralRule>, IPluralRulesEnumerable> DefaultRulesFactory =
+            enumr => enumr is PluralRulesCachedEvaluatable casted ?
                 casted :
-                new PluralRulesIndexed(enumr);
+                new PluralRulesCachedEvaluatable(enumr);
 
         /// <summary>
         /// Create rule resolver with default settings.
@@ -206,8 +213,6 @@ namespace Lexical.Localization.Plurality
             if (assemblyResolver == null) throw new InvalidOperationException($"{nameof(assemblyResolver)} is null");
             // Assert typeResolver is not null
             if (typeResolver == null) throw new InvalidOperationException($"{nameof(typeResolver)} is null");
-            // "Unicode.CLDR*" -> "Lexical.Localization.UnicodeCLDR*,Lexical.Localization"
-            if (typeName.StartsWith("Unicode.CLDR")&&!typeName.Contains(",")) typeName = "Lexical.Localization.UnicodeCLDR" + typeName.Substring("Unicode.CLDR".Length)+",Lexical.Localization";
             // Try get type
             Type type = Type.GetType(typeName, assemblyResolver, typeResolver, true);
             // Assert type was loaded

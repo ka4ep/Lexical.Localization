@@ -113,8 +113,11 @@ namespace Lexical.Localization
                         }
 
                         // Now instantiate rules for each culture
-                        foreach (string culture in cultures)
+                        foreach (string _culture in cultures)
                         {
+                            // C# uses "" as root culture
+                            string culture = _culture == "root" ? "" : _culture;
+
                             // Add optional "zero" rule, if doesn't exist.
                             if (addOptionalZero && zeroCaseIx < 0)
                             {
@@ -152,94 +155,95 @@ namespace Lexical.Localization
         IEnumerator IEnumerable.GetEnumerator()
             => ruleReader.GetEnumerator();
 
-    }
-
-    /// <summary>
-    /// Embedded resource xml document (root) reader.
-    /// </summary>
-    public class EmbeddedXmlReader : IEnumerable<XElement>
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public readonly Assembly Assembly;
 
         /// <summary>
-        /// 
+        /// Embedded resource xml document (root) reader.
         /// </summary>
-        public readonly string ResourceName;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="assembly"></param>
-        /// <param name="resourceName"></param>
-        public EmbeddedXmlReader(Assembly assembly, string resourceName)
+        public class EmbeddedXmlReader : IEnumerable<XElement>
         {
-            this.Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
-            this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
-        }
+            /// <summary>
+            /// 
+            /// </summary>
+            public readonly Assembly Assembly;
 
-        /// <summary>
-        /// Read xml document's root
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<XElement> GetEnumerator()
-        {
-            using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
+            /// <summary>
+            /// 
+            /// </summary>
+            public readonly string ResourceName;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="assembly"></param>
+            /// <param name="resourceName"></param>
+            public EmbeddedXmlReader(Assembly assembly, string resourceName)
             {
-                if (s == null) throw new InvalidOperationException($"Could not find {ResourceName}");
-                yield return XDocument.Load(s).Root;
+                this.Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
+                this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
+            }
+
+            /// <summary>
+            /// Read xml document's root
+            /// </summary>
+            /// <returns></returns>
+            public IEnumerator<XElement> GetEnumerator()
+            {
+                using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
+                {
+                    if (s == null) throw new InvalidOperationException($"Could not find {ResourceName}");
+                    yield return XDocument.Load(s).Root;
+                }
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
+                {
+                    if (s == null) throw new InvalidOperationException($"Could not find {ResourceName}");
+                    yield return XDocument.Load(s).Root;
+                }
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        /// <summary>
+        /// Embedded resource xml document (root) reader.
+        /// </summary>
+        public class FileXmlReader : IEnumerable<XElement>
         {
-            using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
+            /// <summary>
+            /// 
+            /// </summary>
+            public readonly String FilePath;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public readonly string ResourceName;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="filePath"></param>
+            public FileXmlReader(string filePath)
             {
-                if (s == null) throw new InvalidOperationException($"Could not find {ResourceName}");
-                yield return XDocument.Load(s).Root;
+                this.FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+            }
+
+            /// <summary>
+            /// Read xml document's root.
+            /// </summary>
+            /// <returns></returns>
+            public IEnumerator<XElement> GetEnumerator()
+            {
+                yield return XDocument.Load(FilePath).Root;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                yield return XDocument.Load(FilePath).Root;
             }
         }
-    }
 
-    /// <summary>
-    /// Embedded resource xml document (root) reader.
-    /// </summary>
-    public class FileXmlReader : IEnumerable<XElement>
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public readonly String FilePath;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public readonly string ResourceName;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filePath"></param>
-        public FileXmlReader(string filePath)
-        {
-            this.FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
-        }
-
-        /// <summary>
-        /// Read xml document's root.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<XElement> GetEnumerator()
-        {
-            yield return XDocument.Load(FilePath).Root;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            yield return XDocument.Load(FilePath).Root;
-        }
     }
 
 
