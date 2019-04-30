@@ -4,9 +4,6 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lexical.Localization.Plurality
 {

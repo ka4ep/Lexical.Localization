@@ -38,7 +38,7 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Read <see cref="IPluralRuleInfosExpression"/>.
         /// 
-        /// e.g. "[RuleSet=Unicode.CLDRv35,Category=cardinal,Culture=fi,Case=one]"
+        /// e.g. "[RuleSet=Unicode.CLDR35,Category=cardinal,Culture=fi,Case=one]"
         /// </summary>
         public readonly static Tokens.Taker0<IPluralRuleInfosExpression> PluralRuleInfos = (ref Tokens reader) =>
         {
@@ -74,7 +74,7 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Read <see cref="IPluralRuleInfoExpression"/>.
         /// 
-        /// e.g. "RuleSet=Unicode.CLDRv35"
+        /// e.g. "RuleSet=Unicode.CLDR35"
         /// </summary>
         public readonly static Tokens.Taker0<IPluralRuleInfoExpression> PluralRuleInfo = (ref Tokens reader) =>
         {
@@ -109,7 +109,7 @@ namespace Lexical.Localization.Plurality
         {
             int ix = reader.Index;
 
-            // infos, e.g. "[RuleSet=Unicode.CLDRv35,Category=cardinal,Culture=fi,Case=one]"
+            // infos, e.g. "[RuleSet=Unicode.CLDR35,Category=cardinal,Culture=fi,Case=one]"
             reader.TakeAll(TokenKind.NonEssential);
             IPluralRuleInfosExpression infos = reader.Take(PluralRuleInfos);            
 

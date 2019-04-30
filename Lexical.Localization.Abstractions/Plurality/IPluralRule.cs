@@ -1,11 +1,8 @@
 ﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           3.3.2019
+// Date:           25.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Exp;
-using System;
-
 namespace Lexical.Localization.Plurality
 {
     /// <summary>

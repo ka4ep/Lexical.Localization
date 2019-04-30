@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           3.3.2019
+// Date:           25.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Exp;
@@ -8,18 +8,17 @@ using System;
 
 namespace Lexical.Localization.Plurality
 {
-
     /// <summary>
     /// Plural rule expression.
     /// 
-    /// e.g. "[RuleSet=Unicode.CLDRv35,Category=cardinal,Culture=fi,Case=one] v = 0 and i % 10 = 1 @integer 0, 1, 2, 3, … @decimal 0.0~1.5, 10.0, …".
+    /// e.g. "[RuleSet=Unicode.CLDR35,Category=cardinal,Culture=fi,Case=one] v = 0 and i % 10 = 1 @integer 0, 1, 2, 3, … @decimal 0.0~1.5, 10.0, …".
     /// </summary>
     public interface IPluralRuleExpression : IExpression
     {
         /// <summary>
         /// (Optional) Rule infos.
         /// 
-        /// E.g. "[RuleSet=Unicode.CLDRv35,Category=cardinal,Culture=fi,Case=one]"
+        /// E.g. "[RuleSet=Unicode.CLDR35,Category=cardinal,Culture=fi,Case=one]"
         /// </summary>
         IPluralRuleInfosExpression Infos { get; }
 
@@ -76,7 +75,7 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// Rule infos expression.
     /// 
-    /// e.g. "[RuleSet=Unicode.CLDRv35,Category=cardinal,Culture=fi,Case=one]"
+    /// e.g. "[RuleSet=Unicode.CLDR35,Category=cardinal,Culture=fi,Case=one]"
     /// </summary>
     public interface IPluralRuleInfosExpression : IExpression
     {

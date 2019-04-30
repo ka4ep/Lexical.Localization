@@ -95,7 +95,7 @@ namespace Lexical.Localization.Plurality
     /// Uses unicode <see href="https://www.unicode.org/reports/tr35/tr35-numbers.html#Plural_rules_syntax"/> notation,
     /// with some additional features. 
     /// 
-    /// The rule info is added in brackets "[RuleSet=Unicode.CLDRv35,Category=cardinal,Case=zero,Culture=fi,Optional=1]".
+    /// The rule info is added in brackets "[RuleSet=Unicode.CLDR35,Category=cardinal,Case=zero,Culture=fi,Optional=1]".
     /// </summary>
     public class PluralRuleExpressionStringPrinter : PluralRuleExpressionPrinter
     {

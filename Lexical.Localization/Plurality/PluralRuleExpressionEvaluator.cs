@@ -5,8 +5,6 @@
 // --------------------------------------------------------
 using Lexical.Localization.Exp;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lexical.Localization.Plurality
 {
@@ -125,7 +123,7 @@ namespace Lexical.Localization.Plurality
                 // "The positive relations are of the format x = y and x = y mod z. 
                 //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
                 //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
-                if (number.F_Digits > 0) return false;
+                if (number.T_Digits > 0) return false;
 
                 return bop switch
                 {
@@ -147,7 +145,7 @@ namespace Lexical.Localization.Plurality
                 // "The positive relations are of the format x = y and x = y mod z. 
                 //  The y value can be a comma-separated list, such as n = 3, 5, 7..15, and is treated as if each relation were expanded into an OR statement. 
                 //  The range value a..b is equivalent to listing all the integers between a and b, inclusive. When != is used, it means the entire relation is negated."
-                if (number.F_Digits > 0) return false;
+                if (number.T_Digits > 0) return false;
 
                 return bop switch
                 {

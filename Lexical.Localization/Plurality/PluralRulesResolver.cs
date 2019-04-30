@@ -182,7 +182,7 @@ namespace Lexical.Localization.Plurality
         /// 
         /// <paramref name="rules"/> is either:
         /// <list type="bullet">
-        ///     <item>Assign assembly qualified type name of <see cref="IPluralRules"/>, e.g. "Unicode.CLDRv35"</item>
+        ///     <item>Assign assembly qualified type name of <see cref="IPluralRules"/>, e.g. "Unicode.CLDR35"</item>
         ///     <item>Plural rules expression (starts with '['), e.g. "[Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true"</item>
         /// </list>
         /// 

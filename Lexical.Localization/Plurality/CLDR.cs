@@ -9,7 +9,7 @@ namespace Lexical.Localization.Unicode
     /// <summary>
     /// Unicode CLDR v35 Plurality Rules generic expressions.
     /// 
-    /// This class is derivate of Unicode CLDR plurals.xml, and is licensed as "Data Files".
+    /// This class is derivate of Unicode CLDR plurals.xml and ordinals.xml, and is licensed as "Data Files".
     /// ----
     /// UNICODE, INC. LICENSE AGREEMENT - DATA FILES AND SOFTWARE
     /// 
@@ -2582,4 +2582,3 @@ namespace Lexical.Localization.Unicode
     }
 
 }
-

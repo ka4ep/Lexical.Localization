@@ -3,7 +3,6 @@
 // Date:           25.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Exp;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -23,7 +22,7 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Name of ruleset as assembly qualified type name.
         ///
-        /// e.g. "Unicode.CLDRv35".
+        /// e.g. "Unicode.CLDR35".
         /// 
         /// If null, then info is used for querying for a set of rules, and RuleSet is left open.
         /// </summary>

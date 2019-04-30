@@ -74,7 +74,7 @@ namespace Lexical.Localization.Plurality
     }
 
     /// <summary>
-    /// Simple immutable collection of plural rules.
+    /// Simple mutable collection of plural rules.
     /// 
     /// Implements queryable, but does not cache indices.
     /// </summary>

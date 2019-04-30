@@ -3,10 +3,7 @@
 // Date:           12.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Internal;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 
 namespace Lexical.Localization.Plurality
 {
@@ -20,14 +17,14 @@ namespace Lexical.Localization.Plurality
     /// Following features are extracted:
     /// <list type="bullet">
     ///   <item>sign</item>
-    ///   <item>integer</item>
-    ///   <item>fractions</item>
-    ///   <item>exponent</item>
+    ///   <item>integer digits</item>
+    ///   <item>fraction digits</item>
+    ///   <item>exponent sign and digits</item>
+    ///   <item>exponent sign and digits</item>
     /// </list>
     /// 
     /// 
-    /// ToString() also returns the same characters.
-    /// The IEnumerable&lt;char&gt; enumerator returns characters in canonicalized form with the following rules.
+    /// The IEnumerable&lt;char&gt; returns characters in canonicalized form with the following rules:
     /// <list type="bullet">
     ///   <item>Starts with '-' if is negative</item>
     ///   <item>Decimal separator is '.'</item>
@@ -35,6 +32,7 @@ namespace Lexical.Localization.Plurality
     ///   <item>Exponent is unwrapped so that is adjusts the location of decimal separator.</item>
     ///   <item>Hexdecimals are in capital 'A' to 'F'</item>
     /// </list>
+    /// ToString() also returns the same canonical characters.
     /// </summary>
     public interface IPluralNumber : IEnumerable<char> 
     {

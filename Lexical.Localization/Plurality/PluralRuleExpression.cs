@@ -18,7 +18,7 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// (Optional) Rule infos.
         /// 
-        /// E.g. "[RuleSet=Unicode.CLDRv35,Category=cardinal,Culture=fi,Case=one]"
+        /// E.g. "[RuleSet=Unicode.CLDR35,Category=cardinal,Culture=fi,Case=one]"
         /// </summary>
         public IPluralRuleInfosExpression Infos { get; }
         /// <summary> </summary>
@@ -47,7 +47,7 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// Plural rule infos.
     /// 
-    /// e.g. "[RuleSet=Unicode.CLDRv35,Category=cardinal,Culture=fi,Case=one]"
+    /// e.g. "[RuleSet=Unicode.CLDR35,Category=cardinal,Culture=fi,Case=one]"
     /// </summary>
     public class PluralRuleInfosExpression : Expression, IPluralRuleInfosExpression
     {
@@ -68,7 +68,6 @@ namespace Lexical.Localization.Plurality
         /// <inheritdoc/>
         public override void Append(StringBuilder sb)
             => new PluralRuleExpressionStringPrinter(sb).Append(this);
-
     }
 
     /// <summary>
@@ -100,7 +99,6 @@ namespace Lexical.Localization.Plurality
         /// <inheritdoc/>
         public override void Append(StringBuilder sb)
             => new PluralRuleExpressionStringPrinter(sb).Append(this);
-
     }
 
     /// <summary>
@@ -135,8 +133,6 @@ namespace Lexical.Localization.Plurality
         /// <inheritdoc/>
         public override void Append(StringBuilder sb)
             => new PluralRuleExpressionStringPrinter(sb).Append(this);
-
-
     }
 
     /// <summary>
@@ -152,9 +148,7 @@ namespace Lexical.Localization.Plurality
         {
             sb.Append('…');
         }
-
     }
-
 
     /// <summary>
     /// Range expression.
@@ -180,8 +174,6 @@ namespace Lexical.Localization.Plurality
         /// <inheritdoc/>
         public override void Append(StringBuilder sb)
             => new PluralRuleExpressionStringPrinter(sb).Append(this);
-
-
     }
 
     /// <summary>
@@ -203,8 +195,6 @@ namespace Lexical.Localization.Plurality
         /// <inheritdoc/>
         public override void Append(StringBuilder sb)
             => new PluralRuleExpressionStringPrinter(sb).Append(this);
-
     }
-
 
 }
