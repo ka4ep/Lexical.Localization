@@ -85,11 +85,6 @@ namespace Lexical.Localization
         Func<Exception, bool> errorHandler;
 
         /// <summary>
-        /// Observers that monitor content changes.
-        /// </summary>
-        List<IObserver<IAssetEvent>> observers = null;
-
-        /// <summary>
         /// Create language string resolver that uses a dictionary as a source.
         /// </summary>
         /// <param name="comparer">(optional) comparer to use</param>
