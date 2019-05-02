@@ -19,13 +19,13 @@ namespace Lexical.Localization
         /// <summary>
         /// Source dictionary
         /// </summary>
-        protected IReadOnlyDictionary<IAssetKey, byte[]> dictionary;
+        protected IReadOnlyDictionary<ILinePart, byte[]> dictionary;
 
         /// <summary>
         /// Create language byte[] resolver that uses a dictionary as a backend.
         /// </summary>
         /// <param name="dictionary">dictionary</param>
-        public ResourceDictionary(IReadOnlyDictionary<IAssetKey, byte[]> dictionary)
+        public ResourceDictionary(IReadOnlyDictionary<ILinePart, byte[]> dictionary)
         {
             this.dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
         }
@@ -35,7 +35,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public IEnumerable<IAssetKey> GetResourceKeys(IAssetKey filterKey)
+        public IEnumerable<ILinePart> GetResourceKeys(ILinePart filterKey)
         {
             // Return all 
             if (filterKey == null) return dictionary.Keys.ToList();
@@ -50,7 +50,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public IEnumerable<IAssetKey> GetAllResourceKeys(IAssetKey filterKey)
+        public IEnumerable<ILinePart> GetAllResourceKeys(ILinePart filterKey)
             => GetResourceKeys(filterKey);
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public byte[] GetResource(IAssetKey key)
+        public byte[] GetResource(ILinePart key)
         {
             byte[] result = null;
             // Search dictionary
@@ -78,7 +78,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Stream OpenStream(IAssetKey key)
+        public Stream OpenStream(ILinePart key)
         {
             byte[] data = GetResource(key);
             if (data == null) return null;
@@ -101,7 +101,7 @@ namespace Lexical.Localization
         /// <param name="builder"></param>
         /// <param name="dictionary"></param>
         /// <returns></returns>
-        public static IAssetBuilder AddResources(this IAssetBuilder builder, IReadOnlyDictionary<IAssetKey, byte[]> dictionary)
+        public static IAssetBuilder AddResources(this IAssetBuilder builder, IReadOnlyDictionary<ILinePart, byte[]> dictionary)
         {
             builder.AddAsset(new ResourceDictionary(dictionary));
             return builder;
@@ -113,7 +113,7 @@ namespace Lexical.Localization
         /// <param name="composition"></param>
         /// <param name="dictionary"></param>
         /// <returns></returns>
-        public static IAssetComposition AddResources(this IAssetComposition composition, IReadOnlyDictionary<IAssetKey, byte[]> dictionary)
+        public static IAssetComposition AddResources(this IAssetComposition composition, IReadOnlyDictionary<ILinePart, byte[]> dictionary)
         {
             composition.Add(new ResourceDictionary(dictionary));
             return composition;

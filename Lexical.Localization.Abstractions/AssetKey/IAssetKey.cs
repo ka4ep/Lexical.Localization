@@ -32,32 +32,25 @@ namespace Lexical.Localization
     ///  
     /// Others:
     ///     <see cref="IAssetRoot"/>
-    ///     <see cref="IAssetKeyLinked"/>
+    ///     <see cref="ILinePart"/>
     /// 
     /// </summary>
-    public interface IAssetKey
+    public partial interface ILinePart
     {
-        /// <summary>
-        /// Local identity of the key. For example "ConsoleApp1.MyController" or "Error1".
-        /// 
-        /// Name property is used by other decending interfaces for the string representation of their essential value, 
-        /// such as type name, or assembly name.
-        /// </summary>
-        String Name { get; }
     }
 
-    public static partial class AssetKeyExtensions
+    public static partial class LinePartExtensions
     {
         /// <summary>
         /// Find <see cref="IAsset"/> and get language string.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
-        /// <see cref="ResolveString(IAssetKey)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// <see cref="ResolveString(ILinePart)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>byte[] or null</returns>
         /// <exception cref="AssetKeyException">If resolving failed or resolver was not found</exception>
-        public static byte[] GetResource(this IAssetKey key)
+        public static byte[] GetResource(this ILinePart key)
         {
             IAsset asset = key.FindAsset();
             if (asset == null) throw new AssetKeyException(key, "String resolver was not found.");
@@ -70,11 +63,11 @@ namespace Lexical.Localization
         /// Find <see cref="IAsset"/> and get language string.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
-        /// <see cref="ResolveString(IAssetKey)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// <see cref="ResolveString(ILinePart)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>byte[] or null</returns>
-        public static byte[] TryGetResource(this IAssetKey key)
+        public static byte[] TryGetResource(this ILinePart key)
             => key.FindAsset()?.GetResource(key);
 
     }

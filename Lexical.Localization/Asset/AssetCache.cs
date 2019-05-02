@@ -234,17 +234,17 @@ namespace Lexical.Localization
             /// <summary>
             /// Cached result of GetKeyLines(null)
             /// </summary>
-            public List<KeyValuePair<IAssetKey, IFormulationString>> keysLinesPartial;
+            public List<KeyValuePair<ILinePart, IFormulationString>> keysLinesPartial;
 
             /// <summary>
             /// Cached result of GetAllKeyLines(null)
             /// </summary>
-            public List<KeyValuePair<IAssetKey, IFormulationString>> keysLinesAll;
+            public List<KeyValuePair<ILinePart, IFormulationString>> keysLinesAll;
 
             /// <summary>
             /// Cached result of individual GetString() fetches
             /// </summary>
-            public Dictionary<IAssetKey, IFormulationString> strings;
+            public Dictionary<ILinePart, IFormulationString> strings;
 
             /// <summary>
             /// GetKeyLines(null) was read and it was null.
@@ -278,7 +278,7 @@ namespace Lexical.Localization
 
             public Cache(AssetKeyComparer comparer)
             {
-                this.strings = new Dictionary<IAssetKey, IFormulationString>(comparer);
+                this.strings = new Dictionary<ILinePart, IFormulationString>(comparer);
             }
         }
 
@@ -300,7 +300,7 @@ namespace Lexical.Localization
             return this;
         }
 
-        public IFormulationString GetString(IAssetKey key)
+        public IFormulationString GetString(ILinePart key)
         {
             Cache _cache = this.cache;
 
@@ -320,7 +320,7 @@ namespace Lexical.Localization
             value = Source.GetString(key);
 
             // Write to cache, be that null or not
-            IAssetKey cacheKey = cloner.Copy(key);
+            ILinePart cacheKey = cloner.Copy(key);
             _cache.m_lock.EnterWriteLock();
             try
             {
@@ -339,7 +339,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> GetKeyLines(IAssetKey key = null)
+        public IEnumerable<KeyValuePair<ILinePart, IFormulationString>> GetKeyLines(ILinePart key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetKeyLines(key);
@@ -355,7 +355,7 @@ namespace Lexical.Localization
             if (_cache.keyLinesPartialIsNull) return null;
 
             // Read from source
-            IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines = Source.GetKeyLines(null);
+            IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines = Source.GetKeyLines(null);
 
             // Got no results
             if (lines == null)
@@ -365,16 +365,16 @@ namespace Lexical.Localization
             }
 
             // Clone keys
-            if (Options.GetCloneKeys()) lines = lines.Select(line => new KeyValuePair<IAssetKey, IFormulationString>(cloner.Copy(line.Key), line.Value));
+            if (Options.GetCloneKeys()) lines = lines.Select(line => new KeyValuePair<ILinePart, IFormulationString>(cloner.Copy(line.Key), line.Value));
 
             // Take snapshot
-            lines = new List<KeyValuePair<IAssetKey, IFormulationString>>(lines);
+            lines = new List<KeyValuePair<ILinePart, IFormulationString>>(lines);
 
             // Write to cache
             _cache.m_lock.EnterWriteLock();
             try
             {
-                _cache.keysLinesPartial = (List<KeyValuePair<IAssetKey, IFormulationString>>)lines;
+                _cache.keysLinesPartial = (List<KeyValuePair<ILinePart, IFormulationString>>)lines;
                 foreach (var line in lines)
                     _cache.strings[line.Key] = line.Value;
             }
@@ -392,7 +392,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> GetAllKeyLines(IAssetKey key = null)
+        public IEnumerable<KeyValuePair<ILinePart, IFormulationString>> GetAllKeyLines(ILinePart key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetAllKeyLines(key);
@@ -408,7 +408,7 @@ namespace Lexical.Localization
             if (_cache.keyLinesAllIsNull) return null;
 
             // Read from source
-            IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines = Source.GetAllKeyLines(null);
+            IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines = Source.GetAllKeyLines(null);
 
             // Got no results
             if (lines == null)
@@ -418,16 +418,16 @@ namespace Lexical.Localization
             }
 
             // Clone keys
-            if (Options.GetCloneKeys()) lines = lines.Select(line => new KeyValuePair<IAssetKey, IFormulationString>(cloner.Copy(line.Key), line.Value));
+            if (Options.GetCloneKeys()) lines = lines.Select(line => new KeyValuePair<ILinePart, IFormulationString>(cloner.Copy(line.Key), line.Value));
 
             // Take snapshot
-            lines = new List<KeyValuePair<IAssetKey, IFormulationString>>(lines);
+            lines = new List<KeyValuePair<ILinePart, IFormulationString>>(lines);
 
             // Write to cache
             _cache.m_lock.EnterWriteLock();
             try
             {
-                _cache.keysLinesAll = (List<KeyValuePair<IAssetKey, IFormulationString>>)lines;
+                _cache.keysLinesAll = (List<KeyValuePair<ILinePart, IFormulationString>>)lines;
                 foreach (var line in lines)
                     _cache.strings[line.Key] = line.Value;
             }
@@ -446,7 +446,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(IAssetKey key = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILinePart key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetStringLines(key);
@@ -494,7 +494,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(IAssetKey key = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(ILinePart key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetAllStringLines(key);
@@ -580,12 +580,12 @@ namespace Lexical.Localization
             /// <summary>
             /// Cached result of GetResourceKeys(null)
             /// </summary>
-            public List<IAssetKey> keysPartial;
+            public List<ILinePart> keysPartial;
 
             /// <summary>
             /// Cached result of GetAllResourceKeys(null)
             /// </summary>
-            public List<IAssetKey> keysAll;
+            public List<ILinePart> keysAll;
 
             /// <summary>
             /// Cached result of GetResourceNames(null)
@@ -600,7 +600,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Cached result of individual GetString() fetches
             /// </summary>
-            public Dictionary<IAssetKey, byte[]> data;
+            public Dictionary<ILinePart, byte[]> data;
 
             /// <summary>
             /// GetResourceKeys(null) was read and it was null.
@@ -624,7 +624,7 @@ namespace Lexical.Localization
 
             public Cache(AssetKeyComparer comparer)
             {
-                this.data = new Dictionary<IAssetKey, byte[]>(comparer);
+                this.data = new Dictionary<ILinePart, byte[]>(comparer);
             }
         }
 
@@ -646,7 +646,7 @@ namespace Lexical.Localization
             return this;
         }
 
-        public byte[] GetResource(IAssetKey key)
+        public byte[] GetResource(ILinePart key)
         {
             Cache _cache = this.cache;
 
@@ -668,7 +668,7 @@ namespace Lexical.Localization
             // Write to cache, be that null or not
             if (value != null && value.Length <= Options.GetMaxResourceSize())
             {
-                IAssetKey cacheKey = cloner.Copy(key);
+                ILinePart cacheKey = cloner.Copy(key);
                 _cache.m_lock.EnterWriteLock();
                 try
                 {
@@ -688,7 +688,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Stream OpenStream(IAssetKey key)
+        public Stream OpenStream(ILinePart key)
         {
             Cache _cache = this.cache;
 
@@ -711,7 +711,7 @@ namespace Lexical.Localization
             // Store into cache?
             if (Options.GetCacheStreams())
             {
-                IAssetKey cacheKey = Options.GetCloneKeys() ? cloner.Copy(key) : key;
+                ILinePart cacheKey = Options.GetCloneKeys() ? cloner.Copy(key) : key;
 
                 // Cache null value
                 if (stream == null)
@@ -809,7 +809,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<IAssetKey> GetResourceKeys(IAssetKey key = null)
+        public IEnumerable<ILinePart> GetResourceKeys(ILinePart key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetResourceKeys(key);
@@ -825,7 +825,7 @@ namespace Lexical.Localization
             if (_cache.keysPartialIsNull) return null;
 
             // Read from source
-            IEnumerable<IAssetKey> lines = Source.GetResourceKeys(null);
+            IEnumerable<ILinePart> lines = Source.GetResourceKeys(null);
 
             // Got no results
             if (lines == null)
@@ -838,13 +838,13 @@ namespace Lexical.Localization
             if (Options.GetCloneKeys()) lines = lines.Select(line => cloner.Copy(line));
 
             // Take snapshot
-            lines = new List<IAssetKey>(lines);
+            lines = new List<ILinePart>(lines);
 
             // Write to cache
             _cache.m_lock.EnterWriteLock();
             try
             {
-                _cache.keysPartial = (List<IAssetKey>)lines;
+                _cache.keysPartial = (List<ILinePart>)lines;
             }
             finally
             {
@@ -860,7 +860,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<IAssetKey> GetAllResourceKeys(IAssetKey key = null)
+        public IEnumerable<ILinePart> GetAllResourceKeys(ILinePart key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetAllResourceKeys(key);
@@ -876,7 +876,7 @@ namespace Lexical.Localization
             if (_cache.keysAllIsNull) return null;
 
             // Read from source
-            IEnumerable<IAssetKey> lines = Source.GetAllResourceKeys(null);
+            IEnumerable<ILinePart> lines = Source.GetAllResourceKeys(null);
 
             // Got no results
             if (lines == null)
@@ -889,13 +889,13 @@ namespace Lexical.Localization
             if (Options.GetCloneKeys()) lines = lines.Select(line => cloner.Copy(line));
 
             // Take snapshot
-            lines = new List<IAssetKey>(lines);
+            lines = new List<ILinePart>(lines);
 
             // Write to cache
             _cache.m_lock.EnterWriteLock();
             try
             {
-                _cache.keysAll = (List<IAssetKey>)lines;
+                _cache.keysAll = (List<ILinePart>)lines;
             }
             finally
             {
@@ -911,7 +911,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetResourceNames(IAssetKey key = null)
+        public IEnumerable<string> GetResourceNames(ILinePart key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetResourceNames(key);
@@ -959,7 +959,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetAllResourceNames(IAssetKey key = null)
+        public IEnumerable<string> GetAllResourceNames(ILinePart key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetAllResourceNames(key);

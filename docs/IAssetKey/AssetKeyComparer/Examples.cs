@@ -12,21 +12,21 @@ namespace docs
         {
             {
                 #region Snippet_0
-                IEqualityComparer<IAssetKey> comparer = AssetKeyComparer.Default;
+                IEqualityComparer<ILinePart> comparer = AssetKeyComparer.Default;
                 #endregion Snippet_0
             }
             {
                 #region Snippet_1
-                IAssetKey key = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
+                ILinePart key = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
                 int hash = AssetKeyComparer.Default.GetHashCode(key);
                 #endregion Snippet_1
             }
             {
                 #region Snippet_2
-                IAssetKey key1 = new LocalizationRoot().Type("MyClass").Key("OK");
-                IAssetKey key2 = Key.Create("Type", "MyClass").Append("Key", "OK");
-                IAssetKey key3 = LocalizationRoot.Global.Type("MyClass").Key("OK");
-                IAssetKey key4 = StringLocalizerRoot.Global.Type("MyClass").Key("OK");
+                ILinePart key1 = new LocalizationRoot().Type("MyClass").Key("OK");
+                ILinePart key2 = Key.Create("Type", "MyClass").Append("Key", "OK");
+                ILinePart key3 = LocalizationRoot.Global.Type("MyClass").Key("OK");
+                ILinePart key4 = StringLocalizerRoot.Global.Type("MyClass").Key("OK");
 
                 bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
                 bool equals23 = AssetKeyComparer.Default.Equals(key2, key3); // Are equal
@@ -39,8 +39,8 @@ namespace docs
             }
             {
                 #region Snippet_3
-                IAssetKey key1 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
-                IAssetKey key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("en");
+                ILinePart key1 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
+                ILinePart key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("en");
 
                 bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
                 #endregion Snippet_3
@@ -49,8 +49,8 @@ namespace docs
             }
             {
                 #region Snippet_4
-                IAssetKey key1 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
-                IAssetKey key2 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK").Culture("de");
+                ILinePart key1 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
+                ILinePart key2 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK").Culture("de");
 
                 bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
                 #endregion Snippet_4
@@ -59,8 +59,8 @@ namespace docs
             }
             {
                 #region Snippet_5
-                IAssetKey key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
-                IAssetKey key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
+                ILinePart key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
+                ILinePart key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
 
                 bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
                 int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
@@ -69,16 +69,16 @@ namespace docs
             }
             {
                 #region Snippet_5b
-                IAssetKey key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
-                IAssetKey key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
+                ILinePart key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
+                ILinePart key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
                 string str1 = key1.Culture("fi").ToString();  // <- Selects a culture
                 string str2 = key2.Culture("fi").ToString();  // <- Doesn't change the effective culture
                 #endregion Snippet_5b
             }
             {
                 #region Snippet_6
-                IAssetKey key1 = LocalizationRoot.Global.Section("").Key("OK");
-                IAssetKey key2 = LocalizationRoot.Global.Key("OK");
+                ILinePart key1 = LocalizationRoot.Global.Section("").Key("OK");
+                ILinePart key2 = LocalizationRoot.Global.Key("OK");
 
                 bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are not equal
                 int hash1 = AssetKeyComparer.Default.GetHashCode(key1);

@@ -71,11 +71,11 @@ namespace Lexical.Localization
             Match m = null;
             if (args.Length == 1 && typeof(String).IsAssignableFrom(args[0].LimitType) && (m = lang_region_pattern.Match(binder.Name)).Success)
             {
-                if (inlineMethod == null) inlineMethod = typeof(LocalizationKeyExtensions).GetMethod(nameof(LocalizationKeyExtensions.Inline), new Type[] { typeof(IAssetKey), typeof(string), typeof(string) });
+                if (inlineMethod == null) inlineMethod = typeof(LocalizationKeyExtensions).GetMethod(nameof(LocalizationKeyExtensions.Inline), new Type[] { typeof(ILinePart), typeof(string), typeof(string) });
                 BindingRestrictions restrictions = BindingRestrictions.GetTypeRestriction(Expression, LimitType);
                 restrictions.Merge(BindingRestrictions.GetTypeRestriction(args[0].Expression, typeof(String)));
 
-                Expression selfExp = Expression.Convert(Expression, typeof(IAssetKey));
+                Expression selfExp = Expression.Convert(Expression, typeof(ILinePart));
                 Expression cultureExp = Expression.Constant( "Culture:"+ (binder.Name.Contains("_") ? binder.Name.Replace('_', '-') : binder.Name) );
                 Expression textExp = args[0].HasValue ? Expression.Constant(args[0].Value.ToString()) : (Expression)Expression.Convert(args[0].Expression, typeof(String));
 

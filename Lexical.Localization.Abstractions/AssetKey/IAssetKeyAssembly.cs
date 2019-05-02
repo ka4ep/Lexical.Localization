@@ -14,9 +14,9 @@ namespace Lexical.Localization
     /// Assembly is a hint that is used when assets are loaded from embedded rsources.
     /// For instance, assembly hint matches in a name pattern such as "[Assembly.][Resource.]{Type.}{Section.}{Key}".
     /// 
-    /// Consumers of this interface should use the extension method <see cref="AssetKeyExtensions.Assembly(IAssetKey, string)"/>.
+    /// Consumers of this interface should use the extension method <see cref="LinePartExtensions.Assembly(ILinePart, string)"/>.
     /// </summary>
-    public interface IAssetKeyAssemblyAssignable : IAssetKey
+    public interface IAssetKeyAssemblyAssignable : ILinePart
     {
         /// <summary>
         /// Create a new key that has appended "Assembly" section.
@@ -50,7 +50,7 @@ namespace Lexical.Localization
         // The inherited Name property is either Assembly.FullName or Assembly.GetName().Name.
     }
 
-    public static partial class AssetKeyExtensions
+    public static partial class LinePartExtensions
     {
         /// <summary>
         /// Add <see cref="IAssetKeyAssemblyAssigned"/> section.
@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement IAssetKeyAssemblyAssignable</exception>
-        public static IAssetKeyAssemblyAssigned Assembly(this IAssetKey key, Assembly assembly)
+        public static IAssetKeyAssemblyAssigned Assembly(this ILinePart key, Assembly assembly)
         {
             if (key is IAssetKeyAssemblyAssignable casted) return casted.Assembly(assembly);
             throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyAssemblyAssignable)}.");
@@ -72,7 +72,7 @@ namespace Lexical.Localization
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement IAssetKeyAssemblyAssignable</exception>
-        public static IAssetKeyAssemblyAssigned Assembly(this IAssetKey key, string assembly)
+        public static IAssetKeyAssemblyAssigned Assembly(this ILinePart key, string assembly)
         {
             if (key is IAssetKeyAssemblyAssignable casted) return casted.Assembly(assembly);
             throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyAssemblyAssignable)}.");
@@ -84,7 +84,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="assembly"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeyAssemblyAssigned TryAddAssembly(this IAssetKey key, String assembly)
+        public static IAssetKeyAssemblyAssigned TryAddAssembly(this ILinePart key, String assembly)
         {
             if (key is IAssetKeyAssemblyAssignable casted) return casted.Assembly(assembly);
             return null;
@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="assembly"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeyAssemblyAssigned TryAddAssemblyKey(this IAssetKey key, Assembly assembly)
+        public static IAssetKeyAssemblyAssigned TryAddAssemblyKey(this ILinePart key, Assembly assembly)
         {
             if (key is IAssetKeyAssemblyAssignable casted) return casted.Assembly(assembly);
             return null;
@@ -108,12 +108,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>type key with type or null</returns>
-        public static IAssetKeyAssemblyAssigned FindAssemblyKey(this IAssetKey key)
+        public static IAssetKeyAssemblyAssigned FindAssemblyKey(this ILinePart key)
         {
             while (key != null)
             {
-                if (key is IAssetKeyAssemblyAssigned asmKey && !string.IsNullOrEmpty(key.Name)) return asmKey;
-                key = key.GetPreviousKey();
+                if (key is IAssetKeyAssemblyAssigned asmKey && !string.IsNullOrEmpty(key.GetParameterValue())) return asmKey;
+                key = key.PreviousPart;
             }
             return null;
         }
@@ -124,12 +124,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>type key with type or null</returns>
-        public static Assembly FindAssembly(this IAssetKey key)
+        public static Assembly FindAssembly(this ILinePart key)
         {
             while (key != null)
             {
                 if (key is IAssetKeyAssemblyAssigned casted && casted.Assembly != null) return casted.Assembly;
-                key = key.GetPreviousKey();
+                key = key.PreviousPart;
             }
             return null;
         }
@@ -148,14 +148,14 @@ namespace Lexical.Localization
         ///     0 found nothing
         ///     1 found type
         ///     2 found basename + location</returns>
-        public static int FindResourceInfos(this IAssetKey key, out Type type, out string basename, out string location)
+        public static int FindResourceInfos(this ILinePart key, out Type type, out string basename, out string location)
         {
             IAssetKeyAssemblyAssigned asmSection;
             IAssetKeyResourceAssigned resSection;
             IAssetKeyTypeAssigned typeSection;
             int x = key.FindResourceKeys(out asmSection, out resSection, out typeSection);
             if (x == 1) { type = typeSection.Type; basename = null; location = null; }
-            if (x == 2) { type = null; basename = typeSection.Name; location = asmSection.Name; }
+            if (x == 2) { type = null; basename = typeSection.GetParameterValue(); location = asmSection.GetParameterValue(); }
             type = null; basename = null; location = null;
             return 0;
         }
@@ -168,12 +168,12 @@ namespace Lexical.Localization
         ///     0 found nothing
         ///     1 found typeSection
         ///     2 found asmSection + typeSection</returns>
-        public static int FindResourceKeys(this IAssetKey key, out IAssetKeyAssemblyAssigned asmSection, out IAssetKeyResourceAssigned resSection, out IAssetKeyTypeAssigned typeSection)
+        public static int FindResourceKeys(this ILinePart key, out IAssetKeyAssemblyAssigned asmSection, out IAssetKeyResourceAssigned resSection, out IAssetKeyTypeAssigned typeSection)
         {
             IAssetKeyAssemblyAssigned _asmSection = null;
             IAssetKeyResourceAssigned _resSection = null;
             IAssetKeyTypeAssigned _typeSection = null;
-            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+            for (ILinePart k = key; k != null; k = k.PreviousPart)
             {
                 if (k is IAssetKeyAssemblyAssigned __asmSection) _asmSection = __asmSection;
                 else if (k is IAssetKeyResourceAssigned __resSection) _resSection = __resSection;

@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Interface for reading binary resources.
     /// 
-    /// Consumers of this interface should always call with <see cref="AssetExtensions.GetResource(IAsset, IAssetKey)"/>.
+    /// Consumers of this interface should always call with <see cref="AssetExtensions.GetResource(IAsset, ILinePart)"/>.
     /// </summary>
     public interface IAssetResourceProvider : IAsset
     {
@@ -24,7 +24,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>resolved string or null or resource was not found</returns>
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        byte[] GetResource(IAssetKey key);
+        byte[] GetResource(ILinePart key);
 
         /// <summary>
         /// Try to open a stream to a resource.
@@ -32,11 +32,11 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>resolved string or null if resource was not found</returns>
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        Stream OpenStream(IAssetKey key);
+        Stream OpenStream(ILinePart key);
     }
 
     /// <summary>
-    /// Interface to enumerate binary localization resources as <see cref="IAssetKey"/> references.
+    /// Interface to enumerate binary localization resources as <see cref="ILinePart"/> references.
     /// 
     /// If the implementing class uses filenames, the recommended guideline is to use <see cref="IAssetKeyLocationAssigned"/> to
     /// refer to a folder, and <see cref="IAssetKeyAssigned"/> to refer to a filename. For example, 
@@ -61,7 +61,7 @@ namespace Lexical.Localization
         /// Get the resource keys that could be resolved. 
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -69,13 +69,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) key as filter</param>
         /// <returns>resource names, or null</returns>
-        IEnumerable<IAssetKey> GetResourceKeys(IAssetKey filterKey = null);
+        IEnumerable<ILinePart> GetResourceKeys(ILinePart filterKey = null);
 
         /// <summary>
         /// Get all resource keys, or if every key cannot be provided returns null.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -83,13 +83,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) key as filter</param>
         /// <returns>resource names, or null</returns>
-        IEnumerable<IAssetKey> GetAllResourceKeys(IAssetKey filterKey = null);
+        IEnumerable<ILinePart> GetAllResourceKeys(ILinePart filterKey = null);
     }
 
     /// <summary>
     /// Interface to enumerate binary localization resources as strings identifier, which is typically a filename.
     /// 
-    /// Note, that the intrinsic key class is <see cref="IAssetKey"/> and not string, therefore
+    /// Note, that the intrinsic key class is <see cref="ILinePart"/> and not string, therefore
     /// is is encouraged to use and implement <see cref="IAssetResourceKeysEnumerable"/> instead.
     /// </summary>
     public interface IAssetResourceNamesEnumerable : IAsset
@@ -98,7 +98,7 @@ namespace Lexical.Localization
         /// Get all resource names as string keys.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -106,13 +106,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) key as filter</param>
         /// <returns>resource names, or null</returns>
-        IEnumerable<string> GetResourceNames(IAssetKey filterKey = null);
+        IEnumerable<string> GetResourceNames(ILinePart filterKey = null);
 
         /// <summary>
         /// Get all resource names.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -120,7 +120,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) key as filter</param>
         /// <returns>all resource names, or null</returns>
-        IEnumerable<string> GetAllResourceNames(IAssetKey filterKey = null);
+        IEnumerable<string> GetAllResourceNames(ILinePart filterKey = null);
     }
 
     public static partial class AssetExtensions
@@ -132,7 +132,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>resolved string or null or resource was not found</returns>
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        public static byte[] GetResource(this IAsset asset, IAssetKey key)
+        public static byte[] GetResource(this IAsset asset, ILinePart key)
         {
             if (asset is IAssetResourceProvider casted)
             {
@@ -181,7 +181,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>resolved string or null if resource was not found</returns>
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        public static Stream OpenStream(this IAsset asset, IAssetKey key)
+        public static Stream OpenStream(this IAsset asset, ILinePart key)
         {
             if (asset is IAssetResourceProvider casted)
             {
@@ -227,7 +227,7 @@ namespace Lexical.Localization
         /// Get resource names as string keys. If all cannot be returned, returns what is available.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If the parameter has value "", then the result must be filtered to keys that have "" for the same parameter, or don't have that same parameter assigned.
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -236,7 +236,7 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="filterKey">(optional) key as filter</param>
         /// <returns>resource names, or null</returns>
-        public static IEnumerable<string> GetResourceNames(this IAsset asset, IAssetKey filterKey = null)
+        public static IEnumerable<string> GetResourceNames(this IAsset asset, ILinePart filterKey = null)
         {
             IEnumerable<string> result = null;
             if (asset is IAssetResourceNamesEnumerable casted) result = casted.GetResourceNames(filterKey);
@@ -279,7 +279,7 @@ namespace Lexical.Localization
         /// Get all resource names as string keys. If all cannot be returned, returns null.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If the parameter has value "", then the result must be filtered to keys that have "" for the same parameter, or don't have that same parameter assigned.
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -288,7 +288,7 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="filterKey">(optional) key as filter</param>
         /// <returns>resource names, or null</returns>
-        public static IEnumerable<string> GetAllResourceNames(this IAsset asset, IAssetKey filterKey = null)
+        public static IEnumerable<string> GetAllResourceNames(this IAsset asset, ILinePart filterKey = null)
         {
             IEnumerable<string> result = null;
             if (asset is IAssetResourceNamesEnumerable casted) result = casted.GetAllResourceNames(filterKey);
@@ -337,7 +337,7 @@ namespace Lexical.Localization
         /// Get resource names as string keys. If all cannot be returned, returns what is available.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If the parameter has value "", then the result must be filtered to keys that have "" for the same parameter, or don't have that same parameter assigned.
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -346,15 +346,15 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="filterKey">(optional) key as filter</param>
         /// <returns>resource names, or null</returns>
-        public static IEnumerable<IAssetKey> GetResourceKeys(this IAsset asset, IAssetKey filterKey = null)
+        public static IEnumerable<ILinePart> GetResourceKeys(this IAsset asset, ILinePart filterKey = null)
         {
-            IEnumerable<IAssetKey> result = null;
+            IEnumerable<ILinePart> result = null;
             if (asset is IAssetResourceKeysEnumerable casted) result = casted.GetResourceKeys(filterKey);
             if (asset is IAssetComposition composition)
             {
                 foreach (IAssetResourceKeysEnumerable component in composition.GetComponents<IAssetResourceKeysEnumerable>(true) ?? Enumerable.Empty<IAssetResourceKeysEnumerable>())
                 {
-                    IEnumerable<IAssetKey> _result = component.GetResourceKeys(filterKey);
+                    IEnumerable<ILinePart> _result = component.GetResourceKeys(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                 }
                 foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
@@ -364,7 +364,7 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            IEnumerable<IAssetKey> _result = loaded_asset.GetResourceKeys(filterKey);
+                            IEnumerable<ILinePart> _result = loaded_asset.GetResourceKeys(filterKey);
                             if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                         }
                     }
@@ -377,7 +377,7 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in assets)
                     {
-                        IEnumerable<IAssetKey> _result = loaded_asset.GetResourceKeys(filterKey);
+                        IEnumerable<ILinePart> _result = loaded_asset.GetResourceKeys(filterKey);
                         if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                     }
                 }
@@ -389,7 +389,7 @@ namespace Lexical.Localization
         /// Get all resource names as string keys. If all cannot be returned, returns null.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="IAssetKeyParameterAssigned"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If the parameter has value "", then the result must be filtered to keys that have "" for the same parameter, or don't have that same parameter assigned.
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -398,15 +398,15 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="filterKey">(optional) key as filter</param>
         /// <returns>resource names, or null</returns>
-        public static IEnumerable<IAssetKey> GetAllResourceKeys(this IAsset asset, IAssetKey filterKey = null)
+        public static IEnumerable<ILinePart> GetAllResourceKeys(this IAsset asset, ILinePart filterKey = null)
         {
-            IEnumerable<IAssetKey> result = null;
+            IEnumerable<ILinePart> result = null;
             if (asset is IAssetResourceKeysEnumerable casted) result = casted.GetAllResourceKeys(filterKey);
             if (asset is IAssetComposition composition)
             {
                 foreach (IAssetResourceKeysEnumerable component in composition.GetComponents<IAssetResourceKeysEnumerable>(true) ?? Enumerable.Empty<IAssetResourceKeysEnumerable>())
                 {
-                    IEnumerable<IAssetKey> _result = component.GetAllResourceKeys(filterKey);
+                    IEnumerable<ILinePart> _result = component.GetAllResourceKeys(filterKey);
                     if (_result == null) return null;
                     if (_result is Array _array && _array.Length == 0) continue;
                     result = result == null ? _result : result.Concat(_result);
@@ -418,7 +418,7 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            IEnumerable<IAssetKey> _result = loaded_asset.GetAllResourceKeys(filterKey);
+                            IEnumerable<ILinePart> _result = loaded_asset.GetAllResourceKeys(filterKey);
                             if (_result == null) return null;
                             if (_result is Array _array && _array.Length == 0) continue;
                             result = result == null ? _result : result.Concat(_result);
@@ -433,7 +433,7 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in assets)
                     {
-                        IEnumerable<IAssetKey> _result = loaded_asset.GetAllResourceKeys(filterKey);
+                        IEnumerable<ILinePart> _result = loaded_asset.GetAllResourceKeys(filterKey);
                         if (_result == null) return null;
                         if (_result is Array _array && _array.Length == 0) continue;
                         result = result == null ? _result : result.Concat(_result);

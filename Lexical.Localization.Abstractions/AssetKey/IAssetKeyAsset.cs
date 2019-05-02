@@ -10,7 +10,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A key where <see cref="IAsset"/> can be assigned. (Typically a mutable root.)
     /// </summary>
-    public interface IAssetKeyAssetAssignable : IAssetKey
+    public interface IAssetKeyAssetAssignable : ILinePart
     {
         /// <summary>
         /// Set localization asset.
@@ -24,7 +24,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key has <see cref="IAsset"/> hint assigned.
     /// </summary>
-    public interface IAssetKeyAssetAssigned : IAssetKey
+    public interface IAssetKeyAssetAssigned : ILinePart
     {
         /// <summary>
         /// Object that contains localization assets.
@@ -32,7 +32,7 @@ namespace Lexical.Localization
         IAsset Asset { get; }
     }
 
-    public static partial class AssetKeyExtensions
+    public static partial class LinePartExtensions
     {
         /// <summary>
         /// Try to set localization asset. Doesn't throw expected exception.
@@ -56,7 +56,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>key or null</returns>
-        public static IAssetKeyAssetAssignable FindAssetAssignable(this IAssetKey key)
+        public static IAssetKeyAssetAssignable FindAssetAssignable(this ILinePart key)
             => key.Find<IAssetKeyAssetAssignable>();
 
         /// <summary>
@@ -64,9 +64,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>language strings or null</returns>
-        public static IAsset FindAsset(this IAssetKey key)
+        public static IAsset FindAsset(this ILinePart key)
         {
-            for (; key != null; key = key.GetPreviousKey())
+            for (; key != null; key = key.PreviousPart)
                 if (key is IAssetKeyAssetAssigned casted && casted.Asset != null) return casted.Asset;
             return null;
         }

@@ -144,7 +144,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyLines(IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteKeyLines(IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines, TextReader srcText, TextWriter dstText, IAssetKeyNamePolicy namePolicy, LocalizationFileWriteFlags flags);
     }
 
     /// <summary>
@@ -165,7 +165,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyLines(IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteKeyLines(IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines, Stream srcStream, Stream dstStream, IAssetKeyNamePolicy namePolicy, LocalizationFileWriteFlags flags);
     }
 
     /// <summary>

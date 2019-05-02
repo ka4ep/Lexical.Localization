@@ -14,7 +14,7 @@ namespace Lexical.Localization
 {
     #region Interface
     /// <summary>
-    /// A name pattern, akin to regular expression, that can be matched against filenames and <see cref="IAssetKey"/> instances.
+    /// A name pattern, akin to regular expression, that can be matched against filenames and <see cref="ILinePart"/> instances.
     /// Is a sequence of parameter and text parts.
     /// 
     /// Parameter parts:
@@ -94,7 +94,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        IAssetNamePatternMatch Match(IAssetKey key);
+        IAssetNamePatternMatch Match(ILinePart key);
 
         /// <summary>
         /// A regular expression pattern that captures same parts from a filename string.
@@ -223,7 +223,7 @@ namespace Lexical.Localization
         /// <param name="pattern"></param>
         /// <param name="key"></param>
         /// <returns>match as string or null</returns>
-        public static string MatchToString(this IAssetNamePattern pattern, IAssetKey key)
+        public static string MatchToString(this IAssetNamePattern pattern, ILinePart key)
         {
             IAssetNamePatternMatch match = pattern.Match(key);
             return pattern.BuildName(match.PartValues);

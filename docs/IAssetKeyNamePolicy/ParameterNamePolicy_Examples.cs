@@ -16,27 +16,27 @@ namespace docs
             {
                 #region Snippet_0
                 string str = @"Culture:en:Type:MyController:Key:Ok";
-                IAssetKey key = ParameterNamePolicy.Instance.Parse(str);
+                ILinePart key = ParameterNamePolicy.Instance.Parse(str);
                 #endregion Snippet_0
             }
             {
                 #region Snippet_0b
                 string str = @"Culture:en:Type:MyController:Key:Ok";
-                IAssetKey root = new StringLocalizerRoot();
-                IAssetKey key = ParameterNamePolicy.Instance.Parse(str, root);
+                ILinePart root = new StringLocalizerRoot();
+                ILinePart key = ParameterNamePolicy.Instance.Parse(str, root);
                 #endregion Snippet_0b
             }
 
             {
                 #region Snippet_1
                 string str = @"Key:Success\:Plural";
-                IAssetKey key = ParameterNamePolicy.Instance.Parse(str);
+                ILinePart key = ParameterNamePolicy.Instance.Parse(str);
                 #endregion Snippet_1
             }
 
             {
                 #region Snippet_2
-                IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
+                ILinePart key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
                 string str = ParameterNamePolicy.Instance.BuildName(key);
                 #endregion Snippet_2
             }
@@ -46,7 +46,7 @@ namespace docs
             }
             {
                 #region Snippet_4
-                IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
+                ILinePart key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
                 IEnumerable<KeyValuePair<string, string>> parameters = key.GetParameters();
                 string str = ParameterNamePolicy.Instance.PrintParameters(parameters);
                 #endregion Snippet_4
@@ -56,13 +56,13 @@ namespace docs
                 #region Snippet_5
                 string str = "Culture:en:Type:MyLibrary.MyController:Key:Success";
                 IEnumerable<KeyValuePair<string, string>> parameters = ParameterNamePolicy.Instance.ParseParameters(str);
-                IAssetKey key = LocalizationRoot.Global.AppendParameters(parameters);
+                ILinePart key = LocalizationRoot.Global.AppendParameters(parameters);
                 #endregion Snippet_5
             }
 
             {
                 #region Snippet_6
-                IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
+                ILinePart key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
                 string str = ParameterNamePolicy.Instance.PrintKey(key);
                 #endregion Snippet_6
             }
@@ -70,7 +70,7 @@ namespace docs
             {
                 #region Snippet_7
                 string str = "Culture:en:Type:MyLibrary.MyController:Key:Success";
-                IAssetKey key = ParameterNamePolicy.Instance.Parse(str, LocalizationRoot.Global);
+                ILinePart key = ParameterNamePolicy.Instance.Parse(str, LocalizationRoot.Global);
                 #endregion Snippet_7
             }
         }

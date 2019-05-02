@@ -105,7 +105,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>localizer or null</returns>
-        StringLocalizerAsset FindStringLocalizer(IAssetKey key, CultureInfo key_culture)
+        StringLocalizerAsset FindStringLocalizer(ILinePart key, CultureInfo key_culture)
         {
             // This adapter is not assigned with a culture
             if (culture == null)
@@ -121,7 +121,7 @@ namespace Lexical.Localization
             return null;
         }
 
-        public IFormulationString GetString(IAssetKey key)
+        public IFormulationString GetString(ILinePart key)
         {
             CultureInfo key_culture = key.FindCulture();
             if (key_culture != null)
@@ -170,7 +170,7 @@ namespace Lexical.Localization
                 {
                     // This adapter is assigned for specific assembly/embed_basename.
                     // If key has these hints, and they mismatch, we cant retrieve for the key.
-                    if (!asmSectionToStrip.Name.Equals(location_assigned.location) || (!resSectionToStrip.Name.Equals(location_assigned.basename))) return null;
+                    if (!asmSectionToStrip.GetParameterValue().Equals(location_assigned.location) || (!resSectionToStrip.GetParameterValue().Equals(location_assigned.basename))) return null;
                 } else
                 {
                     // This adapter is not assigned for any specific assembly/embed_basename.
@@ -184,22 +184,24 @@ namespace Lexical.Localization
             // Build id
             // Strip: culture, and our typesection/asm section
             int length = 0;
-            for(IAssetKey k = key; k!=null; k=k.GetPreviousKey())
+            for(ILinePart k = key; k!=null; k=k.PreviousPart)
             {
+                string value = k.GetParameterValue();
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILocalizationKeyCultureAssigned || string.IsNullOrEmpty(k.Name)) continue;
+                if (k is ILocalizationKeyCultureAssigned || string.IsNullOrEmpty(value)) continue;
                 if (length > 0) length++;
-                length += k.Name.Length;
+                length += value.Length;
             }
             char[] chars = new char[length];
             int ix = length;
-            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+            for (ILinePart k = key; k != null; k = k.PreviousPart)
             {
+                string value = k.GetParameterValue();
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILocalizationKeyCultureAssigned || string.IsNullOrEmpty(k.Name)) continue;
+                if (k is ILocalizationKeyCultureAssigned || string.IsNullOrEmpty(value)) continue;
                 if (ix < length) chars[--ix] = '.';
-                ix -= k.Name.Length;
-                k.Name.CopyTo(0, chars, ix, k.Name.Length);
+                ix -= value.Length;
+                value.CopyTo(0, chars, ix, value.Length);
             }
             string id = new String(chars);
 
@@ -209,7 +211,7 @@ namespace Lexical.Localization
             return ValueParser.Parse(str.Value);
         }
 
-        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(IAssetKey key = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILinePart key = null)
         {
             CultureInfo key_culture = key?.FindCulture();
             IStringLocalizer localizer = key == null ? stringLocalizer : FindStringLocalizer(key, key_culture).stringLocalizer;
@@ -233,7 +235,7 @@ namespace Lexical.Localization
             }
         }
 
-        public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(IAssetKey key = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(ILinePart key = null)
         {
             return GetStringLines(key);
         }

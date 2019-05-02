@@ -3,6 +3,8 @@
 // Date:           2.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using System;
+
 namespace Lexical.Localization
 {
     /// <summary>
@@ -16,19 +18,24 @@ namespace Lexical.Localization
         public ILinePart PreviousPart { get; protected set; }
 
         /// <summary>
-        /// Part appender
+        /// Appender
         /// </summary>
-        public ILinePartAppender Appender { get; protected set; }
+        protected ILinePartAppender appender;
+
+        /// <summary>
+        /// Get part appender.
+        /// </summary>
+        public virtual ILinePartAppender Appender { get => appender ?? PreviousPart?.Appender; set => throw new InvalidOperationException(nameof(Appender) + " is read-only"); }
 
         /// <summary>
         /// Create line part.
         /// </summary>
-        /// <param name="previousPart"></param>
-        /// <param name="appender"></param>
-        public LinePart(ILinePart previousPart, ILinePartAppender appender)
+        /// <param name="appender">(optional) Explicit appender, if null uses the Appender in <paramref name="previousPart"/></param>
+        /// <param name="previousPart">(optional) link to previous part.</param>
+        public LinePart(ILinePartAppender appender, ILinePart previousPart)
         {
-            PreviousPart = previousPart;
             Appender = appender;
+            PreviousPart = previousPart;
         }
     }
 

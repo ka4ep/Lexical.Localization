@@ -14,7 +14,7 @@ using Lexical.Localization.Internal;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// <see cref="DynamicMetaObject" /> implementation for <see cref="IAssetKey" /> interfaces.
+    /// <see cref="DynamicMetaObject" /> implementation for <see cref="ILinePart" /> interfaces.
     /// </summary>
     public class AssetKeyDynamicMetaObject : DynamicMetaObject
     {
@@ -49,7 +49,7 @@ namespace Lexical.Localization
             // (byte[]) maps to AssetKeyExtensions.GetResource(obj)
             if (typeof(byte[]).IsAssignableFrom(binder.ReturnType))
             {
-                if (miGetResource == null) miGetResource = typeof(AssetKeyExtensions).GetMethod(nameof(AssetKeyExtensions.GetResource));
+                if (miGetResource == null) miGetResource = typeof(LinePartExtensions).GetMethod(nameof(LinePartExtensions.GetResource));
                 mi = miGetResource;
             }
 
@@ -81,7 +81,7 @@ namespace Lexical.Localization
 
         protected virtual DynamicMetaObject createKeyMember(GetMemberBinder binder)
         {
-            MethodInfo mi = typeof(AssetKeyExtensions).GetMethod("Key");
+            MethodInfo mi = typeof(LinePartExtensions).GetMethod("Key");
             BindingRestrictions restrictions = BindingRestrictions.GetTypeRestriction(Expression, LimitType);
             Expression selfExp = Expression.Convert(Expression, mi.GetParameters()[0].ParameterType);
             Expression keyNameExp = Expression.Constant(binder.Name);

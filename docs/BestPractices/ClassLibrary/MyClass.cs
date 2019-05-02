@@ -4,7 +4,7 @@ namespace TutorialLibrary1
 {
     public class MyClass
     {
-        static IAssetKey localizer = LibraryLocalization.Root.Type<MyClass>();
+        static ILinePart localizer = LibraryLocalization.Root.Type<MyClass>();
 
         public string Do()
         {

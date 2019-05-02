@@ -4,7 +4,7 @@ namespace TutorialLibrary
 {
     public class MyController2
     {
-        IAssetKey localization;
+        ILinePart localization;
 
         public MyController2(IAssetRoot root)
         {

@@ -124,14 +124,14 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound"></param>
         public LocalizationFileProviderKeyLinesSource(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound) { }
 
-        static IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> empty = new KeyValuePair<IAssetKey, IFormulationString>[0];
+        static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> empty = new KeyValuePair<ILinePart, IFormulationString>[0];
 
         /// <summary>
         /// Open file and get new reader.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
-        IEnumerator<KeyValuePair<IAssetKey, IFormulationString>> IEnumerable<KeyValuePair<IAssetKey, IFormulationString>>.GetEnumerator()
+        IEnumerator<KeyValuePair<ILinePart, IFormulationString>> IEnumerable<KeyValuePair<ILinePart, IFormulationString>>.GetEnumerator()
         {
             try
             {
@@ -152,7 +152,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
-            => ((IEnumerable<KeyValuePair<IAssetKey, IFormulationString>>)this).GetEnumerator();
+            => ((IEnumerable<KeyValuePair<ILinePart, IFormulationString>>)this).GetEnumerator();
 
         /// <summary>
         /// Add reader to <paramref name="list"/>.

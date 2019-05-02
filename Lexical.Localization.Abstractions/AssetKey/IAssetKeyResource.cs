@@ -15,9 +15,9 @@ namespace Lexical.Localization
     /// 
     /// This parameter is mostly used with IStringLocalization of Microsoft.Extensions.Localization.Abstractions.
     /// 
-    /// Consumers of this interface should use the extension method <see cref="AssetKeyExtensions.Resource(IAssetKey, string)"/>.
+    /// Consumers of this interface should use the extension method <see cref="LinePartExtensions.Resource(ILinePart, string)"/>.
     /// </summary>
-    public interface IAssetKeyResourceAssignable : IAssetKey
+    public interface IAssetKeyResourceAssignable : ILinePart
     {
         /// <summary>
         /// Create a new key where "Resource" is appended to the key.
@@ -41,7 +41,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class AssetKeyExtensions
+    public static partial class LinePartExtensions
     {
         /// <summary>
         /// Add <see cref="IAssetKeyResourceAssigned"/> section.
@@ -50,7 +50,7 @@ namespace Lexical.Localization
         /// <param name="resource"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement ITypeAssignableLocalizationKey</exception>
-        public static IAssetKeyResourceAssigned Resource(this IAssetKey key, string resource)
+        public static IAssetKeyResourceAssigned Resource(this ILinePart key, string resource)
         {
             if (key is IAssetKeyResourceAssignable casted) return casted.Resource(resource);
             throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyResourceAssignable)}.");
@@ -62,7 +62,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="resource"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeyResourceAssigned TryAddResource(this IAssetKey key, String resource)
+        public static IAssetKeyResourceAssigned TryAddResource(this ILinePart key, String resource)
         {
             if (key is IAssetKeyResourceAssignable casted) return casted.Resource(resource);
             return null;
@@ -74,12 +74,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>type key with type or null</returns>
-        public static IAssetKeyResourceAssigned FindResourceKey(this IAssetKey key)
+        public static IAssetKeyResourceAssigned FindResourceKey(this ILinePart key)
         {
             while (key != null)
             {
-                if (key is IAssetKeyResourceAssigned asmKey && !string.IsNullOrEmpty(key.Name)) return asmKey;
-                key = key.GetPreviousKey();
+                if (key is IAssetKeyResourceAssigned asmKey && !string.IsNullOrEmpty(key.GetParameterValue())) return asmKey;
+                key = key.PreviousPart;
             }
             return null;
         }
@@ -90,12 +90,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>type key with type or null</returns>
-        public static string FindResourceName(this IAssetKey key)
+        public static string FindResourceName(this ILinePart key)
         {
             while (key != null)
             {
-                if (key is IAssetKeyResourceAssigned resKey && resKey.Name != null) return resKey.Name;
-                key = key.GetPreviousKey();
+                if (key is IAssetKeyResourceAssigned resKey && resKey.GetParameterValue() != null) return resKey.GetParameterValue();
+                key = key.PreviousPart;
             }
             return null;
         }

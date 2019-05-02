@@ -10,13 +10,13 @@ namespace Lexical.Localization
     /// <summary>
     /// Global singleton instance with compability to Lexical.Localization and Microsoft.Extensions.Localization.
     /// 
-    /// This singleton provides keys for both frameworks, instances of <see cref="IStringLocalizer"/> and <see cref="IAssetKey"/>.
+    /// This singleton provides keys for both frameworks, instances of <see cref="IStringLocalizer"/> and <see cref="ILinePart"/>.
     /// 
     /// This singleton uses the same asset and builder references as <see cref="LocalizationRoot"/> singleton.
     /// </summary>
     public partial class StringLocalizerRoot
     {
-        private static readonly StringLocalizerRoot instance = new StringLocalizerRoot.LinkedTo(LocalizationRoot.Global);
+        private static readonly StringLocalizerRoot instance = new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.Instance, LocalizationRoot.Global);
         private static readonly dynamic dynamic;
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Lexical.Localization
         /// Implements 
         ///     <see cref="IStringLocalizer"/>
         ///     <see cref="IStringLocalizerFactory"/>
-        ///     <see cref="IAssetKey"/>
+        ///     <see cref="ILinePart"/>
         ///     <see cref="IAssetRoot"/>
         /// </summary>
         public static StringLocalizerRoot Global => instance;
@@ -44,7 +44,7 @@ namespace Lexical.Localization
 
         static StringLocalizerRoot()
         {
-            instance = new StringLocalizerRoot.LinkedTo(LocalizationRoot.Global);
+            instance = new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.Instance, LocalizationRoot.Global);
             dynamic = instance;
         }
     }

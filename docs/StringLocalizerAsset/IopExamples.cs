@@ -27,7 +27,7 @@ namespace docs
                 IAssetRoot root = new LocalizationRoot(asset, new CulturePolicy());
 
                 // There are .resx files in "Resources/ConsoleApp1.MyController" with keys "Success" and "Error"
-                IAssetKey key = root
+                ILinePart key = root
                     .Assembly(Assembly.GetExecutingAssembly())
                     .Resource("ConsoleApp1.MyController")
                     //.Type(typeof(ConsoleApp1.MyController1))
@@ -58,7 +58,7 @@ namespace docs
                 IAsset asset = new LocalizationAsset(source, AssetKeyNameProvider.Default);
 
                 // Create root
-                IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());
+                ILinePart root = new StringLocalizerRoot(asset, new CulturePolicy());
 
                 // Type cast to IStringLocalizerFactory
                 IStringLocalizerFactory stringLocalizerFactory = root as IStringLocalizerFactory;
@@ -81,10 +81,10 @@ namespace docs
                 IAsset asset = new LocalizationAsset(source, AssetKeyNameProvider.Default);
 
                 // Create root
-                IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());
+                ILinePart root = new StringLocalizerRoot(asset, new CulturePolicy());
 
                 // Set key
-                IAssetKey key = root.Culture("fi").Type(typeof(ConsoleApp1.MyController));
+                ILinePart key = root.Culture("fi").Type(typeof(ConsoleApp1.MyController));
 
                 // Type cast key to IStringLocalizer
                 IStringLocalizer stringLocalizer = key as IStringLocalizer;
@@ -102,7 +102,7 @@ namespace docs
                 IAsset asset = new LocalizationAsset(source, AssetKeyNameProvider.Default);
 
                 // Create root
-                IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());
+                ILinePart root = new StringLocalizerRoot(asset, new CulturePolicy());
                 #endregion Snippet_9
             }
 

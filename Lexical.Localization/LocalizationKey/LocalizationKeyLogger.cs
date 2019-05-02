@@ -28,7 +28,7 @@ namespace Lexical.Localization
         ///     </list>
         /// </param>
         /// <returns>disposable subscription handle, or null if <paramref name="key"/> cannot be observed</returns>
-        public static ILocalizationKeyLoggerAssigned Logger(this IAssetKey key, TextWriter logger, int severity = 1)
+        public static ILocalizationKeyLoggerAssigned Logger(this ILinePart key, TextWriter logger, int severity = 1)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationTextLogger(logger, severity));
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
@@ -47,7 +47,7 @@ namespace Lexical.Localization
         ///     </list>
         /// </param>
         /// <returns></returns>
-        public static ILocalizationKeyLoggerAssigned DiagnosticsTrace(this IAssetKey key, int severity = 1)
+        public static ILocalizationKeyLoggerAssigned DiagnosticsTrace(this ILinePart key, int severity = 1)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationDiagnosticsTrace(severity));
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
@@ -210,7 +210,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="logger"></param>
         /// <returns>disposable subscription handle, or null if <paramref name="key"/> cannot be observed</returns>
-        public static ILocalizationKeyLoggerAssigned Logger(this IAssetKey key, ILogger logger)
+        public static ILocalizationKeyLoggerAssigned Logger(this ILinePart key, ILogger logger)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationLogger(logger));
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");

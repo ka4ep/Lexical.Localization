@@ -15,39 +15,39 @@ namespace Lexical.Localization.Internal
     public static class StringLinesExtensions
     {
         /// <summary>
-        /// Parse string key of each line into <see cref="IAssetKey"/> by using <paramref name="policy"/>.
+        /// Parse string key of each line into <see cref="ILinePart"/> by using <paramref name="policy"/>.
         /// 
         /// If parse fails, then skips the key, doesn't throw exception.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="policy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
-        /// <returns>lines with <see cref="IAssetKey"/> keys</returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IAssetKeyNamePolicy policy)
+        /// <returns>lines with <see cref="ILinePart"/> keys</returns>
+        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IAssetKeyNamePolicy policy)
         {
             foreach (var line in lines)
             {
-                IAssetKey kk;
+                ILinePart kk;
                 if (policy.TryParse(line.Key, out kk))
-                    yield return new KeyValuePair<IAssetKey, IFormulationString>(kk, line.Value);
+                    yield return new KeyValuePair<ILinePart, IFormulationString>(kk, line.Value);
             }
         }
 
         /// <summary>
-        /// Parse string key of each line into <see cref="IAssetKey"/> by using <paramref name="keyPolicy"/>.
+        /// Parse string key of each line into <see cref="ILinePart"/> by using <paramref name="keyPolicy"/>.
         /// 
         /// If parse fails, then skips the key, doesn't throw exception.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="keyPolicy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
         /// <param name="valueParser"></param>
-        /// <returns>lines with <see cref="IAssetKey"/> keys</returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy keyPolicy, ILocalizationStringFormatParser valueParser)
+        /// <returns>lines with <see cref="ILinePart"/> keys</returns>
+        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy keyPolicy, ILocalizationStringFormatParser valueParser)
         {
             foreach (var line in lines)
             {
-                IAssetKey kk;
+                ILinePart kk;
                 if (keyPolicy.TryParse(line.Key, out kk))
-                    yield return new KeyValuePair<IAssetKey, IFormulationString>(kk, valueParser.Parse(line.Value));
+                    yield return new KeyValuePair<ILinePart, IFormulationString>(kk, valueParser.Parse(line.Value));
             }
         }
 

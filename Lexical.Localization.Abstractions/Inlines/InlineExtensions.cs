@@ -10,7 +10,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey af(this IAssetKey key, string text) => key.Inline("Culture:af", text);
+        public static ILinePart af(this ILinePart key, string text) => key.Inline("Culture:af", text);
         
         /// <summary>
         /// Add inlined Amharic language string.
@@ -18,7 +18,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey am(this IAssetKey key, string text) => key.Inline("Culture:am", text);
+        public static ILinePart am(this ILinePart key, string text) => key.Inline("Culture:am", text);
         
         /// <summary>
         /// Add inlined Arabic language string.
@@ -26,7 +26,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ar(this IAssetKey key, string text) => key.Inline("Culture:ar", text);
+        public static ILinePart ar(this ILinePart key, string text) => key.Inline("Culture:ar", text);
         
         /// <summary>
         /// Add inlined Mapudungun language string.
@@ -34,7 +34,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey arn(this IAssetKey key, string text) => key.Inline("Culture:arn", text);
+        public static ILinePart arn(this ILinePart key, string text) => key.Inline("Culture:arn", text);
         
         /// <summary>
         /// Add inlined Assamese language string.
@@ -42,7 +42,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey _as(this IAssetKey key, string text) => key.Inline("Culture:as", text);
+        public static ILinePart _as(this ILinePart key, string text) => key.Inline("Culture:as", text);
         
         /// <summary>
         /// Add inlined Azerbaijani language string.
@@ -50,7 +50,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey az(this IAssetKey key, string text) => key.Inline("Culture:az", text);
+        public static ILinePart az(this ILinePart key, string text) => key.Inline("Culture:az", text);
         
         /// <summary>
         /// Add inlined Bashkir language string.
@@ -58,7 +58,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ba(this IAssetKey key, string text) => key.Inline("Culture:ba", text);
+        public static ILinePart ba(this ILinePart key, string text) => key.Inline("Culture:ba", text);
         
         /// <summary>
         /// Add inlined Belarusian language string.
@@ -66,7 +66,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey be(this IAssetKey key, string text) => key.Inline("Culture:be", text);
+        public static ILinePart be(this ILinePart key, string text) => key.Inline("Culture:be", text);
         
         /// <summary>
         /// Add inlined Bulgarian language string.
@@ -74,7 +74,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey bg(this IAssetKey key, string text) => key.Inline("Culture:bg", text);
+        public static ILinePart bg(this ILinePart key, string text) => key.Inline("Culture:bg", text);
         
         /// <summary>
         /// Add inlined Edo language string.
@@ -82,7 +82,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey bin(this IAssetKey key, string text) => key.Inline("Culture:bin", text);
+        public static ILinePart bin(this ILinePart key, string text) => key.Inline("Culture:bin", text);
         
         /// <summary>
         /// Add inlined Bangla language string.
@@ -90,7 +90,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey bn(this IAssetKey key, string text) => key.Inline("Culture:bn", text);
+        public static ILinePart bn(this ILinePart key, string text) => key.Inline("Culture:bn", text);
         
         /// <summary>
         /// Add inlined Tibetan language string.
@@ -98,7 +98,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey bo(this IAssetKey key, string text) => key.Inline("Culture:bo", text);
+        public static ILinePart bo(this ILinePart key, string text) => key.Inline("Culture:bo", text);
         
         /// <summary>
         /// Add inlined Breton language string.
@@ -106,7 +106,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey br(this IAssetKey key, string text) => key.Inline("Culture:br", text);
+        public static ILinePart br(this ILinePart key, string text) => key.Inline("Culture:br", text);
         
         /// <summary>
         /// Add inlined Bosnian language string.
@@ -114,7 +114,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey bs(this IAssetKey key, string text) => key.Inline("Culture:bs", text);
+        public static ILinePart bs(this ILinePart key, string text) => key.Inline("Culture:bs", text);
         
         /// <summary>
         /// Add inlined Catalan language string.
@@ -122,7 +122,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ca(this IAssetKey key, string text) => key.Inline("Culture:ca", text);
+        public static ILinePart ca(this ILinePart key, string text) => key.Inline("Culture:ca", text);
         
         /// <summary>
         /// Add inlined Cherokee language string.
@@ -130,7 +130,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey chr(this IAssetKey key, string text) => key.Inline("Culture:chr", text);
+        public static ILinePart chr(this ILinePart key, string text) => key.Inline("Culture:chr", text);
         
         /// <summary>
         /// Add inlined Corsican language string.
@@ -138,7 +138,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey co(this IAssetKey key, string text) => key.Inline("Culture:co", text);
+        public static ILinePart co(this ILinePart key, string text) => key.Inline("Culture:co", text);
         
         /// <summary>
         /// Add inlined Czech language string.
@@ -146,7 +146,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey cs(this IAssetKey key, string text) => key.Inline("Culture:cs", text);
+        public static ILinePart cs(this ILinePart key, string text) => key.Inline("Culture:cs", text);
         
         /// <summary>
         /// Add inlined Welsh language string.
@@ -154,7 +154,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey cy(this IAssetKey key, string text) => key.Inline("Culture:cy", text);
+        public static ILinePart cy(this ILinePart key, string text) => key.Inline("Culture:cy", text);
         
         /// <summary>
         /// Add inlined Danish language string.
@@ -162,7 +162,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey da(this IAssetKey key, string text) => key.Inline("Culture:da", text);
+        public static ILinePart da(this ILinePart key, string text) => key.Inline("Culture:da", text);
         
         /// <summary>
         /// Add inlined German language string.
@@ -170,7 +170,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey de(this IAssetKey key, string text) => key.Inline("Culture:de", text);
+        public static ILinePart de(this ILinePart key, string text) => key.Inline("Culture:de", text);
         
         /// <summary>
         /// Add inlined Lower Sorbian language string.
@@ -178,7 +178,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey dsb(this IAssetKey key, string text) => key.Inline("Culture:dsb", text);
+        public static ILinePart dsb(this ILinePart key, string text) => key.Inline("Culture:dsb", text);
         
         /// <summary>
         /// Add inlined Divehi language string.
@@ -186,7 +186,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey dv(this IAssetKey key, string text) => key.Inline("Culture:dv", text);
+        public static ILinePart dv(this ILinePart key, string text) => key.Inline("Culture:dv", text);
         
         /// <summary>
         /// Add inlined Greek language string.
@@ -194,7 +194,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey el(this IAssetKey key, string text) => key.Inline("Culture:el", text);
+        public static ILinePart el(this ILinePart key, string text) => key.Inline("Culture:el", text);
         
         /// <summary>
         /// Add inlined English language string.
@@ -202,7 +202,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey en(this IAssetKey key, string text) => key.Inline("Culture:en", text);
+        public static ILinePart en(this ILinePart key, string text) => key.Inline("Culture:en", text);
         
         /// <summary>
         /// Add inlined Spanish language string.
@@ -210,7 +210,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey es(this IAssetKey key, string text) => key.Inline("Culture:es", text);
+        public static ILinePart es(this ILinePart key, string text) => key.Inline("Culture:es", text);
         
         /// <summary>
         /// Add inlined Estonian language string.
@@ -218,7 +218,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey et(this IAssetKey key, string text) => key.Inline("Culture:et", text);
+        public static ILinePart et(this ILinePart key, string text) => key.Inline("Culture:et", text);
         
         /// <summary>
         /// Add inlined Basque language string.
@@ -226,7 +226,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey eu(this IAssetKey key, string text) => key.Inline("Culture:eu", text);
+        public static ILinePart eu(this ILinePart key, string text) => key.Inline("Culture:eu", text);
         
         /// <summary>
         /// Add inlined Persian language string.
@@ -234,7 +234,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey fa(this IAssetKey key, string text) => key.Inline("Culture:fa", text);
+        public static ILinePart fa(this ILinePart key, string text) => key.Inline("Culture:fa", text);
         
         /// <summary>
         /// Add inlined Fulah language string.
@@ -242,7 +242,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ff(this IAssetKey key, string text) => key.Inline("Culture:ff", text);
+        public static ILinePart ff(this ILinePart key, string text) => key.Inline("Culture:ff", text);
         
         /// <summary>
         /// Add inlined Finnish language string.
@@ -250,7 +250,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey fi(this IAssetKey key, string text) => key.Inline("Culture:fi", text);
+        public static ILinePart fi(this ILinePart key, string text) => key.Inline("Culture:fi", text);
         
         /// <summary>
         /// Add inlined Filipino language string.
@@ -258,7 +258,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey fil(this IAssetKey key, string text) => key.Inline("Culture:fil", text);
+        public static ILinePart fil(this ILinePart key, string text) => key.Inline("Culture:fil", text);
         
         /// <summary>
         /// Add inlined Faroese language string.
@@ -266,7 +266,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey fo(this IAssetKey key, string text) => key.Inline("Culture:fo", text);
+        public static ILinePart fo(this ILinePart key, string text) => key.Inline("Culture:fo", text);
         
         /// <summary>
         /// Add inlined French language string.
@@ -274,7 +274,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey fr(this IAssetKey key, string text) => key.Inline("Culture:fr", text);
+        public static ILinePart fr(this ILinePart key, string text) => key.Inline("Culture:fr", text);
         
         /// <summary>
         /// Add inlined Western Frisian language string.
@@ -282,7 +282,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey fy(this IAssetKey key, string text) => key.Inline("Culture:fy", text);
+        public static ILinePart fy(this ILinePart key, string text) => key.Inline("Culture:fy", text);
         
         /// <summary>
         /// Add inlined Irish language string.
@@ -290,7 +290,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ga(this IAssetKey key, string text) => key.Inline("Culture:ga", text);
+        public static ILinePart ga(this ILinePart key, string text) => key.Inline("Culture:ga", text);
         
         /// <summary>
         /// Add inlined Scottish Gaelic language string.
@@ -298,7 +298,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey gd(this IAssetKey key, string text) => key.Inline("Culture:gd", text);
+        public static ILinePart gd(this ILinePart key, string text) => key.Inline("Culture:gd", text);
         
         /// <summary>
         /// Add inlined Galician language string.
@@ -306,7 +306,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey gl(this IAssetKey key, string text) => key.Inline("Culture:gl", text);
+        public static ILinePart gl(this ILinePart key, string text) => key.Inline("Culture:gl", text);
         
         /// <summary>
         /// Add inlined Guarani language string.
@@ -314,7 +314,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey gn(this IAssetKey key, string text) => key.Inline("Culture:gn", text);
+        public static ILinePart gn(this ILinePart key, string text) => key.Inline("Culture:gn", text);
         
         /// <summary>
         /// Add inlined Swiss German language string.
@@ -322,7 +322,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey gsw(this IAssetKey key, string text) => key.Inline("Culture:gsw", text);
+        public static ILinePart gsw(this ILinePart key, string text) => key.Inline("Culture:gsw", text);
         
         /// <summary>
         /// Add inlined Gujarati language string.
@@ -330,7 +330,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey gu(this IAssetKey key, string text) => key.Inline("Culture:gu", text);
+        public static ILinePart gu(this ILinePart key, string text) => key.Inline("Culture:gu", text);
         
         /// <summary>
         /// Add inlined Hausa language string.
@@ -338,7 +338,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ha(this IAssetKey key, string text) => key.Inline("Culture:ha", text);
+        public static ILinePart ha(this ILinePart key, string text) => key.Inline("Culture:ha", text);
         
         /// <summary>
         /// Add inlined Hawaiian language string.
@@ -346,7 +346,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey haw(this IAssetKey key, string text) => key.Inline("Culture:haw", text);
+        public static ILinePart haw(this ILinePart key, string text) => key.Inline("Culture:haw", text);
         
         /// <summary>
         /// Add inlined Hebrew language string.
@@ -354,7 +354,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey he(this IAssetKey key, string text) => key.Inline("Culture:he", text);
+        public static ILinePart he(this ILinePart key, string text) => key.Inline("Culture:he", text);
         
         /// <summary>
         /// Add inlined Hindi language string.
@@ -362,7 +362,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey hi(this IAssetKey key, string text) => key.Inline("Culture:hi", text);
+        public static ILinePart hi(this ILinePart key, string text) => key.Inline("Culture:hi", text);
         
         /// <summary>
         /// Add inlined Croatian language string.
@@ -370,7 +370,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey hr(this IAssetKey key, string text) => key.Inline("Culture:hr", text);
+        public static ILinePart hr(this ILinePart key, string text) => key.Inline("Culture:hr", text);
         
         /// <summary>
         /// Add inlined Upper Sorbian language string.
@@ -378,7 +378,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey hsb(this IAssetKey key, string text) => key.Inline("Culture:hsb", text);
+        public static ILinePart hsb(this ILinePart key, string text) => key.Inline("Culture:hsb", text);
         
         /// <summary>
         /// Add inlined Hungarian language string.
@@ -386,7 +386,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey hu(this IAssetKey key, string text) => key.Inline("Culture:hu", text);
+        public static ILinePart hu(this ILinePart key, string text) => key.Inline("Culture:hu", text);
         
         /// <summary>
         /// Add inlined Armenian language string.
@@ -394,7 +394,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey hy(this IAssetKey key, string text) => key.Inline("Culture:hy", text);
+        public static ILinePart hy(this ILinePart key, string text) => key.Inline("Culture:hy", text);
         
         /// <summary>
         /// Add inlined Ibibio language string.
@@ -402,7 +402,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ibb(this IAssetKey key, string text) => key.Inline("Culture:ibb", text);
+        public static ILinePart ibb(this ILinePart key, string text) => key.Inline("Culture:ibb", text);
         
         /// <summary>
         /// Add inlined Indonesian language string.
@@ -410,7 +410,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey id(this IAssetKey key, string text) => key.Inline("Culture:id", text);
+        public static ILinePart id(this ILinePart key, string text) => key.Inline("Culture:id", text);
         
         /// <summary>
         /// Add inlined Igbo language string.
@@ -418,7 +418,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ig(this IAssetKey key, string text) => key.Inline("Culture:ig", text);
+        public static ILinePart ig(this ILinePart key, string text) => key.Inline("Culture:ig", text);
         
         /// <summary>
         /// Add inlined Yi language string.
@@ -426,7 +426,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ii(this IAssetKey key, string text) => key.Inline("Culture:ii", text);
+        public static ILinePart ii(this ILinePart key, string text) => key.Inline("Culture:ii", text);
         
         /// <summary>
         /// Add inlined Icelandic language string.
@@ -434,7 +434,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey _is(this IAssetKey key, string text) => key.Inline("Culture:is", text);
+        public static ILinePart _is(this ILinePart key, string text) => key.Inline("Culture:is", text);
         
         /// <summary>
         /// Add inlined Italian language string.
@@ -442,7 +442,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey it(this IAssetKey key, string text) => key.Inline("Culture:it", text);
+        public static ILinePart it(this ILinePart key, string text) => key.Inline("Culture:it", text);
         
         /// <summary>
         /// Add inlined Inuktitut language string.
@@ -450,7 +450,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey iu(this IAssetKey key, string text) => key.Inline("Culture:iu", text);
+        public static ILinePart iu(this ILinePart key, string text) => key.Inline("Culture:iu", text);
         
         /// <summary>
         /// Add inlined Japanese language string.
@@ -458,7 +458,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ja(this IAssetKey key, string text) => key.Inline("Culture:ja", text);
+        public static ILinePart ja(this ILinePart key, string text) => key.Inline("Culture:ja", text);
         
         /// <summary>
         /// Add inlined Georgian language string.
@@ -466,7 +466,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ka(this IAssetKey key, string text) => key.Inline("Culture:ka", text);
+        public static ILinePart ka(this ILinePart key, string text) => key.Inline("Culture:ka", text);
         
         /// <summary>
         /// Add inlined Kazakh language string.
@@ -474,7 +474,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey kk(this IAssetKey key, string text) => key.Inline("Culture:kk", text);
+        public static ILinePart kk(this ILinePart key, string text) => key.Inline("Culture:kk", text);
         
         /// <summary>
         /// Add inlined Greenlandic language string.
@@ -482,7 +482,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey kl(this IAssetKey key, string text) => key.Inline("Culture:kl", text);
+        public static ILinePart kl(this ILinePart key, string text) => key.Inline("Culture:kl", text);
         
         /// <summary>
         /// Add inlined Khmer language string.
@@ -490,7 +490,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey km(this IAssetKey key, string text) => key.Inline("Culture:km", text);
+        public static ILinePart km(this ILinePart key, string text) => key.Inline("Culture:km", text);
         
         /// <summary>
         /// Add inlined Kannada language string.
@@ -498,7 +498,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey kn(this IAssetKey key, string text) => key.Inline("Culture:kn", text);
+        public static ILinePart kn(this ILinePart key, string text) => key.Inline("Culture:kn", text);
         
         /// <summary>
         /// Add inlined Korean language string.
@@ -506,7 +506,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ko(this IAssetKey key, string text) => key.Inline("Culture:ko", text);
+        public static ILinePart ko(this ILinePart key, string text) => key.Inline("Culture:ko", text);
         
         /// <summary>
         /// Add inlined Konkani language string.
@@ -514,7 +514,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey kok(this IAssetKey key, string text) => key.Inline("Culture:kok", text);
+        public static ILinePart kok(this ILinePart key, string text) => key.Inline("Culture:kok", text);
         
         /// <summary>
         /// Add inlined Kanuri language string.
@@ -522,7 +522,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey kr(this IAssetKey key, string text) => key.Inline("Culture:kr", text);
+        public static ILinePart kr(this ILinePart key, string text) => key.Inline("Culture:kr", text);
         
         /// <summary>
         /// Add inlined Kashmiri language string.
@@ -530,7 +530,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ks(this IAssetKey key, string text) => key.Inline("Culture:ks", text);
+        public static ILinePart ks(this ILinePart key, string text) => key.Inline("Culture:ks", text);
         
         /// <summary>
         /// Add inlined Central Kurdish language string.
@@ -538,7 +538,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ku(this IAssetKey key, string text) => key.Inline("Culture:ku", text);
+        public static ILinePart ku(this ILinePart key, string text) => key.Inline("Culture:ku", text);
         
         /// <summary>
         /// Add inlined Kyrgyz language string.
@@ -546,7 +546,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ky(this IAssetKey key, string text) => key.Inline("Culture:ky", text);
+        public static ILinePart ky(this ILinePart key, string text) => key.Inline("Culture:ky", text);
         
         /// <summary>
         /// Add inlined Latin language string.
@@ -554,7 +554,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey la(this IAssetKey key, string text) => key.Inline("Culture:la", text);
+        public static ILinePart la(this ILinePart key, string text) => key.Inline("Culture:la", text);
         
         /// <summary>
         /// Add inlined Luxembourgish language string.
@@ -562,7 +562,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey lb(this IAssetKey key, string text) => key.Inline("Culture:lb", text);
+        public static ILinePart lb(this ILinePart key, string text) => key.Inline("Culture:lb", text);
         
         /// <summary>
         /// Add inlined Lao language string.
@@ -570,7 +570,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey lo(this IAssetKey key, string text) => key.Inline("Culture:lo", text);
+        public static ILinePart lo(this ILinePart key, string text) => key.Inline("Culture:lo", text);
         
         /// <summary>
         /// Add inlined Lithuanian language string.
@@ -578,7 +578,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey lt(this IAssetKey key, string text) => key.Inline("Culture:lt", text);
+        public static ILinePart lt(this ILinePart key, string text) => key.Inline("Culture:lt", text);
         
         /// <summary>
         /// Add inlined Latvian language string.
@@ -586,7 +586,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey lv(this IAssetKey key, string text) => key.Inline("Culture:lv", text);
+        public static ILinePart lv(this ILinePart key, string text) => key.Inline("Culture:lv", text);
         
         /// <summary>
         /// Add inlined Maori language string.
@@ -594,7 +594,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey mi(this IAssetKey key, string text) => key.Inline("Culture:mi", text);
+        public static ILinePart mi(this ILinePart key, string text) => key.Inline("Culture:mi", text);
         
         /// <summary>
         /// Add inlined Macedonian language string.
@@ -602,7 +602,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey mk(this IAssetKey key, string text) => key.Inline("Culture:mk", text);
+        public static ILinePart mk(this ILinePart key, string text) => key.Inline("Culture:mk", text);
         
         /// <summary>
         /// Add inlined Malayalam language string.
@@ -610,7 +610,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ml(this IAssetKey key, string text) => key.Inline("Culture:ml", text);
+        public static ILinePart ml(this ILinePart key, string text) => key.Inline("Culture:ml", text);
         
         /// <summary>
         /// Add inlined Mongolian language string.
@@ -618,7 +618,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey mn(this IAssetKey key, string text) => key.Inline("Culture:mn", text);
+        public static ILinePart mn(this ILinePart key, string text) => key.Inline("Culture:mn", text);
         
         /// <summary>
         /// Add inlined Manipuri language string.
@@ -626,7 +626,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey mni(this IAssetKey key, string text) => key.Inline("Culture:mni", text);
+        public static ILinePart mni(this ILinePart key, string text) => key.Inline("Culture:mni", text);
         
         /// <summary>
         /// Add inlined Mohawk language string.
@@ -634,7 +634,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey moh(this IAssetKey key, string text) => key.Inline("Culture:moh", text);
+        public static ILinePart moh(this ILinePart key, string text) => key.Inline("Culture:moh", text);
         
         /// <summary>
         /// Add inlined Marathi language string.
@@ -642,7 +642,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey mr(this IAssetKey key, string text) => key.Inline("Culture:mr", text);
+        public static ILinePart mr(this ILinePart key, string text) => key.Inline("Culture:mr", text);
         
         /// <summary>
         /// Add inlined Malay language string.
@@ -650,7 +650,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ms(this IAssetKey key, string text) => key.Inline("Culture:ms", text);
+        public static ILinePart ms(this ILinePart key, string text) => key.Inline("Culture:ms", text);
         
         /// <summary>
         /// Add inlined Maltese language string.
@@ -658,7 +658,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey mt(this IAssetKey key, string text) => key.Inline("Culture:mt", text);
+        public static ILinePart mt(this ILinePart key, string text) => key.Inline("Culture:mt", text);
         
         /// <summary>
         /// Add inlined Burmese language string.
@@ -666,7 +666,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey my(this IAssetKey key, string text) => key.Inline("Culture:my", text);
+        public static ILinePart my(this ILinePart key, string text) => key.Inline("Culture:my", text);
         
         /// <summary>
         /// Add inlined Norwegian Bokmål language string.
@@ -674,7 +674,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey nb(this IAssetKey key, string text) => key.Inline("Culture:nb", text);
+        public static ILinePart nb(this ILinePart key, string text) => key.Inline("Culture:nb", text);
         
         /// <summary>
         /// Add inlined Nepali language string.
@@ -682,7 +682,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ne(this IAssetKey key, string text) => key.Inline("Culture:ne", text);
+        public static ILinePart ne(this ILinePart key, string text) => key.Inline("Culture:ne", text);
         
         /// <summary>
         /// Add inlined Dutch language string.
@@ -690,7 +690,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey nl(this IAssetKey key, string text) => key.Inline("Culture:nl", text);
+        public static ILinePart nl(this ILinePart key, string text) => key.Inline("Culture:nl", text);
         
         /// <summary>
         /// Add inlined Norwegian Nynorsk language string.
@@ -698,7 +698,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey nn(this IAssetKey key, string text) => key.Inline("Culture:nn", text);
+        public static ILinePart nn(this ILinePart key, string text) => key.Inline("Culture:nn", text);
         
         /// <summary>
         /// Add inlined Sesotho sa Leboa language string.
@@ -706,7 +706,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey nso(this IAssetKey key, string text) => key.Inline("Culture:nso", text);
+        public static ILinePart nso(this ILinePart key, string text) => key.Inline("Culture:nso", text);
         
         /// <summary>
         /// Add inlined Occitan language string.
@@ -714,7 +714,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey oc(this IAssetKey key, string text) => key.Inline("Culture:oc", text);
+        public static ILinePart oc(this ILinePart key, string text) => key.Inline("Culture:oc", text);
         
         /// <summary>
         /// Add inlined Oromo language string.
@@ -722,7 +722,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey om(this IAssetKey key, string text) => key.Inline("Culture:om", text);
+        public static ILinePart om(this ILinePart key, string text) => key.Inline("Culture:om", text);
         
         /// <summary>
         /// Add inlined Odia language string.
@@ -730,7 +730,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey or(this IAssetKey key, string text) => key.Inline("Culture:or", text);
+        public static ILinePart or(this ILinePart key, string text) => key.Inline("Culture:or", text);
         
         /// <summary>
         /// Add inlined Punjabi language string.
@@ -738,7 +738,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey pa(this IAssetKey key, string text) => key.Inline("Culture:pa", text);
+        public static ILinePart pa(this ILinePart key, string text) => key.Inline("Culture:pa", text);
         
         /// <summary>
         /// Add inlined Papiamento language string.
@@ -746,7 +746,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey pap(this IAssetKey key, string text) => key.Inline("Culture:pap", text);
+        public static ILinePart pap(this ILinePart key, string text) => key.Inline("Culture:pap", text);
         
         /// <summary>
         /// Add inlined Polish language string.
@@ -754,7 +754,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey pl(this IAssetKey key, string text) => key.Inline("Culture:pl", text);
+        public static ILinePart pl(this ILinePart key, string text) => key.Inline("Culture:pl", text);
         
         /// <summary>
         /// Add inlined Dari language string.
@@ -762,7 +762,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey prs(this IAssetKey key, string text) => key.Inline("Culture:prs", text);
+        public static ILinePart prs(this ILinePart key, string text) => key.Inline("Culture:prs", text);
         
         /// <summary>
         /// Add inlined Pashto language string.
@@ -770,7 +770,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ps(this IAssetKey key, string text) => key.Inline("Culture:ps", text);
+        public static ILinePart ps(this ILinePart key, string text) => key.Inline("Culture:ps", text);
         
         /// <summary>
         /// Add inlined Portuguese language string.
@@ -778,7 +778,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey pt(this IAssetKey key, string text) => key.Inline("Culture:pt", text);
+        public static ILinePart pt(this ILinePart key, string text) => key.Inline("Culture:pt", text);
         
         /// <summary>
         /// Add inlined K'iche' language string.
@@ -786,7 +786,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey quc(this IAssetKey key, string text) => key.Inline("Culture:quc", text);
+        public static ILinePart quc(this ILinePart key, string text) => key.Inline("Culture:quc", text);
         
         /// <summary>
         /// Add inlined Quechua language string.
@@ -794,7 +794,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey quz(this IAssetKey key, string text) => key.Inline("Culture:quz", text);
+        public static ILinePart quz(this ILinePart key, string text) => key.Inline("Culture:quz", text);
         
         /// <summary>
         /// Add inlined Romansh language string.
@@ -802,7 +802,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey rm(this IAssetKey key, string text) => key.Inline("Culture:rm", text);
+        public static ILinePart rm(this ILinePart key, string text) => key.Inline("Culture:rm", text);
         
         /// <summary>
         /// Add inlined Romanian language string.
@@ -810,7 +810,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ro(this IAssetKey key, string text) => key.Inline("Culture:ro", text);
+        public static ILinePart ro(this ILinePart key, string text) => key.Inline("Culture:ro", text);
         
         /// <summary>
         /// Add inlined Russian language string.
@@ -818,7 +818,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ru(this IAssetKey key, string text) => key.Inline("Culture:ru", text);
+        public static ILinePart ru(this ILinePart key, string text) => key.Inline("Culture:ru", text);
         
         /// <summary>
         /// Add inlined Kinyarwanda language string.
@@ -826,7 +826,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey rw(this IAssetKey key, string text) => key.Inline("Culture:rw", text);
+        public static ILinePart rw(this ILinePart key, string text) => key.Inline("Culture:rw", text);
         
         /// <summary>
         /// Add inlined Sanskrit language string.
@@ -834,7 +834,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey sa(this IAssetKey key, string text) => key.Inline("Culture:sa", text);
+        public static ILinePart sa(this ILinePart key, string text) => key.Inline("Culture:sa", text);
         
         /// <summary>
         /// Add inlined Sakha language string.
@@ -842,7 +842,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey sah(this IAssetKey key, string text) => key.Inline("Culture:sah", text);
+        public static ILinePart sah(this ILinePart key, string text) => key.Inline("Culture:sah", text);
         
         /// <summary>
         /// Add inlined Sindhi language string.
@@ -850,7 +850,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey sd(this IAssetKey key, string text) => key.Inline("Culture:sd", text);
+        public static ILinePart sd(this ILinePart key, string text) => key.Inline("Culture:sd", text);
         
         /// <summary>
         /// Add inlined Northern Sami language string.
@@ -858,7 +858,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey se(this IAssetKey key, string text) => key.Inline("Culture:se", text);
+        public static ILinePart se(this ILinePart key, string text) => key.Inline("Culture:se", text);
         
         /// <summary>
         /// Add inlined Sinhala language string.
@@ -866,7 +866,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey si(this IAssetKey key, string text) => key.Inline("Culture:si", text);
+        public static ILinePart si(this ILinePart key, string text) => key.Inline("Culture:si", text);
         
         /// <summary>
         /// Add inlined Slovak language string.
@@ -874,7 +874,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey sk(this IAssetKey key, string text) => key.Inline("Culture:sk", text);
+        public static ILinePart sk(this ILinePart key, string text) => key.Inline("Culture:sk", text);
         
         /// <summary>
         /// Add inlined Slovenian language string.
@@ -882,7 +882,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey sl(this IAssetKey key, string text) => key.Inline("Culture:sl", text);
+        public static ILinePart sl(this ILinePart key, string text) => key.Inline("Culture:sl", text);
         
         /// <summary>
         /// Add inlined Sami (Southern) language string.
@@ -890,7 +890,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey sma(this IAssetKey key, string text) => key.Inline("Culture:sma", text);
+        public static ILinePart sma(this ILinePart key, string text) => key.Inline("Culture:sma", text);
         
         /// <summary>
         /// Add inlined Sami (Lule) language string.
@@ -898,7 +898,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey smj(this IAssetKey key, string text) => key.Inline("Culture:smj", text);
+        public static ILinePart smj(this ILinePart key, string text) => key.Inline("Culture:smj", text);
         
         /// <summary>
         /// Add inlined Sami (Inari) language string.
@@ -906,7 +906,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey smn(this IAssetKey key, string text) => key.Inline("Culture:smn", text);
+        public static ILinePart smn(this ILinePart key, string text) => key.Inline("Culture:smn", text);
         
         /// <summary>
         /// Add inlined Sami (Skolt) language string.
@@ -914,7 +914,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey sms(this IAssetKey key, string text) => key.Inline("Culture:sms", text);
+        public static ILinePart sms(this ILinePart key, string text) => key.Inline("Culture:sms", text);
         
         /// <summary>
         /// Add inlined Somali language string.
@@ -922,7 +922,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey so(this IAssetKey key, string text) => key.Inline("Culture:so", text);
+        public static ILinePart so(this ILinePart key, string text) => key.Inline("Culture:so", text);
         
         /// <summary>
         /// Add inlined Albanian language string.
@@ -930,7 +930,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey sq(this IAssetKey key, string text) => key.Inline("Culture:sq", text);
+        public static ILinePart sq(this ILinePart key, string text) => key.Inline("Culture:sq", text);
         
         /// <summary>
         /// Add inlined Serbian language string.
@@ -938,7 +938,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey sr(this IAssetKey key, string text) => key.Inline("Culture:sr", text);
+        public static ILinePart sr(this ILinePart key, string text) => key.Inline("Culture:sr", text);
         
         /// <summary>
         /// Add inlined Sesotho language string.
@@ -946,7 +946,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey st(this IAssetKey key, string text) => key.Inline("Culture:st", text);
+        public static ILinePart st(this ILinePart key, string text) => key.Inline("Culture:st", text);
         
         /// <summary>
         /// Add inlined Swedish language string.
@@ -954,7 +954,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey sv(this IAssetKey key, string text) => key.Inline("Culture:sv", text);
+        public static ILinePart sv(this ILinePart key, string text) => key.Inline("Culture:sv", text);
         
         /// <summary>
         /// Add inlined Kiswahili language string.
@@ -962,7 +962,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey sw(this IAssetKey key, string text) => key.Inline("Culture:sw", text);
+        public static ILinePart sw(this ILinePart key, string text) => key.Inline("Culture:sw", text);
         
         /// <summary>
         /// Add inlined Syriac language string.
@@ -970,7 +970,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey syr(this IAssetKey key, string text) => key.Inline("Culture:syr", text);
+        public static ILinePart syr(this ILinePart key, string text) => key.Inline("Culture:syr", text);
         
         /// <summary>
         /// Add inlined Tamil language string.
@@ -978,7 +978,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ta(this IAssetKey key, string text) => key.Inline("Culture:ta", text);
+        public static ILinePart ta(this ILinePart key, string text) => key.Inline("Culture:ta", text);
         
         /// <summary>
         /// Add inlined Telugu language string.
@@ -986,7 +986,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey te(this IAssetKey key, string text) => key.Inline("Culture:te", text);
+        public static ILinePart te(this ILinePart key, string text) => key.Inline("Culture:te", text);
         
         /// <summary>
         /// Add inlined Tajik language string.
@@ -994,7 +994,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey tg(this IAssetKey key, string text) => key.Inline("Culture:tg", text);
+        public static ILinePart tg(this ILinePart key, string text) => key.Inline("Culture:tg", text);
         
         /// <summary>
         /// Add inlined Thai language string.
@@ -1002,7 +1002,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey th(this IAssetKey key, string text) => key.Inline("Culture:th", text);
+        public static ILinePart th(this ILinePart key, string text) => key.Inline("Culture:th", text);
         
         /// <summary>
         /// Add inlined Tigrinya language string.
@@ -1010,7 +1010,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ti(this IAssetKey key, string text) => key.Inline("Culture:ti", text);
+        public static ILinePart ti(this ILinePart key, string text) => key.Inline("Culture:ti", text);
         
         /// <summary>
         /// Add inlined Turkmen language string.
@@ -1018,7 +1018,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey tk(this IAssetKey key, string text) => key.Inline("Culture:tk", text);
+        public static ILinePart tk(this ILinePart key, string text) => key.Inline("Culture:tk", text);
         
         /// <summary>
         /// Add inlined Setswana language string.
@@ -1026,7 +1026,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey tn(this IAssetKey key, string text) => key.Inline("Culture:tn", text);
+        public static ILinePart tn(this ILinePart key, string text) => key.Inline("Culture:tn", text);
         
         /// <summary>
         /// Add inlined Turkish language string.
@@ -1034,7 +1034,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey tr(this IAssetKey key, string text) => key.Inline("Culture:tr", text);
+        public static ILinePart tr(this ILinePart key, string text) => key.Inline("Culture:tr", text);
         
         /// <summary>
         /// Add inlined Tsonga language string.
@@ -1042,7 +1042,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ts(this IAssetKey key, string text) => key.Inline("Culture:ts", text);
+        public static ILinePart ts(this ILinePart key, string text) => key.Inline("Culture:ts", text);
         
         /// <summary>
         /// Add inlined Tatar language string.
@@ -1050,7 +1050,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey tt(this IAssetKey key, string text) => key.Inline("Culture:tt", text);
+        public static ILinePart tt(this ILinePart key, string text) => key.Inline("Culture:tt", text);
         
         /// <summary>
         /// Add inlined Central Atlas Tamazight language string.
@@ -1058,7 +1058,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey tzm(this IAssetKey key, string text) => key.Inline("Culture:tzm", text);
+        public static ILinePart tzm(this ILinePart key, string text) => key.Inline("Culture:tzm", text);
         
         /// <summary>
         /// Add inlined Uyghur language string.
@@ -1066,7 +1066,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ug(this IAssetKey key, string text) => key.Inline("Culture:ug", text);
+        public static ILinePart ug(this ILinePart key, string text) => key.Inline("Culture:ug", text);
         
         /// <summary>
         /// Add inlined Ukrainian language string.
@@ -1074,7 +1074,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey uk(this IAssetKey key, string text) => key.Inline("Culture:uk", text);
+        public static ILinePart uk(this ILinePart key, string text) => key.Inline("Culture:uk", text);
         
         /// <summary>
         /// Add inlined Urdu language string.
@@ -1082,7 +1082,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ur(this IAssetKey key, string text) => key.Inline("Culture:ur", text);
+        public static ILinePart ur(this ILinePart key, string text) => key.Inline("Culture:ur", text);
         
         /// <summary>
         /// Add inlined Uzbek language string.
@@ -1090,7 +1090,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey uz(this IAssetKey key, string text) => key.Inline("Culture:uz", text);
+        public static ILinePart uz(this ILinePart key, string text) => key.Inline("Culture:uz", text);
         
         /// <summary>
         /// Add inlined Venda language string.
@@ -1098,7 +1098,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey ve(this IAssetKey key, string text) => key.Inline("Culture:ve", text);
+        public static ILinePart ve(this ILinePart key, string text) => key.Inline("Culture:ve", text);
         
         /// <summary>
         /// Add inlined Vietnamese language string.
@@ -1106,7 +1106,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey vi(this IAssetKey key, string text) => key.Inline("Culture:vi", text);
+        public static ILinePart vi(this ILinePart key, string text) => key.Inline("Culture:vi", text);
         
         /// <summary>
         /// Add inlined Wolof language string.
@@ -1114,7 +1114,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey wo(this IAssetKey key, string text) => key.Inline("Culture:wo", text);
+        public static ILinePart wo(this ILinePart key, string text) => key.Inline("Culture:wo", text);
         
         /// <summary>
         /// Add inlined isiXhosa language string.
@@ -1122,7 +1122,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey xh(this IAssetKey key, string text) => key.Inline("Culture:xh", text);
+        public static ILinePart xh(this ILinePart key, string text) => key.Inline("Culture:xh", text);
         
         /// <summary>
         /// Add inlined Yiddish language string.
@@ -1130,7 +1130,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey yi(this IAssetKey key, string text) => key.Inline("Culture:yi", text);
+        public static ILinePart yi(this ILinePart key, string text) => key.Inline("Culture:yi", text);
         
         /// <summary>
         /// Add inlined Yoruba language string.
@@ -1138,7 +1138,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey yo(this IAssetKey key, string text) => key.Inline("Culture:yo", text);
+        public static ILinePart yo(this ILinePart key, string text) => key.Inline("Culture:yo", text);
         
         /// <summary>
         /// Add inlined Chinese language string.
@@ -1146,7 +1146,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey zh(this IAssetKey key, string text) => key.Inline("Culture:zh", text);
+        public static ILinePart zh(this ILinePart key, string text) => key.Inline("Culture:zh", text);
         
         /// <summary>
         /// Add inlined isiZulu language string.
@@ -1154,7 +1154,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="key">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static IAssetKey zu(this IAssetKey key, string text) => key.Inline("Culture:zu", text);
+        public static ILinePart zu(this ILinePart key, string text) => key.Inline("Culture:zu", text);
         
     }
 }

@@ -81,7 +81,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Construct new root.
         /// </summary>
-        public LocalizationRoot() : this(null, null, null, LocalizationResolver.Instance, null, null) { }
+        public LocalizationRoot() : this(LinePartAppender.Instance, null, null, null, LocalizationResolver.Instance, null, null) { }
 
         /// <summary>
         /// Construct new root
@@ -92,20 +92,21 @@ namespace Lexical.Localization
         /// <param name="formatProvider"></param>
         /// <param name="logger"></param>
         public LocalizationRoot(IAsset asset, ICulturePolicy culturePolicy = null, ILocalizationResolver resolver = default, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) : 
-            this(null, asset, culturePolicy, resolver ?? LocalizationResolver.Instance, formatProvider, logger)
+            this(LinePartAppender.Instance, null, asset, culturePolicy, resolver ?? LocalizationResolver.Instance, formatProvider, logger)
         {
         }
 
         /// <summary>
         /// Construct root, for subclasses.
         /// </summary>
+        /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="asset"></param>
         /// <param name="culturePolicy"></param>
         /// <param name="resolver"></param>
         /// <param name="formatProvider"></param>
         /// <param name="logger"></param>
-        protected LocalizationRoot(IAssetKey prevKey, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver, IFormatProvider formatProvider, IObservable<LocalizationString> logger) : base(prevKey, "")
+        protected LocalizationRoot(ILinePartAppender appender, ILinePart prevKey, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver, IFormatProvider formatProvider, IObservable<LocalizationString> logger) : base(appender, prevKey, "")
         {
             this.culturePolicy = culturePolicy;
             this.asset = asset;
@@ -122,14 +123,15 @@ namespace Lexical.Localization
             /// <summary>
             /// Construct root, for subclasses.
             /// </summary>
+            /// <param name="appender"></param>
             /// <param name="prevKey"></param>
             /// <param name="asset"></param>
             /// <param name="culturePolicy"></param>
             /// <param name="resolver"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
-            public LinkedTo(IAssetKey prevKey, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver, IFormatProvider formatProvider, IObservable<LocalizationString> logger) :
-                base(prevKey, asset, culturePolicy, resolver, formatProvider, logger)
+            public LinkedTo(ILinePartAppender appender, ILinePart prevKey, IAsset asset = null, ICulturePolicy culturePolicy = null, ILocalizationResolver resolver = null, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) :
+                base(appender, prevKey, asset, culturePolicy, resolver, formatProvider, logger)
             { }
         }
 
@@ -167,9 +169,14 @@ namespace Lexical.Localization
             public override IObservable<LocalizationString> Logger { get => logger; set => logger = value; }
 
             /// <summary>
+            /// Appender
+            /// </summary>
+            public override ILinePartAppender Appender { get => appender; set => appender = value; }
+
+            /// <summary>
             /// Construct mutable root.
             /// </summary>
-            public Mutable() : base(null, null, null, LocalizationResolver.Instance, null, null) { }
+            public Mutable() : base(StringLocalizerAppender.Instance, null, null, null, LocalizationResolver.Instance, null, null) { }
 
             /// <summary>
             /// Construct new root
@@ -179,8 +186,8 @@ namespace Lexical.Localization
             /// <param name="resolver"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
-            public Mutable(IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver = default, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) :
-                this(null, asset, culturePolicy, resolver ?? LocalizationResolver.Instance, formatProvider, logger)
+            public Mutable(ILinePartAppender appender = default, IAsset asset = null, ICulturePolicy culturePolicy = null, ILocalizationResolver resolver = default, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) :
+                this(appender ?? LinePartAppender.Instance, null, asset, culturePolicy, resolver ?? LocalizationResolver.Instance, formatProvider, logger)
             {
             }
 
@@ -193,8 +200,8 @@ namespace Lexical.Localization
             /// <param name="resolver"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
-            public Mutable(IAssetKey prevKey, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver, IFormatProvider formatProvider, IObservable<LocalizationString> logger) : 
-                base(prevKey, asset, culturePolicy, resolver, formatProvider, logger)
+            public Mutable(ILinePartAppender appender, ILinePart prevKey, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver, IFormatProvider formatProvider, IObservable<LocalizationString> logger) : 
+                base(appender, prevKey, asset, culturePolicy, resolver, formatProvider, logger)
             {
             }
 

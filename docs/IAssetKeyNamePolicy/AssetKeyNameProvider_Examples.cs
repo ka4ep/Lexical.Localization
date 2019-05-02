@@ -21,7 +21,7 @@ namespace docs
                 // Create asset
                 IAsset asset = new LocalizationAsset(source, policy);
                 // Create key
-                IAssetKey key = new LocalizationRoot(asset).Section("MyController").Key("Hello");
+                ILinePart key = new LocalizationRoot(asset).Section("MyController").Key("Hello");
                 // Retrieve string
                 string str = key.Culture("en").ResolveFormulatedString();
                 #endregion Snippet_0a
@@ -35,7 +35,7 @@ namespace docs
             {
                 #region Snippet_1
                 // Let's create an example key
-                IAssetKey key = new LocalizationRoot()
+                ILinePart key = new LocalizationRoot()
                         .Location("Patches")
                         .Section("Controllers")
                         .Type("MyController")

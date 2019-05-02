@@ -22,7 +22,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Parameters that are associated with this particular node.
         /// </summary>
-        IAssetKey Key { get; set; }
+        ILinePart Key { get; set; }
 
         /// <summary>
         /// Associated values.
@@ -55,7 +55,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>child nodes or null if none was found</returns>
-        IEnumerable<IKeyTree> GetChildren(IAssetKey key);
+        IEnumerable<IKeyTree> GetChildren(ILinePart key);
 
         /// <summary>
         /// Remove self from parent.

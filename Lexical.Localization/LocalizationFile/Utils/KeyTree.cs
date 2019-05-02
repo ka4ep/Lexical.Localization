@@ -39,7 +39,7 @@ namespace Lexical.Localization.Utils
         /// <param name="keyValues"></param>
         /// <param name="groupingPolicy"></param>
         /// <returns>tree root ""</returns>
-        public static KeyTree Create(IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> keyValues, IAssetNamePattern groupingPolicy)
+        public static KeyTree Create(IEnumerable<KeyValuePair<ILinePart, IFormulationString>> keyValues, IAssetNamePattern groupingPolicy)
         {
             KeyTree root = new KeyTree(Key.Root);
             root.AddRange(keyValues, groupingPolicy);
@@ -81,7 +81,7 @@ namespace Lexical.Localization.Utils
             }
         }
 
-        IAssetKey IKeyTree.Key
+        ILinePart IKeyTree.Key
         {
             get => key;
             set
@@ -119,7 +119,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         List<KeyTree> children;
 
-        MapList<IAssetKey, KeyTree> childLookup;
+        MapList<ILinePart, KeyTree> childLookup;
 
         /// <summary>
         /// Test if has child nodes.
@@ -134,7 +134,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Get-or-create child nodes
         /// </summary>
-        public MapList<IAssetKey, KeyTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<IAssetKey, KeyTree>(AssetKeyComparer.Default).AddRange(Children.Where(c=>c.Key!=null).Select(c=>new KeyValuePair<IAssetKey, KeyTree>(c.Key, c))));
+        public MapList<ILinePart, KeyTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<ILinePart, KeyTree>(AssetKeyComparer.Default).AddRange(Children.Where(c=>c.Key!=null).Select(c=>new KeyValuePair<ILinePart, KeyTree>(c.Key, c))));
 
         /// <summary>
         /// Test if has values.
@@ -225,7 +225,7 @@ namespace Lexical.Localization.Utils
         IReadOnlyCollection<IKeyTree> IKeyTree.Children => this.Children;
         IKeyTree IKeyTree.CreateChild() => this.CreateChild();
         static IKeyTree[] empty = new IKeyTree[0];
-        IEnumerable<IKeyTree> IKeyTree.GetChildren(IAssetKey key)
+        IEnumerable<IKeyTree> IKeyTree.GetChildren(ILinePart key)
         {
             if (!HasChildren) return empty;
             IEnumerable<IKeyTree> children = ChildrenLookup.TryGetList(key);
@@ -246,7 +246,7 @@ namespace Lexical.Localization.Utils
             foreach (IKeyTree tree in this.VisitFromRoot())
             {
                 if (i++ > 0) sb.Append("/");
-                IAssetKey key = tree.Key;
+                ILinePart key = tree.Key;
                 if (key == null) continue;
                 ParameterNamePolicy.Instance.PrintKey(key, sb);
             }
@@ -272,7 +272,7 @@ namespace Lexical.Localization.Utils
             foreach(IKeyTree tree in this.VisitFromRoot())
             {
                 if (sb.Length > 0) sb.Append("/");
-                IAssetKey key = tree.Key;
+                ILinePart key = tree.Key;
                 if (key == null) continue;
                 ParameterNamePolicy.Instance.PrintKey(key, sb);
             }

@@ -22,7 +22,7 @@ namespace docs
 
                 #region Snippet_1b
                 // Construct key
-                IAssetKey key = root.Type("MyController").Key("Hello");
+                ILinePart key = root.Type("MyController").Key("Hello");
                 #endregion Snippet_1b
 
                 #region Snippet_1c
@@ -40,7 +40,7 @@ namespace docs
                 IAsset asset = new LocalizationAsset(source, ParameterNamePolicy.Instance);
                 #region Snippet_5x
                 // Create reference
-                IAssetKey key = new LocalizationKey._Section(null, "Section").Key("Key");
+                ILinePart key = new LocalizationKey._Section(null, "Section").Key("Key");
                 // Retreieve with reference
                 IFormulationString str = asset.GetString(key);
                 #endregion Snippet_5x
@@ -49,7 +49,7 @@ namespace docs
             {
                 #region Snippet_2a
                 // Create key from global root
-                IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Hello");
+                ILinePart key = LocalizationRoot.Global.Type("MyController").Key("Hello");
                 #endregion Snippet_2a
 
                 #region Snippet_2b

@@ -13,7 +13,7 @@ namespace docs
                 #region Snippet_0a
                 IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample0a.xml");
                 IAssetRoot root = new LocalizationRoot(asset);
-                IAssetKey key = root.Key("Cats").Inline("{0} cat(s)");
+                ILinePart key = root.Key("Cats").Inline("{0} cat(s)");
 
                 // Print with the default string (without culture policy)
                 for (int cats = 0; cats <= 2; cats++)
@@ -32,7 +32,7 @@ namespace docs
             {
                 #region Snippet_0b
                 IAssetRoot root = new LocalizationRoot();
-                IAssetKey key = root.Key("Cats")
+                ILinePart key = root.Key("Cats")
                         .Inline("{0} cat(s)")  // Default string
                         .Inline("N:Zero", "no cats")
                         .Inline("N:One", "a cat")
@@ -45,7 +45,7 @@ namespace docs
             {
                 #region Snippet_0c
                 IAssetRoot root = new LocalizationRoot();
-                IAssetKey key = root.Key("Cats")
+                ILinePart key = root.Key("Cats")
                         .Inline("{0} cat(s)")   // Default string
                         .Inline("Culture:en:N:Zero", "no cats")
                         .Inline("Culture:en:N:One", "a cat")
@@ -61,7 +61,7 @@ namespace docs
             {
                 #region Snippet_1a
                 IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample0b.xml");
-                IAssetKey key = new LocalizationRoot(asset).Key("Cats");
+                ILinePart key = new LocalizationRoot(asset).Key("Cats");
 
                 for (int cats = 0; cats<=2; cats++)
                     Console.WriteLine(key.Format(cats));
@@ -72,7 +72,7 @@ namespace docs
             {
                 // Plurality permutations for argument 0
                 #region Snippet_2
-                IAssetKey key = LocalizationRoot.Global.Key("CatsDogs")
+                ILinePart key = LocalizationRoot.Global.Key("CatsDogs")
                         .Inline("{0} cat(s) and {1} dog(s)")
                         .Inline("N:Zero", "no cats and {1} dog(s)")
                         .Inline("N:One", "a cat and {1} dog(s)")
@@ -88,7 +88,7 @@ namespace docs
                 // Plurality permutations for argument 0
                 #region Snippet_3
                 IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample1.xml");
-                IAssetKey key = new LocalizationRoot(asset).Key("CatsDogs");
+                ILinePart key = new LocalizationRoot(asset).Key("CatsDogs");
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)
@@ -99,7 +99,7 @@ namespace docs
                 // Plurality permutations for argument 1
                 #region Snippet_4
                 IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample2.xml");
-                IAssetKey key = new LocalizationRoot(asset).Key("CatsDogs");
+                ILinePart key = new LocalizationRoot(asset).Key("CatsDogs");
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)
@@ -111,7 +111,7 @@ namespace docs
                 #region Snippet_5
                 IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample2-en.xml");
                 IAssetRoot root = new LocalizationRoot(asset);
-                IAssetKey key = root.Key("CatsDogs").Inline("{0} cat(s) and {1} dog(s)");
+                ILinePart key = root.Key("CatsDogs").Inline("{0} cat(s) and {1} dog(s)");
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)
@@ -122,7 +122,7 @@ namespace docs
                 // Plurality for 4 arguments
                 #region Snippet_6
                 IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample4.xml");
-                IAssetKey key = new LocalizationRoot(asset).Key("CatsDogsPoniesHorses");
+                ILinePart key = new LocalizationRoot(asset).Key("CatsDogsPoniesHorses");
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)

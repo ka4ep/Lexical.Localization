@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key has capability of "Culture" parameter assignment.
     /// </summary>
-    public interface ILocalizationKeyCultureAssignable : IAssetKey
+    public interface ILocalizationKeyCultureAssignable : ILinePart
     {
         /// <summary>
         /// Select a specific culture. 
@@ -38,7 +38,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key (may have) has "Culture" parameter assigned.
     /// </summary>
-    public interface ILocalizationKeyCultureAssigned : IAssetKeyNonCanonicallyCompared, ILocalizationKey
+    public interface ILocalizationKeyCultureAssigned : ILineKeyNonCanonicallyCompared, ILocalizationKey
     {
         /// <summary>
         /// Selected culture, or null.
@@ -57,7 +57,7 @@ namespace Lexical.Localization
         /// <param name="culture"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
-        public static ILocalizationKeyCultureAssigned Culture(this IAssetKey key, CultureInfo culture)
+        public static ILocalizationKeyCultureAssigned Culture(this ILinePart key, CultureInfo culture)
         {
             if (key is ILocalizationKeyCultureAssignable casted) return casted.Culture(culture);
             //if (key is IAssetKeyParameterAssignable parametrizable) return parametrizable.AppendParameter("Culture", culture.Name);
@@ -71,7 +71,7 @@ namespace Lexical.Localization
         /// <param name="cultureName"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
-        public static ILocalizationKeyCultureAssigned Culture(this IAssetKey key, string cultureName)
+        public static ILocalizationKeyCultureAssigned Culture(this ILinePart key, string cultureName)
         {
             if (key is ILocalizationKeyCultureAssignable casted) return casted.Culture(cultureName);
             //if (key is IAssetKeyParameterAssignable parametrizable) return parametrizable.AppendParameter("Culture", cultureName);
@@ -84,7 +84,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="cultureName"></param>
         /// <returns>new key or null</returns>
-        public static ILocalizationKeyCultureAssigned TrySetCulture(this IAssetKey key, string cultureName)
+        public static ILocalizationKeyCultureAssigned TrySetCulture(this ILinePart key, string cultureName)
         {
             try
             {
@@ -104,7 +104,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="culture"></param>
         /// <returns>new key or null</returns>
-        public static ILocalizationKeyCultureAssigned TrySetCulture(this IAssetKey key, CultureInfo culture)
+        public static ILocalizationKeyCultureAssigned TrySetCulture(this ILinePart key, CultureInfo culture)
         {
             if (key is ILocalizationKeyCultureAssignable casted) return casted.Culture(culture);
             //if (key is IAssetKeyParameterAssignable parametrizable) return parametrizable.AppendParameter("Culture", culture.Name);
@@ -116,17 +116,17 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>culture info or null</returns>
-        public static CultureInfo FindCulture(this IAssetKey key)
+        public static CultureInfo FindCulture(this ILinePart key)
         {
             string cultureName = null;
             CultureInfo culture = null;
-            for (; key != null; key = key.GetPreviousKey())
+            for (; key != null; key = key.PreviousPart)
             {
                 if (key is ILocalizationKeyCultureAssigned cultureKey) {
                     if (cultureKey.Culture != null) culture = cultureKey.Culture;
-                    else if (cultureKey.Name != null) cultureName = cultureKey.Name;
+                    else if (cultureKey.GetParameterValue() != null) cultureName = cultureKey.GetParameterValue();
                 }
-                else if (key is IAssetKeyParameterAssigned parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.Name != null) cultureName = parameterKey.Name;
+                else if (key is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) cultureName = parameterKey.ParameterValue;
             }
             if (culture != null) return culture;
             if (cultureName != null) try { return CultureInfo.GetCultureInfo(cultureName); } catch (CultureNotFoundException) { }
@@ -138,13 +138,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>culture name or null</returns>
-        public static string FindCultureName(this IAssetKey key)
+        public static string FindCultureName(this ILinePart key)
         {
             string result = null;
-            for (; key != null; key = key.GetPreviousKey())
+            for (; key != null; key = key.PreviousPart)
             {
-                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.Name != null) result = cultureKey.Name;
-                else if (key is IAssetKeyParameterAssigned parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.Name != null) result = parameterKey.Name;
+                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.GetParameterValue() != null) result = cultureKey.GetParameterValue();
+                else if (key is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) result = parameterKey.ParameterValue;
             }
             return result;
         }
@@ -154,11 +154,14 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>culture policy or null</returns>
-        public static ILocalizationKeyCultureAssigned FindCultureKey(this IAssetKey key)
+        public static ILinePart FindCultureKey(this ILinePart key)
         {
-            ILocalizationKeyCultureAssigned result = null;
-            for (; key != null; key = key.GetPreviousKey())
-                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.Name != null) result = cultureKey;
+            ILinePart result = null;
+            for (; key != null; key = key.PreviousPart)
+            {
+                if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.GetParameterValue() != null) result = cultureKey;
+                else if (key is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) result = parameterKey;
+            }
             return result;
         }
 
@@ -173,7 +176,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>resource or null</returns>
-        public static byte[] ResolveResource(this IAssetKey key)
+        public static byte[] ResolveResource(this ILinePart key)
         {
             // Arrange
             IAsset asset = key.FindAsset();
@@ -227,13 +230,13 @@ namespace Lexical.Localization
     /// 
     /// This comparer regards null and "" non-equivalent. 
     /// </summary>
-    public class LocalizationKeyCultureComparer : IEqualityComparer<IAssetKey>
+    public class LocalizationKeyCultureComparer : IEqualityComparer<ILinePart>
     {
         //static IEqualityComparer<CultureInfo> culture_comparer = new EqualsComparer<CultureInfo>();
         static IEqualityComparer<string> string_comparer = StringComparer.InvariantCulture;
-        public bool Equals(IAssetKey x, IAssetKey y)
+        public bool Equals(ILinePart x, ILinePart y)
             => string_comparer.Equals(x?.FindCultureName(), y?.FindCultureName());
-        public int GetHashCode(IAssetKey obj)
+        public int GetHashCode(ILinePart obj)
             => string_comparer.GetHashCode(obj?.FindCultureName());
     }
 
@@ -242,13 +245,13 @@ namespace Lexical.Localization
     /// 
     /// This comparer regards null and "" equivalent. 
     /// </summary>
-    public class LocalizationKeyCultureComparer2 : IEqualityComparer<IAssetKey>
+    public class LocalizationKeyCultureComparer2 : IEqualityComparer<ILinePart>
     {
         //static IEqualityComparer<CultureInfo> culture_comparer = new EqualsComparer<CultureInfo>();
         static IEqualityComparer<string> string_comparer = StringComparer.InvariantCulture;
-        public bool Equals(IAssetKey x, IAssetKey y)
+        public bool Equals(ILinePart x, ILinePart y)
             => string_comparer.Equals(x?.FindCultureName() ?? "", y?.FindCultureName() ?? "");
-        public int GetHashCode(IAssetKey obj)
+        public int GetHashCode(ILinePart obj)
             => string_comparer.GetHashCode(obj?.FindCultureName() ?? "");
     }
 

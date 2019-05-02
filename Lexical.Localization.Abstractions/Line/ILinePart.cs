@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// 
     /// Forms a linked list and trie of <see cref="ILinePart"/>s.
     /// </summary>
-    public interface ILinePart : ILine
+    public partial interface ILinePart : ILine
     {
         /// <summary>
         /// Previous part.

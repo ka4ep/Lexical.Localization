@@ -23,7 +23,7 @@ namespace docs
                 // Create asset with string source
                 IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
                 #endregion Snippet_1a
-                IAssetKey key = new LocalizationRoot(asset).Type("MyController").Key("hello");
+                ILinePart key = new LocalizationRoot(asset).Type("MyController").Key("hello");
                 Console.WriteLine(key);
                 Console.WriteLine(key.Culture("en"));
                 Console.WriteLine(key.Culture("de"));
@@ -32,7 +32,7 @@ namespace docs
             {
                 #region Snippet_1b
                 // Create localization source
-                var source = new Dictionary<IAssetKey, string> {
+                var source = new Dictionary<ILinePart, string> {
                     { ParameterNamePolicy.Instance.Parse("Type:MyController:Key:hello", Key.Root),            "Hello World!" },
                     { ParameterNamePolicy.Instance.Parse("Culture:en:Type:MyController:Key:hello", Key.Root), "Hello World!" },
                     { ParameterNamePolicy.Instance.Parse("Culture:de:Type:MyController:Key:hello", Key.Root), "Hallo Welt!"  }
@@ -42,7 +42,7 @@ namespace docs
                 #endregion Snippet_1b
 
                 #region Snippet_2b
-                IAssetKey key = new LocalizationRoot(asset).Type("MyController").Key("hello");
+                ILinePart key = new LocalizationRoot(asset).Type("MyController").Key("hello");
                 Console.WriteLine(key);
                 Console.WriteLine(key.Culture("en"));
                 Console.WriteLine(key.Culture("de"));
@@ -52,7 +52,7 @@ namespace docs
             {
                 #region Snippet_1c
                 // Create localization source
-                var source = new Dictionary<IAssetKey, string> {
+                var source = new Dictionary<ILinePart, string> {
                     { new LocalizationRoot().Type("MyController").Key("hello"),               "Hello World!" },
                     { new LocalizationRoot().Type("MyController").Key("hello").Culture("en"), "Hello World!" },
                     { new LocalizationRoot().Type("MyController").Key("hello").Culture("de"), "Hallo Welt!"  }
@@ -62,7 +62,7 @@ namespace docs
                 #endregion Snippet_1c
 
                 #region Snippet_2c
-                IAssetKey key = new LocalizationRoot(asset).Type("MyController").Key("hello");
+                ILinePart key = new LocalizationRoot(asset).Type("MyController").Key("hello");
                 Console.WriteLine(key);
                 Console.WriteLine(key.Culture("en"));
                 Console.WriteLine(key.Culture("de"));
@@ -79,14 +79,14 @@ namespace docs
                 IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
                 #region Snippet_3a
                 // Extract all keys
-                foreach (IAssetKey _key in asset.GetKeyLines(null).Select(line=>line.Key))
+                foreach (ILinePart _key in asset.GetKeyLines(null).Select(line=>line.Key))
                     Console.WriteLine(_key);
                 #endregion Snippet_3a
 
                 #region Snippet_3b
                 // Keys can be filtered
-                IAssetKey filterKey = LocalizationRoot.Global.Culture("de");
-                foreach (IAssetKey _key in asset.GetKeyLines(filterKey).Select(line => line.Key))
+                ILinePart filterKey = LocalizationRoot.Global.Culture("de");
+                foreach (ILinePart _key in asset.GetKeyLines(filterKey).Select(line => line.Key))
                     Console.WriteLine(_key);
                 #endregion Snippet_3b
 

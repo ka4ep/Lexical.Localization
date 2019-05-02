@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// 
     /// Observable is sent every resolved <see cref="LocalizationString"/> by <see cref="ILocalizationResolver"/>.
     /// </summary>
-    public interface ILocalizationKeyLoggerAssignable : IAssetKey
+    public interface ILocalizationKeyLoggerAssignable : ILinePart
     {
         /// <summary>
         /// Append observer that monitors resolving of localization strings.
@@ -25,7 +25,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A key that has been assigned with logger.
     /// </summary>
-    public interface ILocalizationKeyLoggerAssigned : IAssetKey
+    public interface ILocalizationKeyLoggerAssigned : ILinePart
     {
         /// <summary>
         /// (Optional) The assigned logger.
@@ -42,7 +42,7 @@ namespace Lexical.Localization
         /// <param name="logger"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement <see cref="ILocalizationKeyLoggerAssignable"/></exception>
-        public static ILocalizationKeyLoggerAssigned Logger(this IAssetKey key, IObserver<LocalizationString> logger)
+        public static ILocalizationKeyLoggerAssigned Logger(this ILinePart key, IObserver<LocalizationString> logger)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(logger);
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");

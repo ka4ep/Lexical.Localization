@@ -26,7 +26,7 @@ namespace Lexical.Localization
         /// Resolve the formulation string. 
         /// 
         /// Uses the following algorithm:
-        ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="LocalizationKeyExtensions.FindCulturePolicy(IAssetKey)"/>.
+        ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="LocalizationKeyExtensions.FindCulturePolicy(ILinePart)"/>.
         ///   2. Try key as is.
         ///   
         ///      a. Search inlines with culture
@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>formulation string (without formulating it) or null</returns>
-        public LocalizationString ResolveString(IAssetKey key)
+        public LocalizationString ResolveString(ILinePart key)
         {
             // If there is no explicitly assigned culture in the key, try cultures from culture policy
             string explicitCulture = key.FindCultureName();
@@ -44,13 +44,13 @@ namespace Lexical.Localization
             {
                 IFormulationString languageString = null;
                 // Get inlines
-                IDictionary<IAssetKey, IFormulationString> inlines = key.FindInlines();
+                IDictionary<ILinePart, IFormulationString> inlines = key.FindInlines();
                 foreach (CultureInfo culture in cultures)
                 {
                     bool rootCulture = culture.Name == "";
                     rootCultureTried |= rootCulture;
                     // 
-                    IAssetKey culture_key = rootCulture ? key : key.Culture(culture);
+                    ILinePart culture_key = rootCulture ? key : key.Culture(culture);
                     // Try inlines
                     if (languageString == null && inlines != null) inlines.TryGetValue(culture_key, out languageString);
                     // Try key
@@ -64,7 +64,7 @@ namespace Lexical.Localization
             {
                 IFormulationString languageString = null;
                 // Get inlines
-                IDictionary<IAssetKey, IFormulationString> inlines = key.FindInlines();
+                IDictionary<ILinePart, IFormulationString> inlines = key.FindInlines();
                 // Try inlines with key
                 if (languageString == null && inlines != null) inlines.TryGetValue(key, out languageString);
                 // Try asset with key
@@ -80,7 +80,7 @@ namespace Lexical.Localization
         /// Resolve language string. 
         /// 
         /// Uses the following algorithm:
-        ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="LocalizationKeyExtensions.FindCulturePolicy(IAssetKey)"/>.
+        ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="LocalizationKeyExtensions.FindCulturePolicy(ILinePart)"/>.
         ///   2. Try key as is.
         ///   
         ///      a. Search inlines with plurality and culture
@@ -94,15 +94,15 @@ namespace Lexical.Localization
         /// <returns>If key has <see cref="ILocalizationKeyFormatArgs"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
         /// If key didn't have <see cref="ILocalizationKeyFormatArgs"/> part, then return the formulation string "Error (Code=0x{0:X8})".
         /// otherwise return null</returns>
-        public LocalizationString ResolveFormulatedString(IAssetKey key)
+        public LocalizationString ResolveFormulatedString(ILinePart key)
         {
             // Get args
             object[] format_args = key.FindFormatArgs();
 
             // Plurality key when there is only one numeric argument. e.g. "Key:N:One"
-            IAssetKey pluralityKey = null;
+            ILinePart pluralityKey = null;
             // Pluarlity key for all argument permutations (whether argument is provided or not)
-            IEnumerable<IAssetKey> pluralityKeys = null;
+            IEnumerable<ILinePart> pluralityKeys = null;
             if (format_args != null)
             {
                 for (int argumentIndex = 0; argumentIndex < format_args.Length; argumentIndex++)
@@ -132,23 +132,23 @@ namespace Lexical.Localization
             {
                 IFormulationString languageString = null;
                 // Get inlines
-                IDictionary<IAssetKey, IFormulationString> inlines = key.FindInlines();
+                IDictionary<ILinePart, IFormulationString> inlines = key.FindInlines();
                 foreach (CultureInfo culture in cultures)
                 {
                     bool rootCulture = culture.Name == "";
                     rootCultureTried |= rootCulture;
                     // Append culture
-                    IAssetKey pluralityKey_with_culture = rootCulture ? pluralityKey : pluralityKey?.Culture(culture);
+                    ILinePart pluralityKey_with_culture = rootCulture ? pluralityKey : pluralityKey?.Culture(culture);
                     // Try inlines with plurality key
                     if (languageString == null && inlines != null && pluralityKey_with_culture != null) inlines.TryGetValue(pluralityKey_with_culture, out languageString);
                     // Try inlines with plurality key permutations
                     if (languageString == null && inlines != null && pluralityKeys != null)
                     {
-                        foreach (IAssetKey _pluralityKey in pluralityKeys)
+                        foreach (ILinePart _pluralityKey in pluralityKeys)
                             if (inlines.TryGetValue(_pluralityKey.Culture(culture), out languageString) && languageString != null) break;
                     }
                     // Append culture
-                    IAssetKey key_with_culture = rootCulture ? key : key.Culture(culture);
+                    ILinePart key_with_culture = rootCulture ? key : key.Culture(culture);
                     // Try inlines with fallback key
                     if (languageString == null && inlines != null) inlines.TryGetValue(key_with_culture, out languageString);
                     // Try asset with plurality key
@@ -156,7 +156,7 @@ namespace Lexical.Localization
                     // Try asset with plurality key permutations
                     if (languageString == null && pluralityKeys != null)
                     {
-                        foreach (IAssetKey _pluralityKey in pluralityKeys)
+                        foreach (ILinePart _pluralityKey in pluralityKeys)
                         {
                             languageString = _pluralityKey.TryGetString();
                             if (languageString != null) break;
@@ -176,13 +176,13 @@ namespace Lexical.Localization
             {
                 IFormulationString languageString = null;
                 // Get inlines
-                IDictionary<IAssetKey, IFormulationString> inlines = key.FindInlines();
+                IDictionary<ILinePart, IFormulationString> inlines = key.FindInlines();
                 // Try inlines with plurality key
                 if (languageString == null && inlines != null && pluralityKey != null) inlines.TryGetValue(pluralityKey, out languageString);
                 // Try inlines with plurality key permutations
                 if (languageString == null && inlines != null && pluralityKeys != null)
                 {
-                    foreach (IAssetKey _pluralityKey in pluralityKeys)
+                    foreach (ILinePart _pluralityKey in pluralityKeys)
                         if (inlines.TryGetValue(_pluralityKey, out languageString) && languageString != null) break;
                 }
                 // Try inlines with fallback key
@@ -192,7 +192,7 @@ namespace Lexical.Localization
                 // Try asset with plurality key permutations
                 if (languageString == null && pluralityKeys != null)
                 {
-                    foreach (IAssetKey _pluralityKey in pluralityKeys)
+                    foreach (ILinePart _pluralityKey in pluralityKeys)
                     {
                         languageString = _pluralityKey.TryGetString();
                         if (languageString != null) break;
@@ -219,7 +219,7 @@ namespace Lexical.Localization
         /// <param name="formulationString"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        static LocalizationString Format(IAssetKey key, CultureInfo culture, IFormulationString formulationString, object[] args)
+        static LocalizationString Format(ILinePart key, CultureInfo culture, IFormulationString formulationString, object[] args)
         {
             // Convert to strings
             string[] arg_strings = new string[formulationString.Arguments.Length];
@@ -401,7 +401,7 @@ namespace Lexical.Localization
         /// <param name="maxArgumentCount"></param>
         /// <param name="args">arguments, only numberic arguments are used</param>
         /// <returns>all permutation keys or null</returns>
-        private static IEnumerable<IAssetKey> CreatePluralityKeyPermutations(IAssetKey key, int maxArgumentCount, object[] args)
+        private static IEnumerable<ILinePart> CreatePluralityKeyPermutations(ILinePart key, int maxArgumentCount, object[] args)
         {
             if (maxArgumentCount <= 0) return null;
             // Gather info: (argumentIndex, pluralityKind)
@@ -426,12 +426,12 @@ namespace Lexical.Localization
             return _CreatePluralityKeyPermutations(key, argInfos, argumentCount);
         }
 
-        private static IEnumerable<IAssetKey> _CreatePluralityKeyPermutations(IAssetKey key, (int, string)[] argInfos, int argumentCount)
+        private static IEnumerable<ILinePart> _CreatePluralityKeyPermutations(ILinePart key, (int, string)[] argInfos, int argumentCount)
         {
             int allBits = (int)(1 << argumentCount) - 1;
             for (int bits = allBits; bits > 0; bits--)
             {
-                IAssetKey pluralityKey = key;
+                ILinePart pluralityKey = key;
                 for (int argumentIndex = 0; argumentIndex < argumentCount; argumentIndex++)
                 {
                     if ((bits & (1 << argumentIndex)) == 0) continue;
@@ -441,7 +441,7 @@ namespace Lexical.Localization
             }
         }
 
-        private static IEnumerable<IAssetKey> _CreatePluralityKeysSingleArgumentOnly(IAssetKey key, (int, string)[] argInfos, int argumentCount)
+        private static IEnumerable<ILinePart> _CreatePluralityKeysSingleArgumentOnly(ILinePart key, (int, string)[] argInfos, int argumentCount)
         {
             for (int argumentIndex = 0; argumentIndex < argumentCount; argumentIndex++)
             {

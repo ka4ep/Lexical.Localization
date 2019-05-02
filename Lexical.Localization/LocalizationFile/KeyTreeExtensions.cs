@@ -28,20 +28,20 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ToKeyLines(this IKeyTree node)
+        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ToKeyLines(this IKeyTree node)
         {
-            Queue<(IKeyTree, IAssetKey)> queue = new Queue<(IKeyTree, IAssetKey)>();
+            Queue<(IKeyTree, ILinePart)> queue = new Queue<(IKeyTree, ILinePart)>();
             queue.Enqueue((node, node.Key));
             while (queue.Count > 0)
             {
                 // Next element
-                (IKeyTree, IAssetKey) current = queue.Dequeue();
+                (IKeyTree, ILinePart) current = queue.Dequeue();
 
                 // Yield values
                 if (current.Item2 != null && current.Item1.HasValues)
                 {
                     foreach (IFormulationString value in current.Item1.Values)
-                        yield return new KeyValuePair<IAssetKey, IFormulationString>(current.Item2, value);
+                        yield return new KeyValuePair<ILinePart, IFormulationString>(current.Item2, value);
                 }
 
                 // Enqueue children
@@ -49,7 +49,7 @@ namespace Lexical.Localization
                 {
                     foreach (IKeyTree child in current.Item1.Children)
                     {
-                        IAssetKey childKey = current.Item2 == null ? child.Key : current.Item2.Concat(child.Key);
+                        ILinePart childKey = current.Item2 == null ? child.Key : current.Item2.Concat(child.Key);
                         queue.Enqueue((child, childKey));
                     }
                 }
@@ -98,7 +98,7 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <param name="key"></param>
         /// <returns>child node or null if was not found</returns>
-        public static IKeyTree GetChild(this IKeyTree tree, IAssetKey key)
+        public static IKeyTree GetChild(this IKeyTree tree, ILinePart key)
             => tree.GetChildren(key)?.FirstOrDefault();
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static bool HasChild(this IKeyTree tree, IAssetKey key)
+        public static bool HasChild(this IKeyTree tree, ILinePart key)
         {
             if (key == null) return false;
             if (!tree.HasChildren) return false;
@@ -143,7 +143,7 @@ namespace Lexical.Localization
         /// <param name="node">(optional) not to append to</param>
         /// <param name="key">key that contains parameters</param>
         /// <returns>existing child, new child, or <paramref name="node"/> if no parameters were provided</returns>
-        public static IKeyTree GetOrCreate(this IKeyTree node, IAssetKey key)
+        public static IKeyTree GetOrCreate(this IKeyTree node, ILinePart key)
         {
             if (node == null) return null;
 
@@ -166,7 +166,7 @@ namespace Lexical.Localization
         /// <param name="node">(optional) not to append to</param>
         /// <param name="key">key that contains parameters</param>
         /// <returns>new child</returns>
-        public static IKeyTree Create(this IKeyTree node, IAssetKey key)
+        public static IKeyTree Create(this IKeyTree node, ILinePart key)
         {
             if (node == null) return null;
 
@@ -186,7 +186,7 @@ namespace Lexical.Localization
         /// <param name="key">(optional) possible initial key to set.</param>
         /// <param name="value">(optional) possible initial value to add</param>
         /// <returns><paramref name="node"/></returns>
-        public static IKeyTree Add(this IKeyTree node, IAssetKey key, IFormulationString value)
+        public static IKeyTree Add(this IKeyTree node, ILinePart key, IFormulationString value)
         {
             IKeyTree n = node;
             if (key != null) n = n.GetChild(key);
@@ -204,11 +204,11 @@ namespace Lexical.Localization
         /// <param name="key_parts">(optional) possible initial key to set.</param>
         /// <param name="value">(optional) possible initial value to add</param>
         /// <returns>the leaf node where the values was added</returns>
-        public static IKeyTree AddRecursive(this IKeyTree node, IEnumerable<IAssetKey> key_parts, IFormulationString value)
+        public static IKeyTree AddRecursive(this IKeyTree node, IEnumerable<ILinePart> key_parts, IFormulationString value)
         {
             // Drill into leaf
             IKeyTree leaf = node;
-            foreach (IAssetKey key in key_parts)
+            foreach (ILinePart key in key_parts)
                 leaf = leaf.GetOrCreate(key);
 
             // Add value
@@ -260,16 +260,16 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="node"></param>
         /// <returns>nodes and keys</returns>
-        public static IEnumerable<KeyValuePair<IKeyTree, IAssetKey>> DecendentsWithConcatenatedKeys(this IKeyTree node)
+        public static IEnumerable<KeyValuePair<IKeyTree, ILinePart>> DecendentsWithConcatenatedKeys(this IKeyTree node)
         {
             if (node == null) yield break;
 
-            Queue<(IKeyTree, IAssetKey)> queue = new Queue<(IKeyTree, IAssetKey)>();
+            Queue<(IKeyTree, ILinePart)> queue = new Queue<(IKeyTree, ILinePart)>();
             queue.Enqueue((node, node.GetConcatenatedKey()));
             while (queue.Count > 0)
             {
-                (IKeyTree n, IAssetKey key) = queue.Dequeue();
-                if (n != node) yield return new KeyValuePair<IKeyTree, IAssetKey>(n, key);
+                (IKeyTree n, ILinePart key) = queue.Dequeue();
+                if (n != node) yield return new KeyValuePair<IKeyTree, ILinePart>(n, key);
 
                 if (n.HasChildren)
                     foreach (IKeyTree child in n.Children)
@@ -308,7 +308,7 @@ namespace Lexical.Localization
         /// Get concatenated key from root to <paramref name="node"/>.
         /// </summary>
         /// <returns>key</returns>
-        public static IAssetKey GetConcatenatedKey(this IKeyTree node)
+        public static ILinePart GetConcatenatedKey(this IKeyTree node)
              => node.Parent != null ? node.Parent.GetConcatenatedKey().Concat(node.Key) : node.Key;
 
         /// <summary>
@@ -382,28 +382,28 @@ namespace Lexical.Localization
         /// <param name="node">node to start search.</param>
         /// <param name="searchKey">key to search</param>
         /// <returns>nodes that have matching key</returns>
-        public static IEnumerable<IKeyTree> Search(this IKeyTree node, IAssetKey searchKey)
+        public static IEnumerable<IKeyTree> Search(this IKeyTree node, ILinePart searchKey)
         {
             List<IKeyTree> result = new List<IKeyTree>();
             _search(node, searchKey, node.Key, result);
             return result;
         }
 
-        static void _search(IKeyTree node, IAssetKey searchKey, IAssetKey concatenatedKeyOfNode, List<IKeyTree> result)
+        static void _search(IKeyTree node, ILinePart searchKey, ILinePart concatenatedKeyOfNode, List<IKeyTree> result)
         {
             // Check for mismatch
-            for (IAssetKey k = concatenatedKeyOfNode; k != null; k = k.GetPreviousKey())
+            for (ILinePart k = concatenatedKeyOfNode; k != null; k = k.PreviousPart)
             {
                 string parameterName = k.GetParameterName();
                 if (parameterName == null) continue;
-                string parameterValue = k.Name;
+                string parameterValue = k.GetParameterValue();
 
                 bool parameterDetectedInSearchKey = false;
-                for (IAssetKey sk = searchKey; sk != null; sk = sk.GetPreviousKey())
+                for (ILinePart sk = searchKey; sk != null; sk = sk.PreviousPart)
                 {
                     string _parameterName = sk.GetParameterName();
                     if (_parameterName == null) continue;
-                    string _parameterValue = sk.Name;
+                    string _parameterValue = sk.GetParameterValue();
                     parameterDetectedInSearchKey |= _parameterValue == parameterValue;
                     if (parameterDetectedInSearchKey) break;
                 }
@@ -420,7 +420,7 @@ namespace Lexical.Localization
             {
                 foreach (IKeyTree child in node.Children)
                 {
-                    IAssetKey newConcatenatedKey = concatenatedKeyOfNode.Concat(child.Key);
+                    ILinePart newConcatenatedKey = concatenatedKeyOfNode.Concat(child.Key);
                     _search(child, searchKey, newConcatenatedKey, result);
                 }
             }

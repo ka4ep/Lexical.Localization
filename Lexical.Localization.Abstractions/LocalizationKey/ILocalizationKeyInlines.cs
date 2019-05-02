@@ -3,6 +3,7 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using System;
 using System.Collections.Generic;
 
 namespace Lexical.Localization
@@ -10,20 +11,21 @@ namespace Lexical.Localization
     /// <summary>
     /// Key has capability of inline assignment.
     /// </summary>
-    public interface ILocalizationKeyInlineAssignable : IAssetKey
+    [Obsolete]
+    public interface ILineInlinesAssigned : ILinePart
     {
         /// <summary>
-        /// Add <see cref="ILocalizationKeyInlines"/> part to the key. 
+        /// Add <see cref="ILineInlines"/> part to the key. 
         /// </summary>
         /// <returns>key with inlines (non-null dictionary)</returns>
         /// <exception cref="AssetKeyException">If key can't be inlined.</exception>
-        ILocalizationKeyInlines AddInlines();
+        ILineInlines AddInlines();
     }
 
     /// <summary>
-    /// Key that has inline value assignments.
+    /// Key that has multiple value assignments.
     /// </summary>
-    public interface ILocalizationKeyInlines : ILocalizationKey, IDictionary<IAssetKey, IFormulationString>
+    public interface ILineInlines : ILinePart, IDictionary<ILinePart, IFormulationString>
     {
     }
 
@@ -36,9 +38,9 @@ namespace Lexical.Localization
         /// <param name="text">text to add, or null to remove</param>
         /// <returns>new key with inliens or <paramref name="key"/></returns>
         /// <exception cref="AssetKeyException">If key can't be inlined.</exception>
-        public static ILocalizationKeyInlines Inline(this IAssetKey key, string text)
+        public static ILineInlines Inline(this ILinePart key, string text)
         {
-            ILocalizationKeyInlines inlinesKey = key.GetOrCreateInlines();
+            ILineInlines inlinesKey = key.GetOrCreateInlines();
             if (text == null) inlinesKey.Remove(key); else inlinesKey[key] = LexicalStringFormat.Instance.Parse(text);
             return inlinesKey;
         }
@@ -51,47 +53,47 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <returns>new key with inliens or <paramref name="key"/></returns>
         /// <exception cref="AssetKeyException">If key can't be inlined.</exception>
-        public static IAssetKey Inline(this IAssetKey key, string subKeyText, string text)
+        public static ILinePart Inline(this ILinePart key, string subKeyText, string text)
         {
-            ILocalizationKeyInlines inlinesKey = key.GetOrCreateInlines();
-            IAssetKey subKey = ParameterParser.Instance.Parse(subKeyText, key);
+            ILineInlines inlinesKey = key.GetOrCreateInlines();
+            ILinePart subKey = ParameterParser.Instance.Parse(subKeyText, key);
             if (text == null) inlinesKey.Remove(subKey); else inlinesKey[subKey] = LexicalStringFormat.Instance.Parse(text);
             return inlinesKey;
         }
 
         /// <summary>
-        /// Finds in <see cref="ILocalizationKeyInlines"/>.
+        /// Finds in <see cref="ILineInlines"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static ILocalizationKeyInlines FindInlines(this IAssetKey key)
+        public static ILineInlines FindInlines(this ILinePart key)
         {
-            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
-                if (k is ILocalizationKeyInlines inlinesKey) return inlinesKey;
+            for (ILinePart k = key; k != null; k = k.PreviousPart)
+                if (k is ILineInlines inlinesKey) return inlinesKey;
             return null;
         }
 
         /// <summary>
-        /// Get or create <see cref="ILocalizationKeyInlines"/> section in the <paramref name="key"/>.
+        /// Get or create <see cref="ILineInlines"/> section in the <paramref name="key"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>inlines key</returns>
-        /// <exception cref="AssetKeyException">If <paramref name="key"/> doesn't implement <see cref="ILocalizationKeyInlineAssignable"/></exception>
-        public static ILocalizationKeyInlines GetOrCreateInlines(this IAssetKey key)
+        /// <exception cref="AssetKeyException">If <paramref name="key"/> doesn't implement <see cref="ILineInlinesAssigned"/></exception>
+        public static ILineInlines GetOrCreateInlines(this ILinePart key)
             => key.FindInlines() ?? 
-               (key is ILocalizationKeyInlineAssignable assignable ? 
+               (key is ILineInlinesAssigned assignable ? 
                 assignable.AddInlines() : 
-                throw new AssetKeyException(key, $"Doesn't implement {nameof(ILocalizationKeyInlineAssignable)}"));
+                throw new AssetKeyException(key, $"Doesn't implement {nameof(ILineInlinesAssigned)}"));
 
         /// <summary>
         /// Walks linked list and searches for all inlines.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>inlines</returns>
-        public static IEnumerable<ILocalizationKeyInlines> FindAllInlines(this IAssetKey key)
+        public static IEnumerable<ILineInlines> FindAllInlines(this ILinePart key)
         {
-            for (; key != null; key = key.GetPreviousKey())
-                if (key is ILocalizationKeyInlines casted)
+            for (; key != null; key = key.PreviousPart)
+                if (key is ILineInlines casted)
                     yield return casted;
         }
 

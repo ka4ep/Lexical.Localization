@@ -9,12 +9,12 @@ namespace Lexical.Localization
 {
     #region IAssetKeyNamePolicy
     /// <summary>
-    /// Signal that the class can do conversions of <see cref="IAssetKey"/> and <see cref="String"/>.
+    /// Signal that the class can do conversions of <see cref="ILinePart"/> and <see cref="String"/>.
     /// 
     /// User of this interface should use extensions methods 
     /// <list type="bullet">
-    /// <item><see cref="AssetKeyNamePolicyExtensions.BuildName(IAssetKeyNamePolicy, IAssetKey)"/></item>
-    /// <item><see cref="AssetKeyNamePolicyExtensions.Parse(IAssetKeyNamePolicy, string, IAssetKey)"/></item>
+    /// <item><see cref="AssetKeyNamePolicyExtensions.BuildName(IAssetKeyNamePolicy, ILinePart)"/></item>
+    /// <item><see cref="AssetKeyNamePolicyExtensions.Parse(IAssetKeyNamePolicy, string, ILinePart)"/></item>
     /// </list>
     /// 
     /// Class that implements to this interface should implement one or both of the following interfaces:
@@ -28,7 +28,7 @@ namespace Lexical.Localization
 
     #region IAssetKeyNameProvider
     /// <summary>
-    /// Converts <see cref="IAssetKey"/> to <see cref="String"/>.
+    /// Converts <see cref="ILinePart"/> to <see cref="String"/>.
     /// </summary>
     public interface IAssetKeyNameProvider : IAssetKeyNamePolicy
     {
@@ -37,13 +37,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="str"></param>
         /// <returns>full name string</returns>
-        string BuildName(IAssetKey str);
+        string BuildName(ILinePart str);
     }
     #endregion IAssetKeyNameProvider
 
     #region IAssetKeyNameParser
     /// <summary>
-    /// Parses <see cref="String"/> into <see cref="IAssetKey"/>.
+    /// Parses <see cref="String"/> into <see cref="ILinePart"/>.
     /// </summary>
     public interface IAssetKeyNameParser : IAssetKeyNamePolicy
     {
@@ -54,7 +54,7 @@ namespace Lexical.Localization
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>key result or null if contained no content</returns>
         /// <exception cref="FormatException">If parse failed</exception>
-        IAssetKey Parse(string str, IAssetKey rootKey = default);
+        ILinePart Parse(string str, ILinePart rootKey = default);
 
         /// <summary>
         /// Parse string into key.
@@ -63,7 +63,7 @@ namespace Lexical.Localization
         /// <param name="key">key result or null if contained no content</param>
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>true if parse was successful</returns>
-        bool TryParse(string str, out IAssetKey key, IAssetKey rootKey = default);
+        bool TryParse(string str, out ILinePart key, ILinePart rootKey = default);
     }
     #endregion IAssetKeyNameParser
 
@@ -78,7 +78,7 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <param name="key"></param>
         /// <returns>full name string or null</returns>
-        public static string BuildName(this IAssetKeyNamePolicy policy, IAssetKey key)
+        public static string BuildName(this IAssetKeyNamePolicy policy, ILinePart key)
         {
             if (policy is IAssetKeyNameProvider provider)
             {
@@ -97,8 +97,8 @@ namespace Lexical.Localization
         /// <returns>key result or null if contained no content</returns>
         /// <exception cref="FormatException">If parse failed</exception>
         /// <exception cref="ArgumentException">If <paramref name="policy"/> doesn't implement <see cref="IAssetKeyNameParser"/>.</exception>
-        public static IAssetKey Parse(this IAssetKeyNamePolicy policy, string str, IAssetKey rootKey = default)
-            => policy is IAssetKeyNameParser parser ? parser.Parse(str, rootKey) : throw new ArgumentException($"Cannot parse strings to {nameof(IAssetKey)} with {policy.GetType().FullName}. {policy} doesn't implement {nameof(IAssetKeyNameParser)}.");
+        public static ILinePart Parse(this IAssetKeyNamePolicy policy, string str, ILinePart rootKey = default)
+            => policy is IAssetKeyNameParser parser ? parser.Parse(str, rootKey) : throw new ArgumentException($"Cannot parse strings to {nameof(ILinePart)} with {policy.GetType().FullName}. {policy} doesn't implement {nameof(IAssetKeyNameParser)}.");
 
         /// <summary>
         /// Parse string into key.
@@ -108,7 +108,7 @@ namespace Lexical.Localization
         /// <param name="key">key result or null if contained no content</param>
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>true if parse was successful (even through resulted key might be null)</returns>
-        public static bool TryParse(this IAssetKeyNamePolicy policy, string str, out IAssetKey key, IAssetKey rootKey = default)
+        public static bool TryParse(this IAssetKeyNamePolicy policy, string str, out ILinePart key, ILinePart rootKey = default)
         {
             if (policy is IAssetKeyNameParser parser) return parser.TryParse(str, out key, rootKey);
             key = null;
@@ -122,9 +122,9 @@ namespace Lexical.Localization
         /// <param name="str"></param>
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>Key or null</returns>
-        public static IAssetKey TryParse(this IAssetKeyNamePolicy policy, string str, IAssetKey rootKey = default)
+        public static ILinePart TryParse(this IAssetKeyNamePolicy policy, string str, ILinePart rootKey = default)
         {
-            IAssetKey key;
+            ILinePart key;
             if (policy is IAssetKeyNameParser parser && parser.TryParse(str, out key, rootKey)) return key;
             return null;
         }

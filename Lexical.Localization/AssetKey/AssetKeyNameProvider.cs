@@ -12,7 +12,7 @@ using System.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A generic configurable name policy that converts <see cref="IAssetKey"/> to strings. 
+    /// A generic configurable name policy that converts <see cref="ILinePart"/> to strings. 
     /// 
     /// Used with localizationa assets such <see cref="LocalizationAsset"/>, where keys are non-parseable strings.
     /// 
@@ -250,19 +250,19 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string BuildName(IAssetKey key)
+        public string BuildName(ILinePart key)
         {
             // List for parts
             StructList16<Part> parts = new StructList16<Part>(Part.Comparer.Default);
 
             // Iterate key
             int occuranceIndex = 1;
-            for (IAssetKey part = key; part != null; part = part.GetPreviousKey())
+            for (ILinePart part = key; part != null; part = part.PreviousPart)
             {
-                if (part is IAssetKeyParameterAssigned parametrized)
+                if (part is ILineParameter parametrized)
                 {
                     // Read parameter name and value
-                    string parameterName = parametrized.ParameterName, parameterValue = part.Name;
+                    string parameterName = parametrized.ParameterName, parameterValue = part.GetParameterValue();
                     if (string.IsNullOrEmpty(parameterName) || parameterValue == null) continue;
 
                     // Get description
@@ -270,8 +270,8 @@ namespace Lexical.Localization
                     if (parameters.TryGetValue(parameterName, out desc) && !desc.IsIncluded) continue;
 
                     // Try default descriptions
-                    if (desc == null && part is IAssetKeyCanonicallyCompared) parameters.TryGetValue("canonical", out desc);
-                    if (desc == null && part is IAssetKeyNonCanonicallyCompared) parameters.TryGetValue("noncanonical", out desc);
+                    if (desc == null && part is ILineKeyCanonicallyCompared) parameters.TryGetValue("canonical", out desc);
+                    if (desc == null && part is ILineKeyNonCanonicallyCompared) parameters.TryGetValue("noncanonical", out desc);
                     if (desc == null) parameters.TryGetValue("", out desc);
 
                     // No description
@@ -425,7 +425,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Intermediate information about a <see cref="IAssetKey"/> that was matched to a <see cref="_Rule"/>.
+        /// Intermediate information about a <see cref="ILinePart"/> that was matched to a <see cref="_Rule"/>.
         /// </summary>
         struct Part
         {

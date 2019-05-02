@@ -14,7 +14,7 @@ namespace Lexical.Localization
         /// <param name="policy">(optional)</param>
         /// <param name="parametrizer">(optional) how to extract parameters from key. If not set uses the default implementation <see cref="AssetKeyParametrizer"/></param>
         /// <returns>full name string or null</returns>
-        public static string BuildName(this IAssetKey key, IAssetKeyNamePolicy policy)
+        public static string BuildName(this ILinePart key, IAssetKeyNamePolicy policy)
         {
             if (policy == null) policy = AssetKeyNameProvider.Default;
             return policy.BuildName(key);
@@ -27,7 +27,7 @@ namespace Lexical.Localization
         /// <param name="policy">(optional)</param>
         /// <param name="parametrizer">(optional) how to extract parameters from key. If not set uses the default implementation <see cref="AssetKeyParametrizer"/></param>
         /// <returns>full name string or null</returns>
-        public static string BuildName(this IAssetKey key)
+        public static string BuildName(this ILinePart key)
             => AssetKeyNameProvider.Default.BuildName(key);
 
     }

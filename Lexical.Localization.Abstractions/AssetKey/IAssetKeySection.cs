@@ -7,7 +7,7 @@ namespace Lexical.Localization
     /// <summary>
     /// This interface signals that this key represents a section.
     /// </summary>
-    public interface IAssetKeySection : IAssetKey
+    public interface IAssetKeySection : ILinePart
     {
     }
 
@@ -16,9 +16,9 @@ namespace Lexical.Localization
     /// 
     /// Regular section as a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.
     /// 
-    /// Consumers of this interface should use the extension method <see cref="AssetKeyExtensions.Section(IAssetKey, string)"/>.
+    /// Consumers of this interface should use the extension method <see cref="LinePartExtensions.Section(ILinePart, string)"/>.
     /// </summary>
-    public interface IAssetKeySectionAssignable : IAssetKey
+    public interface IAssetKeySectionAssignable : ILinePart
     {
         /// <summary>
         /// Create section.
@@ -33,11 +33,11 @@ namespace Lexical.Localization
     /// 
     /// Regular section as a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.
     /// </summary>
-    public interface IAssetKeySectionAssigned : IAssetKeySection, IAssetKey
+    public interface IAssetKeySectionAssigned : IAssetKeySection, ILinePart
     {
     }
 
-    public static partial class AssetKeyExtensions
+    public static partial class LinePartExtensions
     {
         /// <summary>
         /// Create section
@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// <param name="name"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement ISectionAssignableLocalizationKey</exception>
-        public static IAssetKeySectionAssigned Section(this IAssetKey key, String name)
+        public static IAssetKeySectionAssigned Section(this ILinePart key, String name)
         {
             if (key is IAssetKeySectionAssignable casted) return casted.Section(name);
             throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeySectionAssignable)}.");
@@ -58,7 +58,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="name"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeySectionAssigned TryAddSection(this IAssetKey key, string name)
+        public static IAssetKeySectionAssigned TryAddSection(this ILinePart key, string name)
         {
             if (key is IAssetKeyTypeAssignable casted) return casted.Section(name);
             return null;
@@ -70,12 +70,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>key or null</returns>
-        public static IAssetKeySection FindSection(this IAssetKey key)
+        public static IAssetKeySection FindSection(this ILinePart key)
         {
             while (key != null)
             {
-                if (key is IAssetKeySection sectionKey && !string.IsNullOrEmpty(key.Name)) return sectionKey;
-                key = key.GetPreviousKey();
+                if (key is IAssetKeySection sectionKey && !string.IsNullOrEmpty(key.GetParameterValue())) return sectionKey;
+                key = key.PreviousPart;
             }
             return null;
         }
@@ -86,12 +86,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>key or null</returns>
-        public static IAssetKeySectionAssigned FindSectionKey(this IAssetKey key)
+        public static IAssetKeySectionAssigned FindSectionKey(this ILinePart key)
         {
             while (key != null)
             {
-                if (key is IAssetKeySectionAssigned sectionKey && !string.IsNullOrEmpty(key.Name)) return sectionKey;
-                key = key.GetPreviousKey();
+                if (key is IAssetKeySectionAssigned sectionKey && !string.IsNullOrEmpty(key.GetParameterValue())) return sectionKey;
+                key = key.PreviousPart;
             }
             return null;
         }

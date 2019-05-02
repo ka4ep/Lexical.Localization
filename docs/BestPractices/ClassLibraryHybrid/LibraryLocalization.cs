@@ -16,7 +16,7 @@ namespace TutorialLibrary3
         /// </summary>
         public new static IAssetBuilder Builder => LocalizationRoot.Builder;
 
-        LibraryLocalization(IAssetRoot linkedTo) : base(linkedTo)
+        LibraryLocalization(IAssetRoot linkedTo) : base(null, linkedTo)
         {
             // Add library's internal assets here
             Builder.AddSources(new LibraryAssetSources());

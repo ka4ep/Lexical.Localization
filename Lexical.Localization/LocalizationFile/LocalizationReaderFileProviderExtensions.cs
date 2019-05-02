@@ -168,7 +168,7 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>asset source</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LocalizationFileProviderSource FileProviderAssetSource(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true, IAssetKey prefix = null, IAssetKey suffix = null)
+        public static LocalizationFileProviderSource FileProviderAssetSource(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, IAssetKeyNamePolicy namePolicy = default, bool throwIfNotFound = true, ILinePart prefix = null, ILinePart suffix = null)
             => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filepath)].FileProviderAssetSource(fileProvider, filepath, namePolicy, throwIfNotFound);
 
     }

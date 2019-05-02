@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// 
     /// Parameters:
     ///     <see cref="ILocalizationKeyCultureAssigned"/>
-    ///     <see cref="ILocalizationKeyInlines"/>
+    ///     <see cref="ILineInlines"/>
     ///     <see cref="ILocalizationKeyFormatArgs"/>
     ///     
     /// Hints:
@@ -26,12 +26,12 @@ namespace Lexical.Localization
     ///     <see cref="ILocalizationKeyCultureAssignable"/>
     ///     <see cref="ILocalizationKeyCulturePolicyAssignable"/>
     ///     <see cref="ILocalizationKeyFormattable"/>
-    ///     <see cref="ILocalizationKeyInlineAssignable"/>
+    ///     <see cref="ILineInlinesAssigned"/>
     ///     
     /// The ILocalizationKey ToString() must try to resolve the key.
     /// If resolve fails ToString returns the built name of the key.
     /// </summary>
-    public interface ILocalizationKey : IAssetKey
+    public interface ILocalizationKey : ILinePart
     {
     }
 
@@ -41,12 +41,12 @@ namespace Lexical.Localization
         /// Find <see cref="IAsset"/> and get formulation string.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
-        /// <see cref="ResolveString(IAssetKey)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// <see cref="ResolveString(ILinePart)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>formulation string</returns>
         /// <exception cref="AssetKeyException">If resolving failed or resolver was not found</exception>
-        public static IFormulationString GetString(this IAssetKey key)
+        public static IFormulationString GetString(this ILinePart key)
         {
             IAsset asset = key.FindAsset();
             if (asset == null) throw new AssetKeyException(key, "String resolver was not found.");
@@ -59,11 +59,11 @@ namespace Lexical.Localization
         /// Find <see cref="IAsset"/> and get formulation string.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
-        /// <see cref="ResolveString(IAssetKey)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// <see cref="ResolveString(ILinePart)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>formulation string, or null if formulation string was not found, or if resolver was not found</returns>
-        public static IFormulationString TryGetString(this IAssetKey key)
+        public static IFormulationString TryGetString(this ILinePart key)
             => key.FindAsset()?.GetString(key);
 
 

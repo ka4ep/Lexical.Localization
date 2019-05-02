@@ -25,7 +25,7 @@ namespace Lexical.Localization
         /// <param name="srcText"></param>
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ReadStringAsKeyLines(this ILocalizationFileFormat fileFormat, string srcText, IAssetKeyNamePolicy namePolicy = default)
+        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadStringAsKeyLines(this ILocalizationFileFormat fileFormat, string srcText, IAssetKeyNamePolicy namePolicy = default)
             => ReadKeyLines(fileFormat, new StringReader(srcText), namePolicy);
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Lexical.Localization
         /// <param name="srcText"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ReadKeyLines(this ILocalizationFileFormat fileFormat, TextReader srcText, IAssetKeyNamePolicy namePolicy = default)
+        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadKeyLines(this ILocalizationFileFormat fileFormat, TextReader srcText, IAssetKeyNamePolicy namePolicy = default)
         {
             if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcText, namePolicy);
             if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcText.ReadStream(), namePolicy);
@@ -73,7 +73,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> ReadKeyLines(this ILocalizationFileFormat fileFormat, Stream stream, IAssetKeyNamePolicy namePolicy = default)
+        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadKeyLines(this ILocalizationFileFormat fileFormat, Stream stream, IAssetKeyNamePolicy namePolicy = default)
         {
             if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(stream, namePolicy);
             if (fileFormat is ILocalizationKeyLinesTextReader r1) using (var txt = stream.ReadText()) return r1.ReadKeyLines(txt, namePolicy);

@@ -36,6 +36,13 @@ namespace Lexical.Localization
     }
 
     /// <summary>
+    /// Signals that appender is composed of component appenders.
+    /// </summary>
+    public interface ILinePartAppenderEnumerable : IEnumerable<ILinePartAppender>
+    {
+    }
+
+    /// <summary>
     /// One argument count line part appender.
     /// </summary>
     public interface ILinePartAppender1 : ILinePartAppender { }

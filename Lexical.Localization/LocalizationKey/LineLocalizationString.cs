@@ -9,33 +9,29 @@ using System.Text;
 
 namespace Lexical.Localization
 {
-    public class LineLocalizationString : ILineLocalizationString, ILinePart
+    public class LineLocalizationValuePart : ILineValue, ILinePart
     {
-        public IFormulationString LocalizationString { get; internal set; }
-        public string Name => "Value";
+        public IFormulationString Value { get; internal set; }
         public ILinePart PreviousPart { get; internal set; }
         public ILinePartAppender Appender { get; internal set; }
 
-        public LineLocalizationString(IFormulationString localizationString, ILinePart previousPart, ILinePartAppender appender)
+        public LineLocalizationValuePart(ILinePart previousPart, ILinePartAppender appender, IFormulationString localizationString)
         {
-            PreviousPart = previousPart;
             Appender = appender;
-            LocalizationString = localizationString;
+            PreviousPart = previousPart;
+            Value = localizationString;
         }
     }
 
-    public class StringLocalizerLocalizationString : StringLocalizerKey, ILineLocalizationString, ILinePart
+    public class StringLocalizerLocalizationValuePart : StringLocalizerKey, ILineValue, ILinePart
     {
-        public IFormulationString LocalizationString { get; internal set; }
-        public string Name => "Value";
+        public IFormulationString Value { get; internal set; }
         public ILinePart PreviousPart { get; internal set; }
         public ILinePartAppender Appender { get; internal set; }
 
-        public StringLocalizerLocalizationString(IFormulationString localizationString, ILinePart previousPart, ILinePartAppender appender) : base(null, "Value")
+        public StringLocalizerLocalizationValuePart(ILinePartAppender appender, ILinePart previousPart, IFormulationString localizationString) : base(appender, previousPart, null)
         {
-            PreviousPart = previousPart;
-            Appender = appender;
-            LocalizationString = localizationString;
+            Value = localizationString;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace docs
             {
                 #region Snippet_1
                 // Let's create an example key
-                IAssetKey key = new LocalizationRoot()
+                ILinePart key = new LocalizationRoot()
                         .Location("Patches")
                         .Type("MyController")
                         .Section("Errors")
@@ -42,7 +42,7 @@ namespace docs
                     // Create pattern
                     IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
-                    IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILinePart key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/icons-ok-de.png"
                     string str = myPolicy.BuildName(key2);
                     #endregion Snippet_4a
@@ -52,7 +52,7 @@ namespace docs
                     // Create pattern
                     IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location/}{Location/}{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
-                    IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILinePart key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
                     string str = myPolicy.BuildName(key2);
                     #endregion Snippet_4b
@@ -62,7 +62,7 @@ namespace docs
                     // "[Location_n/]" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
                     IAssetKeyNamePolicy myPolicy = new AssetNamePattern("[Location_n/]{Section}{-Key}{-Culture}.png");
                     // Create key
-                    IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILinePart key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
                     string str = myPolicy.BuildName(key2);
                     #endregion Snippet_4c
@@ -72,7 +72,7 @@ namespace docs
                     // Create pattern
                     IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{Location_3}{Location_2/}{Location_1/}{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
-                    IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILinePart key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "20181130/Patches/icons-ok-de.png"
                     string str = myPolicy.BuildName(key2);
                     #endregion Snippet_4d

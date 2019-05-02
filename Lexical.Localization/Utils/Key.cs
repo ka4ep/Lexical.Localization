@@ -13,16 +13,33 @@ using Lexical.Localization.Internal;
 namespace Lexical.Localization.Utils
 {
     /// <summary>
-    /// This class is a context-free implementation of <see cref="IAssetKey"/>. 
+    /// This class is a context-free implementation of <see cref="ILinePart"/>. 
     /// It can be used as a reference, but not as a provider of localization content.
     /// It is used as a key for persisting and comparison.
     /// 
     /// This class has one parameter name and a value, and it can carry a link to previous node.
     /// </summary>
     [DebuggerDisplay("{ToString()}")]
-    public partial class Key : IAssetKey, IAssetKeyLinked, IAssetKeyParameterAssigned, IAssetKeyParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>, IAssetKeyDefaultHashCode
+    public partial class Key : ILinePart, ILineParameter, ILineParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>, IAssetKeyDefaultHashCode
     {
         private static readonly Key root = new Key("", "");
+
+        ILinePartAppender ILinePart.Appender => Appender.Instance;
+        /// <summary></summary>
+        public class Appender : ILinePartAppender2<ILineParameter, string, string>,
+            ILinePartAppender2<ILineKeyCanonicallyCompared, string, string>,
+            ILinePartAppender2<ILineKeyNonCanonicallyCompared, string, string>
+        {
+            static readonly Appender instance = new Appender();
+            /// <summary></summary>
+            public static Appender Instance => instance;
+            ILineParameter ILinePartAppender2<ILineParameter, string, string>.Append(ILinePart previous, string parameterName, string parameterKey)
+                => ((Key)previous).AppendParameter(parameterName, parameterKey);
+            ILineKeyCanonicallyCompared ILinePartAppender2<ILineKeyCanonicallyCompared, string, string>.Append(ILinePart prevKey, string parameterName, string parameterValue)
+                => new Key.Canonical((Key)prevKey, parameterName, parameterValue);
+            ILineKeyNonCanonicallyCompared ILinePartAppender2<ILineKeyNonCanonicallyCompared, string, string>.Append(ILinePart prevKey, string parameterName, string parameterValue)
+                => new Key.NonCanonical((Key)prevKey, parameterName, parameterValue);
+        }
 
         /// <summary>
         /// Default root key.
@@ -44,8 +61,8 @@ namespace Lexical.Localization.Utils
         /// </summary>
         public Key Previous;
 
-        IAssetKey IAssetKeyLinked.PreviousKey => Previous;
-        string IAssetKey.Name => Value;
+        ILinePart ILinePart.PreviousPart => Previous;
+        string ILineParameter.ParameterValue => Value;
         public string ParameterName => Name;
 
         /// <summary>
@@ -61,7 +78,7 @@ namespace Lexical.Localization.Utils
         public string[] Parameters => parameters ?? (parameters = String.IsNullOrEmpty(Name) ? empty : new string[] { Name });
 
         /// <summary>
-        /// Create proxy root implementation of <see cref="IAssetKey"/>. Contains one parameter.
+        /// Create proxy root implementation of <see cref="ILinePart"/>. Contains one parameter.
         /// </summary>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
@@ -72,7 +89,7 @@ namespace Lexical.Localization.Utils
         }
 
         /// <summary>
-        /// Create proxy implementation of <see cref="IAssetKey"/>. Contains one parameter.
+        /// Create proxy implementation of <see cref="ILinePart"/>. Contains one parameter.
         /// </summary>
         /// <param name="previous">(optional) previous link</param>
         /// <param name="parameterName"></param>
@@ -93,7 +110,7 @@ namespace Lexical.Localization.Utils
         public Key Append(string parameterName, string parameterValue)
             => Create(this, parameterName, parameterValue);
 
-        public IAssetKeyParameterAssigned AppendParameter(string parameterName, string parameterValue)
+        public ILineParameter AppendParameter(string parameterName, string parameterValue)
             => Create(this, parameterName, parameterValue);
 
         public static Key Create(string parameterName, string parameterValue)
@@ -135,7 +152,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         /// <param name="key">(optional) key to copy</param>
         /// <returns>key, new key, or null is <paramref name="key"/> contained no parameters</returns>
-        public static Key CreateFrom(IAssetKey key)
+        public static Key CreateFrom(ILinePart key)
         {
             if (key == null) return null;
             if (key is Key k) return k;
@@ -164,20 +181,20 @@ namespace Lexical.Localization.Utils
         }
 
         /// <summary>
-        /// Proxy implementation of non-canonical parameter. Implements <see cref="IAssetKeyNonCanonicallyCompared"/>.
+        /// Proxy implementation of non-canonical parameter. Implements <see cref="ILineKeyNonCanonicallyCompared"/>.
         /// </summary>
         [DebuggerDisplay("{ToString()}")]
-        public class NonCanonical : Key, IAssetKeyNonCanonicallyCompared
+        public class NonCanonical : Key, ILineKeyNonCanonicallyCompared
         {
             public NonCanonical(string parameterName, string parameterValue) : base(parameterName, parameterValue) { }
             public NonCanonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
         }
 
         /// <summary>
-        /// Proxy implementation of non-canonical parameter. Implements <see cref="IAssetKeyCanonicallyCompared"/>.
+        /// Proxy implementation of non-canonical parameter. Implements <see cref="ILineKeyCanonicallyCompared"/>.
         /// </summary>
         [DebuggerDisplay("{ToString()}")]
-        public class Canonical : Key, IAssetKeyCanonicallyCompared
+        public class Canonical : Key, ILineKeyCanonicallyCompared
         {
             public Canonical(string parameterName, string parameterValue) : base(parameterName, parameterValue) { }
             public Canonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
@@ -272,7 +289,7 @@ namespace Lexical.Localization.Utils
             int count = 0;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     count++;
             }
 
@@ -281,7 +298,7 @@ namespace Lexical.Localization.Utils
             int ix = count;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     result[--ix] = k;
             }
 
@@ -316,7 +333,7 @@ namespace Lexical.Localization.Utils
             int count = 0;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     count++;
             }
 
@@ -327,7 +344,7 @@ namespace Lexical.Localization.Utils
             int ix = count;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     result[--ix] = k.Name;
             }
 
@@ -348,7 +365,7 @@ namespace Lexical.Localization.Utils
             int count = 0;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     count++;
             }
 
@@ -357,7 +374,7 @@ namespace Lexical.Localization.Utils
             int ix = count;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is IAssetKeyNonCanonicallyCompared) || k is IAssetKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     result[--ix] = new KeyValuePair<string, string>(k.Name, k.Value);
             }
 

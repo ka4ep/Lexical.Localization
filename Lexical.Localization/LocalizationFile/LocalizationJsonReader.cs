@@ -100,7 +100,7 @@ namespace Lexical.Localization
                         current = stack.Pop();
                         break;
                     case JsonToken.PropertyName:
-                        IAssetKey key = null;
+                        ILinePart key = null;
                         if (this.namePolicy.TryParse(json.Value?.ToString(), out key))
                         { 
                             current = key == null ? stack.Peek() : stack.Peek()?.Create(key);

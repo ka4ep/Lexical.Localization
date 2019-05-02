@@ -16,9 +16,9 @@ namespace Lexical.Localization
     /// If <see cref="IAsset"/> implementation uses name pattern, the hint in key reflects to "Location_0", "Location_1", etc parts in name pattern. Part "Location" reflects to the last hint.
     /// For example, location hints would reflect to respective parts in the following name pattern: "{Location_0/}{Location_1/}{Type/}{Section.}{Key}.ini".
     /// 
-    /// Consumers of this interface should call the extension method <see cref="AssetKeyExtensions.Location(IAssetKey, string)"/>.
+    /// Consumers of this interface should call the extension method <see cref="LinePartExtensions.Location(ILinePart, string)"/>.
     /// </summary>
-    public interface IAssetKeyLocationAssignable : IAssetKey
+    public interface IAssetKeyLocationAssignable : ILinePart
     {
         /// <summary>
         /// Create a new key with "Location" added.
@@ -41,7 +41,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class AssetKeyExtensions
+    public static partial class LinePartExtensions
     {
         /// <summary>
         /// Add <see cref="IAssetKeyLocationAssigned"/> section.
@@ -53,7 +53,7 @@ namespace Lexical.Localization
         /// <param name="location"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement ITypeAssignableLocalizationKey</exception>
-        public static IAssetKeyLocationAssigned Location(this IAssetKey key, string location)
+        public static IAssetKeyLocationAssigned Location(this ILinePart key, string location)
         {
             if (key is IAssetKeyLocationAssignable casted) return casted.Location(location);
             throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyLocationAssignable)}.");
@@ -68,7 +68,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="location"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeyLocationAssigned TryAddLocation(this IAssetKey key, string location)
+        public static IAssetKeyLocationAssigned TryAddLocation(this ILinePart key, string location)
         {
             if (key is IAssetKeyLocationAssignable casted) return casted.Location(location);
             return null;
@@ -80,12 +80,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>type key with type or null</returns>
-        public static IAssetKeyLocationAssigned FindLocationKey(this IAssetKey key)
+        public static IAssetKeyLocationAssigned FindLocationKey(this ILinePart key)
         {
             while (key != null)
             {
-                if (key is IAssetKeyLocationAssigned locationKey && !string.IsNullOrEmpty(key.Name)) return locationKey;
-                key = key.GetPreviousKey();
+                if (key is IAssetKeyLocationAssigned locationKey && !string.IsNullOrEmpty(key.GetParameterValue())) return locationKey;
+                key = key.PreviousPart;
             }
             return null;
         }
@@ -96,12 +96,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>type key with type or null</returns>
-        public static string FindLocation(this IAssetKey key)
+        public static string FindLocation(this ILinePart key)
         {
             while (key != null)
             {
-                if (key is IAssetKeyLocationAssigned locationKey && locationKey.Name != null) return locationKey.Name;
-                key = key.GetPreviousKey();
+                if (key is IAssetKeyLocationAssigned locationKey && locationKey.GetParameterValue() != null) return locationKey.GetParameterValue();
+                key = key.PreviousPart;
             }
             return null;
         }

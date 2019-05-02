@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// This class contains language strings. The key class is <see cref="IAssetKey"/>.
+    /// This class contains language strings. The key class is <see cref="ILinePart"/>.
     /// 
     /// Content is loaded from <see cref="IEnumerable{T}"/> sources when <see cref="IAssetReloadable.Reload"/> is called.
     /// </summary>
@@ -33,7 +33,7 @@ namespace Lexical.Localization
         /// Get or load key-lines
         /// </summary>
         /// <returns></returns>
-        protected virtual Dictionary<IAssetKey, IFormulationString> KeyLines => keyLines ?? LoadKeyLines();
+        protected virtual Dictionary<ILinePart, IFormulationString> KeyLines => keyLines ?? LoadKeyLines();
 
         /// <summary>
         /// Get or load key-lines
@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Loaded and active key lines. It is compiled union of all sources.
         /// </summary>
-        protected Dictionary<IAssetKey, IFormulationString> keyLines;
+        protected Dictionary<ILinePart, IFormulationString> keyLines;
 
         /// <summary>
         /// Loaded and active string lines. It is compiled union of all sources.
@@ -72,9 +72,9 @@ namespace Lexical.Localization
         protected Task reloadTask;
 
         /// <summary>
-        /// <see cref="IAssetKey"/> comparer for <see cref="keyLines"/>.
+        /// <see cref="ILinePart"/> comparer for <see cref="keyLines"/>.
         /// </summary>
-        IEqualityComparer<IAssetKey> comparer;
+        IEqualityComparer<ILinePart> comparer;
 
         /// <summary>
         /// Handler that processes file load errors, and file monitoring errors.
@@ -89,7 +89,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="comparer">(optional) comparer to use</param>
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
-        public LocalizationAsset(IEqualityComparer<IAssetKey> comparer = default, Func<Exception, bool> errorHandler = null) : base()
+        public LocalizationAsset(IEqualityComparer<ILinePart> comparer = default, Func<Exception, bool> errorHandler = null) : base()
         {
             this.comparer = comparer ?? AssetKeyComparer.Default;
             this.errorHandler = errorHandler;
@@ -112,7 +112,7 @@ namespace Lexical.Localization
         /// <param name="keyPolicy"></param>
         /// <param name="comparer">(optional) comparer to use</param>
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
-        public LocalizationAsset(IEnumerable reader, IAssetKeyNamePolicy keyPolicy, IEqualityComparer<IAssetKey> comparer = default, Func<Exception, bool> errorHandler = null) : base()
+        public LocalizationAsset(IEnumerable reader, IAssetKeyNamePolicy keyPolicy, IEqualityComparer<ILinePart> comparer = default, Func<Exception, bool> errorHandler = null) : base()
         {
             this.comparer = comparer ?? AssetKeyComparer.Default;
             this.errorHandler = errorHandler;
@@ -134,7 +134,7 @@ namespace Lexical.Localization
         /// <param name="keyPattern"></param>
         /// <param name="comparer">(optional) comparer to use</param>
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
-        public LocalizationAsset(IEnumerable reader, string keyPattern, IEqualityComparer<IAssetKey> comparer = default, Func<Exception, bool> errorHandler = null)
+        public LocalizationAsset(IEnumerable reader, string keyPattern, IEqualityComparer<ILinePart> comparer = default, Func<Exception, bool> errorHandler = null)
             : this(reader, new AssetNamePattern(keyPattern), comparer, errorHandler)
         {
         }
@@ -192,9 +192,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns>new key lines</returns>
         /// <exception cref="Exception">If load fails</exception>
-        protected virtual Dictionary<IAssetKey, IFormulationString> LoadKeyLines()
+        protected virtual Dictionary<ILinePart, IFormulationString> LoadKeyLines()
         {
-            Dictionary<IAssetKey, IFormulationString> newLines = new Dictionary<IAssetKey, IFormulationString>(comparer);
+            Dictionary<ILinePart, IFormulationString> newLines = new Dictionary<ILinePart, IFormulationString>(comparer);
             foreach (var collectionsLine in collections.ToArray())
             {
                 foreach (var line in collectionsLine.Value.KeyLines)
@@ -252,7 +252,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>string or null</returns>
-        public virtual IFormulationString GetString(IAssetKey key)
+        public virtual IFormulationString GetString(ILinePart key)
         {
             IFormulationString result = null;
             if (KeyLines.TryGetValue(key, out result)) return result;
@@ -298,7 +298,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) filter key</param>
         /// <returns>list of key-lines, or null if could not be provided</returns>
-        public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> GetKeyLines(IAssetKey filterKey = null)
+        public IEnumerable<KeyValuePair<ILinePart, IFormulationString>> GetKeyLines(ILinePart filterKey = null)
         {
             // Get snapshot
             var _lines = KeyLines;
@@ -315,7 +315,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) filter key</param>
         /// <returns>list of key-lines, or null if could not be provided</returns>
-        public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> GetAllKeyLines(IAssetKey filterKey = null)
+        public IEnumerable<KeyValuePair<ILinePart, IFormulationString>> GetAllKeyLines(ILinePart filterKey = null)
             => GetKeyLines(filterKey);
 
         /// <summary>
@@ -323,7 +323,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) filter key</param>
         /// <returns>lines or null</returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(IAssetKey filterKey = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILinePart filterKey = null)
         {
             // Return all 
             if (filterKey == null) return StringLines;
@@ -355,7 +355,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) filter key</param>
         /// <returns>lines or null</returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(IAssetKey filterKey = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(ILinePart filterKey = null)
         {
             // Return all 
             if (filterKey == null) return StringLines;
@@ -556,7 +556,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Collection of lines
     /// </summary>
-    public class Collection : IObserver<IAssetSourceEvent>, IEnumerable<KeyValuePair<IAssetKey, IFormulationString>>, IEnumerable<KeyValuePair<string, IFormulationString>>
+    public class Collection : IObserver<IAssetSourceEvent>, IEnumerable<KeyValuePair<ILinePart, IFormulationString>>, IEnumerable<KeyValuePair<string, IFormulationString>>
     {
         /// <summary>
         /// Reader, the original reference.
@@ -566,7 +566,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Previously loaded snapshot of key lines
         /// </summary>
-        internal protected KeyValuePair<IAssetKey, IFormulationString>[] keyLines;
+        internal protected KeyValuePair<ILinePart, IFormulationString>[] keyLines;
 
         /// <summary>
         /// Previously loaded snapshot of key lines
@@ -586,7 +586,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy.
         /// 
-        /// If source is string lines the parses into strings into <see cref="IAssetKey"/>.
+        /// If source is string lines the parses into strings into <see cref="ILinePart"/>.
         /// </summary>
         protected internal IAssetKeyNamePolicy namePolicy;
 
@@ -629,10 +629,10 @@ namespace Lexical.Localization
             this.errorHandler = errorHandler;
             this.disposeReader = disposeReader;
 
-            if (reader is IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> keyLinesReader) this.Type = CollectionType.KeyLines;
+            if (reader is IEnumerable<KeyValuePair<ILinePart, IFormulationString>> keyLinesReader) this.Type = CollectionType.KeyLines;
             else if (reader is IEnumerable<IKeyTree> treesReader) this.Type = CollectionType.KeyTree;
             else if (reader is IEnumerable<KeyValuePair<string, IFormulationString>> stringLinesReader) this.Type = CollectionType.StringLines;
-            else if (reader is IEnumerable<KeyValuePair<IAssetKey, string>> keyLinesReader_) this.Type = CollectionType.KeyLines;
+            else if (reader is IEnumerable<KeyValuePair<ILinePart, string>> keyLinesReader_) this.Type = CollectionType.KeyLines;
             else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_) this.Type = CollectionType.StringLines;
             else throw new ArgumentException($"Cannot read from {reader.GetType().FullName}: {reader}");
         }
@@ -714,7 +714,7 @@ namespace Lexical.Localization
         /// </summary>
         public void Load()
         {
-            if (reader is IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> || reader is IEnumerable<IKeyTree>)
+            if (reader is IEnumerable<KeyValuePair<ILinePart, IFormulationString>> || reader is IEnumerable<IKeyTree>)
             {
                 var _lines = KeyLines;
             }
@@ -730,7 +730,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception">On read problem that is not handled by <see cref="errorHandler"/>.</exception>
-        public KeyValuePair<IAssetKey, IFormulationString>[] KeyLines
+        public KeyValuePair<ILinePart, IFormulationString>[] KeyLines
         {
             get
             {
@@ -741,10 +741,10 @@ namespace Lexical.Localization
                 // Read lines
                 try
                 {
-                    List<KeyValuePair<IAssetKey, IFormulationString>> lines = new List<KeyValuePair<IAssetKey, IFormulationString>>(lineCount < 0 ? 25 : lineCount);
+                    List<KeyValuePair<ILinePart, IFormulationString>> lines = new List<KeyValuePair<ILinePart, IFormulationString>>(lineCount < 0 ? 25 : lineCount);
 
                     // Read as key-lines
-                    if (reader is IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> keyLinesReader)
+                    if (reader is IEnumerable<KeyValuePair<ILinePart, IFormulationString>> keyLinesReader)
                     {
                         lines.AddRange(keyLinesReader);
                     }
@@ -766,9 +766,9 @@ namespace Lexical.Localization
                             lines.AddRange(stringLinesReader.ToKeyLines(namePolicy));
                     }
                     // Read as key-lines
-                    else if (reader is IEnumerable<KeyValuePair<IAssetKey, string>> keyLinesReader_)
+                    else if (reader is IEnumerable<KeyValuePair<ILinePart, string>> keyLinesReader_)
                     {
-                        lines.AddRange(keyLinesReader_.Select(line=>new KeyValuePair<IAssetKey, IFormulationString>(line.Key, LexicalStringFormat.Instance.Parse(line.Value))));
+                        lines.AddRange(keyLinesReader_.Select(line=>new KeyValuePair<ILinePart, IFormulationString>(line.Key, LexicalStringFormat.Instance.Parse(line.Value))));
                     }
                     else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_)
                     {
@@ -787,7 +787,7 @@ namespace Lexical.Localization
                 catch (Exception e) when (errorHandler != null && errorHandler(e))
                 {
                     // Reading failed, but discard the problem as per error handler.
-                    return keyLines = new KeyValuePair<IAssetKey, IFormulationString>[0];
+                    return keyLines = new KeyValuePair<ILinePart, IFormulationString>[0];
                 }
             }
         }
@@ -823,7 +823,7 @@ namespace Lexical.Localization
                     }
 
                     // Read as string lines
-                    else if (reader is IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> keyLinesReader)
+                    else if (reader is IEnumerable<KeyValuePair<ILinePart, IFormulationString>> keyLinesReader)
                     {
                         // Convert from string lines
                         var _keyLines = keyLines;
@@ -836,7 +836,7 @@ namespace Lexical.Localization
                     {
                         lines.AddRange(stringLinesReader_.Select(line => new KeyValuePair<string, IFormulationString>(line.Key, LexicalStringFormat.Instance.Parse(line.Value))));
                     }
-                    else if (reader is IEnumerable<KeyValuePair<IAssetKey, string>> keyLinesReader_)
+                    else if (reader is IEnumerable<KeyValuePair<ILinePart, string>> keyLinesReader_)
                     {
                         // Convert from string lines
                         var _keyLines = keyLines;
@@ -862,8 +862,8 @@ namespace Lexical.Localization
         /// Read source, or return already read snapshot.
         /// </summary>
         /// <returns></returns>
-        IEnumerator<KeyValuePair<IAssetKey, IFormulationString>> IEnumerable<KeyValuePair<IAssetKey, IFormulationString>>.GetEnumerator()
-            => ((IEnumerable<KeyValuePair<IAssetKey, IFormulationString>>)KeyLines).GetEnumerator();
+        IEnumerator<KeyValuePair<ILinePart, IFormulationString>> IEnumerable<KeyValuePair<ILinePart, IFormulationString>>.GetEnumerator()
+            => ((IEnumerable<KeyValuePair<ILinePart, IFormulationString>>)KeyLines).GetEnumerator();
 
         /// <summary>
         /// Read source, or return already read snapshot.
@@ -925,7 +925,7 @@ namespace Lexical.Localization
         /// <param name="builder"></param>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public static IAssetBuilder AddKeyLines(this IAssetBuilder builder, IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines)
+        public static IAssetBuilder AddKeyLines(this IAssetBuilder builder, IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines)
         {
             builder.AddAsset(new LocalizationAsset().Add(lines).Load());
             return builder;
@@ -937,7 +937,7 @@ namespace Lexical.Localization
         /// <param name="composition"></param>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public static IAssetComposition AddKeyLines(this IAssetComposition composition, IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> lines)
+        public static IAssetComposition AddKeyLines(this IAssetComposition composition, IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines)
         {
             composition.Add(new LocalizationAsset().Add(lines).Load());
             return composition;

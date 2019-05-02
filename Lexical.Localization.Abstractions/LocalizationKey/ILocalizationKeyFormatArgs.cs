@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key has capability of format arguments assignment.
     /// </summary>
-    public interface ILocalizationKeyFormattable : IAssetKey
+    public interface ILocalizationKeyFormattable : ILinePart
     {
         /// <summary>
         /// Create a new ILocalizationKey with arguments attached.
@@ -26,7 +26,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key (may have) has formats assigned.
     /// </summary>
-    public interface ILocalizationKeyFormatArgs : IAssetKeyNonCanonicallyCompared, ILocalizationKey
+    public interface ILocalizationKeyFormatArgs : ILinePart
     {
         /// <summary>
         /// Attached format arguments (may be null).
@@ -43,7 +43,7 @@ namespace Lexical.Localization
         /// <param name="args"></param>
         /// <returns></returns>
         /// <exception cref="AssetKeyException">If key can't be formatted</exception>
-        public static ILocalizationKeyFormatArgs Format(this IAssetKey key, params object[] args)
+        public static ILocalizationKeyFormatArgs Format(this ILinePart key, params object[] args)
             => key is ILocalizationKeyFormattable formattable ? formattable.Format(args) : throw new AssetKeyException(key, $"Key doesn't implement {nameof(ILocalizationKeyFormattable)}");
 
         /// <summary>
@@ -51,9 +51,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>culture policy or null</returns>
-        public static Object[] FindFormatArgs(this IAssetKey key)
+        public static Object[] FindFormatArgs(this ILinePart key)
         {
-            for (; key != null; key = key.GetPreviousKey())
+            for (; key != null; key = key.PreviousPart)
                 if (key is ILocalizationKeyFormatArgs casted && casted.Args != null) return casted.Args;
             return null;
         }
@@ -63,12 +63,12 @@ namespace Lexical.Localization
     /// <summary>
     /// Non-canonical comparer that compares <see cref="ILocalizationKeyFormatArgs"/> values of keys.
     /// </summary>
-    public class LocalizationKeyFormatArgsComparer : IEqualityComparer<IAssetKey>
+    public class LocalizationKeyFormatArgsComparer : IEqualityComparer<ILinePart>
     {
         static IEqualityComparer<object[]> array_comparer = new ArrayComparer<object>(EqualityComparer<object>.Default);
-        public bool Equals(IAssetKey x, IAssetKey y)
+        public bool Equals(ILinePart x, ILinePart y)
             => array_comparer.Equals(x?.FindFormatArgs(), y?.FindFormatArgs());
-        public int GetHashCode(IAssetKey obj)
+        public int GetHashCode(ILinePart obj)
             => array_comparer.GetHashCode(obj?.FindFormatArgs());
     }
 }

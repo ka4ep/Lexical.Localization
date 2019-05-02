@@ -21,18 +21,18 @@ namespace docs
 
             {
                 #region Snippet_1
-                IAssetKey key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
+                ILinePart key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
                 #endregion Snippet_1
             }
 
             {
                 #region Snippet_2
                 IAssetRoot root = new LocalizationRoot();
-                IAssetKey section1 = root.Section("Section1");
-                IAssetKey section2 = section1.Section("Section2");
-                IAssetKey section1_1 = section1.Section("Section1.1");
-                IAssetKey key1_1_1 = section1_1.Key("Key1");
-                IAssetKey key1_1_2 = section1_1.Key("Key2");
+                ILinePart section1 = root.Section("Section1");
+                ILinePart section2 = section1.Section("Section2");
+                ILinePart section1_1 = section1.Section("Section1.1");
+                ILinePart key1_1_1 = section1_1.Key("Key1");
+                ILinePart key1_1_2 = section1_1.Key("Key2");
                 // ...
                 #endregion Snippet_2
             }
@@ -41,7 +41,7 @@ namespace docs
                 IAsset asset = null;
                 #region Snippet_3a
                 // Create localization reference
-                IAssetKey key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
+                ILinePart key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
 
                 // Retrieve string with a reference
                 IFormulationString str = asset.GetString(key.Culture("en"));
@@ -63,7 +63,7 @@ namespace docs
                 // Set Current Culture
                 CultureInfo.CurrentCulture = new CultureInfo("en");
                 // Create key specific provider
-                IAssetKey key = root.Section("Section").Key("Key");
+                ILinePart key = root.Section("Section").Key("Key");
                 // Retieve string from provider
                 string str = key.ToString();
                 // Retrieve binary resoruce from provider
@@ -74,7 +74,7 @@ namespace docs
             {
                 #region Snippet_4a
                 // Add canonical parts
-                IAssetKey key = new LocalizationRoot().Section("Section1").Section("Section2").Key("Key");
+                ILinePart key = new LocalizationRoot().Section("Section1").Section("Section2").Key("Key");
 
                 // "Section1:Section2:Key"
                 string id = AssetKeyNameProvider.Colon_Colon_Colon.BuildName(key);
@@ -83,8 +83,8 @@ namespace docs
             {
                 #region Snippet_4b
                 // Add canonical parts, and non-canonical culture
-                IAssetKey key1 = new LocalizationRoot().Section("Section").Key("Key").Culture("en");
-                IAssetKey key2 = new LocalizationRoot().Culture("en").Section("Section").Key("Key");
+                ILinePart key1 = new LocalizationRoot().Section("Section").Key("Key").Culture("en");
+                ILinePart key2 = new LocalizationRoot().Culture("en").Section("Section").Key("Key");
 
                 // "en:Section1:Section2:Key"
                 string id1 = AssetKeyNameProvider.Colon_Colon_Colon.BuildName(key1);
@@ -107,9 +107,9 @@ namespace docs
 
                 #region Snippet_6b
                 // Create key "Error"
-                IAssetKey key = root.Type("ConsoleApp1.MyController").Key("Error");
+                ILinePart key = root.Type("ConsoleApp1.MyController").Key("Error");
                 // Formulate key
-                IAssetKey key_formulated = key.Format(0xFeedF00d);
+                ILinePart key_formulated = key.Format(0xFeedF00d);
                 #endregion Snippet_6b
                 { 
                 #region Snippet_6c
@@ -131,7 +131,7 @@ namespace docs
                 // Create root
                 IAssetRoot root = new LocalizationRoot();
                 // Create key and add default value
-                IAssetKey key = root.Section("Section").Key("Success").Inline("Success");
+                ILinePart key = root.Section("Section").Key("Success").Inline("Success");
                 // Resolve string from inlined key "Success"
                 string str = key.ToString();
                 #endregion Snippet_7a
@@ -142,7 +142,7 @@ namespace docs
                 IAssetRoot root = new LocalizationRoot();
                 #region Snippet_7b
                 // Create key and add default strings
-                IAssetKey key = root.Section("Section").Key("Success")
+                ILinePart key = root.Section("Section").Key("Success")
                     .Inline("Success")                                 // Add inlining to the root culture ""
                     .Inline("Culture:en", "Success")                   // Add inlining to culture "en"
                     .Inline("Culture:fi", "Onnistui")                  // Add inlining to culture "fi"
@@ -157,7 +157,7 @@ namespace docs
                 IAssetRoot root = new LocalizationRoot();
                 #region Snippet_7c
                 // Create key and add default strings
-                IAssetKey key = root.Section("Section").Key("Success")
+                ILinePart key = root.Section("Section").Key("Success")
                     .Inline("Success")                                 // Add inlining to the root culture ""
                     .en("Success")                                     // Add inlining to culture "en"
                     .fi("Onnistui")                                    // Add inlining to culture "fi"
@@ -168,7 +168,7 @@ namespace docs
             {
                 #region Snippet_8a
                 // Assign key to localization of type "MyController"
-                IAssetKey key = new LocalizationRoot().Type(typeof(MyController));
+                ILinePart key = new LocalizationRoot().Type(typeof(MyController));
                 // Search "MyController:Success"
                 string str = key.Key("Success").ToString();
                 #endregion Snippet_8a
@@ -184,9 +184,9 @@ namespace docs
             {
                 #region Snippet_9a
                 // Create root that matches only to english strings
-                IAssetKey root_en = new LocalizationRoot().Culture("en");
+                ILinePart root_en = new LocalizationRoot().Culture("en");
                 // Create key
-                IAssetKey key = root_en.Section("Section").Key("Key");
+                ILinePart key = root_en.Section("Section").Key("Key");
                 #endregion Snippet_9a
             }
 
@@ -203,7 +203,7 @@ namespace docs
         #region Snippet_11a
         class MyController
         {
-            IAssetKey localization;
+            ILinePart localization;
 
             public MyController(IAssetKey<MyController> localization)
             {
@@ -225,7 +225,7 @@ namespace docs
         #region Snippet_11b
         class MyControllerB
         {
-            static IAssetKey localization = LocalizationRoot.Global.Type<MyControllerB>();
+            static ILinePart localization = LocalizationRoot.Global.Type<MyControllerB>();
 
             public void Do()
             {
@@ -237,8 +237,8 @@ namespace docs
         #region Snippet_7d
         class MyController__
         {
-            static IAssetKey localization = LocalizationRoot.Global.Type<MyControllerB>();
-            static IAssetKey Success = localization.Key("Success").Inline("Success").sv("Det funkar").fi("Onnistui");
+            static ILinePart localization = LocalizationRoot.Global.Type<MyControllerB>();
+            static ILinePart Success = localization.Key("Success").Inline("Success").sv("Det funkar").fi("Onnistui");
 
             public string Do()
             {

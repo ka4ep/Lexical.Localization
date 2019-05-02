@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A key that can be assigned with a <see cref="ILocalizationResolver"/>.
     /// </summary>
-    public interface ILocalizationKeyResolverAssignable : IAssetKey
+    public interface ILocalizationKeyResolverAssignable : ILinePart
     {
         /// <summary>
         /// Append a <paramref name="resolver"/> key.
@@ -28,7 +28,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A key that has been assigned with resolver.
     /// </summary>
-    public interface ILocalizationKeyResolverAssigned : IAssetKey
+    public interface ILocalizationKeyResolverAssigned : ILinePart
     {
         /// <summary>
         /// (Optional) The assigned resolver.
@@ -45,7 +45,7 @@ namespace Lexical.Localization
         /// <param name="resolver"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement <see cref="ILocalizationKeyResolverAssignable"/></exception>
-        public static ILocalizationKeyResolverAssigned Resolver(this IAssetKey key, ILocalizationResolver resolver)
+        public static ILocalizationKeyResolverAssigned Resolver(this ILinePart key, ILocalizationResolver resolver)
         {
             if (key is ILocalizationKeyResolverAssignable casted) return casted.Resolver(resolver);
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyResolverAssignable)}.");
@@ -60,10 +60,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static LocalizationString ResolveString(this IAssetKey key)
+        public static LocalizationString ResolveString(this ILinePart key)
         {
             LocalizationString result = new LocalizationString(key, null, LocalizationStatus.NoResult);
-            for (IAssetKey k = key; k!=null; k=k.GetPreviousKey())
+            for (ILinePart k = key; k!=null; k=k.PreviousPart)
             {
                 ILocalizationResolver _formatter;
                 if (k is ILocalizationKeyResolverAssigned formatterAssigned && ((_formatter=formatterAssigned.Resolver)!=null))
@@ -86,10 +86,10 @@ namespace Lexical.Localization
         /// <returns>If key has <see cref="ILocalizationKeyFormatArgs"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
         /// If key didn't have <see cref="ILocalizationKeyFormatArgs"/> part, then return the formulation string "Error (Code=0x{0:X8})".
         /// otherwise return null</returns>
-        public static LocalizationString ResolveFormulatedString(this IAssetKey key)
+        public static LocalizationString ResolveFormulatedString(this ILinePart key)
         {
             LocalizationString result = new LocalizationString(key, null, LocalizationStatus.NoResult);
-            for (IAssetKey k = key; k != null; k = k.GetPreviousKey())
+            for (ILinePart k = key; k != null; k = k.PreviousPart)
             {
                 ILocalizationResolver _formatter;
                 if (k is ILocalizationKeyResolverAssigned formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))

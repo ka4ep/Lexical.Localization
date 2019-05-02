@@ -19,40 +19,40 @@ namespace Lexical.Localization
             Func = func ?? throw new ArgumentNullException(nameof(func));
         }
 
-        IEnumerable<KeyValuePair<string, IFormulationString>> ILocalizationStringLinesEnumerable.GetAllStringLines(IAssetKey key)
+        IEnumerable<KeyValuePair<string, IFormulationString>> ILocalizationStringLinesEnumerable.GetAllStringLines(ILinePart key)
             => (Func() as ILocalizationStringLinesEnumerable)?.GetAllStringLines(key);
 
-        byte[] IAssetResourceProvider.GetResource(IAssetKey key)
+        byte[] IAssetResourceProvider.GetResource(ILinePart key)
             => (Func() as IAssetResourceProvider)?.GetResource(key);
 
-        IEnumerable<string> IAssetResourceNamesEnumerable.GetResourceNames(IAssetKey key)
+        IEnumerable<string> IAssetResourceNamesEnumerable.GetResourceNames(ILinePart key)
             => (Func() as IAssetResourceNamesEnumerable)?.GetResourceNames(key);
 
-        IFormulationString ILocalizationStringProvider.GetString(IAssetKey key)
+        IFormulationString ILocalizationStringProvider.GetString(ILinePart key)
             => (Func() as ILocalizationStringProvider)?.GetString(key);
 
-        Stream IAssetResourceProvider.OpenStream(IAssetKey key)
+        Stream IAssetResourceProvider.OpenStream(ILinePart key)
             => (Func() as IAssetResourceProvider).OpenStream(key);
 
         public override string ToString()
             => $"{GetType().Name}()";
 
-        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(IAssetKey filterKey = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILinePart filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetStringLines(filterKey);
 
-        public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> GetKeyLines(IAssetKey filterKey = null)
+        public IEnumerable<KeyValuePair<ILinePart, IFormulationString>> GetKeyLines(ILinePart filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetKeyLines(filterKey);
 
-        public IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> GetAllKeyLines(IAssetKey filterKey = null)
+        public IEnumerable<KeyValuePair<ILinePart, IFormulationString>> GetAllKeyLines(ILinePart filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetAllKeyLines(filterKey);
 
-        public IEnumerable<string> GetAllResourceNames(IAssetKey filterKey = null)
+        public IEnumerable<string> GetAllResourceNames(ILinePart filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetAllResourceNames(filterKey);
 
-        public IEnumerable<IAssetKey> GetResourceKeys(IAssetKey filterKey = null)
+        public IEnumerable<ILinePart> GetResourceKeys(ILinePart filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetResourceKeys(filterKey);
 
-        public IEnumerable<IAssetKey> GetAllResourceKeys(IAssetKey filterKey = null)
+        public IEnumerable<ILinePart> GetAllResourceKeys(ILinePart filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetAllResourceKeys(filterKey);
     }
 

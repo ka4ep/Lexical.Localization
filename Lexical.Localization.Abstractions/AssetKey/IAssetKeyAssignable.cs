@@ -11,9 +11,9 @@ namespace Lexical.Localization
     /// Key is a leaf, or a tail part, of the identity. 
     /// Such as "Error" in key "ConsoleApp1:MyController:Error".
     /// 
-    /// Consumers of this interface should use the extension method <see cref="AssetKeyExtensions.Key(IAssetKey, string)"/>.
+    /// Consumers of this interface should use the extension method <see cref="LinePartExtensions.Key(ILinePart, string)"/>.
     /// </summary>
-    public interface IAssetKeyAssignable : IAssetKey
+    public interface IAssetKeyAssignable : ILinePart
     {
         /// <summary>
         /// Concatenate new name to this key and create a new subkey.
@@ -32,11 +32,11 @@ namespace Lexical.Localization
     /// Key is a leaf, or a tail part, of the identity. 
     /// Such as "Error" in key "ConsoleApp1:MyController:Error".
     /// </summary>
-    public interface IAssetKeyAssigned : IAssetKey
+    public interface IAssetKeyAssigned : ILinePart
     {
     }
 
-    public static partial class AssetKeyExtensions
+    public static partial class LinePartExtensions
     {
         /// <summary>
         /// Add regular subkey.
@@ -45,7 +45,7 @@ namespace Lexical.Localization
         /// <param name="keyName"></param>
         /// <returns></returns>
         /// <exception cref="AssetException"></exception>
-        public static IAssetKeyAssigned Key(this IAssetKey key, string keyName)
+        public static IAssetKeyAssigned Key(this ILinePart key, string keyName)
             => key is IAssetKeyAssignable assignable ? assignable.Key(keyName) : throw new AssetException($"Key is not {nameof(IAssetKeyAssignable)}");
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="name"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeyAssigned TryAddKey(this IAssetKey key, string name)
+        public static IAssetKeyAssigned TryAddKey(this ILinePart key, string name)
         {
             if (key is IAssetKeyAssignable casted) return casted.Key(name);
             return null;
@@ -66,12 +66,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>key or null</returns>
-        public static IAssetKey FindKey(this IAssetKey key)
+        public static ILinePart FindKey(this ILinePart key)
         {
             while (key != null)
             {
-                if (key is IAssetKeyAssigned && !string.IsNullOrEmpty(key.Name)) return key;
-                key = key.GetPreviousKey();
+                if (key is IAssetKeyAssigned && !string.IsNullOrEmpty(key.GetParameterValue())) return key;
+                key = key.PreviousPart;
             }
             return null;
         }

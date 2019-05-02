@@ -74,7 +74,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="resourceManager"></param>
         /// <param name="assembly"></param>
-        /// <param name="baseName">embedded resources location within assembly, corresponds to "Resource" parameter in <see cref="IAssetKey"/>.</param>
+        /// <param name="baseName">embedded resources location within assembly, corresponds to "Resource" parameter in <see cref="ILinePart"/>.</param>
         /// <returns></returns>
         public static ResourceManagerAsset CreateLocation(ResourceManager resourceManager, string baseName, Assembly assembly)
             => new ResourceManagerAsset(resourceManager, namepolicy_for_location_resourcemanager);
@@ -83,7 +83,7 @@ namespace Lexical.Localization
         /// Create resource manager that is assigned to a specific embedded resource location.
         /// </summary>
         /// <param name="assembly"></param>
-        /// <param name="baseName">embedded resources location within assembly, corresponds to "Resource" parameter in <see cref="IAssetKey"/>.</param>
+        /// <param name="baseName">embedded resources location within assembly, corresponds to "Resource" parameter in <see cref="ILinePart"/>.</param>
         /// <returns></returns>
         public static ResourceManagerAsset CreateLocation(string baseName, Assembly assembly)
             => new ResourceManagerAsset(new ResourceManager(baseName, assembly), namepolicy_for_location_resourcemanager);
@@ -103,7 +103,7 @@ namespace Lexical.Localization
         /// 
         /// </summary>
         /// <param name="resourceManager">source of language strings and resource files</param>
-        /// <param name="namePolicy">policy that converts <see cref="IAssetKey"/> into keys that correlate with keys in <paramref name="resourceManager"/>.</param>
+        /// <param name="namePolicy">policy that converts <see cref="ILinePart"/> into keys that correlate with keys in <paramref name="resourceManager"/>.</param>
         /// <param name="parser"></param>
         public ResourceManagerAsset(ResourceManager resourceManager, IAssetKeyNamePolicy namePolicy, ILocalizationStringFormatParser parser = default)
         {
@@ -112,7 +112,7 @@ namespace Lexical.Localization
             this.ValueParser = parser ?? LexicalStringFormat.Instance;
         }
 
-        public IFormulationString GetString(IAssetKey key)
+        public IFormulationString GetString(ILinePart key)
         {
             string id = namePolicy.BuildName(key);
             CultureInfo culture = key.FindCulture();
@@ -128,7 +128,7 @@ namespace Lexical.Localization
             }
         }
 
-        public byte[] GetResource(IAssetKey key)
+        public byte[] GetResource(ILinePart key)
         {
             string id = namePolicy.BuildName(key);
             CultureInfo culture = key.FindCulture();
@@ -143,7 +143,7 @@ namespace Lexical.Localization
             }
         }
 
-        public Stream OpenStream(IAssetKey key)
+        public Stream OpenStream(ILinePart key)
         {
             string id = namePolicy.BuildName(key);
             CultureInfo culture = key.FindCulture();

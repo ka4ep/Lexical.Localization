@@ -10,7 +10,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A key that can be assigned with a <see cref="IFormatProvider"/>.
     /// </summary>
-    public interface ILocalizationKeyFormatProviderAssignable : IAssetKey
+    public interface ILocalizationKeyFormatProviderAssignable : ILinePart
     {
         /// <summary>
         /// Append a <paramref name="formatProvider"/> key.
@@ -32,7 +32,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A key that has been assigned with format provider.
     /// </summary>
-    public interface ILocalizationKeyFormatProviderAssigned : IAssetKey
+    public interface ILocalizationKeyFormatProviderAssigned : ILinePart
     {
         /// <summary>
         /// (Optional) The assigned format provider.
@@ -57,7 +57,7 @@ namespace Lexical.Localization
         /// <param name="formatProvider"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement <see cref="ILocalizationKeyFormatProviderAssignable"/></exception>
-        public static ILocalizationKeyFormatProviderAssigned FormatProvider(this IAssetKey key, IFormatProvider formatProvider)
+        public static ILocalizationKeyFormatProviderAssigned FormatProvider(this ILinePart key, IFormatProvider formatProvider)
         {
             if (key is ILocalizationKeyFormatProviderAssignable casted) return casted.FormatProvider(formatProvider);
             throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyFormatProviderAssignable)}.");

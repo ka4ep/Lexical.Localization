@@ -47,7 +47,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="rules"></param>
         /// <returns>new key with rules</returns>
-        public static IPluralRulesAssignedKey PluralRules(this IAssetKey key, IPluralRules rules)
+        public static IPluralRulesAssignedKey PluralRules(this ILinePart key, IPluralRules rules)
             => key is IPluralRulesAssignableKey assignable ? assignable.PluralRules(rules): throw new AssetKeyException(key, $"Key doesn't implement {nameof(IPluralRulesAssignableKey)}");
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="ruleSet"></param>
         /// <returns>new key with rules</returns>
-        public static IAssetKey PluralRules(this IAssetKey key, string ruleSet)
+        public static ILinePart PluralRules(this ILinePart key, string ruleSet)
             => key.AppendParameter("PluralRules", ruleSet);
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Lexical.Localization
         /// <returns>key with assigned plurality</returns>
         /// <exception cref="AssetKeyException">if key cannot be assigned.</exception>
         /// <exception cref="ArgumentOutOfRangeException">if <paramref name="argumentIndex"/> is smaller than 0</exception>
-        public static IAssetKey N(this IAssetKey key, int argumentIndex, string @case)
+        public static ILinePart N(this ILinePart key, int argumentIndex, string @case)
             => key.AppendParameter(PrintPluralityParameter(argumentIndex), @case);
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="case"></param>
         /// <returns></returns>
-        public static IAssetKey N(this IAssetKey key, string @case)
+        public static ILinePart N(this ILinePart key, string @case)
             => key.AppendParameter("N", @case);
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="case"></param>
         /// <returns></returns>
-        public static IAssetKey N1(this IAssetKey key, string @case)
+        public static ILinePart N1(this ILinePart key, string @case)
             => key.AppendParameter("N1", @case);
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="case"></param>
         /// <returns></returns>
-        public static IAssetKey N2(this IAssetKey key, string @case)
+        public static ILinePart N2(this ILinePart key, string @case)
             => key.AppendParameter("N2", @case);
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="case"></param>
         /// <returns></returns>
-        public static IAssetKey N3(this IAssetKey key, string @case)
+        public static ILinePart N3(this ILinePart key, string @case)
             => key.AppendParameter("N3", @case);
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="case"></param>
         /// <returns></returns>
-        public static IAssetKey N4(this IAssetKey key, string @case)
+        public static ILinePart N4(this ILinePart key, string @case)
             => key.AppendParameter("N4", @case);
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="case"></param>
         /// <returns></returns>
-        public static IAssetKey N5(this IAssetKey key, string @case)
+        public static ILinePart N5(this ILinePart key, string @case)
             => key.AppendParameter("N5", @case);
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="case"></param>
         /// <returns></returns>
-        public static IAssetKey N6(this IAssetKey key, string @case)
+        public static ILinePart N6(this ILinePart key, string @case)
             => key.AppendParameter("N6", @case);
 
         /// <summary>
@@ -146,7 +146,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="case"></param>
         /// <returns></returns>
-        public static IAssetKey N7(this IAssetKey key, string @case)
+        public static ILinePart N7(this ILinePart key, string @case)
             => key.AppendParameter("N7", @case);
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="case"></param>
         /// <returns></returns>
-        public static IAssetKey N8(this IAssetKey key, string @case)
+        public static ILinePart N8(this ILinePart key, string @case)
             => key.AppendParameter("N8", @case);
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="case"></param>
         /// <returns></returns>
-        public static IAssetKey N9(this IAssetKey key, string @case)
+        public static ILinePart N9(this ILinePart key, string @case)
             => key.AppendParameter("N9", @case);
 
         /// <summary>

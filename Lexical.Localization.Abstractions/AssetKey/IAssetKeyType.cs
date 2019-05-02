@@ -12,9 +12,9 @@ namespace Lexical.Localization
     /// 
     /// Type parameters are used with physical files and embedded resources.
     /// 
-    /// Consumers of this interface should use the extension method <see cref="AssetKeyExtensions.Type(IAssetKey, string)"/> and others.
+    /// Consumers of this interface should use the extension method <see cref="LinePartExtensions.Type(ILinePart, string)"/> and others.
     /// </summary>
-    public interface IAssetKeyTypeAssignable : IAssetKey
+    public interface IAssetKeyTypeAssignable : ILinePart
     {
         /// <summary>
         /// Create type section key for specific type.
@@ -59,7 +59,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class AssetKeyExtensions
+    public static partial class LinePartExtensions
     {
         /// <summary>
         /// Add <see cref="IAssetKeyTypeAssigned"/> section.
@@ -68,7 +68,7 @@ namespace Lexical.Localization
         /// <param name="type"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement <see cref="IAssetKeyTypeAssignable"/></exception>
-        public static IAssetKeyTypeAssigned Type(this IAssetKey key, string name)
+        public static IAssetKeyTypeAssigned Type(this ILinePart key, string name)
         {
             if (key is IAssetKeyTypeAssignable casted) return casted.Type(name);
             throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyTypeAssignable)}.");
@@ -81,7 +81,7 @@ namespace Lexical.Localization
         /// <param name="type"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement <see cref="IAssetKeyTypeAssignable"/></exception>
-        public static IAssetKeyTypeAssigned Type(this IAssetKey key, Type type)
+        public static IAssetKeyTypeAssigned Type(this ILinePart key, Type type)
         {
             if (key is IAssetKeyTypeAssignable casted) return casted.Type(type);
             throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyTypeAssignable)}.");
@@ -94,7 +94,7 @@ namespace Lexical.Localization
         /// <param name="type"></param>
         /// <returns>new key</returns>
         /// <exception cref="AssetKeyException">If key doesn't implement <see cref="IAssetKeyTypeAssignable"/></exception>
-        public static IAssetKey<T> Type<T>(this IAssetKey key)
+        public static IAssetKey<T> Type<T>(this ILinePart key)
         {
             if (key is IAssetKeyTypeAssignable casted) return casted.Type<T>();
             throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyTypeAssignable)}.");
@@ -106,7 +106,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeyTypeAssigned TrySetType(this IAssetKey key, Type type)
+        public static IAssetKeyTypeAssigned TrySetType(this ILinePart key, Type type)
         {
             if (key is IAssetKeyTypeAssignable casted) return casted.Type(type);
             return null;
@@ -118,7 +118,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeyTypeAssigned TrySetType(this IAssetKey key, string type)
+        public static IAssetKeyTypeAssigned TrySetType(this ILinePart key, string type)
         {
             if (key is IAssetKeyTypeAssignable casted) return casted.Type(type);
             return null;
@@ -129,12 +129,12 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>type key with type or null</returns>
-        public static IAssetKeyTypeAssigned FindTypeKey(this IAssetKey key)
+        public static IAssetKeyTypeAssigned FindTypeKey(this ILinePart key)
         {
             while (key != null)
             {
                 if (key is IAssetKeyTypeAssigned typeKey && typeKey.Type != null) return typeKey;
-                key = key.GetPreviousKey();
+                key = key.PreviousPart;
             }
             return null;
         }
@@ -145,12 +145,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>type key with type or null</returns>
-        public static IAssetKeyTypeAssigned FindTypeKey(this IAssetKey key, Type type)
+        public static IAssetKeyTypeAssigned FindTypeKey(this ILinePart key, Type type)
         {
             while (key != null)
             {
                 if (key is IAssetKeyTypeAssigned typeKey && typeKey.Type == type) return typeKey;
-                key = key.GetPreviousKey();
+                key = key.PreviousPart;
             }
             return null;
         }
@@ -160,12 +160,12 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>type or null</returns>
-        public static Type FindType(this IAssetKey key)
+        public static Type FindType(this ILinePart key)
         {
             while (key != null)
             {
                 if (key is IAssetKeyTypeAssigned typeKey && typeKey.Type != null) return typeKey.Type;
-                key = key.GetPreviousKey();
+                key = key.PreviousPart;
             }
             return null;
         }

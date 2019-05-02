@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// 
     /// Name of localization root is "".
     /// </summary>
-    public interface IAssetRoot : IAssetKey
+    public interface IAssetRoot : ILinePart
     {
     }
 
@@ -25,7 +25,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>root key or null</returns>
-        public static IAssetRoot GetRoot(this IAssetKey key)
+        public static IAssetRoot GetRoot(this ILinePart key)
             => key.Find<IAssetRoot>();
     }
 }

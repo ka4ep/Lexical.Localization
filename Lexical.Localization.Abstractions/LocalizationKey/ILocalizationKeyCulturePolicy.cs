@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key has capability of culture policy assignment.
     /// </summary>
-    public interface ILocalizationKeyCulturePolicyAssignable : IAssetKey
+    public interface ILocalizationKeyCulturePolicyAssignable : ILinePart
     {
         /// <summary>
         /// Set culture policy.
@@ -57,7 +57,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>key or null</returns>
-        public static ILocalizationKeyCulturePolicyAssignable FindCulturePolicyAssignableKey(this IAssetKey key)
+        public static ILocalizationKeyCulturePolicyAssignable FindCulturePolicyAssignableKey(this ILinePart key)
             => key.Find<ILocalizationKeyCulturePolicyAssignable>();
 
         /// <summary>
@@ -65,9 +65,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>culture policy or null</returns>
-        public static ICulturePolicy FindCulturePolicy(this IAssetKey key)
+        public static ICulturePolicy FindCulturePolicy(this ILinePart key)
         {
-            for (;key!=null; key=key.GetPreviousKey())
+            for (;key!=null; key=key.PreviousPart)
                 if (key is ILocalizationKeyCulturePolicyAssigned cultureKey && cultureKey.CulturePolicy != null) return cultureKey.CulturePolicy;
             return null;
         }
@@ -76,12 +76,12 @@ namespace Lexical.Localization
     /// <summary>
     /// Non-canonical comparer that compares <see cref="ILocalizationKeyCulturePolicyAssigned"/> values of keys.
     /// </summary>
-    public class LocalizationKeyCulturePolicyComparer : IEqualityComparer<IAssetKey>
+    public class LocalizationKeyCulturePolicyComparer : IEqualityComparer<ILinePart>
     {
         static IEqualityComparer<ICulturePolicy> comparer = new ReferenceComparer<ICulturePolicy>();
-        public bool Equals(IAssetKey x, IAssetKey y)
+        public bool Equals(ILinePart x, ILinePart y)
             => comparer.Equals(x?.FindCulturePolicy(), y?.FindCulturePolicy());
-        public int GetHashCode(IAssetKey obj)
+        public int GetHashCode(ILinePart obj)
             => comparer.GetHashCode(obj?.FindCulturePolicy());
     }
 

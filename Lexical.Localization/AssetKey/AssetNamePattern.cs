@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A name pattern, akin to regular expression, that can be matched against filenames and <see cref="IAssetKey"/> instances.
+    /// A name pattern, akin to regular expression, that can be matched against filenames and <see cref="ILinePart"/> instances.
     /// Is a sequence of parameter and text parts.
     /// 
     /// Parameter parts:
@@ -305,7 +305,7 @@ namespace Lexical.Localization
             public override string ToString() => PatternText;
         }
 
-        public IAssetNamePatternMatch Match(IAssetKey key)
+        public IAssetNamePatternMatch Match(ILinePart key)
         {
             NamePatternMatch match = new NamePatternMatch(this);
             key.VisitParameters(_keyvisitor, ref match);
@@ -363,12 +363,12 @@ namespace Lexical.Localization
         /// <returns>key result or null if contained no content</returns>
         /// <exception cref="FormatException">If parse failed</exception>
         /// <exception cref="ArgumentException">If <paramref name="policy"/> doesn't implement <see cref="IAssetKeyNameParser"/>.</exception>
-        public IAssetKey Parse(string str, IAssetKey rootKey = default)
+        public ILinePart Parse(string str, ILinePart rootKey = default)
         {
             IAssetNamePatternMatch match = this.Match(text: str, filledParameters: null);
             if (!match.Success) throw new FormatException($"Key \"{str}\" did not match the pattern \"{Pattern}\"");
 
-            IAssetKey result = rootKey;
+            ILinePart result = rootKey;
             foreach (var kp in match)
             {
                 if (kp.Key == null || kp.Value == null) continue;
@@ -386,11 +386,11 @@ namespace Lexical.Localization
         /// <param name="key">key result or null if contained no content</param>
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>true if parse was successful</returns>
-        public bool TryParse(string str, out IAssetKey key, IAssetKey rootKey = default)
+        public bool TryParse(string str, out ILinePart key, ILinePart rootKey = default)
         {
             IAssetNamePatternMatch match = this.Match(text: str, filledParameters: null);
             if (!match.Success) { key = null; return false; }
-            IAssetKey result = rootKey;
+            ILinePart result = rootKey;
             foreach (var kp in match)
             {
                 if (kp.Key == null || kp.Value == null) continue;
@@ -402,7 +402,7 @@ namespace Lexical.Localization
             return true;
         }
 
-        public string BuildName(IAssetKey key)
+        public string BuildName(ILinePart key)
         {
             IAssetNamePatternMatch match = Match(key);
             return AssetNamePatternExtensions.BuildName(this, match.PartValues);
@@ -435,7 +435,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="match"></param>
         /// <returns>key or null if <paramref name="match"/> contained no values</returns>
-        public static IAssetKey ToKey(this IAssetNamePatternMatch match)
+        public static ILinePart ToKey(this IAssetNamePatternMatch match)
         {
             Key result = null;
             foreach(IAssetNamePatternPart part in match.Pattern.CaptureParts)

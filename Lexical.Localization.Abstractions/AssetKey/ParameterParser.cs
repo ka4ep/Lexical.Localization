@@ -97,7 +97,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string PrintKey(IAssetKey key)
+        public string PrintKey(ILinePart key)
         {
             StringBuilder sb = new StringBuilder();
             key.VisitFromRoot(_parameterVisitor, ref sb);
@@ -119,22 +119,22 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="sb"></param>
         /// <returns><paramref name="sb"/></returns>
-        public StringBuilder PrintKey(IAssetKey key, StringBuilder sb)
+        public StringBuilder PrintKey(ILinePart key, StringBuilder sb)
         {
             key.VisitFromRoot(_parameterVisitor, ref sb);
             return sb;
         }
 
-        AssetKeyVisitor<StringBuilder> _parameterVisitor;
-        void parameterVisitor(IAssetKey key, ref StringBuilder sb)
+        LinePartVisitor<StringBuilder> _parameterVisitor;
+        void parameterVisitor(ILinePart key, ref StringBuilder sb)
         {
-            if (key is IAssetKeyParameterAssigned parameter)
+            if (key is ILineParameter parameter)
             {
-                IAssetKeyParameterAssigned prevKey = key.GetPreviousParameterKey();
+                ILineParameter prevKey = key.GetPreviousParameterPart();
                 if (prevKey != null) sb.Append(':');
                 sb.Append(EscapeLiteral(parameter.ParameterName));
                 sb.Append(':');
-                sb.Append(EscapeLiteral(parameter.Name));
+                sb.Append(EscapeLiteral(parameter.ParameterValue));
             }
         }
 
@@ -172,9 +172,9 @@ namespace Lexical.Localization
         /// <param name="rootKey">root key to span values from</param>
         /// <returns>result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</returns>
         /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
-        public virtual IAssetKey Parse(string keyString, IAssetKey rootKey)
+        public virtual ILinePart Parse(string keyString, ILinePart rootKey)
         {
-            IAssetKey result = rootKey;
+            ILinePart result = rootKey;
             MatchCollection matches = ParsePattern.Matches(keyString);
             foreach (Match m in matches)
             {
@@ -195,9 +195,9 @@ namespace Lexical.Localization
         /// <param name="resultKey">result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</param>
         /// <param name="rootKey">root key to span values from</param>
         /// <returns>true if parse was successful</returns>
-        public virtual bool TryParse(string keyString, out IAssetKey resultKey, IAssetKey rootKey)
+        public virtual bool TryParse(string keyString, out ILinePart resultKey, ILinePart rootKey)
         {
-            IAssetKey result = rootKey;
+            ILinePart result = rootKey;
             MatchCollection matches = ParsePattern.Matches(keyString);
             foreach (Match m in matches)
             {
