@@ -289,14 +289,14 @@ namespace Lexical.Localization
             /// <summary>
             /// Pattern of this part.
             /// </summary>
-            public Regex Regex => regex ?? AssetNamePatternExtensions.GetDefaultPattern(ParameterName);
+            public Regex Regex => regex ?? IAssetNamePatternExtensions.GetDefaultPattern(ParameterName);
 
             /// <summary>
             /// Tests if text is match.
             /// </summary>
             /// <param name="text"></param>
             /// <returns></returns>
-            public bool IsMatch(string text) => Regex == AssetNamePatternExtensions.GetDefaultPattern(null) ? true : Regex.IsMatch(text);
+            public bool IsMatch(string text) => Regex == IAssetNamePatternExtensions.GetDefaultPattern(null) ? true : Regex.IsMatch(text);
 
             /// <summary>
             /// Print part
@@ -374,7 +374,7 @@ namespace Lexical.Localization
                 if (kp.Key == null || kp.Value == null) continue;
                 string parameterName = kp.Key;
                 if (parameterName == "anysection") parameterName = "Section";
-                result = result == null ? Key.Create(parameterName, kp.Value) : result.AppendParameter(parameterName, kp.Value);
+                result = result == null ? Key.Create(parameterName, kp.Value) : result.Parameter(parameterName, kp.Value);
             }
             return result;
         }
@@ -396,7 +396,7 @@ namespace Lexical.Localization
                 if (kp.Key == null || kp.Value == null) continue;
                 string parameterName = kp.Key;
                 if (parameterName == "anysection") parameterName = "Section";
-                result = result == null ? Key.Create(parameterName, kp.Value) : result.AppendParameter(parameterName, kp.Value);
+                result = result == null ? Key.Create(parameterName, kp.Value) : result.Parameter(parameterName, kp.Value);
             }
             key = result;
             return true;
@@ -405,7 +405,7 @@ namespace Lexical.Localization
         public string BuildName(ILinePart key)
         {
             IAssetNamePatternMatch match = Match(key);
-            return AssetNamePatternExtensions.BuildName(this, match.PartValues);
+            return IAssetNamePatternExtensions.BuildName(this, match.PartValues);
         }
 
         /// <summary>
@@ -428,7 +428,7 @@ namespace Lexical.Localization
         }
     }
 
-    public static partial class AssetNamePatternExtensions_
+    public static partial class AssetNamePatternExtensions
     {
         /// <summary>
         /// Convert <paramref name="match"/> into an asset key that contains the captured parameters.

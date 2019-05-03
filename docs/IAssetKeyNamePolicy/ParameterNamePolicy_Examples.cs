@@ -56,7 +56,7 @@ namespace docs
                 #region Snippet_5
                 string str = "Culture:en:Type:MyLibrary.MyController:Key:Success";
                 IEnumerable<KeyValuePair<string, string>> parameters = ParameterNamePolicy.Instance.ParseParameters(str);
-                ILinePart key = LocalizationRoot.Global.AppendParameters(parameters);
+                ILinePart key = LocalizationRoot.Global.Parameters(parameters);
                 #endregion Snippet_5
             }
 

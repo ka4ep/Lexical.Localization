@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Extensions for <see cref="ILocalizationFileFormat"/>.
     /// </summary>
-    public static partial class LocalizationReaderExtensions_
+    public static partial class LocalizationReaderExtensions
     {
         /// <summary>
         /// Read lines from text.

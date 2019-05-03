@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// 
     /// Type parameters are used with physical files and embedded resources.
     /// 
-    /// Consumers of this interface should use the extension method <see cref="LinePartExtensions.Type(ILinePart, string)"/> and others.
+    /// Consumers of this interface should use the extension method <see cref="ILinePartExtensions.Type(ILinePart, string)"/> and others.
     /// </summary>
     public interface IAssetKeyTypeAssignable : ILinePart
     {
@@ -59,7 +59,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class LinePartExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Add <see cref="IAssetKeyTypeAssigned"/> section.

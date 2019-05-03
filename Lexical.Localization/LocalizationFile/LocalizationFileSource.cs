@@ -69,7 +69,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         IEnumerator<KeyValuePair<string, IFormulationString>> IEnumerable<KeyValuePair<string, IFormulationString>>.GetEnumerator()
         {
-            IEnumerable<KeyValuePair<string, IFormulationString>> lines = LocalizationReaderExtensions_.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable<KeyValuePair<string, IFormulationString>> lines = LocalizationReaderExtensions.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 
@@ -80,7 +80,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
         {
-            IEnumerable<KeyValuePair<string, IFormulationString>> lines = LocalizationReaderExtensions_.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable<KeyValuePair<string, IFormulationString>> lines = LocalizationReaderExtensions.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 
@@ -130,7 +130,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         IEnumerator<KeyValuePair<ILinePart, IFormulationString>> IEnumerable<KeyValuePair<ILinePart, IFormulationString>>.GetEnumerator()
         {
-            IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines = LocalizationReaderExtensions_.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines = LocalizationReaderExtensions.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 
@@ -141,7 +141,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
         {
-            IEnumerable lines = LocalizationReaderExtensions_.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable lines = LocalizationReaderExtensions.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 
@@ -193,7 +193,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         IEnumerator<IKeyTree> IEnumerable<IKeyTree>.GetEnumerator()
         {
-            IKeyTree tree = LocalizationReaderExtensions_.ReadKeyTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
+            IKeyTree tree = LocalizationReaderExtensions.ReadKeyTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
             IKeyTree[] trees = tree == null ? no_trees : new IKeyTree[] { tree };
             return ((IEnumerable<IKeyTree>)trees).GetEnumerator();
         }
@@ -205,7 +205,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
         {
-            IKeyTree tree = LocalizationReaderExtensions_.ReadKeyTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
+            IKeyTree tree = LocalizationReaderExtensions.ReadKeyTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
             IKeyTree[] trees = tree == null ? no_trees : new IKeyTree[] { tree };
             return ((IEnumerable<IKeyTree>)trees).GetEnumerator();
         }

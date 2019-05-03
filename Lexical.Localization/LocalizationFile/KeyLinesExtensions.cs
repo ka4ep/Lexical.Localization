@@ -217,7 +217,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create an asset that uses <paramref name="lines"/>.
         /// 
-        /// Lines are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
+        /// Lines are reloaded into the asset if <see cref="IAssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
@@ -240,7 +240,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static Dictionary<ILinePart, IFormulationString> ToDictionary(this IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines, IEqualityComparer<ILinePart> keyComparer = default)
         {
-            Dictionary<ILinePart, IFormulationString> result = new Dictionary<ILinePart, IFormulationString>(keyComparer ?? AssetKeyComparer.Default);
+            Dictionary<ILinePart, IFormulationString> result = new Dictionary<ILinePart, IFormulationString>(keyComparer ?? LineComparer.Default);
             foreach (var line in lines)
                 if (line.Key != null) result[line.Key] = line.Value;
             return result;

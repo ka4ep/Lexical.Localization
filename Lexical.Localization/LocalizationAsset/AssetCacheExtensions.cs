@@ -7,7 +7,7 @@ using System;
 
 namespace Lexical.Localization
 {
-    public static partial class AssetCacheExtensions__
+    public static partial class AssetCacheExtensions
     {
         /// <summary>
         /// Add cache feature to asset builder.

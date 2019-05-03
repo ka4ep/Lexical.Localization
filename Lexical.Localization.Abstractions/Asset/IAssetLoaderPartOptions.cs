@@ -18,7 +18,7 @@ namespace Lexical.Localization
     }
     #endregion interface
 
-    public static partial class AssetLoaderPartOptionsExtensions
+    public static partial class IAssetLoaderPartOptionsExtensions
     {
         /// <summary>
         /// This option determines whether to fill missing parameters of a key from filenames of existing files.

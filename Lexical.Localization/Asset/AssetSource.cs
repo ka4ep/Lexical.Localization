@@ -55,7 +55,7 @@ namespace Lexical.Localization
     }
 
 
-    public static partial class AssetExtensions_
+    public static partial class AssetExtensions
     {
         /// <summary>
         /// Adapt <see cref="IAsset"/> to <see cref="IAssetSource"/>.

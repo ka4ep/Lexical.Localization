@@ -5,7 +5,6 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Lexical.Localization
 {
@@ -32,6 +31,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="previous"></param>
         /// <returns>new part</returns>
+        /// <exception cref="AssetKeyException">If append failed</exception>
         Part Append(ILinePart previous);
     }
 
@@ -57,6 +57,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Append new <see cref="ILinePart"/> to <paramref name="previous"/>.
         /// </summary>
+        /// <exception cref="AssetKeyException">If append failed</exception>
         Part Append(ILinePart previous, A0 a0);
     }
 
@@ -76,6 +77,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Append new <see cref="ILinePart"/> to <paramref name="previous"/>.
         /// </summary>
+        /// <exception cref="AssetKeyException">If append failed</exception>
         Part Append(ILinePart previous, A0 a0, A1 a1);
     }
 
@@ -96,6 +98,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Append new <see cref="ILinePart"/> to <paramref name="previous"/>.
         /// </summary>
+        /// <exception cref="AssetKeyException">If append failed</exception>
         Part Append(ILinePart previous, A0 a0, A1 a1, A2 a2);
     }
 
@@ -140,7 +143,7 @@ namespace Lexical.Localization
     }
 
     /// <summary></summary>
-    public static partial class LinePartAppenderExtensions
+    public static partial class ILinePartAppenderExtensions
     {
         /// <summary>
         /// Append new <see cref="ILinePart"/> to <paramref name="previous"/>.
@@ -149,13 +152,27 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <typeparam name="Part"></typeparam>
         /// <returns>Part</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="LocalizationException">If appended could not append <typeparamref name="Part"/></exception>
+        /// <exception cref="AssetKeyException">If part could not append <typeparamref name="Part"/></exception>
         public static Part Append<Part>(this ILinePartAppender appender, ILinePart previous) where Part : ILinePart
         {
-            if (appender == null) throw new ArgumentNullException(nameof(appender));
-            ILinePartAppender0<Part> casted = (appender as ILinePartAppender0<Part>) ?? ((appender as ILinePartAppenderAdapter).Cast<Part>()) ?? throw new LocalizationException($"Appender doesn't have capability to adapt to {nameof(Part)}.");
-            return casted.Append<Part>(previous);
+            if (appender == null) throw new AssetKeyException(previous, "Appender is not found.");
+            ILinePartAppender0<Part> casted = ((appender as ILinePartAppenderAdapter)?.Cast<Part>()) ?? (appender as ILinePartAppender0<Part>) ?? throw new AssetKeyException(previous, $"Appender doesn't have capability to adapt to {nameof(Part)}.");
+            return casted.Append(previous);
+        }
+
+        /// <summary>
+        /// Try append new <see cref="ILinePart"/> to <paramref name="previous"/>.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="previous"></param>
+        /// <typeparam name="Part"></typeparam>
+        /// <returns>Part or null</returns>
+        public static Part TryAppend<Part>(this ILinePartAppender appender, ILinePart previous) where Part : ILinePart
+        {
+            if (appender == null) return default;
+            ILinePartAppender0<Part> casted = (appender as ILinePartAppenderAdapter)?.Cast<Part>() ?? (appender as ILinePartAppender0<Part>);
+            if (casted == null) return default;
+            try { return casted.Append(previous); } catch (AssetKeyException) { return default; }
         }
 
         /// <summary>
@@ -166,34 +183,30 @@ namespace Lexical.Localization
         /// <param name="a0">argument 0 </param>
         /// <typeparam name="Part"></typeparam>
         /// <typeparam name="A0"></typeparam>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="LocalizationException">If appended could not append <typeparamref name="Part"/></exception>
+        /// <exception cref="AssetKeyException">If part could not append <typeparamref name="Part"/></exception>
         /// <returns>Part</returns>
         public static Part Append<Part, A0>(this ILinePartAppender appender, ILinePart previous, A0 a0) where Part : ILinePart
         {
-            if (appender == null) throw new ArgumentNullException(nameof(appender));
-            ILinePartAppender1<Part, A0> casted = (appender as ILinePartAppender1<Part, A0>) ?? ((appender as ILinePartAppenderAdapter).Cast<Part, A0>()) ?? throw new LocalizationException($"Appender doesn't have capability to adapt to {nameof(Part)}.");
+            if (appender == null) throw new AssetKeyException(previous, "Appender is not found.");
+            ILinePartAppender1<Part, A0> casted = ((appender as ILinePartAppenderAdapter)?.Cast<Part, A0>()) ?? (appender as ILinePartAppender1<Part, A0>) ?? throw new AssetKeyException(previous, $"Appender doesn't have capability to adapt to {nameof(Part)}.");
             return casted.Append(previous, a0);
         }
 
         /// <summary>
-        /// Append new <see cref="ILinePart"/> to <paramref name="previous"/>.
+        /// Try append new <see cref="ILinePart"/> to <paramref name="previous"/>.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="previous"></param>
-        /// <param name="a0">argument 0</param>
-        /// <param name="a1">argument 1</param>
+        /// <param name="a0">argument 0 </param>
         /// <typeparam name="Part"></typeparam>
         /// <typeparam name="A0"></typeparam>
-        /// <typeparam name="A1"></typeparam>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="LocalizationException">If appended could not append <typeparamref name="Part"/></exception>
-        /// <returns>Part</returns>
-        public static Part Append<Part, A0, A1>(this ILinePartAppender appender, ILinePart previous, A0 a0, A1 a1) where Part : ILinePart
+        /// <returns>Part or null</returns>
+        public static Part TryAppend<Part, A0>(this ILinePartAppender appender, ILinePart previous, A0 a0) where Part : ILinePart
         {
-            if (appender == null) throw new ArgumentNullException(nameof(appender));
-            ILinePartAppender2<Part, A0, A1> casted = (appender as ILinePartAppender2<Part, A0, A1>) ?? ((appender as ILinePartAppenderAdapter).Cast<Part, A0, A1>()) ?? throw new LocalizationException($"Appender doesn't have capability to adapt to {nameof(Part)}.");
-            return casted.Append(previous, a0, a1);
+            if (appender == null) return default;
+            ILinePartAppender1<Part, A0> casted = (appender as ILinePartAppenderAdapter)?.Cast<Part, A0>() ?? (appender as ILinePartAppender1<Part, A0>);
+            if (casted == null) return default;
+            try { return casted.Append(previous, a0); } catch (AssetKeyException) { return default; }
         }
 
         /// <summary>
@@ -206,15 +219,74 @@ namespace Lexical.Localization
         /// <typeparam name="Part"></typeparam>
         /// <typeparam name="A0"></typeparam>
         /// <typeparam name="A1"></typeparam>
+        /// <exception cref="AssetKeyException">If part could not append <typeparamref name="Part"/></exception>
+        /// <returns>Part</returns>
+        public static Part Append<Part, A0, A1>(this ILinePartAppender appender, ILinePart previous, A0 a0, A1 a1) where Part : ILinePart
+        {
+            if (appender == null) throw new AssetKeyException(previous, "Appender is not found.");
+            ILinePartAppender2<Part, A0, A1> casted = ((appender as ILinePartAppenderAdapter)?.Cast<Part, A0, A1>()) ?? (appender as ILinePartAppender2<Part, A0, A1>) ?? throw new AssetKeyException(previous, $"Appender doesn't have capability to adapt to {nameof(Part)}.");
+            return casted.Append(previous, a0, a1);
+        }
+
+        /// <summary>
+        /// Try append new <see cref="ILinePart"/> to <paramref name="previous"/>.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="previous"></param>
+        /// <param name="a0">argument 0</param>
+        /// <param name="a1">argument 1</param>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <typeparam name="A1"></typeparam>
+        /// <returns>Part or null</returns>
+        public static Part TryAppend<Part, A0, A1>(this ILinePartAppender appender, ILinePart previous, A0 a0, A1 a1) where Part : ILinePart
+        {
+            if (appender == null) return default;
+            ILinePartAppender2<Part, A0, A1> casted = (appender as ILinePartAppenderAdapter)?.Cast<Part, A0, A1>() ?? (appender as ILinePartAppender2<Part, A0, A1>);
+            if (casted == null) return default;
+            try { return casted.Append(previous, a0, a1); } catch (AssetKeyException) { return default; }
+        }
+
+        /// <summary>
+        /// Append new <see cref="ILinePart"/> to <paramref name="previous"/>.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="previous"></param>
+        /// <param name="a0">argument 0</param>
+        /// <param name="a1">argument 1</param>
+        /// <param name="a2">argument 2</param>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <typeparam name="A1"></typeparam>
         /// <typeparam name="A2"></typeparam>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="LocalizationException">If appended could not append <typeparamref name="Part"/></exception>
+        /// <exception cref="AssetKeyException">If part could not append <typeparamref name="Part"/></exception>
         /// <returns>Part</returns>
         public static Part Append<Part, A0, A1, A2>(this ILinePartAppender appender, ILinePart previous, A0 a0, A1 a1, A2 a2) where Part : ILinePart
         {
-            if (appender == null) throw new ArgumentNullException(nameof(appender));
-            ILinePartAppender3<Part, A0, A1, A2> casted = (appender as ILinePartAppender3<Part, A0, A1, A2>) ?? ((appender as ILinePartAppenderAdapter).Cast<Part, A0, A1, A2>()) ?? throw new LocalizationException($"Appender doesn't have capability to adapt to {nameof(Part)}.");
+            if (appender == null) throw new AssetKeyException(previous, "Appender is not found.");
+            ILinePartAppender3<Part, A0, A1, A2> casted = ((appender as ILinePartAppenderAdapter)?.Cast<Part, A0, A1, A2>()) ?? (appender as ILinePartAppender3<Part, A0, A1, A2>) ?? throw new AssetKeyException(previous, $"Appender doesn't have capability to adapt to {nameof(Part)}.");
             return casted.Append(previous, a0, a1, a2);
+        }
+
+        /// <summary>
+        /// Try append new <see cref="ILinePart"/> to <paramref name="previous"/>.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="previous"></param>
+        /// <param name="a0">argument 0</param>
+        /// <param name="a1">argument 1</param>
+        /// <param name="a2">argument 2</param>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <returns>Part or null</returns>
+        public static Part TryAppend<Part, A0, A1, A2>(this ILinePartAppender appender, ILinePart previous, A0 a0, A1 a1, A2 a2) where Part : ILinePart
+        {
+            if (appender == null) return default;
+            ILinePartAppender3<Part, A0, A1, A2> casted = (appender as ILinePartAppenderAdapter)?.Cast<Part, A0, A1, A2>() ?? (appender as ILinePartAppender3<Part, A0, A1, A2>);
+            if (casted == null) return default;
+            try { return casted.Append(previous, a0, a1, a2); } catch (AssetKeyException) { return default; }
         }
 
     }

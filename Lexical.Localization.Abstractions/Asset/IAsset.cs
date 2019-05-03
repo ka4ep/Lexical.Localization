@@ -22,7 +22,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class AssetExtensions
+    public static partial class IAssetExtensions
     {
         /// <summary>
         /// Finds first instance of <typeparamref name="T"/>.

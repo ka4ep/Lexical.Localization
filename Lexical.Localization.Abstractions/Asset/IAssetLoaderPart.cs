@@ -56,7 +56,8 @@ namespace Lexical.Localization
     }
     #endregion interface
 
-    public static partial class AssetLoaderPartExtensions
+    /// <summary></summary>
+    public static partial class IAssetLoaderPartExtensions
     {
         /// <summary>
         /// Set options, for chain calls.

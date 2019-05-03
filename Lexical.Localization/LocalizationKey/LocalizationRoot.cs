@@ -176,7 +176,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Construct mutable root.
             /// </summary>
-            public Mutable() : base(StringLocalizerAppender.Instance, null, null, null, LocalizationResolver.Instance, null, null) { }
+            public Mutable() : base(StringLocalizerPartAppender.Instance, null, null, null, LocalizationResolver.Instance, null, null) { }
 
             /// <summary>
             /// Construct new root

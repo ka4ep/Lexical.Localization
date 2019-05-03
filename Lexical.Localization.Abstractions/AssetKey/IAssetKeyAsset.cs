@@ -32,7 +32,7 @@ namespace Lexical.Localization
         IAsset Asset { get; }
     }
 
-    public static partial class LinePartExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Try to set localization asset. Doesn't throw expected exception.

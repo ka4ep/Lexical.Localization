@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Extensions for <see cref="IKeyTree"/>.
     /// </summary>
-    public static class KeyTreeExtensions_
+    public static class KeyTreeExtensions
     {
         /// <summary>
         /// Flatten <paramref name="keyTree"/> to string lines.
@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create an asset that uses <paramref name="tree"/>.
         /// 
-        /// Trees are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
+        /// Trees are reloaded into the asset if <see cref="IAssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="tree"></param>
         /// <returns></returns>
@@ -69,7 +69,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create an asset that uses <paramref name="trees"/>.
         /// 
-        /// Trees are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
+        /// Trees are reloaded into the asset if <see cref="IAssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="trees"></param>
         /// <returns></returns>
@@ -413,7 +413,7 @@ namespace Lexical.Localization
             }
 
             // Key match
-            if (AssetKeyComparer.Default.Equals(concatenatedKeyOfNode, searchKey)) { result.Add(node); return; }
+            if (LineComparer.Default.Equals(concatenatedKeyOfNode, searchKey)) { result.Add(node); return; }
 
             // Recurse
             if (node.HasChildren)

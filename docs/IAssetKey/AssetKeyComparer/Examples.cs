@@ -12,13 +12,13 @@ namespace docs
         {
             {
                 #region Snippet_0
-                IEqualityComparer<ILinePart> comparer = AssetKeyComparer.Default;
+                IEqualityComparer<ILinePart> comparer = LineComparer.Default;
                 #endregion Snippet_0
             }
             {
                 #region Snippet_1
                 ILinePart key = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
-                int hash = AssetKeyComparer.Default.GetHashCode(key);
+                int hash = LineComparer.Default.GetHashCode(key);
                 #endregion Snippet_1
             }
             {
@@ -28,13 +28,13 @@ namespace docs
                 ILinePart key3 = LocalizationRoot.Global.Type("MyClass").Key("OK");
                 ILinePart key4 = StringLocalizerRoot.Global.Type("MyClass").Key("OK");
 
-                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
-                bool equals23 = AssetKeyComparer.Default.Equals(key2, key3); // Are equal
-                bool equals34 = AssetKeyComparer.Default.Equals(key3, key4); // Are equal
-                int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
-                int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
-                int hash3 = AssetKeyComparer.Default.GetHashCode(key3);
-                int hash4 = AssetKeyComparer.Default.GetHashCode(key4);
+                bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
+                bool equals23 = LineComparer.Default.Equals(key2, key3); // Are equal
+                bool equals34 = LineComparer.Default.Equals(key3, key4); // Are equal
+                int hash1 = LineComparer.Default.GetHashCode(key1);
+                int hash2 = LineComparer.Default.GetHashCode(key2);
+                int hash3 = LineComparer.Default.GetHashCode(key3);
+                int hash4 = LineComparer.Default.GetHashCode(key4);
                 #endregion Snippet_2
             }
             {
@@ -42,29 +42,29 @@ namespace docs
                 ILinePart key1 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
                 ILinePart key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("en");
 
-                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
+                bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
                 #endregion Snippet_3
-                int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
-                int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
+                int hash1 = LineComparer.Default.GetHashCode(key1);
+                int hash2 = LineComparer.Default.GetHashCode(key2);
             }
             {
                 #region Snippet_4
                 ILinePart key1 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
                 ILinePart key2 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK").Culture("de");
 
-                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
+                bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
                 #endregion Snippet_4
-                int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
-                int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
+                int hash1 = LineComparer.Default.GetHashCode(key1);
+                int hash2 = LineComparer.Default.GetHashCode(key2);
             }
             {
                 #region Snippet_5
                 ILinePart key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
                 ILinePart key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
 
-                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are equal
-                int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
-                int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
+                bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
+                int hash1 = LineComparer.Default.GetHashCode(key1);
+                int hash2 = LineComparer.Default.GetHashCode(key2);
                 #endregion Snippet_5
             }
             {
@@ -80,9 +80,9 @@ namespace docs
                 ILinePart key1 = LocalizationRoot.Global.Section("").Key("OK");
                 ILinePart key2 = LocalizationRoot.Global.Key("OK");
 
-                bool equals12 = AssetKeyComparer.Default.Equals(key1, key2); // Are not equal
-                int hash1 = AssetKeyComparer.Default.GetHashCode(key1);
-                int hash2 = AssetKeyComparer.Default.GetHashCode(key2);
+                bool equals12 = LineComparer.Default.Equals(key1, key2); // Are not equal
+                int hash1 = LineComparer.Default.GetHashCode(key1);
+                int hash2 = LineComparer.Default.GetHashCode(key2);
                 #endregion Snippet_6
             }
             {

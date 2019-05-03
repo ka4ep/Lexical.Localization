@@ -157,7 +157,7 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// Extension methods for <see cref="IPluralNumber"/>.
     /// </summary>
-    public static class PluralityNumberExtensions
+    public static class IPluralNumberExtensions
     {
         /// <summary>
         /// Tests if <paramref name="number"/> exists in <paramref name="group"/>.

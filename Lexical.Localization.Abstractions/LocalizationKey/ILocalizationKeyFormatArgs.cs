@@ -12,6 +12,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key has capability of format arguments assignment.
     /// </summary>
+    [Obsolete]
     public interface ILocalizationKeyFormattable : ILinePart
     {
         /// <summary>
@@ -20,13 +21,13 @@ namespace Lexical.Localization
         /// <param name="formatProvider">(optional) custom format provider</param>
         /// <param name="args">attach arguments</param>
         /// <returns>new key</returns>
-        ILocalizationKeyFormatArgs Format(params object[] args);
+        ILineFormatArgsPart Format(params object[] args);
     }
 
     /// <summary>
     /// Key (may have) has formats assigned.
     /// </summary>
-    public interface ILocalizationKeyFormatArgs : ILinePart
+    public interface ILineFormatArgs : ILine
     {
         /// <summary>
         /// Attached format arguments (may be null).
@@ -34,41 +35,65 @@ namespace Lexical.Localization
         Object[] Args { get; }
     }
 
-    public static partial class LocalizationKeyExtensions
+    /// <summary>
+    /// Key (may have) has formats assigned.
+    /// </summary>
+    public interface ILineFormatArgsPart : ILineFormatArgs, ILinePart
+    {
+    }
+
+    public static partial class ILinePartExtensions
     {
         /// <summary>
-        /// Create a new <see cref="ILocalizationKeyFormatArgs"/> that has arguments attached.
+        /// Create a new <see cref="ILineFormatArgsPart"/> that has arguments attached.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="args"></param>
         /// <returns></returns>
         /// <exception cref="AssetKeyException">If key can't be formatted</exception>
-        public static ILocalizationKeyFormatArgs Format(this ILinePart key, params object[] args)
+        public static ILineFormatArgsPart Format(this ILinePart key, params object[] args)
             => key is ILocalizationKeyFormattable formattable ? formattable.Format(args) : throw new AssetKeyException(key, $"Key doesn't implement {nameof(ILocalizationKeyFormattable)}");
 
         /// <summary>
         /// Walks linked list and searches for culture policy.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <returns>culture policy or null</returns>
-        public static Object[] FindFormatArgs(this ILinePart key)
+        public static Object[] GetFormatArgs(this ILine line)
         {
-            for (; key != null; key = key.PreviousPart)
-                if (key is ILocalizationKeyFormatArgs casted && casted.Args != null) return casted.Args;
+            if (line is ILineFormatArgs args) return args.Args;
+            if (line is ILinePart tail)
+            {
+                for (ILinePart p = tail; p != null; p = p.PreviousPart)
+                    if (p is ILineFormatArgsPart casted && casted.Args != null) return casted.Args;
+            }
             return null;
         }
 
     }
 
     /// <summary>
-    /// Non-canonical comparer that compares <see cref="ILocalizationKeyFormatArgs"/> values of keys.
+    /// Non-canonical comparer that compares <see cref="ILineFormatArgsPart"/> values of keys.
     /// </summary>
-    public class LocalizationKeyFormatArgsComparer : IEqualityComparer<ILinePart>
+    public class LocalizationKeyFormatArgsComparer : IEqualityComparer<ILine>
     {
         static IEqualityComparer<object[]> array_comparer = new ArrayComparer<object>(EqualityComparer<object>.Default);
-        public bool Equals(ILinePart x, ILinePart y)
-            => array_comparer.Equals(x?.FindFormatArgs(), y?.FindFormatArgs());
-        public int GetHashCode(ILinePart obj)
-            => array_comparer.GetHashCode(obj?.FindFormatArgs());
+
+        /// <summary>
+        /// Compare last format args value.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public bool Equals(ILine x, ILine y)
+            => array_comparer.Equals(x?.GetFormatArgs(), y?.GetFormatArgs());
+
+        /// <summary>
+        /// Calculate hash of last format args value.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        public int GetHashCode(ILine line)
+            => array_comparer.GetHashCode(line.GetFormatArgs());
     }
 }

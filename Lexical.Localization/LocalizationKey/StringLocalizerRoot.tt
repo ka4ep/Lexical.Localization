@@ -15,7 +15,7 @@
     srcCode = GetRegion(srcCode, "Code");
     srcCode = Regex.Replace(srcCode, "([^I])LocalizationKey", m => m.Groups[1].Value + "StringLocalizerKey");
     srcCode = Regex.Replace(srcCode, "([^I])LocalizationRoot", m => m.Groups[1].Value + "StringLocalizerRoot");
-    srcCode = Regex.Replace(srcCode, "([^I])LinePartAppender", m => m.Groups[1].Value + "StringLocalizerAppender");	
+    srcCode = Regex.Replace(srcCode, "([^I])LinePartAppender", m => m.Groups[1].Value + "StringLocalizerPartAppender");	
 #>
 // --------------------------------------------------------
 // Copyright:      Toni Kalajainen

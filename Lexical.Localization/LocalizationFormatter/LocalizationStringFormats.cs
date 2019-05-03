@@ -57,7 +57,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Extensions for <see cref="LocalizationStringFormats"/>.
     /// </summary>
-    public static partial class LocalizationStringFormatsExtensions_
+    public static partial class LocalizationStringFormatsExtensions
     {
         /// <summary>
         /// Create clone 

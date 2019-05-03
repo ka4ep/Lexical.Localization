@@ -20,20 +20,20 @@ namespace Lexical.Localization.Utils
     /// This class has one parameter name and a value, and it can carry a link to previous node.
     /// </summary>
     [DebuggerDisplay("{ToString()}")]
-    public partial class Key : ILinePart, ILineParameter, ILineParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>, IAssetKeyDefaultHashCode
+    public partial class Key : ILinePart, ILineParameterPart, ILineParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>, ILineDefaultHashCode
     {
         private static readonly Key root = new Key("", "");
 
         ILinePartAppender ILinePart.Appender => Appender.Instance;
         /// <summary></summary>
-        public class Appender : ILinePartAppender2<ILineParameter, string, string>,
+        public class Appender : ILinePartAppender2<ILineParameterPart, string, string>,
             ILinePartAppender2<ILineKeyCanonicallyCompared, string, string>,
             ILinePartAppender2<ILineKeyNonCanonicallyCompared, string, string>
         {
             static readonly Appender instance = new Appender();
             /// <summary></summary>
             public static Appender Instance => instance;
-            ILineParameter ILinePartAppender2<ILineParameter, string, string>.Append(ILinePart previous, string parameterName, string parameterKey)
+            ILineParameterPart ILinePartAppender2<ILineParameterPart, string, string>.Append(ILinePart previous, string parameterName, string parameterKey)
                 => ((Key)previous).AppendParameter(parameterName, parameterKey);
             ILineKeyCanonicallyCompared ILinePartAppender2<ILineKeyCanonicallyCompared, string, string>.Append(ILinePart prevKey, string parameterName, string parameterValue)
                 => new Key.Canonical((Key)prevKey, parameterName, parameterValue);
@@ -62,7 +62,7 @@ namespace Lexical.Localization.Utils
         public Key Previous;
 
         ILinePart ILinePart.PreviousPart => Previous;
-        string ILineParameter.ParameterValue => Value;
+        string ILineParameterPart.ParameterValue => Value;
         public string ParameterName => Name;
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Lexical.Localization.Utils
         public Key Append(string parameterName, string parameterValue)
             => Create(this, parameterName, parameterValue);
 
-        public ILineParameter AppendParameter(string parameterName, string parameterValue)
+        public ILineParameterPart AppendParameter(string parameterName, string parameterValue)
             => Create(this, parameterName, parameterValue);
 
         public static Key Create(string parameterName, string parameterValue)
@@ -202,29 +202,29 @@ namespace Lexical.Localization.Utils
 
         bool defaultHashcodeCalculated;
         int defaultHashCode;
-        int IAssetKeyDefaultHashCode.GetDefaultHashCode()
+        int ILineDefaultHashCode.GetDefaultHashCode()
         {
             if (defaultHashcodeCalculated) return defaultHashCode;
-            defaultHashCode = AssetKeyComparer.Default.CalculateHashCode(this);
+            defaultHashCode = LineComparer.Default.CalculateHashCode(this);
             Thread.MemoryBarrier();
             defaultHashcodeCalculated = true;
             return defaultHashCode;
         }
 
         bool IEquatable<Key>.Equals(Key other)
-            => AssetKeyComparer.Default.Equals(this, other);
+            => LineComparer.Default.Equals(this, other);
 
         public override int GetHashCode()
         {
             if (defaultHashcodeCalculated) return defaultHashCode;
-            defaultHashCode = AssetKeyComparer.Default.CalculateHashCode(this);
+            defaultHashCode = LineComparer.Default.CalculateHashCode(this);
             Thread.MemoryBarrier();
             defaultHashcodeCalculated = true;
             return defaultHashCode;
         }
 
         public override bool Equals(object obj)
-            => obj is Key other ? AssetKeyComparer.Default.Equals(this, other) : false;
+            => obj is Key other ? LineComparer.Default.Equals(this, other) : false;
 
         /// <summary>
         /// Prints the key in "parameterName:parameterValue:..." format.

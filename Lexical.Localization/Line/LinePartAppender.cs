@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Default part appender.
     /// </summary>
-    public class LinePartAppender : LinePartAppenderCollection
+    public partial class LinePartAppender : LinePartAppenderList
     {
         private readonly static ILinePartAppender instance = new LinePartAppender().ReadOnly();
 

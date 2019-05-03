@@ -24,7 +24,7 @@ namespace Lexical.Localization
         IEnumerable<CultureInfo> GetSupportedCultures();
     }
 
-    public static partial class LocalizationAssetExtensions
+    public static partial class IAssetExtensions
     {
         /// <summary>
         /// List supported cultures.

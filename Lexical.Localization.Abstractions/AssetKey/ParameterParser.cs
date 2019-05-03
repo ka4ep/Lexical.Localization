@@ -128,9 +128,9 @@ namespace Lexical.Localization
         LinePartVisitor<StringBuilder> _parameterVisitor;
         void parameterVisitor(ILinePart key, ref StringBuilder sb)
         {
-            if (key is ILineParameter parameter)
+            if (key is ILineParameterPart parameter)
             {
-                ILineParameter prevKey = key.GetPreviousParameterPart();
+                ILineParameterPart prevKey = key.GetPreviousParameterPart();
                 if (prevKey != null) sb.Append(':');
                 sb.Append(EscapeLiteral(parameter.ParameterName));
                 sb.Append(':');
@@ -183,7 +183,7 @@ namespace Lexical.Localization
                 if (!k_key.Success || !k_value.Success) throw new FormatException(keyString);
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                result = result.AppendParameter(key, value);
+                result = result.Parameter(key, value);
             }
             return result;
         }
@@ -206,7 +206,7 @@ namespace Lexical.Localization
                 if (!k_key.Success || !k_value.Success) { resultKey = null; return false; }
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                result = result.AppendParameter(key, value);
+                result = result.Parameter(key, value);
             }
             resultKey = result;
             return true;

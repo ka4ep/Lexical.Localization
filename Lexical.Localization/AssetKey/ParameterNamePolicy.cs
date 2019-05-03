@@ -52,7 +52,7 @@ namespace Lexical.Localization
                 if (!k_key.Success || !k_value.Success) throw new FormatException(keyString);
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                result = result == null ? Key.Create(key, value) : result.AppendParameter(key, value);
+                result = result == null ? Key.Create(key, value) : result.Parameter(key, value);
             }
             return result;
         }
@@ -75,7 +75,7 @@ namespace Lexical.Localization
                 if (!k_key.Success || !k_value.Success) { resultKey = null; return false; }
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                result = result == null ? Key.Create(key, value) : result.AppendParameter(key, value);
+                result = result == null ? Key.Create(key, value) : result.Parameter(key, value);
             }
             resultKey = result;
             return resultKey != null;

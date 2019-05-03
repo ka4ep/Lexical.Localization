@@ -39,7 +39,7 @@ namespace Lexical.Localization
             // (byte[]) maps to LocalizationKeyExtensions.ResolveResource(obj)
             if (typeof(byte[]).IsAssignableFrom(binder.ReturnType))
             {
-                if (miResolveResource == null) miResolveResource = typeof(LocalizationKeyExtensions).GetMethod(nameof(LocalizationKeyExtensions.ResolveResource));
+                if (miResolveResource == null) miResolveResource = typeof(ILinePartExtensions).GetMethod(nameof(ILinePartExtensions.ResolveResource));
                 mi = miResolveResource;
             }
 
@@ -71,7 +71,7 @@ namespace Lexical.Localization
             Match m = null;
             if (args.Length == 1 && typeof(String).IsAssignableFrom(args[0].LimitType) && (m = lang_region_pattern.Match(binder.Name)).Success)
             {
-                if (inlineMethod == null) inlineMethod = typeof(LocalizationKeyExtensions).GetMethod(nameof(LocalizationKeyExtensions.Inline), new Type[] { typeof(ILinePart), typeof(string), typeof(string) });
+                if (inlineMethod == null) inlineMethod = typeof(ILinePartExtensions).GetMethod(nameof(ILinePartExtensions.Inline), new Type[] { typeof(ILinePart), typeof(string), typeof(string) });
                 BindingRestrictions restrictions = BindingRestrictions.GetTypeRestriction(Expression, LimitType);
                 restrictions.Merge(BindingRestrictions.GetTypeRestriction(args[0].Expression, typeof(String)));
 

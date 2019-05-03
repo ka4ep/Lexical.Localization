@@ -91,7 +91,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Construct new root.
         /// </summary>
-        public StringLocalizerRoot() : this(StringLocalizerAppender.Instance, null, null, null, LocalizationResolver.Instance, null, null) { }
+        public StringLocalizerRoot() : this(StringLocalizerPartAppender.Instance, null, null, null, LocalizationResolver.Instance, null, null) { }
 
         /// <summary>
         /// Construct new root
@@ -102,7 +102,7 @@ namespace Lexical.Localization
         /// <param name="formatProvider"></param>
         /// <param name="logger"></param>
         public StringLocalizerRoot(IAsset asset, ICulturePolicy culturePolicy = null, ILocalizationResolver resolver = default, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) : 
-            this(StringLocalizerAppender.Instance, null, asset, culturePolicy, resolver ?? LocalizationResolver.Instance, formatProvider, logger)
+            this(StringLocalizerPartAppender.Instance, null, asset, culturePolicy, resolver ?? LocalizationResolver.Instance, formatProvider, logger)
         {
         }
 
@@ -186,7 +186,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Construct mutable root.
             /// </summary>
-            public Mutable() : base(StringLocalizerAppender.Instance, null, null, null, LocalizationResolver.Instance, null, null) { }
+            public Mutable() : base(StringLocalizerPartAppender.Instance, null, null, null, LocalizationResolver.Instance, null, null) { }
 
             /// <summary>
             /// Construct new root
@@ -197,7 +197,7 @@ namespace Lexical.Localization
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
             public Mutable(ILinePartAppender appender = default, IAsset asset = null, ICulturePolicy culturePolicy = null, ILocalizationResolver resolver = default, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) :
-                this(appender ?? StringLocalizerAppender.Instance, null, asset, culturePolicy, resolver ?? LocalizationResolver.Instance, formatProvider, logger)
+                this(appender ?? StringLocalizerPartAppender.Instance, null, asset, culturePolicy, resolver ?? LocalizationResolver.Instance, formatProvider, logger)
             {
             }
 

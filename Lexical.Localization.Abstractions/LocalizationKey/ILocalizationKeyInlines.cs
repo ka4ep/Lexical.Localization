@@ -29,7 +29,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class LocalizationKeyExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Add an inlined language string.

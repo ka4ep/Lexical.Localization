@@ -39,7 +39,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class LinePartExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Find <see cref="IAsset"/> and get language string.

@@ -57,7 +57,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Extenions for <see cref="LocalizationFileFormatMap"/>.
     /// </summary>
-    public static partial class LocalizationFileFormatMapExtensions_
+    public static partial class LocalizationFileFormatMapExtensions
     {
         /// <summary>
         /// All supported extensions.

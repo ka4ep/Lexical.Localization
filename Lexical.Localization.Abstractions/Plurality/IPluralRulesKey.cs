@@ -39,7 +39,7 @@ namespace Lexical.Localization
     /// <summary>
     /// 
     /// </summary>
-    public static partial class PluralRulesExtensions
+    public static partial class IPluralRulesExtensions
     {
         /// <summary>
         /// Assign a specific instance of rules. 
@@ -61,7 +61,7 @@ namespace Lexical.Localization
         /// <param name="ruleSet"></param>
         /// <returns>new key with rules</returns>
         public static ILinePart PluralRules(this ILinePart key, string ruleSet)
-            => key.AppendParameter("PluralRules", ruleSet);
+            => key.Parameter("PluralRules", ruleSet);
 
         /// <summary>
         /// Assign plurality case to argument <paramref name="argumentIndex"/>.
@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// <exception cref="AssetKeyException">if key cannot be assigned.</exception>
         /// <exception cref="ArgumentOutOfRangeException">if <paramref name="argumentIndex"/> is smaller than 0</exception>
         public static ILinePart N(this ILinePart key, int argumentIndex, string @case)
-            => key.AppendParameter(PrintPluralityParameter(argumentIndex), @case);
+            => key.Parameter(PrintPluralityParameter(argumentIndex), @case);
 
         /// <summary>
         /// Assign <paramref name="case"/> for argument 0, "N:case".
@@ -84,7 +84,7 @@ namespace Lexical.Localization
         /// <param name="case"></param>
         /// <returns></returns>
         public static ILinePart N(this ILinePart key, string @case)
-            => key.AppendParameter("N", @case);
+            => key.Parameter("N", @case);
 
         /// <summary>
         /// Assign <paramref name="case"/> for argument 1, "N1:case".
@@ -93,7 +93,7 @@ namespace Lexical.Localization
         /// <param name="case"></param>
         /// <returns></returns>
         public static ILinePart N1(this ILinePart key, string @case)
-            => key.AppendParameter("N1", @case);
+            => key.Parameter("N1", @case);
 
         /// <summary>
         /// Assign <paramref name="case"/> for argument 2, "N2:case".
@@ -102,7 +102,7 @@ namespace Lexical.Localization
         /// <param name="case"></param>
         /// <returns></returns>
         public static ILinePart N2(this ILinePart key, string @case)
-            => key.AppendParameter("N2", @case);
+            => key.Parameter("N2", @case);
 
         /// <summary>
         /// Assign <paramref name="case"/> for argument 3, "N3:case".
@@ -111,7 +111,7 @@ namespace Lexical.Localization
         /// <param name="case"></param>
         /// <returns></returns>
         public static ILinePart N3(this ILinePart key, string @case)
-            => key.AppendParameter("N3", @case);
+            => key.Parameter("N3", @case);
 
         /// <summary>
         /// Assign <paramref name="case"/> for argument 4, "N4:case".
@@ -120,7 +120,7 @@ namespace Lexical.Localization
         /// <param name="case"></param>
         /// <returns></returns>
         public static ILinePart N4(this ILinePart key, string @case)
-            => key.AppendParameter("N4", @case);
+            => key.Parameter("N4", @case);
 
         /// <summary>
         /// Assign <paramref name="case"/> for argument 5, "N5:case".
@@ -129,7 +129,7 @@ namespace Lexical.Localization
         /// <param name="case"></param>
         /// <returns></returns>
         public static ILinePart N5(this ILinePart key, string @case)
-            => key.AppendParameter("N5", @case);
+            => key.Parameter("N5", @case);
 
         /// <summary>
         /// Assign <paramref name="case"/> for argument 6, "N6:case".
@@ -138,7 +138,7 @@ namespace Lexical.Localization
         /// <param name="case"></param>
         /// <returns></returns>
         public static ILinePart N6(this ILinePart key, string @case)
-            => key.AppendParameter("N6", @case);
+            => key.Parameter("N6", @case);
 
         /// <summary>
         /// Assign <paramref name="case"/> for argument 7, "N7:case".
@@ -147,7 +147,7 @@ namespace Lexical.Localization
         /// <param name="case"></param>
         /// <returns></returns>
         public static ILinePart N7(this ILinePart key, string @case)
-            => key.AppendParameter("N7", @case);
+            => key.Parameter("N7", @case);
 
         /// <summary>
         /// Assign <paramref name="case"/> for argument 8, "N8:case".
@@ -156,7 +156,7 @@ namespace Lexical.Localization
         /// <param name="case"></param>
         /// <returns></returns>
         public static ILinePart N8(this ILinePart key, string @case)
-            => key.AppendParameter("N8", @case);
+            => key.Parameter("N8", @case);
 
         /// <summary>
         /// Assign <paramref name="case"/> for argument 9, "N9:case".
@@ -165,7 +165,7 @@ namespace Lexical.Localization
         /// <param name="case"></param>
         /// <returns></returns>
         public static ILinePart N9(this ILinePart key, string @case)
-            => key.AppendParameter("N9", @case);
+            => key.Parameter("N9", @case);
 
         /// <summary>
         /// Static parameter names for plurality keys.

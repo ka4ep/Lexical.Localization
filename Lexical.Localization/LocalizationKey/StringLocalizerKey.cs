@@ -32,7 +32,7 @@ namespace Lexical.Localization
     [DebuggerDisplay("{DebugPrint()}")]
     [Serializable]
     public class StringLocalizerKey : LinePart, 
-        ILocalizationKey, IAssetKeyAssignable, ILineInlinesAssigned, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, ILocalizationKeyResolverAssignable, ILocalizationKeyFormatProviderAssignable, ILinePart, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, ILineParameterAssignable, IPluralRulesAssignableKey, ISerializable, IDynamicMetaObjectProvider, IAssetKeyDefaultHashCode,
+        ILocalizationKey, IAssetKeyAssignable, ILineInlinesAssigned, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, ILocalizationKeyResolverAssignable, ILocalizationKeyFormatProviderAssignable, ILinePart, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, ILineParameterAssignable, IPluralRulesAssignableKey, ISerializable, IDynamicMetaObjectProvider, ILineDefaultHashCode,
         IStringLocalizer, IStringLocalizerFactory, IStringLocalizerKey
     {
         /// <summary>
@@ -102,7 +102,7 @@ namespace Lexical.Localization
         /// Key part.
         /// </summary>
         [Serializable]
-        public class _Key : StringLocalizerKey, IAssetKeyAssigned, ILineParameter, ILineKeyCanonicallyCompared
+        public class _Key : StringLocalizerKey, IAssetKeyAssigned, ILineParameterPart, ILineKeyCanonicallyCompared
         {
             /// <summary>
             /// ParameterName
@@ -130,7 +130,7 @@ namespace Lexical.Localization
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
         /// <returns></returns>
-        ILineParameter ILineParameterAssignable.AppendParameter(string parameterName, string parameterValue)
+        ILineParameterPart ILineParameterAssignable.AppendParameter(string parameterName, string parameterValue)
         {
             if (parameterName == null) throw new ArgumentNullException(nameof(parameterName));
             if (parameterValue == null) throw new ArgumentNullException(nameof(parameterValue));
@@ -151,7 +151,7 @@ namespace Lexical.Localization
         /// Key for a parameterName that wasn't hard coded.
         /// </summary>
         [Serializable]
-        public class _Parameter : StringLocalizerKey, IAssetKeyAssigned, ILineParameter, ILineKeyCanonicallyCompared
+        public class _Parameter : StringLocalizerKey, IAssetKeyAssigned, ILineParameterPart, ILineKeyCanonicallyCompared
         {
             /// <summary>
             /// ParameterName
@@ -228,7 +228,7 @@ namespace Lexical.Localization
         /// Culture key.
         /// </summary>
         [Serializable]
-        public class _Culture : StringLocalizerKey, ILocalizationKeyCultureAssigned, ILineKeyNonCanonicallyCompared, ILineParameter
+        public class _Culture : StringLocalizerKey, ILocalizationKeyCultureAssigned, ILineKeyNonCanonicallyCompared, ILineParameterPart
         {
             /// <summary>
             /// ParameterName
@@ -332,10 +332,10 @@ namespace Lexical.Localization
                     foreach(var stringLine in stringLines)
                     {
                         ILinePart key = ParameterNamePolicy.Instance.Parse(stringLine.Key);
-                        if (AssetKeyComparer.Default.Equals(key, this)) _default = LexicalStringFormat.Instance.Parse(stringLine.Value);
+                        if (LineComparer.Default.Equals(key, this)) _default = LexicalStringFormat.Instance.Parse(stringLine.Value);
                         else
                         {
-                            if (inlines == null) inlines = new Dictionary<ILinePart, IFormulationString>(AssetKeyComparer.Default);
+                            if (inlines == null) inlines = new Dictionary<ILinePart, IFormulationString>(LineComparer.Default);
                             inlines[key] = LexicalStringFormat.Instance.Parse(stringLine.Value);
                         }
                     }
@@ -371,19 +371,19 @@ namespace Lexical.Localization
             {
                 get {
                     if (key == null) throw new ArgumentNullException(nameof(key));
-                    if (_default != null && AssetKeyComparer.Default.Equals(key, this)) return _default;
+                    if (_default != null && LineComparer.Default.Equals(key, this)) return _default;
                     if (inlines != null) return inlines[key];
                     throw new KeyNotFoundException(ParameterNamePolicy.Instance.BuildName(key));
                 }
                 set {
                     if (key == null) throw new ArgumentNullException(nameof(key));
-                    if (AssetKeyComparer.Default.Equals(key, this)) { _default = value; return; }
+                    if (LineComparer.Default.Equals(key, this)) { _default = value; return; }
                     if (value == null)
                     {
                         if (inlines != null) inlines.Remove(key);
                     } else
                     {
-                        if (inlines == null) inlines = new Dictionary<ILinePart, IFormulationString>(AssetKeyComparer.Default);
+                        if (inlines == null) inlines = new Dictionary<ILinePart, IFormulationString>(LineComparer.Default);
                         inlines[key] = value;
                     }
                 }
@@ -437,13 +437,13 @@ namespace Lexical.Localization
             public void Add(ILinePart key, IFormulationString value)
             {
                 if (key == null) throw new ArgumentNullException(nameof(key));
-                if (AssetKeyComparer.Default.Equals(key, this))
+                if (LineComparer.Default.Equals(key, this))
                 {
                     if (_default != null) throw new ArgumentException("Key already exists");
                     _default = value;
                     return;
                 }
-                if (inlines == null) inlines = new Dictionary<ILinePart, IFormulationString>(AssetKeyComparer.Default);
+                if (inlines == null) inlines = new Dictionary<ILinePart, IFormulationString>(LineComparer.Default);
                 inlines.Add(key, value);
             }
 
@@ -473,7 +473,7 @@ namespace Lexical.Localization
             public bool Contains(KeyValuePair<ILinePart, IFormulationString> line)
             {
                 if (line.Key == null) return false;
-                if (_default != null && AssetKeyComparer.Default.Equals(this, line.Key)) return line.Value == _default;
+                if (_default != null && LineComparer.Default.Equals(this, line.Key)) return line.Value == _default;
                 if (inlines != null) return inlines.Contains(line);
                 return false;
             }
@@ -486,7 +486,7 @@ namespace Lexical.Localization
             public bool ContainsKey(ILinePart key)
             {
                 if (key == null) return false;
-                if (_default != null && AssetKeyComparer.Default.Equals(this, key)) return true;
+                if (_default != null && LineComparer.Default.Equals(this, key)) return true;
                 if (inlines != null) return inlines.ContainsKey(key);
                 return false;
             }
@@ -514,7 +514,7 @@ namespace Lexical.Localization
             public bool Remove(ILinePart key)
             {
                 if (key == null) throw new ArgumentNullException(nameof(key));
-                if (_default != null && AssetKeyComparer.Default.Equals(this, key)) { _default = null; return true; }
+                if (_default != null && LineComparer.Default.Equals(this, key)) { _default = null; return true; }
                 if (inlines != null) return inlines.Remove(key);
                 return false;
             }
@@ -526,7 +526,7 @@ namespace Lexical.Localization
             /// <returns>true if item was successfully removed</returns>
             public bool Remove(KeyValuePair<ILinePart, IFormulationString> line)
             {
-                if (_default != null && AssetKeyComparer.Default.Equals(this, line.Key))
+                if (_default != null && LineComparer.Default.Equals(this, line.Key))
                 {
                     if (FormulationStringComparer.Instance.Equals(_default, line.Value)) { _default = null; return true; } else { return false; }
                 }
@@ -543,7 +543,7 @@ namespace Lexical.Localization
             /// <exception cref="ArgumentNullException">key is null.</exception>
             public bool TryGetValue(ILinePart key, out IFormulationString value)
             {
-                if (_default != null && AssetKeyComparer.Default.Equals(this, key)) { value = _default; return true; }
+                if (_default != null && LineComparer.Default.Equals(this, key)) { value = _default; return true; }
                 if (inlines != null) return inlines.TryGetValue(key, out value);
                 value = null;
                 return false;
@@ -575,7 +575,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        ILocalizationKeyFormatArgs ILocalizationKeyFormattable.Format(params object[] args) => new _FormatArgs(Appender, this, args);
+        ILineFormatArgsPart ILocalizationKeyFormattable.Format(params object[] args) => new _FormatArgs(Appender, this, args);
 
         /// <summary>
         /// Append format args key part.
@@ -588,7 +588,7 @@ namespace Lexical.Localization
         /// Format arguments key.
         /// </summary>
         [Serializable]
-        public class _FormatArgs : StringLocalizerKey, ILocalizationKeyFormatArgs
+        public class _FormatArgs : StringLocalizerKey, ILineFormatArgsPart
         {
             /// <summary>
             /// Format arguments.
@@ -702,7 +702,7 @@ namespace Lexical.Localization
         /// Section key part.
         /// </summary>
         [Serializable]
-        public class _Section : StringLocalizerKey, IAssetKeySectionAssigned, ILineParameter, ILineKeyCanonicallyCompared
+        public class _Section : StringLocalizerKey, IAssetKeySectionAssigned, ILineParameterPart, ILineKeyCanonicallyCompared
         {
             /// <summary>
             /// ParameterName
@@ -772,7 +772,7 @@ namespace Lexical.Localization
         /// Type key part.
         /// </summary>
         [Serializable]
-        public class _Type : StringLocalizerKey, IAssetKeyTypeAssigned, ILineParameter, ILineKeyNonCanonicallyCompared
+        public class _Type : StringLocalizerKey, IAssetKeyTypeAssigned, ILineParameterPart, ILineKeyNonCanonicallyCompared
         {
             /// <summary>
             /// Refered Type, or null if type was not available at construction time.
@@ -886,7 +886,7 @@ namespace Lexical.Localization
         /// Assembly key part.
         /// </summary>
         [Serializable]
-        public class _Assembly : StringLocalizerKey, IAssetKeyAssemblyAssigned, ILineKeyNonCanonicallyCompared, ILineParameter, ILineKeyCanonicallyCompared
+        public class _Assembly : StringLocalizerKey, IAssetKeyAssemblyAssigned, ILineKeyNonCanonicallyCompared, ILineParameterPart, ILineKeyCanonicallyCompared
         {
             /// <summary>
             /// Referred Assembly, or null if was not available.
@@ -958,7 +958,7 @@ namespace Lexical.Localization
         /// Resource key part.
         /// </summary>
         [Serializable]
-        public class _Resource : StringLocalizerKey, IAssetKeyResourceAssigned, ILineParameter, ILineKeyCanonicallyCompared
+        public class _Resource : StringLocalizerKey, IAssetKeyResourceAssigned, ILineParameterPart, ILineKeyCanonicallyCompared
         {
             /// <summary>
             /// ParameterName.
@@ -998,7 +998,7 @@ namespace Lexical.Localization
         /// Location key part.
         /// </summary>
         [Serializable]
-        public class _Location : StringLocalizerKey, IAssetKeyLocationAssigned, ILineParameter, ILineKeyCanonicallyCompared
+        public class _Location : StringLocalizerKey, IAssetKeyLocationAssigned, ILineParameterPart, ILineKeyCanonicallyCompared
         {
             /// <summary>
             /// ParameterName.
@@ -1194,14 +1194,14 @@ namespace Lexical.Localization
         /// Preferred comparer
         /// </summary>
         static IEqualityComparer<ILinePart> comparer =
-            new AssetKeyComparer()
+            new LineComparer()
                 .AddCanonicalComparer(ParameterComparer.Instance)
                 .AddComparer(NonCanonicalComparer.Instance)
                 .AddComparer(new LocalizationKeyFormatArgsComparer())
                 .SetReadonly();
 
         /// <summary>
-        /// Comparer that compares key reference and <see cref="ILocalizationKeyFormatArgs"/>.
+        /// Comparer that compares key reference and <see cref="ILineFormatArgsPart"/>.
         /// </summary>
         public static IEqualityComparer<ILinePart> FormatArgsComparer => comparer;
 
@@ -1229,18 +1229,18 @@ namespace Lexical.Localization
         /// Calculate default reference hashcode. Result is cached.
         /// </summary>
         /// <returns></returns>
-        int IAssetKeyDefaultHashCode.GetDefaultHashCode()
+        int ILineDefaultHashCode.GetDefaultHashCode()
         {
             // Return cached default hashcode
             if (defaultHashcodeCalculated) return defaultHashcode;
 
             // Get previous key's default hashcode
-            if (this is ILineKeyCanonicallyCompared == false && this is ILineKeyNonCanonicallyCompared == false && this.prevPart is IAssetKeyDefaultHashCode prevDefaultHashcode)
+            if (this is ILineKeyCanonicallyCompared == false && this is ILineKeyNonCanonicallyCompared == false && this.prevPart is ILineDefaultHashCode prevDefaultHashcode)
             {
                 defaultHashcode = prevDefaultHashcode.GetDefaultHashCode();
             } else
             {
-                defaultHashcode = AssetKeyComparer.Default.CalculateHashCode(this);
+                defaultHashcode = LineComparer.Default.CalculateHashCode(this);
             }
 
             // Mark calculated
@@ -1285,13 +1285,13 @@ namespace Lexical.Localization
             // Read parameters
             List<(string, string)> parameters = new List<(string, string)>();
             for (ILinePart k = this; k != oldCultureKey; k = k.PreviousPart)
-                if (k is ILineParameter parameterKey && parameterKey.ParameterName != null)
+                if (k is ILineParameterPart parameterKey && parameterKey.ParameterName != null)
                     parameters.Add((parameterKey.ParameterName, parameterKey.ParameterValue));
             // Assign new culture
             ILinePart result = newCulture == null ? beforeCultureKey : beforeCultureKey.Culture(newCulture);
             // Apply parameters
             for (int i = parameters.Count - 1; i >= 0; i--)
-                result = result.AppendParameter(parameters[i].Item1, parameters[i].Item2);
+                result = result.Parameter(parameters[i].Item1, parameters[i].Item2);
             return (IStringLocalizer)result;
         }
 

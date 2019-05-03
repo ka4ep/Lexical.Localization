@@ -68,7 +68,7 @@ namespace Lexical.Localization
             if (!String.IsNullOrEmpty(parameterName) && parameterValue != null)
             {
                 if (parameterNamesToExclude.Contains(parameterName)) return;
-                result = result.AppendParameter(parameterName, parameterValue);
+                result = result.Parameter(parameterName, parameterValue);
             }
         }
 

@@ -18,7 +18,7 @@ namespace Lexical.Localization
     /// <param name="data"></param>
     public delegate void LinePartVisitor<T>(ILinePart part, ref T data);
 
-    public static partial class LinePartExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Enumerate linked list towards root.

@@ -77,7 +77,7 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// Plurality extension methods.
     /// </summary>
-    public static partial class PluralityExtensions
+    public static partial class IPluralRulesExtensions
     {
         static string[] empty = new string[0];
 

@@ -17,7 +17,7 @@ namespace Lexical.Localization
     /// Parameters:
     ///     <see cref="ILocalizationKeyCultureAssigned"/>
     ///     <see cref="ILineInlines"/>
-    ///     <see cref="ILocalizationKeyFormatArgs"/>
+    ///     <see cref="ILineFormatArgsPart"/>
     ///     
     /// Hints:
     ///     <see cref="ILocalizationKeyCulturePolicyAssigned"/>
@@ -35,7 +35,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class LocalizationKeyExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Find <see cref="IAsset"/> and get formulation string.

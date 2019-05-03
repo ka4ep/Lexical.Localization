@@ -149,7 +149,7 @@ namespace Lexical.Localization.Utils
     /// <summary>
     /// Extension methods for parameter infos.
     /// </summary>
-    public static class ParameterInfoExtensions
+    public static class IParameterInfoExtensions
     {
         /// <summary>
         /// Add <paramref name="info"/> entry to <paramref name="infos"/>.

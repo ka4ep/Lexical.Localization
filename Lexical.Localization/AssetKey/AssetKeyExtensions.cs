@@ -5,7 +5,7 @@
 // --------------------------------------------------------
 namespace Lexical.Localization
 {
-    public static partial class AssetKeyExtensions_
+    public static partial class AssetKeyExtensions
     {
         /// <summary>
         /// Build name for key. 

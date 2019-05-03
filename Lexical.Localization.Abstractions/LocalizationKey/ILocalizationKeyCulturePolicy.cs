@@ -34,7 +34,7 @@ namespace Lexical.Localization
         ICulturePolicy CulturePolicy { get; }
     }
 
-    public static partial class LocalizationKeyExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Try to set culture policy.

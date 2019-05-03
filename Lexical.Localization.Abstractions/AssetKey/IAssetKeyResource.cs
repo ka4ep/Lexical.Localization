@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// 
     /// This parameter is mostly used with IStringLocalization of Microsoft.Extensions.Localization.Abstractions.
     /// 
-    /// Consumers of this interface should use the extension method <see cref="LinePartExtensions.Resource(ILinePart, string)"/>.
+    /// Consumers of this interface should use the extension method <see cref="ILinePartExtensions.Resource(ILinePart, string)"/>.
     /// </summary>
     public interface IAssetKeyResourceAssignable : ILinePart
     {
@@ -41,7 +41,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class LinePartExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Add <see cref="IAssetKeyResourceAssigned"/> section.

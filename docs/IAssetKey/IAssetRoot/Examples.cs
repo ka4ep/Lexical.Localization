@@ -40,7 +40,7 @@ namespace docs
                 IAsset asset = new LocalizationAsset(source, ParameterNamePolicy.Instance);
                 #region Snippet_5x
                 // Create reference
-                ILinePart key = new LocalizationKey._Section(null, "Section").Key("Key");
+                ILinePart key = new LocalizationKey._Section(null, null, "Section").Key("Key");
                 // Retreieve with reference
                 IFormulationString str = asset.GetString(key);
                 #endregion Snippet_5x

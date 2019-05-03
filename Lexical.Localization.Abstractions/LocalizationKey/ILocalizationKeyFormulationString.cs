@@ -28,7 +28,7 @@ namespace Lexical.Localization
     }
 
     /// <summary></summary>
-    public static partial class LineValueExtensions
+    public static partial class ILineValueExtensions
     {
         /// <summary>
         /// Append <see cref="ILineValue"/> key.

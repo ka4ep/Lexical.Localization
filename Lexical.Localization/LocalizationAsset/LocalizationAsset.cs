@@ -91,7 +91,7 @@ namespace Lexical.Localization
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
         public LocalizationAsset(IEqualityComparer<ILinePart> comparer = default, Func<Exception, bool> errorHandler = null) : base()
         {
-            this.comparer = comparer ?? AssetKeyComparer.Default;
+            this.comparer = comparer ?? LineComparer.Default;
             this.errorHandler = errorHandler;
             Load();
         }
@@ -114,7 +114,7 @@ namespace Lexical.Localization
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
         public LocalizationAsset(IEnumerable reader, IAssetKeyNamePolicy keyPolicy, IEqualityComparer<ILinePart> comparer = default, Func<Exception, bool> errorHandler = null) : base()
         {
-            this.comparer = comparer ?? AssetKeyComparer.Default;
+            this.comparer = comparer ?? LineComparer.Default;
             this.errorHandler = errorHandler;
             Add(reader ?? throw new ArgumentNullException(nameof(reader)), keyPolicy);
             Load();

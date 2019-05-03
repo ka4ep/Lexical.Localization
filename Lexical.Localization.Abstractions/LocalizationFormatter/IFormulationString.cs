@@ -133,7 +133,7 @@ namespace Lexical.Localization
 
         /// <summary>
         /// If format is argument based, then this is the argument index, otherwise -1.
-        /// Also index in <see cref="ILocalizationKeyFormatArgs.Args"/>.
+        /// Also index in <see cref="ILineFormatArgsPart.Args"/>.
         /// </summary>
         int ArgumentIndex { get; }
 

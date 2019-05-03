@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Collection of <see cref="ILinePartAppender"/>s.
     /// </summary>
-    public class LinePartAppenderCollection : ILinePartAppenderAdapter, IEnumerable<ILinePartAppender>
+    public class LinePartAppenderList : ILinePartAppenderAdapter, IEnumerable<ILinePartAppender>
     {
         Dictionary<Type, ILinePartAppender0> appenders0 = new Dictionary<Type, ILinePartAppender0>();
         Dictionary<Pair<Type, Type>, ILinePartAppender1> appenders1 = new Dictionary<Pair<Type, Type>, ILinePartAppender1>(Pair<Type, Type>.EqualityComparer.Default);
@@ -25,14 +25,14 @@ namespace Lexical.Localization
         /// <summary>
         /// Create line part appender collection
         /// </summary>
-        public LinePartAppenderCollection()
+        public LinePartAppenderList()
         {
         }
 
         /// <summary>
         /// Create line part appender collection
         /// </summary>
-        public LinePartAppenderCollection(IEnumerable<ILinePartAppender> initialAppenders)
+        public LinePartAppenderList(IEnumerable<ILinePartAppender> initialAppenders)
         {
             AddRange(initialAppenders);
         }
@@ -44,7 +44,7 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">if key already exists and <paramref name="policy"/> is <see cref="AddPolicy.ThrowIfExists"/></exception>
-        public LinePartAppenderCollection AddRange(IEnumerable<ILinePartAppender> appenders, AddPolicy policy = AddPolicy.ThrowIfExists)
+        public LinePartAppenderList AddRange(IEnumerable<ILinePartAppender> appenders, AddPolicy policy = AddPolicy.ThrowIfExists)
         {
             foreach (var appender in appenders)
                 Add(appender, policy);
@@ -142,7 +142,7 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <exception cref="InvalidOperationException">if key already exists and <paramref name="policy"/> is <see cref="AddPolicy.ThrowIfExists"/></exception>
         /// <returns></returns>
-        public LinePartAppenderCollection Add(ILinePartAppender appender, AddPolicy policy = AddPolicy.ThrowIfExists)
+        public LinePartAppenderList Add(ILinePartAppender appender, AddPolicy policy = AddPolicy.ThrowIfExists)
         {
             if (immutable) throw new InvalidOperationException("Appender is in read-only state.");
             if (appender == null) throw new ArgumentNullException(nameof(appender));
@@ -162,7 +162,7 @@ namespace Lexical.Localization
             {
                 Type[] paramTypes = itype.GetGenericArguments();
                 var key = paramTypes[0];
-                if (appenders0.ContainsKey(key))
+                if (itype.IsAssignableFrom(GetType()) || appenders0.ContainsKey(key))
                 {
                     if (policy == AddPolicy.ThrowIfExists) throw new InvalidOperationException($"Already contains appender for {nameof(itype)}.");
                     else if (policy == AddPolicy.IgnoreIfExists) continue;
@@ -175,7 +175,7 @@ namespace Lexical.Localization
             {
                 Type[] paramTypes = itype.GetGenericArguments();
                 var key = new Pair<Type, Type>(paramTypes[0], paramTypes[1]);
-                if (appenders1.ContainsKey(key))
+                if (itype.IsAssignableFrom(GetType()) || appenders1.ContainsKey(key))
                 {
                     if (policy == AddPolicy.ThrowIfExists) throw new InvalidOperationException($"Already contains appender for {nameof(itype)}.");
                     else if (policy == AddPolicy.IgnoreIfExists) continue;
@@ -188,7 +188,7 @@ namespace Lexical.Localization
             {
                 Type[] paramTypes = itype.GetGenericArguments();
                 var key = new Triple<Type, Type, Type>(paramTypes[0], paramTypes[1], paramTypes[2]);
-                if (appenders2.ContainsKey(key))
+                if (itype.IsAssignableFrom(GetType()) || appenders2.ContainsKey(key))
                 {
                     if (policy == AddPolicy.ThrowIfExists) throw new InvalidOperationException($"Already contains appender for {nameof(itype)}.");
                     else if (policy == AddPolicy.IgnoreIfExists) continue;
@@ -201,7 +201,7 @@ namespace Lexical.Localization
             {
                 Type[] paramTypes = itype.GetGenericArguments();
                 var key = new Quad<Type, Type, Type, Type>(paramTypes[0], paramTypes[1], paramTypes[2], paramTypes[3]);
-                if (appenders3.ContainsKey(key))
+                if (itype.IsAssignableFrom(GetType()) || appenders3.ContainsKey(key))
                 {
                     if (policy == AddPolicy.ThrowIfExists) throw new InvalidOperationException($"Already contains appender for {nameof(itype)}.");
                     else if (policy == AddPolicy.IgnoreIfExists) continue;
@@ -219,7 +219,7 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">if key already exists and <paramref name="policy"/> is <see cref="AddPolicy.ThrowIfExists"/></exception>
-        public LinePartAppenderCollection Add<Part>(Func<ILinePartAppender, ILinePart, Part> func, AddPolicy policy = AddPolicy.ThrowIfExists) where Part : ILinePart
+        public LinePartAppenderList Add<Part>(Func<ILinePartAppender, ILinePart, Part> func, AddPolicy policy = AddPolicy.ThrowIfExists) where Part : ILinePart
             => Add(new Delegate0<Part>(this, func), policy);
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">if key already exists and <paramref name="policy"/> is <see cref="AddPolicy.ThrowIfExists"/></exception>
-        public LinePartAppenderCollection Add<Part, A0>(Func<ILinePartAppender, ILinePart, A0, Part> func, AddPolicy policy = AddPolicy.ThrowIfExists) where Part : ILinePart
+        public LinePartAppenderList Add<Part, A0>(Func<ILinePartAppender, ILinePart, A0, Part> func, AddPolicy policy = AddPolicy.ThrowIfExists) where Part : ILinePart
             => Add(new Delegate1<Part, A0>(this, func), policy);
 
         /// <summary>
@@ -239,7 +239,7 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">if key already exists and <paramref name="policy"/> is <see cref="AddPolicy.ThrowIfExists"/></exception>
-        public LinePartAppenderCollection Add<Part, A0, A1>(Func<ILinePartAppender, ILinePart, A0, A1, Part> func, AddPolicy policy = AddPolicy.ThrowIfExists) where Part : ILinePart
+        public LinePartAppenderList Add<Part, A0, A1>(Func<ILinePartAppender, ILinePart, A0, A1, Part> func, AddPolicy policy = AddPolicy.ThrowIfExists) where Part : ILinePart
             => Add(new Delegate2<Part, A0, A1>(this, func), policy);
 
         /// <summary>
@@ -249,14 +249,14 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">if key already exists and <paramref name="policy"/> is <see cref="AddPolicy.ThrowIfExists"/></exception>
-        public LinePartAppenderCollection Add<Part, A0, A1, A2>(Func<ILinePartAppender, ILinePart, A0, A1, A2, Part> func, AddPolicy policy = AddPolicy.ThrowIfExists) where Part : ILinePart
+        public LinePartAppenderList Add<Part, A0, A1, A2>(Func<ILinePartAppender, ILinePart, A0, A1, A2, Part> func, AddPolicy policy = AddPolicy.ThrowIfExists) where Part : ILinePart
             => Add(new Delegate3<Part, A0, A1, A2>(this, func), policy);
 
         /// <summary>
         /// Change appender into read-only state.
         /// </summary>
         /// <returns></returns>
-        public LinePartAppenderCollection ReadOnly()
+        public LinePartAppenderList ReadOnly()
         {
             this.immutable = true;
             return this;
@@ -266,8 +266,8 @@ namespace Lexical.Localization
         /// Create clone
         /// </summary>
         /// <returns></returns>
-        public virtual LinePartAppenderCollection Clone()
-            => new LinePartAppenderCollection().AddRange(this, AddPolicy.IgnoreIfExists);
+        public virtual LinePartAppenderList Clone()
+            => new LinePartAppenderList().AddRange(this, AddPolicy.IgnoreIfExists);
 
         /// <summary>
         /// List appenders
@@ -448,6 +448,24 @@ namespace Lexical.Localization
             public Part Append(ILinePart previous, A0 a0, A1 a1, A2 a2)
                 => Func(Appender, previous, a0, a1, a2);
         }
-
     }
+
+    /// <summary></summary>
+    public static partial class LinePartExtensions
+    {
+        /// <summary>
+        /// Create a clone of <paramref name="previous"/>'s appender, and add new components to it. 
+        /// </summary>
+        /// <param name="previous">previous part</param>
+        /// <param name="appender">appender to add</param>
+        /// <param name="policy">add policy</param>
+        /// <returns>part with another appender</returns>
+        public static ILinePart AddAppender(this ILinePart previous, ILinePartAppender appender, LinePartAppenderList.AddPolicy policy = LinePartAppenderList.AddPolicy.OverwriteIfExists)
+        {
+            ILinePartAppender previousAppender = previous.GetAppender();
+            ILinePartAppender newAppender = previousAppender == null ? appender : new LinePartAppenderList().Add(previousAppender, policy).Add(appender, policy);
+            return newAppender.Append<ILinePart>(previous);
+        }
+    }
+
 }

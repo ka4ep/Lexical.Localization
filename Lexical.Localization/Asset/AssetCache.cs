@@ -216,7 +216,7 @@ namespace Lexical.Localization
         public IAsset Source { get; internal set; }
         public AssetCacheOptions Options { get; internal set; }
 
-        AssetKeyComparer comparer;
+        LineComparer comparer;
         AssetKeyCloner cloner;
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace Lexical.Localization
             /// </summary>
             public bool stringLinesAllIsNull;
 
-            public Cache(AssetKeyComparer comparer)
+            public Cache(LineComparer comparer)
             {
                 this.strings = new Dictionary<ILinePart, IFormulationString>(comparer);
             }
@@ -287,7 +287,7 @@ namespace Lexical.Localization
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
             this.cloner = new AssetKeyCloner(Key.Root);
-            this.comparer = AssetKeyComparer.Default;
+            this.comparer = LineComparer.Default;
             this.cache = new Cache(comparer);
         }
 
@@ -562,7 +562,7 @@ namespace Lexical.Localization
         public IAsset Source { get; internal set; }
         public AssetCacheOptions Options { get; internal set; }
 
-        AssetKeyComparer comparer;
+        LineComparer comparer;
         AssetKeyCloner cloner;
 
         /// <summary>
@@ -622,7 +622,7 @@ namespace Lexical.Localization
             /// </summary>
             public bool namesAllIsNull;
 
-            public Cache(AssetKeyComparer comparer)
+            public Cache(LineComparer comparer)
             {
                 this.data = new Dictionary<ILinePart, byte[]>(comparer);
             }
@@ -633,7 +633,7 @@ namespace Lexical.Localization
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
             this.cloner = new AssetKeyCloner(Key.Root);
-            this.comparer = AssetKeyComparer.Default;
+            this.comparer = LineComparer.Default;
             this.cache = new Cache(comparer);
         }
 

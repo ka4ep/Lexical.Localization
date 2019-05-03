@@ -49,7 +49,7 @@ namespace Lexical.Localization
             // (byte[]) maps to AssetKeyExtensions.GetResource(obj)
             if (typeof(byte[]).IsAssignableFrom(binder.ReturnType))
             {
-                if (miGetResource == null) miGetResource = typeof(LinePartExtensions).GetMethod(nameof(LinePartExtensions.GetResource));
+                if (miGetResource == null) miGetResource = typeof(ILinePartExtensions).GetMethod(nameof(ILinePartExtensions.GetResource));
                 mi = miGetResource;
             }
 
@@ -81,7 +81,7 @@ namespace Lexical.Localization
 
         protected virtual DynamicMetaObject createKeyMember(GetMemberBinder binder)
         {
-            MethodInfo mi = typeof(LinePartExtensions).GetMethod("Key");
+            MethodInfo mi = typeof(ILinePartExtensions).GetMethod("Key");
             BindingRestrictions restrictions = BindingRestrictions.GetTypeRestriction(Expression, LimitType);
             Expression selfExp = Expression.Convert(Expression, mi.GetParameters()[0].ParameterType);
             Expression keyNameExp = Expression.Constant(binder.Name);

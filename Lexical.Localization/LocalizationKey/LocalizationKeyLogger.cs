@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Extension methods for adding loggers to <see cref="ILocalizationResolver"/>s.
     /// </summary>
-    public static partial class LocalizationKeyLoggerExtensions_
+    public static partial class LocalizationKeyLoggerExtensions
     {
         /// <summary>
         /// Try to add a <paramref name="logger"/> to <paramref name="key"/>.
@@ -202,7 +202,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Extension methods for adding loggers to <see cref="ILocalizationKey"/>s.
     /// </summary>
-    public static partial class LocalizationKeyLoggerExtensions____
+    public static partial class LocalizationKeyLoggerExtensions
     {
         /// <summary>
         /// Append <paramref name="logger"/> to <paramref name="key"/>.

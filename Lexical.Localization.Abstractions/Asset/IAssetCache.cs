@@ -53,7 +53,7 @@ namespace Lexical.Localization
     #endregion options
 
     #region extensions
-    public static partial class AssetCacheExtensions
+    public static partial class IAssetCacheExtensions
     {
         /// <summary>
         /// Extension method for chain calls.

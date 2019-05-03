@@ -259,7 +259,7 @@ namespace Lexical.Localization
             int occuranceIndex = 1;
             for (ILinePart part = key; part != null; part = part.PreviousPart)
             {
-                if (part is ILineParameter parametrized)
+                if (part is ILineParameterPart parametrized)
                 {
                     // Read parameter name and value
                     string parameterName = parametrized.ParameterName, parameterValue = part.GetParameterValue();

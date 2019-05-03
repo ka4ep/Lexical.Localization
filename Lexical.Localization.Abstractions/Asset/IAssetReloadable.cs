@@ -17,7 +17,7 @@ namespace Lexical.Localization
         IAsset Reload();
     }
 
-    public static partial class AssetExtensions
+    public static partial class IAssetExtensions
     {
         /// <summary>
         /// Reload source files and clear caches.

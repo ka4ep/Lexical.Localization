@@ -17,7 +17,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Contains extensions that help instantiating <see cref="IAsset"/> from intermediate key-value formats, and <see cref="ILocalizationFileFormat"/>.
     /// </summary>
-    public static partial class LocalizationReaderExtensions_
+    public static partial class LocalizationReaderExtensions
     {
         /// <summary>
         /// Read localization strings from <see cref="Stream"/> into most suitable asset implementation.

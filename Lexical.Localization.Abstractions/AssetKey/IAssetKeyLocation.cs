@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// If <see cref="IAsset"/> implementation uses name pattern, the hint in key reflects to "Location_0", "Location_1", etc parts in name pattern. Part "Location" reflects to the last hint.
     /// For example, location hints would reflect to respective parts in the following name pattern: "{Location_0/}{Location_1/}{Type/}{Section.}{Key}.ini".
     /// 
-    /// Consumers of this interface should call the extension method <see cref="LinePartExtensions.Location(ILinePart, string)"/>.
+    /// Consumers of this interface should call the extension method <see cref="ILinePartExtensions.Location(ILinePart, string)"/>.
     /// </summary>
     public interface IAssetKeyLocationAssignable : ILinePart
     {
@@ -41,7 +41,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class LinePartExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Add <see cref="IAssetKeyLocationAssigned"/> section.

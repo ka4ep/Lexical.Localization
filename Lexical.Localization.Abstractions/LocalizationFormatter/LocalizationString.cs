@@ -574,10 +574,4 @@ namespace Lexical.Localization
 
     }
 
-    /// <summary>
-    /// Extension methods for <see cref="LocalizationString"/>
-    /// </summary>
-    public static partial class LocalizationFormatResultExtensions
-    {
-    }
 }

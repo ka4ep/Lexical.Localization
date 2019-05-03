@@ -156,7 +156,7 @@ namespace Lexical.Localization
             => $"{GetType().Name}()";
     }
 
-    public static partial class AssetExtensions_
+    public static partial class AssetExtensions
     {
         /// <summary>
         /// Add byte[] dictionary to builder.

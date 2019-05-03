@@ -63,7 +63,7 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Convert <paramref name="lines"/> to asset.
         /// 
-        /// Lines are reloaded into the asset if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
+        /// Lines are reloaded into the asset if <see cref="IAssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="policy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>

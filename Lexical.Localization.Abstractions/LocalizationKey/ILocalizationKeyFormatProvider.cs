@@ -40,7 +40,7 @@ namespace Lexical.Localization
         IFormatProvider FormatProvider { get; }
     }
 
-    public static partial class LocalizationKeyExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Append format provider key.

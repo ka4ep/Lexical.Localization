@@ -215,7 +215,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Extension methods for <see cref="IAssetNamePattern"/>.
     /// </summary>
-    public static partial class AssetNamePatternExtensions
+    public static partial class IAssetNamePatternExtensions
     {
         /// <summary>
         /// Match parameters of an object and convert into a string.

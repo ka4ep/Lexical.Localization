@@ -26,7 +26,7 @@ namespace Lexical.Localization
         /// Resolve the formulation string. 
         /// 
         /// Uses the following algorithm:
-        ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="LocalizationKeyExtensions.FindCulturePolicy(ILinePart)"/>.
+        ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="ILinePartExtensions.FindCulturePolicy(ILinePart)"/>.
         ///   2. Try key as is.
         ///   
         ///      a. Search inlines with culture
@@ -80,7 +80,7 @@ namespace Lexical.Localization
         /// Resolve language string. 
         /// 
         /// Uses the following algorithm:
-        ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="LocalizationKeyExtensions.FindCulturePolicy(ILinePart)"/>.
+        ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="ILinePartExtensions.FindCulturePolicy(ILinePart)"/>.
         ///   2. Try key as is.
         ///   
         ///      a. Search inlines with plurality and culture
@@ -91,13 +91,13 @@ namespace Lexical.Localization
         ///   3. Then try to formulate the string with assigned arguments, e.g. "Error (Code=0xFEEDF00D)"
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>If key has <see cref="ILocalizationKeyFormatArgs"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
-        /// If key didn't have <see cref="ILocalizationKeyFormatArgs"/> part, then return the formulation string "Error (Code=0x{0:X8})".
+        /// <returns>If key has <see cref="ILineFormatArgsPart"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
+        /// If key didn't have <see cref="ILineFormatArgsPart"/> part, then return the formulation string "Error (Code=0x{0:X8})".
         /// otherwise return null</returns>
         public LocalizationString ResolveFormulatedString(ILinePart key)
         {
             // Get args
-            object[] format_args = key.FindFormatArgs();
+            object[] format_args = key.GetFormatArgs();
 
             // Plurality key when there is only one numeric argument. e.g. "Key:N:One"
             ILinePart pluralityKey = null;

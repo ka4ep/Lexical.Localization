@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Contains extensions that help instantiating <see cref="IAsset"/> from intermediate key-value formats, and <see cref="ILocalizationFileFormat"/>.
     /// </summary>
-    public static partial class LocalizationReaderExtensions_
+    public static partial class LocalizationReaderExtensions
     {
         /// <summary>
         /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="asm"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -56,7 +56,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create localization asset from embedded resource<paramref name="resourceName"/>.
         /// 
-        /// File is reloaded if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
+        /// File is reloaded if <see cref="IAssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="fileFormat"></param>
         /// <param name="assembly"></param>
@@ -149,7 +149,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create localization asset from embedded resource<paramref name="resourceName"/>.
         /// 
-        /// File is reloaded if <see cref="AssetExtensions.Reload(IAsset)"/> is called.
+        /// File is reloaded if <see cref="IAssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="fileFormatProvider"></param>
         /// <param name="asm"></param>

@@ -134,7 +134,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Get-or-create child nodes
         /// </summary>
-        public MapList<ILinePart, KeyTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<ILinePart, KeyTree>(AssetKeyComparer.Default).AddRange(Children.Where(c=>c.Key!=null).Select(c=>new KeyValuePair<ILinePart, KeyTree>(c.Key, c))));
+        public MapList<ILinePart, KeyTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<ILinePart, KeyTree>(LineComparer.Default).AddRange(Children.Where(c=>c.Key!=null).Select(c=>new KeyValuePair<ILinePart, KeyTree>(c.Key, c))));
 
         /// <summary>
         /// Test if has values.

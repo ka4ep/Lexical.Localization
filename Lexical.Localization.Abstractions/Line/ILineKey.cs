@@ -3,14 +3,15 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using System.Collections.Generic;
+
 namespace Lexical.Localization
 {
     /// <summary>
     /// Signals that the keypart is used as a key, and is hash-equals comparable
     /// </summary>
-    public interface ILineKey : ILineParameter
+    public interface ILineKey : ILineParameterPart
     {
-
     }
 
     /// <summary>
@@ -31,7 +32,21 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class LinePartExtensions
+    /// <summary>
+    /// Interface for a line that can enumerate non-canonically compared keys (from root towards tail).
+    /// </summary>
+    public interface ILineKeyNonCanonicallyComparedEnumerable : ILine, IEnumerable<KeyValuePair<string, string>>
+    {
+    }
+
+    /// <summary>
+    /// Interface for a line that can enumerate canonically compared keys (from root towards tail).
+    /// </summary>
+    public interface ILineKeyCanonicallyComparedEnumerable : ILine, IEnumerable<KeyValuePair<string, string>>
+    {
+    }
+
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Get part that implements <see cref="ILineKeyCanonicallyCompared"/>, either this or preceding, or null if not found.

@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// Assembly is a hint that is used when assets are loaded from embedded rsources.
     /// For instance, assembly hint matches in a name pattern such as "[Assembly.][Resource.]{Type.}{Section.}{Key}".
     /// 
-    /// Consumers of this interface should use the extension method <see cref="LinePartExtensions.Assembly(ILinePart, string)"/>.
+    /// Consumers of this interface should use the extension method <see cref="ILinePartExtensions.Assembly(ILinePart, string)"/>.
     /// </summary>
     public interface IAssetKeyAssemblyAssignable : ILinePart
     {
@@ -50,7 +50,7 @@ namespace Lexical.Localization
         // The inherited Name property is either Assembly.FullName or Assembly.GetName().Name.
     }
 
-    public static partial class LinePartExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Add <see cref="IAssetKeyAssemblyAssigned"/> section.

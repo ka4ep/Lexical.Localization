@@ -70,7 +70,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Extenions for <see cref="ILocalizationStringFormat"/>.
     /// </summary>
-    public static partial class LocalizationStringFormatExtensions
+    public static partial class ILocalizationStringFormatExtensions
     {
         /// <summary>
         /// Parse formulation string into an <see cref="IFormulationString"/>.

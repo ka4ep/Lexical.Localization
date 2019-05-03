@@ -11,7 +11,7 @@ namespace Lexical.Localization
     /// Key is a leaf, or a tail part, of the identity. 
     /// Such as "Error" in key "ConsoleApp1:MyController:Error".
     /// 
-    /// Consumers of this interface should use the extension method <see cref="LinePartExtensions.Key(ILinePart, string)"/>.
+    /// Consumers of this interface should use the extension method <see cref="ILinePartExtensions.Key(ILinePart, string)"/>.
     /// </summary>
     public interface IAssetKeyAssignable : ILinePart
     {
@@ -36,7 +36,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class LinePartExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Add regular subkey.

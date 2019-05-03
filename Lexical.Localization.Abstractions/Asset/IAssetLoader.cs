@@ -38,7 +38,7 @@ namespace Lexical.Localization
     }
     #endregion interface
  
-    public static partial class AssetLoaderExtensions
+    public static partial class IAssetLoaderExtensions
     { 
         /// <summary>
         /// Apply <paramref name="configurer"/> on every part of the asset loader.

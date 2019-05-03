@@ -31,7 +31,7 @@ namespace Lexical.Localization
     }
     #endregion interface
 
-    public static partial class AssetBuilderExtensions
+    public static partial class IAssetBuilderExtensions
     {
         /// <summary>
         /// Add <paramref name="assetSource"/> to sources.

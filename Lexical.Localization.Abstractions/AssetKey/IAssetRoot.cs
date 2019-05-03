@@ -18,7 +18,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class LocalizationKeyExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Get the root key that implements <see cref="IAssetRoot"/>.

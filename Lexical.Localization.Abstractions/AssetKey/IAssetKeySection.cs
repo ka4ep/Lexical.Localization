@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// 
     /// Regular section as a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.
     /// 
-    /// Consumers of this interface should use the extension method <see cref="LinePartExtensions.Section(ILinePart, string)"/>.
+    /// Consumers of this interface should use the extension method <see cref="ILinePartExtensions.Section(ILinePart, string)"/>.
     /// </summary>
     public interface IAssetKeySectionAssignable : ILinePart
     {
@@ -37,7 +37,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class LinePartExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Create section

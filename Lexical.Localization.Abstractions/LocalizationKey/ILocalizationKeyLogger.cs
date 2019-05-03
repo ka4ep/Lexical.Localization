@@ -33,7 +33,7 @@ namespace Lexical.Localization
         IObservable<LocalizationString> Logger { get; }
     }
 
-    public static partial class LocalizationKeyExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Append observer that monitors resolving of localization strings.

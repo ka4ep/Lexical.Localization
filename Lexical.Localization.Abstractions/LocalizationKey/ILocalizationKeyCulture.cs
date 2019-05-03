@@ -48,7 +48,7 @@ namespace Lexical.Localization
 
     /// <summary>
     /// </summary>
-    public static partial class LocalizationKeyExtensions
+    public static partial class ILinePartExtensions
     {
         /// <summary>
         /// Set to a specific culture
@@ -126,7 +126,7 @@ namespace Lexical.Localization
                     if (cultureKey.Culture != null) culture = cultureKey.Culture;
                     else if (cultureKey.GetParameterValue() != null) cultureName = cultureKey.GetParameterValue();
                 }
-                else if (key is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) cultureName = parameterKey.ParameterValue;
+                else if (key is ILineParameterPart parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) cultureName = parameterKey.ParameterValue;
             }
             if (culture != null) return culture;
             if (cultureName != null) try { return CultureInfo.GetCultureInfo(cultureName); } catch (CultureNotFoundException) { }
@@ -144,7 +144,7 @@ namespace Lexical.Localization
             for (; key != null; key = key.PreviousPart)
             {
                 if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.GetParameterValue() != null) result = cultureKey.GetParameterValue();
-                else if (key is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) result = parameterKey.ParameterValue;
+                else if (key is ILineParameterPart parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) result = parameterKey.ParameterValue;
             }
             return result;
         }
@@ -160,7 +160,7 @@ namespace Lexical.Localization
             for (; key != null; key = key.PreviousPart)
             {
                 if (key is ILocalizationKeyCultureAssigned cultureKey && cultureKey.GetParameterValue() != null) result = cultureKey;
-                else if (key is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) result = parameterKey;
+                else if (key is ILineParameterPart parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) result = parameterKey;
             }
             return result;
         }

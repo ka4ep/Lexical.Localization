@@ -17,19 +17,35 @@ namespace Lexical.Localization
     public partial interface ILinePart : ILine
     {
         /// <summary>
-        /// Previous part.
+        /// (Optional) Previous part.
         /// </summary>
         ILinePart PreviousPart { get; }
 
         /// <summary>
-        /// Part appender
+        /// (Optional) Part appender. If null, the caller should follow to <see cref="PreviousPart"/> for appender.
         /// </summary>
         ILinePartAppender Appender { get; }
     }
 
     /// <summary></summary>
-    public static partial class LinePartExtensions
+    public static partial class ILinePartExtensions
     {
+        /// <summary>
+        /// Get appender from <paramref name="part"/>.
+        /// If its null, follows to previous part. 
+        /// </summary>
+        /// <param name="part"></param>
+        /// <returns>appender or null</returns>
+        public static ILinePartAppender GetAppender(this ILinePart part)
+        {
+            for(ILinePart p = part; p!=null; p=p.PreviousPart)
+            {
+                ILinePartAppender appender = p.Appender;
+                if (appender != null) return appender;
+            }
+            return null;
+        }
+
         /// <summary>
         /// Append new <see cref="ILinePart"/> to <paramref name="part"/>.
         /// </summary>
@@ -39,7 +55,7 @@ namespace Lexical.Localization
         /// <exception cref="ArgumentNullException">If appender is null</exception>
         /// <exception cref="LocalizationException">If appended could not append <typeparamref name="Part"/></exception>
         public static Part Append<Part>(this ILinePart part) where Part : ILinePart
-            => part.Appender.Append<Part>(part);
+            => part.GetAppender().Append<Part>(part);
 
         /// <summary>
         /// Append new <see cref="ILinePart"/> to <paramref name="part"/>.
@@ -52,7 +68,7 @@ namespace Lexical.Localization
         /// <exception cref="LocalizationException">If appended could not append <typeparamref name="Part"/></exception>
         /// <returns>Part</returns>
         public static Part Append<Part, A0>(this ILinePart part, A0 a0) where Part : ILinePart
-            => part.Appender.Append<Part, A0>(part, a0);
+            => part.GetAppender().Append<Part, A0>(part, a0);
 
         /// <summary>
         /// Append new <see cref="ILinePart"/> to <paramref name="part"/>.
@@ -67,7 +83,7 @@ namespace Lexical.Localization
         /// <exception cref="LocalizationException">If appended could not append <typeparamref name="Part"/></exception>
         /// <returns>Part</returns>
         public static Part Append<Part, A0, A1>(this ILinePart part, A0 a0, A1 a1) where Part : ILinePart
-            => part.Appender.Append<Part, A0, A1>(part, a0, a1);
+            => part.GetAppender().Append<Part, A0, A1>(part, a0, a1);
 
         /// <summary>
         /// Append new <see cref="ILinePart"/> to <paramref name="part"/>.
@@ -84,7 +100,15 @@ namespace Lexical.Localization
         /// <exception cref="LocalizationException">If appended could not append <typeparamref name="Part"/></exception>
         /// <returns>Part</returns>
         public static Part Append<Part, A0, A1, A2>(this ILinePart part, A0 a0, A1 a1, A2 a2) where Part : ILinePart
-            => part.Appender.Append<Part, A0, A1, A2>(part, a0, a1, a2);
+            => part.GetAppender().Append<Part, A0, A1, A2>(part, a0, a1, a2);
 
+        /// <summary>
+        /// Set new appender by appending a dummy <see cref="ILinePart"/> with the new <paramref name="appender"/>.
+        /// </summary>
+        /// <param name="previous"></param>
+        /// <param name="appender"></param>
+        /// <returns>part with another appender</returns>
+        public static ILinePart SetAppender(this ILinePart previous, ILinePartAppender appender)
+            => appender.Append<ILinePart>(previous);
     }
 }
