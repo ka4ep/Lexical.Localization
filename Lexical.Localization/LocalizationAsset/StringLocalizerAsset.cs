@@ -123,7 +123,7 @@ namespace Lexical.Localization
 
         public IFormulationString GetString(ILinePart key)
         {
-            CultureInfo key_culture = key.FindCulture();
+            CultureInfo key_culture = key.GetCultureInfo();
             if (key_culture != null)
             {
                 // Get-or-create culture specific adapter, use that
@@ -188,7 +188,7 @@ namespace Lexical.Localization
             {
                 string value = k.GetParameterValue();
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILocalizationKeyCultureAssigned || string.IsNullOrEmpty(value)) continue;
+                if (k is ILineCultureKey || string.IsNullOrEmpty(value)) continue;
                 if (length > 0) length++;
                 length += value.Length;
             }
@@ -198,7 +198,7 @@ namespace Lexical.Localization
             {
                 string value = k.GetParameterValue();
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILocalizationKeyCultureAssigned || string.IsNullOrEmpty(value)) continue;
+                if (k is ILineCultureKey || string.IsNullOrEmpty(value)) continue;
                 if (ix < length) chars[--ix] = '.';
                 ix -= value.Length;
                 value.CopyTo(0, chars, ix, value.Length);
@@ -213,7 +213,7 @@ namespace Lexical.Localization
 
         public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILinePart key = null)
         {
-            CultureInfo key_culture = key?.FindCulture();
+            CultureInfo key_culture = key?.GetCultureInfo();
             IStringLocalizer localizer = key == null ? stringLocalizer : FindStringLocalizer(key, key_culture).stringLocalizer;
             if (localizer == null) return null;
 

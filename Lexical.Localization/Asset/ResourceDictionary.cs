@@ -58,7 +58,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public IEnumerable<CultureInfo> GetSupportedCultures()
-            => dictionary.Keys.Select(l => l.FindCulture()).Where(ci => ci != null).Distinct().ToArray();
+            => dictionary.Keys.Select(l => l.GetCultureInfo()).Where(ci => ci != null).Distinct().ToArray();
 
         /// <summary>
         /// Read resource

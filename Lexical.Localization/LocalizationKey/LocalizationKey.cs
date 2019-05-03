@@ -211,20 +211,20 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="culture"></param>
         /// <returns></returns>
-        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.Culture(CultureInfo culture) => new _Culture(Appender, this, null, culture);
+        ILineCultureKey ILocalizationKeyCultureAssignable.Culture(CultureInfo culture) => new _Culture(Appender, this, null, culture);
 
         /// <summary>
         /// Append a culture key.
         /// </summary>
         /// <param name="cultureName"></param>
         /// <returns></returns>
-        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.Culture(string cultureName) => new _Culture(Appender, this, cultureName, null);
+        ILineCultureKey ILocalizationKeyCultureAssignable.Culture(string cultureName) => new _Culture(Appender, this, cultureName, null);
 
         /// <summary>
         /// Culture key.
         /// </summary>
         [Serializable]
-        public class _Culture : LocalizationKey, ILocalizationKeyCultureAssigned, ILineKeyNonCanonicallyCompared, ILineParameterPart
+        public class _Culture : LocalizationKey, ILineCultureKey, ILineKeyNonCanonicallyCompared, ILineParameterPart
         {
             /// <summary>
             /// ParameterName
@@ -236,7 +236,7 @@ namespace Lexical.Localization
             /// </summary>
             protected CultureInfo culture;
 
-            CultureInfo ILocalizationKeyCultureAssigned.Culture => culture;
+            CultureInfo ILineCulture.Culture => culture;
 
             /// <summary>
             /// Create new culture key.
@@ -1285,7 +1285,7 @@ namespace Lexical.Localization
                     .AddInterface(typeof(IAssetKeyResourceAssignable))
                     .AddExtensionMethods(typeof(ILinePartExtensions))
                     .AddInterface(typeof(ILocalizationKeyCultureAssignable))
-                    .AddInterface(typeof(ILocalizationKeyCultureAssigned))
+                    .AddInterface(typeof(ILineCultureKey))
                     .AddInterface(typeof(ILocalizationKeyCulturePolicyAssigned))
                     .AddInterface(typeof(ILocalizationKeyCulturePolicyAssignable))
                     .AddInterface(typeof(ILineFormatArgsPart))

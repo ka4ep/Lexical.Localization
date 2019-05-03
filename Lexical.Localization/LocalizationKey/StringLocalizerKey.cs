@@ -151,7 +151,7 @@ namespace Lexical.Localization
         /// Key for a parameterName that wasn't hard coded.
         /// </summary>
         [Serializable]
-        public class _Parameter : StringLocalizerKey, IAssetKeyAssigned, ILineParameterPart, ILineKeyCanonicallyCompared
+        public class _Parameter : StringLocalizerKey, IAssetKeyAssigned, ILineParameterPart
         {
             /// <summary>
             /// ParameterName
@@ -215,20 +215,20 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="culture"></param>
         /// <returns></returns>
-        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.Culture(CultureInfo culture) => new _Culture(Appender, this, null, culture);
+        ILineCultureKey ILocalizationKeyCultureAssignable.Culture(CultureInfo culture) => new _Culture(Appender, this, null, culture);
 
         /// <summary>
         /// Append a culture key.
         /// </summary>
         /// <param name="cultureName"></param>
         /// <returns></returns>
-        ILocalizationKeyCultureAssigned ILocalizationKeyCultureAssignable.Culture(string cultureName) => new _Culture(Appender, this, cultureName, null);
+        ILineCultureKey ILocalizationKeyCultureAssignable.Culture(string cultureName) => new _Culture(Appender, this, cultureName, null);
 
         /// <summary>
         /// Culture key.
         /// </summary>
         [Serializable]
-        public class _Culture : StringLocalizerKey, ILocalizationKeyCultureAssigned, ILineKeyNonCanonicallyCompared, ILineParameterPart
+        public class _Culture : StringLocalizerKey, ILineCultureKey, ILineKeyNonCanonicallyCompared, ILineParameterPart
         {
             /// <summary>
             /// ParameterName
@@ -240,7 +240,7 @@ namespace Lexical.Localization
             /// </summary>
             protected CultureInfo culture;
 
-            CultureInfo ILocalizationKeyCultureAssigned.Culture => culture;
+            CultureInfo ILineCulture.Culture => culture;
 
             /// <summary>
             /// Create new culture key.
@@ -1273,7 +1273,7 @@ namespace Lexical.Localization
         public IStringLocalizer WithCulture(CultureInfo newCulture)
         {
             // Find culture key
-            ILinePart oldCultureKey = this.FindCultureKey();
+            ILinePart oldCultureKey = this.GetCultureKey();
             // No culture key, create new
             if (oldCultureKey == null) return newCulture == null ? this : new _Culture(Appender, this, null, newCulture);
             // Old culture matches the new, return as is
@@ -1291,7 +1291,7 @@ namespace Lexical.Localization
             ILinePart result = newCulture == null ? beforeCultureKey : beforeCultureKey.Culture(newCulture);
             // Apply parameters
             for (int i = parameters.Count - 1; i >= 0; i--)
-                result = result.Parameter(parameters[i].Item1, parameters[i].Item2);
+                result = result.Parameter(parameters[i].Item1, parameters[i].Item2); // <- XXX Broken, doesn't use correct type
             return (IStringLocalizer)result;
         }
 
@@ -1341,7 +1341,7 @@ namespace Lexical.Localization
             if (collections == null) return null;
 
             CultureInfo ci = null;
-            if (includeParentCultures && ((ci = this.FindCulture()) != null))
+            if (includeParentCultures && ((ci = this.GetCultureInfo()) != null))
             {
                 IEnumerable<LocalizedString> result = null;
                 while (true)

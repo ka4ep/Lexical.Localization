@@ -188,7 +188,7 @@ namespace Lexical.Localization
                     .AddInterface(typeof(IAssetKeyResourceAssignable))
                     .AddExtensionMethods(typeof(ILinePartExtensions))
                     .AddInterface(typeof(ILocalizationKeyCultureAssignable))
-                    .AddInterface(typeof(ILocalizationKeyCultureAssigned))
+                    .AddInterface(typeof(ILineCultureKey))
                     .AddInterface(typeof(ILocalizationKeyCulturePolicyAssigned))
                     .AddInterface(typeof(ILocalizationKeyCulturePolicyAssignable))
                     .AddInterface(typeof(ILineFormatArgsPart))

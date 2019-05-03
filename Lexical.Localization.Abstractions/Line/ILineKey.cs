@@ -35,8 +35,9 @@ namespace Lexical.Localization
     /// <summary>
     /// Interface for a line that can enumerate non-canonically compared keys (from root towards tail).
     /// </summary>
-    public interface ILineKeyNonCanonicallyComparedEnumerable : ILine, IEnumerable<KeyValuePair<string, string>>
+    public interface ILineKeyNonCanonicallyComparedEnumerable : ILine, IEnumerable<KeyValuePair<string, string>> // <-- XXX Cannot be implemented
     {
+         // <- Add GetEnumerable here
     }
 
     /// <summary>
@@ -44,6 +45,7 @@ namespace Lexical.Localization
     /// </summary>
     public interface ILineKeyCanonicallyComparedEnumerable : ILine, IEnumerable<KeyValuePair<string, string>>
     {
+        // <- Add GetEnumerable here
     }
 
     public static partial class ILinePartExtensions

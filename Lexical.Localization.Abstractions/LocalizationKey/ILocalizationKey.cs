@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// Signals that the class gives localizations specific parameters, hints or capabilities.
     /// 
     /// Parameters:
-    ///     <see cref="ILocalizationKeyCultureAssigned"/>
+    ///     <see cref="ILineCultureKey"/>
     ///     <see cref="ILineInlines"/>
     ///     <see cref="ILineFormatArgsPart"/>
     ///     

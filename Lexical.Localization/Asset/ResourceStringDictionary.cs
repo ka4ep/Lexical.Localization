@@ -112,7 +112,7 @@ namespace Lexical.Localization
             }
             else if (namePolicy is IAssetKeyNameParser parser)
             {
-                return dictionary.Keys.Select(k => parser.TryParse(k, Key.Root)?.FindCulture()).Where(ci => ci != null).Distinct().ToArray();
+                return dictionary.Keys.Select(k => parser.TryParse(k, Key.Root)?.GetCultureInfo()).Where(ci => ci != null).Distinct().ToArray();
             }
             else
             {

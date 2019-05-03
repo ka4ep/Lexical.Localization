@@ -115,7 +115,7 @@ namespace Lexical.Localization
         public IFormulationString GetString(ILinePart key)
         {
             string id = namePolicy.BuildName(key);
-            CultureInfo culture = key.FindCulture();
+            CultureInfo culture = key.GetCultureInfo();
             try
             {
                 string value = culture == null ? ResourceManager.GetString(id) : ResourceManager.GetString(id, culture);
@@ -131,7 +131,7 @@ namespace Lexical.Localization
         public byte[] GetResource(ILinePart key)
         {
             string id = namePolicy.BuildName(key);
-            CultureInfo culture = key.FindCulture();
+            CultureInfo culture = key.GetCultureInfo();
             try
             {
                 object obj = (culture == null ? ResourceManager.GetObject(id) : ResourceManager.GetObject(id, culture)) as byte[];
@@ -146,7 +146,7 @@ namespace Lexical.Localization
         public Stream OpenStream(ILinePart key)
         {
             string id = namePolicy.BuildName(key);
-            CultureInfo culture = key.FindCulture();
+            CultureInfo culture = key.GetCultureInfo();
             try
             {
                 object obj = (culture == null ? ResourceManager.GetObject(id) : ResourceManager.GetObject(id, culture)) as byte[];

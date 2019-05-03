@@ -83,7 +83,7 @@ namespace Lexical.Localization
         public IStringLocalizer WithCulture(CultureInfo newCulture)
         {
             // Find culture key
-            ILinePart oldCultureKey = this.FindCultureKey();
+            ILinePart oldCultureKey = this.GetCultureKey();
             // No culture key, create new
             if (oldCultureKey == null) return newCulture == null ? this : new _Culture(Appender, this, null, newCulture);
             // Old culture matches the new, return as is
@@ -95,13 +95,13 @@ namespace Lexical.Localization
             // Read parameters
             List<(string, string)> parameters = new List<(string, string)>();
             for (ILinePart k = this; k != oldCultureKey; k = k.PreviousPart)
-                if (k is ILineParameter parameterKey && parameterKey.ParameterName != null)
+                if (k is ILineParameterPart parameterKey && parameterKey.ParameterName != null)
                     parameters.Add((parameterKey.ParameterName, parameterKey.ParameterValue));
             // Assign new culture
             ILinePart result = newCulture == null ? beforeCultureKey : beforeCultureKey.Culture(newCulture);
             // Apply parameters
             for (int i = parameters.Count - 1; i >= 0; i--)
-                result = result.AppendParameter(parameters[i].Item1, parameters[i].Item2);
+                result = result.Parameter(parameters[i].Item1, parameters[i].Item2); // <- XXX Broken, doesn't use correct type
             return (IStringLocalizer)result;
         }
 
@@ -151,7 +151,7 @@ namespace Lexical.Localization
             if (collections == null) return null;
 
             CultureInfo ci = null;
-            if (includeParentCultures && ((ci = this.FindCulture()) != null))
+            if (includeParentCultures && ((ci = this.GetCultureInfo()) != null))
             {
                 IEnumerable<LocalizedString> result = null;
                 while (true)

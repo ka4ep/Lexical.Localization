@@ -101,5 +101,63 @@ namespace Lexical.Localization
             return result;
         }
 
+        /// <summary>
+        /// Resolve localization resource using the active culture. Uses the following algorithm:
+        ///   1. If key has a selected culture, try that
+        ///      a) from Asset
+        ///   2. If key has <see cref="ICulturePolicy"/>, iterate the cultures.
+        ///      a) Try asset
+        ///   3. Try to read value for key from asset as is
+        ///   4. Return null
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>resource or null</returns>
+        public static byte[] ResolveResource(this ILinePart key)
+        {
+            // Arrange
+            IAsset asset = key.FindAsset();
+            byte[] result = null;
+
+            // 1. Try selected culture
+            CultureInfo selectedCulture = key.GetCultureInfo();
+            if (selectedCulture != null)
+            {
+                // 1a. Try from asset
+                result = asset.GetResource(key);
+                if (result != null) return result;
+            }
+
+            // 2. Try culture policy
+            IEnumerable<CultureInfo> cultures = key.FindCulturePolicy()?.Cultures;
+            if (cultures != null)
+            {
+                foreach (var culture in cultures)
+                {
+                    // This was already tried above
+                    if (culture == selectedCulture) continue;
+
+                    // 2a. Try from asset
+                    if (asset != null)
+                    {
+                        ILineKey cultured = key.TryAppendCulture(culture);
+                        if (cultured != null)
+                        {
+                            result = asset.GetResource(cultured);
+                            if (result != null) return result;
+                        }
+                    }
+                }
+            }
+
+            // 3. Try key as is
+            if (asset != null)
+            {
+                result = asset.GetResource(key);
+                if (result != null) return result;
+            }
+
+            // Not found
+            return null;
+        }
     }
 }

@@ -4,8 +4,6 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lexical.Localization
 {
@@ -101,6 +99,54 @@ namespace Lexical.Localization
         /// <returns>Part</returns>
         public static Part Append<Part, A0, A1, A2>(this ILinePart part, A0 a0, A1 a1, A2 a2) where Part : ILinePart
             => part.GetAppender().Append<Part, A0, A1, A2>(part, a0, a1, a2);
+
+        /// <summary>
+        /// Append new <see cref="ILinePart"/> to <paramref name="part"/>.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <typeparam name="Part"></typeparam>
+        /// <returns>Part or null</returns>
+        public static Part TryAppend<Part>(this ILinePart part) where Part : ILinePart
+            => part.GetAppender().TryAppend<Part>(part);
+
+        /// <summary>
+        /// Append new <see cref="ILinePart"/> to <paramref name="part"/>.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="a0">argument 0 </param>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <returns>Part or null</returns>
+        public static Part TryAppend<Part, A0>(this ILinePart part, A0 a0) where Part : ILinePart
+            => part.GetAppender().TryAppend<Part, A0>(part, a0);
+
+        /// <summary>
+        /// Append new <see cref="ILinePart"/> to <paramref name="part"/>.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="a0">argument 0</param>
+        /// <param name="a1">argument 1</param>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <typeparam name="A1"></typeparam>
+        /// <returns>Part or null</returns>
+        public static Part TryAppend<Part, A0, A1>(this ILinePart part, A0 a0, A1 a1) where Part : ILinePart
+            => part.GetAppender().TryAppend<Part, A0, A1>(part, a0, a1);
+
+        /// <summary>
+        /// Append new <see cref="ILinePart"/> to <paramref name="part"/>.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="a0">argument 0</param>
+        /// <param name="a1">argument 1</param>
+        /// <param name="a2">argument 2</param>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <returns>Part or null</returns>
+        public static Part TryAppend<Part, A0, A1, A2>(this ILinePart part, A0 a0, A1 a1, A2 a2) where Part : ILinePart
+            => part.GetAppender().TryAppend<Part, A0, A1, A2>(part, a0, a1, a2);
 
         /// <summary>
         /// Set new appender by appending a dummy <see cref="ILinePart"/> with the new <paramref name="appender"/>.

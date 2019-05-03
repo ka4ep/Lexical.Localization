@@ -280,7 +280,7 @@ namespace Lexical.Localization
                 foreach (var line in collectionLine.Value.KeyLines)
                 {
                     if (cultures == null) cultures = new HashSet<CultureInfo>();
-                    CultureInfo ci = line.Key.FindCulture() ?? rootCulture;
+                    CultureInfo ci = line.Key.GetCultureInfo() ?? rootCulture;
                     cultures.Add(ci);
                 }
             }
