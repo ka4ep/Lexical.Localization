@@ -86,7 +86,7 @@ namespace Lexical.Localization.Utils
         int Order { get; }
 
         /// <summary>
-        /// Default capture pattern for IAssetNamePattern.
+        /// Default capture pattern for IParameterPattern.
         /// </summary>
         Regex Pattern { get; }
     }
@@ -122,7 +122,7 @@ namespace Lexical.Localization.Utils
         public int Order { get; private set; }
 
         /// <summary>
-        /// Default capture pattern for IAssetNamePattern.
+        /// Default capture pattern for IParameterPattern.
         /// </summary>
         public Regex Pattern { get; private set; }
 
@@ -174,7 +174,7 @@ namespace Lexical.Localization.Utils
         /// <param name="isNonCanonicalCompare"></param>
         /// <param name="isSection"></param>
         /// <param name="sortingOrder"></param>
-        /// <param name="pattern">(optional) capture pattern for <see cref="IAssetNamePattern"/></param>
+        /// <param name="pattern">(optional) capture pattern for <see cref="IParameterPattern"/></param>
         /// <returns><paramref name="infos"/></returns>
         /// <exception cref="ArgumentException"></exception>
         public static IDictionary<string, IParameterInfo> Add(this IDictionary<string, IParameterInfo> infos, string parameterName, bool isCanonicalCompare, bool isNonCanonicalCompare, bool isSection, int sortingOrder, Regex pattern)

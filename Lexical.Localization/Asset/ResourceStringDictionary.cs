@@ -25,14 +25,14 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy that converts <see cref="ILinePart"/> to string, and back to <see cref="ILinePart"/>.
         /// </summary>
-        IAssetKeyNamePolicy namePolicy;
+        IParameterPolicy namePolicy;
 
         /// <summary>
         /// Create language byte[] resolver that uses a dictionary as a backend.
         /// </summary>
         /// <param name="dictionary">dictionary</param>
         /// <param name="namePolicy">policy that describes how to convert localization key to dictionary key</param>
-        public ResourceStringDictionary(IReadOnlyDictionary<string, byte[]> dictionary, IAssetKeyNamePolicy namePolicy = default)
+        public ResourceStringDictionary(IReadOnlyDictionary<string, byte[]> dictionary, IParameterPolicy namePolicy = default)
         {
             this.dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
             this.namePolicy = namePolicy ?? throw new ArgumentNullException(nameof(namePolicy));
@@ -52,22 +52,22 @@ namespace Lexical.Localization
             // There are no rules
             if (!filter.HasRules) return dictionary.Keys.ToList();
             // Filter with pattern
-            if (namePolicy is IAssetNamePattern pattern_) return Filter1(pattern_).ToList();
+            if (namePolicy is IParameterPattern pattern_) return Filter1(pattern_).ToList();
             // Filter with parser
-            if (namePolicy is IAssetKeyNameParser parser_) return Filter2(parser_).ToList();
+            if (namePolicy is IParameterParser parser_) return Filter2(parser_).ToList();
             // Return nothing
             return null;
 
-            IEnumerable<string> Filter1(IAssetNamePattern pattern)
+            IEnumerable<string> Filter1(IParameterPattern pattern)
             {
                 foreach (var line in dictionary)
                 {
-                    IAssetNamePatternMatch match = pattern.Match(line.Key);
+                    IParameterPatternMatch match = pattern.Match(line.Key);
                     if (!match.Success || !filter.Filter(match)) continue;
                     yield return line.Key;
                 }
             }
-            IEnumerable<string> Filter2(IAssetKeyNameParser parser)
+            IEnumerable<string> Filter2(IParameterParser parser)
             {
                 foreach (var line in dictionary)
                 {
@@ -93,15 +93,15 @@ namespace Lexical.Localization
         /// <returns></returns>
         public IEnumerable<CultureInfo> GetSupportedCultures()
         {
-            if (namePolicy is IAssetNamePattern pattern)
+            if (namePolicy is IParameterPattern pattern)
             {
-                IAssetNamePatternPart culturePart;
+                IParameterPatternPart culturePart;
                 if (!pattern.PartMap.TryGetValue("Culture", out culturePart)) return null;
 
                 Dictionary<string, CultureInfo> result = new Dictionary<string, CultureInfo>();
                 foreach (var kp in dictionary)
                 {
-                    IAssetNamePatternMatch match = pattern.Match(kp.Key);
+                    IParameterPatternMatch match = pattern.Match(kp.Key);
                     if (!match.Success) continue;
                     string culture = match[culturePart.CaptureIndex];
                     if (culture == null) culture = "";
@@ -110,7 +110,7 @@ namespace Lexical.Localization
                 }
                 return result.Values.ToArray();
             }
-            else if (namePolicy is IAssetKeyNameParser parser)
+            else if (namePolicy is IParameterParser parser)
             {
                 return dictionary.Keys.Select(k => parser.TryParse(k, Key.Root)?.GetCultureInfo()).Where(ci => ci != null).Distinct().ToArray();
             }
@@ -129,7 +129,7 @@ namespace Lexical.Localization
         public byte[] GetResource(ILinePart key)
         {
             byte[] result = null;
-            string id = namePolicy.BuildName(key);
+            string id = namePolicy.Print(key);
 
             // Search dictionary
             dictionary.TryGetValue(id, out result);
@@ -165,7 +165,7 @@ namespace Lexical.Localization
         /// <param name="dictionary"></param>
         /// <param name="namePolicy">instructions how to convert key to byte[]</param>
         /// <returns></returns>
-        public static IAssetBuilder AddResources(this IAssetBuilder builder, IReadOnlyDictionary<String, byte[]> dictionary, IAssetKeyNamePolicy namePolicy)
+        public static IAssetBuilder AddResources(this IAssetBuilder builder, IReadOnlyDictionary<String, byte[]> dictionary, IParameterPolicy namePolicy)
         {
             builder.AddAsset(new ResourceStringDictionary(dictionary, namePolicy));
             return builder;
@@ -178,7 +178,7 @@ namespace Lexical.Localization
         /// <param name="dictionary"></param>
         /// <param name="namePolicy">instructions how to convert key to byte[]</param>
         /// <returns></returns>
-        public static IAssetComposition AddResources(this IAssetComposition composition, IReadOnlyDictionary<String, byte[]> dictionary, IAssetKeyNamePolicy namePolicy)
+        public static IAssetComposition AddResources(this IAssetComposition composition, IReadOnlyDictionary<String, byte[]> dictionary, IParameterPolicy namePolicy)
         {
             composition.Add(new ResourceStringDictionary(dictionary, namePolicy));
             return composition;

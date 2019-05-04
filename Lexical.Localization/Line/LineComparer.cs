@@ -48,7 +48,7 @@ namespace Lexical.Localization
         public static LineComparer IgnoreCulture => ignoreCulture;
 
         /// <summary>
-        /// List of canonical comparers that compare <see cref="ILineKeyCanonicallyCompared"/> parts separately.
+        /// List of canonical comparers that compare <see cref="ILineCanonicallyComparedKey"/> parts separately.
         /// </summary>
         List<IEqualityComparer<ILine>> canonicalComparers = new List<IEqualityComparer<ILine>>();
 
@@ -80,7 +80,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Add canonical comparer. Canonical comparer is applied to each key that implements <see cref="ILineKeyCanonicallyCompared"/>.
+        /// Add canonical comparer. Canonical comparer is applied to each key that implements <see cref="ILineCanonicallyComparedKey"/>.
         /// </summary>
         /// <param name="comparer"></param>
         /// <returns></returns>
@@ -207,7 +207,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Compares two keys that are assumed to implement <see cref="ILineParameterPart"/>.
+    /// Compares two keys that are assumed to implement <see cref="ILineParameter"/>.
     /// </summary>
     public class ParameterComparer : IEqualityComparer<ILine>
     {
@@ -220,7 +220,7 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Compare two keys for paramter name and value. 
-        /// Keys are assumed to implement <see cref="ILineParameterPart"/>.
+        /// Keys are assumed to implement <see cref="ILineParameter"/>.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -272,9 +272,9 @@ namespace Lexical.Localization
     /// <summary>
     /// Compares all non-canonical parameters keys against each other.
     /// 
-    /// These are keys that implement <see cref="ILineParameterPart"/> and <see cref="ILineKeyNonCanonicallyCompared"/>.
+    /// These are keys that implement <see cref="ILineParameter"/> and <see cref="ILineNonCanonicallyComparedKey"/>.
     /// 
-    /// If <see cref="ILineKeyNonCanonicallyCompared"/> occurs more than once, only the left-most is considered effective.
+    /// If <see cref="ILineNonCanonicallyComparedKey"/> occurs more than once, only the left-most is considered effective.
     /// </summary>
     public class NonCanonicalComparer : IEqualityComparer<ILine>
     {
@@ -297,7 +297,7 @@ namespace Lexical.Localization
         protected HashSet<string> parameterNamesToIgnore;
 
         /// <summary>
-        /// Create new comparer of <see cref="ILineParameterPart"/> and <see cref="ILineKeyNonCanonicallyCompared"/> keys.
+        /// Create new comparer of <see cref="ILineParameter"/> and <see cref="ILineNonCanonicallyComparedKey"/> keys.
         /// </summary>
         /// <param name="keyNamesToIgnore">(optional) list of parameter names to not to compare</param>
         public NonCanonicalComparer(IEnumerable<string> keyNamesToIgnore = null)
@@ -319,7 +319,7 @@ namespace Lexical.Localization
             {
                 // Get x's (parameter, value) pairs
                 StructList8<KeyValuePair<string, string>> x_parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
-                for (ILineKeyNonCanonicallyCompared x_key = x_tail.GetNonCanonicalKey(); x_key != null; x_key = x_key.GetPreviousNonCanonicalKey())
+                for (ILineNonCanonicallyComparedKey x_key = x_tail.GetNonCanonicalKey(); x_key != null; x_key = x_key.GetPreviousNonCanonicalKey())
                 {
                     // Get parameter
                     string x_parameter_name = x_key.GetParameterName(), x_parameter_value = x_key.GetParameterValue();
@@ -347,10 +347,10 @@ namespace Lexical.Localization
 
                 // Get y's (parameter, value) pairs
                 StructList8<KeyValuePair<string, string>> y_parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
-                for (ILineKeyNonCanonicallyCompared y_key = y_tail.GetNonCanonicalKey(); y_key != null; y_key = y_key.GetPreviousNonCanonicalKey())
+                for (ILineNonCanonicallyComparedKey y_key = y_tail.GetNonCanonicalKey(); y_key != null; y_key = y_key.GetPreviousNonCanonicalKey())
                 {
                     // Is non-canonical
-                    if (y_key is ILineKeyNonCanonicallyCompared == false) continue;
+                    if (y_key is ILineNonCanonicallyComparedKey == false) continue;
 
                     // Get parameter
                     string y_parameter_name = y_key.GetParameterName(), y_parameter_value = y_key.GetParameterValue();
@@ -417,7 +417,7 @@ namespace Lexical.Localization
             {
                 int hash = 0;
                 // Get x's (parameter, value) pairs
-                for (ILineKeyNonCanonicallyCompared key = tail.GetNonCanonicalKey(); key != null; key = key.GetPreviousNonCanonicalKey())
+                for (ILineNonCanonicallyComparedKey key = tail.GetNonCanonicalKey(); key != null; key = key.GetPreviousNonCanonicalKey())
                 {
                     // Get parameters.
                     string parameterName = key.GetParameterName();
@@ -432,7 +432,7 @@ namespace Lexical.Localization
 
                     // Test if this parameter is yet to occure again towards left of the key
                     bool firstOccurance = true;
-                    for (ILineKeyNonCanonicallyCompared k = key.GetPreviousNonCanonicalKey(); k != null; k = k.GetPreviousNonCanonicalKey())
+                    for (ILineNonCanonicallyComparedKey k = key.GetPreviousNonCanonicalKey(); k != null; k = k.GetPreviousNonCanonicalKey())
                         if (k.GetParameterName() == parameterName)
                         {
                             firstOccurance = false;

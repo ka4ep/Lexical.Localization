@@ -19,7 +19,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Key policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public IAssetKeyNamePolicy KeyPolicy { get; internal set; }
+        public IParameterPolicy KeyPolicy { get; internal set; }
 
         /// <summary>
         /// File format 
@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// <param name="filename"></param>
         /// <param name="keyPolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileSource(ILocalizationFileFormat fileFormat, string path, string filename, IAssetKeyNamePolicy keyPolicy, bool throwIfNotFound) : base(path, filename, throwIfNotFound)
+        public LocalizationFileSource(ILocalizationFileFormat fileFormat, string path, string filename, IParameterPolicy keyPolicy, bool throwIfNotFound) : base(path, filename, throwIfNotFound)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.KeyPolicy = keyPolicy;
@@ -60,7 +60,7 @@ namespace Lexical.Localization
         /// <param name="filename">non-rooted relative path, or rooted full path</param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileStringLinesSource(ILocalizationFileFormat fileFormat, string path, string filename, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
+        public LocalizationFileStringLinesSource(ILocalizationFileFormat fileFormat, string path, string filename, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
 
         /// <summary>
         /// Open file and get new reader.
@@ -121,7 +121,7 @@ namespace Lexical.Localization
         /// <param name="filename">non-rooted relative path, or rooted full path</param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileKeyLinesSource(ILocalizationFileFormat fileFormat, string path, string filename, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
+        public LocalizationFileKeyLinesSource(ILocalizationFileFormat fileFormat, string path, string filename, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
 
         /// <summary>
         /// Open file and get new reader.
@@ -182,7 +182,7 @@ namespace Lexical.Localization
         /// <param name="filename">non-rooted relative path, or rooted full path</param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileKeyTreeSource(ILocalizationFileFormat fileFormat, string path, string filename, IAssetKeyNamePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
+        public LocalizationFileKeyTreeSource(ILocalizationFileFormat fileFormat, string path, string filename, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
 
         static IKeyTree[] no_trees = new IKeyTree[0];
 
@@ -242,7 +242,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Key policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public IAssetKeyNamePolicy KeyPolicy { get; protected set; }
+        public IParameterPolicy KeyPolicy { get; protected set; }
 
         /// <summary>
         /// File format 
@@ -256,7 +256,7 @@ namespace Lexical.Localization
         /// <param name="path"></param>
         /// <param name="keyPattern"></param>
         /// <param name="namePolicy"></param>
-        public LocalizationFilePatternSource(ILocalizationFileFormat fileFormat, string path, IAssetNamePattern keyPattern, IAssetKeyNamePolicy namePolicy) : base(path, keyPattern)
+        public LocalizationFilePatternSource(ILocalizationFileFormat fileFormat, string path, IParameterPattern keyPattern, IParameterPolicy namePolicy) : base(path, keyPattern)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.KeyPolicy = namePolicy;

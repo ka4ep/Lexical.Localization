@@ -19,7 +19,7 @@ namespace Lexical.Localization
     /// </summary>
     public static partial class KeyLinesExtensions
     {
-        static IAssetKeyNamePolicy DefaultPolicy = AssetKeyNameProvider.Default;
+        static IParameterPolicy DefaultPolicy = KeyPrinter.Default;
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset key lines.
@@ -27,8 +27,8 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines, IAssetKeyNamePolicy policy)
-            => lines.Select(line => new KeyValuePair<string, IFormulationString>((policy ?? DefaultPolicy).BuildName(line.Key), line.Value));
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines, IParameterPolicy policy)
+            => lines.Select(line => new KeyValuePair<string, IFormulationString>((policy ?? DefaultPolicy).Print(line.Key), line.Value));
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset key lines.
@@ -37,8 +37,8 @@ namespace Lexical.Localization
         /// <param name="keyPolicy"></param>
         /// <param name="valueParser"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILinePart, string>> lines, IAssetKeyNamePolicy keyPolicy, ILocalizationStringFormatParser valueParser)
-            => lines.Select(line => new KeyValuePair<string, IFormulationString>((keyPolicy ?? DefaultPolicy).BuildName(line.Key), valueParser.Parse(line.Value)));
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILinePart, string>> lines, IParameterPolicy keyPolicy, ILocalizationStringFormatParser valueParser)
+            => lines.Select(line => new KeyValuePair<string, IFormulationString>((keyPolicy ?? DefaultPolicy).Print(line.Key), valueParser.Parse(line.Value)));
 
         /// <summary>
         /// Convert <paramref name="lines"/> to Key Tree of one level.
@@ -46,10 +46,10 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines, IAssetKeyNamePolicy namePolicy)
+        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines, IParameterPolicy namePolicy)
         {
             KeyTree tree = new KeyTree(Key.Root, null);
-            if (namePolicy is IAssetNamePattern pattern)
+            if (namePolicy is IParameterPattern pattern)
                 tree.AddRange(lines, pattern);
             else
                 tree.AddRange(lines);
@@ -74,7 +74,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Default grouping rule.
         /// </summary>
-        public static IAssetNamePattern DefaultGroupingRule = new AssetNamePattern("{Culture}/{Location_n}{Assembly}{Resource_n}/{Type}{Section_n/}/{Key_n}");
+        public static IParameterPattern DefaultGroupingRule = new ParameterPattern("{Culture}/{Location_n}{Assembly}{Resource_n}/{Type}{Section_n/}/{Key_n}");
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="groupingRule"></param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines, IAssetNamePattern groupingRule) // Todo separate to sortRule + groupingRule
+        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines, IParameterPattern groupingRule) // Todo separate to sortRule + groupingRule
         {
             // Use another method
             //if (groupingRule == null) { node.AddRange(lines); return node; }
@@ -109,7 +109,7 @@ namespace Lexical.Localization
                 {
                     string parameterName = k.GetParameterName(), parameterValue = k.GetParameterValue();
                     if (parameterName == null || parameterValue == null) continue;
-                    bool isCanonical = k is ILineKeyCanonicallyCompared, isNonCanonical = k is ILineKeyNonCanonicallyCompared;
+                    bool isCanonical = k is ILineCanonicallyComparedKey, isNonCanonical = k is ILineNonCanonicallyComparedKey;
                     if (!isCanonical && !isNonCanonical) continue;
 
                     // Overwrite previously assigned non-canonical parameter

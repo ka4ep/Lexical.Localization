@@ -128,9 +128,9 @@ namespace Lexical.Localization
         LinePartVisitor<StringBuilder> _parameterVisitor;
         void parameterVisitor(ILinePart key, ref StringBuilder sb)
         {
-            if (key is ILineParameterPart parameter)
+            if (key is ILineParameter parameter)
             {
-                ILineParameterPart prevKey = key.GetPreviousParameterPart();
+                ILineParameter prevKey = key.GetPreviousParameterPart();
                 if (prevKey != null) sb.Append(':');
                 sb.Append(EscapeLiteral(parameter.ParameterName));
                 sb.Append(':');

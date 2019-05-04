@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// <summary>
         /// File pattern.
         /// </summary>
-        public IAssetNamePattern FilePattern { get; protected set; }
+        public IParameterPattern FilePattern { get; protected set; }
 
         /// <summary>
         /// Create abstract file source.
@@ -104,7 +104,7 @@ namespace Lexical.Localization
         /// <param name="fileProvider"></param>
         /// <param name="path"></param>
         /// <param name="filePattern"></param>
-        public FileProviderPatternSource(IFileProvider fileProvider, string path, IAssetNamePattern filePattern)
+        public FileProviderPatternSource(IFileProvider fileProvider, string path, IParameterPattern filePattern)
         {
             this.FileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
             this.Path = path ?? throw new ArgumentNullException(nameof(path));

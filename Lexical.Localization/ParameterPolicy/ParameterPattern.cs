@@ -56,7 +56,7 @@ namespace Lexical.Localization
     ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
     /// 
     /// </summary>
-    public class AssetNamePattern : IAssetNamePattern, IAssetKeyNameParser, IAssetKeyNameProvider
+    public class ParameterPattern : IParameterPattern, IParameterParser, IParameterPrinter
     {
         static Regex regex = new Regex(
             @"(?<text>[^\[\{\}\]]+)|" +
@@ -74,11 +74,11 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns>pattern or null if parse failed.</returns>
-        public static AssetNamePattern TryParse(string pattern)
+        public static ParameterPattern TryParse(string pattern)
         {
             try
             {
-                return new AssetNamePattern(pattern);
+                return new ParameterPattern(pattern);
             }
             catch (Exception) { }
             {
@@ -93,23 +93,23 @@ namespace Lexical.Localization
         /// All parts of the pattern
         /// </summary>
         readonly Part[] allParts;
-        public IAssetNamePatternPart[] AllParts => allParts;
+        public IParameterPatternPart[] AllParts => allParts;
 
         /// <summary>
         /// All parts that capture a part of string.
         /// </summary>
         readonly Part[] captureParts;
-        public IAssetNamePatternPart[] CaptureParts => captureParts;
+        public IParameterPatternPart[] CaptureParts => captureParts;
 
         /// <summary>
         /// Maps parts by part identifier.
         /// </summary>
-        public IReadOnlyDictionary<string, IAssetNamePatternPart> PartMap { get; internal set; }
+        public IReadOnlyDictionary<string, IParameterPatternPart> PartMap { get; internal set; }
 
         /// <summary>
         /// Maps parts by parameter identifier.
         /// </summary>
-        public IReadOnlyDictionary<string, IAssetNamePatternPart[]> ParameterMap { get; internal set; }
+        public IReadOnlyDictionary<string, IParameterPatternPart[]> ParameterMap { get; internal set; }
 
         /// <summary>
         /// List of all parameter names
@@ -128,7 +128,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="pattern"></param>
         /// <exception cref="ArgumentException">If there was a problem parsing the filename pattern</exception>
-        public AssetNamePattern(string pattern)
+        public ParameterPattern(string pattern)
         {
             this.Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
             System.Text.RegularExpressions.MatchCollection matches = regex.Matches(pattern);
@@ -151,7 +151,7 @@ namespace Lexical.Localization
                 }
 
                 // Assert that either optional or required groups match
-                if (!g_o_identifier.Success && !g_r_identifier.Success) throw new ArgumentException($"Could not parse {nameof(AssetNamePattern)} \"{pattern}\"");
+                if (!g_o_identifier.Success && !g_r_identifier.Success) throw new ArgumentException($"Could not parse {nameof(ParameterPattern)} \"{pattern}\"");
 
                 bool optional = g_o_identifier.Success;
 
@@ -229,7 +229,7 @@ namespace Lexical.Localization
             ParameterMap = ParameterNames.ToDictionary(s => s, parameterName => CaptureParts.Where(part => part.ParameterName == parameterName).OrderBy(p => p.OccuranceIndex).ToArray());
         }
 
-        public class Part : IAssetNamePatternPart
+        public class Part : IParameterPatternPart
         {
             /// <summary>
             /// Text that represents this part in pattern.
@@ -289,14 +289,14 @@ namespace Lexical.Localization
             /// <summary>
             /// Pattern of this part.
             /// </summary>
-            public Regex Regex => regex ?? IAssetNamePatternExtensions.GetDefaultPattern(ParameterName);
+            public Regex Regex => regex ?? IParameterPatternExtensions.GetDefaultPattern(ParameterName);
 
             /// <summary>
             /// Tests if text is match.
             /// </summary>
             /// <param name="text"></param>
             /// <returns></returns>
-            public bool IsMatch(string text) => Regex == IAssetNamePatternExtensions.GetDefaultPattern(null) ? true : Regex.IsMatch(text);
+            public bool IsMatch(string text) => Regex == IParameterPatternExtensions.GetDefaultPattern(null) ? true : Regex.IsMatch(text);
 
             /// <summary>
             /// Print part
@@ -305,7 +305,7 @@ namespace Lexical.Localization
             public override string ToString() => PatternText;
         }
 
-        public IAssetNamePatternMatch Match(ILinePart key)
+        public IParameterPatternMatch Match(ILinePart key)
         {
             NamePatternMatch match = new NamePatternMatch(this);
             key.VisitParameters(_keyvisitor, ref match);
@@ -316,11 +316,11 @@ namespace Lexical.Localization
         void KeyVisitor(string parameterName, string parameterValue, ref NamePatternMatch match)
         {
             // Search parts
-            IAssetNamePatternPart[] parts;
+            IParameterPatternPart[] parts;
             if (ParameterMap.TryGetValue(parameterName, out parts))
             {
                 // Iterate each part
-                foreach (IAssetNamePatternPart part in parts)
+                foreach (IParameterPatternPart part in parts)
                 {
                     // Test if part is already filled
                     if (match[part.CaptureIndex] != null) continue;
@@ -339,7 +339,7 @@ namespace Lexical.Localization
             if ((parameterName == "Section" || parameterName == "Location" || parameterName == "Type" || parameterName == "Resource" || parameterName == "Assembly") && ParameterMap.TryGetValue("anysection", out parts))
             {
                 // Iterate each part
-                foreach (IAssetNamePatternPart part in parts)
+                foreach (IParameterPatternPart part in parts)
                 {
                     // Test if part is already filled
                     if (match[part.CaptureIndex] != null) continue;
@@ -362,10 +362,10 @@ namespace Lexical.Localization
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>key result or null if contained no content</returns>
         /// <exception cref="FormatException">If parse failed</exception>
-        /// <exception cref="ArgumentException">If <paramref name="policy"/> doesn't implement <see cref="IAssetKeyNameParser"/>.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="policy"/> doesn't implement <see cref="IParameterParser"/>.</exception>
         public ILinePart Parse(string str, ILinePart rootKey = default)
         {
-            IAssetNamePatternMatch match = this.Match(text: str, filledParameters: null);
+            IParameterPatternMatch match = this.Match(text: str, filledParameters: null);
             if (!match.Success) throw new FormatException($"Key \"{str}\" did not match the pattern \"{Pattern}\"");
 
             ILinePart result = rootKey;
@@ -388,7 +388,7 @@ namespace Lexical.Localization
         /// <returns>true if parse was successful</returns>
         public bool TryParse(string str, out ILinePart key, ILinePart rootKey = default)
         {
-            IAssetNamePatternMatch match = this.Match(text: str, filledParameters: null);
+            IParameterPatternMatch match = this.Match(text: str, filledParameters: null);
             if (!match.Success) { key = null; return false; }
             ILinePart result = rootKey;
             foreach (var kp in match)
@@ -402,10 +402,10 @@ namespace Lexical.Localization
             return true;
         }
 
-        public string BuildName(ILinePart key)
+        public string Print(ILinePart key)
         {
-            IAssetNamePatternMatch match = Match(key);
-            return IAssetNamePatternExtensions.BuildName(this, match.PartValues);
+            IParameterPatternMatch match = Match(key);
+            return IParameterPatternExtensions.Print(this, match.PartValues);
         }
 
         /// <summary>
@@ -422,23 +422,24 @@ namespace Lexical.Localization
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            if (obj is AssetNamePattern other)
+            if (obj is ParameterPattern other)
                 return other.Pattern == Pattern;
             return false;
         }
     }
 
-    public static partial class AssetNamePatternExtensions
+    /// <summary></summary>
+    public static partial class ParameterPatternExtensions
     {
         /// <summary>
         /// Convert <paramref name="match"/> into an asset key that contains the captured parameters.
         /// </summary>
         /// <param name="match"></param>
         /// <returns>key or null if <paramref name="match"/> contained no values</returns>
-        public static ILinePart ToKey(this IAssetNamePatternMatch match)
+        public static ILinePart ToKey(this IParameterPatternMatch match)
         {
             Key result = null;
-            foreach(IAssetNamePatternPart part in match.Pattern.CaptureParts)
+            foreach(IParameterPatternPart part in match.Pattern.CaptureParts)
             {
                 string value = match[part.CaptureIndex];
                 if (value == null) continue;
@@ -452,10 +453,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="match">(optional)</param>
         /// <returns>parameter names and values</returns>
-        public static IEnumerable<KeyValuePair<string, string>> ToParameters(this IAssetNamePatternMatch match)
+        public static IEnumerable<KeyValuePair<string, string>> ToParameters(this IParameterPatternMatch match)
         {
             if (match == null) yield break;
-            foreach (IAssetNamePatternPart part in match.Pattern.CaptureParts)
+            foreach (IParameterPatternPart part in match.Pattern.CaptureParts)
             {
                 string value = match[part.CaptureIndex];
                 if (value == null) continue;
@@ -466,7 +467,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Convert "match" parameters into an array of "non-match" parameters.
         /// 
-        /// "match" parameter is a parameter in the format of <see cref="IAssetNamePattern"/>, where match contains
+        /// "match" parameter is a parameter in the format of <see cref="IParameterPattern"/>, where match contains
         /// capture index "_#". For example "section_0", "section_1". The capture index is removed from the result of 
         /// this function. Keys are orderd by this index.
         /// 
@@ -484,7 +485,7 @@ namespace Lexical.Localization
         public static IEnumerable<KeyValuePair<string, string>> ConvertMatchParametersToNonMatchParameters(IReadOnlyDictionary<string, string> matchParameters)
         {
             if (matchParameters == null) return new KeyValuePair<string, string>[0];
-            if (matchParameters is IAssetNamePatternMatch match) return ToParameters(match);
+            if (matchParameters is IParameterPatternMatch match) return ToParameters(match);
 
             // (parameter name, parameter value, sorting value)
             List<(string, string, int)> list = new List<(string, string, int)>();

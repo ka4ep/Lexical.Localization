@@ -65,7 +65,7 @@ namespace Lexical.Localization
                 for (ILinePart p = part; p != null; p = p.PreviousPart) count++;
             else
                 for (ILinePart p = part; p != null; p = p.PreviousPart)
-                    if (p is ILineKeyNonCanonicallyCompared == false) count++;
+                    if (p is ILineNonCanonicallyComparedKey == false) count++;
 
             // Create result
             ILinePart[] result = new ILinePart[count];
@@ -75,7 +75,7 @@ namespace Lexical.Localization
                     result[ix--] = p;
             else
                 for (ILinePart p = part; p != null; p = p.PreviousPart)
-                    if (p is ILineKeyNonCanonicallyCompared == false)
+                    if (p is ILineNonCanonicallyComparedKey == false)
                         result[ix--] = p;
 
             return result;

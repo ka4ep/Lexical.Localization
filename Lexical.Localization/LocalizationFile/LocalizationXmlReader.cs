@@ -88,7 +88,7 @@ namespace Lexical.Localization
         /// <param name="element"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public IKeyTree ReadKeyTree(XElement element, IAssetKeyNamePolicy namePolicy = default)
+        public IKeyTree ReadKeyTree(XElement element, IParameterPolicy namePolicy = default)
             => ReadElement(element, new KeyTree(Key.Root), null);
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public IKeyTree ReadKeyTree(Stream stream, IAssetKeyNamePolicy namePolicy = default)
+        public IKeyTree ReadKeyTree(Stream stream, IParameterPolicy namePolicy = default)
             => ReadElement(Load(stream).Root, new KeyTree(Key.Root), null);
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default)
+        public IKeyTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default)
             => ReadElement(Load(text).Root, new KeyTree(Key.Root), null);
 
         /// <summary>

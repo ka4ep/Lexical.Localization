@@ -20,7 +20,7 @@ namespace Lexical.Localization
         /// <param name="keyTree"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IKeyTree keyTree, IAssetKeyNamePolicy policy)
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IKeyTree keyTree, IParameterPolicy policy)
             => keyTree.ToKeyLines().ToStringLines(policy);
 
         /// <summary>

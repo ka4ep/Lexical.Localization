@@ -36,12 +36,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.
         /// </summary>
-        protected ParameterNamePolicy escaper_section = new ParameterNamePolicy("\\:[]", true, "\\:[]", true);
+        protected ParameterPolicy escaper_section = new ParameterPolicy("\\:[]", true, "\\:[]", true);
 
         /// <summary>
         /// Escaper for key parts of .ini files. Escapes '\', ':', '=' characters and white-spaces.
         /// </summary>
-        protected ParameterNamePolicy escaper_key = new ParameterNamePolicy("\\:= ", true, "\\:= ", true);
+        protected ParameterPolicy escaper_key = new ParameterPolicy("\\:= ", true, "\\:= ", true);
 
         /// <summary>
         /// Escaper for value parts of .ini files. Escapes '\', '{', '}' characters and white-spaces.
@@ -80,7 +80,7 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default)
+        public IKeyTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default)
         {
             KeyTree root = new KeyTree(Key.Root);
             using (var ini = new IniTokenizer(text.ReadToEnd()))
@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="correspondence">(optional) if set tokens are associated to key tree. If <paramref name="correspondence"/> is provided, then <paramref name="ini"/> must be a linked list. See <see cref="IniTokenizer.ToLinkedList"/></param>
         /// <returns><paramref name="root"/></returns>
-        public IKeyTree ReadIniIntoTree(IEnumerable<IniToken> ini, IKeyTree root, IAssetKeyNamePolicy namePolicy, IniCorrespondence correspondence)
+        public IKeyTree ReadIniIntoTree(IEnumerable<IniToken> ini, IKeyTree root, IParameterPolicy namePolicy, IniCorrespondence correspondence)
         {
             IKeyTree section = null;
             foreach(IniToken token in ini)

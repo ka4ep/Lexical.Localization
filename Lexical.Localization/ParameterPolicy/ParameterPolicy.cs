@@ -12,16 +12,16 @@ using System.Text.RegularExpressions;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Context free format of asset key
+    /// Parameter policy that uses string format of "Key:Value:..."
     /// </summary>
-    public class ParameterNamePolicy : ParameterParser, IAssetKeyNameProvider, IAssetKeyNameParser
+    public class ParameterPolicy : ParameterParser, IParameterPrinter, IParameterParser
     {
-        static ParameterNamePolicy instance = new ParameterNamePolicy("\\:", false, "\\:", false);
+        static ParameterPolicy instance = new ParameterPolicy("\\:", false, "\\:", false);
 
         /// <summary>
         /// Generic string serializer where colons can be used in the key and value literals.
         /// </summary>
-        public new static ParameterNamePolicy Instance => instance;
+        public new static ParameterPolicy Instance => instance;
 
         /// <summary>
         /// Create new string serializer
@@ -30,7 +30,7 @@ namespace Lexical.Localization
         /// <param name="escapeControlCharacters">Escape characters 0x00 - 0x1f</param>
         /// <param name="unescapeCharacteres">list of characters that are to be unescaped</param>
         /// <param name="unescapeControlCharactrs">Unescape tnab0f</param>
-        public ParameterNamePolicy(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacteres, bool unescapeControlCharactrs) : base(escapeCharacters, escapeControlCharacters, unescapeCharacteres, unescapeControlCharactrs)
+        public ParameterPolicy(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacteres, bool unescapeControlCharactrs) : base(escapeCharacters, escapeControlCharacters, unescapeCharacteres, unescapeControlCharactrs)
         {
         }
 
@@ -87,7 +87,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>full name string</returns>
-        public string BuildName(ILinePart key)
+        public string Print(ILinePart key)
             => PrintKey(key as ILinePart);
 
     }

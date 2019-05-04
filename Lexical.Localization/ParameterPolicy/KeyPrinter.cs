@@ -23,16 +23,16 @@ namespace Lexical.Localization
     /// Parameters with same sort order, are printed out in order of occurance in the key, from left (root) to right (tail).
     /// For example: root.Section("1").Section("2") is printed out as "1.2".
     /// </summary>
-    public class AssetKeyNameProvider : IAssetKeyNameProvider, ICloneable
+    public class KeyPrinter : IParameterPrinter, ICloneable
     {
         /// <summary>
         /// Default name policy. Appends known parameters in <see cref="Utils.ParameterInfos"/> with ":" separator.
         /// 
         /// Example "en:ConsoleApp1:MyController:Success".
         /// </summary>
-        public static IAssetKeyNameProvider Default => instance;
-        private static readonly AssetKeyNameProvider instance = 
-            new AssetKeyNameProvider()
+        public static IParameterPrinter Default => instance;
+        private static readonly KeyPrinter instance = 
+            new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":"); // Add known parameters for sorting correcly
 
         /// <summary>
@@ -40,9 +40,9 @@ namespace Lexical.Localization
         /// 
         /// Example "en:ConsoleApp1:MyController:Success".
         /// </summary>
-        public static IAssetKeyNameProvider Colon_Colon_Colon => colon_colon_colon;
-        private static readonly AssetKeyNameProvider colon_colon_colon =
-            new AssetKeyNameProvider()
+        public static IParameterPrinter Colon_Colon_Colon => colon_colon_colon;
+        private static readonly KeyPrinter colon_colon_colon =
+            new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
                 .DefaultRule(true, prefixSeparator: ":"); // Add policy for unknown parameters
 
@@ -51,9 +51,9 @@ namespace Lexical.Localization
         /// 
         /// Example "ConsoleApp1:MyController:Success".
         /// </summary>
-        public static IAssetKeyNameProvider None_Colon_Colon => none_colon_colon;
-        private static readonly AssetKeyNameProvider none_colon_colon =
-            new AssetKeyNameProvider()
+        public static IParameterPrinter None_Colon_Colon => none_colon_colon;
+        private static readonly KeyPrinter none_colon_colon =
+            new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
                 .Ignore("Culture") // Ignore Culture
                 .DefaultRule(true, prefixSeparator: ":");
@@ -63,9 +63,9 @@ namespace Lexical.Localization
         /// 
         /// Example "en:ConsoleApp1:MyController.Success".
         /// </summary>
-        public static IAssetKeyNameProvider Colon_Colon_Dot => colon_colon_dot;
-        private static readonly AssetKeyNameProvider colon_colon_dot = 
-            new AssetKeyNameProvider()
+        public static IParameterPrinter Colon_Colon_Dot => colon_colon_dot;
+        private static readonly KeyPrinter colon_colon_dot = 
+            new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
                 .Separator("Key", prefixSeparator: ".")
                 .DefaultRule(true, prefixSeparator: ":");
@@ -75,9 +75,9 @@ namespace Lexical.Localization
         /// 
         /// Example "en.ConsoleApp1.MyController.Success"
         /// </summary>
-        public static IAssetKeyNameProvider Dot_Dot_Dot => dot_dot_dot;
-        private static readonly AssetKeyNameProvider dot_dot_dot = 
-            new AssetKeyNameProvider()
+        public static IParameterPrinter Dot_Dot_Dot => dot_dot_dot;
+        private static readonly KeyPrinter dot_dot_dot = 
+            new KeyPrinter()
             .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
             .DefaultRule(true, prefixSeparator: ".");
 
@@ -86,9 +86,9 @@ namespace Lexical.Localization
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static IAssetKeyNameProvider None_Dot_Dot => none_dot_dot;
-        private static readonly AssetKeyNameProvider none_dot_dot = 
-            new AssetKeyNameProvider()
+        public static IParameterPrinter None_Dot_Dot => none_dot_dot;
+        private static readonly KeyPrinter none_dot_dot = 
+            new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
                 .Ignore("Culture") // Ignore Culture
                 .DefaultRule(true, prefixSeparator: ".");
@@ -98,9 +98,9 @@ namespace Lexical.Localization
         /// 
         /// Example "en:ConsoleApp1.MyController.Success".
         /// </summary>
-        public static IAssetKeyNameProvider Colon_Dot_Dot => colon_dot_dot;
-        private static readonly AssetKeyNameProvider colon_dot_dot =
-            new AssetKeyNameProvider()
+        public static IParameterPrinter Colon_Dot_Dot => colon_dot_dot;
+        private static readonly KeyPrinter colon_dot_dot =
+            new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
                 .Separator("Culture", postfixSeparator: ":") // Print with ":"
                 .DefaultRule(true, prefixSeparator: ".");
@@ -123,7 +123,7 @@ namespace Lexical.Localization
         /// Construct a new name provider with no rules. 
         /// Use chain methods to add some rules.
         /// </summary>
-        public AssetKeyNameProvider()
+        public KeyPrinter()
         {
         }
 
@@ -132,7 +132,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="parameterName"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider Ignore(string parameterName)
+        public KeyPrinter Ignore(string parameterName)
         {
             parameters[parameterName] = new _Rule(parameterName, false, null, null, 0);
             return this;
@@ -145,7 +145,7 @@ namespace Lexical.Localization
         /// <param name="prefixSeparator"></param>
         /// <param name="postfixSeparator"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider ParameterInfo(IParameterInfo info, string prefixSeparator = null, string postfixSeparator = null)
+        public KeyPrinter ParameterInfo(IParameterInfo info, string prefixSeparator = null, string postfixSeparator = null)
         {
             parameters[info.ParameterName] = new _Rule(info.ParameterName, true, prefixSeparator, postfixSeparator, info.Order);
             return this;
@@ -158,7 +158,7 @@ namespace Lexical.Localization
         /// <param name="prefixSeparator"></param>
         /// <param name="postfixSeparator"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider ParameterInfo(IEnumerable<IParameterInfo> infos, string prefixSeparator = null, string postfixSeparator = null)
+        public KeyPrinter ParameterInfo(IEnumerable<IParameterInfo> infos, string prefixSeparator = null, string postfixSeparator = null)
         {
             foreach (var info in infos)
             {
@@ -176,7 +176,7 @@ namespace Lexical.Localization
         /// <param name="postfixSeparator"></param>
         /// <param name="order"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider Rule(string parameterName, bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
+        public KeyPrinter Rule(string parameterName, bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
         {
             parameters[parameterName] = new _Rule(parameterName, isIncluded, prefixSeparator, postfixSeparator, order);
             return this;
@@ -189,7 +189,7 @@ namespace Lexical.Localization
         /// <param name="prefixSeparator"></param>
         /// <param name="postfixSeparator"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider Separator(string parameterName, string prefixSeparator = null, string postfixSeparator = null)
+        public KeyPrinter Separator(string parameterName, string prefixSeparator = null, string postfixSeparator = null)
         {
             _Rule rule;
             if (parameters.TryGetValue(parameterName, out rule))
@@ -211,7 +211,7 @@ namespace Lexical.Localization
         /// <param name="postfixSeparator"></param>
         /// <param name="order"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider CanonicalRule(bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
+        public KeyPrinter CanonicalRule(bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
         {
             parameters["canonical"] = new _Rule("canonical", isIncluded, prefixSeparator, postfixSeparator, order);
             return this;
@@ -225,7 +225,7 @@ namespace Lexical.Localization
         /// <param name="postfixSeparator"></param>
         /// <param name="order"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider NonCanonicalRule(bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
+        public KeyPrinter NonCanonicalRule(bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
         {
             parameters["noncanonical"] = new _Rule("noncanonical", isIncluded, prefixSeparator, postfixSeparator, order);
             return this;
@@ -239,7 +239,7 @@ namespace Lexical.Localization
         /// <param name="postfixSeparator"></param>
         /// <param name="order"></param>
         /// <returns>this</returns>
-        public AssetKeyNameProvider DefaultRule(bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
+        public KeyPrinter DefaultRule(bool isIncluded, string prefixSeparator = null, string postfixSeparator = null, int order = 0)
         {
             parameters[""] = new _Rule("", isIncluded, prefixSeparator, postfixSeparator, order);
             return this;
@@ -250,7 +250,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string BuildName(ILinePart key)
+        public string Print(ILinePart key)
         {
             // List for parts
             StructList16<Part> parts = new StructList16<Part>(Part.Comparer.Default);
@@ -259,7 +259,7 @@ namespace Lexical.Localization
             int occuranceIndex = 1;
             for (ILinePart part = key; part != null; part = part.PreviousPart)
             {
-                if (part is ILineParameterPart parametrized)
+                if (part is ILineParameter parametrized)
                 {
                     // Read parameter name and value
                     string parameterName = parametrized.ParameterName, parameterValue = part.GetParameterValue();
@@ -270,8 +270,8 @@ namespace Lexical.Localization
                     if (parameters.TryGetValue(parameterName, out desc) && !desc.IsIncluded) continue;
 
                     // Try default descriptions
-                    if (desc == null && part is ILineKeyCanonicallyCompared) parameters.TryGetValue("canonical", out desc);
-                    if (desc == null && part is ILineKeyNonCanonicallyCompared) parameters.TryGetValue("noncanonical", out desc);
+                    if (desc == null && part is ILineCanonicallyComparedKey) parameters.TryGetValue("canonical", out desc);
+                    if (desc == null && part is ILineNonCanonicallyComparedKey) parameters.TryGetValue("noncanonical", out desc);
                     if (desc == null) parameters.TryGetValue("", out desc);
 
                     // No description
@@ -351,7 +351,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public object Clone()
         {
-            AssetKeyNameProvider result = new AssetKeyNameProvider();
+            KeyPrinter result = new KeyPrinter();
             foreach (var kp in parameters)
                 result.parameters[kp.Key] = kp.Value.Clone() as _Rule;
             return result;

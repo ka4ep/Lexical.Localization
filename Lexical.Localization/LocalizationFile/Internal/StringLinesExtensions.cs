@@ -20,9 +20,9 @@ namespace Lexical.Localization.Internal
         /// If parse fails, then skips the key, doesn't throw exception.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="policy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
+        /// <param name="policy"><see cref="IParameterParser"/> implementation used for parsing.</param>
         /// <returns>lines with <see cref="ILinePart"/> keys</returns>
-        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IAssetKeyNamePolicy policy)
+        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IParameterPolicy policy)
         {
             foreach (var line in lines)
             {
@@ -38,10 +38,10 @@ namespace Lexical.Localization.Internal
         /// If parse fails, then skips the key, doesn't throw exception.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="keyPolicy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
+        /// <param name="keyPolicy"><see cref="IParameterParser"/> implementation used for parsing.</param>
         /// <param name="valueParser"></param>
         /// <returns>lines with <see cref="ILinePart"/> keys</returns>
-        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, IAssetKeyNamePolicy keyPolicy, ILocalizationStringFormatParser valueParser)
+        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, IParameterPolicy keyPolicy, ILocalizationStringFormatParser valueParser)
         {
             foreach (var line in lines)
             {
@@ -57,7 +57,7 @@ namespace Lexical.Localization.Internal
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IAssetKeyNamePolicy policy)
+        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IParameterPolicy policy)
             => KeyTree.Create(lines.ToKeyLines(policy), null);
 
         /// <summary>
@@ -66,9 +66,9 @@ namespace Lexical.Localization.Internal
         /// Lines are reloaded into the asset if <see cref="IAssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="policy"><see cref="IAssetKeyNameParser"/> implementation used for parsing.</param>
+        /// <param name="policy"><see cref="IParameterParser"/> implementation used for parsing.</param>
         /// <returns></returns>
-        public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IAssetKeyNamePolicy policy)
+        public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IParameterPolicy policy)
             => new LocalizationAsset().Add(lines, policy).Load();
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Lexical.Localization.Internal
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IAssetKeyNamePolicy policy)
+        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IParameterPolicy policy)
             => new LocalizationStringLinesSource(lines, policy);
 
         /// <summary>

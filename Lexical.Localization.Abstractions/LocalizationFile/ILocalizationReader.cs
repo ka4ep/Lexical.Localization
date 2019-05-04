@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. </param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadKeyLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadKeyLines(Stream stream, IParameterPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        IKeyTree ReadKeyTree(Stream stream, IAssetKeyNamePolicy namePolicy = default);
+        IKeyTree ReadKeyTree(Stream stream, IParameterPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadKeyLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadKeyLines(TextReader text, IParameterPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        IKeyTree ReadKeyTree(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+        IKeyTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read string key-values</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, IAssetKeyNamePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, IParameterPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read string key-values</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, IAssetKeyNamePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, IParameterPolicy namePolicy = default);
     }
     #endregion Interface
 }

@@ -39,7 +39,7 @@ namespace Lexical.Localization.Utils
         /// <param name="keyValues"></param>
         /// <param name="groupingPolicy"></param>
         /// <returns>tree root ""</returns>
-        public static KeyTree Create(IEnumerable<KeyValuePair<ILinePart, IFormulationString>> keyValues, IAssetNamePattern groupingPolicy)
+        public static KeyTree Create(IEnumerable<KeyValuePair<ILinePart, IFormulationString>> keyValues, IParameterPattern groupingPolicy)
         {
             KeyTree root = new KeyTree(Key.Root);
             root.AddRange(keyValues, groupingPolicy);
@@ -248,7 +248,7 @@ namespace Lexical.Localization.Utils
                 if (i++ > 0) sb.Append("/");
                 ILinePart key = tree.Key;
                 if (key == null) continue;
-                ParameterNamePolicy.Instance.PrintKey(key, sb);
+                ParameterPolicy.Instance.PrintKey(key, sb);
             }
 
             if (HasValues)
@@ -274,7 +274,7 @@ namespace Lexical.Localization.Utils
                 if (sb.Length > 0) sb.Append("/");
                 ILinePart key = tree.Key;
                 if (key == null) continue;
-                ParameterNamePolicy.Instance.PrintKey(key, sb);
+                ParameterPolicy.Instance.PrintKey(key, sb);
             }
             return sb.ToString();
         }

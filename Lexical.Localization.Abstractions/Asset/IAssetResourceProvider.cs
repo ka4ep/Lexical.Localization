@@ -61,7 +61,7 @@ namespace Lexical.Localization
         /// Get the resource keys that could be resolved. 
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameterPart"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// Get all resource keys, or if every key cannot be provided returns null.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameterPart"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -98,7 +98,7 @@ namespace Lexical.Localization
         /// Get all resource names as string keys.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameterPart"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -112,7 +112,7 @@ namespace Lexical.Localization
         /// Get all resource names.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameterPart"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If filterKey has a parameter with value "", then the comparand key must not have the key, or have it with value "".
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -227,7 +227,7 @@ namespace Lexical.Localization
         /// Get resource names as string keys. If all cannot be returned, returns what is available.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameterPart"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If the parameter has value "", then the result must be filtered to keys that have "" for the same parameter, or don't have that same parameter assigned.
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -279,7 +279,7 @@ namespace Lexical.Localization
         /// Get all resource names as string keys. If all cannot be returned, returns null.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameterPart"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If the parameter has value "", then the result must be filtered to keys that have "" for the same parameter, or don't have that same parameter assigned.
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -337,7 +337,7 @@ namespace Lexical.Localization
         /// Get resource names as string keys. If all cannot be returned, returns what is available.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameterPart"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If the parameter has value "", then the result must be filtered to keys that have "" for the same parameter, or don't have that same parameter assigned.
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then
@@ -389,7 +389,7 @@ namespace Lexical.Localization
         /// Get all resource names as string keys. If all cannot be returned, returns null.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
-        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameterPart"/>, then result must be filtered to lines that have matching value for each parameter.
+        /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
         /// If the parameter has value "", then the result must be filtered to keys that have "" for the same parameter, or don't have that same parameter assigned.
         /// 
         /// The returned enumerable must be multi-thread safe. If the implementing class is mutable or <see cref="IAssetReloadable"/>, then

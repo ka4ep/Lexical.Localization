@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy that is used for converting string to <see cref="ILinePart"/>.
         /// </summary>
-        IAssetKeyNamePolicy KeyPolicy { get; }
+        IParameterPolicy KeyPolicy { get; }
     }
 
     /// <summary>

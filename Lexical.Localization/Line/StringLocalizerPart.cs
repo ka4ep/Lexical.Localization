@@ -103,7 +103,7 @@ namespace Lexical.Localization
     //            ILocalizationKey key = this.Key(name);
     //            LocalizationString printedString = key.ResolveFormulatedString();
     //            if (printedString.Value == null)
-    //                return new LocalizedString(name, key.BuildName(), true);
+    //                return new LocalizedString(name, key.Print(), true);
     //            else
     //                return new LocalizedString(name, printedString.Value);
     //                */
@@ -123,7 +123,7 @@ namespace Lexical.Localization
     //            ILocalizationKey key = this.Key(name).Format(arguments);
     //            LocalizationString printedString = key.ResolveFormulatedString();
     //            if (printedString.Value == null)
-    //                return new LocalizedString(name, key.BuildName(), true);
+    //                return new LocalizedString(name, key.Print(), true);
     //            else
     //                return new LocalizedString(name, printedString.Value);
     //        }

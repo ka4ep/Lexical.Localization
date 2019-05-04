@@ -20,7 +20,7 @@ namespace Lexical.Localization
         IAssetResourceProvider
     {
         public readonly ResourceManager ResourceManager;
-        public readonly IAssetKeyNamePolicy namePolicy;
+        public readonly IParameterPolicy namePolicy;
         public readonly ILocalizationStringFormatParser ValueParser;
 
         /// <summary>
@@ -30,21 +30,21 @@ namespace Lexical.Localization
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public  static readonly IAssetKeyNamePolicy namepolicy_for_type_resourcemanager = new AssetKeyNameProvider().Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
+        public  static readonly IParameterPolicy namepolicy_for_type_resourcemanager = new KeyPrinter().Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
 
         /// <summary>
         /// Name policy where "Type", "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static readonly IAssetKeyNamePolicy namepolicy_for_location_resourcemanager = new AssetKeyNameProvider().Rule("Type", true, ".").Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
+        public static readonly IParameterPolicy namepolicy_for_location_resourcemanager = new KeyPrinter().Rule("Type", true, ".").Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
 
         /// <summary>
         /// Name policy where "Resource", "Type", "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static readonly IAssetKeyNamePolicy namepolicy_for_root_resourcemanager = new AssetKeyNameProvider().Rule("Resource", true, ".").Rule("Type", true, ".").Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
+        public static readonly IParameterPolicy namepolicy_for_root_resourcemanager = new KeyPrinter().Rule("Resource", true, ".").Rule("Type", true, ".").Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
 
         /// <summary>
         /// Create resource manager that is assigned to a specific type.
@@ -105,7 +105,7 @@ namespace Lexical.Localization
         /// <param name="resourceManager">source of language strings and resource files</param>
         /// <param name="namePolicy">policy that converts <see cref="ILinePart"/> into keys that correlate with keys in <paramref name="resourceManager"/>.</param>
         /// <param name="parser"></param>
-        public ResourceManagerAsset(ResourceManager resourceManager, IAssetKeyNamePolicy namePolicy, ILocalizationStringFormatParser parser = default)
+        public ResourceManagerAsset(ResourceManager resourceManager, IParameterPolicy namePolicy, ILocalizationStringFormatParser parser = default)
         {
             this.ResourceManager = resourceManager ?? throw new ArgumentNullException(nameof(resourceManager));
             this.namePolicy = namePolicy ?? throw new ArgumentNullException(nameof(namePolicy));
@@ -114,7 +114,7 @@ namespace Lexical.Localization
 
         public IFormulationString GetString(ILinePart key)
         {
-            string id = namePolicy.BuildName(key);
+            string id = namePolicy.Print(key);
             CultureInfo culture = key.GetCultureInfo();
             try
             {
@@ -130,7 +130,7 @@ namespace Lexical.Localization
 
         public byte[] GetResource(ILinePart key)
         {
-            string id = namePolicy.BuildName(key);
+            string id = namePolicy.Print(key);
             CultureInfo culture = key.GetCultureInfo();
             try
             {
@@ -145,7 +145,7 @@ namespace Lexical.Localization
 
         public Stream OpenStream(ILinePart key)
         {
-            string id = namePolicy.BuildName(key);
+            string id = namePolicy.Print(key);
             CultureInfo culture = key.GetCultureInfo();
             try
             {

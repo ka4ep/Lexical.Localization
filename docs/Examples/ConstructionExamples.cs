@@ -36,7 +36,7 @@ namespace docs
             {
                 #region Snippet_Plain_1
                 AssetBuilder builder = new AssetBuilder();
-                builder.AddStrings(languageStrings, AssetKeyNameProvider.Default);
+                builder.AddStrings(languageStrings, KeyPrinter.Default);
 
                 CulturePolicy culturePolicy = new CulturePolicy();
                 culturePolicy.SetCultures("en", "fi", "");
@@ -45,10 +45,10 @@ namespace docs
                 #endregion Snippet_Plain_1
 
                 // Try it out
-                //Console.WriteLine(myLocalization["ConsoleApp1.MyController"].Key("Success").BuildName());
-                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Success").BuildName());
-                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Success").Culture("fi").BuildName());
-                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").BuildName());
+                //Console.WriteLine(myLocalization["ConsoleApp1.MyController"].Key("Success").Print());
+                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Success").Print());
+                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Success").Culture("fi").Print());
+                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").Print());
                 Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Success"));
                 Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error"));
                 Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").Format(0xBAADF00D));
@@ -71,7 +71,7 @@ namespace docs
                 #region Snippet_Singleton
                 // How to setup singleton instance
                 (LocalizationRoot.Global.CulturePolicy as ICulturePolicyAssignable).SetToCurrentThreadCulture();
-                LocalizationRoot.Builder.AddStrings(languageStrings, AssetKeyNameProvider.Default);
+                LocalizationRoot.Builder.AddStrings(languageStrings, KeyPrinter.Default);
                 LocalizationRoot.Builder.Build();
 
                 // Try it out

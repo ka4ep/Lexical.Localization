@@ -11,7 +11,7 @@ namespace Lexical.Localization
 {
     #region interface
     /// <summary>
-    /// Interface for objects that load assets from IAssetLoader depending on parameters of a <see cref="IAssetNamePattern"/>.
+    /// Interface for objects that load assets from IAssetLoader depending on parameters of a <see cref="IParameterPattern"/>.
     /// This interface is used with <see cref="LocalizationAssetLoader"/>.
     /// 
     /// For example, localization files are separated by culture, then file pattern could be "localization{-culture}.ini".
@@ -22,7 +22,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Filename pattern of this loader. For example "Resources/localization{-culture}.ini".
         /// </summary>
-        IAssetNamePattern Pattern { get; }
+        IParameterPattern Pattern { get; }
 
         /// <summary>
         /// Options of this loader.
@@ -173,7 +173,7 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <returns></returns>
         public static IEnumerable<string> ListFiles(this IAssetLoaderPart part)
-            => part.ListLoadables().Select(param => part.Pattern.BuildName(param));
+            => part.ListLoadables().Select(param => part.Pattern.Print(param));
 
         /// <summary>
         /// Load an asset file by filename.

@@ -18,7 +18,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public IAssetKeyNamePolicy KeyPolicy { get; protected set; }
+        public IParameterPolicy KeyPolicy { get; protected set; }
 
         /// <summary>
         /// Line source
@@ -30,7 +30,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lineSource"></param>
         /// <param name="namePolicy"></param>
-        public LocalizationStringLinesSource(IEnumerable<KeyValuePair<string, IFormulationString>> lineSource, IAssetKeyNamePolicy namePolicy)
+        public LocalizationStringLinesSource(IEnumerable<KeyValuePair<string, IFormulationString>> lineSource, IParameterPolicy namePolicy)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
             this.KeyPolicy = namePolicy;
@@ -162,7 +162,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public IAssetKeyNamePolicy NamePolicy { get; protected set; }
+        public IParameterPolicy NamePolicy { get; protected set; }
 
         /// <summary>
         /// 
@@ -170,7 +170,7 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="streamSource"></param>
         /// <param name="namePolicy"></param>
-        public StreamProviderAssetSource(ILocalizationFileFormat fileFormat, Func<Stream> streamSource, IAssetKeyNamePolicy namePolicy)
+        public StreamProviderAssetSource(ILocalizationFileFormat fileFormat, Func<Stream> streamSource, IParameterPolicy namePolicy)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.streamSource = streamSource ?? throw new ArgumentNullException(nameof(streamSource));

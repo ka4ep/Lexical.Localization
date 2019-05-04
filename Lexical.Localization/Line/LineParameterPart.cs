@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Line part that represents a parameter key-value pair.
     /// </summary>
-    public class LineParameterPart : LinePart, ILineParameterPart
+    public class LineParameterPart : LinePart, ILineParameter
     {
         /// <summary>
         /// Parameter name.
@@ -42,7 +42,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Line part that represents a parameter key-value pair.
     /// </summary>
-    public class StringLocalizerParameterPart : StringLocalizerKey, ILineParameterPart
+    public class StringLocalizerParameterPart : StringLocalizerKey, ILineParameter
     {
         /// <summary>
         /// Parameter name.
@@ -68,7 +68,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LinePartAppender : ILinePartAppender2<ILineParameterPart, string, string>
+    public partial class LinePartAppender : ILinePartAppender2<ILineParameter, string, string>
     {
         /// <summary>
         /// Append <see cref="LineParameterPart"/>.
@@ -77,11 +77,11 @@ namespace Lexical.Localization
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
         /// <returns></returns>
-        public ILineParameterPart Append(ILinePart previous, string parameterName, string parameterValue)
+        public ILineParameter Append(ILinePart previous, string parameterName, string parameterValue)
             => new LineParameterPart(this, previous, parameterName, parameterValue);
     }
 
-    public partial class StringLocalizerPartAppender : ILinePartAppender2<ILineParameterPart, string, string>
+    public partial class StringLocalizerPartAppender : ILinePartAppender2<ILineParameter, string, string>
     {
         /// <summary>
         /// Append <see cref="LineParameterPart"/>.
@@ -90,7 +90,7 @@ namespace Lexical.Localization
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
         /// <returns></returns>
-        public ILineParameterPart Append(ILinePart previous, string parameterName, string parameterValue)
+        public ILineParameter Append(ILinePart previous, string parameterName, string parameterValue)
             => new StringLocalizerParameterPart(this, previous, parameterName, parameterValue);
     }
 

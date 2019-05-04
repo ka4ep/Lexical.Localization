@@ -16,7 +16,7 @@ var source = new Dictionary<string, string> {
     { "de:MyController:hello", "Hallo Welt!" }
 };
 // Create asset with culture policy
-IAsset asset = new LocalizationAsset(source, AssetKeyNameProvider.Default);
+IAsset asset = new LocalizationAsset(source, KeyPrinter.Default);
 // Create root and assign culturePolicy
 IAssetRoot root = new LocalizationRoot(asset, culturePolicy);
 ```

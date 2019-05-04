@@ -97,7 +97,7 @@ namespace Lexical.Localization
             if (defaultHashcodeCalculated) return defaultHashcode;
 
             // Get previous key's default hashcode
-            if (this is ILineKeyCanonicallyCompared == false && this is ILineKeyNonCanonicallyCompared == false && this.PreviousPart is ILineDefaultHashCode prevDefaultHashcode)
+            if (this is ILineCanonicallyComparedKey == false && this is ILineNonCanonicallyComparedKey == false && this.PreviousPart is ILineDefaultHashCode prevDefaultHashcode)
             {
                 defaultHashcode = prevDefaultHashcode.GetDefaultHashCode();
             }
@@ -129,7 +129,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public string DebugPrint()
-            => ParameterNamePolicy.Instance.BuildName(this); // AssetKeyNameProvider.Default.BuildName(this);
+            => ParameterPolicy.Instance.Print(this); // KeyPrinter.Default.Print(this);
 
         /// <summary>
         /// Equals comparison. The default comparer compares <see cref="ILineKey"/> and <see cref="ILineFormatArgsPart"/> parts.

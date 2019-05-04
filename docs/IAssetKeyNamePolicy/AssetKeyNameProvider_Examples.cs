@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace docs
 {
-    public class AssetKeyNameProvider_Examples
+    public class KeyPrinter_Examples
     {
         public static void Main(string[] args)
         {
@@ -14,8 +14,8 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "en/MyController/Hello", "Hello World!" } };
                 // Create key name policy
-                IAssetKeyNamePolicy policy = 
-                    new AssetKeyNameProvider()
+                IParameterPolicy policy = 
+                    new KeyPrinter()
                         .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: "/") // Sorts parameters
                         .DefaultRule(true, prefixSeparator: "/"); // Default separator
                 // Create asset
@@ -28,7 +28,7 @@ namespace docs
 
                 #region Snippet_0b
                 // Test if key converted correctly to expected identity "en/Section/Key"
-                string id = policy.BuildName(key.Culture("en"));
+                string id = policy.Print(key.Culture("en"));
                 #endregion Snippet_0b
             }
 
@@ -47,22 +47,22 @@ namespace docs
                 {
                     #region Snippet_2
                     // "en:Patches:Controllers:MyController:Errors:InvalidState"
-                    string str1 = AssetKeyNameProvider.Default.BuildName(key);
+                    string str1 = KeyPrinter.Default.Print(key);
                     // "en.Patches.Controllers.MyController.Errors.InvalidState"
-                    string str2 = AssetKeyNameProvider.Dot_Dot_Dot.BuildName(key);
+                    string str2 = KeyPrinter.Dot_Dot_Dot.Print(key);
                     // "Patches:Controllers:MyController:Errors:InvalidState"
-                    string str3 = AssetKeyNameProvider.None_Colon_Colon.BuildName(key);
+                    string str3 = KeyPrinter.None_Colon_Colon.Print(key);
                     // "en:Patches.Controllers.MyController.Errors.InvalidState"
-                    string str4 = AssetKeyNameProvider.Colon_Dot_Dot.BuildName(key);
+                    string str4 = KeyPrinter.Colon_Dot_Dot.Print(key);
                     // "en:Patches:Controllers:MyController:Errors.InvalidState"
-                    string str5 = AssetKeyNameProvider.Colon_Colon_Dot.BuildName(key);
+                    string str5 = KeyPrinter.Colon_Colon_Dot.Print(key);
                     #endregion Snippet_2
                 }
 
                 {
                     #region Snippet_3
                     // Create a custom policy 
-                    IAssetKeyNamePolicy myPolicy = new AssetKeyNameProvider()
+                    IParameterPolicy myPolicy = new KeyPrinter()
                         // Enable non-canonical "Culture" parameter with "/" separator
                         .Rule("Culture", true, postfixSeparator: "/", order: ParameterInfos.Default["Culture"].Order)
                         // Disable other non-canonical parts
@@ -73,7 +73,7 @@ namespace docs
                         .Rule("Key", true, prefixSeparator: "/", order: ParameterInfos.Default["Key"].Order);
 
                     // "en/Patches/MyController/Errors/InvalidState"
-                    string str = myPolicy.BuildName(key);
+                    string str = myPolicy.Print(key);
                     #endregion Snippet_3
                 }
 

@@ -44,7 +44,7 @@ namespace Lexical.Localization
         /// <summary>
         /// String lines sorted by name policy.
         /// </summary>
-        protected virtual Dictionary<IAssetKeyNameProvider, Dictionary<string, IFormulationString>> StringLinesByProvider => stringLinesByProvider ?? LoadStringLinesByProvider();
+        protected virtual Dictionary<IParameterPrinter, Dictionary<string, IFormulationString>> StringLinesByProvider => stringLinesByProvider ?? LoadStringLinesByProvider();
 
         /// <summary>
         /// Loaded and active key lines. It is compiled union of all sources.
@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// <summary>
         /// String lines sorted by name policy.
         /// </summary>
-        protected Dictionary<IAssetKeyNameProvider, Dictionary<string, IFormulationString>> stringLinesByProvider;
+        protected Dictionary<IParameterPrinter, Dictionary<string, IFormulationString>> stringLinesByProvider;
 
         /// <summary>
         /// Collections of lines and source readers. They are read when <see cref="Load"/> is called.
@@ -112,7 +112,7 @@ namespace Lexical.Localization
         /// <param name="keyPolicy"></param>
         /// <param name="comparer">(optional) comparer to use</param>
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
-        public LocalizationAsset(IEnumerable reader, IAssetKeyNamePolicy keyPolicy, IEqualityComparer<ILinePart> comparer = default, Func<Exception, bool> errorHandler = null) : base()
+        public LocalizationAsset(IEnumerable reader, IParameterPolicy keyPolicy, IEqualityComparer<ILinePart> comparer = default, Func<Exception, bool> errorHandler = null) : base()
         {
             this.comparer = comparer ?? LineComparer.Default;
             this.errorHandler = errorHandler;
@@ -135,7 +135,7 @@ namespace Lexical.Localization
         /// <param name="comparer">(optional) comparer to use</param>
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
         public LocalizationAsset(IEnumerable reader, string keyPattern, IEqualityComparer<ILinePart> comparer = default, Func<Exception, bool> errorHandler = null)
-            : this(reader, new AssetNamePattern(keyPattern), comparer, errorHandler)
+            : this(reader, new ParameterPattern(keyPattern), comparer, errorHandler)
         {
         }
 
@@ -224,9 +224,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns>new key lines</returns>
         /// <exception cref="Exception">If load fails</exception>
-        protected virtual Dictionary<IAssetKeyNameProvider, Dictionary<string, IFormulationString>> LoadStringLinesByProvider()
+        protected virtual Dictionary<IParameterPrinter, Dictionary<string, IFormulationString>> LoadStringLinesByProvider()
         {
-            Dictionary<IAssetKeyNameProvider, Dictionary<string, IFormulationString>> byProvider = new Dictionary<IAssetKeyNameProvider, Dictionary<string, IFormulationString>>();
+            Dictionary<IParameterPrinter, Dictionary<string, IFormulationString>> byProvider = new Dictionary<IParameterPrinter, Dictionary<string, IFormulationString>>();
 
             foreach (var collectionsLine in collections.ToArray())
             {
@@ -234,7 +234,7 @@ namespace Lexical.Localization
                 if (c.Type == CollectionType.StringLines)
                 {
                     Dictionary<string, IFormulationString> newLines;
-                    IAssetKeyNameProvider provider = c.namePolicy as IAssetKeyNameProvider;
+                    IParameterPrinter provider = c.namePolicy as IParameterPrinter;
                     if (provider == null) continue;
                     if (!byProvider.TryGetValue(provider, out newLines))
                         byProvider[provider] = newLines = new Dictionary<string, IFormulationString>();
@@ -258,7 +258,7 @@ namespace Lexical.Localization
             if (KeyLines.TryGetValue(key, out result)) return result;
             foreach(var line in StringLinesByProvider)
             {
-                string id = line.Key.BuildName(key);
+                string id = line.Key.Print(key);
                 if (line.Value.TryGetValue(id, out result)) return result;
             }
 
@@ -276,7 +276,7 @@ namespace Lexical.Localization
             HashSet<CultureInfo> cultures = null;
             foreach (var collectionLine in collections.ToArray())
             {
-                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is IAssetKeyNameParser == false && collectionLine.Value.StringLines.Length>0) return null;
+                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is IParameterParser == false && collectionLine.Value.StringLines.Length>0) return null;
                 foreach (var line in collectionLine.Value.KeyLines)
                 {
                     if (cultures == null) cultures = new HashSet<CultureInfo>();
@@ -333,16 +333,16 @@ namespace Lexical.Localization
             List<KeyValuePair<string, IFormulationString>> result = null;
             foreach (var collectionLine in collections.ToArray())
             {
-                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider_ && collectionLine.Value.namePolicy is IAssetKeyNameParser nameParser_)
+                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is IParameterPrinter nameProvider_ && collectionLine.Value.namePolicy is IParameterParser nameParser_)
                 {
-                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider_.BuildName(line.Key), line.Value));
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider_.Print(line.Key), line.Value));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
                     result.AddRange(__stringLines);
                 }
                 else
-                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.KeyTree) && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider)
+                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.KeyTree) && collectionLine.Value.namePolicy is IParameterPrinter nameProvider)
                 {
-                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.BuildName(line.Key), line.Value));
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.Print(line.Key), line.Value));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
                     result.AddRange(__stringLines);
                 }
@@ -365,15 +365,15 @@ namespace Lexical.Localization
             List<KeyValuePair<string, IFormulationString>> result = null;
             foreach (var collectionLine in collections.ToArray())
             {
-                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider_ && collectionLine.Value.namePolicy is IAssetKeyNameParser nameParser_)
+                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is IParameterPrinter nameProvider_ && collectionLine.Value.namePolicy is IParameterParser nameParser_)
                 {
-                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider_.BuildName(line.Key), line.Value));
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider_.Print(line.Key), line.Value));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
                     result.AddRange(__stringLines);
                 } else 
-                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.KeyTree) && collectionLine.Value.namePolicy is IAssetKeyNameProvider nameProvider)
+                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.KeyTree) && collectionLine.Value.namePolicy is IParameterPrinter nameProvider)
                 {
-                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.BuildName(line.Key), line.Value));
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.Print(line.Key), line.Value));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
                     result.AddRange(__stringLines);
                 }
@@ -397,7 +397,7 @@ namespace Lexical.Localization
         /// <param name="errorHandler">(optional) overrides default handler.</param>
         /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="LocalizationAsset"/></param>
         /// <returns></returns>
-        public LocalizationAsset Add(IEnumerable reader, IAssetKeyNamePolicy namePolicy = null, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
+        public LocalizationAsset Add(IEnumerable reader, IParameterPolicy namePolicy = null, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
         {
             // Reader argument not null
             if (reader == null) throw new ArgumentNullException(nameof(reader));
@@ -440,7 +440,7 @@ namespace Lexical.Localization
         /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="LocalizationAsset"/></param>
         /// <returns></returns>
         public LocalizationAsset Add(IEnumerable reader, string namePattern, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
-            => Add(reader, new AssetNamePattern(namePattern), errorHandler, disposeReader);
+            => Add(reader, new ParameterPattern(namePattern), errorHandler, disposeReader);
 
         /// <summary>
         /// Remove <paramref name="reader"/>. If reader was added with disposeReader, it will be disposed here.
@@ -588,7 +588,7 @@ namespace Lexical.Localization
         /// 
         /// If source is string lines the parses into strings into <see cref="ILinePart"/>.
         /// </summary>
-        protected internal IAssetKeyNamePolicy namePolicy;
+        protected internal IParameterPolicy namePolicy;
 
         /// <summary>
         /// Handler that processes file load errors, and file monitoring errors.
@@ -621,11 +621,11 @@ namespace Lexical.Localization
         /// <param name="errorHandler">(optional) handles file load and observe errors for logging and capturing exceptions. If <paramref name="errorHandler"/> returns true then exception is caught and not thrown</param>
         /// <param name="parent"></param>
         /// <param name="disposeReader"></param>
-        public Collection(IEnumerable reader, IAssetKeyNamePolicy namePolicy, Func<Exception, bool> errorHandler, LocalizationAsset parent, bool disposeReader)
+        public Collection(IEnumerable reader, IParameterPolicy namePolicy, Func<Exception, bool> errorHandler, LocalizationAsset parent, bool disposeReader)
         {
             this.parent = parent;
             this.reader = reader;
-            this.namePolicy = namePolicy ?? ParameterNamePolicy.Instance;
+            this.namePolicy = namePolicy ?? ParameterPolicy.Instance;
             this.errorHandler = errorHandler;
             this.disposeReader = disposeReader;
 
@@ -760,7 +760,7 @@ namespace Lexical.Localization
                     {
                         // Convert from string lines
                         var _stringLines = stringLines;
-                        if (_stringLines != null && namePolicy is IAssetKeyNameParser parser)
+                        if (_stringLines != null && namePolicy is IParameterParser parser)
                             lines.AddRange(_stringLines.ToKeyLines(parser));
                         else
                             lines.AddRange(stringLinesReader.ToKeyLines(namePolicy));
@@ -774,7 +774,7 @@ namespace Lexical.Localization
                     {
                         // Convert from string lines
                         var _stringLines = stringLines;
-                        if (_stringLines != null && namePolicy is IAssetKeyNameParser parser)
+                        if (_stringLines != null && namePolicy is IParameterParser parser)
                             lines.AddRange(_stringLines.ToKeyLines(parser));
                         else
                             lines.AddRange(stringLinesReader_.ToKeyLines(namePolicy, LexicalStringFormat.Instance));
@@ -827,7 +827,7 @@ namespace Lexical.Localization
                     {
                         // Convert from string lines
                         var _keyLines = keyLines;
-                        if (_keyLines != null && namePolicy is IAssetKeyNameProvider provider)
+                        if (_keyLines != null && namePolicy is IParameterPrinter provider)
                             lines.AddRange(_keyLines.ToStringLines(provider));
                         else
                             lines.AddRange(keyLinesReader.ToStringLines(namePolicy));
@@ -840,7 +840,7 @@ namespace Lexical.Localization
                     {
                         // Convert from string lines
                         var _keyLines = keyLines;
-                        if (_keyLines != null && namePolicy is IAssetKeyNameProvider provider)
+                        if (_keyLines != null && namePolicy is IParameterPrinter provider)
                             lines.AddRange(_keyLines.ToStringLines(provider));
                         else
                             lines.AddRange(keyLinesReader_.ToStringLines(namePolicy, LexicalStringFormat.Instance));
@@ -956,7 +956,7 @@ namespace Lexical.Localization
         /// <param name="dictionary"></param>
         /// <param name="namePolicy">instructions how to convert key to string</param>
         /// <returns></returns>
-        public static IAssetBuilder AddStrings(this IAssetBuilder builder, IReadOnlyDictionary<string, string> dictionary, IAssetKeyNamePolicy namePolicy)
+        public static IAssetBuilder AddStrings(this IAssetBuilder builder, IReadOnlyDictionary<string, string> dictionary, IParameterPolicy namePolicy)
         {
             builder.AddAsset(new LocalizationAsset(dictionary, namePolicy));
             return builder;
@@ -969,7 +969,7 @@ namespace Lexical.Localization
         /// <param name="dictionary"></param>
         /// <param name="namePolicy">instructions how to convert key to string</param>
         /// <returns></returns>
-        public static IAssetComposition AddStrings(this IAssetComposition composition, IReadOnlyDictionary<string, string> dictionary, IAssetKeyNamePolicy namePolicy)
+        public static IAssetComposition AddStrings(this IAssetComposition composition, IReadOnlyDictionary<string, string> dictionary, IParameterPolicy namePolicy)
         {
             composition.Add(new LocalizationAsset(dictionary, namePolicy));
             return composition;

@@ -21,10 +21,10 @@ namespace docs
 
 
             IAssetRoot_StringLocalizer_Examples.Main(args);
-            AssetKeyNameProvider_Examples.Main(args);
-            ParameterNamePolicy_Examples.Main(args);
-            IAssetKeyNamePolicy_Examples.Main(args);
-            AssetNamePattern_Examples.Main(args);
+            KeyPrinter_Examples.Main(args);
+            ParameterPolicy_Examples.Main(args);
+            IParameterPolicy_Examples.Main(args);
+            ParameterPattern_Examples.Main(args);
 
             LocalizationReader_Examples.Main(args);
             AssetKeyComparer_Examples.Main(args);
@@ -33,9 +33,9 @@ namespace docs
             Plurality_Examples.Main(args);
             TutorialProject.ExampleB.Main(args);
             TutorialProject.ExampleC.Main(args);
-            ParameterNamePolicy_Examples.Main(args);
+            ParameterPolicy_Examples.Main(args);
             ICulturePolicy_Examples.Main(args);
-            IAssetKeyNamePolicy_Examples.Main(args);
+            IParameterPolicy_Examples.Main(args);
             Ms_Localization_IopExamples.Main(args);
             Console.ReadKey();
         }

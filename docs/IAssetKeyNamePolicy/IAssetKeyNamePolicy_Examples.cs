@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace docs
 {
-    public class IAssetKeyNamePolicy_Examples
+    public class IParameterPolicy_Examples
     {
         public static void Main(string[] args)
         {
@@ -14,8 +14,8 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "en/MyController/Hello", "Hello World!" } };
                 // Create key name policy
-                IAssetKeyNamePolicy policy =
-                    new AssetKeyNameProvider()
+                IParameterPolicy policy =
+                    new KeyPrinter()
                         .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: "/") // Sorts parameters
                         .DefaultRule(true, prefixSeparator: "/"); // Default separator
                 // Create asset
@@ -28,7 +28,7 @@ namespace docs
 
                 #region Snippet_0b
                 // Test if key converted correctly to expected identity "en/Section/Key"
-                string id = policy.BuildName(key.Culture("en"));
+                string id = policy.Print(key.Culture("en"));
                 #endregion Snippet_0b
             }
 
@@ -46,20 +46,20 @@ namespace docs
                 {
                     #region Snippet_2
                     // "en:Patches:MyController:Errors:InvalidState"
-                    string str1 = AssetKeyNameProvider.Default.BuildName(key);
+                    string str1 = KeyPrinter.Default.Print(key);
                     // "en.Patches.MyController.Errors.InvalidState"
-                    string str2 = AssetKeyNameProvider.Dot_Dot_Dot.BuildName(key);
+                    string str2 = KeyPrinter.Dot_Dot_Dot.Print(key);
                     // "Patches:MyController:Errors:InvalidState"
-                    string str3 = AssetKeyNameProvider.None_Colon_Colon.BuildName(key);
+                    string str3 = KeyPrinter.None_Colon_Colon.Print(key);
                     // "en:Patches.MyController.Errors.InvalidState"
-                    string str4 = AssetKeyNameProvider.Colon_Dot_Dot.BuildName(key);
+                    string str4 = KeyPrinter.Colon_Dot_Dot.Print(key);
                     #endregion Snippet_2
                 }
 
                 {
                     #region Snippet_3
                     // Create a custom policy 
-                    IAssetKeyNamePolicy myPolicy = new AssetKeyNameProvider()
+                    IParameterPolicy myPolicy = new KeyPrinter()
                         // Enable non-canonical "Culture" parameter with "/" separator
                         .Rule("Culture", true, "", "/")
                         // Disable other non-canonical parts
@@ -70,41 +70,41 @@ namespace docs
                         .Rule("Key", true, "/", ".txt");
 
                     // "en/Patches/MyController/Errors/InvalidState.txt"
-                    string str = myPolicy.BuildName(key);
+                    string str = myPolicy.Print(key);
                     #endregion Snippet_3
                 }
 
                 {
                     #region Snippet_4
-                    // Create similiar policy with AssetNamePattern
-                    IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{culture/}{location/}{type/}{section/}[Key].txt");
+                    // Create similiar policy with ParameterPattern
+                    IParameterPolicy myPolicy = new ParameterPattern("{culture/}{location/}{type/}{section/}[Key].txt");
                     // "en/Patches/MyController/Errors/InvalidState.txt"
-                    string str = myPolicy.BuildName(key);
+                    string str = myPolicy.Print(key);
                     #endregion Snippet_4
                 }
 
                 {
                     #region Snippet_4a
                     // Create name pattern
-                    IAssetKeyNamePolicy myPolicy = new AssetNamePattern("Patches/{Section}[-key]{-culture}.png");
+                    IParameterPolicy myPolicy = new ParameterPattern("Patches/{Section}[-key]{-culture}.png");
                     #endregion Snippet_4a
                     // "Patches/icons-ok-de.png"
-                    string str = myPolicy.BuildName(key);
+                    string str = myPolicy.Print(key);
                 }
                 {
                     #region Snippet_4b
                     // Create name pattern
-                    IAssetKeyNamePolicy myPolicy = new AssetNamePattern("{location_0/}{location_1/}{location_n/}{Section}{-key}{-culture}.png");
+                    IParameterPolicy myPolicy = new ParameterPattern("{location_0/}{location_1/}{location_n/}{Section}{-key}{-culture}.png");
                     // Create key
                     ILinePart key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
-                    string str = myPolicy.BuildName(key2);
+                    string str = myPolicy.Print(key2);
                     #endregion Snippet_4b
                 }
                 {
                     #region Snippet_4c
                     // Create name pattern with regular expression detail
-                    IAssetNamePattern myPolicy = new AssetNamePattern("{location<[^/]+>/}{Section}{-key}{-culture}.png");
+                    IParameterPattern myPolicy = new ParameterPattern("{location<[^/]+>/}{Section}{-key}{-culture}.png");
                     // Use its regular expression
                     Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");
                     #endregion Snippet_4c

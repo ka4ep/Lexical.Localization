@@ -8,12 +8,12 @@ using System.Linq;
 
 namespace Lexical.Localization.Internal
 {
-    public class NamePatternMatch : IAssetNamePatternMatch
+    public class NamePatternMatch : IParameterPatternMatch
     {
         /// <summary>
         /// Reference to name pattern.
         /// </summary>
-        public IAssetNamePattern Pattern { get; internal set; }
+        public IParameterPattern Pattern { get; internal set; }
 
         /// <summary>
         /// Matches part values. One for each corresponding pattern.CaptureParts.
@@ -32,7 +32,7 @@ namespace Lexical.Localization.Internal
         /// </summary>
         /// <param name="identifier">identifier, e.g. "Culture", "Type"</param>
         /// <returns>value or null</returns>
-        public string this[string identifier] { get { IAssetNamePatternPart part; if (Pattern.PartMap.TryGetValue(identifier, out part)) return PartValues[part.CaptureIndex]; return null; } }
+        public string this[string identifier] { get { IParameterPatternPart part; if (Pattern.PartMap.TryGetValue(identifier, out part)) return PartValues[part.CaptureIndex]; return null; } }
 
         /// <summary>
         /// Cached result.
@@ -53,13 +53,13 @@ namespace Lexical.Localization.Internal
         /// Get match as string
         /// </summary>
         /// <returns></returns>
-        public override string ToString() => str ?? (str = Pattern.BuildName(PartValues));
+        public override string ToString() => str ?? (str = Pattern.Print(PartValues));
 
         /// <summary>
         /// Construct new match.
         /// </summary>
         /// <param name="pattern"></param>
-        public NamePatternMatch(IAssetNamePattern pattern)
+        public NamePatternMatch(IParameterPattern pattern)
         {
             this.Pattern = pattern;
             this.PartValues = new string[pattern.CaptureParts.Length];
@@ -86,7 +86,7 @@ namespace Lexical.Localization.Internal
         public bool ContainsKey(string key) => Pattern.PartMap.ContainsKey(key);
         public bool TryGetValue(string key, out string value)
         {
-            IAssetNamePatternPart p;
+            IParameterPatternPart p;
             if (Pattern.PartMap.TryGetValue(key, out p)) { value = PartValues[p.CaptureIndex]; return true; }
             value = default;
             return false;
@@ -105,7 +105,7 @@ namespace Lexical.Localization.Internal
                 get
                 {
                     if (ix < 0 || ix >= match.Pattern.CaptureParts.Length) return new KeyValuePair<string, string>(null, null);
-                    IAssetNamePatternPart part = match.Pattern.CaptureParts[ix];
+                    IParameterPatternPart part = match.Pattern.CaptureParts[ix];
                     return new KeyValuePair<string, string>(part.Identifier, match.PartValues[part.CaptureIndex]);
                 }
             }
@@ -114,7 +114,7 @@ namespace Lexical.Localization.Internal
                 get
                 {
                     if (ix < 0 || ix >= match.Pattern.CaptureParts.Length) return null;
-                    IAssetNamePatternPart part = match.Pattern.CaptureParts[ix];
+                    IParameterPatternPart part = match.Pattern.CaptureParts[ix];
                     return new KeyValuePair<string, string>(part.Identifier, match.PartValues[part.CaptureIndex]);
                 }
             }
@@ -129,9 +129,9 @@ namespace Lexical.Localization.Internal
     /// </summary>
     public class NamePatternMatchComparer : IEqualityComparer<IReadOnlyDictionary<string, string>>
     {
-        public readonly IAssetNamePattern Pattern;
+        public readonly IParameterPattern Pattern;
 
-        public NamePatternMatchComparer(IAssetNamePattern pattern)
+        public NamePatternMatchComparer(IParameterPattern pattern)
         {
             this.Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
         }
@@ -142,8 +142,8 @@ namespace Lexical.Localization.Internal
             if (x == null || y == null) return false;
 
             // Cast if x and y are pattern matches
-            IAssetNamePatternMatch x_match = x as IAssetNamePatternMatch;
-            IAssetNamePatternMatch y_match = y as IAssetNamePatternMatch;
+            IParameterPatternMatch x_match = x as IParameterPatternMatch;
+            IParameterPatternMatch y_match = y as IParameterPatternMatch;
             if (x_match?.Pattern != Pattern) x_match = null;
             if (y_match?.Pattern != Pattern) y_match = null;
 
@@ -166,7 +166,7 @@ namespace Lexical.Localization.Internal
         public int GetHashCode(IReadOnlyDictionary<string, string> obj)
         {
             // Cast if is match
-            IAssetNamePatternMatch match = obj as IAssetNamePatternMatch;
+            IParameterPatternMatch match = obj as IParameterPatternMatch;
             if (match?.Pattern != Pattern) match = null;
 
             // hash
@@ -202,7 +202,7 @@ namespace Lexical.Localization.Internal
             if (x == null || y == null) return false;
 
             // Compare match arrays
-            if (x is IAssetNamePatternMatch x_match && y is IAssetNamePatternMatch y_match && x_match.Pattern == y_match.Pattern)
+            if (x is IParameterPatternMatch x_match && y is IParameterPatternMatch y_match && x_match.Pattern == y_match.Pattern)
             {
                 int c = x_match.Pattern.CaptureParts.Length;
                 for (int i = 0; i < c; i++)
