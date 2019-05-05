@@ -52,7 +52,7 @@ namespace Lexical.Localization
     /// Assembly hint is used when loading assets from embedded resources.
     /// For instance, in a name pattern "[assembly.][resource.]{type.}{section.}{Key}".
     /// </summary>
-    public interface ILineKeyAssembly : ILineAssembly, ILineKeyNonCanonicallyCompared
+    public interface ILineKeyAssembly : ILineAssembly, ILinePart
     {
         // The inherited ParameterName property is Assembly.GetName().FullName
     }
@@ -122,48 +122,35 @@ namespace Lexical.Localization
         /// <returns>assembly info or null</returns>
         public static Assembly GetAssembly(this ILine line)
         {
-            if (line is ILineAssembly lineAssembly && lineAssembly.Assembly != null) return lineAssembly.Assembly;
-
-            if (line is ILinePart part)
+            Assembly result = null;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                Assembly assembly = null;
-                for (ILinePart p = part; p != null; p = p.PreviousPart)
-                    if (p is ILineKeyAssembly assemblyKey && assemblyKey.Assembly != null) assembly = assemblyKey.Assembly;
-                if (assembly != null) return assembly;
+                if (l is ILineAssembly key && key.Assembly != null) result = key.Assembly;
             }
-
-            return null;
+            return result;
         }
 
         /// <summary>
-        /// Get effective (closest root) assembly value.
+        /// Get effective (closest to root) assembly value.
         /// </summary>
         /// <param name="line"></param>
         /// <returns>assembly name or null</returns>
         public static string GetAssemblyName(this ILine line)
         {
-            if (line is ILineAssembly lineAssembly && lineAssembly.Assembly != null) return lineAssembly.Assembly.GetName().FullName;
-
-            if (line is ILineParameters lineParameters)
+            string result = null;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                var keys = lineParameters.Parameters;
-                if (keys != null)
-                    foreach (var kv in keys)
-                        if (kv.Key == "Assembly" && kv.Value != null) return kv.Value;
-            }
-
-            if (line is ILinePart part)
-            {
-                string result = null;
-                for (ILinePart p = part; p != null; p = p.PreviousPart)
+                if (l is ILineAssembly typeKey && typeKey.Assembly != null) result = typeKey.Assembly.FullName;
+                else if (l is ILineParameter parameter && parameter.ParameterName == "Assembly" && parameter.ParameterValue != null) result = parameter.ParameterValue;
+                else if (line is ILineParameters lineParameters)
                 {
-                    if (p is ILineKeyAssembly assemblyKey && assemblyKey.Assembly != null) result = assemblyKey.Assembly.GetName().FullName;
-                    else if (p is ILineParameter parameterKey && parameterKey.ParameterName == "Assembly" && parameterKey.ParameterValue != null) result = parameterKey.ParameterValue;
+                    var keys = lineParameters.Parameters;
+                    if (keys != null)
+                        foreach (var kv in keys)
+                            if (kv.Key == "Assembly" && kv.Value != null) return kv.Value;
                 }
-                if (result != null) return result;
             }
-
-            return null;
+            return result;
         }
 
     }

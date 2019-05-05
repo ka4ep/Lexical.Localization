@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// "Type" key that carries <see cref="Type"/>. 
     /// </summary>
     [Serializable]
-    public class LineTypeKey : LineKey, ILineKeyType
+    public class LineTypeKey : LineKey, ILineKeyType, ILineKeyNonCanonicallyCompared
     {
         /// <summary>
         /// Type, null if non-standard type.
@@ -24,6 +24,11 @@ namespace Lexical.Localization
         /// Type property
         /// </summary>
         public Type Type { get => type; set => throw new InvalidOperationException(); }
+
+        /// <summary>
+        /// Appending arguments.
+        /// </summary>
+        public override Object[] AppendArguments => new Object[] { typeof(ILineKeyType), Type };
 
         /// <summary>
         /// Create new type key.
@@ -65,6 +70,11 @@ namespace Lexical.Localization
     public class LineTypeKey<T> : LineTypeKey, ILineKeyType, ILineKey<T>
     {
         /// <summary>
+        /// Appending arguments.
+        /// </summary>
+        public override Object[] AppendArguments => new Object[] { typeof(ILineKey<T>) };
+
+        /// <summary>
         /// Create type key
         /// </summary>
         /// <param name="appender"></param>
@@ -96,7 +106,7 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public ILineKeyType Append(ILinePart previous, Type type)
+        ILineKeyType ILinePartAppender1<ILineKeyType, Type>.Append(ILinePart previous, Type type)
             => typeConstructor.Create(type, this, previous);
     }
 

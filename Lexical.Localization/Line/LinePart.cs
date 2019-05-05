@@ -67,6 +67,11 @@ namespace Lexical.Localization
         public virtual ILinePartAppender Appender { get => appender; set => throw new InvalidOperationException(nameof(Appender) + " is read-only"); }
 
         /// <summary>
+        /// Appending arguments.
+        /// </summary>
+        public virtual IEnumerable<Object[]> GetAppendArguments() { yield return new Object[] { typeof(ILinePart) }; }
+
+        /// <summary>
         /// Create line part.
         /// </summary>
         /// <param name="appender">(optional) Explicit appender, if null uses the Appender in <paramref name="previousPart"/></param>

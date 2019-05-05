@@ -28,6 +28,11 @@ namespace Lexical.Localization
         public string ParameterValue { get; protected set; }
 
         /// <summary>
+        /// Appending arguments.
+        /// </summary>
+        public override IEnumerable<Object[]> GetAppendArguments() { yield return new Object[] { typeof(ILineParameter), ParameterName, ParameterValue }; }
+
+        /// <summary>
         /// Create parameter part.
         /// </summary>
         /// <param name="appender"></param>
@@ -102,7 +107,7 @@ namespace Lexical.Localization
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
         /// <returns></returns>
-        public ILineParameter Append(ILinePart previous, string parameterName, string parameterValue)
+        ILineParameter ILinePartAppender2<ILineParameter, string, string>.Append(ILinePart previous, string parameterName, string parameterValue)
             => new LineParameter(this, previous, parameterName, parameterValue);
     }
 
@@ -115,7 +120,7 @@ namespace Lexical.Localization
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
         /// <returns></returns>
-        public ILineParameter Append(ILinePart previous, string parameterName, string parameterValue)
+        ILineParameter ILinePartAppender2<ILineParameter, string, string>.Append(ILinePart previous, string parameterName, string parameterValue)
             => new StringLocalizerParameterPart(this, previous, parameterName, parameterValue);
     }
 

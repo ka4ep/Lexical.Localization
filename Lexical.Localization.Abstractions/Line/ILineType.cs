@@ -67,7 +67,7 @@ namespace Lexical.Localization
     /// 
     /// Type parameters are used with physical files and embedded resources.
     /// </summary>
-    public interface ILineKeyType : ILineType, ILineKeyNonCanonicallyCompared
+    public interface ILineKeyType : ILineType, ILinePart
     {
     }
 
@@ -154,48 +154,35 @@ namespace Lexical.Localization
         /// <returns>type info or null</returns>
         public static Type GetType(this ILine line)
         {
-            if (line is ILineType lineType && lineType.Type != null) return lineType.Type;
-
-            if (line is ILinePart part)
+            Type type = null;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                Type type = null;
-                for (ILinePart p = part; p != null; p = p.PreviousPart)
-                    if (p is ILineKeyType typeKey && typeKey.Type != null) type = typeKey.Type;
-                if (type != null) return type;
+                if (l is ILineType typeKey && typeKey.Type != null) type = typeKey.Type;
             }
-
-            return null;
+            return type;
         }
 
         /// <summary>
-        /// Get effective (closest root) type value.
+        /// Get effective (closest to root) type value.
         /// </summary>
         /// <param name="line"></param>
         /// <returns>type name or null</returns>
         public static string GetTypeName(this ILine line)
         {
-            if (line is ILineType lineType && lineType.Type != null) return lineType.Type.FullName;
-
-            if (line is ILineParameters lineParameters)
+            string result = null;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                var keys = lineParameters.Parameters;
-                if (keys != null)
-                    foreach (var kv in keys)
-                        if (kv.Key == "Type" && kv.Value != null) return kv.Value;
-            }
-
-            if (line is ILinePart part)
-            {
-                string result = null;
-                for (ILinePart p = part; p != null; p = p.PreviousPart)
+                if (l is ILineType typeKey && typeKey.Type != null) result = typeKey.Type.FullName;
+                else if (l is ILineParameter parameter && parameter.ParameterName == "Type" && parameter.ParameterValue != null) result = parameter.ParameterValue;
+                else if (line is ILineParameters lineParameters)
                 {
-                    if (p is ILineKeyType typeKey && typeKey.Type != null) result = typeKey.Type.FullName;
-                    else if (p is ILineParameter parameterKey && parameterKey.ParameterName == "Type" && parameterKey.ParameterValue != null) result = parameterKey.ParameterValue;
+                    var keys = lineParameters.Parameters;
+                    if (keys != null)
+                        foreach (var kv in keys)
+                            if (kv.Key == "Type" && kv.Value != null) return kv.Value;
                 }
-                if (result != null) return result;
             }
-
-            return null;
+            return result;
         }
 
 

@@ -48,7 +48,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key (may have) has "Culture" parameter assigned.
     /// </summary>
-    public interface ILineKeyCulture : ILineCulture, ILineKeyNonCanonicallyCompared
+    public interface ILineKeyCulture : ILineCulture, ILinePart
     {
     }
 
@@ -62,7 +62,7 @@ namespace Lexical.Localization
         /// <param name="culture"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key cannot be appended</exception>
-        public static ILineKey Culture(this ILinePart key, CultureInfo culture)
+        public static ILinePart Culture(this ILinePart key, CultureInfo culture)
             => key.Append<ILineKeyCulture, CultureInfo>(culture);
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Lexical.Localization
         /// <param name="cultureName"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
-        public static ILineKey Culture(this ILinePart key, string cultureName)
+        public static ILinePart Culture(this ILinePart key, string cultureName)
             => key.Append<ILineKeyNonCanonicallyCompared, string, string>("Culture", cultureName);
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="culture"></param>
         /// <returns>new key or null</returns>
-        public static ILineKey TryAppendCulture(this ILinePart key, CultureInfo culture)
+        public static ILinePart TryAppendCulture(this ILinePart key, CultureInfo culture)
             => key.TryAppend<ILineKeyCulture, CultureInfo>(culture);
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="cultureName"></param>
         /// <returns>new key or null</returns>
-        public static ILineKey TryAppendCulture(this ILinePart key, string cultureName)
+        public static ILinePart TryAppendCulture(this ILinePart key, string cultureName)
             => key.TryAppend<ILineKeyNonCanonicallyCompared, string, string>("Culture", cultureName);
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Lexical.Localization
         /// <returns>culture info or null</returns>
         public static CultureInfo GetCultureInfo(this ILine line)
         {
-            if (line is ILineCulture lineCulture && lineCulture.Culture != null) return lineCulture.Culture;
+            
 
             if (line is ILineParameters lineParameters)
             {
@@ -116,14 +116,10 @@ namespace Lexical.Localization
             {
                 string cultureName = null;
                 CultureInfo culture = null;
-                for (ILinePart p = part; p != null; p = p.PreviousPart)
+                for (ILine l = line; l != null; l = l.GetPreviousPart())
                 {
-                    if (p is ILineKeyCulture cultureKey)
-                    {
-                        if (cultureKey.Culture != null) culture = cultureKey.Culture;
-                        else if (cultureKey.GetParameterValue() != null) cultureName = cultureKey.GetParameterValue();
-                    }
-                    else if (p is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) cultureName = parameterKey.ParameterValue;
+                    if (l is ILineCulture lineCulture && lineCulture.Culture != null) culture = lineCulture.Culture;
+                    else if (l is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) cultureName = parameterKey.ParameterValue;
                 }
                 if (culture != null) return culture;
                 if (cultureName != null) try { return CultureInfo.GetCultureInfo(cultureName); } catch (CultureNotFoundException) { }
@@ -133,7 +129,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Get effective (closest root) culture value.
+        /// Get effective (closest to root) culture value.
         /// </summary>
         /// <param name="line"></param>
         /// <returns>culture name or null</returns>
@@ -152,7 +148,7 @@ namespace Lexical.Localization
             if (line is ILinePart part)
             {
                 string result = null;
-                for (ILinePart p = part; p != null; p = p.PreviousPart)
+                for (ILinePart p = part; p != null; p = p.GetPreviousPart())
                 {
                     if (p is ILineKeyCulture cultureKey && cultureKey.Culture != null) result = cultureKey.Culture.Name;
                     else if (p is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) result = parameterKey.ParameterValue;

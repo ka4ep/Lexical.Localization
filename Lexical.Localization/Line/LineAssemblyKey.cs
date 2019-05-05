@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 
@@ -13,7 +14,7 @@ namespace Lexical.Localization
     /// "Assembly" key that carries <see cref="Assembly"/>. 
     /// </summary>
     [Serializable]
-    public class LineAssemblyKey : LineKey, ILineKeyAssembly
+    public class LineAssemblyKey : LineKey, ILineKeyAssembly, ILineKeyNonCanonicallyCompared
     {
         /// <summary>
         /// Assembly, null if non-standard assembly.
@@ -24,6 +25,11 @@ namespace Lexical.Localization
         /// Assembly property
         /// </summary>
         public Assembly Assembly { get => assembly; set => throw new InvalidOperationException(); }
+
+        /// <summary>
+        /// Appending arguments.
+        /// </summary>
+        public override IEnumerable<Object[]> GetAppendArguments() { yield return new Object[] { typeof(ILineKeyAssembly), Assembly }; }
 
         /// <summary>
         /// Create new assembly key.
@@ -66,7 +72,7 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="assembly"></param>
         /// <returns></returns>
-        public ILineKeyAssembly Append(ILinePart previous, Assembly assembly)
+        ILineKeyAssembly ILinePartAppender1<ILineKeyAssembly, Assembly>.Append(ILinePart previous, Assembly assembly)
             => new LineAssemblyKey(this, previous, assembly);
     }
     /*

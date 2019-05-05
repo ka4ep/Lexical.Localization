@@ -73,6 +73,152 @@ namespace Lexical.Localization
     public static partial class ILinePartExtensions
     {
         /// <summary>
+        /// Append new parameter part.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="parameterName">parameter name</param>
+        /// <param name="parameterValue">(optional) parameter value</param>
+        /// <returns>new parameter part</returns>
+        /// <exception cref="LineException">If part could not be appended</exception>
+        /// <returns>new part</returns>
+        public static ILinePart Parameter(this ILinePart part, string parameterName, string parameterValue)
+            => part.GetAppender().Append<ILineParameter, string, string>(part, parameterName, parameterValue);
+
+        /// <summary>
+        /// Append new parameter part.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="parameterName">parameter name</param>
+        /// <param name="parameterValue">(optional) parameter value</param>
+        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
+        /// <returns>new parameter part</returns>
+        /// <exception cref="LineException">If part could not be appended</exception>
+        /// <returns>new part</returns>
+        public static ILinePart Parameter(this ILinePart part, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
+        {
+            IParameterInfo info = null;
+            if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info) && (info.IsCanonical || info.IsNonCanonical))
+            {
+                if (info.IsCanonical) return part.GetAppender().Append<ILineKeyCanonicallyCompared, string, string>(part, parameterName, parameterValue);
+                else if (info.IsNonCanonical) return part.GetAppender().Append<ILineKeyNonCanonicallyCompared, string, string>(part, parameterName, parameterValue);
+            }
+            return part.GetAppender().Append<ILineParameter, string, string>(part, parameterName, parameterValue);
+        }
+
+        /// <summary>
+        /// Try to create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="parameterName">parameter name</param>
+        /// <param name="parameterValue">(otional) parameter value.</param>
+        /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
+        public static ILinePart TryAppendParameter(this ILinePart part, string parameterName, string parameterValue)
+            => part.GetAppender().TryAppend<ILineParameter, string, string>(part, parameterName, parameterValue);
+
+        /// <summary>
+        /// Try to create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="parameterName">parameter name</param>
+        /// <param name="parameterValue">(otional) parameter value.</param>
+        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
+        /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
+        public static ILinePart TryAppendParameter(this ILinePart part, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
+        {
+            IParameterInfo info = null;
+            if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info) && (info.IsCanonical || info.IsNonCanonical))
+            {
+                if (info.IsCanonical) return part.GetAppender().TryAppend<ILineKeyCanonicallyCompared, string, string>(part, parameterName, parameterValue);
+                else if (info.IsNonCanonical) return part.GetAppender().TryAppend<ILineKeyNonCanonicallyCompared, string, string>(part, parameterName, parameterValue);
+            }
+            return part.GetAppender().TryAppend<ILineParameter, string, string>(part, parameterName, parameterValue);
+
+        }
+
+        /// <summary>
+        /// Append enumeration of parameters.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="parameters">enumeration of parameters to append</param>
+        /// <returns>new key that is appended to this key</returns>
+        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
+        public static ILinePart Parameters(this ILinePart part, IEnumerable<KeyValuePair<string, string>> parameters)
+        {
+            ILinePartAppender appender = part.GetAppender();
+            if (appender == null) throw new LineException(part, "Appender is not found.");
+            foreach (var parameter in parameters)
+                part = appender.Append<ILineParameter, string, string>(part, parameter.Key, parameter.Value);
+            return part;
+        }
+
+        /// <summary>
+        /// Append enumeration of parameters and keys.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="parameters">enumeration of parameters to append</param>
+        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
+        /// <returns>new key that is appended to this key</returns>
+        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
+        public static ILinePart Parameter(this ILinePart part, IEnumerable<KeyValuePair<string, string>> parameters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
+        {
+            ILinePartAppender appender = part.GetAppender();
+            if (appender == null) throw new LineException(part, "Appender is not found.");
+            foreach (var parameter in parameters)
+            {
+                if (parameter.Key == null) continue;
+                IParameterInfo info = null;
+                if (parameterInfos != null && parameterInfos.TryGetValue(parameter.Key, out info) && (info.IsCanonical || info.IsNonCanonical))
+                {
+                    if (info.IsCanonical) part = appender.Append<ILineKeyCanonicallyCompared, string, string>(part, parameter.Key, parameter.Value);
+                    else if (info.IsNonCanonical) part = appender.Append<ILineKeyNonCanonicallyCompared, string, string>(part, parameter.Key, parameter.Value);
+                }
+                else part = appender.Append<ILineParameter, string, string>(part, parameter.Key, parameter.Value);
+            }
+            return part;
+        }
+
+        /// <summary>
+        /// Try to create a new key by appending an enumeration of parameters.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="parameters"></param>
+        /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
+        public static ILinePart TryAppendParameters(this ILinePart part, IEnumerable<KeyValuePair<string, string>> parameters)
+        {
+            ILinePartAppender appender = part.GetAppender();
+            if (appender == null) return null;
+            foreach (var parameter in parameters)
+            {
+                if (part == null) return null;
+                part = appender.TryAppend<ILineParameter, string, string>(part, parameter.Key, parameter.Value);
+            }
+            return part;
+        }
+
+        /// <summary>
+        /// Get effective (closes to root) parameter value
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="parameterName"></param>
+        /// <returns></returns>
+        public static string GetParameter(this ILine line, string parameterName)
+        {
+            string result = null;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineParameter lineParameter && lineParameter.ParameterName == parameterName && lineParameter.ParameterValue != null) result = lineParameter.ParameterValue;
+                if (l is ILineParameters lineParameters)
+                {
+                    var parms = lineParameters.Parameters;
+                    if (parms != null)
+                        foreach (var p in parms)
+                            if (p.Key == parameterName && p.Value != null) result = p.Value;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Get parameter name of the part.
         /// </summary>
         /// <param name="key"></param>
@@ -188,128 +334,6 @@ namespace Lexical.Localization
 
             // Pop from stack in reverse order
             if (key is ILineParameter parameter && parameter.ParameterName!=null) visitor(parameter.ParameterName, parameter.ParameterValue, ref data);
-        }
-
-        /// <summary>
-        /// Append new parameter part.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="parameterName">parameter name</param>
-        /// <param name="parameterValue">(optional) parameter value</param>
-        /// <returns>new parameter part</returns>
-        /// <exception cref="LineException">If part could not be appended</exception>
-        /// <returns>new part</returns>
-        public static ILinePart Parameter(this ILinePart part, string parameterName, string parameterValue)
-            => part.GetAppender().Append<ILineParameter, string, string>(part, parameterName, parameterValue);
-
-        /// <summary>
-        /// Append new parameter part.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="parameterName">parameter name</param>
-        /// <param name="parameterValue">(optional) parameter value</param>
-        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
-        /// <returns>new parameter part</returns>
-        /// <exception cref="LineException">If part could not be appended</exception>
-        /// <returns>new part</returns>
-        public static ILinePart Parameter(this ILinePart part, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
-        {
-            IParameterInfo info = null;
-            if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info) && (info.IsCanonical || info.IsNonCanonical))
-            {
-                if (info.IsCanonical) return part.GetAppender().Append<ILineKeyCanonicallyCompared, string, string>(part, parameterName, parameterValue);
-                else if (info.IsNonCanonical) return part.GetAppender().Append<ILineKeyNonCanonicallyCompared, string, string>(part, parameterName, parameterValue);
-            }
-            return part.GetAppender().Append<ILineParameter, string, string>(part, parameterName, parameterValue);
-        }
-
-        /// <summary>
-        /// Try to create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="parameterName">parameter name</param>
-        /// <param name="parameterValue">(otional) parameter value.</param>
-        /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
-        public static ILinePart TryAppendParameter(this ILinePart part, string parameterName, string parameterValue)
-            => part.GetAppender().TryAppend<ILineParameter, string, string>(part, parameterName, parameterValue);
-
-        /// <summary>
-        /// Try to create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="parameterName">parameter name</param>
-        /// <param name="parameterValue">(otional) parameter value.</param>
-        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
-        /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
-        public static ILinePart TryAppendParameter(this ILinePart part, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
-        {
-            IParameterInfo info = null;
-            if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info) && (info.IsCanonical || info.IsNonCanonical))
-            {
-                if (info.IsCanonical) return part.GetAppender().TryAppend<ILineKeyCanonicallyCompared, string, string>(part, parameterName, parameterValue);
-                else if (info.IsNonCanonical) return part.GetAppender().TryAppend<ILineKeyNonCanonicallyCompared, string, string>(part, parameterName, parameterValue);
-            }
-            return part.GetAppender().TryAppend<ILineParameter, string, string>(part, parameterName, parameterValue);
-
-        }
-
-        /// <summary>
-        /// Appending an enumeration of parameters.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="parameters">enumeration of parameters to append</param>
-        /// <returns>new key that is appended to this key</returns>
-        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
-        public static ILinePart Parameters(this ILinePart part, IEnumerable<KeyValuePair<string, string>> parameters)
-        {
-            ILinePartAppender appender = part.GetAppender();
-            if (appender == null) throw new LineException(part, "Appender is not found.");
-            foreach (var parameter in parameters)
-                part = appender.Append<ILineParameter, string, string>(part, parameter.Key, parameter.Value);
-            return part;
-        }
-
-        /// <summary>
-        /// Appending an enumeration of parameters and keys.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="parameters">enumeration of parameters to append</param>
-        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
-        /// <returns>new key that is appended to this key</returns>
-        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
-        public static ILinePart Parameter(this ILinePart part, IEnumerable<KeyValuePair<string, string>> parameters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
-        {
-            ILinePartAppender appender = part.GetAppender();
-            if (appender == null) throw new LineException(part, "Appender is not found.");
-            foreach (var parameter in parameters)
-            {
-                if (parameter.Key == null) continue;
-                IParameterInfo info = null;
-                if (parameterInfos!=null && parameterInfos.TryGetValue(parameter.Key, out info) && (info.IsCanonical||info.IsNonCanonical))
-                {
-                    if (info.IsCanonical) part = appender.Append<ILineKeyCanonicallyCompared, string, string>(part, parameter.Key, parameter.Value);
-                    else if (info.IsNonCanonical) part = appender.Append<ILineKeyNonCanonicallyCompared, string, string>(part, parameter.Key, parameter.Value);
-                } else part = appender.Append<ILineParameter, string, string>(part, parameter.Key, parameter.Value);
-            }
-            return part;
-        }
-
-        /// <summary>
-        /// Try to create a new key by appending an enumeration of parameters.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="parameters"></param>
-        /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
-        public static ILinePart TryAppendParameters(this ILinePart part, IEnumerable<KeyValuePair<string, string>> parameters)
-        {
-            ILinePartAppender appender = part.GetAppender();
-            if (appender == null) return null;
-            foreach (var parameter in parameters)
-            {
-                if (part == null) return null;
-                part = appender.TryAppend<ILineParameter, string, string>(part, parameter.Key, parameter.Value);
-            }
-            return part;
         }
 
         /// <summary>

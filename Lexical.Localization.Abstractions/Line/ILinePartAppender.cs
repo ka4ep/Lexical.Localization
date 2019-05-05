@@ -3,7 +3,6 @@
 // Date:           2.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using System;
 using System.Collections.Generic;
 
 namespace Lexical.Localization
@@ -288,6 +287,43 @@ namespace Lexical.Localization
             if (casted == null) return default;
             try { return casted.Append(previous, a0, a1, a2); } catch (LineException) { return default; }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="partToAppendTo"></param>
+        /// <param name="lineToAppendFrom"></param>
+        /// <returns></returns>
+        public static ILinePart Append(this ILinePartAppender appender, ILinePart partToAppendTo, ILine lineToAppendFrom)
+        {
+            for (ILine l = lineToAppendFrom; l!=null; l=l.GetPreviousPart())
+            {
+                if (l is ILineAppendArguments args)
+                {
+                    var enumr = args.GetAppendArguments();
+                    if (enumr != null)
+                    {
+                        foreach (var arg in enumr)
+                        {
+                            if (arg.Length == 1)
+                            {
+                                //typeof(ILinePartAppenderExtensions).GetMember("Append")
+                                //typeof(ILinePartAppender).GetMember()
+                            }
+                        }
+                    }
+                }
+            }
+            return partToAppendTo;
+        }
+
+        static ILinePartAppenderExtensions()
+        {
+
+        }
+
+        //Func<ILinePart, Object[]> append
 
     }
 }

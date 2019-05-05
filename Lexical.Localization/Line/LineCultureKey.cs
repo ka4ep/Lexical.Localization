@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.Serialization;
 
@@ -13,7 +14,7 @@ namespace Lexical.Localization
     /// "Culture" key that carries <see cref="CultureInfo"/>. 
     /// </summary>
     [Serializable]
-    public class LineCultureKey : LineKey, ILineKeyCulture
+    public class LineCultureKey : LineKey, ILineKeyCulture, ILineKeyNonCanonicallyCompared
     {
         /// <summary>
         /// CultureInfo, null if non-standard culture.
@@ -24,6 +25,11 @@ namespace Lexical.Localization
         /// Culture property
         /// </summary>
         public CultureInfo Culture { get => culture; set => throw new InvalidOperationException(); }
+
+        /// <summary>
+        /// Appending arguments.
+        /// </summary>
+        public override IEnumerable<Object[]> GetAppendArguments() { yield return new Object[] { typeof(ILineKeyCulture), Culture}; }
 
         /// <summary>
         /// Create new culture key.
@@ -66,9 +72,10 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="culture"></param>
         /// <returns></returns>
-        public ILineKeyCulture Append(ILinePart previous, CultureInfo culture)
+        ILineKeyCulture ILinePartAppender1<ILineKeyCulture, CultureInfo>.Append(ILinePart previous, CultureInfo culture)
             => new LineCultureKey(this, previous, culture);
     }
+
     /*
     /// <summary>
     /// "Culture" key that carries <see cref="CultureInfo"/>. 
