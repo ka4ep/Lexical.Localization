@@ -65,7 +65,7 @@ namespace Lexical.Localization
                 for (ILinePart p = part; p != null; p = p.PreviousPart) count++;
             else
                 for (ILinePart p = part; p != null; p = p.PreviousPart)
-                    if (p is ILineNonCanonicallyComparedKey == false) count++;
+                    if (p is ILineKeyNonCanonicallyCompared == false) count++;
 
             // Create result
             ILinePart[] result = new ILinePart[count];
@@ -75,7 +75,7 @@ namespace Lexical.Localization
                     result[ix--] = p;
             else
                 for (ILinePart p = part; p != null; p = p.PreviousPart)
-                    if (p is ILineNonCanonicallyComparedKey == false)
+                    if (p is ILineKeyNonCanonicallyCompared == false)
                         result[ix--] = p;
 
             return result;
@@ -116,12 +116,12 @@ namespace Lexical.Localization
         /// <typeparam name="T"></typeparam>
         /// <param name="part"></param>
         /// <returns>T</returns>
-        /// <exception cref="AssetKeyException">if T is not found</exception>
+        /// <exception cref="LineException">if T is not found</exception>
         public static T Get<T>(this ILinePart part) where T : ILinePart
         {
             for (; part != null; part = part.PreviousPart)
                 if (part is T casted) return casted;
-            throw new AssetKeyException(part, $"{typeof(T).FullName} is not found.");
+            throw new LineException(part, $"{typeof(T).FullName} is not found.");
         }
 
         /// <summary>

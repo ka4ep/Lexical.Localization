@@ -56,11 +56,11 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="formatProvider"></param>
         /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement <see cref="ILocalizationKeyFormatProviderAssignable"/></exception>
+        /// <exception cref="LineException">If key doesn't implement <see cref="ILocalizationKeyFormatProviderAssignable"/></exception>
         public static ILocalizationKeyFormatProviderAssigned FormatProvider(this ILinePart key, IFormatProvider formatProvider)
         {
             if (key is ILocalizationKeyFormatProviderAssignable casted) return casted.FormatProvider(formatProvider);
-            throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyFormatProviderAssignable)}.");
+            throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyFormatProviderAssignable)}.");
         }
     }
 }

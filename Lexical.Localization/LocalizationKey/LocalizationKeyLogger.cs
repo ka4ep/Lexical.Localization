@@ -31,7 +31,7 @@ namespace Lexical.Localization
         public static ILocalizationKeyLoggerAssigned Logger(this ILinePart key, TextWriter logger, int severity = 1)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationTextLogger(logger, severity));
-            throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
+            throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Lexical.Localization
         public static ILocalizationKeyLoggerAssigned DiagnosticsTrace(this ILinePart key, int severity = 1)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationDiagnosticsTrace(severity));
-            throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
+            throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
         }
     }
 
@@ -213,7 +213,7 @@ namespace Lexical.Localization
         public static ILocalizationKeyLoggerAssigned Logger(this ILinePart key, ILogger logger)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationLogger(logger));
-            throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
+            throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
         }
     }
 

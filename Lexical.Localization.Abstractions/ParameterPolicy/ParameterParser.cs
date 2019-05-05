@@ -14,7 +14,7 @@ using Lexical.Localization.Internal;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Context free format of asset key
+    /// Parameter policy that uses the following format "Key:Value:...".
     /// </summary>
     public class ParameterParser
     {

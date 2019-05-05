@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Lexical.Localization
@@ -12,7 +13,8 @@ namespace Lexical.Localization
     /// <summary>
     /// Hash-equals comparable key.
     /// </summary>
-    public class LineKey : LineParameterPart, ILineKey
+    [Serializable]
+    public class LineKey : LineParameter, ILineKey
     {
         /// <summary>
         /// Create parameter part.
@@ -24,5 +26,13 @@ namespace Lexical.Localization
         public LineKey(ILinePartAppender appender, ILinePart previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
         {
         }
+
+        /// <summary>
+        /// Deserialize.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public LineKey(SerializationInfo info, StreamingContext context) : base(info, context) { }
+
     }
 }

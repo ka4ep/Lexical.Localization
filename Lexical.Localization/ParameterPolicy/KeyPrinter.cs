@@ -270,8 +270,8 @@ namespace Lexical.Localization
                     if (parameters.TryGetValue(parameterName, out desc) && !desc.IsIncluded) continue;
 
                     // Try default descriptions
-                    if (desc == null && part is ILineCanonicallyComparedKey) parameters.TryGetValue("canonical", out desc);
-                    if (desc == null && part is ILineNonCanonicallyComparedKey) parameters.TryGetValue("noncanonical", out desc);
+                    if (desc == null && part is ILineKeyCanonicallyCompared) parameters.TryGetValue("canonical", out desc);
+                    if (desc == null && part is ILineKeyNonCanonicallyCompared) parameters.TryGetValue("noncanonical", out desc);
                     if (desc == null) parameters.TryGetValue("", out desc);
 
                     // No description

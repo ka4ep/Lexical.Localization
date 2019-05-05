@@ -23,6 +23,14 @@ namespace Lexical.Localization
         /// (Optional) Part appender. If null, the caller should follow to <see cref="PreviousPart"/> for appender.
         /// </summary>
         ILinePartAppender Appender { get; }
+
+        /// <summary>
+        /// Append with the parameters in this part to <paramref name="otherLine"/> with the other line's appender.
+        /// </summary>
+        /// <param name="otherLine"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException">If cannot create line</exception>
+        //ILinePart AppendTo(ILinePart otherLine);
     }
 
     /// <summary></summary>

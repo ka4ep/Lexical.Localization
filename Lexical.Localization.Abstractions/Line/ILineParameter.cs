@@ -22,7 +22,7 @@ namespace Lexical.Localization
         /// <param name="parameterName">parameter name</param>
         /// <param name="parameterValue">parameter value</param>
         /// <returns>new key that is appended to this key</returns>
-        /// <exception cref="AssetKeyException">If append failed</exception>
+        /// <exception cref="LineException">If append failed</exception>
         ILineParameter AppendParameter(string parameterName, string parameterValue);
     }
 
@@ -35,7 +35,7 @@ namespace Lexical.Localization
     public interface ILineParameters : ILine
     {
         /// <summary>
-        /// Get and assign parameters to line. 
+        /// Parameters of the line, this includes <see cref="ILineKeysCanonicallyCompared"/> and <see cref="ILineKeysNonCanonicallyCompared"/>.
         /// 
         /// The preferred implementation is of <see cref="IList{T}"/>.
         /// </summary>
@@ -197,7 +197,7 @@ namespace Lexical.Localization
         /// <param name="parameterName">parameter name</param>
         /// <param name="parameterValue">(optional) parameter value</param>
         /// <returns>new parameter part</returns>
-        /// <exception cref="AssetKeyException">If part could not be appended</exception>
+        /// <exception cref="LineException">If part could not be appended</exception>
         /// <returns>new part</returns>
         public static ILinePart Parameter(this ILinePart part, string parameterName, string parameterValue)
             => part.GetAppender().Append<ILineParameter, string, string>(part, parameterName, parameterValue);
@@ -210,15 +210,15 @@ namespace Lexical.Localization
         /// <param name="parameterValue">(optional) parameter value</param>
         /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
         /// <returns>new parameter part</returns>
-        /// <exception cref="AssetKeyException">If part could not be appended</exception>
+        /// <exception cref="LineException">If part could not be appended</exception>
         /// <returns>new part</returns>
         public static ILinePart Parameter(this ILinePart part, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
         {
             IParameterInfo info = null;
             if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info) && (info.IsCanonical || info.IsNonCanonical))
             {
-                if (info.IsCanonical) return part.GetAppender().Append<ILineCanonicallyComparedKey, string, string>(part, parameterName, parameterValue);
-                else if (info.IsNonCanonical) return part.GetAppender().Append<ILineNonCanonicallyComparedKey, string, string>(part, parameterName, parameterValue);
+                if (info.IsCanonical) return part.GetAppender().Append<ILineKeyCanonicallyCompared, string, string>(part, parameterName, parameterValue);
+                else if (info.IsNonCanonical) return part.GetAppender().Append<ILineKeyNonCanonicallyCompared, string, string>(part, parameterName, parameterValue);
             }
             return part.GetAppender().Append<ILineParameter, string, string>(part, parameterName, parameterValue);
         }
@@ -246,8 +246,8 @@ namespace Lexical.Localization
             IParameterInfo info = null;
             if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info) && (info.IsCanonical || info.IsNonCanonical))
             {
-                if (info.IsCanonical) return part.GetAppender().TryAppend<ILineCanonicallyComparedKey, string, string>(part, parameterName, parameterValue);
-                else if (info.IsNonCanonical) return part.GetAppender().TryAppend<ILineNonCanonicallyComparedKey, string, string>(part, parameterName, parameterValue);
+                if (info.IsCanonical) return part.GetAppender().TryAppend<ILineKeyCanonicallyCompared, string, string>(part, parameterName, parameterValue);
+                else if (info.IsNonCanonical) return part.GetAppender().TryAppend<ILineKeyNonCanonicallyCompared, string, string>(part, parameterName, parameterValue);
             }
             return part.GetAppender().TryAppend<ILineParameter, string, string>(part, parameterName, parameterValue);
 
@@ -259,11 +259,11 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <param name="parameters">enumeration of parameters to append</param>
         /// <returns>new key that is appended to this key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
+        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
         public static ILinePart Parameters(this ILinePart part, IEnumerable<KeyValuePair<string, string>> parameters)
         {
             ILinePartAppender appender = part.GetAppender();
-            if (appender == null) throw new AssetKeyException(part, "Appender is not found.");
+            if (appender == null) throw new LineException(part, "Appender is not found.");
             foreach (var parameter in parameters)
                 part = appender.Append<ILineParameter, string, string>(part, parameter.Key, parameter.Value);
             return part;
@@ -276,19 +276,19 @@ namespace Lexical.Localization
         /// <param name="parameters">enumeration of parameters to append</param>
         /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
         /// <returns>new key that is appended to this key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
+        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
         public static ILinePart Parameter(this ILinePart part, IEnumerable<KeyValuePair<string, string>> parameters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
         {
             ILinePartAppender appender = part.GetAppender();
-            if (appender == null) throw new AssetKeyException(part, "Appender is not found.");
+            if (appender == null) throw new LineException(part, "Appender is not found.");
             foreach (var parameter in parameters)
             {
                 if (parameter.Key == null) continue;
                 IParameterInfo info = null;
                 if (parameterInfos!=null && parameterInfos.TryGetValue(parameter.Key, out info) && (info.IsCanonical||info.IsNonCanonical))
                 {
-                    if (info.IsCanonical) part = appender.Append<ILineCanonicallyComparedKey, string, string>(part, parameter.Key, parameter.Value);
-                    else if (info.IsNonCanonical) part = appender.Append<ILineNonCanonicallyComparedKey, string, string>(part, parameter.Key, parameter.Value);
+                    if (info.IsCanonical) part = appender.Append<ILineKeyCanonicallyCompared, string, string>(part, parameter.Key, parameter.Value);
+                    else if (info.IsNonCanonical) part = appender.Append<ILineKeyNonCanonicallyCompared, string, string>(part, parameter.Key, parameter.Value);
                 } else part = appender.Append<ILineParameter, string, string>(part, parameter.Key, parameter.Value);
             }
             return part;
@@ -320,7 +320,7 @@ namespace Lexical.Localization
         /// <param name="left"></param>
         /// <param name="right">enumeration of parameters to append</param>
         /// <returns>new key that is appended to this key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
+        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
         public static ILinePart ConcatIfNew(this ILinePart left, ILinePart right)
         {
             if (right == null) return left;
@@ -334,7 +334,7 @@ namespace Lexical.Localization
                     if (string.IsNullOrEmpty(parameterName) || parameterValue == null) continue;
 
                     // Check if parameterName of k already exists in "result"/"left".
-                    if (k is ILineNonCanonicallyComparedKey && left.GetParameterPart(parameterName) != null) continue;
+                    if (k is ILineKeyNonCanonicallyCompared && left.GetParameterPart(parameterName) != null) continue;
 
                     result = result.Parameter(parameterName, parameterValue);
                 }
@@ -350,7 +350,7 @@ namespace Lexical.Localization
         /// <param name="part">Key that must implement <see cref="ILineParameterAssignable"/>.</param>
         /// <param name="anotherKey"></param>
         /// <returns>concatenated key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement IAssetKeyParameterAssignable</exception>
+        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable</exception>
         public static ILinePart Concat(this ILinePart part, ILinePart anotherKey)
         {
             ILinePart result = part;
@@ -444,7 +444,7 @@ namespace Lexical.Localization.Internal
                 if (parameterName == null) continue;
 
                 // Canonical/Non-canonical
-                bool isCanonical = k is ILineCanonicallyComparedKey, isNonCanonical = k is ILineNonCanonicallyComparedKey;
+                bool isCanonical = k is ILineKeyCanonicallyCompared, isNonCanonical = k is ILineKeyNonCanonicallyCompared;
                 if (!isCanonical && !isNonCanonical) continue;
 
                 if (isNonCanonical)

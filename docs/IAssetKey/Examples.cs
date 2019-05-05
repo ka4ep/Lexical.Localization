@@ -177,7 +177,7 @@ namespace docs
             {
                 #region Snippet_8b
                 // Assign key to localization of type "MyController"
-                IAssetKey<MyController> key = new LocalizationRoot().Type<MyController>();
+                ILineKey<MyController> key = new LocalizationRoot().Type<MyController>();
                 #endregion Snippet_8b
             }
 
@@ -205,7 +205,7 @@ namespace docs
         {
             ILinePart localization;
 
-            public MyController(IAssetKey<MyController> localization)
+            public MyController(ILineKey<MyController> localization)
             {
                 this.localization = localization;
             }

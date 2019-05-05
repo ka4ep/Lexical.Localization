@@ -469,7 +469,7 @@ namespace Lexical.Localization
             if (filledParameters != null && filledParameters.Count > 0) foreach (var kp in filledParameters) if (kp.Value != null) { hasFilledParameters = true; break; }
             Regex regex = hasFilledParameters ? pattern.Regex : pattern.BuildRegex(filledParameters);
             System.Text.RegularExpressions.Match match = regex.Match(text);
-            NamePatternMatch _match = new NamePatternMatch(pattern);
+            ParameterPatternMatch _match = new ParameterPatternMatch(pattern);
             if (match.Success)
             {
                 foreach (IParameterPatternPart part in pattern.CaptureParts)

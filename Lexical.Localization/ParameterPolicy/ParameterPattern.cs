@@ -86,19 +86,35 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Pattern as string.
+        /// </summary>
         public string Pattern { get; internal set; }
+
+        /// <summary>
+        /// Pattern as string.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString() => Pattern;
 
         /// <summary>
         /// All parts of the pattern
         /// </summary>
         readonly Part[] allParts;
+
+        /// <summary>
+        /// All parts of the pattern
+        /// </summary>
         public IParameterPatternPart[] AllParts => allParts;
 
         /// <summary>
         /// All parts that capture a part of string.
         /// </summary>
         readonly Part[] captureParts;
+
+        /// <summary>
+        /// All parts that capture a part of string.
+        /// </summary>
         public IParameterPatternPart[] CaptureParts => captureParts;
 
         /// <summary>
@@ -116,6 +132,9 @@ namespace Lexical.Localization
         /// </summary>
         public string[] ParameterNames { get; internal set; }
 
+        /// <summary>
+        /// Cached regex.
+        /// </summary>
         protected Regex cachedRegex;
 
         /// <summary>
@@ -229,6 +248,9 @@ namespace Lexical.Localization
             ParameterMap = ParameterNames.ToDictionary(s => s, parameterName => CaptureParts.Where(part => part.ParameterName == parameterName).OrderBy(p => p.OccuranceIndex).ToArray());
         }
 
+        /// <summary>
+        /// Part info
+        /// </summary>
         public class Part : IParameterPatternPart
         {
             /// <summary>
@@ -305,15 +327,20 @@ namespace Lexical.Localization
             public override string ToString() => PatternText;
         }
 
+        /// <summary>
+        /// Match parameters in <paramref name="key"/> with the parts in the pattern.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public IParameterPatternMatch Match(ILinePart key)
         {
-            NamePatternMatch match = new NamePatternMatch(this);
+            ParameterPatternMatch match = new ParameterPatternMatch(this);
             key.VisitParameters(_keyvisitor, ref match);
             return match;
         }
 
-        KeyParameterVisitor<NamePatternMatch> _keyvisitor;
-        void KeyVisitor(string parameterName, string parameterValue, ref NamePatternMatch match)
+        KeyParameterVisitor<ParameterPatternMatch> _keyvisitor;
+        void KeyVisitor(string parameterName, string parameterValue, ref ParameterPatternMatch match)
         {
             // Search parts
             IParameterPatternPart[] parts;
@@ -362,7 +389,6 @@ namespace Lexical.Localization
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>key result or null if contained no content</returns>
         /// <exception cref="FormatException">If parse failed</exception>
-        /// <exception cref="ArgumentException">If <paramref name="policy"/> doesn't implement <see cref="IParameterParser"/>.</exception>
         public ILinePart Parse(string str, ILinePart rootKey = default)
         {
             IParameterPatternMatch match = this.Match(text: str, filledParameters: null);
@@ -402,6 +428,11 @@ namespace Lexical.Localization
             return true;
         }
 
+        /// <summary>
+        /// Print line as string.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public string Print(ILinePart key)
         {
             IParameterPatternMatch match = Match(key);

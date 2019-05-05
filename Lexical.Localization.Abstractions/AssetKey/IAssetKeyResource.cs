@@ -49,11 +49,11 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="resource"></param>
         /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement ITypeAssignableLocalizationKey</exception>
+        /// <exception cref="LineException">If key doesn't implement ITypeAssignableLocalizationKey</exception>
         public static IAssetKeyResourceAssigned Resource(this ILinePart key, string resource)
         {
             if (key is IAssetKeyResourceAssignable casted) return casted.Resource(resource);
-            throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyResourceAssignable)}.");
+            throw new LineException(key, $"doesn't implement {nameof(IAssetKeyResourceAssignable)}.");
         }
 
         /// <summary>

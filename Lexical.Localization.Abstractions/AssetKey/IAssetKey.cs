@@ -11,10 +11,10 @@ namespace Lexical.Localization
     /// Signals that the class gives asset specific parameters, hints or capabilities.
     /// 
     /// Parameters:
-    ///     <see cref="IAssetKeyAssemblyAssigned"/>
+    ///     <see cref="ILineKeyAssembly"/>
     ///     <see cref="IAssetKeyLocationAssigned"/>
     ///     <see cref="IAssetKeyResourceAssigned"/>
-    ///     <see cref="IAssetKeyTypeAssigned"/>
+    ///     <see cref="ILineKeyType"/>
     ///     <see cref="IAssetKeySectionAssigned"/>
     ///     <see cref="IAssetKeyAssigned"/>
     ///     
@@ -49,13 +49,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>byte[] or null</returns>
-        /// <exception cref="AssetKeyException">If resolving failed or resolver was not found</exception>
+        /// <exception cref="LineException">If resolving failed or resolver was not found</exception>
         public static byte[] GetResource(this ILinePart key)
         {
             IAsset asset = key.FindAsset();
-            if (asset == null) throw new AssetKeyException(key, "String resolver was not found.");
+            if (asset == null) throw new LineException(key, "String resolver was not found.");
             byte[] data = asset.GetResource(key);
-            if (data == null) throw new AssetKeyException(key, $"String {key} was not found.");
+            if (data == null) throw new LineException(key, $"String {key} was not found.");
             return data;
         }
 

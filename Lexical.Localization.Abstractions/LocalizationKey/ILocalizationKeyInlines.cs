@@ -18,7 +18,7 @@ namespace Lexical.Localization
         /// Add <see cref="ILineInlines"/> part to the key. 
         /// </summary>
         /// <returns>key with inlines (non-null dictionary)</returns>
-        /// <exception cref="AssetKeyException">If key can't be inlined.</exception>
+        /// <exception cref="LineException">If key can't be inlined.</exception>
         ILineInlines AddInlines();
     }
 
@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="text">text to add, or null to remove</param>
         /// <returns>new key with inliens or <paramref name="key"/></returns>
-        /// <exception cref="AssetKeyException">If key can't be inlined.</exception>
+        /// <exception cref="LineException">If key can't be inlined.</exception>
         public static ILineInlines Inline(this ILinePart key, string text)
         {
             ILineInlines inlinesKey = key.GetOrCreateInlines();
@@ -52,7 +52,7 @@ namespace Lexical.Localization
         /// <param name="subKeyText">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
         /// <param name="text"></param>
         /// <returns>new key with inliens or <paramref name="key"/></returns>
-        /// <exception cref="AssetKeyException">If key can't be inlined.</exception>
+        /// <exception cref="LineException">If key can't be inlined.</exception>
         public static ILinePart Inline(this ILinePart key, string subKeyText, string text)
         {
             ILineInlines inlinesKey = key.GetOrCreateInlines();
@@ -78,12 +78,12 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>inlines key</returns>
-        /// <exception cref="AssetKeyException">If <paramref name="key"/> doesn't implement <see cref="ILineInlinesAssigned"/></exception>
+        /// <exception cref="LineException">If <paramref name="key"/> doesn't implement <see cref="ILineInlinesAssigned"/></exception>
         public static ILineInlines GetOrCreateInlines(this ILinePart key)
             => key.FindInlines() ?? 
                (key is ILineInlinesAssigned assignable ? 
                 assignable.AddInlines() : 
-                throw new AssetKeyException(key, $"Doesn't implement {nameof(ILineInlinesAssigned)}"));
+                throw new LineException(key, $"Doesn't implement {nameof(ILineInlinesAssigned)}"));
 
         /// <summary>
         /// Walks linked list and searches for all inlines.

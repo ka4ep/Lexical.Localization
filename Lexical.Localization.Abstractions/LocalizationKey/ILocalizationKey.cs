@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// Signals that the class gives localizations specific parameters, hints or capabilities.
     /// 
     /// Parameters:
-    ///     <see cref="ILineCultureKey"/>
+    ///     <see cref="ILineKeyCulture"/>
     ///     <see cref="ILineInlines"/>
     ///     <see cref="ILineFormatArgsPart"/>
     ///     
@@ -45,13 +45,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>formulation string</returns>
-        /// <exception cref="AssetKeyException">If resolving failed or resolver was not found</exception>
+        /// <exception cref="LineException">If resolving failed or resolver was not found</exception>
         public static IFormulationString GetString(this ILinePart key)
         {
             IAsset asset = key.FindAsset();
-            if (asset == null) throw new AssetKeyException(key, "String resolver was not found.");
+            if (asset == null) throw new LineException(key, "String resolver was not found.");
             IFormulationString str = asset.GetString(key);
-            if (str == null) throw new AssetKeyException(key, "String was not found.");
+            if (str == null) throw new LineException(key, "String was not found.");
             return str;
         }
 

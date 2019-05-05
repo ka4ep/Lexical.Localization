@@ -139,9 +139,9 @@ namespace Lexical.Localization
             }
 
             // Parse basename/location/type from key
-            IAssetKeyAssemblyAssigned asmSectionToStrip;
+            ILineKeyAssembly asmSectionToStrip;
             IAssetKeyResourceAssigned resSectionToStrip;
-            IAssetKeyTypeAssigned typeSectionToStrip;
+            ILineKeyType typeSectionToStrip;
             int x = key.FindResourceKeys(out asmSectionToStrip, out resSectionToStrip, out typeSectionToStrip);
 
             // If key has type, and this handler is also assigned to type, but they mismatch, don't strip the type name from key (below)
@@ -188,7 +188,7 @@ namespace Lexical.Localization
             {
                 string value = k.GetParameterValue();
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILineCultureKey || string.IsNullOrEmpty(value)) continue;
+                if (k is ILineKeyCulture || string.IsNullOrEmpty(value)) continue;
                 if (length > 0) length++;
                 length += value.Length;
             }
@@ -198,7 +198,7 @@ namespace Lexical.Localization
             {
                 string value = k.GetParameterValue();
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILineCultureKey || string.IsNullOrEmpty(value)) continue;
+                if (k is ILineKeyCulture || string.IsNullOrEmpty(value)) continue;
                 if (ix < length) chars[--ix] = '.';
                 ix -= value.Length;
                 value.CopyTo(0, chars, ix, value.Length);
@@ -254,6 +254,73 @@ namespace Lexical.Localization
             => new StringLocalizerAsset(stringLocalizer);
         public static IAssetSource ToSource(this IStringLocalizer stringLocalizer)
             => new StringLocalizerAsset(stringLocalizer).ToSource();
+
+
+        /// <summary>
+        /// Searches key for either 
+        ///    <see cref="ILineKeyType"/> with type
+        ///    <see cref="ILineKeyAssembly"/> and <see cref="IAssetKeyResourceAssigned"/> with string, not type.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="type"></param>
+        /// <param name="basename"></param>
+        /// <param name="location"></param>
+        /// <returns>
+        ///     0 found nothing
+        ///     1 found type
+        ///     2 found basename + location</returns>
+        public static int FindResourceInfos(this ILinePart key, out Type type, out string basename, out string location)
+        {
+            ILineKeyAssembly asmSection;
+            IAssetKeyResourceAssigned resSection;
+            ILineKeyType typeSection;
+            int x = key.FindResourceKeys(out asmSection, out resSection, out typeSection);
+            if (x == 1) { type = typeSection.Type; basename = null; location = null; }
+            if (x == 2) { type = null; basename = typeSection.GetParameterValue(); location = asmSection.GetParameterValue(); }
+            type = null; basename = null; location = null;
+            return 0;
+        }
+        /// <summary>
+        /// Searches key for either 
+        ///    <see cref="ILineKeyType"/> with type
+        ///    <see cref="ILineKeyAssembly"/> and <see cref="IAssetKeyResourceAssigned"/> with string, not type.
+        /// </summary>
+        /// <returns>
+        ///     0 found nothing
+        ///     1 found typeSection
+        ///     2 found asmSection + typeSection</returns>
+        public static int FindResourceKeys(this ILinePart key, out ILineKeyAssembly asmSection, out IAssetKeyResourceAssigned resSection, out ILineKeyType typeSection)
+        {
+            ILineKeyAssembly _asmSection = null;
+            IAssetKeyResourceAssigned _resSection = null;
+            ILineKeyType _typeSection = null;
+            for (ILinePart k = key; k != null; k = k.PreviousPart)
+            {
+                if (k is ILineKeyAssembly __asmSection) _asmSection = __asmSection;
+                else if (k is IAssetKeyResourceAssigned __resSection) _resSection = __resSection;
+                else if (k is ILineKeyType __typeSection) _typeSection = __typeSection;
+            }
+
+            if (_asmSection != null && _resSection != null)
+            {
+                asmSection = _asmSection;
+                resSection = _resSection;
+                typeSection = null;
+                return 2;
+            }
+            if (_typeSection != null && _typeSection.Type != null)
+            {
+                asmSection = null;
+                resSection = null;
+                typeSection = _typeSection;
+                return 1;
+            }
+
+            asmSection = null;
+            resSection = null;
+            typeSection = null;
+            return 0;
+        }
     }
 }
 

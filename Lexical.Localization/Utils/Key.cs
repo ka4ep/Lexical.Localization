@@ -27,17 +27,17 @@ namespace Lexical.Localization.Utils
         ILinePartAppender ILinePart.Appender => Appender.Instance;
         /// <summary></summary>
         public class Appender : ILinePartAppender2<ILineParameter, string, string>,
-            ILinePartAppender2<ILineCanonicallyComparedKey, string, string>,
-            ILinePartAppender2<ILineNonCanonicallyComparedKey, string, string>
+            ILinePartAppender2<ILineKeyCanonicallyCompared, string, string>,
+            ILinePartAppender2<ILineKeyNonCanonicallyCompared, string, string>
         {
             static readonly Appender instance = new Appender();
             /// <summary></summary>
             public static Appender Instance => instance;
             ILineParameter ILinePartAppender2<ILineParameter, string, string>.Append(ILinePart previous, string parameterName, string parameterKey)
                 => ((Key)previous).AppendParameter(parameterName, parameterKey);
-            ILineCanonicallyComparedKey ILinePartAppender2<ILineCanonicallyComparedKey, string, string>.Append(ILinePart prevKey, string parameterName, string parameterValue)
+            ILineKeyCanonicallyCompared ILinePartAppender2<ILineKeyCanonicallyCompared, string, string>.Append(ILinePart prevKey, string parameterName, string parameterValue)
                 => new Key.Canonical((Key)prevKey, parameterName, parameterValue);
-            ILineNonCanonicallyComparedKey ILinePartAppender2<ILineNonCanonicallyComparedKey, string, string>.Append(ILinePart prevKey, string parameterName, string parameterValue)
+            ILineKeyNonCanonicallyCompared ILinePartAppender2<ILineKeyNonCanonicallyCompared, string, string>.Append(ILinePart prevKey, string parameterName, string parameterValue)
                 => new Key.NonCanonical((Key)prevKey, parameterName, parameterValue);
         }
 
@@ -181,20 +181,20 @@ namespace Lexical.Localization.Utils
         }
 
         /// <summary>
-        /// Proxy implementation of non-canonical parameter. Implements <see cref="ILineNonCanonicallyComparedKey"/>.
+        /// Proxy implementation of non-canonical parameter. Implements <see cref="ILineKeyNonCanonicallyCompared"/>.
         /// </summary>
         [DebuggerDisplay("{ToString()}")]
-        public class NonCanonical : Key, ILineNonCanonicallyComparedKey
+        public class NonCanonical : Key, ILineKeyNonCanonicallyCompared
         {
             public NonCanonical(string parameterName, string parameterValue) : base(parameterName, parameterValue) { }
             public NonCanonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
         }
 
         /// <summary>
-        /// Proxy implementation of non-canonical parameter. Implements <see cref="ILineCanonicallyComparedKey"/>.
+        /// Proxy implementation of non-canonical parameter. Implements <see cref="ILineKeyCanonicallyCompared"/>.
         /// </summary>
         [DebuggerDisplay("{ToString()}")]
-        public class Canonical : Key, ILineCanonicallyComparedKey
+        public class Canonical : Key, ILineKeyCanonicallyCompared
         {
             public Canonical(string parameterName, string parameterValue) : base(parameterName, parameterValue) { }
             public Canonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
@@ -289,7 +289,7 @@ namespace Lexical.Localization.Utils
             int count = 0;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineNonCanonicallyComparedKey) || k is ILineCanonicallyComparedKey)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     count++;
             }
 
@@ -298,7 +298,7 @@ namespace Lexical.Localization.Utils
             int ix = count;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineNonCanonicallyComparedKey) || k is ILineCanonicallyComparedKey)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     result[--ix] = k;
             }
 
@@ -333,7 +333,7 @@ namespace Lexical.Localization.Utils
             int count = 0;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineNonCanonicallyComparedKey) || k is ILineCanonicallyComparedKey)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     count++;
             }
 
@@ -344,7 +344,7 @@ namespace Lexical.Localization.Utils
             int ix = count;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineNonCanonicallyComparedKey) || k is ILineCanonicallyComparedKey)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     result[--ix] = k.Name;
             }
 
@@ -365,7 +365,7 @@ namespace Lexical.Localization.Utils
             int count = 0;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineNonCanonicallyComparedKey) || k is ILineCanonicallyComparedKey)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     count++;
             }
 
@@ -374,7 +374,7 @@ namespace Lexical.Localization.Utils
             int ix = count;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineNonCanonicallyComparedKey) || k is ILineCanonicallyComparedKey)
+                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
                     result[--ix] = new KeyValuePair<string, string>(k.Name, k.Value);
             }
 

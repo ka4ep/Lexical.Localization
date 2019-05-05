@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq.Expressions;
+using System.Runtime.Serialization;
 using System.Threading;
 
 namespace Lexical.Localization
@@ -17,6 +18,7 @@ namespace Lexical.Localization
     /// Basic line part.
     /// </summary>
     [DebuggerDisplay("{DebugPrint()}")]
+    [Serializable]
     public class LinePart : ILinePart, ILineDefaultHashCode, IDynamicMetaObjectProvider
     {
         /// <summary>
@@ -76,6 +78,26 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Deserialize.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public LinePart(SerializationInfo info, StreamingContext context)
+        {
+            this.PreviousPart = info.GetValue(nameof(PreviousPart), typeof(ILinePart)) as ILinePart;
+        }
+
+        /// <summary>
+        /// Serialize
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue(nameof(PreviousPart), PreviousPart);
+        }
+
+        /// <summary>
         /// Calculate hashcode with hashesin format arguments. Result is cached.
         /// </summary>
         /// <returns></returns>
@@ -97,7 +119,7 @@ namespace Lexical.Localization
             if (defaultHashcodeCalculated) return defaultHashcode;
 
             // Get previous key's default hashcode
-            if (this is ILineCanonicallyComparedKey == false && this is ILineNonCanonicallyComparedKey == false && this.PreviousPart is ILineDefaultHashCode prevDefaultHashcode)
+            if (this is ILineKeyCanonicallyCompared == false && this is ILineKeyNonCanonicallyCompared == false && this.PreviousPart is ILineDefaultHashCode prevDefaultHashcode)
             {
                 defaultHashcode = prevDefaultHashcode.GetDefaultHashCode();
             }
@@ -177,28 +199,20 @@ namespace Lexical.Localization
                     .AddInterface(typeof(IAssetKeyAssetAssigned))
                     .AddInterface(typeof(IAssetKeyAssignable))
                     .AddInterface(typeof(IAssetKeySectionAssigned))
-                    .AddInterface(typeof(IAssetKeySectionAssignable))
                     .AddInterface(typeof(IAssetKeyLocationAssigned))
-                    .AddInterface(typeof(IAssetKeyLocationAssignable))
-                    .AddInterface(typeof(IAssetKeyTypeAssigned))
+                    .AddInterface(typeof(ILineKeyType))
                     .AddInterface(typeof(IAssetKeyTypeAssignable))
-                    .AddInterface(typeof(IAssetKeyAssemblyAssigned))
-                    .AddInterface(typeof(IAssetKeyAssemblyAssignable))
+                    .AddInterface(typeof(ILineKeyAssembly))
                     .AddInterface(typeof(IAssetKeyResourceAssigned))
-                    .AddInterface(typeof(IAssetKeyResourceAssignable))
                     .AddExtensionMethods(typeof(ILinePartExtensions))
-                    .AddInterface(typeof(ILocalizationKeyCultureAssignable))
-                    .AddInterface(typeof(ILineCultureKey))
+                    .AddInterface(typeof(ILineKeyCulture))
                     .AddInterface(typeof(ILocalizationKeyCulturePolicyAssigned))
                     .AddInterface(typeof(ILocalizationKeyCulturePolicyAssignable))
                     .AddInterface(typeof(ILineFormatArgsPart))
-                    .AddInterface(typeof(ILocalizationKeyFormattable))
                     .AddInterface(typeof(ILineInlinesAssigned))
                     .AddInterface(typeof(ILineInlines));
         }
     }
-
-    // StringLocalizerPart
 
     public partial class LinePartAppender : ILinePartAppender0<ILinePart>
     {
@@ -210,6 +224,8 @@ namespace Lexical.Localization
         public ILinePart Append(ILinePart previous)
             => new LinePart(this, previous);
     }
+
+    // StringLocalizerPart
 
     /*
     public partial class StringLocalizerPartAppender : ILinePartAppender2<ILineParameterPart, string, string>

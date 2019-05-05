@@ -102,7 +102,7 @@ namespace Lexical.Localization
         /// Key part.
         /// </summary>
         [Serializable]
-        public class _Key : StringLocalizerKey, IAssetKeyAssigned, ILineParameter, ILineCanonicallyComparedKey
+        public class _Key : StringLocalizerKey, IAssetKeyAssigned, ILineParameter, ILineKeyCanonicallyCompared
         {
             /// <summary>
             /// ParameterName
@@ -215,20 +215,20 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="culture"></param>
         /// <returns></returns>
-        ILineCultureKey ILocalizationKeyCultureAssignable.Culture(CultureInfo culture) => new _Culture(Appender, this, null, culture);
+        ILineKeyCulture ILocalizationKeyCultureAssignable.Culture(CultureInfo culture) => new _Culture(Appender, this, null, culture);
 
         /// <summary>
         /// Append a culture key.
         /// </summary>
         /// <param name="cultureName"></param>
         /// <returns></returns>
-        ILineCultureKey ILocalizationKeyCultureAssignable.Culture(string cultureName) => new _Culture(Appender, this, cultureName, null);
+        ILineKeyCulture ILocalizationKeyCultureAssignable.Culture(string cultureName) => new _Culture(Appender, this, cultureName, null);
 
         /// <summary>
         /// Culture key.
         /// </summary>
         [Serializable]
-        public class _Culture : StringLocalizerKey, ILineCultureKey, ILineNonCanonicallyComparedKey, ILineParameter
+        public class _Culture : StringLocalizerKey, ILineKeyCulture, ILineKeyNonCanonicallyCompared, ILineParameter
         {
             /// <summary>
             /// ParameterName
@@ -240,7 +240,7 @@ namespace Lexical.Localization
             /// </summary>
             protected CultureInfo culture;
 
-            CultureInfo ILineCulture.Culture { get => culture; set => throw new InvalidOperationException(); }        
+            CultureInfo ILineCulture.Culture { get => culture; set => throw new InvalidOperationException(); }
 
             /// <summary>
             /// Create new culture key.
@@ -702,7 +702,7 @@ namespace Lexical.Localization
         /// Section key part.
         /// </summary>
         [Serializable]
-        public class _Section : StringLocalizerKey, IAssetKeySectionAssigned, ILineParameter, ILineCanonicallyComparedKey
+        public class _Section : StringLocalizerKey, IAssetKeySectionAssigned, ILineParameter, ILineKeyCanonicallyCompared
         {
             /// <summary>
             /// ParameterName
@@ -750,21 +750,21 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="typename"></param>
         /// <returns></returns>
-        IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(string typename) => new _Type(Appender, this, typename);
+        ILineKeyType IAssetKeyTypeAssignable.Type(string typename) => new _Type(Appender, this, typename);
 
         /// <summary>
         /// Append Type key part.
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        IAssetKeyTypeAssigned IAssetKeyTypeAssignable.Type(Type t) => typeConstructor.Create(t, this);
+        ILineKeyType IAssetKeyTypeAssignable.Type(Type t) => typeConstructor.Create(t, this);
 
         /// <summary>
         /// Append Type key part.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        IAssetKey<T> IAssetKeyTypeAssignable.Type<T>() => new _Type<T>(Appender, this);
+        ILineKey<T> IAssetKeyTypeAssignable.Type<T>() => new _Type<T>(Appender, this);
 
         static RuntimeConstructor<ILinePart, _Type> typeConstructor = new RuntimeConstructor<ILinePart, _Type>(typeof(_Type<>));
 
@@ -772,7 +772,7 @@ namespace Lexical.Localization
         /// Type key part.
         /// </summary>
         [Serializable]
-        public class _Type : StringLocalizerKey, IAssetKeyTypeAssigned, ILineParameter, ILineNonCanonicallyComparedKey
+        public class _Type : StringLocalizerKey, ILineKeyType, ILineParameter, ILineKeyNonCanonicallyCompared
         {
             /// <summary>
             /// Refered Type, or null if type was not available at construction time.
@@ -782,7 +782,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Refered Type, or null if type was not available at construction time.
             /// </summary>
-            Type IAssetKeyTypeAssigned.Type => type;
+            Type ILineKeyType.Type => type;
 
             /// <summary>
             /// Create Type part.
@@ -832,7 +832,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <typeparam name="T"></typeparam>
         [Serializable]
-        public class _Type<T> : _Type, IAssetKey<T>, IStringLocalizer<T>
+        public class _Type<T> : _Type, ILineKey<T>, IStringLocalizer<T>
         {
             /// <summary>
             /// Create Type key part.
@@ -859,14 +859,14 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns></returns>
-        IAssetKeyAssemblyAssigned IAssetKeyAssemblyAssignable.Assembly(Assembly assembly) => new _Assembly(Appender, this, assembly);
+        ILineKeyAssembly IAssetKeyAssemblyAssignable.Assembly(Assembly assembly) => new _Assembly(Appender, this, assembly);
 
         /// <summary>
         /// Append Assembly key part.
         /// </summary>
         /// <param name="assemblyName"></param>
         /// <returns></returns>
-        IAssetKeyAssemblyAssigned IAssetKeyAssemblyAssignable.Assembly(String assemblyName) => new _Assembly(Appender, this, assemblyName);
+        ILineKeyAssembly IAssetKeyAssemblyAssignable.Assembly(String assemblyName) => new _Assembly(Appender, this, assemblyName);
 
         /// <summary>
         /// Append Assembly key part.
@@ -886,7 +886,7 @@ namespace Lexical.Localization
         /// Assembly key part.
         /// </summary>
         [Serializable]
-        public class _Assembly : StringLocalizerKey, IAssetKeyAssemblyAssigned, ILineNonCanonicallyComparedKey, ILineParameter, ILineCanonicallyComparedKey
+        public class _Assembly : StringLocalizerKey, ILineKeyAssembly, ILineKeyNonCanonicallyCompared, ILineParameter, ILineKeyCanonicallyCompared
         {
             /// <summary>
             /// Referred Assembly, or null if was not available.
@@ -896,7 +896,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Referred Assembly, or null if was not available.
             /// </summary>
-            Assembly IAssetKeyAssemblyAssigned.Assembly => assembly;
+            Assembly ILineKeyAssembly.Assembly => assembly;
 
             /// <summary>
             /// ParameterName
@@ -958,7 +958,7 @@ namespace Lexical.Localization
         /// Resource key part.
         /// </summary>
         [Serializable]
-        public class _Resource : StringLocalizerKey, IAssetKeyResourceAssigned, ILineParameter, ILineCanonicallyComparedKey
+        public class _Resource : StringLocalizerKey, IAssetKeyResourceAssigned, ILineParameter, ILineKeyCanonicallyCompared
         {
             /// <summary>
             /// ParameterName.
@@ -998,7 +998,7 @@ namespace Lexical.Localization
         /// Location key part.
         /// </summary>
         [Serializable]
-        public class _Location : StringLocalizerKey, IAssetKeyLocationAssigned, ILineParameter, ILineCanonicallyComparedKey
+        public class _Location : StringLocalizerKey, IAssetKeyLocationAssigned, ILineParameter, ILineKeyCanonicallyCompared
         {
             /// <summary>
             /// ParameterName.
@@ -1235,7 +1235,7 @@ namespace Lexical.Localization
             if (defaultHashcodeCalculated) return defaultHashcode;
 
             // Get previous key's default hashcode
-            if (this is ILineCanonicallyComparedKey == false && this is ILineNonCanonicallyComparedKey == false && this.prevPart is ILineDefaultHashCode prevDefaultHashcode)
+            if (this is ILineKeyCanonicallyCompared == false && this is ILineKeyNonCanonicallyCompared == false && this.prevPart is ILineDefaultHashCode prevDefaultHashcode)
             {
                 defaultHashcode = prevDefaultHashcode.GetDefaultHashCode();
             } else
@@ -1285,7 +1285,7 @@ namespace Lexical.Localization
             // Read parameters
             List<(string, string)> parameters = new List<(string, string)>();
             for (ILinePart k = this; k != oldCultureKey; k = k.PreviousPart)
-                if (k is ILineParameter parameterKey && parameterKey.ParameterName != null)
+                if (k is ILineParameterPart parameterKey && parameterKey.ParameterName != null)
                     parameters.Add((parameterKey.ParameterName, parameterKey.ParameterValue));
             // Assign new culture
             ILinePart result = newCulture == null ? beforeCultureKey : beforeCultureKey.Culture(newCulture);
@@ -1306,7 +1306,7 @@ namespace Lexical.Localization
                 ILocalizationKey key = this.Key(name);
                 LocalizationString printedString = key.ResolveFormulatedString();
                 if (printedString.Value == null)
-                    return new LocalizedString(name, key.Print(), true);
+                    return new LocalizedString(name, key.BuildName(), true);
                 else
                     return new LocalizedString(name, printedString.Value);
                 }
@@ -1324,7 +1324,7 @@ namespace Lexical.Localization
                 ILocalizationKey key = this.Key(name).Format(arguments);
                 LocalizationString printedString = key.ResolveFormulatedString();
                 if (printedString.Value == null)
-                    return new LocalizedString(name, key.Print(), true);
+                    return new LocalizedString(name, key.BuildName(), true);
                 else
                     return new LocalizedString(name, printedString.Value);
                 }

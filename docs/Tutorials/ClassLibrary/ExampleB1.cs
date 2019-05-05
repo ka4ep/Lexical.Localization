@@ -11,7 +11,7 @@ namespace TutorialLibrary
             this.localization = root.Type(GetType());
         }
 
-        public MyController2(IAssetKey<MyController2> localization)
+        public MyController2(ILineKey<MyController2> localization)
         {
             this.localization = localization;
         }

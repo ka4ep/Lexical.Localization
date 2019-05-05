@@ -16,6 +16,7 @@ namespace Lexical.Localization
     /// </summary>
     public class LinePartAppenderList : ILinePartAppenderAdapter, IEnumerable<ILinePartAppender>
     {
+        List<ILinePartAppenderAdapter> adapters = new List<ILinePartAppenderAdapter>();
         Dictionary<Type, ILinePartAppender0> appenders0 = new Dictionary<Type, ILinePartAppender0>();
         Dictionary<Pair<Type, Type>, ILinePartAppender1> appenders1 = new Dictionary<Pair<Type, Type>, ILinePartAppender1>(Pair<Type, Type>.EqualityComparer.Default);
         Dictionary<Triple<Type, Type, Type>, ILinePartAppender2> appenders2 = new Dictionary<Triple<Type, Type, Type>, ILinePartAppender2>(Triple<Type, Type, Type>.EqualityComparer.Default);
@@ -27,6 +28,8 @@ namespace Lexical.Localization
         /// </summary>
         public LinePartAppenderList()
         {
+            PostConstruction();
+            PostConstruction2();
         }
 
         /// <summary>
@@ -35,7 +38,19 @@ namespace Lexical.Localization
         public LinePartAppenderList(IEnumerable<ILinePartAppender> initialAppenders)
         {
             AddRange(initialAppenders);
+            PostConstruction();
+            PostConstruction2();
         }
+
+        /// <summary>
+        /// Override this to add post construction actions.
+        /// </summary>
+        protected virtual void PostConstruction() { }
+
+        /// <summary>
+        /// Override this to add post construction actions.
+        /// </summary>
+        protected virtual void PostConstruction2() { }
 
         /// <summary>
         /// Add range of appenders
@@ -60,6 +75,7 @@ namespace Lexical.Localization
         {
             ILinePartAppender0 result;
             if (appenders0.TryGetValue(typeof(Part), out result)) return result as ILinePartAppender0<Part>;
+            foreach(var adapter in adapters) { var appender = adapter.Cast<Part>(); if (appender != null) return appender; }
             return default;
         }
 
@@ -73,6 +89,7 @@ namespace Lexical.Localization
         {
             ILinePartAppender1 result;
             if (appenders1.TryGetValue(new Pair<Type, Type>(typeof(Part), typeof(A0)), out result)) return result as ILinePartAppender1<Part, A0>;
+            foreach (var adapter in adapters) { var appender = adapter.Cast<Part, A0>(); if (appender != null) return appender; }
             return default;
         }
 
@@ -87,6 +104,7 @@ namespace Lexical.Localization
         {
             ILinePartAppender2 result;
             if (appenders2.TryGetValue(new Triple<Type, Type, Type>(typeof(Part), typeof(A0), typeof(A1)), out result)) return result as ILinePartAppender2<Part, A0, A1>;
+            foreach (var adapter in adapters) { var appender = adapter.Cast<Part, A0, A1>(); if (appender != null) return appender; }
             return default;
         }
 
@@ -102,6 +120,7 @@ namespace Lexical.Localization
         {
             ILinePartAppender3 result;
             if (appenders3.TryGetValue(new Quad<Type, Type, Type, Type>(typeof(Part), typeof(A0), typeof(A1), typeof(A2)), out result)) return result as ILinePartAppender3<Part, A0, A1, A2>;
+            foreach (var adapter in adapters) { var appender = adapter.Cast<Part, A0, A1, A2>(); if (appender != null) return appender; }
             return default;
         }
 
@@ -209,6 +228,9 @@ namespace Lexical.Localization
                 appenders3[key] = (ILinePartAppender3)appender;
             }
 
+            // Add as ILinePartAppenderAdapter
+            if (appender is ILinePartAppenderAdapter adapter) adapters.Add(adapter);
+
             return this;
         }
 
@@ -275,6 +297,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public IEnumerator<ILinePartAppender> GetEnumerator()
         {
+            foreach (var a in adapters) yield return a;
             foreach (var a in appenders0) yield return a.Value;
             foreach (var a in appenders1) yield return a.Value;
             foreach (var a in appenders2) yield return a.Value;
@@ -287,6 +310,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
+            foreach (var a in adapters) yield return a;
             foreach (var a in appenders0) yield return a.Value;
             foreach (var a in appenders1) yield return a.Value;
             foreach (var a in appenders2) yield return a.Value;

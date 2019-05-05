@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Lexical.Localization
@@ -13,7 +14,8 @@ namespace Lexical.Localization
     /// <summary>
     /// Line part that represents a parameter key-value pair.
     /// </summary>
-    public class LineParameterPart : LinePart, ILineParameter
+    [Serializable]
+    public class LineParameter : LinePart, ILineParameter
     {
         /// <summary>
         /// Parameter name.
@@ -32,10 +34,33 @@ namespace Lexical.Localization
         /// <param name="previousPart"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        public LineParameterPart(ILinePartAppender appender, ILinePart previousPart, string parameterName, string parameterValue) : base(appender, previousPart)
+        public LineParameter(ILinePartAppender appender, ILinePart previousPart, string parameterName, string parameterValue) : base(appender, previousPart)
         {
             ParameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
             ParameterValue = parameterValue;
+        }
+
+        /// <summary>
+        /// Deserialize.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public LineParameter(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+            this.ParameterName = info.GetString(nameof(ParameterName));
+            this.ParameterValue = info.GetString(nameof(ParameterValue));
+        }
+
+        /// <summary>
+        /// Serialize.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            base.GetObjectData(info, context);
+            info.AddValue(nameof(ParameterName), ParameterName);
+            info.AddValue(nameof(ParameterValue), ParameterValue);
         }
     }
 
@@ -71,20 +96,20 @@ namespace Lexical.Localization
     public partial class LinePartAppender : ILinePartAppender2<ILineParameter, string, string>
     {
         /// <summary>
-        /// Append <see cref="LineParameterPart"/>.
+        /// Append <see cref="LineParameter"/>.
         /// </summary>
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
         /// <returns></returns>
         public ILineParameter Append(ILinePart previous, string parameterName, string parameterValue)
-            => new LineParameterPart(this, previous, parameterName, parameterValue);
+            => new LineParameter(this, previous, parameterName, parameterValue);
     }
 
     public partial class StringLocalizerPartAppender : ILinePartAppender2<ILineParameter, string, string>
     {
         /// <summary>
-        /// Append <see cref="LineParameterPart"/>.
+        /// Append <see cref="LineParameter"/>.
         /// </summary>
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>

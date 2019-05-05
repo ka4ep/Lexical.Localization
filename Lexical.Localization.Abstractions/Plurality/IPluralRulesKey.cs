@@ -48,7 +48,7 @@ namespace Lexical.Localization
         /// <param name="rules"></param>
         /// <returns>new key with rules</returns>
         public static IPluralRulesAssignedKey PluralRules(this ILinePart key, IPluralRules rules)
-            => key is IPluralRulesAssignableKey assignable ? assignable.PluralRules(rules): throw new AssetKeyException(key, $"Key doesn't implement {nameof(IPluralRulesAssignableKey)}");
+            => key is IPluralRulesAssignableKey assignable ? assignable.PluralRules(rules): throw new LineException(key, $"Key doesn't implement {nameof(IPluralRulesAssignableKey)}");
 
         /// <summary>
         /// Assign plurality rules as 
@@ -72,7 +72,7 @@ namespace Lexical.Localization
         /// <param name="argumentIndex">argument index to configure plurality, e.g. 0 = "{0}" in the format string</param>
         /// <param name="case">Plurality case, e.g. "zero", "one", "other"</param>
         /// <returns>key with assigned plurality</returns>
-        /// <exception cref="AssetKeyException">if key cannot be assigned.</exception>
+        /// <exception cref="LineException">if key cannot be assigned.</exception>
         /// <exception cref="ArgumentOutOfRangeException">if <paramref name="argumentIndex"/> is smaller than 0</exception>
         public static ILinePart N(this ILinePart key, int argumentIndex, string @case)
             => key.Parameter(PrintPluralityParameter(argumentIndex), @case);

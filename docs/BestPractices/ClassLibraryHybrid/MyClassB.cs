@@ -4,9 +4,9 @@ namespace TutorialLibrary3
 {
     public class MyClassB
     {
-        IAssetKey<MyClass> localizer;
+        ILineKey<MyClass> localizer;
 
-        public MyClassB(IAssetKey<MyClass> localizer = default)
+        public MyClassB(ILineKey<MyClass> localizer = default)
         {
             this.localizer = localizer ?? LibraryLocalization.Root.Type<MyClass>();
         }

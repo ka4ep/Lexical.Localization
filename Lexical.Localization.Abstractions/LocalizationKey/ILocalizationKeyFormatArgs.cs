@@ -50,9 +50,9 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        /// <exception cref="AssetKeyException">If key can't be formatted</exception>
+        /// <exception cref="LineException">If key can't be formatted</exception>
         public static ILineFormatArgsPart Format(this ILinePart key, params object[] args)
-            => key is ILocalizationKeyFormattable formattable ? formattable.Format(args) : throw new AssetKeyException(key, $"Key doesn't implement {nameof(ILocalizationKeyFormattable)}");
+            => key is ILocalizationKeyFormattable formattable ? formattable.Format(args) : throw new LineException(key, $"Key doesn't implement {nameof(ILocalizationKeyFormattable)}");
 
         /// <summary>
         /// Walks linked list and searches for culture policy.

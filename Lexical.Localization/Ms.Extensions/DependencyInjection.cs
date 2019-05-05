@@ -20,7 +20,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Adds the following Lexical.Localization services:
         ///    <see cref="IAssetRoot"/>
-        ///    <see cref="IAssetKey{T}"/>
+        ///    <see cref="ILineKey{T}"/>
         ///    <see cref="IAssetBuilder"/>
         ///    
         /// If <paramref name="addCulturePolicyService"/> is true a <see cref="CultureResolver"/> is added,
@@ -141,7 +141,7 @@ namespace Lexical.Localization
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAsset>(s => s.GetService<IAssetBuilder>().Build()));
 
             // IAssetKey<>
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IAssetKey<>), typeof(StringLocalizerKey._Type<>)));             
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(ILineKey<>), typeof(StringLocalizerKey._Type<>)));             
 
             // IStringLocalizer<>
             // IStringLocalizerFactory

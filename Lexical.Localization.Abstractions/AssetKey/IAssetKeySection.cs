@@ -45,11 +45,11 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="name"></param>
         /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement ISectionAssignableLocalizationKey</exception>
+        /// <exception cref="LineException">If key doesn't implement ISectionAssignableLocalizationKey</exception>
         public static IAssetKeySectionAssigned Section(this ILinePart key, String name)
         {
             if (key is IAssetKeySectionAssignable casted) return casted.Section(name);
-            throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeySectionAssignable)}.");
+            throw new LineException(key, $"doesn't implement {nameof(IAssetKeySectionAssignable)}.");
         }
 
         /// <summary>

@@ -4,9 +4,9 @@ namespace TutorialLibrary2
 {
     public class MyClassB
     {
-        IAssetKey<MyClass> localizer;
+        ILineKey<MyClass> localizer;
 
-        public MyClassB(IAssetKey<MyClass> localizer)
+        public MyClassB(ILineKey<MyClass> localizer)
         {
             this.localizer = localizer;
         }

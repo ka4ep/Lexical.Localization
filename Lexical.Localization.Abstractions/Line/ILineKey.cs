@@ -20,7 +20,7 @@ namespace Lexical.Localization
     /// 
     /// Non-canonical key parts are compared so that their order of appearance doesn't matter.
     /// </summary>
-    public interface ILineNonCanonicallyComparedKey : ILineKey
+    public interface ILineKeyNonCanonicallyCompared : ILineKey
     {
     }
 
@@ -29,14 +29,14 @@ namespace Lexical.Localization
     /// 
     /// The order of canonical key parts must match compared in the order of occurance.
     /// </summary>
-    public interface ILineCanonicallyComparedKey : ILineKey
+    public interface ILineKeyCanonicallyCompared : ILineKey
     {
     }
 
     /// <summary>
     /// Interface for a line that can enumerate non-canonically compared keys
     /// </summary>
-    public interface ILineNonCanonicallyComparedKeys : ILine
+    public interface ILineKeysNonCanonicallyCompared : ILine
     {
         /// <summary>
         /// Non-canonically compared keys.
@@ -49,7 +49,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Interface for a line that can enumerate canonically compared keys (from root towards tail).
     /// </summary>
-    public interface ILineCanonicallyComparedKeys : ILine
+    public interface ILineKeysCanonicallyCompared : ILine
     {
         /// <summary>
         /// Canonically compared keys.
@@ -62,57 +62,57 @@ namespace Lexical.Localization
     public static partial class ILinePartExtensions
     {
         /// <summary>
-        /// Get part that implements <see cref="ILineCanonicallyComparedKey"/>, either this or preceding, or null if not found.
+        /// Get part that implements <see cref="ILineKeyCanonicallyCompared"/>, either this or preceding, or null if not found.
         /// </summary>
         /// <param name="part"></param>
         /// <returns><paramref name="part"/>, or preceding canonical part or null</returns>
-        public static ILineCanonicallyComparedKey GetCanonicalKey(this ILinePart part)
+        public static ILineKeyCanonicallyCompared GetCanonicalKey(this ILinePart part)
         {
             for (ILinePart p = part; p != null; p = p is ILinePart linkedKey ? linkedKey.PreviousPart : null)
             {
-                if (p is ILineCanonicallyComparedKey kk) return kk;
+                if (p is ILineKeyCanonicallyCompared kk) return kk;
             }
             return null;
         }
 
         /// <summary>
-        /// Get preceding part that implements <see cref="ILineCanonicallyComparedKey"/>, or null if not found.
+        /// Get preceding part that implements <see cref="ILineKeyCanonicallyCompared"/>, or null if not found.
         /// </summary>
         /// <param name="part"></param>
         /// <returns>preceding canonical part or null</returns>
-        public static ILineCanonicallyComparedKey GetPreviousCanonicalKey(this ILinePart part)
+        public static ILineKeyCanonicallyCompared GetPreviousCanonicalKey(this ILinePart part)
         {
             for (ILinePart k = part is ILinePart lkk ? lkk.PreviousPart : null; k != null; k = k is ILinePart nlkk ? nlkk.PreviousPart : null)
             {
-                if (k is ILineCanonicallyComparedKey kk) return kk;
+                if (k is ILineKeyCanonicallyCompared kk) return kk;
             }
             return null;
         }
 
         /// <summary>
-        /// Get part that implements <see cref="ILineNonCanonicallyComparedKey"/>, either this or preceding one, or null if not found.
+        /// Get part that implements <see cref="ILineKeyNonCanonicallyCompared"/>, either this or preceding one, or null if not found.
         /// </summary>
         /// <param name="part"></param>
         /// <returns><paramref name="part"/>, or preceding non-canonical part or null</returns>
-        public static ILineNonCanonicallyComparedKey GetNonCanonicalKey(this ILinePart part)
+        public static ILineKeyNonCanonicallyCompared GetNonCanonicalKey(this ILinePart part)
         {
             for (ILinePart k = part; k != null; k = k is ILinePart linkedKey ? linkedKey.PreviousPart : null)
             {
-                if (k is ILineNonCanonicallyComparedKey kk) return kk;
+                if (k is ILineKeyNonCanonicallyCompared kk) return kk;
             }
             return null;
         }
 
         /// <summary>
-        /// Get preceding part that implements <see cref="ILineNonCanonicallyComparedKey"/>, or null if not found.
+        /// Get preceding part that implements <see cref="ILineKeyNonCanonicallyCompared"/>, or null if not found.
         /// </summary>
         /// <param name="part"></param>
         /// <returns>preceding non-canonical part or null</returns>
-        public static ILineNonCanonicallyComparedKey GetPreviousNonCanonicalKey(this ILinePart part)
+        public static ILineKeyNonCanonicallyCompared GetPreviousNonCanonicalKey(this ILinePart part)
         {
             for (ILinePart k = part is ILinePart lkk ? lkk.PreviousPart : null; k != null; k = k is ILinePart nlkk ? nlkk.PreviousPart : null)
             {
-                if (k is ILineNonCanonicallyComparedKey kk) return kk;
+                if (k is ILineKeyNonCanonicallyCompared kk) return kk;
             }
             return null;
         }
@@ -124,7 +124,7 @@ namespace Lexical.Localization
         /// <returns>dictionary of keys</returns>
         public static IReadOnlyDictionary<string, string> GetNonCanonicalKeys(this ILine line)
         {
-            if (line is ILineNonCanonicallyComparedKeys lineKeys)
+            if (line is ILineKeysNonCanonicallyCompared lineKeys)
             {
                 var enumr = lineKeys.NonCanonicallyComparedKeys;
                 if (enumr is IReadOnlyDictionary<string, string> map) return map;
@@ -137,13 +137,13 @@ namespace Lexical.Localization
             {
                 int count = 0;
                 for (ILinePart p = part; p != null; p = p.PreviousPart)
-                    if (p is ILineNonCanonicallyComparedKey key && key.ParameterName != null && key.ParameterValue != null) count++;
+                    if (p is ILineKeyNonCanonicallyCompared key && key.ParameterName != null && key.ParameterValue != null) count++;
 
                 Dictionary<string, string> result = new Dictionary<string, string>(count);
                 int ix = count;
                 for (ILinePart p = part; p != null; p = p.PreviousPart)
                 {
-                    if (p is ILineNonCanonicallyComparedKey key && key.ParameterName != null && key.ParameterValue != null)
+                    if (p is ILineKeyNonCanonicallyCompared key && key.ParameterName != null && key.ParameterValue != null)
                         result[key.ParameterName] = key.ParameterValue;
                 }
 
@@ -162,7 +162,7 @@ namespace Lexical.Localization
         /// <returns>value or null</returns>
         public static string GetNonCanonicalKey(this ILine line, string parameterName)
         {
-            if (line is ILineNonCanonicallyComparedKeys lineKeys)
+            if (line is ILineKeysNonCanonicallyCompared lineKeys)
             {
                 var enumr = lineKeys.NonCanonicallyComparedKeys;
                 if (enumr is IReadOnlyDictionary<string, string> map)
@@ -182,7 +182,7 @@ namespace Lexical.Localization
             if (line is ILinePart tail)
             {
                 for (ILinePart p = tail; p != null; p = p.PreviousPart)
-                    if (p is ILineNonCanonicallyComparedKey key && key.ParameterName == parameterName)
+                    if (p is ILineKeyNonCanonicallyCompared key && key.ParameterName == parameterName)
                         return key.ParameterValue;
             }
 
@@ -196,7 +196,7 @@ namespace Lexical.Localization
         /// <returns>dictionary of keys</returns>
         public static IList<KeyValuePair<string, string>> GetCanonicalKeys(this ILine line)
         {
-            if (line is ILineCanonicallyComparedKeys lineKeys)
+            if (line is ILineKeysCanonicallyCompared lineKeys)
             {
                 var enumr = lineKeys.CanonicallyComparedKeys;
                 return enumr is IList<KeyValuePair<string, string>> list ? list : enumr.ToList();
@@ -206,7 +206,7 @@ namespace Lexical.Localization
             {
                 int count = 0;
                 for (ILinePart p = part; p != null; p = p.PreviousPart)
-                    if (p is ILineCanonicallyComparedKey key && key.ParameterName != null && key.ParameterValue != null) count++;
+                    if (p is ILineKeyCanonicallyCompared key && key.ParameterName != null && key.ParameterValue != null) count++;
 
                 if (count == 0) return no_keys;
 

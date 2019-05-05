@@ -43,9 +43,9 @@ namespace Lexical.Localization
 
         public StringLocalizerAsset GetHandlingAsset(ILinePart key)
         {
-            IAssetKeyAssemblyAssigned asmSection;
+            ILineKeyAssembly asmSection;
             IAssetKeyResourceAssigned resSection;
-            IAssetKeyTypeAssigned typeSection;
+            ILineKeyType typeSection;
             int x = key.FindResourceKeys(out asmSection, out resSection, out typeSection);
             return
                 x == 1 ? map_by_type.GetOrAdd(typeSection.Type, createByTypeFunc) :
@@ -70,8 +70,8 @@ namespace Lexical.Localization
         /// Adapts <see cref="IStringLocalizerFactory"/> into an <see cref="IAsset" />.
         /// 
         /// Notice, that using asset that is converted this way, requres that keys have 
-        /// <see cref="IAssetKeyTypeAssigned"/> hint, or
-        /// <see cref="IAssetKeyAssemblyAssigned"/>+<see cref="IAssetKeyResourceAssigned"/> hints.
+        /// <see cref="ILineKeyType"/> hint, or
+        /// <see cref="ILineKeyAssembly"/>+<see cref="IAssetKeyResourceAssigned"/> hints.
         /// </summary>
         /// <param name="stringLocalizerFactory"></param>
         /// <returns></returns>
@@ -82,8 +82,8 @@ namespace Lexical.Localization
         /// Adapts <see cref="IStringLocalizerFactory"/> into an <see cref="IAssetSource" />.
         /// 
         /// Notice, that using asset that is converted this way, requres that keys have 
-        /// <see cref="IAssetKeyTypeAssigned"/> hint, or
-        /// <see cref="IAssetKeyAssemblyAssigned"/>+<see cref="IAssetKeyResourceAssigned"/> hints.
+        /// <see cref="ILineKeyType"/> hint, or
+        /// <see cref="ILineKeyAssembly"/>+<see cref="IAssetKeyResourceAssigned"/> hints.
         /// </summary>
         /// <param name="stringLocalizerFactory"></param>
         /// <returns></returns>

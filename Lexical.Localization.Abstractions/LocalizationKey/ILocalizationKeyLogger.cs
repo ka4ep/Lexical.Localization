@@ -41,11 +41,11 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="logger"></param>
         /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement <see cref="ILocalizationKeyLoggerAssignable"/></exception>
+        /// <exception cref="LineException">If key doesn't implement <see cref="ILocalizationKeyLoggerAssignable"/></exception>
         public static ILocalizationKeyLoggerAssigned Logger(this ILinePart key, IObserver<LocalizationString> logger)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(logger);
-            throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
+            throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
         }
     }
 }

@@ -44,11 +44,11 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="resolver"></param>
         /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement <see cref="ILocalizationKeyResolverAssignable"/></exception>
+        /// <exception cref="LineException">If key doesn't implement <see cref="ILocalizationKeyResolverAssignable"/></exception>
         public static ILocalizationKeyResolverAssigned Resolver(this ILinePart key, ILocalizationResolver resolver)
         {
             if (key is ILocalizationKeyResolverAssignable casted) return casted.Resolver(resolver);
-            throw new AssetKeyException(key, $"doesn't implement {nameof(ILocalizationKeyResolverAssignable)}.");
+            throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyResolverAssignable)}.");
         }
 
         /// <summary>

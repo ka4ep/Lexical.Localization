@@ -52,11 +52,11 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="location"></param>
         /// <returns>new key</returns>
-        /// <exception cref="AssetKeyException">If key doesn't implement ITypeAssignableLocalizationKey</exception>
+        /// <exception cref="LineException">If key doesn't implement ITypeAssignableLocalizationKey</exception>
         public static IAssetKeyLocationAssigned Location(this ILinePart key, string location)
         {
             if (key is IAssetKeyLocationAssignable casted) return casted.Location(location);
-            throw new AssetKeyException(key, $"doesn't implement {nameof(IAssetKeyLocationAssignable)}.");
+            throw new LineException(key, $"doesn't implement {nameof(IAssetKeyLocationAssignable)}.");
         }
 
         /// <summary>

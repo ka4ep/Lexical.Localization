@@ -8,7 +8,10 @@ using System.Linq;
 
 namespace Lexical.Localization.Internal
 {
-    public class NamePatternMatch : IParameterPatternMatch
+    /// <summary>
+    /// Match result.
+    /// </summary>
+    public class ParameterPatternMatch : IParameterPatternMatch
     {
         /// <summary>
         /// Reference to name pattern.
@@ -21,7 +24,7 @@ namespace Lexical.Localization.Internal
         public string[] PartValues { get; }
 
         /// <summary>
-        /// Part values by <see cref="CaptureParts" />
+        /// Part values by <see cref="IParameterPattern.CaptureParts" />
         /// </summary>
         /// <param name="ix"></param>
         /// <returns></returns>
@@ -59,7 +62,7 @@ namespace Lexical.Localization.Internal
         /// Construct new match.
         /// </summary>
         /// <param name="pattern"></param>
-        public NamePatternMatch(IParameterPattern pattern)
+        public ParameterPatternMatch(IParameterPattern pattern)
         {
             this.Pattern = pattern;
             this.PartValues = new string[pattern.CaptureParts.Length];
@@ -80,10 +83,34 @@ namespace Lexical.Localization.Internal
             return true;
         }
 
+        /// <summary>
+        /// All capture part identifiers
+        /// </summary>
         public IEnumerable<string> Keys => Pattern.CaptureParts.Select(p => p.Identifier);
+
+        /// <summary>
+        /// All capture part values
+        /// </summary>
         public IEnumerable<string> Values => PartValues;
+
+        /// <summary>
+        /// Number of capture parts
+        /// </summary>
         public int Count => PartValues.Length;
+
+        /// <summary>
+        /// Test if contains capture part by identifier
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public bool ContainsKey(string key) => Pattern.PartMap.ContainsKey(key);
+
+        /// <summary>
+        /// Try get matched value
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public bool TryGetValue(string key, out string value)
         {
             IParameterPatternPart p;
@@ -92,14 +119,19 @@ namespace Lexical.Localization.Internal
             return false;
         }
 
+        /// <summary>
+        /// GEt enumerator of capture keys and values
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => new MatchEnumerator(this);
+
         IEnumerator IEnumerable.GetEnumerator() => new MatchEnumerator(this);
 
         class MatchEnumerator : IEnumerator<KeyValuePair<string, string>>
         {
             int ix = -1;
-            NamePatternMatch match;
-            public MatchEnumerator(NamePatternMatch match) { this.match = match; }
+            ParameterPatternMatch match;
+            public MatchEnumerator(ParameterPatternMatch match) { this.match = match; }
             public KeyValuePair<string, string> Current
             {
                 get
@@ -127,15 +159,28 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Compares specific parameters, and those only.
     /// </summary>
-    public class NamePatternMatchComparer : IEqualityComparer<IReadOnlyDictionary<string, string>>
+    public class ParameterPatternMatchComparer : IEqualityComparer<IReadOnlyDictionary<string, string>>
     {
+        /// <summary>
+        /// The pattern this is comparer to
+        /// </summary>
         public readonly IParameterPattern Pattern;
 
-        public NamePatternMatchComparer(IParameterPattern pattern)
+        /// <summary>
+        /// Create comparer to <paramref name="pattern"/>.
+        /// </summary>
+        /// <param name="pattern"></param>
+        public ParameterPatternMatchComparer(IParameterPattern pattern)
         {
             this.Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
         }
 
+        /// <summary>
+        /// Compare matches for equality.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public bool Equals(IReadOnlyDictionary<string, string> x, IReadOnlyDictionary<string, string> y)
         {
             if (x == null && y == null) return true;
@@ -161,8 +206,21 @@ namespace Lexical.Localization.Internal
             return true;
         }
 
+        /// <summary>
+        /// Hash prime factor.
+        /// </summary>
         public const int FNVHashBasis = unchecked((int)2166136261);
+
+        /// <summary>
+        /// Hash initial value.
+        /// </summary>
         public const int FNVHashPrime = 16777619;
+
+        /// <summary>
+        /// Calculate hashcode for match.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public int GetHashCode(IReadOnlyDictionary<string, string> obj)
         {
             // Cast if is match
@@ -193,9 +251,18 @@ namespace Lexical.Localization.Internal
     public class ParameterComparer : IEqualityComparer<IReadOnlyDictionary<string, string>>
     {
         private static ParameterComparer instance = new ParameterComparer();
+
+        /// <summary>
+        /// Default instance
+        /// </summary>
         public static ParameterComparer Instance => instance;
 
-
+        /// <summary>
+        /// Compare dictionaries (parameters) for equality.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public bool Equals(IReadOnlyDictionary<string, string> x, IReadOnlyDictionary<string, string> y)
         {
             if (x == null && y == null) return true;
