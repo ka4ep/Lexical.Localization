@@ -29,7 +29,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public override IEnumerable<Object[]> GetAppendArguments() { yield return new Object[] { typeof(ILineKeyAssembly), Assembly }; }
+        public override object[] GetAppendArguments() => new object[] { Tuple.Create<Type, Assembly>(typeof(ILineKeyAssembly), Assembly) };
 
         /// <summary>
         /// Create new assembly key.
@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="assembly"></param>
-        public LineAssemblyKey(ILinePartAppender appender, ILinePart prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.GetName()?.FullName)
+        public LineAssemblyKey(ILineFactory appender, ILine prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.GetName()?.FullName)
         {
             this.assembly = assembly;
         }
@@ -64,16 +64,17 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LinePartAppender : ILinePartAppender1<ILineKeyAssembly, Assembly>
+    public partial class LinePartAppender : ILineFactory<ILineKeyAssembly, Assembly>
     {
         /// <summary>
         /// Append part.
         /// </summary>
+        /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="assembly"></param>
         /// <returns></returns>
-        ILineKeyAssembly ILinePartAppender1<ILineKeyAssembly, Assembly>.Append(ILinePart previous, Assembly assembly)
-            => new LineAssemblyKey(this, previous, assembly);
+        ILineKeyAssembly ILineFactory<ILineKeyAssembly, Assembly>.Create(ILineFactory appender, ILine previous, Assembly assembly)
+            => new LineAssemblyKey(appender, previous, assembly);
     }
     /*
     /// <summary>
@@ -98,7 +99,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="assembly"></param>
-        public StringLocalizerAssemblyKey(ILinePartAppender appender, ILinePart prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.Name)
+        public StringLocalizerAssemblyKey(ILineFactory appender, ILine prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.Name)
         {
             this.assembly = assembly;
         }
@@ -125,7 +126,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class StringLocalizerPartAppender : ILinePartAppender1<ILineKeyAssembly, Assembly>
+    public partial class StringLocalizerPartAppender : ILineFactory1<ILineKeyAssembly, Assembly>
     {
         /// <summary>
         /// Append part.
@@ -133,7 +134,7 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="assembly"></param>
         /// <returns></returns>
-        public ILineKeyAssembly Append(ILinePart previous, Assembly assembly)
+        public ILineKeyAssembly Append(ILine previous, Assembly assembly)
             => new StringLocalizerAssemblyKey(this, previous, assembly);
     }
 */

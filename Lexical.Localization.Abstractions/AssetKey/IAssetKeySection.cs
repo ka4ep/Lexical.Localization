@@ -7,7 +7,7 @@ namespace Lexical.Localization
     /// <summary>
     /// This interface signals that this key represents a section.
     /// </summary>
-    public interface IAssetKeySection : ILinePart
+    public interface IAssetKeySection : ILine
     {
     }
 
@@ -16,9 +16,9 @@ namespace Lexical.Localization
     /// 
     /// Regular section as a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.
     /// 
-    /// Consumers of this interface should use the extension method <see cref="ILinePartExtensions.Section(ILinePart, string)"/>.
+    /// Consumers of this interface should use the extension method <see cref="ILineExtensions.Section(ILine, string)"/>.
     /// </summary>
-    public interface IAssetKeySectionAssignable : ILinePart
+    public interface IAssetKeySectionAssignable : ILine
     {
         /// <summary>
         /// Create section.
@@ -33,11 +33,11 @@ namespace Lexical.Localization
     /// 
     /// Regular section as a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.
     /// </summary>
-    public interface IAssetKeySectionAssigned : IAssetKeySection, ILinePart
+    public interface IAssetKeySectionAssigned : IAssetKeySection, ILine
     {
     }
 
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Create section
@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// <param name="name"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement ISectionAssignableLocalizationKey</exception>
-        public static IAssetKeySectionAssigned Section(this ILinePart key, String name)
+        public static IAssetKeySectionAssigned Section(this ILine key, String name)
         {
             if (key is IAssetKeySectionAssignable casted) return casted.Section(name);
             throw new LineException(key, $"doesn't implement {nameof(IAssetKeySectionAssignable)}.");
@@ -58,7 +58,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="name"></param>
         /// <returns>new key or null</returns>
-        public static IAssetKeySectionAssigned TryAddSection(this ILinePart key, string name)
+        public static IAssetKeySectionAssigned TryAddSection(this ILine key, string name)
         {
             if (key is IAssetKeyTypeAssignable casted) return casted.Section(name);
             return null;
@@ -70,12 +70,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>key or null</returns>
-        public static IAssetKeySection FindSection(this ILinePart key)
+        public static IAssetKeySection FindSection(this ILine key)
         {
             while (key != null)
             {
                 if (key is IAssetKeySection sectionKey && !string.IsNullOrEmpty(key.GetParameterValue())) return sectionKey;
-                key = key.PreviousPart;
+                key = key.GetPreviousPart();
             }
             return null;
         }
@@ -86,12 +86,12 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="type">type value to search</param>
         /// <returns>key or null</returns>
-        public static IAssetKeySectionAssigned FindSectionKey(this ILinePart key)
+        public static IAssetKeySectionAssigned FindSectionKey(this ILine key)
         {
             while (key != null)
             {
                 if (key is IAssetKeySectionAssigned sectionKey && !string.IsNullOrEmpty(key.GetParameterValue())) return sectionKey;
-                key = key.PreviousPart;
+                key = key.GetPreviousPart();
             }
             return null;
         }

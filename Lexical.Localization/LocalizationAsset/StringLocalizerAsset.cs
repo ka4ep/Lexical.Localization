@@ -105,7 +105,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>localizer or null</returns>
-        StringLocalizerAsset FindStringLocalizer(ILinePart key, CultureInfo key_culture)
+        StringLocalizerAsset FindStringLocalizer(ILine key, CultureInfo key_culture)
         {
             // This adapter is not assigned with a culture
             if (culture == null)
@@ -121,7 +121,7 @@ namespace Lexical.Localization
             return null;
         }
 
-        public IFormulationString GetString(ILinePart key)
+        public IFormulationString GetString(ILine key)
         {
             CultureInfo key_culture = key.GetCultureInfo();
             if (key_culture != null)
@@ -184,7 +184,7 @@ namespace Lexical.Localization
             // Build id
             // Strip: culture, and our typesection/asm section
             int length = 0;
-            for(ILinePart k = key; k!=null; k=k.PreviousPart)
+            for(ILine k = key; k!=null; k=k.GetPreviousPart())
             {
                 string value = k.GetParameterValue();
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
@@ -194,7 +194,7 @@ namespace Lexical.Localization
             }
             char[] chars = new char[length];
             int ix = length;
-            for (ILinePart k = key; k != null; k = k.PreviousPart)
+            for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
                 string value = k.GetParameterValue();
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
@@ -211,7 +211,7 @@ namespace Lexical.Localization
             return ValueParser.Parse(str.Value);
         }
 
-        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILinePart key = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILine key = null)
         {
             CultureInfo key_culture = key?.GetCultureInfo();
             IStringLocalizer localizer = key == null ? stringLocalizer : FindStringLocalizer(key, key_culture).stringLocalizer;
@@ -235,7 +235,7 @@ namespace Lexical.Localization
             }
         }
 
-        public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(ILinePart key = null)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(ILine key = null)
         {
             return GetStringLines(key);
         }
@@ -269,7 +269,7 @@ namespace Lexical.Localization
         ///     0 found nothing
         ///     1 found type
         ///     2 found basename + location</returns>
-        public static int FindResourceInfos(this ILinePart key, out Type type, out string basename, out string location)
+        public static int FindResourceInfos(this ILine key, out Type type, out string basename, out string location)
         {
             ILineKeyAssembly asmSection;
             IAssetKeyResourceAssigned resSection;
@@ -289,12 +289,12 @@ namespace Lexical.Localization
         ///     0 found nothing
         ///     1 found typeSection
         ///     2 found asmSection + typeSection</returns>
-        public static int FindResourceKeys(this ILinePart key, out ILineKeyAssembly asmSection, out IAssetKeyResourceAssigned resSection, out ILineKeyType typeSection)
+        public static int FindResourceKeys(this ILine key, out ILineKeyAssembly asmSection, out IAssetKeyResourceAssigned resSection, out ILineKeyType typeSection)
         {
             ILineKeyAssembly _asmSection = null;
             IAssetKeyResourceAssigned _resSection = null;
             ILineKeyType _typeSection = null;
-            for (ILinePart k = key; k != null; k = k.PreviousPart)
+            for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
                 if (k is ILineKeyAssembly __asmSection) _asmSection = __asmSection;
                 else if (k is IAssetKeyResourceAssigned __resSection) _resSection = __resSection;

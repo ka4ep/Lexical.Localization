@@ -10,7 +10,7 @@ using System.Text;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Represents a localization and asset line in abstract non-specific format. 
+    /// Line containing localization key, value and string resolve parameters.
     /// </summary>
     public interface ILine
     {

@@ -12,7 +12,7 @@ namespace docs
             {
                 #region Snippet_1
                 // Let's create an example key
-                ILinePart key = new LocalizationRoot()
+                ILine key = new LocalizationRoot()
                         .Location("Patches")
                         .Type("MyController")
                         .Section("Errors")
@@ -42,7 +42,7 @@ namespace docs
                     // Create pattern
                     IParameterPolicy myPolicy = new ParameterPattern("{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
-                    ILinePart key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILine key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/icons-ok-de.png"
                     string str = myPolicy.Print(key2);
                     #endregion Snippet_4a
@@ -52,7 +52,7 @@ namespace docs
                     // Create pattern
                     IParameterPolicy myPolicy = new ParameterPattern("{Location/}{Location/}{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
-                    ILinePart key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILine key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
                     string str = myPolicy.Print(key2);
                     #endregion Snippet_4b
@@ -62,7 +62,7 @@ namespace docs
                     // "[Location_n/]" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
                     IParameterPolicy myPolicy = new ParameterPattern("[Location_n/]{Section}{-Key}{-Culture}.png");
                     // Create key
-                    ILinePart key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILine key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
                     string str = myPolicy.Print(key2);
                     #endregion Snippet_4c
@@ -72,7 +72,7 @@ namespace docs
                     // Create pattern
                     IParameterPolicy myPolicy = new ParameterPattern("{Location_3}{Location_2/}{Location_1/}{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
-                    ILinePart key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILine key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "20181130/Patches/icons-ok-de.png"
                     string str = myPolicy.Print(key2);
                     #endregion Snippet_4d

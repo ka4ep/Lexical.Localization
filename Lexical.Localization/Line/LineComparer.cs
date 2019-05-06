@@ -129,9 +129,9 @@ namespace Lexical.Localization
             }
 
             // Canonical key part comparers
-            if (x is ILinePart x_tail && y is ILinePart y_tail)
+            if (x is ILine x_tail && y is ILine y_tail)
             {
-                for (ILinePart x_key = x_tail.GetCanonicalKey(), y_key = y_tail.GetCanonicalKey(); x != null || y != null; x_key = x_key.GetPreviousCanonicalKey(), y_key = y_key.GetPreviousCanonicalKey())
+                for (ILine x_key = x_tail.GetCanonicalKey(), y_key = y_tail.GetCanonicalKey(); x != null || y != null; x_key = x_key.GetPreviousCanonicalKey(), y_key = y_key.GetPreviousCanonicalKey())
                 {
                     // Ran out of one or another
                     if (x_key == null && y_key == null) break;
@@ -187,9 +187,9 @@ namespace Lexical.Localization
             }
 
             // Canonical hashing
-            if (line is ILinePart tail)
+            if (line is ILine tail)
             {
-                for (ILinePart key = tail.GetCanonicalKey(); key != null; key = key.GetPreviousCanonicalKey())
+                for (ILine key = tail.GetCanonicalKey(); key != null; key = key.GetPreviousCanonicalKey())
                 {
                     // hash in canonical comparer 
                     foreach (var comparer in canonicalComparers)
@@ -227,9 +227,9 @@ namespace Lexical.Localization
         /// <returns></returns>
         public bool Equals(ILine x, ILine y)
         {
-            if (x is ILinePart x_tail && y is ILinePart y_tail)
+            if (x is ILine x_tail && y is ILine y_tail)
             {
-                ILinePart x_part = x_tail, y_part = y_tail;
+                ILine x_part = x_tail, y_part = y_tail;
 
                 string x_parameter = x_tail.GetParameterName();
                 string y_parameter = y_tail.GetParameterName();
@@ -253,7 +253,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public int GetHashCode(ILine line)
         {
-            if (line is ILinePart part)
+            if (line is ILine part)
             {
                 string parameterName = part.GetParameterName();
                 if (parameterName == null) return 0;
@@ -315,7 +315,7 @@ namespace Lexical.Localization
         /// <returns>true if keys are equals in terms of non-canonical parameters</returns>
         public bool Equals(ILine x, ILine y)
         {
-            if (x is ILinePart x_tail && y is ILinePart y_tail)
+            if (x is ILine x_tail && y is ILine y_tail)
             {
                 // Get x's (parameter, value) pairs
                 StructList8<KeyValuePair<string, string>> x_parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
@@ -413,7 +413,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public int GetHashCode(ILine line)
         {
-            if (line is ILinePart tail)
+            if (line is ILine tail)
             {
                 int hash = 0;
                 // Get x's (parameter, value) pairs

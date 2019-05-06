@@ -10,7 +10,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A key that can be assigned with a <see cref="IFormatProvider"/>.
     /// </summary>
-    public interface ILocalizationKeyFormatProviderAssignable : ILinePart
+    public interface ILocalizationKeyFormatProviderAssignable : ILine
     {
         /// <summary>
         /// Append a <paramref name="formatProvider"/> key.
@@ -32,7 +32,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A key that has been assigned with format provider.
     /// </summary>
-    public interface ILocalizationKeyFormatProviderAssigned : ILinePart
+    public interface ILocalizationKeyFormatProviderAssigned : ILine
     {
         /// <summary>
         /// (Optional) The assigned format provider.
@@ -40,7 +40,7 @@ namespace Lexical.Localization
         IFormatProvider FormatProvider { get; }
     }
 
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Append format provider key.
@@ -57,7 +57,7 @@ namespace Lexical.Localization
         /// <param name="formatProvider"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement <see cref="ILocalizationKeyFormatProviderAssignable"/></exception>
-        public static ILocalizationKeyFormatProviderAssigned FormatProvider(this ILinePart key, IFormatProvider formatProvider)
+        public static ILocalizationKeyFormatProviderAssigned FormatProvider(this ILine key, IFormatProvider formatProvider)
         {
             if (key is ILocalizationKeyFormatProviderAssignable casted) return casted.FormatProvider(formatProvider);
             throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyFormatProviderAssignable)}.");

@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// Key has capability of format arguments assignment.
     /// </summary>
     [Obsolete]
-    public interface ILocalizationKeyFormattable : ILinePart
+    public interface ILocalizationKeyFormattable : ILine
     {
         /// <summary>
         /// Create a new ILocalizationKey with arguments attached.
@@ -38,11 +38,11 @@ namespace Lexical.Localization
     /// <summary>
     /// Key (may have) has formats assigned.
     /// </summary>
-    public interface ILineFormatArgsPart : ILineFormatArgs, ILinePart
+    public interface ILineFormatArgsPart : ILineFormatArgs, ILine
     {
     }
 
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Create a new <see cref="ILineFormatArgsPart"/> that has arguments attached.
@@ -51,7 +51,7 @@ namespace Lexical.Localization
         /// <param name="args"></param>
         /// <returns></returns>
         /// <exception cref="LineException">If key can't be formatted</exception>
-        public static ILineFormatArgsPart Format(this ILinePart key, params object[] args)
+        public static ILineFormatArgsPart Format(this ILine key, params object[] args)
             => key is ILocalizationKeyFormattable formattable ? formattable.Format(args) : throw new LineException(key, $"Key doesn't implement {nameof(ILocalizationKeyFormattable)}");
 
         /// <summary>
@@ -62,9 +62,9 @@ namespace Lexical.Localization
         public static Object[] GetFormatArgs(this ILine line)
         {
             if (line is ILineFormatArgs args) return args.Args;
-            if (line is ILinePart tail)
+            if (line is ILine tail)
             {
-                for (ILinePart p = tail; p != null; p = p.PreviousPart)
+                for (ILine p = tail; p != null; p = p.GetPreviousPart())
                     if (p is ILineFormatArgsPart casted && casted.Args != null) return casted.Args;
             }
             return null;

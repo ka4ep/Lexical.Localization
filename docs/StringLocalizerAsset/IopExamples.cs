@@ -27,7 +27,7 @@ namespace docs
                 IAssetRoot root = new LocalizationRoot(asset, new CulturePolicy());
 
                 // There are .resx files in "Resources/ConsoleApp1.MyController" with keys "Success" and "Error"
-                ILinePart key = root
+                ILine key = root
                     .Assembly(Assembly.GetExecutingAssembly())
                     .Resource("ConsoleApp1.MyController")
                     //.Type(typeof(ConsoleApp1.MyController1))
@@ -58,7 +58,7 @@ namespace docs
                 IAsset asset = new LocalizationAsset(source, KeyPrinter.Default);
 
                 // Create root
-                ILinePart root = new StringLocalizerRoot(asset, new CulturePolicy());
+                ILine root = new StringLocalizerRoot(asset, new CulturePolicy());
 
                 // Type cast to IStringLocalizerFactory
                 IStringLocalizerFactory stringLocalizerFactory = root as IStringLocalizerFactory;
@@ -81,10 +81,10 @@ namespace docs
                 IAsset asset = new LocalizationAsset(source, KeyPrinter.Default);
 
                 // Create root
-                ILinePart root = new StringLocalizerRoot(asset, new CulturePolicy());
+                ILine root = new StringLocalizerRoot(asset, new CulturePolicy());
 
                 // Set key
-                ILinePart key = root.Culture("fi").Type(typeof(ConsoleApp1.MyController));
+                ILine key = root.Culture("fi").Type(typeof(ConsoleApp1.MyController));
 
                 // Type cast key to IStringLocalizer
                 IStringLocalizer stringLocalizer = key as IStringLocalizer;
@@ -102,7 +102,7 @@ namespace docs
                 IAsset asset = new LocalizationAsset(source, KeyPrinter.Default);
 
                 // Create root
-                ILinePart root = new StringLocalizerRoot(asset, new CulturePolicy());
+                ILine root = new StringLocalizerRoot(asset, new CulturePolicy());
                 #endregion Snippet_9
             }
 

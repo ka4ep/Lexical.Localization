@@ -212,7 +212,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Key that was requested to be formatted.
         /// </summary>
-        public ILinePart Key;
+        public ILine Key;
 
         /// <summary>
         /// Resolved string.
@@ -224,7 +224,7 @@ namespace Lexical.Localization
         public String Value;
 
         /// <summary>
-        /// Severity for the step that resolves <see cref="ILinePart"/> into formulation string.
+        /// Severity for the step that resolves <see cref="ILine"/> into formulation string.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
@@ -378,7 +378,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="value"></param>
         /// <param name="status"></param>
-        public LocalizationString(ILinePart key, string value, LocalizationStatus status)
+        public LocalizationString(ILine key, string value, LocalizationStatus status)
         {
             Key = key;
             Value = value;

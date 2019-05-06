@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Interface to read localization strings.
     /// 
-    /// Consumers of this interface can use <see cref="IAssetExtensions.GetString(IAsset, ILinePart)"/> with uncasted <see cref="IAsset"/>.
+    /// Consumers of this interface can use <see cref="IAssetExtensions.GetString(IAsset, ILine)"/> with uncasted <see cref="IAsset"/>.
     /// </summary>
     public interface ILocalizationStringProvider : IAsset
     {
@@ -23,13 +23,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>formulation string or null</returns>
-        IFormulationString GetString(ILinePart key);
+        IFormulationString GetString(ILine key);
     }
 
     /// <summary>
     /// Interface to enumerate localization strings as <see cref="KeyValuePair{IAssetKey, String}"/> lines. 
     /// 
-    /// This interface is used by classes that use <see cref="ILinePart"/> as intrinsic keys.
+    /// This interface is used by classes that use <see cref="ILine"/> as intrinsic keys.
     /// </summary>
     public interface ILocalizationKeyLinesEnumerable : IAsset
     {
@@ -45,7 +45,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns>all lines, or null</returns>
-        IEnumerable<KeyValuePair<ILinePart, IFormulationString>> GetKeyLines(ILinePart filterKey = null);
+        IEnumerable<KeyValuePair<ILine, IFormulationString>> GetKeyLines(ILine filterKey = null);
 
         /// <summary>
         /// Get all localization lines. If cannot return all lines, return what is availale.
@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns>lines, or null</returns>
-        IEnumerable<KeyValuePair<ILinePart, IFormulationString>> GetAllKeyLines(ILinePart filterKey = null);
+        IEnumerable<KeyValuePair<ILine, IFormulationString>> GetAllKeyLines(ILine filterKey = null);
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Gets localization key-value pairs as string keys. If cannot return all lines, then return what is available.
         /// 
-        /// If the implementation cannot filter with an <see cref="ILinePart"/>, then it returns all available lines.
+        /// If the implementation cannot filter with an <see cref="ILine"/>, then it returns all available lines.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
         /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
@@ -83,12 +83,12 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) key used for filtering results</param>
         /// <returns>key to language string mapping, or null</returns>
-        IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILinePart filterKey = null);
+        IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILine filterKey = null);
 
         /// <summary>
         /// Gets all localization lines. If cannot return all keys, then returns null.
         /// 
-        /// If the implementation cannot filter with an <see cref="ILinePart"/>, then it returns all lines.
+        /// If the implementation cannot filter with an <see cref="ILine"/>, then it returns all lines.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
         /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
@@ -99,7 +99,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) key to get strings for</param>
         /// <returns>key to language string mapping, or null</returns>
-        IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(ILinePart filterKey = null);
+        IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(ILine filterKey = null);
     }
 
     public static partial class IAssetExtensions
@@ -112,7 +112,7 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="key"></param>
         /// <returns>resolved string or null</returns>
-        public static IFormulationString GetString(this IAsset asset, ILinePart key)
+        public static IFormulationString GetString(this IAsset asset, ILine key)
         {
             if (asset is ILocalizationStringProvider casted) 
             {
@@ -155,7 +155,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Gets localization lines as <see cref="ILinePart"/> keys. If it cannot return all keys, then returns what is available.
+        /// Gets localization lines as <see cref="ILine"/> keys. If it cannot return all keys, then returns what is available.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
         /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
@@ -167,15 +167,15 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="filterKey">(optional) key used for filtering results</param>
         /// <returns>key to language string mapping, or null</returns>
-        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> GetKeyLines(this IAsset asset, ILinePart filterKey = null)
+        public static IEnumerable<KeyValuePair<ILine, IFormulationString>> GetKeyLines(this IAsset asset, ILine filterKey = null)
         {
-            IEnumerable<KeyValuePair<ILinePart, IFormulationString>> result = null;
+            IEnumerable<KeyValuePair<ILine, IFormulationString>> result = null;
             if (asset is ILocalizationKeyLinesEnumerable casted) result = casted.GetKeyLines(filterKey);
             if (asset is IAssetComposition composition)
             {
                 foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationKeyLinesEnumerable>())
                 {
-                    IEnumerable<KeyValuePair<ILinePart, IFormulationString>> _result = component.GetKeyLines(filterKey);
+                    IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = component.GetKeyLines(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                 }
                 foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
@@ -185,7 +185,7 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            IEnumerable<KeyValuePair<ILinePart, IFormulationString>> _result = loaded_asset.GetKeyLines(filterKey);
+                            IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = loaded_asset.GetKeyLines(filterKey);
                             if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                         }
                     }
@@ -198,7 +198,7 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in loaded_assets)
                     {
-                        IEnumerable<KeyValuePair<ILinePart, IFormulationString>> _result = loaded_asset.GetKeyLines(filterKey);
+                        IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = loaded_asset.GetKeyLines(filterKey);
                         if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                     }
                 }
@@ -208,7 +208,7 @@ namespace Lexical.Localization
 
 
         /// <summary>
-        /// Gets localization lines as <see cref="ILinePart"/> keys. If it cannot return all keys, then returns null.
+        /// Gets localization lines as <see cref="ILine"/> keys. If it cannot return all keys, then returns null.
         /// 
         /// If <paramref name="filterKey"/> is provided, then the resulted lines are filtered based on the parameters in the <paramref name="filterKey"/>.
         /// If <paramref name="filterKey"/> has parameter assignment(s) <see cref="ILineParameter"/>, then result must be filtered to lines that have matching value for each parameter.
@@ -220,15 +220,15 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="filterKey">(optional) key used for filtering results</param>
         /// <returns>key to language string mapping, or null</returns>
-        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> GetAllKeyLines(this IAsset asset, ILinePart filterKey = null)
+        public static IEnumerable<KeyValuePair<ILine, IFormulationString>> GetAllKeyLines(this IAsset asset, ILine filterKey = null)
         {
-            IEnumerable<KeyValuePair<ILinePart, IFormulationString>> result = null;
+            IEnumerable<KeyValuePair<ILine, IFormulationString>> result = null;
             if (asset is ILocalizationKeyLinesEnumerable casted) result = casted.GetAllKeyLines(filterKey);
             if (asset is IAssetComposition composition)
             {
                 foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationKeyLinesEnumerable>())
                 {
-                    IEnumerable<KeyValuePair<ILinePart, IFormulationString>> _result = component.GetAllKeyLines(filterKey);
+                    IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = component.GetAllKeyLines(filterKey);
                     if (_result == null) return null;
                     if (_result is Array _array && _array.Length == 0) continue;
                     result = result == null ? _result : result.Concat(_result);
@@ -240,7 +240,7 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            IEnumerable<KeyValuePair<ILinePart, IFormulationString>> _result = loaded_asset.GetAllKeyLines(filterKey);
+                            IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = loaded_asset.GetAllKeyLines(filterKey);
                             if (_result == null) return null;
                             if (_result is Array _array && _array.Length == 0) continue;
                             result = result == null ? _result : result.Concat(_result);
@@ -255,7 +255,7 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in loaded_assets)
                     {
-                        IEnumerable<KeyValuePair<ILinePart, IFormulationString>> _result = loaded_asset.GetAllKeyLines(filterKey);
+                        IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = loaded_asset.GetAllKeyLines(filterKey);
                         if (_result == null) return null;
                         if (_result is Array _array && _array.Length == 0) continue;
                         result = result == null ? _result : result.Concat(_result);
@@ -279,7 +279,7 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="filterKey">(optional) key used for filtering results</param>
         /// <returns>key to language string mapping, or null</returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(this IAsset asset, ILinePart filterKey = null)
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(this IAsset asset, ILine filterKey = null)
         {
             IEnumerable<KeyValuePair<string, IFormulationString>> result = null;
             if (asset is ILocalizationStringLinesEnumerable casted) result = casted.GetStringLines(filterKey);
@@ -331,7 +331,7 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="filterKey">(optional) key used for filtering results</param>
         /// <returns>key to language string mapping, or null</returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(this IAsset asset, ILinePart filterKey = null)
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(this IAsset asset, ILine filterKey = null)
         {
             IEnumerable<KeyValuePair<string, IFormulationString>> result = null;
             if (asset is ILocalizationStringLinesEnumerable casted) result = casted.GetAllStringLines(filterKey);

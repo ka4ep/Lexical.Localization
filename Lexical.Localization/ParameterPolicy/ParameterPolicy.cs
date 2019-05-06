@@ -41,9 +41,9 @@ namespace Lexical.Localization
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</returns>
         /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
-        public override ILinePart Parse(string keyString, ILinePart rootKey)
+        public override ILine Parse(string keyString, ILine rootKey)
         {
-            ILinePart result = rootKey;
+            ILine result = rootKey;
             MatchCollection matches = ParsePattern.Matches(keyString);
             foreach (Match m in matches)
             {
@@ -64,9 +64,9 @@ namespace Lexical.Localization
         /// <param name="resultKey">(optional) result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</param>
         /// <param name="rootKey">root key to span values from</param>
         /// <returns>true if parse was successful</returns>
-        public override bool TryParse(string keyString, out ILinePart resultKey, ILinePart rootKey)
+        public override bool TryParse(string keyString, out ILine resultKey, ILine rootKey)
         {
-            ILinePart result = rootKey;
+            ILine result = rootKey;
             MatchCollection matches = ParsePattern.Matches(keyString);
             foreach (Match m in matches)
             {
@@ -87,8 +87,8 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>full name string</returns>
-        public string Print(ILinePart key)
-            => PrintKey(key as ILinePart);
+        public string Print(ILine key)
+            => PrintKey(key as ILine);
 
     }
 }

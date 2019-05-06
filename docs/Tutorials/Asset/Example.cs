@@ -19,7 +19,7 @@ namespace TutorialProject
             IAssetRoot root = LocalizationRoot.Global;
 
             // Create key
-            ILinePart key = root.Type<Program>().Key("Hello").Inline("Hello World!");
+            ILine key = root.Type<Program>().Key("Hello").Inline("Hello World!");
 
             // Print with current culture
             Console.WriteLine(key);

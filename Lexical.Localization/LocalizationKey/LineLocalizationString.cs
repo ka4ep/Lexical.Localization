@@ -9,13 +9,13 @@ using System.Text;
 
 namespace Lexical.Localization
 {
-    public class LineLocalizationValuePart : ILineValue, ILinePart
+    public class LineLocalizationValuePart : ILineValue, ILine
     {
         public IFormulationString Value { get; internal set; }
-        public ILinePart PreviousPart { get; internal set; }
-        public ILinePartAppender Appender { get; internal set; }
+        public ILine PreviousPart { get; internal set; }
+        public ILineFactory Appender { get; internal set; }
 
-        public LineLocalizationValuePart(ILinePart previousPart, ILinePartAppender appender, IFormulationString localizationString)
+        public LineLocalizationValuePart(ILine previousPart, ILineFactory appender, IFormulationString localizationString)
         {
             Appender = appender;
             PreviousPart = previousPart;
@@ -23,13 +23,13 @@ namespace Lexical.Localization
         }
     }
 
-    public class StringLocalizerLocalizationValuePart : StringLocalizerKey, ILineValue, ILinePart
+    public class StringLocalizerLocalizationValuePart : StringLocalizerKey, ILineValue, ILine
     {
         public IFormulationString Value { get; internal set; }
-        public ILinePart PreviousPart { get; internal set; }
-        public ILinePartAppender Appender { get; internal set; }
+        public ILine PreviousPart { get; internal set; }
+        public ILineFactory Appender { get; internal set; }
 
-        public StringLocalizerLocalizationValuePart(ILinePartAppender appender, ILinePart previousPart, IFormulationString localizationString) : base(appender, previousPart, null)
+        public StringLocalizerLocalizationValuePart(ILineFactory appender, ILine previousPart, IFormulationString localizationString) : base(appender, previousPart, null)
         {
             Value = localizationString;
         }

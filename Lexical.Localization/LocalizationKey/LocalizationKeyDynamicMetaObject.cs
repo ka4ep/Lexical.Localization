@@ -39,7 +39,7 @@ namespace Lexical.Localization
             // (byte[]) maps to LocalizationKeyExtensions.ResolveResource(obj)
             if (typeof(byte[]).IsAssignableFrom(binder.ReturnType))
             {
-                if (miResolveResource == null) miResolveResource = typeof(ILinePartExtensions).GetMethod(nameof(ILinePartExtensions.ResolveResource));
+                if (miResolveResource == null) miResolveResource = typeof(ILineExtensions).GetMethod(nameof(ILineExtensions.ResolveResource));
                 mi = miResolveResource;
             }
 
@@ -71,11 +71,11 @@ namespace Lexical.Localization
             Match m = null;
             if (args.Length == 1 && typeof(String).IsAssignableFrom(args[0].LimitType) && (m = lang_region_pattern.Match(binder.Name)).Success)
             {
-                if (inlineMethod == null) inlineMethod = typeof(ILinePartExtensions).GetMethod(nameof(ILinePartExtensions.Inline), new Type[] { typeof(ILinePart), typeof(string), typeof(string) });
+                if (inlineMethod == null) inlineMethod = typeof(ILineExtensions).GetMethod(nameof(ILineExtensions.Inline), new Type[] { typeof(ILine), typeof(string), typeof(string) });
                 BindingRestrictions restrictions = BindingRestrictions.GetTypeRestriction(Expression, LimitType);
                 restrictions.Merge(BindingRestrictions.GetTypeRestriction(args[0].Expression, typeof(String)));
 
-                Expression selfExp = Expression.Convert(Expression, typeof(ILinePart));
+                Expression selfExp = Expression.Convert(Expression, typeof(ILine));
                 Expression cultureExp = Expression.Constant( "Culture:"+ (binder.Name.Contains("_") ? binder.Name.Replace('_', '-') : binder.Name) );
                 Expression textExp = args[0].HasValue ? Expression.Constant(args[0].Value.ToString()) : (Expression)Expression.Convert(args[0].Expression, typeof(String));
 

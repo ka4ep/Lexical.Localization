@@ -13,31 +13,32 @@ using Lexical.Localization.Internal;
 namespace Lexical.Localization.Utils
 {
     /// <summary>
-    /// This class is a context-free implementation of <see cref="ILinePart"/>. 
+    /// This class is a context-free implementation of <see cref="ILine"/>. 
     /// It can be used as a reference, but not as a provider of localization content.
     /// It is used as a key for persisting and comparison.
     /// 
     /// This class has one parameter name and a value, and it can carry a link to previous node.
     /// </summary>
     [DebuggerDisplay("{ToString()}")]
-    public partial class Key : ILinePart, ILineParameter, ILineParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>, ILineDefaultHashCode
+    public partial class Key : ILine, ILineParameter, ILineParameterAssignable, IEnumerable<KeyValuePair<string, string>>, IEquatable<Key>, ILineDefaultHashCode, ILineAppendable, ILinePart
     {
         private static readonly Key root = new Key("", "");
 
-        ILinePartAppender ILinePart.Appender => Appender.Instance;
+        ILineFactory ILineAppendable.Appender { get => Appender.Instance; set => new InvalidOperationException(); }
+
         /// <summary></summary>
-        public class Appender : ILinePartAppender2<ILineParameter, string, string>,
-            ILinePartAppender2<ILineKeyCanonicallyCompared, string, string>,
-            ILinePartAppender2<ILineKeyNonCanonicallyCompared, string, string>
+        public class Appender : ILineFactory<ILineParameter, string, string>,
+            ILineFactory<ILineKeyCanonicallyCompared, string, string>,
+            ILineFactory<ILineKeyNonCanonicallyCompared, string, string>
         {
             static readonly Appender instance = new Appender();
             /// <summary></summary>
             public static Appender Instance => instance;
-            ILineParameter ILinePartAppender2<ILineParameter, string, string>.Append(ILinePart previous, string parameterName, string parameterKey)
+            ILineParameter ILineFactory<ILineParameter, string, string>.Create(ILineFactory factory, ILine previous, string parameterName, string parameterKey)
                 => ((Key)previous).AppendParameter(parameterName, parameterKey);
-            ILineKeyCanonicallyCompared ILinePartAppender2<ILineKeyCanonicallyCompared, string, string>.Append(ILinePart prevKey, string parameterName, string parameterValue)
+            ILineKeyCanonicallyCompared ILineFactory<ILineKeyCanonicallyCompared, string, string>.Create(ILineFactory factory, ILine prevKey, string parameterName, string parameterValue)
                 => new Key.Canonical((Key)prevKey, parameterName, parameterValue);
-            ILineKeyNonCanonicallyCompared ILinePartAppender2<ILineKeyNonCanonicallyCompared, string, string>.Append(ILinePart prevKey, string parameterName, string parameterValue)
+            ILineKeyNonCanonicallyCompared ILineFactory<ILineKeyNonCanonicallyCompared, string, string>.Create(ILineFactory factory, ILine prevKey, string parameterName, string parameterValue)
                 => new Key.NonCanonical((Key)prevKey, parameterName, parameterValue);
         }
 
@@ -61,7 +62,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         public Key Previous;
 
-        ILinePart ILinePart.PreviousPart => Previous;
+        ILine ILinePart.PreviousPart { get => Previous; set => new InvalidOperationException(); }
         string ILineParameter.ParameterValue => Value;
         public string ParameterName => Name;
 
@@ -78,7 +79,7 @@ namespace Lexical.Localization.Utils
         public string[] Parameters => parameters ?? (parameters = String.IsNullOrEmpty(Name) ? empty : new string[] { Name });
 
         /// <summary>
-        /// Create proxy root implementation of <see cref="ILinePart"/>. Contains one parameter.
+        /// Create proxy root implementation of <see cref="ILine"/>. Contains one parameter.
         /// </summary>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
@@ -89,7 +90,7 @@ namespace Lexical.Localization.Utils
         }
 
         /// <summary>
-        /// Create proxy implementation of <see cref="ILinePart"/>. Contains one parameter.
+        /// Create proxy implementation of <see cref="ILine"/>. Contains one parameter.
         /// </summary>
         /// <param name="previous">(optional) previous link</param>
         /// <param name="parameterName"></param>
@@ -152,7 +153,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         /// <param name="key">(optional) key to copy</param>
         /// <returns>key, new key, or null is <paramref name="key"/> contained no parameters</returns>
-        public static Key CreateFrom(ILinePart key)
+        public static Key CreateFrom(ILine key)
         {
             if (key == null) return null;
             if (key is Key k) return k;
@@ -160,7 +161,7 @@ namespace Lexical.Localization.Utils
             key.VisitParameters(_copyVisitor, ref result);
             return result;
         }
-        static KeyParameterVisitor<Key> _copyVisitor = copyVisitor;
+        static ParameterVisitor<Key> _copyVisitor = copyVisitor;
         static void copyVisitor(string parameterName, string parameterValue, ref Key result)
             => result = Key.Create(result, parameterName, parameterValue);
 

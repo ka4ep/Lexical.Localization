@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A name pattern, akin to regular expression, that can be matched against filenames and <see cref="ILinePart"/> instances.
+    /// A name pattern, akin to regular expression, that can be matched against filenames and <see cref="ILine"/> instances.
     /// Is a sequence of parameter and text parts.
     /// 
     /// Parameter parts:
@@ -332,14 +332,14 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IParameterPatternMatch Match(ILinePart key)
+        public IParameterPatternMatch Match(ILine key)
         {
             ParameterPatternMatch match = new ParameterPatternMatch(this);
             key.VisitParameters(_keyvisitor, ref match);
             return match;
         }
 
-        KeyParameterVisitor<ParameterPatternMatch> _keyvisitor;
+        ParameterVisitor<ParameterPatternMatch> _keyvisitor;
         void KeyVisitor(string parameterName, string parameterValue, ref ParameterPatternMatch match)
         {
             // Search parts
@@ -389,12 +389,12 @@ namespace Lexical.Localization
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>key result or null if contained no content</returns>
         /// <exception cref="FormatException">If parse failed</exception>
-        public ILinePart Parse(string str, ILinePart rootKey = default)
+        public ILine Parse(string str, ILine rootKey = default)
         {
             IParameterPatternMatch match = this.Match(text: str, filledParameters: null);
             if (!match.Success) throw new FormatException($"Key \"{str}\" did not match the pattern \"{Pattern}\"");
 
-            ILinePart result = rootKey;
+            ILine result = rootKey;
             foreach (var kp in match)
             {
                 if (kp.Key == null || kp.Value == null) continue;
@@ -412,11 +412,11 @@ namespace Lexical.Localization
         /// <param name="key">key result or null if contained no content</param>
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>true if parse was successful</returns>
-        public bool TryParse(string str, out ILinePart key, ILinePart rootKey = default)
+        public bool TryParse(string str, out ILine key, ILine rootKey = default)
         {
             IParameterPatternMatch match = this.Match(text: str, filledParameters: null);
             if (!match.Success) { key = null; return false; }
-            ILinePart result = rootKey;
+            ILine result = rootKey;
             foreach (var kp in match)
             {
                 if (kp.Key == null || kp.Value == null) continue;
@@ -433,7 +433,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string Print(ILinePart key)
+        public string Print(ILine key)
         {
             IParameterPatternMatch match = Match(key);
             return IParameterPatternExtensions.Print(this, match.PartValues);
@@ -467,7 +467,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="match"></param>
         /// <returns>key or null if <paramref name="match"/> contained no values</returns>
-        public static ILinePart ToKey(this IParameterPatternMatch match)
+        public static ILine ToKey(this IParameterPatternMatch match)
         {
             Key result = null;
             foreach(IParameterPatternPart part in match.Pattern.CaptureParts)

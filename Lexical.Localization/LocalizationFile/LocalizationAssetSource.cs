@@ -72,18 +72,18 @@ namespace Lexical.Localization
         /// <summary>
         /// Source of lines
         /// </summary>
-        public IEnumerable<KeyValuePair<ILinePart, IFormulationString>> LineSource { get; protected set; }
+        public IEnumerable<KeyValuePair<ILine, IFormulationString>> LineSource { get; protected set; }
 
         /// <summary>
         /// Create adapter that adapts IEnumerable&lt;KeyValuePair&lt;IAssetKey, String&lt;&lt;.
         /// </summary>
         /// <param name="lineSource"></param>
-        public LocalizationKeyLinesSource(IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lineSource)
+        public LocalizationKeyLinesSource(IEnumerable<KeyValuePair<ILine, IFormulationString>> lineSource)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
         }
 
-        IEnumerator<KeyValuePair<ILinePart, IFormulationString>> IEnumerable<KeyValuePair<ILinePart, IFormulationString>>.GetEnumerator()
+        IEnumerator<KeyValuePair<ILine, IFormulationString>> IEnumerable<KeyValuePair<ILine, IFormulationString>>.GetEnumerator()
             => LineSource.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator()
             => LineSource.GetEnumerator();

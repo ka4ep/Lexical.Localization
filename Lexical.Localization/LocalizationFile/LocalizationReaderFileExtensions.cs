@@ -55,7 +55,7 @@ namespace Lexical.Localization
         /// <returns>enumerable of lines</returns>
         /// <exception cref="FileNotFoundException">thrown if file was not found and <paramref name="throwIfNotFound"/> is true</exception>
         /// <exception cref="IOException">on io error</exception>
-        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadKeyLines(this ILocalizationFileFormat fileFormat, string srcFilename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+        public static IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(this ILocalizationFileFormat fileFormat, string srcFilename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
         {
             if (!throwIfNotFound && !File.Exists(srcFilename)) return no_keylines;
             try
@@ -223,7 +223,7 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadKeyLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+        public static IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
             => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].ReadKeyLines(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
@@ -313,7 +313,7 @@ namespace Lexical.Localization
             => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].FileAssetSource(filename, namePolicy, throwIfNotFound);
 
         static IKeyTree[] no_trees = new IKeyTree[0];
-        static KeyValuePair<ILinePart, IFormulationString>[] no_keylines = new KeyValuePair<ILinePart, IFormulationString>[0];
+        static KeyValuePair<ILine, IFormulationString>[] no_keylines = new KeyValuePair<ILine, IFormulationString>[0];
         static KeyValuePair<string, IFormulationString>[] no_stringlines = new KeyValuePair<string, IFormulationString>[0];
 
     }

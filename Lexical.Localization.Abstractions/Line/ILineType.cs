@@ -12,10 +12,10 @@ namespace Lexical.Localization
     /// 
     /// Type parameters are used with physical files and embedded resources.
     /// 
-    /// Consumers of this interface should use the extension method <see cref="ILinePartExtensions.Type(ILinePart, string)"/> and others.
+    /// Consumers of this interface should use the extension method <see cref="ILineExtensions.Type(ILine, string)"/> and others.
     /// </summary>
     [Obsolete]
-    public interface IAssetKeyTypeAssignable : ILinePart
+    public interface IAssetKeyTypeAssignable : ILine
     {
         /// <summary>
         /// Create type section key for specific type.
@@ -67,7 +67,7 @@ namespace Lexical.Localization
     /// 
     /// Type parameters are used with physical files and embedded resources.
     /// </summary>
-    public interface ILineKeyType : ILineType, ILinePart
+    public interface ILineKeyType : ILineType, ILine
     {
     }
 
@@ -79,7 +79,7 @@ namespace Lexical.Localization
     {
     }
 
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Add <see cref="ILineKeyNonCanonicallyCompared"/> key.
@@ -88,7 +88,7 @@ namespace Lexical.Localization
         /// <param name="typeName"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement <see cref="ILineKeyNonCanonicallyCompared"/></exception>
-        public static ILineKeyNonCanonicallyCompared Type(this ILinePart part, string typeName)
+        public static ILineKeyNonCanonicallyCompared Type(this ILine part, string typeName)
             => part.Append<ILineKeyNonCanonicallyCompared, string, string>("Type", typeName);
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Lexical.Localization
         /// <param name="type"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement <see cref="ILineKeyType"/></exception>
-        public static ILineKeyType Type(this ILinePart part, Type type)
+        public static ILineKeyType Type(this ILine part, Type type)
             => part.Append<ILineKeyType, Type>(type);
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Lexical.Localization
         /// <returns>new key</returns>
         /// <typeparam name="T"></typeparam>
         /// <exception cref="LineException">If key doesn't implement <see cref="IAssetKeyTypeAssignable"/></exception>
-        public static ILineKey<T> Type<T>(this ILinePart part)
+        public static ILineKey<T> Type<T>(this ILine part)
             => part.Append<ILineKeyType, Type>(typeof(T)) as ILineKey<T> ?? part.Append<ILineKey<T>>();
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <param name="type"></param>
         /// <returns>new key or null</returns>
-        public static ILineKeyType TryAppendType(this ILinePart part, Type type)
+        public static ILineKeyType TryAppendType(this ILine part, Type type)
             => part.TryAppend<ILineKeyType, Type>(type);
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <param name="typeName"></param>
         /// <returns>new key or null</returns>
-        public static ILineKey TryAppendType(this ILinePart part, string typeName)
+        public static ILineKey TryAppendType(this ILine part, string typeName)
             => part.TryAppend<ILineKeyNonCanonicallyCompared, string, string>("Type", typeName);
 
         /// <summary>
@@ -134,10 +134,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="tail"></param>
         /// <returns>key or null</returns>
-        public static ILinePart GetTypeKey(this ILinePart tail)
+        public static ILine GetTypeKey(this ILine tail)
         {
-            ILinePart result = null;
-            for (ILinePart part = tail; tail != null; tail = tail.PreviousPart)
+            ILine result = null;
+            for (ILine part = tail; tail != null; tail = tail.GetPreviousPart())
             {
                 if (part is ILineKeyType asmKey && asmKey.Type != null) result = asmKey;
                 else if (part is ILineParameter parameterKey && parameterKey.ParameterName == "Type" && parameterKey.ParameterValue != null) result = parameterKey;
@@ -174,7 +174,7 @@ namespace Lexical.Localization
             {
                 if (l is ILineType typeKey && typeKey.Type != null) result = typeKey.Type.FullName;
                 else if (l is ILineParameter parameter && parameter.ParameterName == "Type" && parameter.ParameterValue != null) result = parameter.ParameterValue;
-                else if (line is ILineParameters lineParameters)
+                else if (line is ILineParameterEnumerable lineParameters)
                 {
                     var keys = lineParameters.Parameters;
                     if (keys != null)

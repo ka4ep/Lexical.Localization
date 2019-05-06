@@ -116,7 +116,7 @@ namespace Lexical.Localization
         /// <param name="resolver"></param>
         /// <param name="formatProvider"></param>
         /// <param name="logger"></param>
-        protected StringLocalizerRoot(ILinePartAppender appender, ILinePart prevKey, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver, IFormatProvider formatProvider, IObservable<LocalizationString> logger) : base(appender, prevKey, "")
+        protected StringLocalizerRoot(ILineFactory appender, ILine prevKey, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver, IFormatProvider formatProvider, IObservable<LocalizationString> logger) : base(appender, prevKey, "")
         {
             this.culturePolicy = culturePolicy;
             this.asset = asset;
@@ -140,7 +140,7 @@ namespace Lexical.Localization
             /// <param name="resolver"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
-            public LinkedTo(ILinePartAppender appender, ILinePart prevKey, IAsset asset = null, ICulturePolicy culturePolicy = null, ILocalizationResolver resolver = null, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) :
+            public LinkedTo(ILineFactory appender, ILine prevKey, IAsset asset = null, ICulturePolicy culturePolicy = null, ILocalizationResolver resolver = null, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) :
                 base(appender, prevKey, asset, culturePolicy, resolver, formatProvider, logger)
             { }
         }
@@ -181,7 +181,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Appender
             /// </summary>
-            public override ILinePartAppender Appender { get => appender; set => appender = value; }
+            public override ILineFactory Appender { get => appender; set => appender = value; }
 
             /// <summary>
             /// Construct mutable root.
@@ -196,7 +196,7 @@ namespace Lexical.Localization
             /// <param name="resolver"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
-            public Mutable(ILinePartAppender appender = default, IAsset asset = null, ICulturePolicy culturePolicy = null, ILocalizationResolver resolver = default, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) :
+            public Mutable(ILineFactory appender = default, IAsset asset = null, ICulturePolicy culturePolicy = null, ILocalizationResolver resolver = default, IFormatProvider formatProvider = null, IObservable<LocalizationString> logger = null) :
                 this(appender ?? StringLocalizerPartAppender.Instance, null, asset, culturePolicy, resolver ?? LocalizationResolver.Instance, formatProvider, logger)
             {
             }
@@ -210,7 +210,7 @@ namespace Lexical.Localization
             /// <param name="resolver"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
-            public Mutable(ILinePartAppender appender, ILinePart prevKey, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver, IFormatProvider formatProvider, IObservable<LocalizationString> logger) : 
+            public Mutable(ILineFactory appender, ILine prevKey, IAsset asset, ICulturePolicy culturePolicy, ILocalizationResolver resolver, IFormatProvider formatProvider, IObservable<LocalizationString> logger) : 
                 base(appender, prevKey, asset, culturePolicy, resolver, formatProvider, logger)
             {
             }

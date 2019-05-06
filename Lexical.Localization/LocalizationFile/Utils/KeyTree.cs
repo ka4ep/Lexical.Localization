@@ -39,7 +39,7 @@ namespace Lexical.Localization.Utils
         /// <param name="keyValues"></param>
         /// <param name="groupingPolicy"></param>
         /// <returns>tree root ""</returns>
-        public static KeyTree Create(IEnumerable<KeyValuePair<ILinePart, IFormulationString>> keyValues, IParameterPattern groupingPolicy)
+        public static KeyTree Create(IEnumerable<KeyValuePair<ILine, IFormulationString>> keyValues, IParameterPattern groupingPolicy)
         {
             KeyTree root = new KeyTree(Key.Root);
             root.AddRange(keyValues, groupingPolicy);
@@ -81,7 +81,7 @@ namespace Lexical.Localization.Utils
             }
         }
 
-        ILinePart IKeyTree.Key
+        ILine IKeyTree.Key
         {
             get => key;
             set
@@ -119,7 +119,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         List<KeyTree> children;
 
-        MapList<ILinePart, KeyTree> childLookup;
+        MapList<ILine, KeyTree> childLookup;
 
         /// <summary>
         /// Test if has child nodes.
@@ -134,7 +134,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Get-or-create child nodes
         /// </summary>
-        public MapList<ILinePart, KeyTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<ILinePart, KeyTree>(LineComparer.Default).AddRange(Children.Where(c=>c.Key!=null).Select(c=>new KeyValuePair<ILinePart, KeyTree>(c.Key, c))));
+        public MapList<ILine, KeyTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<ILine, KeyTree>(LineComparer.Default).AddRange(Children.Where(c=>c.Key!=null).Select(c=>new KeyValuePair<ILine, KeyTree>(c.Key, c))));
 
         /// <summary>
         /// Test if has values.
@@ -225,7 +225,7 @@ namespace Lexical.Localization.Utils
         IReadOnlyCollection<IKeyTree> IKeyTree.Children => this.Children;
         IKeyTree IKeyTree.CreateChild() => this.CreateChild();
         static IKeyTree[] empty = new IKeyTree[0];
-        IEnumerable<IKeyTree> IKeyTree.GetChildren(ILinePart key)
+        IEnumerable<IKeyTree> IKeyTree.GetChildren(ILine key)
         {
             if (!HasChildren) return empty;
             IEnumerable<IKeyTree> children = ChildrenLookup.TryGetList(key);
@@ -246,7 +246,7 @@ namespace Lexical.Localization.Utils
             foreach (IKeyTree tree in this.VisitFromRoot())
             {
                 if (i++ > 0) sb.Append("/");
-                ILinePart key = tree.Key;
+                ILine key = tree.Key;
                 if (key == null) continue;
                 ParameterPolicy.Instance.PrintKey(key, sb);
             }
@@ -272,7 +272,7 @@ namespace Lexical.Localization.Utils
             foreach(IKeyTree tree in this.VisitFromRoot())
             {
                 if (sb.Length > 0) sb.Append("/");
-                ILinePart key = tree.Key;
+                ILine key = tree.Key;
                 if (key == null) continue;
                 ParameterPolicy.Instance.PrintKey(key, sb);
             }

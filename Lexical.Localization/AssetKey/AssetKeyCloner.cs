@@ -16,12 +16,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Root from where keys are appended. Determines the class of the constructed keys.
         /// </summary>
-        public readonly ILinePart Root;
+        public readonly ILine Root;
 
         /// <summary>
         /// Visitor delegate
         /// </summary>
-        LinePartVisitor<ILinePart> visitor;
+        LinePartVisitor<ILine> visitor;
 
         /// <summary>
         /// List of parameters not to clone.
@@ -32,7 +32,7 @@ namespace Lexical.Localization
         /// Create new cloner.
         /// </summary>
         /// <param name="root">root from which parameters are constructed</param>
-        public AssetKeyCloner(ILinePart root)
+        public AssetKeyCloner(ILine root)
         {
             this.Root = root ?? throw new ArgumentNullException(nameof(root));
             this.visitor = Visitor;
@@ -54,15 +54,15 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key">key to copy. If null root is returned</param>
         /// <returns>copy of every part the parametrizer extracted</returns>
-        public ILinePart Copy(ILinePart key)
+        public ILine Copy(ILine key)
         {
             if (key == null) return Root;
-            ILinePart result = Root;
+            ILine result = Root;
             key.VisitFromRoot(visitor, ref result);
             return result ?? Root;
         }
 
-        void Visitor(ILinePart key, ref ILinePart result)
+        void Visitor(ILine key, ref ILine result)
         {
             string parameterName = key.GetParameterName(), parameterValue = key.GetParameterValue();
             if (!String.IsNullOrEmpty(parameterName) && parameterValue != null)

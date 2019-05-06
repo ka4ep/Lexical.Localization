@@ -40,7 +40,7 @@ namespace docs
                 IAssetRoot root = serviceProvider.GetService<IAssetRoot>();
 
                 // Service can provide type key
-                ILinePart typeKey = serviceProvider.GetService<ILineKey<ConsoleApp1.MyController>>();
+                ILine typeKey = serviceProvider.GetService<ILineKey<ConsoleApp1.MyController>>();
 
                 // Get "Hello World!"
                 string str = typeKey.Key("Hello").Culture("en").ToString();

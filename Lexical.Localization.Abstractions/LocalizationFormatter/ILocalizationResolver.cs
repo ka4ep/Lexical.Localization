@@ -6,7 +6,7 @@
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Resolver that resolves <see cref="ILinePart"/> into <see cref="LocalizationString"/>.
+    /// Resolver that resolves <see cref="ILine"/> into <see cref="LocalizationString"/>.
     /// </summary>
     public interface ILocalizationResolver
     {
@@ -16,14 +16,14 @@ namespace Lexical.Localization
         /// If <paramref name="key"/> contains arguments, then resolves into the applicable plurality case of the formulation string.
         /// </summary>
         /// <param name="key"></param>
-        LocalizationString ResolveString(ILinePart key);
+        LocalizationString ResolveString(ILine key);
 
         /// <summary>
         /// Resolve <paramref name="key"/> into <see cref="IFormulationString"/>, and apply arguments.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        LocalizationString ResolveFormulatedString(ILinePart key);
+        LocalizationString ResolveFormulatedString(ILine key);
     }
 
 }

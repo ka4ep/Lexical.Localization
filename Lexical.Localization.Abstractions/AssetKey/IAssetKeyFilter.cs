@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Interface for validating whether a <see cref="ILinePart"/> matches a criteria.
+    /// Interface for validating whether a <see cref="ILine"/> matches a criteria.
     /// </summary>
     public interface IAssetKeyFilter
     {
@@ -17,20 +17,20 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>true if <paramref name="key"/> passes the filter, containing all required parameters</returns>
-        bool Filter(ILinePart key);
+        bool Filter(ILine key);
 
         /// <summary>
         /// Filters lines against filter rules.
         /// </summary>
         /// <param name="keys"></param>
         /// <returns></returns>
-        IEnumerable<ILinePart> Filter(IEnumerable<ILinePart> keys);
+        IEnumerable<ILine> Filter(IEnumerable<ILine> keys);
 
         /// <summary>
         /// Filters lines against filter rules.
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        IEnumerable<KeyValuePair<ILinePart, IFormulationString>> Filter(IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines);
+        IEnumerable<KeyValuePair<ILine, IFormulationString>> Filter(IEnumerable<KeyValuePair<ILine, IFormulationString>> lines);
     }
 }

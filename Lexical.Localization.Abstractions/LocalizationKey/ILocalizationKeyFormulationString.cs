@@ -21,9 +21,9 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Localization string value of a <see cref="ILinePart"/>.
+    /// Localization string value of a <see cref="ILine"/>.
     /// </summary>
-    public interface ILineValuePart : ILinePart, ILineValue
+    public interface ILineValuePart : ILine, ILineValue
     {
     }
 
@@ -36,7 +36,7 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILinePart Value(this ILinePart part, IFormulationString value)
+        public static ILine Value(this ILine part, IFormulationString value)
             => part.Append<ILineValuePart, IFormulationString>(value);
 
         /// <summary>
@@ -48,9 +48,9 @@ namespace Lexical.Localization
         public static IFormulationString GetValue(this ILine line)
         {
             if (line is ILineValue value) return value.Value;
-            if (line is ILinePart part)
+            if (line is ILine part)
             {
-                for (ILinePart p = part; p != null; p = p.PreviousPart)
+                for (ILine p = part; p != null; p = p.GetPreviousPart())
                     if (part is ILineValue valuePart && valuePart.Value != null) return valuePart.Value;
             }
             return null;

@@ -27,7 +27,7 @@ namespace docs
                 dynamic myLocalization = new LocalizationRoot(new LocalizationAsset(languageStrings, KeyPrinter.Default), new CulturePolicy());
                 //dynamic x = myLocalization.Culture("fi");
                 dynamic mySection1 = myLocalization.Section("ConsoleApp1");
-                ILinePart k = mySection1.Section("MyController");
+                ILine k = mySection1.Section("MyController");
                 dynamic mySection = myLocalization.Section("ConsoleApp1").Section("MyController");
                 dynamic inlined = mySection.Success.fi_Savo("Onnistuepi").Culture("fi-Savo");
                 object inlines = inlined.Inlines;

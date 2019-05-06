@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// Line part that represents a parameter key-value pair.
     /// </summary>
     [Serializable]
-    public class LineParameter : LinePart, ILineParameter
+    public class LineParameter : LinePart, ILineParameter, ILineArguments<ILineParameter, string, string>
     {
         /// <summary>
         /// Parameter name.
@@ -27,10 +27,13 @@ namespace Lexical.Localization
         /// </summary>
         public string ParameterValue { get; protected set; }
 
+        string ILineArguments<ILineParameter, string, string>.Argument0 => ParameterName;
+        string ILineArguments<ILineParameter, string, string>.Argument1 => ParameterValue;
+
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public override IEnumerable<Object[]> GetAppendArguments() { yield return new Object[] { typeof(ILineParameter), ParameterName, ParameterValue }; }
+        public override object[] GetAppendArguments() => new object[] { Tuple.Create<Type, string, string>(typeof(ILineParameter), ParameterName, ParameterValue) };
 
         /// <summary>
         /// Create parameter part.
@@ -39,7 +42,7 @@ namespace Lexical.Localization
         /// <param name="previousPart"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        public LineParameter(ILinePartAppender appender, ILinePart previousPart, string parameterName, string parameterValue) : base(appender, previousPart)
+        public LineParameter(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart)
         {
             ParameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
             ParameterValue = parameterValue;
@@ -91,37 +94,39 @@ namespace Lexical.Localization
         /// <param name="previousPart"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        public StringLocalizerParameterPart(ILinePartAppender appender, ILinePart previousPart, string parameterName, string parameterValue) : base(appender, previousPart, "")
+        public StringLocalizerParameterPart(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, "")
         {
             ParameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
             ParameterValue = parameterValue;
         }
     }
 
-    public partial class LinePartAppender : ILinePartAppender2<ILineParameter, string, string>
+    public partial class LinePartAppender : ILineFactory<ILineParameter, string, string>
     {
         /// <summary>
         /// Append <see cref="LineParameter"/>.
         /// </summary>
+        /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
         /// <returns></returns>
-        ILineParameter ILinePartAppender2<ILineParameter, string, string>.Append(ILinePart previous, string parameterName, string parameterValue)
-            => new LineParameter(this, previous, parameterName, parameterValue);
+        ILineParameter ILineFactory<ILineParameter, string, string>.Create(ILineFactory appender, ILine previous, string parameterName, string parameterValue)
+            => new LineParameter(appender, previous, parameterName, parameterValue);
     }
 
-    public partial class StringLocalizerPartAppender : ILinePartAppender2<ILineParameter, string, string>
+    public partial class StringLocalizerPartAppender : ILineFactory<ILineParameter, string, string>
     {
         /// <summary>
         /// Append <see cref="LineParameter"/>.
         /// </summary>
+        /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
         /// <returns></returns>
-        ILineParameter ILinePartAppender2<ILineParameter, string, string>.Append(ILinePart previous, string parameterName, string parameterValue)
-            => new StringLocalizerParameterPart(this, previous, parameterName, parameterValue);
+        ILineParameter ILineFactory<ILineParameter, string, string>.Create(ILineFactory appender, ILine previous, string parameterName, string parameterValue)
+            => new StringLocalizerParameterPart(appender, previous, parameterName, parameterValue);
     }
 
 }

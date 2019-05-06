@@ -9,12 +9,12 @@ namespace Lexical.Localization
 {
     #region IParameterPolicy
     /// <summary>
-    /// Signals that the class can do conversions of <see cref="ILinePart"/> and <see cref="String"/>.
+    /// Signals that the class can do conversions of <see cref="ILine"/> and <see cref="String"/>.
     /// 
     /// User of this interface should use extensions methods 
     /// <list type="bullet">
-    /// <item><see cref="IParameterPolicyExtensions.Print(IParameterPolicy, ILinePart)"/></item>
-    /// <item><see cref="IParameterPolicyExtensions.Parse(IParameterPolicy, string, ILinePart)"/></item>
+    /// <item><see cref="IParameterPolicyExtensions.Print(IParameterPolicy, ILine)"/></item>
+    /// <item><see cref="IParameterPolicyExtensions.Parse(IParameterPolicy, string, ILine)"/></item>
     /// </list>
     /// 
     /// Class that implements to this interface should implement one or both of the following interfaces:
@@ -28,7 +28,7 @@ namespace Lexical.Localization
 
     #region IParameterPrinter
     /// <summary>
-    /// Converts <see cref="ILinePart"/> to <see cref="String"/>.
+    /// Converts <see cref="ILine"/> to <see cref="String"/>.
     /// </summary>
     public interface IParameterPrinter : IParameterPolicy
     {
@@ -37,13 +37,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="str"></param>
         /// <returns>full name string</returns>
-        string Print(ILinePart str);
+        string Print(ILine str);
     }
     #endregion IParameterPrinter
 
     #region IParameterParser
     /// <summary>
-    /// Parses <see cref="String"/> into <see cref="ILinePart"/>.
+    /// Parses <see cref="String"/> into <see cref="ILine"/>.
     /// </summary>
     public interface IParameterParser : IParameterPolicy
     {
@@ -54,7 +54,7 @@ namespace Lexical.Localization
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>key result or null if contained no content</returns>
         /// <exception cref="FormatException">If parse failed</exception>
-        ILinePart Parse(string str, ILinePart rootKey = default);
+        ILine Parse(string str, ILine rootKey = default);
 
         /// <summary>
         /// Parse string into key.
@@ -63,7 +63,7 @@ namespace Lexical.Localization
         /// <param name="key">key result or null if contained no content</param>
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>true if parse was successful</returns>
-        bool TryParse(string str, out ILinePart key, ILinePart rootKey = default);
+        bool TryParse(string str, out ILine key, ILine rootKey = default);
     }
     #endregion IParameterParser
 
@@ -78,7 +78,7 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <param name="key"></param>
         /// <returns>full name string or null</returns>
-        public static string Print(this IParameterPolicy policy, ILinePart key)
+        public static string Print(this IParameterPolicy policy, ILine key)
         {
             if (policy is IParameterPrinter provider)
             {
@@ -97,8 +97,8 @@ namespace Lexical.Localization
         /// <returns>key result or null if contained no content</returns>
         /// <exception cref="FormatException">If parse failed</exception>
         /// <exception cref="ArgumentException">If <paramref name="policy"/> doesn't implement <see cref="IParameterParser"/>.</exception>
-        public static ILinePart Parse(this IParameterPolicy policy, string str, ILinePart rootKey = default)
-            => policy is IParameterParser parser ? parser.Parse(str, rootKey) : throw new ArgumentException($"Cannot parse strings to {nameof(ILinePart)} with {policy.GetType().FullName}. {policy} doesn't implement {nameof(IParameterParser)}.");
+        public static ILine Parse(this IParameterPolicy policy, string str, ILine rootKey = default)
+            => policy is IParameterParser parser ? parser.Parse(str, rootKey) : throw new ArgumentException($"Cannot parse strings to {nameof(ILine)} with {policy.GetType().FullName}. {policy} doesn't implement {nameof(IParameterParser)}.");
 
         /// <summary>
         /// Parse string into key.
@@ -108,7 +108,7 @@ namespace Lexical.Localization
         /// <param name="key">key result or null if contained no content</param>
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>true if parse was successful (even through resulted key might be null)</returns>
-        public static bool TryParse(this IParameterPolicy policy, string str, out ILinePart key, ILinePart rootKey = default)
+        public static bool TryParse(this IParameterPolicy policy, string str, out ILine key, ILine rootKey = default)
         {
             if (policy is IParameterParser parser) return parser.TryParse(str, out key, rootKey);
             key = null;
@@ -122,9 +122,9 @@ namespace Lexical.Localization
         /// <param name="str"></param>
         /// <param name="rootKey">(optional) root key to span values from</param>
         /// <returns>Key or null</returns>
-        public static ILinePart TryParse(this IParameterPolicy policy, string str, ILinePart rootKey = default)
+        public static ILine TryParse(this IParameterPolicy policy, string str, ILine rootKey = default)
         {
-            ILinePart key;
+            ILine key;
             if (policy is IParameterParser parser && parser.TryParse(str, out key, rootKey)) return key;
             return null;
         }

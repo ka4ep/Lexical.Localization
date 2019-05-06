@@ -16,24 +16,24 @@ namespace Lexical.Localization
     ///// <summary>
     ///// Basic line part.
     ///// </summary>
-    //public class StringLocalizerPart : LinePart, ILinePart, IStringLocalizerKey, IStringLocalizer, IStringLocalizerFactory
+    //public class StringLocalizerPart : LinePart, ILine, IStringLocalizerKey, IStringLocalizer, IStringLocalizerFactory
     //{
     //    /// <summary>
     //    /// Previous part.
     //    /// </summary>
-    //    public ILinePart PreviousPart { get; protected set; }
+    //    public ILine PreviousPart { get; protected set; }
 
     //    /// <summary>
     //    /// Part appender
     //    /// </summary>
-    //    public ILinePartAppender Appender { get; protected set; }
+    //    public ILineFactory Appender { get; protected set; }
 
     //    /// <summary>
     //    /// Create string localizer part.
     //    /// </summary>
     //    /// <param name="previousPart"></param>
     //    /// <param name="appender"></param>
-    //    public StringLocalizerPart(ILinePart previousPart, ILinePartAppender appender) : base(previousPart, appender) { }
+    //    public StringLocalizerPart(ILine previousPart, ILineFactory appender) : base(previousPart, appender) { }
 
     //    /// <summary>
     //    /// 
@@ -183,12 +183,12 @@ namespace Lexical.Localization
     ///// </summary>
     //public class StringLocalizerPartAppender : LinePartAppender
     //{
-    //    private readonly static ILinePartAppender instance = new StringLocalizerPartAppender().ReadOnly();
+    //    private readonly static ILineFactory instance = new StringLocalizerPartAppender().ReadOnly();
 
     //    /// <summary>
     //    /// Default instance
     //    /// </summary>
-    //    public static ILinePartAppender Instance => instance;
+    //    public static ILineFactory Instance => instance;
 
     //    /// <summary>
     //    /// Create new part appender

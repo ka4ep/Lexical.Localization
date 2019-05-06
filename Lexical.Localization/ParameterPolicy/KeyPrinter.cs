@@ -12,7 +12,7 @@ using System.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A generic configurable name policy that converts <see cref="ILinePart"/> to strings. 
+    /// A generic configurable name policy that converts <see cref="ILine"/> to strings. 
     /// 
     /// Used with localizationa assets such <see cref="LocalizationAsset"/>, where keys are non-parseable strings.
     /// 
@@ -250,14 +250,14 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string Print(ILinePart key)
+        public string Print(ILine key)
         {
             // List for parts
             StructList16<Part> parts = new StructList16<Part>(Part.Comparer.Default);
 
             // Iterate key
             int occuranceIndex = 1;
-            for (ILinePart part = key; part != null; part = part.PreviousPart)
+            for (ILine part = key; part != null; part = part.GetPreviousPart())
             {
                 if (part is ILineParameter parametrized)
                 {
@@ -425,7 +425,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Intermediate information about a <see cref="ILinePart"/> that was matched to a <see cref="_Rule"/>.
+        /// Intermediate information about a <see cref="ILine"/> that was matched to a <see cref="_Rule"/>.
         /// </summary>
         struct Part
         {

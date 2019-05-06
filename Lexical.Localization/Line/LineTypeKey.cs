@@ -28,7 +28,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public override Object[] AppendArguments => new Object[] { typeof(ILineKeyType), Type };
+        public override object[] GetAppendArguments() => new object[] { Tuple.Create<Type, Type>(typeof(ILineKeyType), Type) };
 
         /// <summary>
         /// Create new type key.
@@ -36,7 +36,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="type"></param>
-        public LineTypeKey(ILinePartAppender appender, ILinePart prevKey, Type type) : base(appender, prevKey, "Type", type?.FullName)
+        public LineTypeKey(ILineFactory appender, ILine prevKey, Type type) : base(appender, prevKey, "Type", type?.FullName)
         {
             this.type = type;
         }
@@ -72,14 +72,14 @@ namespace Lexical.Localization
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public override Object[] AppendArguments => new Object[] { typeof(ILineKey<T>) };
+        public override object[] GetAppendArguments() => new object[] { Tuple.Create<Type>(typeof(ILineKey<T>)) };
 
         /// <summary>
         /// Create type key
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
-        public LineTypeKey(ILinePartAppender appender, ILinePart prevKey) : base(appender, prevKey, typeof(T))
+        public LineTypeKey(ILineFactory appender, ILine prevKey) : base(appender, prevKey, typeof(T))
         {
         }
 
@@ -93,21 +93,49 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LinePartAppender : ILinePartAppender1<ILineKeyType, Type>
+    public partial class LinePartAppender : ILineFactory<ILineKeyType, Type>
     {
         /// <summary>
         /// Constructor of runtime types.
         /// </summary>
-        static RuntimeConstructor<ILinePartAppender, ILinePart, LineTypeKey> typeConstructor = new RuntimeConstructor<ILinePartAppender, ILinePart, LineTypeKey>(typeof(LineTypeKey<>));
+        static RuntimeConstructor<ILineFactory, ILine, LineTypeKey> typeConstructor = new RuntimeConstructor<ILineFactory, ILine, LineTypeKey>(typeof(LineTypeKey<>));
 
         /// <summary>
         /// Append part.
         /// </summary>
+        /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        ILineKeyType ILinePartAppender1<ILineKeyType, Type>.Append(ILinePart previous, Type type)
-            => typeConstructor.Create(type, this, previous);
+        ILineKeyType ILineFactory<ILineKeyType, Type>.Create(ILineFactory appender, ILine previous, Type type)
+            => typeConstructor.Create(type, appender, previous);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override void PostConstruction() => Add(new TypeAppender());
+
+        class TypeAppender : ILineFactoryCastable
+        {
+            public ILineFactory<Part> Cast<Part>() where Part : ILine
+            {
+                if (typeof(Part).GetGenericTypeDefinition() == typeof(ILineKey<>))
+                {
+                    Type[] args = typeof(Part).GetGenericArguments();
+                    if (args != null && args.Length == 1)
+                        return (ILineFactory<Part>) Activator.CreateInstance(typeof(TypeAppender).MakeGenericType(args));
+                }
+                return null;
+            }
+            public ILineFactory<Part, A0> Cast<Part, A0>() where Part : ILine => null;
+            public ILineFactory<Part, A0, A1> Cast<Part, A0, A1>() where Part : ILine => null;
+            public ILineFactory<Part, A0, A1, A2> Cast<Part, A0, A1, A2>() where Part : ILine => null;
+        }
+
+        class TypeAppender<T> : ILineFactory<ILineKey<T>>
+        {
+            public ILineKey<T> Create(ILineFactory appender, ILine previous) => new LineTypeKey<T>(appender, previous);
+        }
     }
 
     /*
@@ -133,7 +161,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="type"></param>
-        public StringLocalizerTypeKey(ILinePartAppender appender, ILinePart prevKey, Type type) : base(appender, prevKey, "Type", type?.Name)
+        public StringLocalizerTypeKey(ILineFactory appender, ILine prevKey, Type type) : base(appender, prevKey, "Type", type?.Name)
         {
             this.type = type;
         }
@@ -160,7 +188,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class StringLocalizerPartAppender : ILinePartAppender1<ILineKeyType, Type>
+    public partial class StringLocalizerPartAppender : ILineFactory1<ILineKeyType, Type>
     {
         /// <summary>
         /// Append part.
@@ -168,7 +196,7 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public ILineKeyType Append(ILinePart previous, Type type)
+        public ILineKeyType Append(ILine previous, Type type)
             => new StringLocalizerTypeKey(this, previous, type);
     }
 */

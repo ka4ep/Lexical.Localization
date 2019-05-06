@@ -14,18 +14,18 @@ namespace Lexical.Localization
     /// 
     /// Name of localization root is "".
     /// </summary>
-    public interface IAssetRoot : ILinePart
+    public interface IAssetRoot : ILine
     {
     }
 
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Get the root key that implements <see cref="IAssetRoot"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>root key or null</returns>
-        public static IAssetRoot GetRoot(this ILinePart key)
+        public static IAssetRoot GetRoot(this ILine key)
             => key.Find<IAssetRoot>();
     }
 }

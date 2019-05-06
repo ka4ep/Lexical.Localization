@@ -5,7 +5,7 @@ namespace TutorialLibrary
     public class MyController1
     {
         // Use this reference 
-        static ILinePart localization = LocalizationRoot.Global.Type(typeof(MyController1));
+        static ILine localization = LocalizationRoot.Global.Type(typeof(MyController1));
 
         public string Do()
         {

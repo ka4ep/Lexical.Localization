@@ -29,7 +29,7 @@ namespace Lexical.Localization
         /// <param name="key">key as criteria, or null for no criteria</param>
         /// <returns>assets or null</returns>
         /// <exception cref="AssetException">If loading failed</exception>
-        IEnumerable<IAsset> LoadAssets(ILinePart key);
+        IEnumerable<IAsset> LoadAssets(ILine key);
 
         /// <summary>
         /// Load assets that match the criteria of the parameters in <paramref name="key"/>.
@@ -40,7 +40,7 @@ namespace Lexical.Localization
         /// <param name="key">key as criteria, or null for no criteria</param>
         /// <returns>assets or null</returns>
         /// <exception cref="AssetException">If loading failed</exception>
-        IEnumerable<IAsset> LoadAllAssets(ILinePart key);
+        IEnumerable<IAsset> LoadAllAssets(ILine key);
     }
     #endregion interface
 }

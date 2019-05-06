@@ -31,7 +31,7 @@ namespace docs
                 IAsset asset = serviceScope.GetService<IAsset>();
 
                 // Create string key
-                ILinePart key = new LocalizationRoot().Key("hello").Culture("en");
+                ILine key = new LocalizationRoot().Key("hello").Culture("en");
                 // Request string
                 IFormulationString str = asset.GetString(key);
                 // Print result

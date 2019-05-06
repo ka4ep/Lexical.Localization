@@ -34,7 +34,7 @@ namespace docs
 
             {
                 #region Snippet_1a
-                IEnumerable<KeyValuePair<ILinePart, IFormulationString>> key_lines = LocalizationReaderMap.Instance.ReadKeyLines(
+                IEnumerable<KeyValuePair<ILine, IFormulationString>> key_lines = LocalizationReaderMap.Instance.ReadKeyLines(
                     filename: "localization.ini", 
                     throwIfNotFound: true);
                 #endregion Snippet_1a
@@ -57,7 +57,7 @@ namespace docs
 
             {
                 #region Snippet_2a
-                IEnumerable<KeyValuePair<ILinePart, IFormulationString>> key_lines_reader = 
+                IEnumerable<KeyValuePair<ILine, IFormulationString>> key_lines_reader = 
                     LocalizationReaderMap.Instance.FileReaderAsKeyLines(
                         filename: "localization.ini", 
                         throwIfNotFound: true);
@@ -86,7 +86,7 @@ namespace docs
             {
                 #region Snippet_3a
                 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
-                IEnumerable<KeyValuePair<ILinePart, IFormulationString>> key_lines_reader = 
+                IEnumerable<KeyValuePair<ILine, IFormulationString>> key_lines_reader = 
                     LocalizationReaderMap.Instance.EmbeddedReaderAsKeyLines(
                         assembly: asm, 
                         resourceName: "docs.localization.ini", 
@@ -121,7 +121,7 @@ namespace docs
             {
                 #region Snippet_4a
                 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-                IEnumerable<KeyValuePair<ILinePart, IFormulationString>> key_lines_reader = 
+                IEnumerable<KeyValuePair<ILine, IFormulationString>> key_lines_reader = 
                     LocalizationReaderMap.Instance.FileProviderReaderAsKeyLines(
                         fileProvider: fileProvider, 
                         filepath: "localization.ini", 
@@ -156,7 +156,7 @@ namespace docs
                 #region Snippet_5a
                 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
                 {
-                    IEnumerable<KeyValuePair<ILinePart, IFormulationString>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(s);
+                    IEnumerable<KeyValuePair<ILine, IFormulationString>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(s);
                 }
                 #endregion Snippet_5a
             }
@@ -185,7 +185,7 @@ namespace docs
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
                 using (TextReader tr = new StringReader(text))
                 {
-                    IEnumerable<KeyValuePair<ILinePart, IFormulationString>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(tr);
+                    IEnumerable<KeyValuePair<ILine, IFormulationString>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(tr);
                 }
                 #endregion Snippet_6a
             }
@@ -213,7 +213,7 @@ namespace docs
             {
                 #region Snippet_7a
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
-                IEnumerable<KeyValuePair<ILinePart, IFormulationString>> key_lines = 
+                IEnumerable<KeyValuePair<ILine, IFormulationString>> key_lines = 
                     LocalizationIniReader.Instance.ReadStringAsKeyLines(
                         srcText: text);
                 #endregion Snippet_7a
@@ -370,12 +370,12 @@ namespace docs
     {
         public string Extension => "ext";
 
-        public IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadKeyLines(
+        public IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(
             TextReader text, 
             IParameterPolicy namePolicy = null)
         {
-            ILinePart key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
-            yield return new KeyValuePair<ILinePart, IFormulationString>(key, LexicalStringFormat.Instance.Parse("Hello World!"));
+            ILine key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
+            yield return new KeyValuePair<ILine, IFormulationString>(key, LexicalStringFormat.Instance.Parse("Hello World!"));
         }
     }
     #endregion Snippet_30

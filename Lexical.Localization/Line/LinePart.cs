@@ -19,12 +19,12 @@ namespace Lexical.Localization
     /// </summary>
     [DebuggerDisplay("{DebugPrint()}")]
     [Serializable]
-    public class LinePart : ILinePart, ILineDefaultHashCode, IDynamicMetaObjectProvider
+    public class LinePart : ILinePart, ILineDefaultHashCode, IDynamicMetaObjectProvider, ILineArguments<ILine>
     {
         /// <summary>
         /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineFormatArgsPart"/> parts.
         /// </summary>
-        static IEqualityComparer<ILinePart> keyAndArgsComparer =
+        static IEqualityComparer<ILine> keyAndArgsComparer =
             new LineComparer()
                 .AddCanonicalComparer(ParameterComparer.Instance)
                 .AddComparer(NonCanonicalComparer.Instance)
@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineFormatArgsPart"/> parts.
         /// </summary>
-        public static IEqualityComparer<ILinePart> FormatArgsComparer => keyAndArgsComparer;
+        public static IEqualityComparer<ILine> FormatArgsComparer => keyAndArgsComparer;
 
         /// <summary>
         /// Cached hashcode
@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Appender
         /// </summary>
-        protected ILinePartAppender appender;
+        protected ILineFactory appender;
 
         /// <summary>
         /// Cached dynamic object.
@@ -59,27 +59,32 @@ namespace Lexical.Localization
         /// <summary>
         /// Previous part.
         /// </summary>
-        public ILinePart PreviousPart { get; protected set; }
+        protected ILine previousPart;
+            
+        /// <summary>
+        /// Previous part.
+        /// </summary>
+        public ILine PreviousPart { get => previousPart; set => new InvalidOperationException(); }
 
         /// <summary>
         /// (optional) Get part appender.
         /// </summary>
-        public virtual ILinePartAppender Appender { get => appender; set => throw new InvalidOperationException(nameof(Appender) + " is read-only"); }
+        public virtual ILineFactory Appender { get => appender; set => throw new InvalidOperationException(nameof(Appender) + " is read-only"); }
 
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public virtual IEnumerable<Object[]> GetAppendArguments() { yield return new Object[] { typeof(ILinePart) }; }
+        public virtual object[] GetAppendArguments() => new object[] { Tuple.Create<Type>(typeof(ILine)) };
 
         /// <summary>
         /// Create line part.
         /// </summary>
         /// <param name="appender">(optional) Explicit appender, if null uses the Appender in <paramref name="previousPart"/></param>
         /// <param name="previousPart">(optional) link to previous part.</param>
-        public LinePart(ILinePartAppender appender, ILinePart previousPart)
+        public LinePart(ILineFactory appender, ILine previousPart)
         {
-            Appender = appender;
-            PreviousPart = previousPart;
+            this.appender = appender;
+            this.previousPart = previousPart;
         }
 
         /// <summary>
@@ -89,7 +94,7 @@ namespace Lexical.Localization
         /// <param name="context"></param>
         public LinePart(SerializationInfo info, StreamingContext context)
         {
-            this.PreviousPart = info.GetValue(nameof(PreviousPart), typeof(ILinePart)) as ILinePart;
+            this.PreviousPart = info.GetValue(nameof(PreviousPart), typeof(ILine)) as ILine;
         }
 
         /// <summary>
@@ -124,7 +129,7 @@ namespace Lexical.Localization
             if (defaultHashcodeCalculated) return defaultHashcode;
 
             // Get previous key's default hashcode
-            if (this is ILineKeyCanonicallyCompared == false && this is ILineKeyNonCanonicallyCompared == false && this.PreviousPart is ILineDefaultHashCode prevDefaultHashcode)
+            if (this is ILineKeyCanonicallyCompared == false && this is ILineKeyNonCanonicallyCompared == false && this.GetPreviousPart() is ILineDefaultHashCode prevDefaultHashcode)
             {
                 defaultHashcode = prevDefaultHashcode.GetDefaultHashCode();
             }
@@ -148,7 +153,7 @@ namespace Lexical.Localization
         {
             var prev = dynamicMetaObject;
             if (prev?.Expression == expression) return prev;
-            return dynamicMetaObject = new LocalizationKeyDynamicMetaObject(Library.Default, expression, BindingRestrictions.GetTypeRestriction(expression, typeof(ILinePart)), this);
+            return dynamicMetaObject = new LocalizationKeyDynamicMetaObject(Library.Default, expression, BindingRestrictions.GetTypeRestriction(expression, typeof(ILine)), this);
         }
 
         /// <summary>
@@ -164,7 +169,7 @@ namespace Lexical.Localization
         /// <param name="obj"></param>
         /// <returns></returns>
         public override bool Equals(object obj)
-            => keyAndArgsComparer.Equals(this, obj as ILinePart);
+            => keyAndArgsComparer.Equals(this, obj as ILine);
 
         /// <summary>
         /// Produce string using the following algorithm:
@@ -195,45 +200,44 @@ namespace Lexical.Localization
             /// <returns></returns>
             public static DynamicObjectLibrary CreateDefault()
                 => new DynamicObjectLibrary()
-                    .AddExtensionMethods(typeof(ILinePartExtensions))
+                    .AddExtensionMethods(typeof(ILineExtensions))
                     .AddExtensionMethods(typeof(AssetKeyExtensions))
-                    .AddInterface(typeof(ILinePart))
+                    .AddInterface(typeof(ILine))
                     .AddInterface(typeof(IAssetKeyAssignable))
                     .AddInterface(typeof(IAssetKeyAssigned))
-                    .AddInterface(typeof(ILinePart))
+                    .AddInterface(typeof(ILine))
                     .AddInterface(typeof(IAssetKeyAssetAssigned))
                     .AddInterface(typeof(IAssetKeyAssignable))
                     .AddInterface(typeof(IAssetKeySectionAssigned))
                     .AddInterface(typeof(IAssetKeyLocationAssigned))
                     .AddInterface(typeof(ILineKeyType))
-                    .AddInterface(typeof(IAssetKeyTypeAssignable))
                     .AddInterface(typeof(ILineKeyAssembly))
                     .AddInterface(typeof(IAssetKeyResourceAssigned))
-                    .AddExtensionMethods(typeof(ILinePartExtensions))
+                    .AddExtensionMethods(typeof(ILineExtensions))
                     .AddInterface(typeof(ILineKeyCulture))
                     .AddInterface(typeof(ILocalizationKeyCulturePolicyAssigned))
-                    .AddInterface(typeof(ILocalizationKeyCulturePolicyAssignable))
                     .AddInterface(typeof(ILineFormatArgsPart))
                     .AddInterface(typeof(ILineInlinesAssigned))
                     .AddInterface(typeof(ILineInlines));
         }
     }
 
-    public partial class LinePartAppender : ILinePartAppender0<ILinePart>
+    public partial class LinePartAppender : ILineFactory<ILine>
     {
         /// <summary>
         /// Append <see cref="LinePart"/>.
         /// </summary>
+        /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <returns></returns>
-        public ILinePart Append(ILinePart previous)
-            => new LinePart(this, previous);
+        public ILine Create(ILineFactory appender, ILine previous)
+            => new LinePart(appender, previous);
     }
 
     // StringLocalizerPart
 
     /*
-    public partial class StringLocalizerPartAppender : ILinePartAppender2<ILineParameterPart, string, string>
+    public partial class StringLocalizerPartAppender : ILineFactory2<ILineParameterPart, string, string>
     {
         /// <summary>
         /// Append <see cref="LineParameterPart"/>.
@@ -242,7 +246,7 @@ namespace Lexical.Localization
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
         /// <returns></returns>
-        public ILineParameterPart Append(ILinePart previous, string parameterName, string parameterValue)
+        public ILineParameterPart Append(ILine previous, string parameterName, string parameterValue)
             => new StringLocalizerParameterPart(this, previous, parameterName, parameterValue);
     }
 */

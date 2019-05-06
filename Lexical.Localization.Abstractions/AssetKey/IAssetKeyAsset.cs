@@ -10,7 +10,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A key where <see cref="IAsset"/> can be assigned. (Typically a mutable root.)
     /// </summary>
-    public interface IAssetKeyAssetAssignable : ILinePart
+    public interface IAssetKeyAssetAssignable : ILine
     {
         /// <summary>
         /// Set localization asset.
@@ -24,7 +24,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key has <see cref="IAsset"/> hint assigned.
     /// </summary>
-    public interface IAssetKeyAssetAssigned : ILinePart
+    public interface IAssetKeyAssetAssigned : ILine
     {
         /// <summary>
         /// Object that contains localization assets.
@@ -32,7 +32,7 @@ namespace Lexical.Localization
         IAsset Asset { get; }
     }
 
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Try to set localization asset. Doesn't throw expected exception.
@@ -56,18 +56,18 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>key or null</returns>
-        public static IAssetKeyAssetAssignable FindAssetAssignable(this ILinePart key)
+        public static IAssetKeyAssetAssignable FindAssetAssignable(this ILine key)
             => key.Find<IAssetKeyAssetAssignable>();
 
         /// <summary>
         /// Search for localization asset instance. 
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <returns>language strings or null</returns>
-        public static IAsset FindAsset(this ILinePart key)
+        public static IAsset FindAsset(this ILine line)
         {
-            for (; key != null; key = key.PreviousPart)
-                if (key is IAssetKeyAssetAssigned casted && casted.Asset != null) return casted.Asset;
+            for (; line != null; line = line.GetPreviousPart())
+                if (line is IAssetKeyAssetAssigned casted && casted.Asset != null) return casted.Asset;
             return null;
         }
     }

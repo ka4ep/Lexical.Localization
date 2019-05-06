@@ -23,7 +23,7 @@ namespace Lexical.Localization
         /// <param name="previousPart"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        public LineKey(ILinePartAppender appender, ILinePart previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
+        public LineKey(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
         {
         }
 
@@ -37,12 +37,15 @@ namespace Lexical.Localization
         /// <summary>
         /// Non-canonically compared key
         /// </summary>
-        public class NonCanonical : LineKey, ILineKeyNonCanonicallyCompared
+        public class NonCanonical : LineKey, ILineKeyNonCanonicallyCompared, ILineArguments<ILineKeyNonCanonicallyCompared, string, string>
         {
+            string ILineArguments<ILineKeyNonCanonicallyCompared, string, string>.Argument0 => ParameterName;
+            string ILineArguments<ILineKeyNonCanonicallyCompared, string, string>.Argument1 => ParameterValue;
+
             /// <summary>
             /// Appending arguments.
             /// </summary>
-            public override IEnumerable<Object[]> GetAppendArguments() { yield return new Object[] { typeof(ILineKeyNonCanonicallyCompared), ParameterName, ParameterValue }; }
+            public override object[] GetAppendArguments() => new object[] { Tuple.Create<Type, string, string>(typeof(ILineKeyNonCanonicallyCompared), ParameterName, ParameterValue) };
 
             /// <summary>
             /// 
@@ -51,7 +54,7 @@ namespace Lexical.Localization
             /// <param name="previousPart"></param>
             /// <param name="parameterName"></param>
             /// <param name="parameterValue"></param>
-            public NonCanonical(ILinePartAppender appender, ILinePart previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
+            public NonCanonical(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
             {
             }
 
@@ -68,12 +71,15 @@ namespace Lexical.Localization
         /// <summary>
         /// Canonically compared key
         /// </summary>
-        public class Canonical : LineKey, ILineKeyCanonicallyCompared
+        public class Canonical : LineKey, ILineKeyCanonicallyCompared, ILineArguments<ILineKeyNonCanonicallyCompared, string, string>
         {
+            string ILineArguments<ILineKeyNonCanonicallyCompared, string, string>.Argument0 => ParameterName;
+            string ILineArguments<ILineKeyNonCanonicallyCompared, string, string>.Argument1 => ParameterValue;
+
             /// <summary>
             /// Appending arguments.
             /// </summary>
-            public override IEnumerable<Object[]> GetAppendArguments() { yield return new Object[] { typeof(ILineKeyCanonicallyCompared), ParameterName, ParameterValue }; }
+            public override object[] GetAppendArguments() => new object[] { Tuple.Create<Type, string, string>(typeof(ILineKeyCanonicallyCompared), ParameterName, ParameterValue) };
 
             /// <summary>
             /// 
@@ -82,7 +88,7 @@ namespace Lexical.Localization
             /// <param name="previousPart"></param>
             /// <param name="parameterName"></param>
             /// <param name="parameterValue"></param>
-            public Canonical(ILinePartAppender appender, ILinePart previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
+            public Canonical(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
             {
             }
 
@@ -97,26 +103,28 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LinePartAppender : ILinePartAppender2<ILineKeyNonCanonicallyCompared, string, string>, ILinePartAppender2<ILineKeyCanonicallyCompared, string, string>
+    public partial class LinePartAppender : ILineFactory<ILineKeyNonCanonicallyCompared, string, string>, ILineFactory<ILineKeyCanonicallyCompared, string, string>
     {
         /// <summary>
         /// Append key.
         /// </summary>
+        /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
         /// <returns></returns>
-        ILineKeyNonCanonicallyCompared ILinePartAppender2<ILineKeyNonCanonicallyCompared, string, string>.Append(ILinePart previous, string parameterName, string parameterValue)
-            => new LineKey.NonCanonical(this, previous, parameterName, parameterValue);
+        ILineKeyNonCanonicallyCompared ILineFactory<ILineKeyNonCanonicallyCompared, string, string>.Create(ILineFactory appender, ILine previous, string parameterName, string parameterValue)
+            => new LineKey.NonCanonical(appender, previous, parameterName, parameterValue);
 
         /// <summary>
         /// Append key.
         /// </summary>
+        /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
         /// <returns></returns>
-        ILineKeyCanonicallyCompared ILinePartAppender2<ILineKeyCanonicallyCompared, string, string>.Append(ILinePart previous, string parameterName, string parameterValue)
+        ILineKeyCanonicallyCompared ILineFactory<ILineKeyCanonicallyCompared, string, string>.Create(ILineFactory appender, ILine previous, string parameterName, string parameterValue)
             => new LineKey.Canonical(this, previous, parameterName, parameterValue);
     }
 

@@ -41,7 +41,7 @@ namespace Lexical.Localization
         public IAsset Create(string basename, string location, CultureInfo culture = null)
             => new StringLocalizerAsset.Location(stringLocalizerFactory.Create(basename, location), basename, location, culture, ValueParser);
 
-        public StringLocalizerAsset GetHandlingAsset(ILinePart key)
+        public StringLocalizerAsset GetHandlingAsset(ILine key)
         {
             ILineKeyAssembly asmSection;
             IAssetKeyResourceAssigned resSection;
@@ -53,7 +53,7 @@ namespace Lexical.Localization
                 null;
         }
 
-        public IFormulationString GetString(ILinePart key)
+        public IFormulationString GetString(ILine key)
             => GetHandlingAsset(key)?.GetString(key);
 
         public IAsset Reload()

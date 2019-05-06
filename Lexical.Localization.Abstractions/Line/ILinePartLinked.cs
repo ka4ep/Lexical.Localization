@@ -16,97 +16,83 @@ namespace Lexical.Localization
     /// <typeparam name="T"></typeparam>
     /// <param name="part"></param>
     /// <param name="data"></param>
-    public delegate void LinePartVisitor<T>(ILinePart part, ref T data);
+    public delegate void LinePartVisitor<T>(ILine part, ref T data);
 
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
-        /// Enumerate linked list towards root.
+        /// Enumerate from tail to root.
         /// </summary>
-        /// <param name="part"></param>
+        /// <param name="tail"></param>
         /// <returns></returns>
-        public static IEnumerable<ILinePart> EnumerateToRoot(this ILinePart part)
+        public static IEnumerable<ILine> EnumerateToRoot(this ILine tail)
         {
-            while (part != null)
-            {
-                yield return part;
-                part = part.PreviousPart;
-            }
+            for (ILine l = tail; l != null; l = l.GetPreviousPart())
+                yield return l;
         }
 
         /// <summary>
-        /// Visit part chain from root towards part
+        /// Visit line parts from root towards tail.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="part"></param>
+        /// <param name="tail"></param>
         /// <param name="visitor"></param>
         /// <param name="data"></param>
-        public static void VisitFromRoot<T>(this ILinePart part, LinePartVisitor<T> visitor, ref T data)
+        public static void VisitFromRoot<T>(this ILine tail, LinePartVisitor<T> visitor, ref T data)
         {
             // Push to stack
-            ILinePart prevKey = part.PreviousPart;
-            if (prevKey != null) VisitFromRoot(prevKey, visitor, ref data);
-
+            ILine prevPart = tail.GetPreviousPart();
+            if (prevPart != null) VisitFromRoot(prevPart, visitor, ref data);
             // Pop from stack in reverse order
-            visitor(part, ref data);
+            visitor(tail, ref data);
         }
 
         /// <summary>
-        /// Return an array of parts from root.
+        /// Array of <see cref="ILine"/> parts from root towards tail.
         /// </summary>
-        /// <param name="part"></param>
-        /// <param name="includeNonCanonical">include all parts that implement ILocalizationKeyNonCanonicallyCompared</param>
+        /// <param name="tail"></param>
+        /// <param name="whereFilter">(optional) where filter</param>
         /// <returns>array of parts</returns>
-        public static ILinePart[] ArrayFromRoot(this ILinePart part, bool includeNonCanonical=true)
+        public static ILine[] ToArray(this ILine tail, Func<ILine, bool> whereFilter = null)
         {
             // Count the number of parts
             int count = 0;
-            if (includeNonCanonical)
-                for (ILinePart p = part; p != null; p = p.PreviousPart) count++;
+            if (whereFilter != null)
+            {
+                for (ILine p = tail; p != null; p = p.GetPreviousPart())
+                    if (whereFilter(p)) count++;
+            }
             else
-                for (ILinePart p = part; p != null; p = p.PreviousPart)
-                    if (p is ILineKeyNonCanonicallyCompared == false) count++;
+            {
+                for (ILine p = tail; p != null; p = p.GetPreviousPart()) count++;
+            }
 
             // Create result
-            ILinePart[] result = new ILinePart[count];
+            ILine[] result = new ILine[count];
             int ix = count - 1;
-            if (includeNonCanonical)
-                for (ILinePart p = part; p != null; p = p.PreviousPart)
+            if (whereFilter != null)
+                for (ILine p = tail; p != null; p = p.GetPreviousPart())
                     result[ix--] = p;
             else
-                for (ILinePart p = part; p != null; p = p.PreviousPart)
-                    if (p is ILineKeyNonCanonicallyCompared == false)
+            {
+                for (ILine p = tail; p != null; p = p.GetPreviousPart())
+                    if (whereFilter(p))
                         result[ix--] = p;
+            }
 
             return result;
-        }
-
-
-        /// <summary>
-        /// Get the first part in the linked list.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <returns>part or first part</returns>
-        public static ILinePart GetFirstKey(this ILinePart part)
-        {
-            while (true)
-            {
-                ILinePart prevKey = part.PreviousPart;
-                if (prevKey == null) return part;
-                part = prevKey;
-            }
         }
 
         /// <summary>
         /// Finds part that implements T when walking towards root.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="part"></param>
+        /// <param name="tail"></param>
         /// <returns>T or null</returns>
-        public static T Find<T>(this ILinePart part) where T : ILinePart
+        public static T Find<T>(this ILine tail) where T : ILine
         {
-            for (; part != null; part = part.PreviousPart)
-                if (part is T casted) return casted;
+            for (; tail != null; tail = tail.GetPreviousPart())
+                if (tail is T casted) return casted;
             return default;
         }
 
@@ -114,14 +100,14 @@ namespace Lexical.Localization
         /// Finds part that implements T when walking towards root.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="part"></param>
+        /// <param name="tail"></param>
         /// <returns>T</returns>
         /// <exception cref="LineException">if T is not found</exception>
-        public static T Get<T>(this ILinePart part) where T : ILinePart
+        public static T Get<T>(this ILine tail) where T : ILine
         {
-            for (; part != null; part = part.PreviousPart)
-                if (part is T casted) return casted;
-            throw new LineException(part, $"{typeof(T).FullName} is not found.");
+            for (; tail != null; tail = tail.GetPreviousPart())
+                if (tail is T casted) return casted;
+            throw new LineException(tail, $"{typeof(T).FullName} is not found.");
         }
 
         /// <summary>
@@ -130,27 +116,27 @@ namespace Lexical.Localization
         /// <typeparam name="T"></typeparam>
         /// <param name="part"></param>
         /// <returns>T or null</returns>
-        public static T FindPrev<T>(this ILinePart part) where T : ILinePart
+        public static T FindPrev<T>(this ILine part) where T : ILine
         {
-            for (ILinePart k = part.PreviousPart; k != null; k = k.PreviousPart)
+            for (ILine k = part.GetPreviousPart(); k != null; k = k.GetPreviousPart())
                 if (k is T casted) return casted;
             return default;
         }
 
         /// <summary>
-        /// Scan part towards root, returns <paramref name="index"/>th part from tail.
+        /// Scan part towards root, returns <paramref name="index"/>th part from tail (0=tail, count-1=root)
         /// </summary>
-        /// <param name="part"></param>
+        /// <param name="tail"></param>
         /// <param name="index">the index of part to return starting from tail.</param>
         /// <returns>part</returns>
         /// <exception cref="IndexOutOfRangeException">if <paramref name="index"/> goes over root</exception>
-        public static ILinePart GetAt(this ILinePart part, int index)
+        public static ILine GetAt(this ILine tail, int index)
         {
             if (index < 0) throw new IndexOutOfRangeException();
             for (int i = 0; i < index; i++)
-                part = part.PreviousPart;
-            if (part == null) throw new IndexOutOfRangeException();
-            return part;
+                tail = tail.GetPreviousPart();
+            if (tail == null) throw new IndexOutOfRangeException();
+            return tail;
         }
 
     }

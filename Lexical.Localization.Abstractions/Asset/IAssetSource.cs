@@ -47,15 +47,15 @@ namespace Lexical.Localization
     public interface ILocalizationStringLinesSource : ILocalizationSource, IEnumerable<KeyValuePair<string, IFormulationString>>
     {
         /// <summary>
-        /// Name policy that is used for converting string to <see cref="ILinePart"/>.
+        /// Name policy that is used for converting string to <see cref="ILine"/>.
         /// </summary>
         IParameterPolicy KeyPolicy { get; }
     }
 
     /// <summary>
-    /// Source that provides <see cref="ILinePart"/> based key-value lines.
+    /// Source that provides <see cref="ILine"/> based key-value lines.
     /// </summary>
-    public interface ILocalizationKeyLinesSource : ILocalizationSource, IEnumerable<KeyValuePair<ILinePart, IFormulationString>>
+    public interface ILocalizationKeyLinesSource : ILocalizationSource, IEnumerable<KeyValuePair<ILine, IFormulationString>>
     {
     }
 

@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key has capability of culture policy assignment.
     /// </summary>
-    public interface ILocalizationKeyCulturePolicyAssignable : ILinePart
+    public interface ILocalizationKeyCulturePolicyAssignable : ILine
     {
         /// <summary>
         /// Set culture policy.
@@ -34,7 +34,7 @@ namespace Lexical.Localization
         ICulturePolicy CulturePolicy { get; }
     }
 
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Try to set culture policy.
@@ -57,18 +57,18 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>key or null</returns>
-        public static ILocalizationKeyCulturePolicyAssignable FindCulturePolicyAssignableKey(this ILinePart key)
+        public static ILocalizationKeyCulturePolicyAssignable FindCulturePolicyAssignableKey(this ILine key)
             => key.Find<ILocalizationKeyCulturePolicyAssignable>();
 
         /// <summary>
         /// Walks linked list and searches for culture policy setting.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <returns>culture policy or null</returns>
-        public static ICulturePolicy FindCulturePolicy(this ILinePart key)
+        public static ICulturePolicy FindCulturePolicy(this ILine line)
         {
-            for (;key!=null; key=key.PreviousPart)
-                if (key is ILocalizationKeyCulturePolicyAssigned cultureKey && cultureKey.CulturePolicy != null) return cultureKey.CulturePolicy;
+            for (;line!=null; line=line.GetPreviousPart())
+                if (line is ILocalizationKeyCulturePolicyAssigned cultureKey && cultureKey.CulturePolicy != null) return cultureKey.CulturePolicy;
             return null;
         }
     }
@@ -76,12 +76,12 @@ namespace Lexical.Localization
     /// <summary>
     /// Non-canonical comparer that compares <see cref="ILocalizationKeyCulturePolicyAssigned"/> values of keys.
     /// </summary>
-    public class LocalizationKeyCulturePolicyComparer : IEqualityComparer<ILinePart>
+    public class LocalizationKeyCulturePolicyComparer : IEqualityComparer<ILine>
     {
         static IEqualityComparer<ICulturePolicy> comparer = new ReferenceComparer<ICulturePolicy>();
-        public bool Equals(ILinePart x, ILinePart y)
+        public bool Equals(ILine x, ILine y)
             => comparer.Equals(x?.FindCulturePolicy(), y?.FindCulturePolicy());
-        public int GetHashCode(ILinePart obj)
+        public int GetHashCode(ILine obj)
             => comparer.GetHashCode(obj?.FindCulturePolicy());
     }
 

@@ -7,50 +7,18 @@ using System;
 
 namespace Lexical.Localization
 {
-    /// <summary>
-    /// Signals that the class gives asset specific parameters, hints or capabilities.
-    /// 
-    /// Parameters:
-    ///     <see cref="ILineKeyAssembly"/>
-    ///     <see cref="IAssetKeyLocationAssigned"/>
-    ///     <see cref="IAssetKeyResourceAssigned"/>
-    ///     <see cref="ILineKeyType"/>
-    ///     <see cref="IAssetKeySectionAssigned"/>
-    ///     <see cref="IAssetKeyAssigned"/>
-    ///     
-    /// Hints:
-    ///     <see cref="IAssetKeyAssetAssigned"/>
-    ///     
-    /// Capabilities:
-    ///     <see cref="IAssetKeyAssemblyAssignable"/>
-    ///     <see cref="IAssetKeyAssetAssignable"/>
-    ///     <see cref="IAssetKeyAssignable"/>
-    ///     <see cref="IAssetKeyLocationAssignable"/>
-    ///     <see cref="IAssetKeyResourceAssignable"/>
-    ///     <see cref="IAssetKeySectionAssignable"/>
-    ///     <see cref="IAssetKeyTypeAssignable"/>
-    ///  
-    /// Others:
-    ///     <see cref="IAssetRoot"/>
-    ///     <see cref="ILinePart"/>
-    /// 
-    /// </summary>
-    public partial interface ILinePart
-    {
-    }
-
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Find <see cref="IAsset"/> and get language string.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
-        /// <see cref="ResolveString(ILinePart)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// <see cref="ResolveString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>byte[] or null</returns>
         /// <exception cref="LineException">If resolving failed or resolver was not found</exception>
-        public static byte[] GetResource(this ILinePart key)
+        public static byte[] GetResource(this ILine key)
         {
             IAsset asset = key.FindAsset();
             if (asset == null) throw new LineException(key, "String resolver was not found.");
@@ -63,11 +31,11 @@ namespace Lexical.Localization
         /// Find <see cref="IAsset"/> and get language string.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
-        /// <see cref="ResolveString(ILinePart)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// <see cref="ResolveString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>byte[] or null</returns>
-        public static byte[] TryGetResource(this ILinePart key)
+        public static byte[] TryGetResource(this ILine key)
             => key.FindAsset()?.GetResource(key);
 
     }

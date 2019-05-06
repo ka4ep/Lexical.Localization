@@ -31,22 +31,22 @@ namespace Lexical.Localization
     /// The ILocalizationKey ToString() must try to resolve the key.
     /// If resolve fails ToString returns the built name of the key.
     /// </summary>
-    public interface ILocalizationKey : ILinePart
+    public interface ILocalizationKey : ILine
     {
     }
 
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Find <see cref="IAsset"/> and get formulation string.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
-        /// <see cref="ResolveString(ILinePart)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// <see cref="ResolveString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>formulation string</returns>
         /// <exception cref="LineException">If resolving failed or resolver was not found</exception>
-        public static IFormulationString GetString(this ILinePart key)
+        public static IFormulationString GetString(this ILine key)
         {
             IAsset asset = key.FindAsset();
             if (asset == null) throw new LineException(key, "String resolver was not found.");
@@ -59,11 +59,11 @@ namespace Lexical.Localization
         /// Find <see cref="IAsset"/> and get formulation string.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
-        /// <see cref="ResolveString(ILinePart)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// <see cref="ResolveString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>formulation string, or null if formulation string was not found, or if resolver was not found</returns>
-        public static IFormulationString TryGetString(this ILinePart key)
+        public static IFormulationString TryGetString(this ILine key)
             => key.FindAsset()?.GetString(key);
 
 

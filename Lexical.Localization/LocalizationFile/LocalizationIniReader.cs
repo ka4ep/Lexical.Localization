@@ -104,7 +104,7 @@ namespace Lexical.Localization
                 switch (token.Type)
                 {
                     case IniTokenType.Section:
-                        ILinePart key = null;
+                        ILine key = null;
                         if (escaper_section.TryParse(token.ValueText, out key))
                         {
                             section = key == null ? null : root.Create(key);
@@ -116,7 +116,7 @@ namespace Lexical.Localization
                         }
                         break;
                     case IniTokenType.KeyValue:
-                        ILinePart key_ = null;
+                        ILine key_ = null;
                         if (escaper_key.TryParse(token.KeyText, out key_))
                         {
                             IKeyTree current = key_ == null ? null : (section??root).GetOrCreate(key_);

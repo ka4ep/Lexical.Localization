@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. </param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadKeyLines(Stream stream, IParameterPolicy namePolicy = default);
+        IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(Stream stream, IParameterPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<ILinePart, IFormulationString>> ReadKeyLines(TextReader text, IParameterPolicy namePolicy = default);
+        IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(TextReader text, IParameterPolicy namePolicy = default);
     }
 
     /// <summary>

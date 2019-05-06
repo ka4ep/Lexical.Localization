@@ -128,9 +128,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
-        IEnumerator<KeyValuePair<ILinePart, IFormulationString>> IEnumerable<KeyValuePair<ILinePart, IFormulationString>>.GetEnumerator()
+        IEnumerator<KeyValuePair<ILine, IFormulationString>> IEnumerable<KeyValuePair<ILine, IFormulationString>>.GetEnumerator()
         {
-            IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines = LocalizationReaderExtensions.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable<KeyValuePair<ILine, IFormulationString>> lines = LocalizationReaderExtensions.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 
@@ -267,7 +267,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public abstract IAssetSource CreateSource(ILinePart key);
+        public abstract IAssetSource CreateSource(ILine key);
     }
 
 

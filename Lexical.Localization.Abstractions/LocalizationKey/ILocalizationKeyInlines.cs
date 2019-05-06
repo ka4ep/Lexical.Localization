@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// Key has capability of inline assignment.
     /// </summary>
     [Obsolete]
-    public interface ILineInlinesAssigned : ILinePart
+    public interface ILineInlinesAssigned : ILine
     {
         /// <summary>
         /// Add <see cref="ILineInlines"/> part to the key. 
@@ -25,11 +25,11 @@ namespace Lexical.Localization
     /// <summary>
     /// Key that has multiple value assignments.
     /// </summary>
-    public interface ILineInlines : ILinePart, IDictionary<ILinePart, IFormulationString>
+    public interface ILineInlines : ILine, IDictionary<ILine, IFormulationString>
     {
     }
 
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Add an inlined language string.
@@ -38,7 +38,7 @@ namespace Lexical.Localization
         /// <param name="text">text to add, or null to remove</param>
         /// <returns>new key with inliens or <paramref name="key"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILineInlines Inline(this ILinePart key, string text)
+        public static ILineInlines Inline(this ILine key, string text)
         {
             ILineInlines inlinesKey = key.GetOrCreateInlines();
             if (text == null) inlinesKey.Remove(key); else inlinesKey[key] = LexicalStringFormat.Instance.Parse(text);
@@ -53,10 +53,10 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <returns>new key with inliens or <paramref name="key"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILinePart Inline(this ILinePart key, string subKeyText, string text)
+        public static ILine Inline(this ILine key, string subKeyText, string text)
         {
             ILineInlines inlinesKey = key.GetOrCreateInlines();
-            ILinePart subKey = ParameterParser.Instance.Parse(subKeyText, key);
+            ILine subKey = ParameterParser.Instance.Parse(subKeyText, key);
             if (text == null) inlinesKey.Remove(subKey); else inlinesKey[subKey] = LexicalStringFormat.Instance.Parse(text);
             return inlinesKey;
         }
@@ -64,36 +64,36 @@ namespace Lexical.Localization
         /// <summary>
         /// Finds in <see cref="ILineInlines"/>.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <returns></returns>
-        public static ILineInlines FindInlines(this ILinePart key)
+        public static ILineInlines FindInlines(this ILine line)
         {
-            for (ILinePart k = key; k != null; k = k.PreviousPart)
+            for (ILine k = line; k != null; k = k.GetPreviousPart())
                 if (k is ILineInlines inlinesKey) return inlinesKey;
             return null;
         }
 
         /// <summary>
-        /// Get or create <see cref="ILineInlines"/> section in the <paramref name="key"/>.
+        /// Get or create <see cref="ILineInlines"/> section in the <paramref name="line"/>.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <returns>inlines key</returns>
-        /// <exception cref="LineException">If <paramref name="key"/> doesn't implement <see cref="ILineInlinesAssigned"/></exception>
-        public static ILineInlines GetOrCreateInlines(this ILinePart key)
-            => key.FindInlines() ?? 
-               (key is ILineInlinesAssigned assignable ? 
+        /// <exception cref="LineException">If <paramref name="line"/> doesn't implement <see cref="ILineInlinesAssigned"/></exception>
+        public static ILineInlines GetOrCreateInlines(this ILine line)
+            => line.FindInlines() ?? 
+               (line is ILineInlinesAssigned assignable ? 
                 assignable.AddInlines() : 
-                throw new LineException(key, $"Doesn't implement {nameof(ILineInlinesAssigned)}"));
+                throw new LineException(line, $"Doesn't implement {nameof(ILineInlinesAssigned)}"));
 
         /// <summary>
         /// Walks linked list and searches for all inlines.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <returns>inlines</returns>
-        public static IEnumerable<ILineInlines> FindAllInlines(this ILinePart key)
+        public static IEnumerable<ILineInlines> FindAllInlines(this ILine line)
         {
-            for (; key != null; key = key.PreviousPart)
-                if (key is ILineInlines casted)
+            for (; line != null; line = line.GetPreviousPart())
+                if (line is ILineInlines casted)
                     yield return casted;
         }
 

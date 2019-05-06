@@ -23,7 +23,7 @@ namespace Lexical.Localization
         protected IReadOnlyDictionary<string, byte[]> dictionary;
 
         /// <summary>
-        /// Name policy that converts <see cref="ILinePart"/> to string, and back to <see cref="ILinePart"/>.
+        /// Name policy that converts <see cref="ILine"/> to string, and back to <see cref="ILine"/>.
         /// </summary>
         IParameterPolicy namePolicy;
 
@@ -43,7 +43,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetResourceNames(ILinePart filterKey)
+        public IEnumerable<string> GetResourceNames(ILine filterKey)
         {
             // Return all 
             if (filterKey == null) return dictionary.Keys.ToList();
@@ -71,7 +71,7 @@ namespace Lexical.Localization
             {
                 foreach (var line in dictionary)
                 {
-                    ILinePart key;
+                    ILine key;
                     if (!parser.TryParse(line.Key, out key)) continue;
                     if (!filter.Filter(key)) continue;
                     yield return line.Key;
@@ -84,7 +84,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) filter key</param>
         /// <returns>lines or null</returns>
-        public IEnumerable<string> GetAllResourceNames(ILinePart filterKey)
+        public IEnumerable<string> GetAllResourceNames(ILine filterKey)
             => GetResourceNames(filterKey);
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>resource or null</returns>
-        public byte[] GetResource(ILinePart key)
+        public byte[] GetResource(ILine key)
         {
             byte[] result = null;
             string id = namePolicy.Print(key);
@@ -141,7 +141,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Stream OpenStream(ILinePart key)
+        public Stream OpenStream(ILine key)
         {
             byte[] data = GetResource(key);
             if (data == null) return null;

@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A key that can be assigned with a <see cref="ILocalizationResolver"/>.
     /// </summary>
-    public interface ILocalizationKeyResolverAssignable : ILinePart
+    public interface ILocalizationKeyResolverAssignable : ILine
     {
         /// <summary>
         /// Append a <paramref name="resolver"/> key.
@@ -28,7 +28,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A key that has been assigned with resolver.
     /// </summary>
-    public interface ILocalizationKeyResolverAssigned : ILinePart
+    public interface ILocalizationKeyResolverAssigned : ILine
     {
         /// <summary>
         /// (Optional) The assigned resolver.
@@ -36,7 +36,7 @@ namespace Lexical.Localization
         ILocalizationResolver Resolver { get; }
     }
 
-    public static partial class ILinePartExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Append format provider key.
@@ -45,7 +45,7 @@ namespace Lexical.Localization
         /// <param name="resolver"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement <see cref="ILocalizationKeyResolverAssignable"/></exception>
-        public static ILocalizationKeyResolverAssigned Resolver(this ILinePart key, ILocalizationResolver resolver)
+        public static ILocalizationKeyResolverAssigned Resolver(this ILine key, ILocalizationResolver resolver)
         {
             if (key is ILocalizationKeyResolverAssignable casted) return casted.Resolver(resolver);
             throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyResolverAssignable)}.");
@@ -60,10 +60,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static LocalizationString ResolveString(this ILinePart key)
+        public static LocalizationString ResolveString(this ILine key)
         {
             LocalizationString result = new LocalizationString(key, null, LocalizationStatus.NoResult);
-            for (ILinePart k = key; k!=null; k=k.PreviousPart)
+            for (ILine k = key; k!=null; k=k.GetPreviousPart())
             {
                 ILocalizationResolver _formatter;
                 if (k is ILocalizationKeyResolverAssigned formatterAssigned && ((_formatter=formatterAssigned.Resolver)!=null))
@@ -86,10 +86,10 @@ namespace Lexical.Localization
         /// <returns>If key has <see cref="ILineFormatArgsPart"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
         /// If key didn't have <see cref="ILineFormatArgsPart"/> part, then return the formulation string "Error (Code=0x{0:X8})".
         /// otherwise return null</returns>
-        public static LocalizationString ResolveFormulatedString(this ILinePart key)
+        public static LocalizationString ResolveFormulatedString(this ILine key)
         {
             LocalizationString result = new LocalizationString(key, null, LocalizationStatus.NoResult);
-            for (ILinePart k = key; k != null; k = k.PreviousPart)
+            for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
                 ILocalizationResolver _formatter;
                 if (k is ILocalizationKeyResolverAssigned formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
@@ -112,7 +112,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>resource or null</returns>
-        public static byte[] ResolveResource(this ILinePart key)
+        public static byte[] ResolveResource(this ILine key)
         {
             // Arrange
             IAsset asset = key.FindAsset();
@@ -139,7 +139,7 @@ namespace Lexical.Localization
                     // 2a. Try from asset
                     if (asset != null)
                     {
-                        ILineKey cultured = key.TryAppendCulture(culture);
+                        ILine cultured = key.TryAppendCulture(culture);
                         if (cultured != null)
                         {
                             result = asset.GetResource(cultured);

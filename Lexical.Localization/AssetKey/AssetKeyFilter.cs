@@ -63,7 +63,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public AssetKeyFilter KeyRule(ILinePart filterKey)
+        public AssetKeyFilter KeyRule(ILine filterKey)
         {
             // Break filterKey into effective non-canonical parameters, and to canonical parameters and occurance index
             // (ParameterName, occuranceIndex, ParameterValue)
@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>true if <paramref name="key"/> passes the filter, containing all required parameters</returns>
-        public bool Filter(ILinePart key)
+        public bool Filter(ILine key)
         {
             // Apply generic filters
             if (genericFilters != null)
@@ -153,13 +153,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="keys"></param>
         /// <returns></returns>
-        public IEnumerable<ILinePart> Filter(IEnumerable<ILinePart> keys)
+        public IEnumerable<ILine> Filter(IEnumerable<ILine> keys)
         {
             // Break key into effective non-canonical parameters, and to canonical parameters and occurance index
             // (ParameterName, occuranceIndex, ParameterValue)
             StructList12<(string, int, string)> list = new StructList12<(string, int, string)>();
 
-            foreach (ILinePart key in keys)
+            foreach (ILine key in keys)
             {
                 // Apply generic filters
                 if (genericFilters != null)
@@ -214,7 +214,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<ILinePart, IFormulationString>> Filter(IEnumerable<KeyValuePair<ILinePart, IFormulationString>> lines)
+        public IEnumerable<KeyValuePair<ILine, IFormulationString>> Filter(IEnumerable<KeyValuePair<ILine, IFormulationString>> lines)
         {
             // Break key into effective non-canonical parameters, and to canonical parameters and occurance index
             // (ParameterName, occuranceIndex, ParameterValue)
@@ -285,7 +285,7 @@ namespace Lexical.Localization
             // Apply generic filters
             if (genericFilters != null)
             {
-                ILinePart filterKey = keyMatch.ToKey();
+                ILine filterKey = keyMatch.ToKey();
                 foreach (var filter in genericFilters)
                     if (!filter.Filter(filterKey)) return false;
             }

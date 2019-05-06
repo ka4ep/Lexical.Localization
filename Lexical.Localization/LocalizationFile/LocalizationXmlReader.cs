@@ -162,7 +162,7 @@ namespace Lexical.Localization
         /// <returns>parent</returns>
         public IKeyTree ReadElement(XElement element, IKeyTree parent, XmlCorrespondence correspondenceContext)
         {
-            ILinePart key = ReadKey(element);
+            ILine key = ReadKey(element);
 
             if (key != null)
             {
@@ -238,7 +238,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="element"></param>
         /// <returns>key or null</returns>
-        public ILinePart ReadKey(XElement element)
+        public ILine ReadKey(XElement element)
         {
             Key key;
             // <line type="MyClass" type="something" key="something">
@@ -284,12 +284,12 @@ namespace Lexical.Localization
 
 
         /// <summary>
-        /// List all children of <paramref name="parent"/> with a readable <see cref="ILinePart"/>.
+        /// List all children of <paramref name="parent"/> with a readable <see cref="ILine"/>.
         /// </summary>
         /// <param name="parent"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<ILinePart, XElement>> ListChildrenWithKeys(XElement parent)
-            => parent.Elements().Select(e => new KeyValuePair<ILinePart, XElement>(ReadKey(e), e)).Where(line => line.Key != null);
+        public IEnumerable<KeyValuePair<ILine, XElement>> ListChildrenWithKeys(XElement parent)
+            => parent.Elements().Select(e => new KeyValuePair<ILine, XElement>(ReadKey(e), e)).Where(line => line.Key != null);
 
         /*
         public class TrimmerXmlReader : XmlTextReader

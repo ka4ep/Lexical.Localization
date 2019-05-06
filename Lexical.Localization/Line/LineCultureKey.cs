@@ -29,7 +29,8 @@ namespace Lexical.Localization
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public override IEnumerable<Object[]> GetAppendArguments() { yield return new Object[] { typeof(ILineKeyCulture), Culture}; }
+        public override object[] GetAppendArguments() 
+            => new object[] { Tuple.Create<Type, CultureInfo>(typeof(ILineKeyCulture), Culture) };
 
         /// <summary>
         /// Create new culture key.
@@ -37,7 +38,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="culture"></param>
-        public LineCultureKey(ILinePartAppender appender, ILinePart prevKey, CultureInfo culture) : base(appender, prevKey, "Culture", culture?.Name)
+        public LineCultureKey(ILineFactory appender, ILine prevKey, CultureInfo culture) : base(appender, prevKey, "Culture", culture?.Name)
         {
             this.culture = culture;
         }
@@ -64,16 +65,17 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LinePartAppender : ILinePartAppender1<ILineKeyCulture, CultureInfo>
+    public partial class LinePartAppender : ILineFactory<ILineKeyCulture, CultureInfo>
     {
         /// <summary>
         /// Append part.
         /// </summary>
+        /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="culture"></param>
         /// <returns></returns>
-        ILineKeyCulture ILinePartAppender1<ILineKeyCulture, CultureInfo>.Append(ILinePart previous, CultureInfo culture)
-            => new LineCultureKey(this, previous, culture);
+        ILineKeyCulture ILineFactory<ILineKeyCulture, CultureInfo>.Create(ILineFactory appender, ILine previous, CultureInfo culture)
+            => new LineCultureKey(appender, previous, culture);
     }
 
     /*
@@ -99,7 +101,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="culture"></param>
-        public StringLocalizerCultureKey(ILinePartAppender appender, ILinePart prevKey, CultureInfo culture) : base(appender, prevKey, "Culture", culture?.Name)
+        public StringLocalizerCultureKey(ILineFactory appender, ILine prevKey, CultureInfo culture) : base(appender, prevKey, "Culture", culture?.Name)
         {
             this.culture = culture;
         }
@@ -126,7 +128,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class StringLocalizerPartAppender : ILinePartAppender1<ILineKeyCulture, CultureInfo>
+    public partial class StringLocalizerPartAppender : ILineFactory1<ILineKeyCulture, CultureInfo>
     {
         /// <summary>
         /// Append part.
@@ -134,7 +136,7 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="culture"></param>
         /// <returns></returns>
-        public ILineKeyCulture Append(ILinePart previous, CultureInfo culture)
+        public ILineKeyCulture Append(ILine previous, CultureInfo culture)
             => new StringLocalizerCultureKey(this, previous, culture);
     }
 */
