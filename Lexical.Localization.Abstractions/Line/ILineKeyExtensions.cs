@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         /// <exception cref="LineException"></exception>
         public static ILine Key(this ILine line, string key)
-            => line.Append<ILineKeyCanonicallyCompared, string, string>("Key", key);
+            => line.Append<ILineCanonicalKey, string, string>("Key", key);
 
         /// <summary>
         /// Try append "Key" non-canonical key.
@@ -58,7 +58,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>new key or null</returns>
         public static ILine TryAddKey(this ILine line, string key)
-            => line.TryAppend<ILineKeyCanonicallyCompared, string, string>("Key", key);
+            => line.TryAppend<ILineCanonicalKey, string, string>("Key", key);
 
     }
 

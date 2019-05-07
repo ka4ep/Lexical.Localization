@@ -109,7 +109,7 @@ namespace Lexical.Localization
                 {
                     string parameterName = k.GetParameterName(), parameterValue = k.GetParameterValue();
                     if (parameterName == null || parameterValue == null) continue;
-                    bool isCanonical = k is ILineKeyCanonicallyCompared, isNonCanonical = k is ILineKeyNonCanonicallyCompared;
+                    bool isCanonical = k is ILineCanonicalKey, isNonCanonical = k is ILineNonCanonicalKey;
                     if (!isCanonical && !isNonCanonical) continue;
 
                     // Overwrite previously assigned non-canonical parameter

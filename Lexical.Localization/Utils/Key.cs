@@ -28,17 +28,17 @@ namespace Lexical.Localization.Utils
 
         /// <summary></summary>
         public class Appender : ILineFactory<ILineParameter, string, string>,
-            ILineFactory<ILineKeyCanonicallyCompared, string, string>,
-            ILineFactory<ILineKeyNonCanonicallyCompared, string, string>
+            ILineFactory<ILineCanonicalKey, string, string>,
+            ILineFactory<ILineNonCanonicalKey, string, string>
         {
             static readonly Appender instance = new Appender();
             /// <summary></summary>
             public static Appender Instance => instance;
             ILineParameter ILineFactory<ILineParameter, string, string>.Create(ILineFactory factory, ILine previous, string parameterName, string parameterKey)
                 => ((Key)previous).AppendParameter(parameterName, parameterKey);
-            ILineKeyCanonicallyCompared ILineFactory<ILineKeyCanonicallyCompared, string, string>.Create(ILineFactory factory, ILine prevKey, string parameterName, string parameterValue)
+            ILineCanonicalKey ILineFactory<ILineCanonicalKey, string, string>.Create(ILineFactory factory, ILine prevKey, string parameterName, string parameterValue)
                 => new Key.Canonical((Key)prevKey, parameterName, parameterValue);
-            ILineKeyNonCanonicallyCompared ILineFactory<ILineKeyNonCanonicallyCompared, string, string>.Create(ILineFactory factory, ILine prevKey, string parameterName, string parameterValue)
+            ILineNonCanonicalKey ILineFactory<ILineNonCanonicalKey, string, string>.Create(ILineFactory factory, ILine prevKey, string parameterName, string parameterValue)
                 => new Key.NonCanonical((Key)prevKey, parameterName, parameterValue);
         }
 
@@ -182,20 +182,20 @@ namespace Lexical.Localization.Utils
         }
 
         /// <summary>
-        /// Proxy implementation of non-canonical parameter. Implements <see cref="ILineKeyNonCanonicallyCompared"/>.
+        /// Proxy implementation of non-canonical parameter. Implements <see cref="ILineNonCanonicalKey"/>.
         /// </summary>
         [DebuggerDisplay("{ToString()}")]
-        public class NonCanonical : Key, ILineKeyNonCanonicallyCompared
+        public class NonCanonical : Key, ILineNonCanonicalKey
         {
             public NonCanonical(string parameterName, string parameterValue) : base(parameterName, parameterValue) { }
             public NonCanonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
         }
 
         /// <summary>
-        /// Proxy implementation of non-canonical parameter. Implements <see cref="ILineKeyCanonicallyCompared"/>.
+        /// Proxy implementation of non-canonical parameter. Implements <see cref="ILineCanonicalKey"/>.
         /// </summary>
         [DebuggerDisplay("{ToString()}")]
-        public class Canonical : Key, ILineKeyCanonicallyCompared
+        public class Canonical : Key, ILineCanonicalKey
         {
             public Canonical(string parameterName, string parameterValue) : base(parameterName, parameterValue) { }
             public Canonical(Key previous, string parameterName, string parameterValue) : base(previous, parameterName, parameterValue) { }
@@ -290,7 +290,7 @@ namespace Lexical.Localization.Utils
             int count = 0;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineNonCanonicalKey) || k is ILineCanonicalKey)
                     count++;
             }
 
@@ -299,7 +299,7 @@ namespace Lexical.Localization.Utils
             int ix = count;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineNonCanonicalKey) || k is ILineCanonicalKey)
                     result[--ix] = k;
             }
 
@@ -334,7 +334,7 @@ namespace Lexical.Localization.Utils
             int count = 0;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineNonCanonicalKey) || k is ILineCanonicalKey)
                     count++;
             }
 
@@ -345,7 +345,7 @@ namespace Lexical.Localization.Utils
             int ix = count;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineNonCanonicalKey) || k is ILineCanonicalKey)
                     result[--ix] = k.Name;
             }
 
@@ -366,7 +366,7 @@ namespace Lexical.Localization.Utils
             int count = 0;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineNonCanonicalKey) || k is ILineCanonicalKey)
                     count++;
             }
 
@@ -375,7 +375,7 @@ namespace Lexical.Localization.Utils
             int ix = count;
             for (Key k = this; k != null; k = k.Previous)
             {
-                if ((includeNonCanonical && k is ILineKeyNonCanonicallyCompared) || k is ILineKeyCanonicallyCompared)
+                if ((includeNonCanonical && k is ILineNonCanonicalKey) || k is ILineCanonicalKey)
                     result[--ix] = new KeyValuePair<string, string>(k.Name, k.Value);
             }
 

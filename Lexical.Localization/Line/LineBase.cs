@@ -136,7 +136,7 @@ namespace Lexical.Localization
             if (defaultHashcodeCalculated) return defaultHashcode;
 
             // Get previous key's default hashcode
-            if (this is ILineKeyCanonicallyCompared == false && this is ILineKeyNonCanonicallyCompared == false && this.GetPreviousPart() is ILineDefaultHashCode prevDefaultHashcode)
+            if (this is ILineCanonicalKey == false && this is ILineNonCanonicalKey == false && this.GetPreviousPart() is ILineDefaultHashCode prevDefaultHashcode)
             {
                 defaultHashcode = prevDefaultHashcode.GetDefaultHashCode();
             }
@@ -267,8 +267,8 @@ namespace Lexical.Localization
         public IStringLocalizer Create(string basename, string location)
         {
             ILine result = this;
-            if (basename != null) result = result.Append<ILineKeyNonCanonicallyCompared, string, string>("BaseName", basename);
-            if (location != null) result = result.Append<ILineKeyNonCanonicallyCompared, string, string>("Location", location);
+            if (basename != null) result = result.Append<ILineNonCanonicalKey, string, string>("BaseName", basename);
+            if (location != null) result = result.Append<ILineNonCanonicalKey, string, string>("Location", location);
             return (IStringLocalizer)result;
         }
 
@@ -316,7 +316,7 @@ namespace Lexical.Localization
             get
             {
                 ILine line = this;
-                if (name != null) line = line.Append<ILineKeyNonCanonicallyCompared, string, string>("Key", name);                
+                if (name != null) line = line.Append<ILineNonCanonicalKey, string, string>("Key", name);                
                 LocalizationString printedString = line.ResolveFormulatedString();
                 if (printedString.Value == null)
                     return new LocalizedString(name, line.Print(), true);
@@ -336,7 +336,7 @@ namespace Lexical.Localization
             get
             {
                 ILine line = this;
-                if (name != null) line = line.Append<ILineKeyNonCanonicallyCompared, string, string>("Key", name);
+                if (name != null) line = line.Append<ILineNonCanonicalKey, string, string>("Key", name);
                 if (arguments != null) line = line.Append<ILineFormatArgs, object[]>(arguments);
                 LocalizationString printedString = line.ResolveFormulatedString();
                 if (printedString.Value == null)

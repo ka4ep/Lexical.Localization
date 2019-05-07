@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// "Culture" key that carries <see cref="CultureInfo"/>. 
     /// </summary>
     [Serializable]
-    public class LineCultureKey : LineKey, ILineKeyCulture, ILineKeyNonCanonicallyCompared
+    public class LineCultureKey : LineKey, ILineKeyCulture, ILineNonCanonicalKey
     {
         /// <summary>
         /// CultureInfo, null if non-standard culture.

@@ -256,16 +256,16 @@ namespace Lexical.Localization
                     foreach (ILineArguments args_ in enumr)
                     {
                         if (args_ is ILineArguments<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
-                        if (args_ is ILineArguments<ILineKeyNonCanonicallyCompared, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
-                        if (args_ is ILineArguments<ILineKeyCanonicallyCompared, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
+                        if (args_ is ILineArguments<ILineNonCanonicalKey, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
+                        if (args_ is ILineArguments<ILineCanonicalKey, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
                         result = result.Append(args_);
                     }
 
                 if (l is ILineArguments args)
                 {
                     if (args is ILineArguments<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
-                    if (args is ILineArguments<ILineKeyNonCanonicallyCompared, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
-                    if (args is ILineArguments<ILineKeyCanonicallyCompared, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
+                    if (args is ILineArguments<ILineNonCanonicalKey, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
+                    if (args is ILineArguments<ILineCanonicalKey, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
                     result = result.Append(args);
                 }
             }

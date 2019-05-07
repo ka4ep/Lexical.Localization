@@ -70,14 +70,14 @@ namespace Lexical.Localization
             => line.GetAppender().Create<ILineKeyAssembly, Assembly>(line, assembly);
 
         /// <summary>
-        /// Add "Assembly" <see cref="ILineKeyNonCanonicallyCompared"/> key.
+        /// Add "Assembly" <see cref="ILineNonCanonicalKey"/> key.
         /// </summary>
         /// <param name="line"></param>
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement IAssetKeyAssemblyAssignable</exception>
         public static ILineKey Assembly(this ILine line, string assembly)
-            => line.GetAppender().Create<ILineKeyNonCanonicallyCompared, string, string>(line, "Assembly", assembly);
+            => line.GetAppender().Create<ILineNonCanonicalKey, string, string>(line, "Assembly", assembly);
 
         /// <summary>
         /// Try to add <see cref="ILineKeyAssembly"/> section.
@@ -86,7 +86,7 @@ namespace Lexical.Localization
         /// <param name="assembly"></param>
         /// <returns>new key or null</returns>
         public static ILineKey TryAddAssembly(this ILine line, String assembly)
-            => line.GetAppender()?.TryCreate<ILineKeyNonCanonicallyCompared, string, string>(line, "Assembly", assembly);
+            => line.GetAppender()?.TryCreate<ILineNonCanonicalKey, string, string>(line, "Assembly", assembly);
 
         /// <summary>
         /// Try to add <see cref="ILineKeyAssembly"/> section.

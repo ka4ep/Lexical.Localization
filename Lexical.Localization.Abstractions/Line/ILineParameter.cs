@@ -32,7 +32,7 @@ namespace Lexical.Localization
     /// Comparer may consider parameter as hash-equals comparable, if the 
     /// <see cref="ILineParameter.ParameterName"/> is key, such as "Culture".
     /// 
-    /// If the parameter class implements <see cref="ILineKeyNonCanonicallyCompared"/> or <see cref="ILineKeyCanonicallyCompared"/> then
+    /// If the parameter class implements <see cref="ILineNonCanonicalKey"/> or <see cref="ILineCanonicalKey"/> then
     /// the parameter will be considered as hash-equals comparable despite the value of the key.
     /// </summary>
     public interface ILineParameter : ILine
@@ -54,7 +54,7 @@ namespace Lexical.Localization
     /// Comparer may consider parameter as hash-equals comparable, if the 
     /// <see cref="ILineParameter.ParameterName"/> is key, such as "Culture".
     /// 
-    /// If the parameter class implements <see cref="ILineKeyNonCanonicallyCompared"/> or <see cref="ILineKeyCanonicallyCompared"/> then
+    /// If the parameter class implements <see cref="ILineNonCanonicalKey"/> or <see cref="ILineCanonicalKey"/> then
     /// the parameter will be considered as hash-equals comparable despite the <see cref="ILineParameter.ParameterName"/> of the key.
     /// 
     /// The enumerable must keys as well as parameters.
@@ -86,7 +86,7 @@ namespace Lexical.Localization
             => part.GetAppender().Create<ILineParameter, string, string>(part, parameterName, parameterValue);
 
         /// <summary>
-        /// Append new parameter part as <see cref="ILineParameter"/>, as <see cref="ILineKeyCanonicallyCompared"/>, or as <see cref="ILineKeyNonCanonicallyCompared"/> depending
+        /// Append new parameter part as <see cref="ILineParameter"/>, as <see cref="ILineCanonicalKey"/>, or as <see cref="ILineNonCanonicalKey"/> depending
         /// on parameter name and policy in <paramref name="parameterInfos"/>.
         /// </summary>
         /// <param name="part"></param>
@@ -101,8 +101,8 @@ namespace Lexical.Localization
             IParameterInfo info = null;
             if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info) && (info.IsCanonical || info.IsNonCanonical))
             {
-                if (info.IsCanonical) return part.GetAppender().Create<ILineKeyCanonicallyCompared, string, string>(part, parameterName, parameterValue);
-                else if (info.IsNonCanonical) return part.GetAppender().Create<ILineKeyNonCanonicallyCompared, string, string>(part, parameterName, parameterValue);
+                if (info.IsCanonical) return part.GetAppender().Create<ILineCanonicalKey, string, string>(part, parameterName, parameterValue);
+                else if (info.IsNonCanonical) return part.GetAppender().Create<ILineNonCanonicalKey, string, string>(part, parameterName, parameterValue);
             }
             return part.GetAppender().Create<ILineParameter, string, string>(part, parameterName, parameterValue);
         }
@@ -143,8 +143,8 @@ namespace Lexical.Localization
             {
                 if (info.IsCanonical)
                 {
-                    ILineKeyCanonicallyCompared result = null;
-                    if (part.GetAppender().TryCreate<ILineKeyCanonicallyCompared, string, string>(part, parameterName, parameterValue, out result))
+                    ILineCanonicalKey result = null;
+                    if (part.GetAppender().TryCreate<ILineCanonicalKey, string, string>(part, parameterName, parameterValue, out result))
                     {
                         line = result;
                         return true;
@@ -152,8 +152,8 @@ namespace Lexical.Localization
                 }
                 else if (info.IsNonCanonical)
                 {
-                    ILineKeyNonCanonicallyCompared result = null;
-                    if (part.GetAppender().TryCreate<ILineKeyNonCanonicallyCompared, string, string>(part, parameterName, parameterValue, out result))
+                    ILineNonCanonicalKey result = null;
+                    if (part.GetAppender().TryCreate<ILineNonCanonicalKey, string, string>(part, parameterName, parameterValue, out result))
                     {
                         line = result;
                         return true;
@@ -205,8 +205,8 @@ namespace Lexical.Localization
                 IParameterInfo info = null;
                 if (parameterInfos != null && parameterInfos.TryGetValue(parameter.Key, out info) && (info.IsCanonical || info.IsNonCanonical))
                 {
-                    if (info.IsCanonical) part = appender.Create<ILineKeyCanonicallyCompared, string, string>(part, parameter.Key, parameter.Value);
-                    else if (info.IsNonCanonical) part = appender.Create<ILineKeyNonCanonicallyCompared, string, string>(part, parameter.Key, parameter.Value);
+                    if (info.IsCanonical) part = appender.Create<ILineCanonicalKey, string, string>(part, parameter.Key, parameter.Value);
+                    else if (info.IsNonCanonical) part = appender.Create<ILineNonCanonicalKey, string, string>(part, parameter.Key, parameter.Value);
                 }
                 else part = appender.Create<ILineParameter, string, string>(part, parameter.Key, parameter.Value);
             }
@@ -218,7 +218,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="part"></param>
         /// <param name="parameters"></param>
-        /// <param name="parameterInfos">(optional) rules whether to create <see cref="ILineKeyCanonicallyCompared"/>, <see cref="ILineKeyNonCanonicallyCompared"/>, or <see cref="ILineParameter"/>. If null everything is instantiated as <see cref="ILineParameter"/></param>
+        /// <param name="parameterInfos">(optional) rules whether to create <see cref="ILineCanonicalKey"/>, <see cref="ILineNonCanonicalKey"/>, or <see cref="ILineParameter"/>. If null everything is instantiated as <see cref="ILineParameter"/></param>
         /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
         public static bool TryAppendParameters(this ILine part, IEnumerable<KeyValuePair<string, string>> parameters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos, out ILine line)
         {
@@ -387,6 +387,7 @@ namespace Lexical.Localization
                     }
                 }
             }
+
             return result;
         }
         static KeyValuePair<string, string>[] no_parameter_keyvalues = new KeyValuePair<string, string>[0];
@@ -411,33 +412,6 @@ namespace Lexical.Localization
                         visitor(parameter_, ref data);
             if (line is ILineParameter parameter && parameter.ParameterName!=null && parameter.ParameterValue != null)
                 visitor(parameter, ref data);
-        }
-
-
-        /// <summary>
-        /// Find value for a parameter.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="parameterName">parameter name, e.g. "Culture"</param>
-        /// <param name="rootMost">If true returns the value that is closest to root, if false then one closes to tail</param>
-        /// <returns>name or null</returns>
-        public static string FindParameterValue(this ILine part, string parameterName, bool rootMost)
-        {
-            if (rootMost)
-            {
-                string result = null;
-                for (ILine p = part; p != null; p = p.GetPreviousPart())
-                    if (p is ILineParameter _parameter && _parameter.ParameterName == parameterName && p.GetParameterValue() != null)
-                        result = p.GetParameterValue();
-                return result;
-            }
-            else
-            {
-                for (ILine p = part; p != null; p = p.GetPreviousPart())
-                    if (p is ILineParameter parametrized && parametrized.ParameterName == parameterName && p.GetParameterValue() != null)
-                        return p.GetParameterValue();
-                return null;
-            }
         }
 
     }
@@ -470,7 +444,7 @@ namespace Lexical.Localization.Internal
                 if (parameterName == null) continue;
 
                 // Canonical/Non-canonical
-                bool isCanonical = k is ILineKeyCanonicallyCompared, isNonCanonical = k is ILineKeyNonCanonicallyCompared;
+                bool isCanonical = k is ILineCanonicalKey, isNonCanonical = k is ILineNonCanonicalKey;
                 if (!isCanonical && !isNonCanonical) continue;
 
                 if (isNonCanonical)

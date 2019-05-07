@@ -73,7 +73,7 @@ namespace Lexical.Localization
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
         public static ILine Culture(this ILine key, string cultureName)
-            => key.Append<ILineKeyNonCanonicallyCompared, string, string>("Culture", cultureName);
+            => key.Append<ILineNonCanonicalKey, string, string>("Culture", cultureName);
 
         /// <summary>
         /// Try append <see cref="CultureInfo"/>.
@@ -99,8 +99,8 @@ namespace Lexical.Localization
         /// <returns>new key or null</returns>
         public static bool TryAppendCulture(this ILine key, string cultureName, out ILine result)
         {
-            ILineKeyNonCanonicallyCompared _result;
-            if (key.TryAppend<ILineKeyNonCanonicallyCompared, string, string>(cultureName, "Culture", out _result)) { result = _result; return true; }
+            ILineNonCanonicalKey _result;
+            if (key.TryAppend<ILineNonCanonicalKey, string, string>(cultureName, "Culture", out _result)) { result = _result; return true; }
             result = default;
             return false;
         }

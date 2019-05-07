@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// "Assembly" key that carries <see cref="Assembly"/>. 
     /// </summary>
     [Serializable]
-    public class LineAssemblyKey : LineKey, ILineKeyAssembly, ILineKeyNonCanonicallyCompared
+    public class LineAssemblyKey : LineKey, ILineKeyAssembly, ILineNonCanonicalKey
     {
         /// <summary>
         /// Assembly, null if non-standard assembly.

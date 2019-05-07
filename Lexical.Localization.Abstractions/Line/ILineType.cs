@@ -65,14 +65,14 @@ namespace Lexical.Localization
     public static partial class ILineExtensions
     {
         /// <summary>
-        /// Add <see cref="ILineKeyNonCanonicallyCompared"/> key.
+        /// Add <see cref="ILineNonCanonicalKey"/> key.
         /// </summary>
         /// <param name="part"></param>
         /// <param name="typeName"></param>
         /// <returns>new key</returns>
-        /// <exception cref="LineException">If key doesn't implement <see cref="ILineKeyNonCanonicallyCompared"/></exception>
-        public static ILineKeyNonCanonicallyCompared Type(this ILine part, string typeName)
-            => part.Append<ILineKeyNonCanonicallyCompared, string, string>("Type", typeName);
+        /// <exception cref="LineException">If key doesn't implement <see cref="ILineNonCanonicalKey"/></exception>
+        public static ILineNonCanonicalKey Type(this ILine part, string typeName)
+            => part.Append<ILineNonCanonicalKey, string, string>("Type", typeName);
 
         /// <summary>
         /// Add <see cref="ILineKeyType"/> key.
@@ -104,13 +104,13 @@ namespace Lexical.Localization
             => part.TryAppend<ILineKeyType, Type>(type);
 
         /// <summary>
-        /// Try to add <see cref="ILineKeyNonCanonicallyCompared"/> key.
+        /// Try to add <see cref="ILineNonCanonicalKey"/> key.
         /// </summary>
         /// <param name="part"></param>
         /// <param name="typeName"></param>
         /// <returns>new key or null</returns>
         public static ILineKey TryAppendType(this ILine part, string typeName)
-            => part.TryAppend<ILineKeyNonCanonicallyCompared, string, string>("Type", typeName);
+            => part.TryAppend<ILineNonCanonicalKey, string, string>("Type", typeName);
 
         /// <summary>
         /// Get the effective (closest to root) non-null <see cref="ILineKeyType"/> key or <see cref="ILineParameter"/> key with "Type".

@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// "Type" key that carries <see cref="Type"/>. 
     /// </summary>
     [Serializable]
-    public class LineType : LineKey, ILineType, ILineKeyNonCanonicallyCompared
+    public class LineType : LineKey, ILineType, ILineNonCanonicalKey
     {
         /// <summary>
         /// Type, null if non-standard type.

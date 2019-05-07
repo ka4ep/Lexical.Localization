@@ -102,7 +102,7 @@ namespace Lexical.Localization
         /// Key part.
         /// </summary>
         [Serializable]
-        public class _Key : StringLocalizerKey, IAssetKeyAssigned, ILineParameter, ILineKeyCanonicallyCompared
+        public class _Key : StringLocalizerKey, IAssetKeyAssigned, ILineParameter, ILineCanonicalKey
         {
             /// <summary>
             /// ParameterName
@@ -228,7 +228,7 @@ namespace Lexical.Localization
         /// Culture key.
         /// </summary>
         [Serializable]
-        public class _Culture : StringLocalizerKey, ILineKeyCulture, ILineKeyNonCanonicallyCompared, ILineParameter
+        public class _Culture : StringLocalizerKey, ILineKeyCulture, ILineNonCanonicalKey, ILineParameter
         {
             /// <summary>
             /// ParameterName
@@ -702,7 +702,7 @@ namespace Lexical.Localization
         /// Section key part.
         /// </summary>
         [Serializable]
-        public class _Section : StringLocalizerKey, IAssetKeySectionAssigned, ILineParameter, ILineKeyCanonicallyCompared
+        public class _Section : StringLocalizerKey, IAssetKeySectionAssigned, ILineParameter, ILineCanonicalKey
         {
             /// <summary>
             /// ParameterName
@@ -772,7 +772,7 @@ namespace Lexical.Localization
         /// Type key part.
         /// </summary>
         [Serializable]
-        public class _Type : StringLocalizerKey, ILineKeyType, ILineParameter, ILineKeyNonCanonicallyCompared
+        public class _Type : StringLocalizerKey, ILineKeyType, ILineParameter, ILineNonCanonicalKey
         {
             /// <summary>
             /// Refered Type, or null if type was not available at construction time.
@@ -886,7 +886,7 @@ namespace Lexical.Localization
         /// Assembly key part.
         /// </summary>
         [Serializable]
-        public class _Assembly : StringLocalizerKey, ILineKeyAssembly, ILineKeyNonCanonicallyCompared, ILineParameter, ILineKeyCanonicallyCompared
+        public class _Assembly : StringLocalizerKey, ILineKeyAssembly, ILineNonCanonicalKey, ILineParameter, ILineCanonicalKey
         {
             /// <summary>
             /// Referred Assembly, or null if was not available.
@@ -958,7 +958,7 @@ namespace Lexical.Localization
         /// Resource key part.
         /// </summary>
         [Serializable]
-        public class _Resource : StringLocalizerKey, IAssetKeyResourceAssigned, ILineParameter, ILineKeyCanonicallyCompared
+        public class _Resource : StringLocalizerKey, IAssetKeyResourceAssigned, ILineParameter, ILineCanonicalKey
         {
             /// <summary>
             /// ParameterName.
@@ -998,7 +998,7 @@ namespace Lexical.Localization
         /// Location key part.
         /// </summary>
         [Serializable]
-        public class _Location : StringLocalizerKey, IAssetKeyLocationAssigned, ILineParameter, ILineKeyCanonicallyCompared
+        public class _Location : StringLocalizerKey, IAssetKeyLocationAssigned, ILineParameter, ILineCanonicalKey
         {
             /// <summary>
             /// ParameterName.
@@ -1235,7 +1235,7 @@ namespace Lexical.Localization
             if (defaultHashcodeCalculated) return defaultHashcode;
 
             // Get previous key's default hashcode
-            if (this is ILineKeyCanonicallyCompared == false && this is ILineKeyNonCanonicallyCompared == false && this.prevPart is ILineDefaultHashCode prevDefaultHashcode)
+            if (this is ILineCanonicalKey == false && this is ILineNonCanonicalKey == false && this.prevPart is ILineDefaultHashCode prevDefaultHashcode)
             {
                 defaultHashcode = prevDefaultHashcode.GetDefaultHashCode();
             } else
