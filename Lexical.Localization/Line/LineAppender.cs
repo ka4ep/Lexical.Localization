@@ -26,8 +26,6 @@ namespace Lexical.Localization
         /// </summary>
         public LineAppender()
         {
-
         }
-
     }
 }

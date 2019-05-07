@@ -10,7 +10,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Interface for validating whether a <see cref="ILine"/> matches a criteria.
     /// </summary>
-    public interface IAssetKeyFilter
+    public interface ILineFilter
     {
         /// <summary>
         /// Filter <paramref name="key"/> against the filter rules.
@@ -22,15 +22,15 @@ namespace Lexical.Localization
         /// <summary>
         /// Filters lines against filter rules.
         /// </summary>
-        /// <param name="keys"></param>
+        /// <param name="line"></param>
         /// <returns></returns>
-        IEnumerable<ILine> Filter(IEnumerable<ILine> keys);
+        IEnumerable<ILine> Filter(IEnumerable<ILine> line);
 
         /// <summary>
         /// Filters lines against filter rules.
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        IEnumerable<KeyValuePair<ILine, IFormulationString>> Filter(IEnumerable<KeyValuePair<ILine, IFormulationString>> lines);
+        //IEnumerable<ILine> Filter(IEnumerable<ILine> lines);
     }
 }

@@ -18,11 +18,11 @@ namespace Lexical.Localization
         /// <summary>
         /// Select a specific culture. 
         /// 
-        /// Adds <see cref="ILineKeyCulture"/> link.
+        /// Adds <see cref="ILineCulture"/> link.
         /// </summary>
         /// <param name="culture">Name for new sub key.</param>
         /// <returns>new key</returns>
-        ILineKeyCulture Culture(CultureInfo culture);
+        ILineCulture Culture(CultureInfo culture);
 
         /// <summary>
         /// Set to a specific culture
@@ -31,7 +31,7 @@ namespace Lexical.Localization
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
         /// <exception cref="CultureNotFoundException">if culture was not found</exception>
-        ILineKeyCulture Culture(string cultureName);
+        ILineCulture Culture(string cultureName);
     }
 
     /// <summary>
@@ -45,13 +45,6 @@ namespace Lexical.Localization
         CultureInfo Culture { get; set; }
     }
 
-    /// <summary>
-    /// Key (may have) has "Culture" parameter assigned.
-    /// </summary>
-    public interface ILineKeyCulture : ILineCulture, ILine
-    {
-    }
-
     /// <summary></summary>
     public static partial class ILineExtensions
     {
@@ -63,7 +56,7 @@ namespace Lexical.Localization
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key cannot be appended</exception>
         public static ILine Culture(this ILine key, CultureInfo culture)
-            => key.Append<ILineKeyCulture, CultureInfo>(culture);
+            => key.Append<ILineCulture, CultureInfo>(culture);
 
         /// <summary>
         /// Append culture key "Culture:xx".
@@ -201,7 +194,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Search linked list and find the effective (closest to root) culture key either <see cref="ILineKeyCulture"/> or <see cref="ILineParameter"/> "Culture".
+        /// Search linked list and find the effective (closest to root) culture key either <see cref="ILineCulture"/> or <see cref="ILineParameter"/> "Culture".
         /// </summary>
         /// <param name="line"></param>
         /// <returns>Key with culture policy or null</returns>
@@ -223,7 +216,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Search linked list and find the effective (closest to root) culture key either <see cref="ILineKeyCulture"/> or <see cref="ILineParameter"/> "Culture".
+        /// Search linked list and find the effective (closest to root) culture key either <see cref="ILineCulture"/> or <see cref="ILineParameter"/> "Culture".
         /// </summary>
         /// <param name="line"></param>
         /// <param name="key"></param>

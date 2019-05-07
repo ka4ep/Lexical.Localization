@@ -19,7 +19,7 @@ namespace Lexical.Localization
     {
         /// <summary>
         /// Adds the following Lexical.Localization services:
-        ///    <see cref="IAssetRoot"/>
+        ///    <see cref="ILineRoot"/>
         ///    <see cref="ILineKey{T}"/>
         ///    <see cref="IAssetBuilder"/>
         ///    
@@ -61,7 +61,7 @@ namespace Lexical.Localization
             if (useGlobalInstance)
             {
                 // Use StringLocalizerRoot as IAssetRoot
-                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetRoot>(
+                serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineRoot>(
                     s=>
                     {
                         IAsset asset = s.GetService<IAsset>(); // DO NOT REMOVE
@@ -73,11 +73,11 @@ namespace Lexical.Localization
             }
             else
             {
-                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetRoot, StringLocalizerRoot>());
+                serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineRoot, StringLocalizerRoot>());
             }
 
             // IAssetKeyAssetAssigned
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetKeyAssetAssigned>(s => s.GetService<IAssetRoot>() as IAssetKeyAssetAssigned));
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineAsset>(s => s.GetService<ILineRoot>() as ILineAsset));
 
             // ICulturePolicy
             if (addCulturePolicyService)
@@ -152,7 +152,7 @@ namespace Lexical.Localization
                 // Service reqeust for IStringLocalizerFactory
                 serviceCollection.TryAdd(ServiceDescriptor.Singleton<IStringLocalizerFactory>(s =>
                 {
-                    IAssetRoot localizationRoot = s.GetService<IAssetRoot>();
+                    ILineRoot localizationRoot = s.GetService<ILineRoot>();
                     // Use the StringLocalizerKey or StringLocalizerRoot implementation from th service.
                     if (localizationRoot is StringLocalizerKey casted) return casted;
                     // Create new root that implements IStringLocalizerFactory and acquires asset and policy with delegate

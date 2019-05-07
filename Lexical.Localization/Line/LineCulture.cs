@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// "Culture" key that carries <see cref="CultureInfo"/>. 
     /// </summary>
     [Serializable]
-    public class LineCultureKey : LineKey, ILineKeyCulture, ILineNonCanonicalKey
+    public class LineCulture : LineKey, ILineCulture, ILineNonCanonicalKey
     {
         /// <summary>
         /// CultureInfo, null if non-standard culture.
@@ -27,18 +27,12 @@ namespace Lexical.Localization
         public CultureInfo Culture { get => culture; set => throw new InvalidOperationException(); }
 
         /// <summary>
-        /// Appending arguments.
-        /// </summary>
-        public override object[] GetAppendArguments() 
-            => new object[] { Tuple.Create<Type, CultureInfo>(typeof(ILineKeyCulture), Culture) };
-
-        /// <summary>
         /// Create new culture key.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="culture"></param>
-        public LineCultureKey(ILineFactory appender, ILine prevKey, CultureInfo culture) : base(appender, prevKey, "Culture", culture?.Name)
+        public LineCulture(ILineFactory appender, ILine prevKey, CultureInfo culture) : base(appender, prevKey, "Culture", culture?.Name)
         {
             this.culture = culture;
         }
@@ -48,7 +42,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public LineCultureKey(SerializationInfo info, StreamingContext context) : base(info, context)
+        public LineCulture(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.culture = info.GetValue("Culture", typeof(CultureInfo)) as CultureInfo;
         }
@@ -65,7 +59,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LineAppender : ILineFactory<ILineKeyCulture, CultureInfo>
+    public partial class LineAppender : ILineFactory<ILineCulture, CultureInfo>
     {
         /// <summary>
         /// Append part.
@@ -73,17 +67,20 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="culture"></param>
+        /// <param name="line"></param>
         /// <returns></returns>
-        ILineKeyCulture ILineFactory<ILineKeyCulture, CultureInfo>.Create(ILineFactory appender, ILine previous, CultureInfo culture)
-            => new LineCultureKey(appender, previous, culture);
+        bool ILineFactory<ILineCulture, CultureInfo>.TryCreate(ILineFactory appender, ILine previous, CultureInfo culture, out ILineCulture line)
+        {
+            line = new LineCulture(appender, previous, culture);
+            return true;
+        }
     }
 
-    /*
     /// <summary>
     /// "Culture" key that carries <see cref="CultureInfo"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerCultureKey : StringLocalizerKey, ILineKeyCulture
+    public class StringLocalizerCulture : _StringLocalizerKey, ILineCulture, ILineNonCanonicalKey
     {
         /// <summary>
         /// CultureInfo, null if non-standard culture.
@@ -101,7 +98,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="culture"></param>
-        public StringLocalizerCultureKey(ILineFactory appender, ILine prevKey, CultureInfo culture) : base(appender, prevKey, "Culture", culture?.Name)
+        public StringLocalizerCulture(ILineFactory appender, ILine prevKey, CultureInfo culture) : base(appender, prevKey, "Culture", culture?.Name)
         {
             this.culture = culture;
         }
@@ -111,7 +108,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public StringLocalizerCultureKey(SerializationInfo info, StreamingContext context) : base(info, context)
+        public StringLocalizerCulture(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.culture = info.GetValue("Culture", typeof(CultureInfo)) as CultureInfo;
         }
@@ -128,16 +125,21 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class StringLocalizerPartAppender : ILineFactory1<ILineKeyCulture, CultureInfo>
+    public partial class StringLocalizerAppender : ILineFactory<ILineCulture, CultureInfo>
     {
         /// <summary>
         /// Append part.
         /// </summary>
+        /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="culture"></param>
+        /// <param name="line"></param>
         /// <returns></returns>
-        public ILineKeyCulture Append(ILine previous, CultureInfo culture)
-            => new StringLocalizerCultureKey(this, previous, culture);
+        bool ILineFactory<ILineCulture, CultureInfo>.TryCreate(ILineFactory appender, ILine previous, CultureInfo culture, out ILineCulture line)
+        {
+            line = new StringLocalizerCulture(appender, previous, culture);
+            return true;
+        }
     }
-*/
+
 }

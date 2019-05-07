@@ -6,7 +6,7 @@ namespace TutorialLibrary
     {
         ILine localization;
 
-        public MyController2(IAssetRoot root)
+        public MyController2(ILineRoot root)
         {
             this.localization = root.Type(GetType());
         }

@@ -2,7 +2,7 @@
 
 namespace TutorialLibrary2
 {
-    internal class LibraryLocalization : LocalizationRoot.LinkedTo, IAssetRoot
+    internal class LibraryLocalization : LocalizationRoot.LinkedTo, ILineRoot
     {
         private static readonly LibraryLocalization instance = new LibraryLocalization(LocalizationRoot.Global);
 
@@ -16,7 +16,7 @@ namespace TutorialLibrary2
         /// </summary>
         public new static IAssetBuilder Builder => LocalizationRoot.Builder;
 
-        LibraryLocalization(IAssetRoot linkedTo) : base(null, linkedTo, null, null, null, null, null)
+        LibraryLocalization(ILineRoot linkedTo) : base(null, linkedTo, null, null, null, null, null)
         {
             // Add library's internal assets here
             Builder.AddSources(new LibraryAssetSources(null));

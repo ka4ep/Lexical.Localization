@@ -8,28 +8,14 @@ using System;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A key where <see cref="IAsset"/> can be assigned. (Typically a mutable root.)
+    /// Line's <see cref="IAsset"/> assignment.
     /// </summary>
-    public interface IAssetKeyAssetAssignable : ILine
-    {
-        /// <summary>
-        /// Set localization asset.
-        /// </summary>
-        /// <param name="asset">localization asset</param>
-        /// <returns>key (most likely self)</returns>
-        /// <exception cref="InvalidOperationException">If object is read-only</exception>
-        IAssetKeyAssetAssigned SetAsset(IAsset asset);
-    }
-
-    /// <summary>
-    /// Key has <see cref="IAsset"/> hint assigned.
-    /// </summary>
-    public interface IAssetKeyAssetAssigned : ILine
+    public interface ILineAsset : ILine
     {
         /// <summary>
         /// Object that contains localization assets.
         /// </summary>
-        IAsset Asset { get; }
+        IAsset Asset { get; set; }
     }
 
     public static partial class ILineExtensions
@@ -40,7 +26,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="localizationResources"></param>
         /// <returns>key or null if failed.</returns>
-        public static IAssetKeyAssetAssigned TrySetAsset(this IAssetKeyAssetAssignable key, IAsset localizationResources)
+        public static ILineAsset TrySetAsset(this IAssetKeyAssetAssignable key, IAsset localizationResources)
         {
             try
             {
@@ -67,7 +53,7 @@ namespace Lexical.Localization
         public static IAsset FindAsset(this ILine line)
         {
             for (; line != null; line = line.GetPreviousPart())
-                if (line is IAssetKeyAssetAssigned casted && casted.Asset != null) return casted.Asset;
+                if (line is ILineAsset casted && casted.Asset != null) return casted.Asset;
             return null;
         }
     }

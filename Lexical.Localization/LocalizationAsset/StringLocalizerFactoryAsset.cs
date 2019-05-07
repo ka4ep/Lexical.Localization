@@ -43,7 +43,7 @@ namespace Lexical.Localization
 
         public StringLocalizerAsset GetHandlingAsset(ILine key)
         {
-            ILineKeyAssembly asmSection;
+            ILineAssembly asmSection;
             IAssetKeyResourceAssigned resSection;
             ILineKeyType typeSection;
             int x = key.FindResourceKeys(out asmSection, out resSection, out typeSection);
@@ -71,7 +71,7 @@ namespace Lexical.Localization
         /// 
         /// Notice, that using asset that is converted this way, requres that keys have 
         /// <see cref="ILineKeyType"/> hint, or
-        /// <see cref="ILineKeyAssembly"/>+<see cref="IAssetKeyResourceAssigned"/> hints.
+        /// <see cref="ILineAssembly"/>+<see cref="IAssetKeyResourceAssigned"/> hints.
         /// </summary>
         /// <param name="stringLocalizerFactory"></param>
         /// <returns></returns>
@@ -83,7 +83,7 @@ namespace Lexical.Localization
         /// 
         /// Notice, that using asset that is converted this way, requres that keys have 
         /// <see cref="ILineKeyType"/> hint, or
-        /// <see cref="ILineKeyAssembly"/>+<see cref="IAssetKeyResourceAssigned"/> hints.
+        /// <see cref="ILineAssembly"/>+<see cref="IAssetKeyResourceAssigned"/> hints.
         /// </summary>
         /// <param name="stringLocalizerFactory"></param>
         /// <returns></returns>

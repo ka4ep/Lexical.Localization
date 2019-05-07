@@ -16,12 +16,12 @@ namespace Lexical.Localization
     /// <summary>
     /// Filters keys and key-lines against filter rules.
     /// </summary>
-    public class AssetKeyFilter : IAssetKeyFilter
+    public class AssetKeyFilter : ILineFilter
     {
         /// <summary>
         /// List of generic filters. Null if none is assigned.
         /// </summary>
-        protected List<IAssetKeyFilter> genericFilters;
+        protected List<ILineFilter> genericFilters;
 
         /// <summary>
         /// List of parameter name specific rules. Null if none is assigned.
@@ -33,10 +33,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filter"></param>
         /// <returns>this</returns>
-        public AssetKeyFilter Rule(IAssetKeyFilter filter)
+        public AssetKeyFilter Rule(ILineFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
-            if (genericFilters == null) genericFilters = new List<IAssetKeyFilter>();
+            if (genericFilters == null) genericFilters = new List<ILineFilter>();
             genericFilters.Add(filter);
             return this;
         }

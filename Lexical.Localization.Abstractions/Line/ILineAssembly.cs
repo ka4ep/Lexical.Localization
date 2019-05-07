@@ -25,18 +25,21 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
-        ILineKeyAssembly Assembly(Assembly assembly);
+        ILineAssembly Assembly(Assembly assembly);
 
         /// <summary>
         /// Create assembly section key.
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
-        ILineKeyAssembly Assembly(string assembly);
+        ILineAssembly Assembly(string assembly);
     }
 
     /// <summary>
-    /// Line's assigned assembly.
+    /// Line that (may have) has been assigned with a "Assembly" parameter.
+    /// 
+    /// Assembly hint is used when loading assets from embedded resources.
+    /// For instance, in a name pattern "[assembly.][resource.]{type.}{section.}{Key}".
     /// </summary>
     public interface ILineAssembly : ILine
     {
@@ -46,28 +49,17 @@ namespace Lexical.Localization
         Assembly Assembly { get; set; }
     }
 
-    /// <summary>
-    /// Key that (may have) has been assigned with a "Assembly" parameter.
-    /// 
-    /// Assembly hint is used when loading assets from embedded resources.
-    /// For instance, in a name pattern "[assembly.][resource.]{type.}{section.}{Key}".
-    /// </summary>
-    public interface ILineKeyAssembly : ILineAssembly, ILine
-    {
-        // The inherited ParameterName property is Assembly.GetName().FullName
-    }
-
     public static partial class ILineExtensions
     {
         /// <summary>
-        /// Append <see cref="ILineKeyAssembly"/> section.
+        /// Append <see cref="ILineAssembly"/> section.
         /// </summary>
         /// <param name="line"></param>
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement IAssetKeyAssemblyAssignable</exception>
-        public static ILineKeyAssembly Assembly(this ILine line, Assembly assembly)
-            => line.GetAppender().Create<ILineKeyAssembly, Assembly>(line, assembly);
+        public static ILineAssembly Assembly(this ILine line, Assembly assembly)
+            => line.GetAppender().Create<ILineAssembly, Assembly>(line, assembly);
 
         /// <summary>
         /// Add "Assembly" <see cref="ILineNonCanonicalKey"/> key.
@@ -80,7 +72,7 @@ namespace Lexical.Localization
             => line.GetAppender().Create<ILineNonCanonicalKey, string, string>(line, "Assembly", assembly);
 
         /// <summary>
-        /// Try to add <see cref="ILineKeyAssembly"/> section.
+        /// Try to add <see cref="ILineAssembly"/> section.
         /// </summary>
         /// <param name="line"></param>
         /// <param name="assembly"></param>
@@ -89,16 +81,16 @@ namespace Lexical.Localization
             => line.GetAppender()?.TryCreate<ILineNonCanonicalKey, string, string>(line, "Assembly", assembly);
 
         /// <summary>
-        /// Try to add <see cref="ILineKeyAssembly"/> section.
+        /// Try to add <see cref="ILineAssembly"/> section.
         /// </summary>
         /// <param name="line"></param>
         /// <param name="assembly"></param>
         /// <returns>new key or null</returns>
-        public static ILineKeyAssembly TryAddAssemblyKey(this ILine line, Assembly assembly)
-            => line.GetAppender()?.TryCreate<ILineKeyAssembly, Assembly>(line, assembly);
+        public static ILineAssembly TryAddAssemblyKey(this ILine line, Assembly assembly)
+            => line.GetAppender()?.TryCreate<ILineAssembly, Assembly>(line, assembly);
 
         /// <summary>
-        /// Get the effective (closest to root) non-null <see cref="ILineKeyAssembly"/> key or <see cref="ILineParameter"/> key with "Assembly".
+        /// Get the effective (closest to root) non-null <see cref="ILineAssembly"/> key or <see cref="ILineParameter"/> key with "Assembly".
         /// </summary>
         /// <param name="tail"></param>
         /// <returns>key or null</returns>
@@ -107,14 +99,14 @@ namespace Lexical.Localization
             ILine result = null;
             for (ILine part = tail; tail != null; tail = tail.GetPreviousPart())
             {
-                if (part is ILineKeyAssembly asmKey && asmKey.Assembly != null) result = asmKey;
+                if (part is ILineAssembly asmKey && asmKey.Assembly != null) result = asmKey;
                 else if (part is ILineParameter parameterKey && parameterKey.ParameterName == "Assembly" && parameterKey.ParameterValue != null) result = parameterKey;
             }
             return result;
         }
 
         /// <summary>
-        /// Search linked list and finds the selected (left-most) <see cref="ILineKeyAssembly"/> key.
+        /// Search linked list and finds the selected (left-most) <see cref="ILineAssembly"/> key.
         /// 
         /// If implements <see cref="ILineAssembly"/> returns the assembly. 
         /// </summary>

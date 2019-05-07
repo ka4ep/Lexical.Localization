@@ -41,7 +41,7 @@ namespace docs
                 CulturePolicy culturePolicy = new CulturePolicy();
                 culturePolicy.SetCultures("en", "fi", "");
                 
-                IAssetRoot myLocalization = new LocalizationRoot(builder.Build(), culturePolicy);
+                ILineRoot myLocalization = new LocalizationRoot(builder.Build(), culturePolicy);
                 #endregion Snippet_Plain_1
 
                 // Try it out

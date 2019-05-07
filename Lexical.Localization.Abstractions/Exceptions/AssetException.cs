@@ -11,7 +11,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Error related to <see cref="IAsset"/>.
     /// </summary>
-    public class AssetException : Exception
+    public class AssetException : LocalizationException
     {
         /// <summary>
         /// Create exception

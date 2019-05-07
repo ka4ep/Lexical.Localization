@@ -18,13 +18,13 @@ namespace Lexical.Localization
     ///     <see cref="IStringLocalizer"/>
     ///     <see cref="IStringLocalizerFactory"/>
     ///     <see cref="ILocalizationKey"/>
-    ///     <see cref="IAssetRoot"/>
+    ///     <see cref="ILineRoot"/>
     /// </summary>
     [Serializable]
     [DebuggerDisplay("{DebugPrint()}")]
     public partial class StringLocalizerRoot :
         StringLocalizerKey,
-        IAssetRoot, ILocalizationKey, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned, ILocalizationKeyResolverAssigned,
+        ILineRoot, ILocalizationKey, ILineCulturePolicy, ILineAsset, ILineLocalizationResolver,
         IStringLocalizer, IStringLocalizerFactory
     {
         /// <summary>

@@ -17,7 +17,7 @@ namespace docs
             // Create culture policy
             ICulturePolicy culturePolicy = new CulturePolicy();
             // Create root
-            IAssetRoot root = new StringLocalizerRoot(asset, culturePolicy);
+            ILineRoot root = new StringLocalizerRoot(asset, culturePolicy);
             #endregion Snippet_1
 
             {

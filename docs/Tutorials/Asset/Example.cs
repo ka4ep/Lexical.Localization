@@ -16,7 +16,7 @@ namespace TutorialProject
             LocalizationRoot.Builder.Build();
 
             // Take reference of the root
-            IAssetRoot root = LocalizationRoot.Global;
+            ILineRoot root = LocalizationRoot.Global;
 
             // Create key
             ILine key = root.Type<Program>().Key("Hello").Inline("Hello World!");

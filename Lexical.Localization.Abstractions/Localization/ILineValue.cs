@@ -17,14 +17,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Localization string value.
         /// </summary>
-        IFormulationString Value { get; }
-    }
-
-    /// <summary>
-    /// Localization string value of a <see cref="ILine"/>.
-    /// </summary>
-    public interface ILineValuePart : ILine, ILineValue
-    {
+        IFormulationString Value { get; set; }
     }
 
     /// <summary></summary>
@@ -36,8 +29,8 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILine Value(this ILine part, IFormulationString value)
-            => part.Append<ILineValuePart, IFormulationString>(value);
+        public static ILineValue Value(this ILine part, IFormulationString value)
+            => part.Append<ILineValue, IFormulationString>(value);
 
         /// <summary>
         /// Get the <see cref="IFormulationString"/> of a <see cref="ILineValue"/>, or

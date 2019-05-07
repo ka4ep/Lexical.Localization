@@ -11,29 +11,14 @@ using System.Text;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A key that can be assigned with a <see cref="ILocalizationResolver"/>.
-    /// </summary>
-    public interface ILocalizationKeyResolverAssignable : ILine
-    {
-        /// <summary>
-        /// Append a <paramref name="resolver"/> key.
-        /// 
-        /// If key has multiple formatters, they are evaluated in order of - from tail towards root -.
-        /// </summary>
-        /// <param name="resolver"></param>
-        /// <returns>key that is assigned with <paramref name="resolver"/></returns>
-        ILocalizationKeyResolverAssigned Resolver(ILocalizationResolver resolver);
-    }
-
-    /// <summary>
     /// A key that has been assigned with resolver.
     /// </summary>
-    public interface ILocalizationKeyResolverAssigned : ILine
+    public interface ILineLocalizationResolver : ILine
     {
         /// <summary>
         /// (Optional) The assigned resolver.
         /// </summary>
-        ILocalizationResolver Resolver { get; }
+        ILocalizationResolver Resolver { get; set; }
     }
 
     public static partial class ILineExtensions
@@ -45,7 +30,7 @@ namespace Lexical.Localization
         /// <param name="resolver"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement <see cref="ILocalizationKeyResolverAssignable"/></exception>
-        public static ILocalizationKeyResolverAssigned Resolver(this ILine key, ILocalizationResolver resolver)
+        public static ILineLocalizationResolver Resolver(this ILine key, ILocalizationResolver resolver)
         {
             if (key is ILocalizationKeyResolverAssignable casted) return casted.Resolver(resolver);
             throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyResolverAssignable)}.");
@@ -66,7 +51,7 @@ namespace Lexical.Localization
             for (ILine k = key; k!=null; k=k.GetPreviousPart())
             {
                 ILocalizationResolver _formatter;
-                if (k is ILocalizationKeyResolverAssigned formatterAssigned && ((_formatter=formatterAssigned.Resolver)!=null))
+                if (k is ILineLocalizationResolver formatterAssigned && ((_formatter=formatterAssigned.Resolver)!=null))
                 {
                     LocalizationString str = _formatter.ResolveString(key);
                     if (str.Severity <= result.Severity) result = str;
@@ -92,7 +77,7 @@ namespace Lexical.Localization
             for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
                 ILocalizationResolver _formatter;
-                if (k is ILocalizationKeyResolverAssigned formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
+                if (k is ILineLocalizationResolver formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
                 {
                     LocalizationString str = _formatter.ResolveFormulatedString(key);
                     if (str.Severity <= result.Severity) result = str;

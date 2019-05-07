@@ -4,7 +4,6 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 
@@ -14,7 +13,7 @@ namespace Lexical.Localization
     /// "Assembly" key that carries <see cref="Assembly"/>. 
     /// </summary>
     [Serializable]
-    public class LineAssemblyKey : LineKey, ILineKeyAssembly, ILineNonCanonicalKey
+    public class LineAssembly : LineKey, ILineAssembly, ILineNonCanonicalKey, ILineArguments<ILineAssembly, Assembly>
     {
         /// <summary>
         /// Assembly, null if non-standard assembly.
@@ -29,7 +28,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public override object[] GetAppendArguments() => new object[] { Tuple.Create<Type, Assembly>(typeof(ILineKeyAssembly), Assembly) };
+        public Assembly Argument0 => assembly;
 
         /// <summary>
         /// Create new assembly key.
@@ -37,7 +36,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="assembly"></param>
-        public LineAssemblyKey(ILineFactory appender, ILine prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.GetName()?.FullName)
+        public LineAssembly(ILineFactory appender, ILine prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.GetName()?.FullName)
         {
             this.assembly = assembly;
         }
@@ -47,7 +46,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public LineAssemblyKey(SerializationInfo info, StreamingContext context) : base(info, context)
+        public LineAssembly(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.assembly = info.GetValue("Assembly", typeof(Assembly)) as Assembly;
         }
@@ -64,7 +63,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LineAppender : ILineFactory<ILineKeyAssembly, Assembly>
+    public partial class LineAppender : ILineFactory<ILineAssembly, Assembly>
     {
         /// <summary>
         /// Append part.
@@ -72,16 +71,20 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="assembly"></param>
+        /// <param name="line"></param>
         /// <returns></returns>
-        ILineKeyAssembly ILineFactory<ILineKeyAssembly, Assembly>.Create(ILineFactory appender, ILine previous, Assembly assembly)
-            => new LineAssemblyKey(appender, previous, assembly);
+        bool ILineFactory<ILineAssembly, Assembly>.TryCreate(ILineFactory appender, ILine previous, Assembly assembly, out ILineAssembly line)
+        {
+            line = new LineAssembly(appender, previous, assembly);
+            return true;
+        }
     }
-    /*
+
     /// <summary>
     /// "Assembly" key that carries <see cref="Assembly"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerAssemblyKey : StringLocalizerKey, ILineKeyAssembly
+    public class StringLocalizerAssembly : _StringLocalizerKey, ILineAssembly, ILineNonCanonicalKey, ILineArguments<ILineAssembly, Assembly>
     {
         /// <summary>
         /// Assembly, null if non-standard assembly.
@@ -94,12 +97,17 @@ namespace Lexical.Localization
         public Assembly Assembly { get => assembly; set => throw new InvalidOperationException(); }
 
         /// <summary>
+        /// Appending arguments.
+        /// </summary>
+        public Assembly Argument0 => assembly;
+
+        /// <summary>
         /// Create new assembly key.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="assembly"></param>
-        public StringLocalizerAssemblyKey(ILineFactory appender, ILine prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.Name)
+        public StringLocalizerAssembly(ILineFactory appender, ILine prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.GetName()?.FullName)
         {
             this.assembly = assembly;
         }
@@ -109,7 +117,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public StringLocalizerAssemblyKey(SerializationInfo info, StreamingContext context) : base(info, context)
+        public StringLocalizerAssembly(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.assembly = info.GetValue("Assembly", typeof(Assembly)) as Assembly;
         }
@@ -126,16 +134,21 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class StringLocalizerPartAppender : ILineFactory1<ILineKeyAssembly, Assembly>
+    public partial class StringLocalizerAppender : ILineFactory<ILineAssembly, Assembly>
     {
         /// <summary>
         /// Append part.
         /// </summary>
+        /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="assembly"></param>
+        /// <param name="StringLocalizer"></param>
         /// <returns></returns>
-        public ILineKeyAssembly Append(ILine previous, Assembly assembly)
-            => new StringLocalizerAssemblyKey(this, previous, assembly);
+        bool ILineFactory<ILineAssembly, Assembly>.TryCreate(ILineFactory appender, ILine previous, Assembly assembly, out ILineAssembly StringLocalizer)
+        {
+            StringLocalizer = new StringLocalizerAssembly(appender, previous, assembly);
+            return true;
+        }
     }
-*/
+
 }

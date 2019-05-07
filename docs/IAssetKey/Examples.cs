@@ -14,7 +14,7 @@ namespace docs
             {
                 IAsset asset = new LocalizationAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, ParameterPolicy.Instance);
                 // Assign the composition to root
-                IAssetRoot root = new LocalizationRoot(asset, new CulturePolicy());
+                ILineRoot root = new LocalizationRoot(asset, new CulturePolicy());
                 #region Snippet_0
                 #endregion Snippet_0
             }
@@ -27,7 +27,7 @@ namespace docs
 
             {
                 #region Snippet_2
-                IAssetRoot root = new LocalizationRoot();
+                ILineRoot root = new LocalizationRoot();
                 ILine section1 = root.Section("Section1");
                 ILine section2 = section1.Section("Section2");
                 ILine section1_1 = section1.Section("Section1.1");
@@ -59,7 +59,7 @@ namespace docs
                 // Create culture policy
                 ICulturePolicy culturePolicy = new CulturePolicy();
                 // Create root
-                IAssetRoot root = new LocalizationRoot(asset, culturePolicy);
+                ILineRoot root = new LocalizationRoot(asset, culturePolicy);
                 // Set Current Culture
                 CultureInfo.CurrentCulture = new CultureInfo("en");
                 // Create key specific provider
@@ -102,7 +102,7 @@ namespace docs
                 // Create asset
                 IAsset asset = new LocalizationAsset(strs, KeyPrinter.Default);
                 // Create root
-                IAssetRoot root = new LocalizationRoot(asset);
+                ILineRoot root = new LocalizationRoot(asset);
                 #endregion Snippet_6a
 
                 #region Snippet_6b
@@ -129,7 +129,7 @@ namespace docs
             {
                 #region Snippet_7a
                 // Create root
-                IAssetRoot root = new LocalizationRoot();
+                ILineRoot root = new LocalizationRoot();
                 // Create key and add default value
                 ILine key = root.Section("Section").Key("Success").Inline("Success");
                 // Resolve string from inlined key "Success"
@@ -139,7 +139,7 @@ namespace docs
 
             {
                 // Create root
-                IAssetRoot root = new LocalizationRoot();
+                ILineRoot root = new LocalizationRoot();
                 #region Snippet_7b
                 // Create key and add default strings
                 ILine key = root.Section("Section").Key("Success")
@@ -154,7 +154,7 @@ namespace docs
 
             {
                 // Create root
-                IAssetRoot root = new LocalizationRoot();
+                ILineRoot root = new LocalizationRoot();
                 #region Snippet_7c
                 // Create key and add default strings
                 ILine key = root.Section("Section").Key("Success")
@@ -210,7 +210,7 @@ namespace docs
                 this.localization = localization;
             }
 
-            public MyController(IAssetRoot localizationRoot)
+            public MyController(ILineRoot localizationRoot)
             {
                 this.localization = localizationRoot.Type<MyController>();
             }

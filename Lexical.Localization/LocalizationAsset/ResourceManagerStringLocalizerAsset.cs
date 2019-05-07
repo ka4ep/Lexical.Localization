@@ -64,7 +64,7 @@ namespace Lexical.Localization
         ///  var key = resx_key["Success"];
         /// </code>
         /// 
-        /// This asset is needed if <see cref="IAssetRoot"/> is converted to <see cref="IStringLocalizerFactory" />.
+        /// This asset is needed if <see cref="ILineRoot"/> is converted to <see cref="IStringLocalizerFactory" />.
         /// </summary>
         /// <param name="resourcePath"></param>
         /// <param name="loggerFactory"></param>

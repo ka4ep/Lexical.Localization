@@ -32,7 +32,7 @@ namespace Lexical.Localization
     [DebuggerDisplay("{DebugPrint()}")]
     [Serializable]
     public class StringLocalizerKey : LinePart, 
-        ILocalizationKey, IAssetKeyAssignable, ILineInlinesAssigned, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, ILocalizationKeyResolverAssignable, ILocalizationKeyFormatProviderAssignable, ILine, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, ILineParameterAssignable, IPluralRulesAssignableKey, ISerializable, IDynamicMetaObjectProvider, ILineDefaultHashCode,
+        ILocalizationKey, IAssetKeyAssignable, ILineInlines, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, ILocalizationKeyResolverAssignable, ILocalizationKeyFormatProviderAssignable, ILine, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, ILineParameterAssignable, IPluralRulesAssignableKey, ISerializable, IDynamicMetaObjectProvider, ILineDefaultHashCode,
         IStringLocalizer, IStringLocalizerFactory, IStringLocalizerLine
     {
         /// <summary>
@@ -215,20 +215,20 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="culture"></param>
         /// <returns></returns>
-        ILineKeyCulture ILocalizationKeyCultureAssignable.Culture(CultureInfo culture) => new _Culture(Appender, this, null, culture);
+        ILineCulture ILocalizationKeyCultureAssignable.Culture(CultureInfo culture) => new _Culture(Appender, this, null, culture);
 
         /// <summary>
         /// Append a culture key.
         /// </summary>
         /// <param name="cultureName"></param>
         /// <returns></returns>
-        ILineKeyCulture ILocalizationKeyCultureAssignable.Culture(string cultureName) => new _Culture(Appender, this, cultureName, null);
+        ILineCulture ILocalizationKeyCultureAssignable.Culture(string cultureName) => new _Culture(Appender, this, cultureName, null);
 
         /// <summary>
         /// Culture key.
         /// </summary>
         [Serializable]
-        public class _Culture : StringLocalizerKey, ILineKeyCulture, ILineNonCanonicalKey, ILineParameter
+        public class _Culture : StringLocalizerKey, ILineCulture, ILineNonCanonicalKey, ILineParameter
         {
             /// <summary>
             /// ParameterName
@@ -292,7 +292,7 @@ namespace Lexical.Localization
         /// Append Inlines key part.
         /// </summary>
         /// <returns></returns>
-        ILineInlines ILineInlinesAssigned.AddInlines() => _addinlines();
+        ILineInlines ILineInlines.AddInlines() => _addinlines();
 
         /// <summary>
         /// Key that contains inlines. 
@@ -631,20 +631,20 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="rules"></param>
         /// <returns></returns>
-        public IPluralRulesAssignedKey PluralRules(IPluralRules rules) => new _PluralRules(Appender, this, rules);
+        public ILinePluralRules PluralRules(IPluralRules rules) => new _PluralRules(Appender, this, rules);
 
         /// <summary>
         /// Append plural rules
         /// </summary>
         /// <param name="rules"></param>
         /// <returns></returns>
-        IPluralRulesAssignedKey IPluralRulesAssignableKey.PluralRules(IPluralRules rules) => new _PluralRules(Appender, this, rules);
+        ILinePluralRules IPluralRulesAssignableKey.PluralRules(IPluralRules rules) => new _PluralRules(Appender, this, rules);
 
         /// <summary>
         /// Plural Rules key.
         /// </summary>
         [Serializable]
-        public class _PluralRules : StringLocalizerKey, IPluralRulesAssignedKey
+        public class _PluralRules : StringLocalizerKey, ILinePluralRules
         {
             /// <summary>
             /// Assigned rules
@@ -844,7 +844,7 @@ namespace Lexical.Localization
             /// Create Type key part.
             /// </summary>
             /// <param name="root"></param>
-            public _Type(IAssetRoot root) : base((root as ILineAppendable)?.Appender, root, typeof(T)) { }
+            public _Type(ILineRoot root) : base((root as ILineAppendable)?.Appender, root, typeof(T)) { }
 
             /// <summary>
             /// Deserialize Type key part.
@@ -859,14 +859,14 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns></returns>
-        ILineKeyAssembly IAssetKeyAssemblyAssignable.Assembly(Assembly assembly) => new _Assembly(Appender, this, assembly);
+        ILineAssembly IAssetKeyAssemblyAssignable.Assembly(Assembly assembly) => new _Assembly(Appender, this, assembly);
 
         /// <summary>
         /// Append Assembly key part.
         /// </summary>
         /// <param name="assemblyName"></param>
         /// <returns></returns>
-        ILineKeyAssembly IAssetKeyAssemblyAssignable.Assembly(String assemblyName) => new _Assembly(Appender, this, assemblyName);
+        ILineAssembly IAssetKeyAssemblyAssignable.Assembly(String assemblyName) => new _Assembly(Appender, this, assemblyName);
 
         /// <summary>
         /// Append Assembly key part.
@@ -886,7 +886,7 @@ namespace Lexical.Localization
         /// Assembly key part.
         /// </summary>
         [Serializable]
-        public class _Assembly : StringLocalizerKey, ILineKeyAssembly, ILineNonCanonicalKey, ILineParameter, ILineCanonicalKey
+        public class _Assembly : StringLocalizerKey, ILineAssembly, ILineNonCanonicalKey, ILineParameter, ILineCanonicalKey
         {
             /// <summary>
             /// Referred Assembly, or null if was not available.
@@ -1035,7 +1035,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="resolver"></param>
         /// <returns></returns>
-        ILocalizationKeyResolverAssigned ILocalizationKeyResolverAssignable.Resolver(ILocalizationResolver resolver) => new _Resolver(Appender, this, resolver);
+        ILineLocalizationResolver ILocalizationKeyResolverAssignable.Resolver(ILocalizationResolver resolver) => new _Resolver(Appender, this, resolver);
 
         /// <summary>
         /// Append Resolver key part.
@@ -1048,14 +1048,14 @@ namespace Lexical.Localization
         /// Resolver key part.
         /// </summary>
         [Serializable]
-        public class _Resolver : StringLocalizerKey, ILocalizationKeyResolverAssigned
+        public class _Resolver : StringLocalizerKey, ILineLocalizationResolver
         {
             /// <summary>
             /// The assigned resolver, or null.
             /// </summary>
             protected ILocalizationResolver resolver;
 
-            ILocalizationResolver ILocalizationKeyResolverAssigned.Resolver => resolver;
+            ILocalizationResolver ILineLocalizationResolver.Resolver => resolver;
 
             /// <summary>
             /// Create Resolver key part.
@@ -1091,7 +1091,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="formatProvider"></param>
         /// <returns></returns>
-        ILocalizationKeyFormatProviderAssigned ILocalizationKeyFormatProviderAssignable.FormatProvider(IFormatProvider formatProvider) => new _FormatProvider(Appender, this, formatProvider);
+        ILineFormatProvider ILocalizationKeyFormatProviderAssignable.FormatProvider(IFormatProvider formatProvider) => new _FormatProvider(Appender, this, formatProvider);
 
         /// <summary>
         /// Append FormatProvider key part.
@@ -1104,14 +1104,14 @@ namespace Lexical.Localization
         /// FormatProvider key part.
         /// </summary>
         [Serializable]
-        public class _FormatProvider : StringLocalizerKey, ILocalizationKeyFormatProviderAssigned
+        public class _FormatProvider : StringLocalizerKey, ILineFormatProvider
         {
             /// <summary>
             /// The assigned formatProvider, or null.
             /// </summary>
             protected IFormatProvider formatProvider;
 
-            IFormatProvider ILocalizationKeyFormatProviderAssigned.FormatProvider => formatProvider;
+            IFormatProvider ILineFormatProvider.FormatProvider => formatProvider;
 
             /// <summary>
             /// Create FormatProvider key part.
@@ -1197,7 +1197,7 @@ namespace Lexical.Localization
             new LineComparer()
                 .AddCanonicalComparer(ParameterComparer.Instance)
                 .AddComparer(NonCanonicalComparer.Instance)
-                .AddComparer(new LocalizationKeyFormatArgsComparer())
+                .AddComparer(new LineFormatArgsComparer())
                 .SetReadonly();
 
         /// <summary>

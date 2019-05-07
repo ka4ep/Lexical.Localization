@@ -28,7 +28,7 @@ namespace Lexical.Localization
         ///     </list>
         /// </param>
         /// <returns>disposable subscription handle, or null if <paramref name="key"/> cannot be observed</returns>
-        public static ILocalizationKeyLoggerAssigned Logger(this ILine key, TextWriter logger, int severity = 1)
+        public static ILineLogger Logger(this ILine key, TextWriter logger, int severity = 1)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationTextLogger(logger, severity));
             throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
@@ -47,7 +47,7 @@ namespace Lexical.Localization
         ///     </list>
         /// </param>
         /// <returns></returns>
-        public static ILocalizationKeyLoggerAssigned DiagnosticsTrace(this ILine key, int severity = 1)
+        public static ILineLogger DiagnosticsTrace(this ILine key, int severity = 1)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationDiagnosticsTrace(severity));
             throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
@@ -210,7 +210,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="logger"></param>
         /// <returns>disposable subscription handle, or null if <paramref name="key"/> cannot be observed</returns>
-        public static ILocalizationKeyLoggerAssigned Logger(this ILine key, ILogger logger)
+        public static ILineLogger Logger(this ILine key, ILogger logger)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationLogger(logger));
             throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");

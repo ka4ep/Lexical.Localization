@@ -139,7 +139,7 @@ namespace Lexical.Localization
             }
 
             // Parse basename/location/type from key
-            ILineKeyAssembly asmSectionToStrip;
+            ILineAssembly asmSectionToStrip;
             IAssetKeyResourceAssigned resSectionToStrip;
             ILineKeyType typeSectionToStrip;
             int x = key.FindResourceKeys(out asmSectionToStrip, out resSectionToStrip, out typeSectionToStrip);
@@ -188,7 +188,7 @@ namespace Lexical.Localization
             {
                 string value = k.GetParameterValue();
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILineKeyCulture || string.IsNullOrEmpty(value)) continue;
+                if (k is ILineCulture || string.IsNullOrEmpty(value)) continue;
                 if (length > 0) length++;
                 length += value.Length;
             }
@@ -198,7 +198,7 @@ namespace Lexical.Localization
             {
                 string value = k.GetParameterValue();
                 if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILineKeyCulture || string.IsNullOrEmpty(value)) continue;
+                if (k is ILineCulture || string.IsNullOrEmpty(value)) continue;
                 if (ix < length) chars[--ix] = '.';
                 ix -= value.Length;
                 value.CopyTo(0, chars, ix, value.Length);
@@ -259,7 +259,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Searches key for either 
         ///    <see cref="ILineKeyType"/> with type
-        ///    <see cref="ILineKeyAssembly"/> and <see cref="IAssetKeyResourceAssigned"/> with string, not type.
+        ///    <see cref="ILineAssembly"/> and <see cref="IAssetKeyResourceAssigned"/> with string, not type.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="type"></param>
@@ -271,7 +271,7 @@ namespace Lexical.Localization
         ///     2 found basename + location</returns>
         public static int FindResourceInfos(this ILine key, out Type type, out string basename, out string location)
         {
-            ILineKeyAssembly asmSection;
+            ILineAssembly asmSection;
             IAssetKeyResourceAssigned resSection;
             ILineKeyType typeSection;
             int x = key.FindResourceKeys(out asmSection, out resSection, out typeSection);
@@ -283,20 +283,20 @@ namespace Lexical.Localization
         /// <summary>
         /// Searches key for either 
         ///    <see cref="ILineKeyType"/> with type
-        ///    <see cref="ILineKeyAssembly"/> and <see cref="IAssetKeyResourceAssigned"/> with string, not type.
+        ///    <see cref="ILineAssembly"/> and <see cref="IAssetKeyResourceAssigned"/> with string, not type.
         /// </summary>
         /// <returns>
         ///     0 found nothing
         ///     1 found typeSection
         ///     2 found asmSection + typeSection</returns>
-        public static int FindResourceKeys(this ILine key, out ILineKeyAssembly asmSection, out IAssetKeyResourceAssigned resSection, out ILineKeyType typeSection)
+        public static int FindResourceKeys(this ILine key, out ILineAssembly asmSection, out IAssetKeyResourceAssigned resSection, out ILineKeyType typeSection)
         {
-            ILineKeyAssembly _asmSection = null;
+            ILineAssembly _asmSection = null;
             IAssetKeyResourceAssigned _resSection = null;
             ILineKeyType _typeSection = null;
             for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
-                if (k is ILineKeyAssembly __asmSection) _asmSection = __asmSection;
+                if (k is ILineAssembly __asmSection) _asmSection = __asmSection;
                 else if (k is IAssetKeyResourceAssigned __resSection) _resSection = __resSection;
                 else if (k is ILineKeyType __typeSection) _typeSection = __typeSection;
             }

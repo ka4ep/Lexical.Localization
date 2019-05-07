@@ -8,29 +8,14 @@ using System;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A key that can be assigned with an observer for logging purposes.
-    /// 
-    /// Observable is sent every resolved <see cref="LocalizationString"/> by <see cref="ILocalizationResolver"/>.
-    /// </summary>
-    public interface ILocalizationKeyLoggerAssignable : ILine
-    {
-        /// <summary>
-        /// Append observer that monitors resolving of localization strings.
-        /// </summary>
-        /// <param name="logger"></param>
-        /// <returns>key that is assigned with <paramref name="logger"/></returns>
-        ILocalizationKeyLoggerAssigned Logger(IObserver<LocalizationString> logger);
-    }
-
-    /// <summary>
     /// A key that has been assigned with logger.
     /// </summary>
-    public interface ILocalizationKeyLoggerAssigned : ILine
+    public interface ILineLogger : ILine
     {
         /// <summary>
         /// (Optional) The assigned logger.
         /// </summary>
-        IObservable<LocalizationString> Logger { get; }
+        IObservable<LocalizationString> Logger { get; set; }
     }
 
     public static partial class ILineExtensions
@@ -42,7 +27,7 @@ namespace Lexical.Localization
         /// <param name="logger"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement <see cref="ILocalizationKeyLoggerAssignable"/></exception>
-        public static ILocalizationKeyLoggerAssigned Logger(this ILine key, IObserver<LocalizationString> logger)
+        public static ILineLogger Logger(this ILine key, IObserver<LocalizationString> logger)
         {
             if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(logger);
             throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");

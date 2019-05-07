@@ -25,7 +25,7 @@ namespace docs
                 // Create asset with culture policy
                 IAsset asset = new LocalizationAsset(source, KeyPrinter.Default);
                 // Create root and assign culturePolicy
-                IAssetRoot root = new LocalizationRoot(asset, culturePolicy);
+                ILineRoot root = new LocalizationRoot(asset, culturePolicy);
                 #endregion Snippet_1
             }
 

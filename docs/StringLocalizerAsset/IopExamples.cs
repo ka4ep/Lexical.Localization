@@ -24,7 +24,7 @@ namespace docs
                 IAsset asset = new StringLocalizerFactoryAsset(stringLocalizerFactory);
 
                 // Create root
-                IAssetRoot root = new LocalizationRoot(asset, new CulturePolicy());
+                ILineRoot root = new LocalizationRoot(asset, new CulturePolicy());
 
                 // There are .resx files in "Resources/ConsoleApp1.MyController" with keys "Success" and "Error"
                 ILine key = root

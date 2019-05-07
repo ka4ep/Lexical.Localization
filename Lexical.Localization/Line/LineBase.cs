@@ -40,7 +40,7 @@ namespace Lexical.Localization
             new LineComparer()
                 .AddCanonicalComparer(ParameterComparer.Instance)
                 .AddComparer(NonCanonicalComparer.Instance)
-                .AddComparer(new LocalizationKeyFormatArgsComparer())
+                .AddComparer(new LineFormatArgsComparer())
                 .SetReadonly();
 
         /// <summary>
@@ -213,18 +213,18 @@ namespace Lexical.Localization
                     .AddInterface(typeof(IAssetKeyAssignable))
                     .AddInterface(typeof(IAssetKeyAssigned))
                     .AddInterface(typeof(ILine))
-                    .AddInterface(typeof(IAssetKeyAssetAssigned))
+                    .AddInterface(typeof(ILineAsset))
                     .AddInterface(typeof(IAssetKeyAssignable))
                     .AddInterface(typeof(IAssetKeySectionAssigned))
                     .AddInterface(typeof(IAssetKeyLocationAssigned))
                     .AddInterface(typeof(ILineKeyType))
-                    .AddInterface(typeof(ILineKeyAssembly))
+                    .AddInterface(typeof(ILineAssembly))
                     .AddInterface(typeof(IAssetKeyResourceAssigned))
                     .AddExtensionMethods(typeof(ILineExtensions))
-                    .AddInterface(typeof(ILineKeyCulture))
-                    .AddInterface(typeof(ILocalizationKeyCulturePolicyAssigned))
+                    .AddInterface(typeof(ILineCulture))
+                    .AddInterface(typeof(ILineCulturePolicy))
                     .AddInterface(typeof(ILineFormatArgsPart))
-                    .AddInterface(typeof(ILineInlinesAssigned))
+                    .AddInterface(typeof(ILineInlines))
                     .AddInterface(typeof(ILineInlines));
         }
     }

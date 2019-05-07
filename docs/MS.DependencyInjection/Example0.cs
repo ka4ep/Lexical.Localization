@@ -37,7 +37,7 @@ namespace docs
                 IAsset asset = serviceProvider.GetService<IAsset>();
 
                 // Service can provide root
-                IAssetRoot root = serviceProvider.GetService<IAssetRoot>();
+                ILineRoot root = serviceProvider.GetService<ILineRoot>();
 
                 // Service can provide type key
                 ILine typeKey = serviceProvider.GetService<ILineKey<ConsoleApp1.MyController>>();

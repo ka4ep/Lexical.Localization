@@ -30,7 +30,7 @@ namespace Lexical.Localization
         ///     <see cref="IStringLocalizer"/>
         ///     <see cref="IStringLocalizerFactory"/>
         ///     <see cref="ILine"/>
-        ///     <see cref="IAssetRoot"/>
+        ///     <see cref="ILineRoot"/>
         /// </summary>
         public static StringLocalizerRoot Global => instance;
 

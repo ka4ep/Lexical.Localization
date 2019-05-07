@@ -9,20 +9,6 @@ using System.Collections.Generic;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of inline assignment.
-    /// </summary>
-    [Obsolete]
-    public interface ILineInlinesAssigned : ILine
-    {
-        /// <summary>
-        /// Add <see cref="ILineInlines"/> part to the key. 
-        /// </summary>
-        /// <returns>key with inlines (non-null dictionary)</returns>
-        /// <exception cref="LineException">If key can't be inlined.</exception>
-        ILineInlines AddInlines();
-    }
-
-    /// <summary>
     /// Key that has multiple value assignments.
     /// </summary>
     public interface ILineInlines : ILine, IDictionary<ILine, IFormulationString>
@@ -78,12 +64,12 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="line"></param>
         /// <returns>inlines key</returns>
-        /// <exception cref="LineException">If <paramref name="line"/> doesn't implement <see cref="ILineInlinesAssigned"/></exception>
+        /// <exception cref="LineException">If <paramref name="line"/> doesn't implement <see cref="ILineInlines"/></exception>
         public static ILineInlines GetOrCreateInlines(this ILine line)
             => line.FindInlines() ?? 
-               (line is ILineInlinesAssigned assignable ? 
+               (line is ILineInlines assignable ? 
                 assignable.AddInlines() : 
-                throw new LineException(line, $"Doesn't implement {nameof(ILineInlinesAssigned)}"));
+                throw new LineException(line, $"Doesn't implement {nameof(ILineInlines)}"));
 
         /// <summary>
         /// Walks linked list and searches for all inlines.

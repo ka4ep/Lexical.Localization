@@ -11,7 +11,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Error related to this class library
     /// </summary>
-    public class LocalizationException : AssetException
+    public class LocalizationException : Exception
     {
         /// <summary>
         /// Create exception.

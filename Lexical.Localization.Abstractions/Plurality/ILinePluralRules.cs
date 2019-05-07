@@ -10,30 +10,14 @@ using Lexical.Localization.Plurality;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key where <see cref="IPluralRules"/> may be assigned.
-    /// </summary>
-    public interface IPluralRulesAssignableKey : ILocalizationKey
-    {
-        /// <summary>
-        /// Append rules to the key. 
-        /// 
-        /// Note that, this adds rules, but doesn't choose the active ruleset. 
-        /// Active ruleset can be added with parameter "PluralRuleSet".
-        /// </summary>
-        /// <param name="rules"></param>
-        /// <returns>Key with rules assigned.</returns>
-        IPluralRulesAssignedKey PluralRules(IPluralRules rules);
-    }
-
-    /// <summary>
     /// Key that has specific <see cref="IPluralRules"/> instance assigned.
     /// </summary>
-    public interface IPluralRulesAssignedKey : ILocalizationKey
+    public interface ILinePluralRules : ILine
     {
         /// <summary>
         /// (optional) Assigned instance of plural rules.
         /// </summary>
-        IPluralRules PluralRules { get; }
+        IPluralRules PluralRules { get; set; }
     }
 
     /// <summary>
@@ -47,8 +31,8 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="rules"></param>
         /// <returns>new key with rules</returns>
-        public static IPluralRulesAssignedKey PluralRules(this ILine key, IPluralRules rules)
-            => key is IPluralRulesAssignableKey assignable ? assignable.PluralRules(rules): throw new LineException(key, $"Key doesn't implement {nameof(IPluralRulesAssignableKey)}");
+        public static ILinePluralRules PluralRules(this ILine key, IPluralRules rules)
+            => key.Append<ILinePluralRules, IPluralRules>(rules);
 
         /// <summary>
         /// Assign plurality rules as 

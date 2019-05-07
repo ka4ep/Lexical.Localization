@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// </summary>
     [Serializable]
     public partial class LocalizationRoot : 
-        LocalizationKey, IAssetRoot, ILocalizationKeyCulturePolicyAssigned, IAssetKeyAssetAssigned, ILocalizationKeyResolverAssigned, ILocalizationKeyFormatProviderAssigned, ILocalizationKeyLoggerAssigned
+        LocalizationKey, ILineRoot, ILineCulturePolicy, ILineAsset, ILineLocalizationResolver, ILineFormatProvider, ILineLogger
     {
         #region Code
         /// <summary>

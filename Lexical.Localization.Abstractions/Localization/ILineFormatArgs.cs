@@ -10,49 +10,29 @@ using System.Collections.Generic;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of format arguments assignment.
-    /// </summary>
-    [Obsolete]
-    public interface ILocalizationKeyFormattable : ILine
-    {
-        /// <summary>
-        /// Create a new ILocalizationKey with arguments attached.
-        /// </summary>
-        /// <param name="formatProvider">(optional) custom format provider</param>
-        /// <param name="args">attach arguments</param>
-        /// <returns>new key</returns>
-        ILineFormatArgsPart Format(params object[] args);
-    }
-
-    /// <summary>
-    /// Key (may have) has formats assigned.
+    /// Line's format argument assignments. Arguments are matched to placeholders in formulation string.
+    /// 
+    /// For example for string "Hello, {0}" the placeholder {0} is matched to argument at index 0.
     /// </summary>
     public interface ILineFormatArgs : ILine
     {
         /// <summary>
         /// Attached format arguments (may be null).
         /// </summary>
-        Object[] Args { get; }
-    }
-
-    /// <summary>
-    /// Key (may have) has formats assigned.
-    /// </summary>
-    public interface ILineFormatArgsPart : ILineFormatArgs, ILine
-    {
+        Object[] Args { get; set;  }
     }
 
     public static partial class ILineExtensions
     {
         /// <summary>
-        /// Create a new <see cref="ILineFormatArgsPart"/> that has arguments attached.
+        /// Append format arguments. Format arguments 
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="args"></param>
         /// <returns></returns>
         /// <exception cref="LineException">If key can't be formatted</exception>
-        public static ILineFormatArgsPart Format(this ILine key, params object[] args)
-            => key is ILocalizationKeyFormattable formattable ? formattable.Format(args) : throw new LineException(key, $"Key doesn't implement {nameof(ILocalizationKeyFormattable)}");
+        public static ILineFormatArgs Format(this ILine line, params object[] args)
+            => line.Append<ILineFormatArgs, Object[]>(args);
 
         /// <summary>
         /// Walks linked list and searches for culture policy.
@@ -75,7 +55,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Non-canonical comparer that compares <see cref="ILineFormatArgsPart"/> values of keys.
     /// </summary>
-    public class LocalizationKeyFormatArgsComparer : IEqualityComparer<ILine>
+    public class LineFormatArgsComparer : IEqualityComparer<ILine>
     {
         static IEqualityComparer<object[]> array_comparer = new ArrayComparer<object>(EqualityComparer<object>.Default);
 
