@@ -3,88 +3,24 @@
 // Date:           2.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Internal;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Linq.Expressions;
 using System.Runtime.Serialization;
-using System.Threading;
 
 namespace Lexical.Localization
 {
     /// <summary>
     /// Basic line part.
     /// </summary>
-    [DebuggerDisplay("{DebugPrint()}")]
     [Serializable]
-    public class LinePart : ILinePart, ILineDefaultHashCode, IDynamicMetaObjectProvider, ILineArguments<ILine>
+    public class LinePart : LineBase, ILinePart, ILineArguments<ILinePart>
     {
-        /// <summary>
-        /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineFormatArgsPart"/> parts.
-        /// </summary>
-        static IEqualityComparer<ILine> keyAndArgsComparer =
-            new LineComparer()
-                .AddCanonicalComparer(ParameterComparer.Instance)
-                .AddComparer(NonCanonicalComparer.Instance)
-                .AddComparer(new LocalizationKeyFormatArgsComparer())
-                .SetReadonly();
-
-        /// <summary>
-        /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineFormatArgsPart"/> parts.
-        /// </summary>
-        public static IEqualityComparer<ILine> FormatArgsComparer => keyAndArgsComparer;
-
-        /// <summary>
-        /// Cached hashcode
-        /// </summary>
-        int hashcode = -1, defaultHashcode = -1;
-
-        /// <summary>
-        /// Determines if hashcode is calculated and cached
-        /// </summary>
-        bool hashcodeCalculated, defaultHashcodeCalculated;
-
-        /// <summary>
-        /// Appender
-        /// </summary>
-        protected ILineFactory appender;
-
-        /// <summary>
-        /// Cached dynamic object.
-        /// </summary>
-        protected DynamicMetaObject dynamicMetaObject;
-
-        /// <summary>
-        /// Previous part.
-        /// </summary>
-        protected ILine previousPart;
-            
-        /// <summary>
-        /// Previous part.
-        /// </summary>
-        public ILine PreviousPart { get => previousPart; set => new InvalidOperationException(); }
-
-        /// <summary>
-        /// (optional) Get part appender.
-        /// </summary>
-        public virtual ILineFactory Appender { get => appender; set => throw new InvalidOperationException(nameof(Appender) + " is read-only"); }
-
-        /// <summary>
-        /// Appending arguments.
-        /// </summary>
-        public virtual object[] GetAppendArguments() => new object[] { Tuple.Create<Type>(typeof(ILine)) };
-
         /// <summary>
         /// Create line part.
         /// </summary>
         /// <param name="appender">(optional) Explicit appender, if null uses the Appender in <paramref name="previousPart"/></param>
         /// <param name="previousPart">(optional) link to previous part.</param>
-        public LinePart(ILineFactory appender, ILine previousPart)
+        public LinePart(ILineFactory appender, ILine previousPart) : base(appender, previousPart)
         {
-            this.appender = appender;
-            this.previousPart = previousPart;
         }
 
         /// <summary>
@@ -92,165 +28,65 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public LinePart(SerializationInfo info, StreamingContext context)
+        public LinePart(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.PreviousPart = info.GetValue(nameof(PreviousPart), typeof(ILine)) as ILine;
-        }
-
-        /// <summary>
-        /// Serialize
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue(nameof(PreviousPart), PreviousPart);
-        }
-
-        /// <summary>
-        /// Calculate hashcode with hashesin format arguments. Result is cached.
-        /// </summary>
-        /// <returns></returns>
-        public override int GetHashCode()
-        {
-            if (hashcodeCalculated) return hashcode;
-            hashcode = keyAndArgsComparer.GetHashCode(this);
-            hashcodeCalculated = true;
-            return hashcode;
-        }
-
-        /// <summary>
-        /// Calculate default reference hashcode. Result is cached.
-        /// </summary>
-        /// <returns></returns>
-        int ILineDefaultHashCode.GetDefaultHashCode()
-        {
-            // Return cached default hashcode
-            if (defaultHashcodeCalculated) return defaultHashcode;
-
-            // Get previous key's default hashcode
-            if (this is ILineKeyCanonicallyCompared == false && this is ILineKeyNonCanonicallyCompared == false && this.GetPreviousPart() is ILineDefaultHashCode prevDefaultHashcode)
-            {
-                defaultHashcode = prevDefaultHashcode.GetDefaultHashCode();
-            }
-            else
-            {
-                defaultHashcode = LineComparer.Default.CalculateHashCode(this);
-            }
-
-            // Mark calculated
-            Thread.MemoryBarrier();
-            defaultHashcodeCalculated = true;
-            return defaultHashcode;
-        }
-
-        /// <summary>
-        /// Get-or-create dynamic object.
-        /// </summary>
-        /// <param name="expression">the expression in the calling environgment</param>
-        /// <returns>object</returns>
-        public virtual DynamicMetaObject GetMetaObject(Expression expression)
-        {
-            var prev = dynamicMetaObject;
-            if (prev?.Expression == expression) return prev;
-            return dynamicMetaObject = new LocalizationKeyDynamicMetaObject(Library.Default, expression, BindingRestrictions.GetTypeRestriction(expression, typeof(ILine)), this);
-        }
-
-        /// <summary>
-        /// Print parameters.
-        /// </summary>
-        /// <returns></returns>
-        public string DebugPrint()
-            => ParameterPolicy.Instance.Print(this); // KeyPrinter.Default.Print(this);
-
-        /// <summary>
-        /// Equals comparison. The default comparer compares <see cref="ILineKey"/> and <see cref="ILineFormatArgsPart"/> parts.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override bool Equals(object obj)
-            => keyAndArgsComparer.Equals(this, obj as ILine);
-
-        /// <summary>
-        /// Produce string using the following algorithm:
-        ///   1. Search for language strings
-        ///      a. Search for formultion arguments. Apply arguments. Return
-        ///   2. Build and return key identity.
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-            => this.ResolveFormulatedString().Value ?? this.DebugPrint();
-
-        /// <summary>
-        /// A library of interfaces and extension methods that DynamicMetaObject implementation seaches from when 
-        /// invoked with dynamic calls.
-        /// </summary>
-        public static class Library
-        {
-            private static DynamicObjectLibrary instance = CreateDefault();
-
-            /// <summary>
-            /// Library of methods, fields and properties for dynamic object.
-            /// </summary>
-            public static DynamicObjectLibrary Default => instance;
-
-            /// <summary>
-            /// Create library of methods, fields and properties for dynamic object implementation.
-            /// </summary>
-            /// <returns></returns>
-            public static DynamicObjectLibrary CreateDefault()
-                => new DynamicObjectLibrary()
-                    .AddExtensionMethods(typeof(ILineExtensions))
-                    .AddExtensionMethods(typeof(AssetKeyExtensions))
-                    .AddInterface(typeof(ILine))
-                    .AddInterface(typeof(IAssetKeyAssignable))
-                    .AddInterface(typeof(IAssetKeyAssigned))
-                    .AddInterface(typeof(ILine))
-                    .AddInterface(typeof(IAssetKeyAssetAssigned))
-                    .AddInterface(typeof(IAssetKeyAssignable))
-                    .AddInterface(typeof(IAssetKeySectionAssigned))
-                    .AddInterface(typeof(IAssetKeyLocationAssigned))
-                    .AddInterface(typeof(ILineKeyType))
-                    .AddInterface(typeof(ILineKeyAssembly))
-                    .AddInterface(typeof(IAssetKeyResourceAssigned))
-                    .AddExtensionMethods(typeof(ILineExtensions))
-                    .AddInterface(typeof(ILineKeyCulture))
-                    .AddInterface(typeof(ILocalizationKeyCulturePolicyAssigned))
-                    .AddInterface(typeof(ILineFormatArgsPart))
-                    .AddInterface(typeof(ILineInlinesAssigned))
-                    .AddInterface(typeof(ILineInlines));
         }
     }
 
-    public partial class LinePartAppender : ILineFactory<ILine>
+    public partial class LineAppender : ILineFactory<ILinePart>
     {
         /// <summary>
-        /// Append <see cref="LinePart"/>.
+        /// Create <see cref="LinePart"/>.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="previous"></param>
+        /// <param name="part"></param>
         /// <returns></returns>
-        public ILine Create(ILineFactory appender, ILine previous)
-            => new LinePart(appender, previous);
+        public bool TryCreate(ILineFactory appender, ILine previous, out ILinePart part)
+        {
+            part = new LinePart(appender, previous);
+            return true;
+        }
     }
 
-    // StringLocalizerPart
-
-    /*
-    public partial class StringLocalizerPartAppender : ILineFactory2<ILineParameterPart, string, string>
+    /// <summary>
+    /// Basic line part.
+    /// </summary>
+    [Serializable]
+    public class StringLocalizerPart : StringLocalizerBase, ILinePart, ILineArguments<ILinePart>
     {
         /// <summary>
-        /// Append <see cref="LineParameterPart"/>.
+        /// Create line part.
         /// </summary>
-        /// <param name="previous"></param>
-        /// <param name="parameterName"></param>
-        /// <param name="parameterValue"></param>
-        /// <returns></returns>
-        public ILineParameterPart Append(ILine previous, string parameterName, string parameterValue)
-            => new StringLocalizerParameterPart(this, previous, parameterName, parameterValue);
+        /// <param name="appender">(optional) Explicit appender, if null uses the Appender in <paramref name="previousPart"/></param>
+        /// <param name="previousPart">(optional) link to previous part.</param>
+        public StringLocalizerPart(ILineFactory appender, ILine previousPart) : base(appender, previousPart)
+        {
+        }
+
+        /// <summary>
+        /// Deserialize.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public StringLocalizerPart(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
     }
-*/
 
-
-
+    public partial class StringLocalizerAppender : ILineFactory<ILinePart>
+    {
+        /// <summary>
+        /// Create <see cref="StringLocalizerPart"/>.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="previous"></param>
+        /// <param name="part"></param>
+        /// <returns></returns>
+        public bool TryCreate(ILineFactory appender, ILine previous, out ILinePart part)
+        {
+            part = new StringLocalizerPart(appender, previous);
+            return true;
+        }
+    }
 }

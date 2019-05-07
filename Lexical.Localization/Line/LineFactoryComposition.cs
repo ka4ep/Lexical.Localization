@@ -8,7 +8,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Lexical.Localization
 {
@@ -77,7 +76,7 @@ namespace Lexical.Localization
         {
             ILineFactory result;
             if (factories0.TryGetValue(typeof(Intf), out result)) return result as ILineFactory<Intf>;
-            foreach(var adapter in castables) { var appender = adapter.Cast<Intf>(); if (appender != null) return appender; }
+            foreach (var adapter in castables) { var appender = adapter.Cast<Intf>(); if (appender != null) return appender; }
             if (this is ILineFactory<Intf> casted) return casted;
             return default;
         }
@@ -281,33 +280,12 @@ namespace Lexical.Localization
         /// <exception cref="LineException">If append failed due to unexpected reason</exception>
         public bool TryCreate(ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line)
         {
-            foreach(var argFactory in argFactories)
+            foreach (var argFactory in argFactories)
             {
                 if (argFactory.TryCreate(factory, previous, arguments, out line)) return true;
             }
-            /*
-            foreach(Type intfType in arguments.GetType().GetInterfaces())
-            {
-                Type intfGenericType = intfType.GetGenericTypeDefinition();
-                if (intfGenericType == typeof(ILineArguments<>))
-                {
-
-                }
-            }*/
-            throw new NotImplementedException();
             line = default;
             return false;
-        }
-
-        //static MethodInfo miCast0, miCast1, miCast2, miCast3;
-
-        static LineFactoryComposition()
-        {
-            foreach(MethodInfo mi in typeof(LineFactoryComposition).GetMethods())
-            {
-                if (mi.Name != "Cast") continue;
-                //Type[] genericArguments = mi.MakeGenericMethod
-            }
         }
 
     }
@@ -324,9 +302,16 @@ namespace Lexical.Localization
         /// <returns>part with another appender</returns>
         public static ILine AddAppender(this ILine previous, ILineFactory appender, LineFactoryAddPolicy policy = LineFactoryAddPolicy.OverwriteIfExists)
         {
-            ILineFactory previousAppender = previous.GetAppender();
-            ILineFactory newAppender = previousAppender == null ? appender : new LineFactoryComposition().Add(previousAppender, policy).Add(appender, policy);
-            return newAppender.Create<ILine>(previous);
+            ILineFactory previousAppender;
+            if (previous.TryGetAppender(out previousAppender))
+            {
+                ILineFactory newAppender = previousAppender == null ? appender : (ILineFactory)new LineFactoryComposition().Add(previousAppender, policy).Add(appender, policy);
+                return newAppender.Create<ILinePart>(previous);
+            }
+            else
+            {
+                return appender.Create<ILinePart>(previous);
+            }
         }
     }
 

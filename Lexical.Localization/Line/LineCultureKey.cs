@@ -65,7 +65,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LinePartAppender : ILineFactory<ILineKeyCulture, CultureInfo>
+    public partial class LineAppender : ILineFactory<ILineKeyCulture, CultureInfo>
     {
         /// <summary>
         /// Append part.

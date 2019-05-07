@@ -6,9 +6,7 @@
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A part that together with other parts composes a <see cref="ILine"/>.
-    /// 
-    /// Forms a linked list and trie of <see cref="ILine"/>s.
+    /// Line parts form a linked list or trie of a <see cref="ILine"/>.
     /// </summary>
     public interface ILinePart : ILine
     {

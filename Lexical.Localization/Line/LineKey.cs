@@ -103,7 +103,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LinePartAppender : ILineFactory<ILineKeyNonCanonicallyCompared, string, string>, ILineFactory<ILineKeyCanonicallyCompared, string, string>
+    public partial class LineAppender : ILineFactory<ILineKeyNonCanonicallyCompared, string, string>, ILineFactory<ILineKeyCanonicallyCompared, string, string>
     {
         /// <summary>
         /// Append key.

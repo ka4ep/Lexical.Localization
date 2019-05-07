@@ -12,9 +12,9 @@ namespace Lexical.Localization
     /// <summary>
     /// Default part appender.
     /// </summary>
-    public partial class LinePartAppender : LineFactoryComposition
+    public partial class LineAppender : LineFactoryComposition
     {
-        private readonly static ILineFactory instance = new LinePartAppender().ReadOnly();
+        private readonly static ILineFactory instance = new LineAppender().ReadOnly();
 
         /// <summary>
         /// Default instance
@@ -24,7 +24,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new part appender
         /// </summary>
-        public LinePartAppender()
+        public LineAppender()
         {
 
         }

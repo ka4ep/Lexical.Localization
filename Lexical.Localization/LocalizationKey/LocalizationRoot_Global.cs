@@ -39,7 +39,7 @@ namespace Lexical.Localization
             var _culturePolicy = new CulturePolicy();
             var _builder = new AssetBuilder.OneBuildInstance();
             builder = _builder;
-            instance = new LocalizationRoot.Mutable(LinePartAppender.Instance, _builder.Asset, _culturePolicy, LocalizationResolver.Instance);
+            instance = new LocalizationRoot.Mutable(LineAppender.Instance, _builder.Asset, _culturePolicy, LocalizationResolver.Instance);
             dynamic = instance;
         }
     }

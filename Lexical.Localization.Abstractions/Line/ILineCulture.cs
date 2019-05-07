@@ -80,99 +80,169 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <param name="culture"></param>
-        /// <returns>new key or null</returns>
-        public static ILine TryAppendCulture(this ILine key, CultureInfo culture)
-            => key.TryAppend<ILineKeyCulture, CultureInfo>(culture);
+        /// <param name="result"></param>
+        /// <returns>true if append was successful</returns>
+        public static bool TryAppendCulture(this ILine key, CultureInfo culture, out ILine result)
+        {
+            ILineCulture _result;
+            if (key.TryAppend<ILineCulture, CultureInfo>(culture, out _result)) { result = _result; return true; }
+            result = default;
+            return false;
+        }
 
         /// <summary>
         /// Try append culture key "Culture:xx"
         /// </summary>
         /// <param name="key"></param>
         /// <param name="cultureName"></param>
+        /// <param name="result"></param>
         /// <returns>new key or null</returns>
-        public static ILine TryAppendCulture(this ILine key, string cultureName)
-            => key.TryAppend<ILineKeyNonCanonicallyCompared, string, string>("Culture", cultureName);
+        public static bool TryAppendCulture(this ILine key, string cultureName, out ILine result)
+        {
+            ILineKeyNonCanonicallyCompared _result;
+            if (key.TryAppend<ILineKeyNonCanonicallyCompared, string, string>(cultureName, "Culture", out _result)) { result = _result; return true; }
+            result = default;
+            return false;
+        }
 
         /// <summary>
-        /// Search linked list and finds the selected (left-most) <see cref="ILineKeyCulture"/> key.
-        /// 
-        /// If implements <see cref="ILineCulture"/> returns the culture. 
+        /// Search linked list and finds the effective (left-most) <see cref="ILineCulture"/> or <see cref="ILineParameter"/> of "Culture".
         /// </summary>
         /// <param name="line"></param>
-        /// <returns>culture info or null</returns>
+        /// <returns>culture info</returns>
+        /// <exception cref="LineException">If culture info was not found.</exception>
         public static CultureInfo GetCultureInfo(this ILine line)
         {
-            
-
-            if (line is ILineParameterEnumerable lineParameters)
+            CultureInfo result = null;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                var keys = lineParameters.Parameters;
-                if (keys != null)
-                    foreach (var kv in keys)
-                        if (kv.Key == "Culture" && kv.Value != null) try { return CultureInfo.GetCultureInfo(kv.Value); } catch (CultureNotFoundException) { }
-            }
-
-            if (line is ILine part)
-            {
-                string cultureName = null;
-                CultureInfo culture = null;
-                for (ILine l = line; l != null; l = l.GetPreviousPart())
+                if (l is ILineCulture culture && culture.Culture != null) result = culture.Culture;
+                else if (l is ILineParameter parameter_ && parameter_.ParameterName == "Culture" && parameter_.ParameterValue != null)
+                    try { result = CultureInfo.GetCultureInfo(parameter_.ParameterValue); } catch (CultureNotFoundException) { }
+                else if (l is ILineParameterEnumerable lineParameters)
                 {
-                    if (l is ILineCulture lineCulture && lineCulture.Culture != null) culture = lineCulture.Culture;
-                    else if (l is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) cultureName = parameterKey.ParameterValue;
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName == "Culture" && parameter.ParameterValue != null)
+                            try { result = CultureInfo.GetCultureInfo(parameter.ParameterValue); } catch (CultureNotFoundException) { }
                 }
-                if (culture != null) return culture;
-                if (cultureName != null) try { return CultureInfo.GetCultureInfo(cultureName); } catch (CultureNotFoundException) { }
             }
+            return result ?? throw new LineException(line, "Could not find CultureInfo");
+        }
 
-            return null;
+        /// <summary>
+        /// Search linked list and finds the effective (left-most) <see cref="ILineCulture"/> or <see cref="ILineParameter"/> of "Culture".
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="cultureInfo"></param>
+        /// <returns>true if culture info was retrieved</returns>
+        public static bool TryGetCultureInfo(this ILine line, out CultureInfo cultureInfo)
+        {
+            CultureInfo result = null;
+            for (ILine l = line; l!=null; l=l.GetPreviousPart())
+            {
+                if (l is ILineCulture culture && culture.Culture != null) result = culture.Culture;
+                else if (l is ILineParameter parameter_ && parameter_.ParameterName == "Culture" && parameter_.ParameterValue != null)
+                    try { result = CultureInfo.GetCultureInfo(parameter_.ParameterValue); } catch (CultureNotFoundException) { }
+                else if (l is ILineParameterEnumerable lineParameters)
+                {
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName == "Culture" && parameter.ParameterValue != null)
+                            try { result = CultureInfo.GetCultureInfo(parameter.ParameterValue); } catch (CultureNotFoundException) { }
+                }
+            }
+            cultureInfo = result;
+            return result != null;
         }
 
         /// <summary>
         /// Get effective (closest to root) culture value.
         /// </summary>
         /// <param name="line"></param>
-        /// <returns>culture name or null</returns>
-        public static string GetCulture(this ILine line)
+        /// <returns>culture name</returns>
+        /// <exception cref="LineException">If culture info was not found.</exception>
+        public static string GetCultureName(this ILine line)
         {
-            if (line is ILineCulture lineCulture && lineCulture.Culture != null) return lineCulture.Culture.Name;
-
-            if (line is ILineParameterEnumerable lineParameters)
+            String result = null;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                var keys = lineParameters.Parameters;
-                if (keys != null)
-                    foreach (var kv in keys)
-                        if (kv.Key == "Culture" && kv.Value != null) return kv.Value;
-            }
-
-            if (line is ILine part)
-            {
-                string result = null;
-                for (ILine p = part; p != null; p = p.GetPreviousPart())
+                if (l is ILineCulture culture && culture.Culture != null) result = culture.Culture.Name;
+                else if (l is ILineParameter parameter_ && parameter_.ParameterName == "Culture" && parameter_.ParameterValue != null) result = parameter_.ParameterValue;
+                else if (l is ILineParameterEnumerable lineParameters)
                 {
-                    if (p is ILineKeyCulture cultureKey && cultureKey.Culture != null) result = cultureKey.Culture.Name;
-                    else if (p is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) result = parameterKey.ParameterValue;
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName == "Culture" && parameter.ParameterValue != null) result = parameter.ParameterValue;
                 }
-                if (result != null) return result;
             }
-
-            return null;
+            return result ?? throw new LineException(line, "Could not find CultureName");
         }
 
         /// <summary>
-        /// Search linked list and find the effective (closest to root) culture key either <see cref="ILineKeyCulture"/> or <see cref="ILineParameter"/>.
+        /// Get effective (closest to root) culture value.
         /// </summary>
-        /// <param name="tail"></param>
+        /// <param name="line"></param>
+        /// <param name="cultureName"></param>
+        /// <returns>true if name was found</returns>
+        /// <exception cref="LineException">If culture info was not found.</exception>
+        public static bool TryGetCultureName(this ILine line, out string cultureName)
+        {
+            String result = null;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineCulture culture && culture.Culture != null) result = culture.Culture.Name;
+                else if (l is ILineParameter parameter_ && parameter_.ParameterName == "Culture" && parameter_.ParameterValue != null) result = parameter_.ParameterValue;
+                else if (l is ILineParameterEnumerable lineParameters)
+                {
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName == "Culture" && parameter.ParameterValue != null) result = parameter.ParameterValue;
+                }
+            }
+            cultureName = result;
+            return result != null;
+        }
+
+        /// <summary>
+        /// Search linked list and find the effective (closest to root) culture key either <see cref="ILineKeyCulture"/> or <see cref="ILineParameter"/> "Culture".
+        /// </summary>
+        /// <param name="line"></param>
         /// <returns>Key with culture policy or null</returns>
-        public static ILine GetCultureKey(this ILine tail)
+        /// <exception cref="LineException">If culture info was not found.</exception>
+        public static ILine GetCultureKey(this ILine line)
         {
             ILine result = null;
-            for (; tail != null; tail = tail.GetPreviousPart())
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                if (tail is ILineKeyCulture cultureKey && cultureKey.Culture != null) result = cultureKey;
-                else if (tail is ILineParameter parameterKey && parameterKey.ParameterName == "Culture" && parameterKey.ParameterValue != null) result = parameterKey;
+                if (l is ILineCulture culture && culture.Culture != null) result = l;
+                else if (l is ILineParameter parameter_ && parameter_.ParameterName == "Culture" && parameter_.ParameterValue != null) result = l;
+                else if (l is ILineParameterEnumerable lineParameters)
+                {
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName == "Culture" && parameter.ParameterValue != null) { result = l; break; }
+                }
             }
-            return result;
+            return result ?? throw new LineException(line, "Could not find CultureKey");
+        }
+
+        /// <summary>
+        /// Search linked list and find the effective (closest to root) culture key either <see cref="ILineKeyCulture"/> or <see cref="ILineParameter"/> "Culture".
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="key"></param>
+        /// <returns>true if key was found</returns>
+        public static bool TryGetCultureKey(this ILine line, out ILine key)
+        {
+            ILine result = null;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineCulture culture && culture.Culture != null) result = l;
+                else if (l is ILineParameter parameter_ && parameter_.ParameterName == "Culture" && parameter_.ParameterValue != null) result = l;
+                else if (l is ILineParameterEnumerable lineParameters)
+                {
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName == "Culture" && parameter.ParameterValue != null) { result = l; break; }
+                }
+            }
+            key = result;
+            return result != null;
         }
 
     }
@@ -193,7 +263,7 @@ namespace Lexical.Localization
         /// <param name="y"></param>
         /// <returns></returns>
         public bool Equals(ILine x, ILine y)
-            => string_comparer.Equals(x?.GetCulture(), y?.GetCulture());
+            => string_comparer.Equals(x?.GetCultureName(), y?.GetCultureName());
 
         /// <summary>
         /// 
@@ -201,7 +271,7 @@ namespace Lexical.Localization
         /// <param name="obj"></param>
         /// <returns></returns>
         public int GetHashCode(ILine obj)
-            => string_comparer.GetHashCode(obj?.GetCulture());
+            => string_comparer.GetHashCode(obj?.GetCultureName());
     }
 
     /// <summary>
@@ -220,7 +290,7 @@ namespace Lexical.Localization
         /// <param name="y"></param>
         /// <returns></returns>
         public bool Equals(ILine x, ILine y)
-            => string_comparer.Equals(x?.GetCulture() ?? "", y?.GetCulture() ?? "");
+            => string_comparer.Equals(x?.GetCultureName() ?? "", y?.GetCultureName() ?? "");
 
         /// <summary>
         /// 
@@ -228,7 +298,7 @@ namespace Lexical.Localization
         /// <param name="obj"></param>
         /// <returns></returns>
         public int GetHashCode(ILine obj)
-            => string_comparer.GetHashCode(obj?.GetCulture() ?? "");
+            => string_comparer.GetHashCode(obj?.GetCultureName() ?? "");
     }
 
 }

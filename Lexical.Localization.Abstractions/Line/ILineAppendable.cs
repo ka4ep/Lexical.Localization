@@ -3,9 +3,10 @@
 // Date:           2.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Linq;
 
 namespace Lexical.Localization
 {
@@ -32,7 +33,7 @@ namespace Lexical.Localization
         /// <exception cref="LineException">Error if appender is not available</exception>
         public static ILineFactory GetAppender(this ILine line)
         {
-            for(ILine p = line; p!=null; p=p.GetPreviousPart())
+            for (ILine p = line; p != null; p = p.GetPreviousPart())
                 if (p is ILineAppendable appendable && appendable.Appender != null) return appendable.Appender;
             throw new LineException(line, "Could not find appender.");
         }
@@ -109,6 +110,21 @@ namespace Lexical.Localization
             => line.GetAppender().Create<Intf, A0, A1, A2>(line, a0, a1, a2);
 
         /// <summary>
+        /// Append new <see cref="ILine"/> with <paramref name="arguments"/>.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="arguments"></param>
+        /// <returns>Part</returns>
+        /// <exception cref="ArgumentNullException">If appender is null</exception>
+        /// <exception cref="LineException">If append failed</exception>
+        public static ILine Append(this ILine line, ILineArguments arguments)
+        {
+            ILine result;
+            if (line.GetAppender().TryCreate(line, arguments, out result)) return result;
+            throw new LineException(arguments, $"Could not append.");
+        }
+
+        /// <summary>
         /// Append new <see cref="ILine"/> to <paramref name="line"/>.
         /// </summary>
         /// <param name="line"></param>
@@ -132,7 +148,7 @@ namespace Lexical.Localization
         /// <typeparam name="Intf"></typeparam>
         /// <typeparam name="A0"></typeparam>
         /// <returns>true if append succeeded</returns>
-        public static bool TryAppend<Intf, A0>(this ILine line, A0 a0, Intf result) where Intf : ILine
+        public static bool TryAppend<Intf, A0>(this ILine line, A0 a0, out Intf result) where Intf : ILine
         {
             ILineFactory appender;
             if (line.TryGetAppender(out appender) && appender.TryCreate<Intf, A0>(line, a0, out result)) return true;
@@ -172,13 +188,25 @@ namespace Lexical.Localization
         /// <typeparam name="A1"></typeparam>
         /// <typeparam name="A2"></typeparam>
         /// <returns>true if append succeeded</returns>
-        public static bool TryAppend<Intf, A0, A1, A2>(this ILine line, A0 a0, A1 a1, A2 a2, Intf result) where Intf : ILine
+        public static bool TryAppend<Intf, A0, A1, A2>(this ILine line, A0 a0, A1 a1, A2 a2, out Intf result) where Intf : ILine
         {
             ILineFactory appender;
             if (line.TryGetAppender(out appender) && appender.TryCreate<Intf, A0, A1, A2>(line, a0, a1, a2, out result)) return true;
             result = default;
             return false;
         }
+
+        /// <summary>
+        /// Append new <see cref="ILine"/> with <paramref name="arguments"/>.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="arguments"></param>
+        /// <param name="result"></param>
+        /// <returns>Part</returns>
+        /// <exception cref="ArgumentNullException">If appender is null</exception>
+        /// <exception cref="LineException">If append failed</exception>
+        public static bool TryAppend(this ILine line, ILineArguments arguments, out ILine result)
+            => line.GetAppender().TryCreate(line, arguments, out result);
 
         /// <summary>
         /// Set new appender by appending a dummy <see cref="ILine"/> with the new <paramref name="appender"/>.
@@ -190,33 +218,91 @@ namespace Lexical.Localization
             => appender.Create<ILinePart>(previous);
 
         /// <summary>
-        /// Append <paramref name="anotherLine"/> to <paramref name="part"/>.
+        /// Concatenate <paramref name="anotherLine"/> to <paramref name="line"/>.
         /// </summary>
-        /// <param name="part">part to append to</param>
+        /// <param name="line">part to append to</param>
         /// <param name="anotherLine"></param>
         /// <returns></returns>
-        public static ILine Append(this ILine part, ILine anotherLine = null)
+        /// <exception cref="LineException">on append error</exception>
+        public static ILine Concat(this ILine line, ILine anotherLine)
         {
-            /*
-            ILineFactory appender = part.GetAppender();
-            if (appender == null) throw new LineException();
+            ILine result = line;
             for (ILine l = anotherLine; l != null; l=l.GetPreviousPart())
             {
-                if (l is ILineAppendArguments args)
-                {
-                    var enumr = args.GetAppendArguments();
-                    if (enumr != null)
+                if (l is ILineArgumentsEnumerable enumr)
+                    foreach (ILineArguments args_ in enumr)
+                        result = result.Append(args_);
+
+                if (l is ILineArguments args)
+                    result = result.Append(args);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Concatenate <paramref name="anotherLine"/> to <paramref name="line"/>.
+        /// </summary>
+        /// <param name="line">part to append to</param>
+        /// <param name="anotherLine"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException">on append error</exception>
+        public static ILine ConcatIfNew(this ILine line, ILine anotherLine)
+        {
+            ILine result = line;
+            KeyValuePair<string, string>[] parameters = null;
+            for (ILine l = anotherLine; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineArgumentsEnumerable enumr)
+                    foreach (ILineArguments args_ in enumr)
                     {
-                        foreach(var arg in args)
-                        {
-                            part.GetAppender()
-                        }
+                        if (args_ is ILineArguments<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
+                        if (args_ is ILineArguments<ILineKeyNonCanonicallyCompared, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
+                        if (args_ is ILineArguments<ILineKeyCanonicallyCompared, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
+                        result = result.Append(args_);
                     }
+
+                if (l is ILineArguments args)
+                {
+                    if (args is ILineArguments<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
+                    if (args is ILineArguments<ILineKeyNonCanonicallyCompared, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
+                    if (args is ILineArguments<ILineKeyCanonicallyCompared, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
+                    result = result.Append(args);
                 }
             }
-            return part;
-            */
-            return null;
+            return result;
+
+            bool ContainsParameter(string parameterName, string parameterValue)
+            {
+                if (parameters == null) parameters = line.GetParameterAsKeyValues();
+                return parameters.Contains(new KeyValuePair<string, string>(parameterName, parameterValue), KeyValuePairEqualityComparer<string, string>.Default);
+            }
         }
+
+        /// <summary>
+        /// Append <paramref name="anotherLine"/> to <paramref name="line"/>.
+        /// </summary>
+        /// <param name="line">part to append to</param>
+        /// <param name="anotherLine"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException">on append error</exception>
+        public static bool TryConcat(this ILine line, ILine anotherLine, out ILine result)
+        {
+            ILine _result = line;
+            for (ILine l = anotherLine; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineArgumentsEnumerable enumr)
+                    foreach (ILineArguments args_ in enumr)
+                        if (!_result.TryAppend(args_, out _result)) { result = null; return false; }
+                        
+
+                if (l is ILineArguments args)
+                    if (!_result.TryAppend(args, out _result)) { result = null; return false; }
+            }
+            result = _result;
+            return false;
+        }
+
+
     }
 }

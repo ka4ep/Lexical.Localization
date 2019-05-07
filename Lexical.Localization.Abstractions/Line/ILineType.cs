@@ -22,21 +22,21 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="name">type</param>
         /// <returns>new key</returns>
-        ILineKeyType Type(string name);
+        ILineType Type(string name);
 
         /// <summary>
         /// Create type section key for specific type.
         /// </summary>
         /// <param name="type">type</param>
         /// <returns>new key</returns>
-        ILineKeyType Type(Type type);
+        ILineType Type(Type type);
 
         /// <summary>
         /// Create type section for specific type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>new key</returns>
-        ILineKey<T> Type<T>();
+        ILine<T> Type<T>();
     }
 
     /// <summary>
@@ -59,23 +59,6 @@ namespace Lexical.Localization
     /// </summary>
     /// <typeparam name="T"/>
     public interface ILine<T> : ILine, ILineType
-    {
-    }
-
-    /// <summary>
-    /// Line key part with "Type" parameter assignment.
-    /// 
-    /// Type parameters are used with physical files and embedded resources.
-    /// </summary>
-    public interface ILineKeyType : ILineType, ILine
-    {
-    }
-
-    /// <summary>
-    /// Type section for <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface ILineKey<T> : ILine<T>, ILineKeyType
     {
     }
 

@@ -8,7 +8,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Signals that the class implements IStringLocalizer without refering to it.
     /// </summary>
-    public interface IStringLocalizerKey : ILocalizationKey
+    public interface IStringLocalizerLine : ILine
     {
     }
 }

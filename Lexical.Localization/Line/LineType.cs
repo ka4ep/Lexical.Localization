@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// "Type" key that carries <see cref="Type"/>. 
     /// </summary>
     [Serializable]
-    public class LineTypeKey : LineKey, ILineKeyType, ILineKeyNonCanonicallyCompared
+    public class LineType : LineKey, ILineType, ILineKeyNonCanonicallyCompared
     {
         /// <summary>
         /// Type, null if non-standard type.
@@ -26,17 +26,12 @@ namespace Lexical.Localization
         public Type Type { get => type; set => throw new InvalidOperationException(); }
 
         /// <summary>
-        /// Appending arguments.
-        /// </summary>
-        public override object[] GetAppendArguments() => new object[] { Tuple.Create<Type, Type>(typeof(ILineKeyType), Type) };
-
-        /// <summary>
         /// Create new type key.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="type"></param>
-        public LineTypeKey(ILineFactory appender, ILine prevKey, Type type) : base(appender, prevKey, "Type", type?.FullName)
+        public LineType(ILineFactory appender, ILine prevKey, Type type) : base(appender, prevKey, "Type", type?.FullName)
         {
             this.type = type;
         }
@@ -46,7 +41,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public LineTypeKey(SerializationInfo info, StreamingContext context) : base(info, context)
+        public LineType(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.type = info.GetValue("Type", typeof(Type)) as Type;
         }
@@ -67,19 +62,14 @@ namespace Lexical.Localization
     /// Create type key
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class LineTypeKey<T> : LineTypeKey, ILineKeyType, ILineKey<T>
+    public class LineType<T> : LineType, ILineType, ILine<T>
     {
-        /// <summary>
-        /// Appending arguments.
-        /// </summary>
-        public override object[] GetAppendArguments() => new object[] { Tuple.Create<Type>(typeof(ILineKey<T>)) };
-
         /// <summary>
         /// Create type key
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
-        public LineTypeKey(ILineFactory appender, ILine prevKey) : base(appender, prevKey, typeof(T))
+        public LineType(ILineFactory appender, ILine prevKey) : base(appender, prevKey, typeof(T))
         {
         }
 
@@ -88,17 +78,17 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public LineTypeKey(SerializationInfo info, StreamingContext context) : base(info, context)
+        public LineType(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
 
-    public partial class LinePartAppender : ILineFactory<ILineKeyType, Type>
+    public partial class LineAppender : ILineFactory<ILineType, Type>
     {
         /// <summary>
         /// Constructor of runtime types.
         /// </summary>
-        static RuntimeConstructor<ILineFactory, ILine, LineTypeKey> typeConstructor = new RuntimeConstructor<ILineFactory, ILine, LineTypeKey>(typeof(LineTypeKey<>));
+        static RuntimeConstructor<ILineFactory, ILine, LineType> typeConstructor = new RuntimeConstructor<ILineFactory, ILine, LineType>(typeof(LineType<>));
 
         /// <summary>
         /// Append part.
@@ -106,24 +96,28 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="type"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
-        ILineKeyType ILineFactory<ILineKeyType, Type>.Create(ILineFactory appender, ILine previous, Type type)
-            => typeConstructor.Create(type, appender, previous);
+        bool ILineFactory<ILineType, Type>.TryCreate(ILineFactory appender, ILine previous, Type type, out ILineType result)
+        {
+            result = typeConstructor.Create(type, appender, previous);
+            return true;
+        }
 
         /// <summary>
-        /// 
+        /// Address ILine{T} request.
         /// </summary>
         protected override void PostConstruction() => Add(new TypeAppender());
 
         class TypeAppender : ILineFactoryCastable
         {
+            static RuntimeConstructor<TypeAppender> typeConstructor = new RuntimeConstructor<TypeAppender>(typeof(TypeAppender<>));
             public ILineFactory<Part> Cast<Part>() where Part : ILine
             {
-                if (typeof(Part).GetGenericTypeDefinition() == typeof(ILineKey<>))
+                if (typeof(Part).GetGenericTypeDefinition() == typeof(ILine<>))
                 {
                     Type[] args = typeof(Part).GetGenericArguments();
-                    if (args != null && args.Length == 1)
-                        return (ILineFactory<Part>) Activator.CreateInstance(typeof(TypeAppender).MakeGenericType(args));
+                    if (args != null && args.Length == 1) return (ILineFactory<Part>)typeConstructor.Create(args[0]);
                 }
                 return null;
             }
@@ -132,9 +126,13 @@ namespace Lexical.Localization
             public ILineFactory<Part, A0, A1, A2> Cast<Part, A0, A1, A2>() where Part : ILine => null;
         }
 
-        class TypeAppender<T> : ILineFactory<ILineKey<T>>
+        class TypeAppender<T> : ILineFactory<ILine<T>>
         {
-            public ILineKey<T> Create(ILineFactory appender, ILine previous) => new LineTypeKey<T>(appender, previous);
+            public bool TryCreate(ILineFactory appender, ILine previous, out ILine<T> result)
+            {
+                result = new LineType<T>(appender, previous);
+                return true;
+            }
         }
     }
 
@@ -143,7 +141,7 @@ namespace Lexical.Localization
     /// "Type" key that carries <see cref="Type"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerTypeKey : StringLocalizerKey, ILineKeyType
+    public class StringLocalizerTypeKey : StringLocalizerKey, ILineType
     {
         /// <summary>
         /// Type, null if non-standard type.
@@ -188,7 +186,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class StringLocalizerPartAppender : ILineFactory1<ILineKeyType, Type>
+    public partial class StringLocalizerPartAppender : ILineFactory1<ILineType, Type>
     {
         /// <summary>
         /// Append part.
@@ -196,7 +194,7 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public ILineKeyType Append(ILine previous, Type type)
+        public ILineType Append(ILine previous, Type type)
             => new StringLocalizerTypeKey(this, previous, type);
     }
 */

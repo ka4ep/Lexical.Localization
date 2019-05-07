@@ -33,7 +33,7 @@ namespace Lexical.Localization
     [Serializable]
     public class StringLocalizerKey : LinePart, 
         ILocalizationKey, IAssetKeyAssignable, ILineInlinesAssigned, ILocalizationKeyFormattable, ILocalizationKeyCultureAssignable, ILocalizationKeyResolverAssignable, ILocalizationKeyFormatProviderAssignable, ILine, IAssetKeyTypeAssignable, IAssetKeyAssemblyAssignable, IAssetKeyResourceAssignable, IAssetKeyLocationAssignable, IAssetKeySectionAssignable, ILineParameterAssignable, IPluralRulesAssignableKey, ISerializable, IDynamicMetaObjectProvider, ILineDefaultHashCode,
-        IStringLocalizer, IStringLocalizerFactory, IStringLocalizerKey
+        IStringLocalizer, IStringLocalizerFactory, IStringLocalizerLine
     {
         /// <summary>
         /// Local name of this key.
@@ -1273,7 +1273,7 @@ namespace Lexical.Localization
         public IStringLocalizer WithCulture(CultureInfo newCulture)
         {
             // Find culture key
-            ILine oldCultureKey = this.GetCultureKey();
+            ILine oldCultureKey = this.TryGetCultureKey();
             // No culture key, create new
             if (oldCultureKey == null) return newCulture == null ? this : new _Culture(Appender, this, null, newCulture);
             // Old culture matches the new, return as is

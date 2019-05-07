@@ -156,7 +156,7 @@ namespace Lexical.Localization
                     // Use the StringLocalizerKey or StringLocalizerRoot implementation from th service.
                     if (localizationRoot is StringLocalizerKey casted) return casted;
                     // Create new root that implements IStringLocalizerFactory and acquires asset and policy with delegate
-                    return new StringLocalizerRoot.LinkedTo(StringLocalizerPartAppender.Instance, localizationRoot);
+                    return new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.Instance, localizationRoot);
                 }));
             }
 

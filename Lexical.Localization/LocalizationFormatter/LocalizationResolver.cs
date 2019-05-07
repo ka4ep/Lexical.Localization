@@ -37,7 +37,7 @@ namespace Lexical.Localization
         public LocalizationString ResolveString(ILine key)
         {
             // If there is no explicitly assigned culture in the key, try cultures from culture policy
-            string explicitCulture = key.GetCulture();
+            string explicitCulture = key.GetCultureName();
             IEnumerable<CultureInfo> cultures = null;
             bool rootCultureTried = false;
             if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
@@ -126,7 +126,7 @@ namespace Lexical.Localization
 
             // If there is no explicitly assigned culture in the key, try cultures from culture policy
             bool rootCultureTried = false;
-            string explicitCulture = key.GetCulture();
+            string explicitCulture = key.GetCultureName();
             IEnumerable<CultureInfo> cultures = null;
             if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
             {

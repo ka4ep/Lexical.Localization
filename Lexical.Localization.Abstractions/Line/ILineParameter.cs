@@ -64,7 +64,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Function that visits parameters
+    /// Function that visits parameters from root towards tail.
     /// </summary>
     /// <typeparam name="T">type for the visitor to choose</typeparam>
     /// <param name="parameter"></param>
@@ -74,7 +74,7 @@ namespace Lexical.Localization
     public static partial class ILineExtensions
     {
         /// <summary>
-        /// Append new parameter part.
+        /// Append parameter part.
         /// </summary>
         /// <param name="part"></param>
         /// <param name="parameterName">parameter name</param>
@@ -86,11 +86,12 @@ namespace Lexical.Localization
             => part.GetAppender().Create<ILineParameter, string, string>(part, parameterName, parameterValue);
 
         /// <summary>
-        /// Append new parameter part.
+        /// Append new parameter part as <see cref="ILineParameter"/>, as <see cref="ILineKeyCanonicallyCompared"/>, or as <see cref="ILineKeyNonCanonicallyCompared"/> depending
+        /// on parameter name and policy in <paramref name="parameterInfos"/>.
         /// </summary>
         /// <param name="part"></param>
         /// <param name="parameterName">parameter name</param>
-        /// <param name="parameterValue">(optional) parameter value</param>
+        /// <param name="parameterValue">parameter value</param>
         /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
         /// <returns>new parameter part</returns>
         /// <exception cref="LineException">If part could not be appended</exception>
@@ -107,14 +108,20 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Try to create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
+        /// Try to create a new key by appending an another key with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
         /// </summary>
         /// <param name="part"></param>
         /// <param name="parameterName">parameter name</param>
         /// <param name="parameterValue">(otional) parameter value.</param>
-        /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
-        public static ILine TryAppendParameter(this ILine part, string parameterName, string parameterValue)
-            => part.GetAppender().TryCreate<ILineParameter, string, string>(part, parameterName, parameterValue);
+        /// <param name="line"></param>
+        /// <returns>true if was appended to <paramref name="line"/></returns>
+        public static bool TryAppendParameter(this ILine part, string parameterName, string parameterValue, out ILine line)
+        {
+            ILineParameter result = null;
+            bool ok = part.GetAppender().TryCreate<ILineParameter, string, string>(part, parameterName, parameterValue, out result);
+            line = result;
+            return ok;
+        }
 
         /// <summary>
         /// Try to create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
@@ -123,17 +130,46 @@ namespace Lexical.Localization
         /// <param name="parameterName">parameter name</param>
         /// <param name="parameterValue">(otional) parameter value.</param>
         /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
+        /// <param name="line"></param>
         /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
-        public static ILine TryAppendParameter(this ILine part, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
+        public static bool TryAppendParameter(this ILine part, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfos, out ILine line)
         {
+            // Get appender 
+            ILineFactory appender;
+            if (!part.TryGetAppender(out appender)) { line = default; return false; }
+
             IParameterInfo info = null;
             if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info) && (info.IsCanonical || info.IsNonCanonical))
             {
-                if (info.IsCanonical) return part.GetAppender().TryCreate<ILineKeyCanonicallyCompared, string, string>(part, parameterName, parameterValue);
-                else if (info.IsNonCanonical) return part.GetAppender().TryCreate<ILineKeyNonCanonicallyCompared, string, string>(part, parameterName, parameterValue);
+                if (info.IsCanonical)
+                {
+                    ILineKeyCanonicallyCompared result = null;
+                    if (part.GetAppender().TryCreate<ILineKeyCanonicallyCompared, string, string>(part, parameterName, parameterValue, out result))
+                    {
+                        line = result;
+                        return true;
+                    }
+                }
+                else if (info.IsNonCanonical)
+                {
+                    ILineKeyNonCanonicallyCompared result = null;
+                    if (part.GetAppender().TryCreate<ILineKeyNonCanonicallyCompared, string, string>(part, parameterName, parameterValue, out result))
+                    {
+                        line = result;
+                        return true;
+                    }
+                }
             }
-            return part.GetAppender().TryCreate<ILineParameter, string, string>(part, parameterName, parameterValue);
-
+            {
+                ILineParameter result = null;
+                if (part.GetAppender().TryCreate<ILineParameter, string, string>(part, parameterName, parameterValue, out result))
+                {
+                    line = result;
+                    return true;
+                }
+            }
+            line = default;
+            return false;
         }
 
         /// <summary>
@@ -160,10 +196,9 @@ namespace Lexical.Localization
         /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
         /// <returns>new key that is appended to this key</returns>
         /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
-        public static ILine Parameter(this ILine part, IEnumerable<KeyValuePair<string, string>> parameters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
+        public static ILine Parameters(this ILine part, IEnumerable<KeyValuePair<string, string>> parameters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
         {
             ILineFactory appender = part.GetAppender();
-            if (appender == null) throw new LineException(part, "Appender is not found.");
             foreach (var parameter in parameters)
             {
                 if (parameter.Key == null) continue;
@@ -183,25 +218,24 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="part"></param>
         /// <param name="parameters"></param>
+        /// <param name="parameterInfos">(optional) rules whether to create <see cref="ILineKeyCanonicallyCompared"/>, <see cref="ILineKeyNonCanonicallyCompared"/>, or <see cref="ILineParameter"/>. If null everything is instantiated as <see cref="ILineParameter"/></param>
         /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
-        public static ILine TryAppendParameters(this ILine part, IEnumerable<KeyValuePair<string, string>> parameters)
+        public static bool TryAppendParameters(this ILine part, IEnumerable<KeyValuePair<string, string>> parameters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos, out ILine line)
         {
-            ILineFactory appender = part.GetAppender();
-            if (appender == null) return null;
-            foreach (var parameter in parameters)
-            {
-                if (part == null) return null;
-                part = appender.TryCreate<ILineParameter, string, string>(part, parameter.Key, parameter.Value);
-            }
-            return part;
+            ILine result = part;
+            foreach(var parameter in parameters)
+                if (!result.TryAppendParameter(parameter.Key, parameter.Value, parameterInfos, out result))
+                    { line = null; return false; }
+            line = result;
+            return true;
         }
 
         /// <summary>
-        /// Get effective (closes to root) parameter value
+        /// Get effective parameter value (closest to root).
         /// </summary>
         /// <param name="line"></param>
         /// <param name="parameterName"></param>
-        /// <returns></returns>
+        /// <returns>parameter or null</returns>
         public static string GetParameter(this ILine line, string parameterName)
         {
             string result = null;
@@ -209,12 +243,8 @@ namespace Lexical.Localization
             {
                 if (l is ILineParameter lineParameter && lineParameter.ParameterName == parameterName && lineParameter.ParameterValue != null) result = lineParameter.ParameterValue;
                 if (l is ILineParameterEnumerable lineParameters)
-                {
-                    var parms = lineParameters.Parameters;
-                    if (parms != null)
-                        foreach (var p in parms)
-                            if (p.Key == parameterName && p.Value != null) result = p.Value;
-                }
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName == parameterName && parameter.ParameterValue != null) { result = parameter.ParameterValue; break; }
             }
             return result;
         }
@@ -242,176 +272,147 @@ namespace Lexical.Localization
         /// <returns>number of parameters</returns>
         public static int GetParameterCount(this ILine line)
         {
-            if (line is ILineParameterEnumerable lineParameters) return lineParameters.Parameters.Count();
-
-            // Count parts
-            if (line is ILine part)
+            int result = 0;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                int count = 0;
-                for (ILine p = part; p != null; p = p.GetPreviousPart())
-                    if (p.GetParameterName() != null) count++;
-                return count;
+                if (l is ILineParameter lineParameter && lineParameter.ParameterName != null && lineParameter.ParameterValue != null) result++;
+                if (l is ILineParameterEnumerable lineParameters)
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName != null && parameter.ParameterValue != null) result++;
             }
-
-            return 0;
+            return result;
         }
 
         /// <summary>
-        /// Find key in the linked list by <paramref name="parameterName"/>.
+        /// Find the preceding part key in the linked list by <paramref name="parameterName"/>.
         /// Starts search from the tail and goes toward root.
         /// </summary>
-        /// <param name="tail">(optional)</param>
+        /// <param name="line">(optional)</param>
         /// <param name="parameterName">(optional)</param>
-        /// <returns>key or null</returns>
-        public static ILineParameter GetParameterPart(this ILine tail, string parameterName)
+        /// <returns><see cref="ILineParameter"/>, <see cref="ILineParameterEnumerable"/> or null</returns>
+        public static ILine GetParameterPart(this ILine line, string parameterName)
         {
-            if (tail == null || parameterName == null) return null;
-            for (ILine p = tail; p != null; p = p.GetPreviousPart())
-                if (p is ILineParameter part && part.ParameterName == parameterName) return part;
+            if (line == null || parameterName == null) return null;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineParameter lineParameter && lineParameter.ParameterName == parameterName) return lineParameter;
+                if (l is ILineParameterEnumerable lineParameters)
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName == parameterName) return l;
+            }
             return null;
         }
 
         /// <summary>
-        /// Get previous valid parameter part.
+        /// Get preceding non-null parameter part.
         /// </summary>
-        /// <param name="part"></param>
-        /// <returns>key or null</returns>
-        public static ILineParameter GetPreviousParameterPart(this ILine part)
+        /// <param name="line"></param>
+        /// <returns><see cref="ILineParameter"/>, <see cref="ILineParameterEnumerable"/> or null</returns>
+        public static ILine GetPreviousParameterPart(this ILine line)
         {
-            if (part == null) return null;
-            for (ILine k = part.GetPreviousPart(); k != null; k = k.GetPreviousPart())
-                if (k is ILineParameter parameterAssigned)
-                    if (!string.IsNullOrEmpty(parameterAssigned.ParameterName))
-                        return parameterAssigned;
+            if (line == null) return null;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineParameter lineParameter && lineParameter.ParameterName != null) return lineParameter;
+                if (l is ILineParameterEnumerable lineParameters && lineParameters.FirstOrDefault() != null)
+                    return l;
+            }
             return null;
         }
 
         /// <summary>
-        /// Get all parameters as parameterName,parameterValue array.
+        /// Get all parameters as parameterName,parameterValue as array with value from root to tail.
         /// </summary>
         /// <param name="line">(optional) line to read parameters of</param>
         /// <returns>array of parameters</returns>
-        public static IList<KeyValuePair<string, string>> GetParameters(this ILine line)
+        public static ILineParameter[] GetParameters(this ILine line)
         {
-            if (line is ILineParameterEnumerable lineParameters)
+            int count = line.GetParameterCount();
+            if (count == 0) return no_parameters;
+            ILineParameter[] result = new ILineParameter[count];
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                var enumr = lineParameters.Parameters;
-                return enumr is IList<KeyValuePair<string, string>> list ? list : enumr.ToList();
+                if (l is ILineParameter lineParameter && lineParameter.ParameterName != null && lineParameter.ParameterValue != null) result[--count] = lineParameter;
+                if (l is ILineParameterEnumerable lineParameters)
+                {
+                    int endIx = count;
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName != null && parameter.ParameterValue != null) result[--count] = parameter;
+
+                    // Reverse between count .. endIx
+                    int mid = count+ ((endIx-count)/2);
+                    for (int i = count, j = endIx-1; i < mid; i++, j--)
+                    {
+                        // Swap result[i] and result[j]
+                        ILineParameter tmp = result[i];
+                        result[i] = result[j];
+                        result[j] = tmp;
+                    }
+                }
             }
-
-            if (line is ILine part)
-            {
-                int count = 0;
-                for (ILine p = part; p != null; p = p.GetPreviousPart())
-                    if (p is ILineParameter parameter && parameter.ParameterName != null && parameter.ParameterValue != null) count++;
-
-                if (count == 0) return no_parameters;
-
-                KeyValuePair<string, string>[] result = new KeyValuePair<string, string>[count];
-                int ix = count;
-                for (ILine p = part; p != null; p = p.GetPreviousPart())
-                    if (p is ILineParameter parameter && parameter.ParameterName != null && parameter.ParameterValue != null)
-                        result[--ix] = new KeyValuePair<string, string>(parameter.ParameterName, parameter.ParameterValue);
-
-                return result;
-            }
-
-            return no_parameters;
+            return result;
         }
-        static KeyValuePair<string, string>[] no_parameters = new KeyValuePair<string, string>[0];
+        static ILineParameter[] no_parameters = new ILineParameter[0];
+
+        /// <summary>
+        /// Get all parameters as parameterName,parameterValue as array with value from root to tail.
+        /// </summary>
+        /// <param name="line">(optional) line to read parameters of</param>
+        /// <returns>array of parameters</returns>
+        public static KeyValuePair<string, string>[] GetParameterAsKeyValues(this ILine line)
+        {
+            int count = line.GetParameterCount();
+            if (count == 0) return no_parameter_keyvalues;
+            KeyValuePair<string, string>[] result = new KeyValuePair<string, string>[count];
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineParameter lineParameter && lineParameter.ParameterName != null && lineParameter.ParameterValue != null)
+                    result[--count] = new KeyValuePair<string, string>(lineParameter.ParameterName, lineParameter.ParameterValue);
+
+                if (l is ILineParameterEnumerable lineParameters)
+                {
+                    int endIx = count;
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName != null && parameter.ParameterValue != null)
+                            result[--count] = new KeyValuePair<string, string>(parameter.ParameterName, parameter.ParameterValue);
+
+                    // Reverse between count .. endIx
+                    int mid = count + ((endIx - count) / 2);
+                    for (int i = count, j = endIx - 1; i < mid; i++, j--)
+                    {
+                        // Swap result[i] and result[j]
+                        KeyValuePair<string, string> tmp = result[i];
+                        result[i] = result[j];
+                        result[j] = tmp;
+                    }
+                }
+            }
+            return result;
+        }
+        static KeyValuePair<string, string>[] no_parameter_keyvalues = new KeyValuePair<string, string>[0];
 
         /// <summary>
         /// Visit parameter parts from root towards key
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="visitor"></param>
         /// <param name="data"></param>
-        public static void VisitParameters<T>(this ILine key, ParameterVisitor<T> visitor, ref T data)
+        public static void VisitParameters<T>(this ILine line, ParameterVisitor<T> visitor, ref T data)
         {
             // Push to stack
-            ILine prevKey = key.GetPreviousPart();
+            ILine prevKey = line.GetPreviousPart();
             if (prevKey != null) VisitParameters(prevKey, visitor, ref data);
 
             // Pop from stack in reverse order
-            if (key is ILineParameter parameter && parameter.ParameterName!=null) visitor(parameter.ParameterName, parameter.ParameterValue, ref data);
+            if (line is ILineParameterEnumerable enumr)
+                foreach(var parameter_ in enumr)
+                    if (parameter_.ParameterName != null && parameter_.ParameterValue != null)
+                        visitor(parameter_, ref data);
+            if (line is ILineParameter parameter && parameter.ParameterName!=null && parameter.ParameterValue != null)
+                visitor(parameter, ref data);
         }
 
-        /// <summary>
-        /// Create a new key by appending an enumeration of parameters.
-        /// 
-        /// If non-canonical parameter is already in the <paramref name="left"/>, then its not appended.
-        /// </summary>
-        /// <param name="left"></param>
-        /// <param name="right">enumeration of parameters to append</param>
-        /// <returns>new key that is appended to this key</returns>
-        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
-        public static ILine ConcatIfNew(this ILine left, ILine right)
-        {
-            if (right == null) return left;
-            if (left == null) return right;
-            ILine result = left;
-            foreach (ILine k in right.ToArray())
-            {
-                if (k is ILineParameter parameter)
-                {
-                    string parameterName = parameter.ParameterName, parameterValue = k.GetParameterValue();
-                    if (string.IsNullOrEmpty(parameterName) || parameterValue == null) continue;
-
-                    // Check if parameterName of k already exists in "result"/"left".
-                    if (k is ILineKeyNonCanonicallyCompared && left.GetParameterPart(parameterName) != null) continue;
-
-                    result = result.Parameter(parameterName, parameterValue);
-                }
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Concatenate <paramref name="anotherKey"/> to this <paramref name="part"/> and return the concatenated key.
-        /// If <paramref name="anotherKey"/> contains non-parametrizable nodes such as <see cref="ILineInlines"/> or <see cref="ILineFormatArgsPart"/>
-        /// then these keys are not appended to the result.
-        /// </summary>
-        /// <param name="part">Key that must implement <see cref="ILineParameterAssignable"/>.</param>
-        /// <param name="anotherKey"></param>
-        /// <returns>concatenated key</returns>
-        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable</exception>
-        public static ILine Concat(this ILine part, ILine anotherKey)
-        {
-            ILine result = part;
-            anotherKey.VisitFromRoot(_concatVisitor, ref result);
-            return result;
-        }
-
-        /// <summary>
-        /// Try concatenate <paramref name="anotherKey"/> to this <paramref name="part"/> and return the concatenated key.
-        /// If <paramref name="anotherKey"/> contains non-parametrizable nodes such as <see cref="ILineInlines"/> or <see cref="ILineFormatArgsPart"/>
-        /// then these keys are not appended to the result.
-        /// </summary>
-        /// <param name="part">Key that must implement <see cref="ILineParameterAssignable"/>.</param>
-        /// <param name="anotherKey"></param>
-        /// <returns>concatenated key or null</returns>
-        public static ILine TryConcat(this ILine part, ILine anotherKey)
-        {
-            ILineFactory appender = part.GetAppender();
-            if (appender == null) return null;
-
-            ILine result = part;
-            anotherKey.VisitFromRoot(_tryConcatVisitor, ref result);
-            return result;
-        }
-
-        static LinePartVisitor<ILine> _concatVisitor = concatVisitor, _tryConcatVisitor = tryConcatVisitor;
-        private static void concatVisitor(ILine part, ref ILine result)
-        {
-            if (part is ILineParameter keyParametrized)
-                result = part.Parameter(keyParametrized.ParameterName, part.GetParameterValue());
-        }
-        private static void tryConcatVisitor(ILine key, ref ILine result)
-        {
-            if (key is ILineParameter keyParametrized)
-                result = result?.TryAppendParameter(keyParametrized.ParameterName, key.GetParameterValue());
-        }
 
         /// <summary>
         /// Find value for a parameter.

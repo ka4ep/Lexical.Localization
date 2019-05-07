@@ -212,7 +212,7 @@ namespace Lexical.Localization
             if (factory == null) throw new LineException(previous, "Appender is not found.");
             if (factory is ILineFactoryByArgument argFactory && argFactory.TryCreate(factory, previous, arguments, out line)) return true;
 
-            // TODO Fix this //
+            // TODO Fix reflection //
 
             try
             {
