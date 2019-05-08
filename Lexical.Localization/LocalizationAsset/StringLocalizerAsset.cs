@@ -29,13 +29,36 @@ namespace Lexical.Localization
         ILocalizationStringLinesEnumerable,  // Doesn't work
         IAssetReloadable
     {
+        /// <summary>
+        /// Source string localizer
+        /// </summary>
         public readonly IStringLocalizer stringLocalizer;
+
+        /// <summary>
+        /// Selected culture of localizer
+        /// </summary>
         public readonly CultureInfo culture;
+
+        /// <summary>
+        /// Value string parser
+        /// </summary>
         public readonly ILocalizationStringFormatParser ValueParser;
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected ConcurrentDictionary<CultureInfo, StringLocalizerAsset> culture_map;
+
+        /// <summary>
+        /// 
+        /// </summary>
         protected Func<CultureInfo, StringLocalizerAsset> createFunc;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stringLocalizer"></param>
+        /// <param name="valueParser"></param>
         public StringLocalizerAsset(IStringLocalizer stringLocalizer, ILocalizationStringFormatParser valueParser = default)
         {
             this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
@@ -43,6 +66,13 @@ namespace Lexical.Localization
             this.createFunc = ci => new StringLocalizerAsset(stringLocalizer.WithCulture(ci), ci);
             this.ValueParser = ValueParser ?? LexicalStringFormat.Instance;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stringLocalizer"></param>
+        /// <param name="culture"></param>
+        /// <param name="valueParser"></param>
         public StringLocalizerAsset(IStringLocalizer stringLocalizer, CultureInfo culture, ILocalizationStringFormatParser valueParser = default)
         {
             this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
@@ -68,9 +98,9 @@ namespace Lexical.Localization
             /// 
             /// </summary>
             /// <param name="stringLocalizer"></param>
-            /// <param name="basename">Embed location, e.g. "Resources" folder in an assembly</param>
-            /// <param name="location">Assembly name</param>
+            /// <param name="type"></param>
             /// <param name="culture"></param>
+            /// <param name="valueParser"></param>
             public Type(IStringLocalizer stringLocalizer, System.Type type, CultureInfo culture, ILocalizationStringFormatParser valueParser = default) : base(stringLocalizer, culture, valueParser)
             {
                 this.type = type ?? throw new ArgumentNullException(nameof(type));
@@ -83,8 +113,16 @@ namespace Lexical.Localization
         /// </summary>
         public class Location : StringLocalizerAsset
         {
+            /// <summary>
+            /// Location or assembly
+            /// </summary>
             public readonly string location;
+
+            /// <summary>
+            /// Basename (embedded resource prefix)
+            /// </summary>
             public readonly string basename;
+
             /// <summary>
             /// 
             /// </summary>
@@ -92,6 +130,7 @@ namespace Lexical.Localization
             /// <param name="basename">Embed location, e.g. "Resources" folder in an assembly</param>
             /// <param name="location">Assembly name</param>
             /// <param name="culture"></param>
+            /// <param name="valueParser"></param>
             public Location(IStringLocalizer stringLocalizer, string basename, string location, CultureInfo culture, ILocalizationStringFormatParser valueParser = default) : base(stringLocalizer, culture, valueParser)
             {
                 this.basename = basename ?? throw new ArgumentNullException(nameof(basename));
@@ -104,6 +143,7 @@ namespace Lexical.Localization
         /// Find a localizer that matches the key.
         /// </summary>
         /// <param name="key"></param>
+        /// <param name="key_culture"></param>
         /// <returns>localizer or null</returns>
         StringLocalizerAsset FindStringLocalizer(ILine key, CultureInfo key_culture)
         {
@@ -121,6 +161,11 @@ namespace Lexical.Localization
             return null;
         }
 
+        /// <summary>
+        /// Match <paramref name="key"/> to content in <see cref="IStringLocalizer"/>.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public IFormulationString GetString(ILine key)
         {
             CultureInfo key_culture = key.GetCultureInfo();
@@ -139,10 +184,8 @@ namespace Lexical.Localization
             }
 
             // Parse basename/location/type from key
-            ILineAssembly asmSectionToStrip;
-            IAssetKeyResourceAssigned resSectionToStrip;
-            ILineKeyType typeSectionToStrip;
-            int x = key.FindResourceKeys(out asmSectionToStrip, out resSectionToStrip, out typeSectionToStrip);
+            string _location, _basename, _type;
+            int x = key.FindResourceInfos(out _type, out _location, out _basename);
 
             // If key has type, and this handler is also assigned to type, but they mismatch, don't strip the type name from key (below)
             if (x == 1)
@@ -152,14 +195,14 @@ namespace Lexical.Localization
                     // This adapter is assigned to a specific type.
                     // If a request is made to another type, if might be because it is needed in the name.
                     // So lets not strip the type part from the name we will build (below)
-                    if (!typeSectionToStrip.Type.Equals(type_assigned.type)) typeSectionToStrip = null;
+                    if (!_type.Equals(type_assigned.type.FullName)) _type = null;
                 }
                 else
                 {
                     // This adapter is not assigned to any Type. 
                     // If key has type hint, we can try to fetch for that full name.
                     // Therefore lets not strip type part from the name we will build (below)
-                    typeSectionToStrip = null;
+                    _type = null;
                 }
             }
 
@@ -170,14 +213,14 @@ namespace Lexical.Localization
                 {
                     // This adapter is assigned for specific assembly/embed_basename.
                     // If key has these hints, and they mismatch, we cant retrieve for the key.
-                    if (!asmSectionToStrip.GetParameterValue().Equals(location_assigned.location) || (!resSectionToStrip.GetParameterValue().Equals(location_assigned.basename))) return null;
+                    if (!_location.Equals(location_assigned.location) || (!_basename.Equals(location_assigned.basename))) return null;
                 } else
                 {
                     // This adapter is not assigned for any specific assembly/embed_basename.
                     // If key has these hints, we can try to fetch for that full name.
                     // Therefore lets not strip location part from the name (below).
-                    asmSectionToStrip = null;
-                    resSectionToStrip = null;
+                    _location = null;
+                    _basename = null;
                 }
             }
 
@@ -186,22 +229,47 @@ namespace Lexical.Localization
             int length = 0;
             for(ILine k = key; k!=null; k=k.GetPreviousPart())
             {
-                string value = k.GetParameterValue();
-                if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILineCulture || string.IsNullOrEmpty(value)) continue;
-                if (length > 0) length++;
-                length += value.Length;
+                if (k is ILineParameterEnumerable lineParameters)
+                    foreach(var lineParameter in lineParameters)
+                    {
+                        if (lineParameter.ParameterValue == _type || lineParameter.ParameterValue == _location || lineParameter.ParameterValue == _basename) continue; // break; ?
+                        string value = lineParameter.ParameterValue;
+                        if (lineParameter.ParameterName == "Culture" || string.IsNullOrEmpty(value)) continue;
+                        if (length > 0) length++;
+                        length += value.Length;
+                    }
+                if (k is ILineParameter parameter)
+                {
+                    if (parameter.ParameterValue == _type || parameter.ParameterValue == _location || parameter.ParameterValue == _basename) continue; // break; ?
+                    string value = parameter.ParameterValue;
+                    if (parameter.ParameterName == "Culture" || string.IsNullOrEmpty(value)) continue;
+                    if (length > 0) length++;
+                    length += value.Length;
+                }
             }
             char[] chars = new char[length];
             int ix = length;
             for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
-                string value = k.GetParameterValue();
-                if (k == typeSectionToStrip || k == asmSectionToStrip || k == resSectionToStrip) break;
-                if (k is ILineCulture || string.IsNullOrEmpty(value)) continue;
-                if (ix < length) chars[--ix] = '.';
-                ix -= value.Length;
-                value.CopyTo(0, chars, ix, value.Length);
+                if (k is ILineParameterEnumerable lineParameters)
+                    foreach (var lineParameter in lineParameters)
+                    {
+                        if (lineParameter.ParameterValue == _type || lineParameter.ParameterValue == _location || lineParameter.ParameterValue == _basename) continue; // break; ?
+                        string value = lineParameter.ParameterValue;
+                        if (lineParameter.ParameterName == "Culture" || string.IsNullOrEmpty(value)) continue;
+                        if (ix < length) chars[--ix] = '.';
+                        ix -= value.Length;
+                        value.CopyTo(0, chars, ix, value.Length);
+                    }
+                if (k is ILineParameter parameter)
+                {
+                    if (parameter.ParameterValue == _type || parameter.ParameterValue == _location || parameter.ParameterValue == _basename) continue; // break; ?
+                    string value = parameter.ParameterValue;
+                    if (parameter.ParameterName == "Culture" || string.IsNullOrEmpty(value)) continue;
+                    if (ix < length) chars[--ix] = '.';
+                    ix -= value.Length;
+                    value.CopyTo(0, chars, ix, value.Length);
+                }
             }
             string id = new String(chars);
 
@@ -211,6 +279,11 @@ namespace Lexical.Localization
             return ValueParser.Parse(str.Value);
         }
 
+        /// <summary>
+        /// Get all strings in the asset
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILine key = null)
         {
             CultureInfo key_culture = key?.GetCultureInfo();
@@ -235,11 +308,20 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Get all strings in the asset
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(ILine key = null)
         {
             return GetStringLines(key);
         }
 
+        /// <summary>
+        /// Flush cache.
+        /// </summary>
+        /// <returns></returns>
         public IAsset Reload()
         {
             culture_map.Clear();
@@ -250,77 +332,81 @@ namespace Lexical.Localization
 
     public static partial class MsLocalizationExtensions
     {
+        /// <summary>
+        /// Convert to asset
+        /// </summary>
+        /// <param name="stringLocalizer"></param>
+        /// <returns></returns>
         public static IAsset ToAsset(this IStringLocalizer stringLocalizer)
             => new StringLocalizerAsset(stringLocalizer);
+
+        /// <summary>
+        /// Convert to asset source.
+        /// </summary>
+        /// <param name="stringLocalizer"></param>
+        /// <returns></returns>
         public static IAssetSource ToSource(this IStringLocalizer stringLocalizer)
             => new StringLocalizerAsset(stringLocalizer).ToSource();
 
 
         /// <summary>
-        /// Searches key for either 
-        ///    <see cref="ILineKeyType"/> with type
-        ///    <see cref="ILineAssembly"/> and <see cref="IAssetKeyResourceAssigned"/> with string, not type.
+        /// Searches key for either:
+        /// <list type="bullet">
+        ///     <item><see cref="ILineType"/></item>
+        ///     <item>"BaseName" and "Location"</item>
+        ///     <item>"BaseName" and "Assembly"</item>
+        /// </list>
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="type"></param>
-        /// <param name="basename"></param>
-        /// <param name="location"></param>
         /// <returns>
         ///     0 found nothing
         ///     1 found type
-        ///     2 found basename + location</returns>
-        public static int FindResourceInfos(this ILine key, out Type type, out string basename, out string location)
+        ///     2 found basename + location
+        /// </returns>
+        public static int FindResourceInfos(this ILine line, out string type, out string baseName, out string location)
         {
-            ILineAssembly asmSection;
-            IAssetKeyResourceAssigned resSection;
-            ILineKeyType typeSection;
-            int x = key.FindResourceKeys(out asmSection, out resSection, out typeSection);
-            if (x == 1) { type = typeSection.Type; basename = null; location = null; }
-            if (x == 2) { type = null; basename = typeSection.GetParameterValue(); location = asmSection.GetParameterValue(); }
-            type = null; basename = null; location = null;
-            return 0;
-        }
-        /// <summary>
-        /// Searches key for either 
-        ///    <see cref="ILineKeyType"/> with type
-        ///    <see cref="ILineAssembly"/> and <see cref="IAssetKeyResourceAssigned"/> with string, not type.
-        /// </summary>
-        /// <returns>
-        ///     0 found nothing
-        ///     1 found typeSection
-        ///     2 found asmSection + typeSection</returns>
-        public static int FindResourceKeys(this ILine key, out ILineAssembly asmSection, out IAssetKeyResourceAssigned resSection, out ILineKeyType typeSection)
-        {
-            ILineAssembly _asmSection = null;
-            IAssetKeyResourceAssigned _resSection = null;
-            ILineKeyType _typeSection = null;
-            for (ILine k = key; k != null; k = k.GetPreviousPart())
+            string _location = null, _basename = null;
+            string _type = null;
+            for (ILine l = line; l != null; l=l.GetPreviousPart())
             {
-                if (k is ILineAssembly __asmSection) _asmSection = __asmSection;
-                else if (k is IAssetKeyResourceAssigned __resSection) _resSection = __resSection;
-                else if (k is ILineKeyType __typeSection) _typeSection = __typeSection;
+                if (l is ILineParameterEnumerable lineParameters)
+                    foreach(var parameter in lineParameters)
+                    {
+                        if (parameter is ILineType lineType && lineType.Type != null) _type = lineType.Type.FullName;
+                        else if (parameter.ParameterName == "Type" && parameter.ParameterValue != null) _type = parameter.ParameterValue;
+                        else if ((parameter.ParameterName == "Assembly" || parameter.ParameterName == "Location") && parameter.ParameterValue!= null) _location = parameter.ParameterValue;
+                        else if (parameter.ParameterName == "BaseName" && parameter.ParameterValue != null) _basename = parameter.ParameterValue; ;
+                    }
+                else if (l is ILineParameter parameter)
+                {
+                    if (parameter is ILineType lineType && lineType.Type != null) _type = lineType.Type.FullName;
+                    else if (parameter.ParameterName == "Type" && parameter.ParameterValue != null) _type = parameter.ParameterValue;
+                    else if ((parameter.ParameterName == "Assembly" || parameter.ParameterName == "Location") && parameter.ParameterValue != null) _location = parameter.ParameterValue;
+                    else if (parameter.ParameterName == "BaseName" && parameter.ParameterValue != null) _basename = parameter.ParameterValue; ;
+                }
             }
 
-            if (_asmSection != null && _resSection != null)
+
+            if (_location != null && _basename != null)
             {
-                asmSection = _asmSection;
-                resSection = _resSection;
-                typeSection = null;
+                location = _location;
+                baseName = _basename;
+                type = null;
                 return 2;
             }
-            if (_typeSection != null && _typeSection.Type != null)
+            if (_type != null)
             {
-                asmSection = null;
-                resSection = null;
-                typeSection = _typeSection;
+                location = null;
+                baseName = null;
+                type = _type;
                 return 1;
             }
 
-            asmSection = null;
-            resSection = null;
-            typeSection = null;
+            location = null;
+            baseName = null;
+            type = null;
             return 0;
         }
     }
 }
+
 

@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Lexical.Localization.Internal;
-using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
@@ -19,9 +18,19 @@ namespace Lexical.Localization
     /// </summary>
     public class AssetCache : AssetComposition, IAssetCache
     {
+        /// <summary>
+        /// Cache options.
+        /// </summary>
         public AssetCacheOptions Options { get; }
+
+        /// <summary>
+        /// Source asset that is cached.
+        /// </summary>
         public IAsset Source { get; internal set; }
 
+        /// <summary>
+        /// If true, then <see cref="Source"/> is disposed along with this object.
+        /// </summary>
         protected bool disposeSource;
 
         /// <summary>
@@ -106,6 +115,10 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Print info
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}({Source.ToString()})";
     }
@@ -117,15 +130,27 @@ namespace Lexical.Localization
     {
         Action<IAssetCache> configurer;
 
+        /// <summary>
+        /// Create source that adds cache
+        /// </summary>
+        /// <param name="configurer"></param>
         public AssetCacheSource(Action<IAssetCache> configurer)
         {
             this.configurer = configurer;
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="list"></param>
         public void Build(IList<IAsset> list)
         {
         }
 
+        /// <summary>
+        /// Wrap asset into cache.
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <returns></returns>
         public IAsset PostBuild(IAsset asset)
         {
             AssetCache cache = new AssetCache(asset);
@@ -217,7 +242,6 @@ namespace Lexical.Localization
         public AssetCacheOptions Options { get; internal set; }
 
         LineComparer comparer;
-        AssetKeyCloner cloner;
 
         /// <summary>
         /// Cache that is discarded when <see cref="IAssetReloadable.Reload"/> is called.
@@ -286,7 +310,6 @@ namespace Lexical.Localization
         {
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
-            this.cloner = new AssetKeyCloner(Key.Root);
             this.comparer = LineComparer.Default;
             this.cache = new Cache(comparer);
         }
@@ -563,7 +586,6 @@ namespace Lexical.Localization
         public AssetCacheOptions Options { get; internal set; }
 
         LineComparer comparer;
-        AssetKeyCloner cloner;
 
         /// <summary>
         /// Cache that is discarded when <see cref="IAssetReloadable.Reload"/> is called.
@@ -632,7 +654,6 @@ namespace Lexical.Localization
         {
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
             this.Options = options ?? throw new ArgumentNullException(nameof(options));
-            this.cloner = new AssetKeyCloner(Key.Root);
             this.comparer = LineComparer.Default;
             this.cache = new Cache(comparer);
         }

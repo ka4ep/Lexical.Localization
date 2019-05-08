@@ -3,6 +3,9 @@
 // Date:           2.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using System;
+using System.Collections.Generic;
+
 namespace Lexical.Localization
 {
     /// <summary>
@@ -101,41 +104,41 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Finds part that implements T when walking towards root.
+        /// Finds part that implements T when walking from tail towards root.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="tail"></param>
+        /// <param name="line"></param>
         /// <returns>T or null</returns>
-        public static T Find<T>(this ILine tail) where T : ILine
+        public static T Find<T>(this ILine line) where T : ILine
         {
-            for (; tail != null; tail = tail.GetPreviousPart())
-                if (tail is T casted) return casted;
+            for (; line != null; line = line.GetPreviousPart())
+                if (line is T casted) return casted;
             return default;
         }
 
         /// <summary>
-        /// Finds part that implements T when walking towards root.
+        /// Finds part that implements T when walking from tail towards root.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="tail"></param>
+        /// <param name="line"></param>
         /// <returns>T</returns>
         /// <exception cref="LineException">if T is not found</exception>
-        public static T Get<T>(this ILine tail) where T : ILine
+        public static T Get<T>(this ILine line) where T : ILine
         {
-            for (; tail != null; tail = tail.GetPreviousPart())
-                if (tail is T casted) return casted;
-            throw new LineException(tail, $"{typeof(T).FullName} is not found.");
+            for (; line != null; line = line.GetPreviousPart())
+                if (line is T casted) return casted;
+            throw new LineException(line, $"{typeof(T).FullName} is not found.");
         }
 
         /// <summary>
         /// Finds part that implements T when walking towards root, start from previous part.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="part"></param>
+        /// <param name="line"></param>
         /// <returns>T or null</returns>
-        public static T FindPrev<T>(this ILine part) where T : ILine
+        public static T FindPrev<T>(this ILine line) where T : ILine
         {
-            for (ILine k = part.GetPreviousPart(); k != null; k = k.GetPreviousPart())
+            for (ILine k = line.GetPreviousPart(); k != null; k = k.GetPreviousPart())
                 if (k is T casted) return casted;
             return default;
         }
