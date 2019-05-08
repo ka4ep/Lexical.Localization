@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           7.4.2019
+// Date:           3.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
@@ -10,14 +10,114 @@ using System.IO;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Extension methods for adding loggers to <see cref="ILocalizationResolver"/>s.
+    /// "Logger" key that carries <see cref="Logger"/>. 
     /// </summary>
-    public static partial class LocalizationKeyLoggerExtensions
+    [Serializable]
+    public class LineLogger : LineBase, ILineLogger, ILineArguments<ILineLogger, IObserver<LocalizationString>>
     {
         /// <summary>
-        /// Try to add a <paramref name="logger"/> to <paramref name="key"/>.
+        /// Logger, null if non-standard assembly.
         /// </summary>
-        /// <param name="key"></param>
+        protected IObserver<LocalizationString> logger;
+
+        /// <summary>
+        /// Logger property
+        /// </summary>
+        public IObserver<LocalizationString> Logger { get => logger; set => throw new InvalidOperationException(); }
+
+        /// <summary>
+        /// Appending arguments.
+        /// </summary>
+        public IObserver<LocalizationString> Argument0 => logger;
+
+        /// <summary>
+        /// Create new line part.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="prevKey"></param>
+        /// <param name="logger"></param>
+        public LineLogger(ILineFactory appender, ILine prevKey, IObserver<LocalizationString> logger) : base(appender, prevKey)
+        {
+            this.logger = logger;
+        }
+    }
+
+    public partial class LineAppender : ILineFactory<ILineLogger, IObserver<LocalizationString>>
+    {
+        /// <summary>
+        /// Append part.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="previous"></param>
+        /// <param name="logger"></param>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        bool ILineFactory<ILineLogger, IObserver<LocalizationString>>.TryCreate(ILineFactory appender, ILine previous, IObserver<LocalizationString> logger, out ILineLogger line)
+        {
+            line = new LineLogger(appender, previous, logger);
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// "Logger" key that carries <see cref="Logger"/>. 
+    /// </summary>
+    [Serializable]
+    public class StringLocalizerLogger : StringLocalizerBase, ILineLogger, ILineArguments<ILineLogger, IObserver<LocalizationString>>
+    {
+        /// <summary>
+        /// Logger, null if non-standard assembly.
+        /// </summary>
+        protected IObserver<LocalizationString> logger;
+
+        /// <summary>
+        /// Logger property
+        /// </summary>
+        public IObserver<LocalizationString> Logger { get => logger; set => throw new InvalidOperationException(); }
+
+        /// <summary>
+        /// Appending arguments.
+        /// </summary>
+        public IObserver<LocalizationString> Argument0 => logger;
+
+        /// <summary>
+        /// Create new line part.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="prevKey"></param>
+        /// <param name="logger"></param>
+        public StringLocalizerLogger(ILineFactory appender, ILine prevKey, IObserver<LocalizationString> logger) : base(appender, prevKey)
+        {
+            this.logger = logger;
+        }
+    }
+
+    public partial class StringLocalizerAppender : ILineFactory<ILineLogger, IObserver<LocalizationString>>
+    {
+        /// <summary>
+        /// Append part.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="previous"></param>
+        /// <param name="logger"></param>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        bool ILineFactory<ILineLogger, IObserver<LocalizationString>>.TryCreate(ILineFactory appender, ILine previous, IObserver<LocalizationString> logger, out ILineLogger line)
+        {
+            line = new StringLocalizerLogger(appender, previous, logger);
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Extension methods for adding loggers.
+    /// </summary>
+    public static partial class LineLoggerExtensions
+    {
+        /// <summary>
+        /// Try to add a <paramref name="logger"/> to <paramref name="line"/>.
+        /// </summary>
+        /// <param name="line"></param>
         /// <param name="logger">writer such as Console.Out</param>
         /// <param name="severity">
         ///     <list type="bullet">
@@ -27,17 +127,14 @@ namespace Lexical.Localization
         ///         <item>3 - Failed</item>
         ///     </list>
         /// </param>
-        /// <returns>disposable subscription handle, or null if <paramref name="key"/> cannot be observed</returns>
-        public static ILineLogger Logger(this ILine key, TextWriter logger, int severity = 1)
-        {
-            if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationTextLogger(logger, severity));
-            throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
-        }
+        /// <returns>disposable subscription handle, or null if <paramref name="line"/> cannot be observed</returns>
+        public static ILineLogger Logger(this ILine line, TextWriter logger, int severity = 1)
+            => line.Logger(new LineTextLogger(logger, severity));
 
         /// <summary>
         /// Append <see cref="System.Diagnostics.Trace"/> logger. 
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="severity">
         ///     <list type="bullet">
         ///         <item>0 - OK</item>
@@ -47,17 +144,14 @@ namespace Lexical.Localization
         ///     </list>
         /// </param>
         /// <returns></returns>
-        public static ILineLogger DiagnosticsTrace(this ILine key, int severity = 1)
-        {
-            if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationDiagnosticsTrace(severity));
-            throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
-        }
+        public static ILineLogger DiagnosticsTrace(this ILine line, int severity = 1)
+            => line.Logger(new LineDiagnosticsTrace(severity));
     }
 
     /// <summary>
     /// Observes resolved keys and writes log lines to <see cref="TextWriter"/>.
     /// </summary>
-    public class LocalizationTextLogger : IObserver<LocalizationString>
+    public class LineTextLogger : IObserver<LocalizationString>
     {
         TextWriter logger;
 
@@ -72,13 +166,13 @@ namespace Lexical.Localization
         /// </list>
         /// </summary>
         int severity;
-        
+
         /// <summary>
         /// Create logger
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="severity"></param>
-        public LocalizationTextLogger(TextWriter logger, int severity)
+        public LineTextLogger(TextWriter logger, int severity)
         {
             this.logger = logger;
             this.severity = severity;
@@ -98,6 +192,12 @@ namespace Lexical.Localization
         /// <param name="error"></param>
         public void OnError(Exception error)
         {
+            // Get reference
+            var _logger = logger;
+            // Is disposed?
+            if (_logger == null) return;
+            if (3 >= this.severity)
+                _logger.Write($"{error.GetType().Name}: {error.Message}");
         }
 
         /// <summary>
@@ -113,7 +213,7 @@ namespace Lexical.Localization
             // Get severity
             int severity = value.Severity;
             // Write status
-            if (severity>=this.severity)
+            if (severity >= this.severity)
                 _logger.Write(value.DebugInfo);
         }
     }
@@ -121,7 +221,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Observes resolved keys and writes log lines to <see cref="Trace"/>.
     /// </summary>
-    public class LocalizationDiagnosticsTrace : IObserver<LocalizationString>
+    public class LineDiagnosticsTrace : IObserver<LocalizationString>
     {
         /// <summary>
         /// Severity to log
@@ -138,13 +238,13 @@ namespace Lexical.Localization
         /// <summary>
         /// disposed
         /// </summary>
-        bool disposed; 
+        bool disposed;
 
         /// <summary>
         /// Create logger
         /// </summary>
         /// <param name="severity"></param>
-        public LocalizationDiagnosticsTrace(int severity)
+        public LineDiagnosticsTrace(int severity)
         {
             this.severity = severity;
         }
@@ -163,6 +263,7 @@ namespace Lexical.Localization
         /// <param name="error"></param>
         public void OnError(Exception error)
         {
+            Trace.TraceError(error.Message);
         }
 
         /// <summary>
@@ -177,7 +278,7 @@ namespace Lexical.Localization
             // Threshold
             if (severity < this.severity) return;
             // Write status
-            switch(severity)
+            switch (severity)
             {
                 case 0:
                     Trace.TraceInformation(value.DebugInfo);
@@ -200,27 +301,24 @@ namespace Lexical.Localization
     using Microsoft.Extensions.Logging;
 
     /// <summary>
-    /// Extension methods for adding loggers to <see cref="ILocalizationKey"/>s.
+    /// Extension methods for adding loggers to <see cref="ILine"/>.
     /// </summary>
-    public static partial class LocalizationKeyLoggerExtensions
+    public static partial class LineILoggerExtensions
     {
         /// <summary>
-        /// Append <paramref name="logger"/> to <paramref name="key"/>.
+        /// Append <paramref name="logger"/> to <paramref name="line"/>.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="logger"></param>
-        /// <returns>disposable subscription handle, or null if <paramref name="key"/> cannot be observed</returns>
-        public static ILineLogger Logger(this ILine key, ILogger logger)
-        {
-            if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(new LocalizationLogger(logger));
-            throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
-        }
+        /// <returns>disposable subscription handle, or null if <paramref name="line"/> cannot be observed</returns>
+        public static ILineLogger Logger(this ILine line, ILogger logger)
+            => line.Logger(new LineILogger(logger));
     }
 
     /// <summary>
     /// Observes resolved localization strings and logs into <see cref="ILogger"/>.
     /// </summary>
-    public class LocalizationLogger : IObserver<LocalizationString>
+    public class LineILogger : IObserver<LocalizationString>
     {
         ILogger logger;
 
@@ -228,7 +326,7 @@ namespace Lexical.Localization
         /// Create logger
         /// </summary>
         /// <param name="logger"></param>
-        public LocalizationLogger(ILogger logger)
+        public LineILogger(ILogger logger)
         {
             this.logger = logger;
         }
@@ -247,6 +345,12 @@ namespace Lexical.Localization
         /// <param name="error"></param>
         public void OnError(Exception error)
         {
+            // Get reference
+            var _logger = logger;
+            // Is disposed?
+            if (_logger == null) return;
+            // Write status
+            if (_logger.IsEnabled(LogLevel.Error)) _logger.LogError(error, error.Message, error.Data);
         }
 
         /// <summary>
@@ -268,3 +372,4 @@ namespace Lexical.Localization
         }
     }
 }
+

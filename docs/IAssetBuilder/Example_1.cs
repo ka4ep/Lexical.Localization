@@ -24,7 +24,7 @@ namespace docs
             IAsset asset = builder.Build();
 
             // Create string key
-            ILine key = new LocalizationRoot().Key("hello").Culture("en");
+            ILine key = new LineRoot().Key("hello").Culture("en");
             // Request string
             IFormulationString str = asset.GetString(key);
             // Print result

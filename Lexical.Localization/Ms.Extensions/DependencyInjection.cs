@@ -33,7 +33,7 @@ namespace Lexical.Localization
         ///    <see cref="IStringLocalizerFactory"/>
         ///    <see cref="IStringLocalizer{T}"/>
         ///    
-        /// If <paramref name="useGlobalInstance"/> is true, then uses global <see cref="LocalizationRoot"/>.
+        /// If <paramref name="useGlobalInstance"/> is true, then uses global <see cref="LineRoot"/>.
         /// 
         /// 
         /// After this call, the <paramref name="serviceCollection"/> still needs to be populated with 

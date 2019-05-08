@@ -3,10 +3,8 @@
 // Date:           20.3.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 
 namespace Lexical.Localization
 {
@@ -24,17 +22,14 @@ namespace Lexical.Localization
     public static partial class ILineExtensions
     {
         /// <summary>
-        /// Append format provider key.
+        /// Append localization resolver.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="resolver"></param>
         /// <returns>new key</returns>
-        /// <exception cref="LineException">If key doesn't implement <see cref="ILocalizationKeyResolverAssignable"/></exception>
-        public static ILineLocalizationResolver Resolver(this ILine key, ILocalizationResolver resolver)
-        {
-            if (key is ILocalizationKeyResolverAssignable casted) return casted.Resolver(resolver);
-            throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyResolverAssignable)}.");
-        }
+        /// <exception cref="LineException">If part append fails/exception>
+        public static ILineLocalizationResolver Resolver(this ILine line, ILocalizationResolver resolver)
+            => line.Append<ILineLocalizationResolver, ILocalizationResolver>(resolver);
 
         /// <summary>
         /// Get formulation string, but does not apply arguments.
@@ -48,10 +43,10 @@ namespace Lexical.Localization
         public static LocalizationString ResolveString(this ILine key)
         {
             LocalizationString result = new LocalizationString(key, null, LocalizationStatus.NoResult);
-            for (ILine k = key; k!=null; k=k.GetPreviousPart())
+            for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
                 ILocalizationResolver _formatter;
-                if (k is ILineLocalizationResolver formatterAssigned && ((_formatter=formatterAssigned.Resolver)!=null))
+                if (k is ILineLocalizationResolver formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
                 {
                     LocalizationString str = _formatter.ResolveString(key);
                     if (str.Severity <= result.Severity) result = str;
@@ -124,7 +119,7 @@ namespace Lexical.Localization
                     // 2a. Try from asset
                     if (asset != null)
                     {
-                        ILine cultured = key.TryAppendCulture(culture);
+                        ILine cultured = key.Culture(culture);
                         if (cultured != null)
                         {
                             result = asset.GetResource(cultured);

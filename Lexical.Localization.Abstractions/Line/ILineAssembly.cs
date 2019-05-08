@@ -9,33 +9,6 @@ using System.Reflection;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of "Assembly" parameter assignment.
-    /// 
-    /// Assembly is a hint that is used when assets are loaded from embedded rsources.
-    /// For instance, assembly hint matches in a name pattern such as "[Assembly.][Resource.]{Type.}{Section.}{Key}".
-    /// 
-    /// Consumers of this interface should use the extension method <see cref="ILineExtensions.Assembly(ILine, string)"/>.
-    /// </summary>
-    [Obsolete]
-    public interface IAssetKeyAssemblyAssignable : ILine
-    {
-        /// <summary>
-        /// Create a new key that has appended "Assembly" section.
-        /// 
-        /// </summary>
-        /// <param name="assembly"></param>
-        /// <returns>new key</returns>
-        ILineAssembly Assembly(Assembly assembly);
-
-        /// <summary>
-        /// Create assembly section key.
-        /// </summary>
-        /// <param name="assembly"></param>
-        /// <returns>new key</returns>
-        ILineAssembly Assembly(string assembly);
-    }
-
-    /// <summary>
     /// Line that (may have) has been assigned with a "Assembly" parameter.
     /// 
     /// Assembly hint is used when loading assets from embedded resources.
@@ -57,7 +30,7 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
-        /// <exception cref="LineException">If key doesn't implement IAssetKeyAssemblyAssignable</exception>
+        /// <exception cref="LineException">If key could not be appended</exception>
         public static ILineAssembly Assembly(this ILine line, Assembly assembly)
             => line.GetAppender().Create<ILineAssembly, Assembly>(line, assembly);
 
@@ -67,27 +40,9 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <param name="assembly"></param>
         /// <returns>new key</returns>
-        /// <exception cref="LineException">If key doesn't implement IAssetKeyAssemblyAssignable</exception>
+        /// <exception cref="LineException">If key could not be appended</exception>
         public static ILineKey Assembly(this ILine line, string assembly)
             => line.GetAppender().Create<ILineNonCanonicalKey, string, string>(line, "Assembly", assembly);
-
-        /// <summary>
-        /// Try to add <see cref="ILineAssembly"/> section.
-        /// </summary>
-        /// <param name="line"></param>
-        /// <param name="assembly"></param>
-        /// <returns>new key or null</returns>
-        public static ILineKey TryAddAssembly(this ILine line, String assembly)
-            => line.GetAppender()?.TryCreate<ILineNonCanonicalKey, string, string>(line, "Assembly", assembly);
-
-        /// <summary>
-        /// Try to add <see cref="ILineAssembly"/> section.
-        /// </summary>
-        /// <param name="line"></param>
-        /// <param name="assembly"></param>
-        /// <returns>new key or null</returns>
-        public static ILineAssembly TryAddAssemblyKey(this ILine line, Assembly assembly)
-            => line.GetAppender()?.TryCreate<ILineAssembly, Assembly>(line, assembly);
 
         /// <summary>
         /// Get the effective (closest to root) non-null <see cref="ILineAssembly"/> key or <see cref="ILineParameter"/> key with "Assembly".

@@ -17,7 +17,7 @@ namespace docs
             asset = asset.CreateCache();
 
             // Issue a request which will be cached.
-            ILine key = new LocalizationRoot().Key("hello");
+            ILine key = new LineRoot().Key("hello");
             IFormulationString str = asset.GetString( key.Culture("en") );
             Console.WriteLine(str);
 

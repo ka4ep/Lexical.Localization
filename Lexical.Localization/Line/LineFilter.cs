@@ -14,9 +14,9 @@ using System.Text.RegularExpressions;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Filters keys and key-lines against filter rules.
+    /// Filters lines against filter rules.
     /// </summary>
-    public class AssetKeyFilter : ILineFilter
+    public class LineFilter : ILineFilter
     {
         /// <summary>
         /// List of generic filters. Null if none is assigned.
@@ -33,7 +33,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filter"></param>
         /// <returns>this</returns>
-        public AssetKeyFilter Rule(ILineFilter filter)
+        public LineFilter Rule(ILineFilter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
             if (genericFilters == null) genericFilters = new List<ILineFilter>();
@@ -47,7 +47,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="parameterRule"></param>
         /// <returns>this</returns>
-        public AssetKeyFilter Rule(ParameterRule parameterRule)
+        public LineFilter Rule(ParameterRule parameterRule)
         {
             if (parameterRule == null) throw new ArgumentNullException(nameof(parameterRule));
             if (parameterRules==null) parameterRules = new MapList<KeyValuePair<string, int>, ParameterRule>(KeyValuePairEqualityComparer<string, int>.Default);
@@ -63,7 +63,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public AssetKeyFilter KeyRule(ILine filterKey)
+        public LineFilter KeyRule(ILine filterKey)
         {
             // Break filterKey into effective non-canonical parameters, and to canonical parameters and occurance index
             // (ParameterName, occuranceIndex, ParameterValue)
@@ -350,7 +350,7 @@ namespace Lexical.Localization
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(nameof(AssetKeyFilter));
+            sb.Append(nameof(LineFilter));
             sb.Append("(");
             if (genericFilters != null)
             {

@@ -4,7 +4,7 @@ namespace TutorialLibrary3
 {
     internal class LibraryLocalization : StringLocalizerRoot.LinkedTo, ILineRoot
     {
-        private static readonly LibraryLocalization instance = new LibraryLocalization(LocalizationRoot.Global);
+        private static readonly LibraryLocalization instance = new LibraryLocalization(LineRoot.Global);
 
         /// <summary>
         /// Singleton instance to localization root for this class library.
@@ -14,7 +14,7 @@ namespace TutorialLibrary3
         /// <summary>
         /// Add asset sources here. Then call <see cref="IAssetBuilder.Build"/> to make effective.
         /// </summary>
-        public new static IAssetBuilder Builder => LocalizationRoot.Builder;
+        public new static IAssetBuilder Builder => LineRoot.Builder;
 
         LibraryLocalization(ILineRoot linkedTo) : base(null, linkedTo)
         {

@@ -12,11 +12,11 @@ namespace TutorialProject
             IAsset asset = LocalizationIniReader.Instance.FileAsset("HelloWorld.ini");
 
             // Add asset to global singleton instance
-            LocalizationRoot.Builder.AddAsset(asset);
-            LocalizationRoot.Builder.Build();
+            LineRoot.Builder.AddAsset(asset);
+            LineRoot.Builder.Build();
 
             // Take reference of the root
-            ILineRoot root = LocalizationRoot.Global;
+            ILineRoot root = LineRoot.Global;
 
             // Create key
             ILine key = root.Type<Program>().Key("Hello").Inline("Hello World!");

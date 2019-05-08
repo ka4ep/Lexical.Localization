@@ -8,38 +8,6 @@ using System;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of "Type" parameter assignment.
-    /// 
-    /// Type parameters are used with physical files and embedded resources.
-    /// 
-    /// Consumers of this interface should use the extension method <see cref="ILineExtensions.Type(ILine, string)"/> and others.
-    /// </summary>
-    [Obsolete]
-    public interface IAssetKeyTypeAssignable : ILine
-    {
-        /// <summary>
-        /// Create type section key for specific type.
-        /// </summary>
-        /// <param name="name">type</param>
-        /// <returns>new key</returns>
-        ILineType Type(string name);
-
-        /// <summary>
-        /// Create type section key for specific type.
-        /// </summary>
-        /// <param name="type">type</param>
-        /// <returns>new key</returns>
-        ILineType Type(Type type);
-
-        /// <summary>
-        /// Create type section for specific type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns>new key</returns>
-        ILine<T> Type<T>();
-    }
-
-    /// <summary>
     /// Line with <see cref="Type"/> assignment.
     /// 
     /// Type parameters are used with physical files and embedded resources.
@@ -65,7 +33,7 @@ namespace Lexical.Localization
     public static partial class ILineExtensions
     {
         /// <summary>
-        /// Add <see cref="ILineNonCanonicalKey"/> key.
+        /// Add "Type" as <see cref="ILineNonCanonicalKey"/> key.
         /// </summary>
         /// <param name="part"></param>
         /// <param name="typeName"></param>
@@ -75,45 +43,27 @@ namespace Lexical.Localization
             => part.Append<ILineNonCanonicalKey, string, string>("Type", typeName);
 
         /// <summary>
-        /// Add <see cref="ILineKeyType"/> key.
+        /// Add <see cref="ILineType"/> key.
         /// </summary>
         /// <param name="part"></param>
         /// <param name="type"></param>
         /// <returns>new key</returns>
-        /// <exception cref="LineException">If key doesn't implement <see cref="ILineKeyType"/></exception>
-        public static ILineKeyType Type(this ILine part, Type type)
-            => part.Append<ILineKeyType, Type>(type);
+        /// <exception cref="LineException">If key doesn't implement <see cref="ILineType"/></exception>
+        public static ILineType Type(this ILine part, Type type)
+            => part.Append<ILineType, Type>(type);
 
         /// <summary>
-        /// Add <see cref="ILineKeyType"/> key.
+        /// Add <see cref="ILine{T}"/> key.
         /// </summary>
         /// <param name="part"></param>
         /// <returns>new key</returns>
         /// <typeparam name="T"></typeparam>
-        /// <exception cref="LineException">If key doesn't implement <see cref="IAssetKeyTypeAssignable"/></exception>
-        public static ILineKey<T> Type<T>(this ILine part)
-            => part.Append<ILineKeyType, Type>(typeof(T)) as ILineKey<T> ?? part.Append<ILineKey<T>>();
-
+        /// <exception cref="LineException">If key cannot be appended</exception>
+        public static ILine<T> Type<T>(this ILine part)
+            => (ILine<T>)part.Append<ILineType, Type>(typeof(T));
+        
         /// <summary>
-        /// Try to add <see cref="ILineKeyType"/> key.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="type"></param>
-        /// <returns>new key or null</returns>
-        public static ILineKeyType TryAppendType(this ILine part, Type type)
-            => part.TryAppend<ILineKeyType, Type>(type);
-
-        /// <summary>
-        /// Try to add <see cref="ILineNonCanonicalKey"/> key.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="typeName"></param>
-        /// <returns>new key or null</returns>
-        public static ILineKey TryAppendType(this ILine part, string typeName)
-            => part.TryAppend<ILineNonCanonicalKey, string, string>("Type", typeName);
-
-        /// <summary>
-        /// Get the effective (closest to root) non-null <see cref="ILineKeyType"/> key or <see cref="ILineParameter"/> key with "Type".
+        /// Get the effective (closest to root) non-null <see cref="ILineType"/> key or <see cref="ILineParameter"/> key with "Type".
         /// </summary>
         /// <param name="tail"></param>
         /// <returns>key or null</returns>
@@ -122,14 +72,14 @@ namespace Lexical.Localization
             ILine result = null;
             for (ILine part = tail; tail != null; tail = tail.GetPreviousPart())
             {
-                if (part is ILineKeyType asmKey && asmKey.Type != null) result = asmKey;
+                if (part is ILineType asmKey && asmKey.Type != null) result = asmKey;
                 else if (part is ILineParameter parameterKey && parameterKey.ParameterName == "Type" && parameterKey.ParameterValue != null) result = parameterKey;
             }
             return result;
         }
 
         /// <summary>
-        /// Search linked list and finds the selected (left-most) <see cref="ILineKeyType"/> key.
+        /// Search linked list and finds the selected (left-most) <see cref="ILineType"/> key.
         /// 
         /// If implements <see cref="ILineType"/> returns the type. 
         /// </summary>

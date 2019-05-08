@@ -23,7 +23,7 @@ namespace docs
                 // Create asset with string source
                 IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
                 #endregion Snippet_1a
-                ILine key = new LocalizationRoot(asset).Type("MyController").Key("hello");
+                ILine key = new LineRoot(asset).Type("MyController").Key("hello");
                 Console.WriteLine(key);
                 Console.WriteLine(key.Culture("en"));
                 Console.WriteLine(key.Culture("de"));
@@ -42,7 +42,7 @@ namespace docs
                 #endregion Snippet_1b
 
                 #region Snippet_2b
-                ILine key = new LocalizationRoot(asset).Type("MyController").Key("hello");
+                ILine key = new LineRoot(asset).Type("MyController").Key("hello");
                 Console.WriteLine(key);
                 Console.WriteLine(key.Culture("en"));
                 Console.WriteLine(key.Culture("de"));
@@ -53,16 +53,16 @@ namespace docs
                 #region Snippet_1c
                 // Create localization source
                 var source = new Dictionary<ILine, string> {
-                    { new LocalizationRoot().Type("MyController").Key("hello"),               "Hello World!" },
-                    { new LocalizationRoot().Type("MyController").Key("hello").Culture("en"), "Hello World!" },
-                    { new LocalizationRoot().Type("MyController").Key("hello").Culture("de"), "Hallo Welt!"  }
+                    { new LineRoot().Type("MyController").Key("hello"),               "Hello World!" },
+                    { new LineRoot().Type("MyController").Key("hello").Culture("en"), "Hello World!" },
+                    { new LineRoot().Type("MyController").Key("hello").Culture("de"), "Hallo Welt!"  }
                 };
                 // Create asset with string source
                 IAsset asset = new LocalizationAsset().Add(source).Load();
                 #endregion Snippet_1c
 
                 #region Snippet_2c
-                ILine key = new LocalizationRoot(asset).Type("MyController").Key("hello");
+                ILine key = new LineRoot(asset).Type("MyController").Key("hello");
                 Console.WriteLine(key);
                 Console.WriteLine(key.Culture("en"));
                 Console.WriteLine(key.Culture("de"));
@@ -85,7 +85,7 @@ namespace docs
 
                 #region Snippet_3b
                 // Keys can be filtered
-                ILine filterKey = LocalizationRoot.Global.Culture("de");
+                ILine filterKey = LineRoot.Global.Culture("de");
                 foreach (ILine _key in asset.GetKeyLines(filterKey).Select(line => line.Key))
                     Console.WriteLine(_key);
                 #endregion Snippet_3b

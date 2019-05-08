@@ -21,7 +21,7 @@ namespace docs
                 // Create asset
                 IAsset asset = new LocalizationAsset(source, policy);
                 // Create key
-                ILine key = new LocalizationRoot(asset).Section("MyController").Key("Hello");
+                ILine key = new LineRoot(asset).Section("MyController").Key("Hello");
                 // Retrieve string
                 string str = key.Culture("en").ResolveFormulatedString();
                 #endregion Snippet_0a
@@ -35,7 +35,7 @@ namespace docs
             {
                 #region Snippet_1
                 // Let's create an example key
-                ILine key = new LocalizationRoot()
+                ILine key = new LineRoot()
                         .Location("Patches")
                         .Type("MyController")
                         .Section("Errors")
@@ -96,7 +96,7 @@ namespace docs
                     // Create name pattern
                     IParameterPolicy myPolicy = new ParameterPattern("{location_0/}{location_1/}{location_n/}{Section}{-key}{-culture}.png");
                     // Create key
-                    ILine key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILine key2 = new LineRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
                     string str = myPolicy.Print(key2);
                     #endregion Snippet_4b

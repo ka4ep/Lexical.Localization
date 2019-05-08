@@ -14,20 +14,20 @@ namespace docs
             {
                 IAsset asset = new LocalizationAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, ParameterPolicy.Instance);
                 // Assign the composition to root
-                ILineRoot root = new LocalizationRoot(asset, new CulturePolicy());
+                ILineRoot root = new LineRoot(asset, new CulturePolicy());
                 #region Snippet_0
                 #endregion Snippet_0
             }
 
             {
                 #region Snippet_1
-                ILine key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
+                ILine key = new LineRoot().Section("Section").Section("Section").Key("Key");
                 #endregion Snippet_1
             }
 
             {
                 #region Snippet_2
-                ILineRoot root = new LocalizationRoot();
+                ILineRoot root = new LineRoot();
                 ILine section1 = root.Section("Section1");
                 ILine section2 = section1.Section("Section2");
                 ILine section1_1 = section1.Section("Section1.1");
@@ -41,7 +41,7 @@ namespace docs
                 IAsset asset = null;
                 #region Snippet_3a
                 // Create localization reference
-                ILine key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
+                ILine key = new LineRoot().Section("Section").Section("Section").Key("Key");
 
                 // Retrieve string with a reference
                 IFormulationString str = asset.GetString(key.Culture("en"));
@@ -59,7 +59,7 @@ namespace docs
                 // Create culture policy
                 ICulturePolicy culturePolicy = new CulturePolicy();
                 // Create root
-                ILineRoot root = new LocalizationRoot(asset, culturePolicy);
+                ILineRoot root = new LineRoot(asset, culturePolicy);
                 // Set Current Culture
                 CultureInfo.CurrentCulture = new CultureInfo("en");
                 // Create key specific provider
@@ -74,7 +74,7 @@ namespace docs
             {
                 #region Snippet_4a
                 // Add canonical parts
-                ILine key = new LocalizationRoot().Section("Section1").Section("Section2").Key("Key");
+                ILine key = new LineRoot().Section("Section1").Section("Section2").Key("Key");
 
                 // "Section1:Section2:Key"
                 string id = KeyPrinter.Colon_Colon_Colon.Print(key);
@@ -83,8 +83,8 @@ namespace docs
             {
                 #region Snippet_4b
                 // Add canonical parts, and non-canonical culture
-                ILine key1 = new LocalizationRoot().Section("Section").Key("Key").Culture("en");
-                ILine key2 = new LocalizationRoot().Culture("en").Section("Section").Key("Key");
+                ILine key1 = new LineRoot().Section("Section").Key("Key").Culture("en");
+                ILine key2 = new LineRoot().Culture("en").Section("Section").Key("Key");
 
                 // "en:Section1:Section2:Key"
                 string id1 = KeyPrinter.Colon_Colon_Colon.Print(key1);
@@ -102,7 +102,7 @@ namespace docs
                 // Create asset
                 IAsset asset = new LocalizationAsset(strs, KeyPrinter.Default);
                 // Create root
-                ILineRoot root = new LocalizationRoot(asset);
+                ILineRoot root = new LineRoot(asset);
                 #endregion Snippet_6a
 
                 #region Snippet_6b
@@ -129,7 +129,7 @@ namespace docs
             {
                 #region Snippet_7a
                 // Create root
-                ILineRoot root = new LocalizationRoot();
+                ILineRoot root = new LineRoot();
                 // Create key and add default value
                 ILine key = root.Section("Section").Key("Success").Inline("Success");
                 // Resolve string from inlined key "Success"
@@ -139,7 +139,7 @@ namespace docs
 
             {
                 // Create root
-                ILineRoot root = new LocalizationRoot();
+                ILineRoot root = new LineRoot();
                 #region Snippet_7b
                 // Create key and add default strings
                 ILine key = root.Section("Section").Key("Success")
@@ -154,7 +154,7 @@ namespace docs
 
             {
                 // Create root
-                ILineRoot root = new LocalizationRoot();
+                ILineRoot root = new LineRoot();
                 #region Snippet_7c
                 // Create key and add default strings
                 ILine key = root.Section("Section").Key("Success")
@@ -168,7 +168,7 @@ namespace docs
             {
                 #region Snippet_8a
                 // Assign key to localization of type "MyController"
-                ILine key = new LocalizationRoot().Type(typeof(MyController));
+                ILine key = new LineRoot().Type(typeof(MyController));
                 // Search "MyController:Success"
                 string str = key.Key("Success").ToString();
                 #endregion Snippet_8a
@@ -177,14 +177,14 @@ namespace docs
             {
                 #region Snippet_8b
                 // Assign key to localization of type "MyController"
-                ILineKey<MyController> key = new LocalizationRoot().Type<MyController>();
+                ILineKey<MyController> key = new LineRoot().Type<MyController>();
                 #endregion Snippet_8b
             }
 
             {
                 #region Snippet_9a
                 // Create root that matches only to english strings
-                ILine root_en = new LocalizationRoot().Culture("en");
+                ILine root_en = new LineRoot().Culture("en");
                 // Create key
                 ILine key = root_en.Section("Section").Key("Key");
                 #endregion Snippet_9a
@@ -193,7 +193,7 @@ namespace docs
             {
                 #region Snippet_10
                 // Dynamic assignment
-                dynamic root = new LocalizationRoot();
+                dynamic root = new LineRoot();
                 // Provides to string on typecast
                 string str = root.Section("Section").Key("Hello");
                 #endregion Snippet_10
@@ -225,7 +225,7 @@ namespace docs
         #region Snippet_11b
         class MyControllerB
         {
-            static ILine localization = LocalizationRoot.Global.Type<MyControllerB>();
+            static ILine localization = LineRoot.Global.Type<MyControllerB>();
 
             public void Do()
             {
@@ -237,7 +237,7 @@ namespace docs
         #region Snippet_7d
         class MyController__
         {
-            static ILine localization = LocalizationRoot.Global.Type<MyControllerB>();
+            static ILine localization = LineRoot.Global.Type<MyControllerB>();
             static ILine Success = localization.Key("Success").Inline("Success").sv("Det funkar").fi("Onnistui");
 
             public string Do()

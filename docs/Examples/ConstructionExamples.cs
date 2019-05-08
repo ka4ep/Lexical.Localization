@@ -41,7 +41,7 @@ namespace docs
                 CulturePolicy culturePolicy = new CulturePolicy();
                 culturePolicy.SetCultures("en", "fi", "");
                 
-                ILineRoot myLocalization = new LocalizationRoot(builder.Build(), culturePolicy);
+                ILineRoot myLocalization = new LineRoot(builder.Build(), culturePolicy);
                 #endregion Snippet_Plain_1
 
                 // Try it out
@@ -70,12 +70,12 @@ namespace docs
             {
                 #region Snippet_Singleton
                 // How to setup singleton instance
-                (LocalizationRoot.Global.CulturePolicy as ICulturePolicyAssignable).SetToCurrentThreadCulture();
-                LocalizationRoot.Builder.AddStrings(languageStrings, KeyPrinter.Default);
-                LocalizationRoot.Builder.Build();
+                (LineRoot.Global.CulturePolicy as ICulturePolicyAssignable).SetToCurrentThreadCulture();
+                LineRoot.Builder.AddStrings(languageStrings, KeyPrinter.Default);
+                LineRoot.Builder.Build();
 
                 // Try it out
-                var myControllerLocalization = LocalizationRoot.Global.Section("ConsoleApp1.MyController");
+                var myControllerLocalization = LineRoot.Global.Section("ConsoleApp1.MyController");
                 Console.WriteLine(myControllerLocalization.Key("Error"));
                 Console.WriteLine(myControllerLocalization.Key("Error").Format(0xBAADF00D));
                 Console.WriteLine(myControllerLocalization.Key("Error").Format(0xBAADF00D).Culture("fi"));

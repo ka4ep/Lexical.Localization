@@ -17,15 +17,15 @@ namespace docs
             }
             {
                 #region Snippet_1
-                ILine key = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
+                ILine key = LineRoot.Global.Culture("en").Type("MyClass").Key("OK");
                 int hash = LineComparer.Default.GetHashCode(key);
                 #endregion Snippet_1
             }
             {
                 #region Snippet_2
-                ILine key1 = new LocalizationRoot().Type("MyClass").Key("OK");
+                ILine key1 = new LineRoot().Type("MyClass").Key("OK");
                 ILine key2 = Key.Create("Type", "MyClass").Append("Key", "OK");
-                ILine key3 = LocalizationRoot.Global.Type("MyClass").Key("OK");
+                ILine key3 = LineRoot.Global.Type("MyClass").Key("OK");
                 ILine key4 = StringLocalizerRoot.Global.Type("MyClass").Key("OK");
 
                 bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
@@ -39,8 +39,8 @@ namespace docs
             }
             {
                 #region Snippet_3
-                ILine key1 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
-                ILine key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("en");
+                ILine key1 = LineRoot.Global.Culture("en").Type("MyClass").Key("OK");
+                ILine key2 = LineRoot.Global.Type("MyClass").Key("OK").Culture("en");
 
                 bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
                 #endregion Snippet_3
@@ -49,8 +49,8 @@ namespace docs
             }
             {
                 #region Snippet_4
-                ILine key1 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK");
-                ILine key2 = LocalizationRoot.Global.Culture("en").Type("MyClass").Key("OK").Culture("de");
+                ILine key1 = LineRoot.Global.Culture("en").Type("MyClass").Key("OK");
+                ILine key2 = LineRoot.Global.Culture("en").Type("MyClass").Key("OK").Culture("de");
 
                 bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
                 #endregion Snippet_4
@@ -59,8 +59,8 @@ namespace docs
             }
             {
                 #region Snippet_5
-                ILine key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
-                ILine key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
+                ILine key1 = LineRoot.Global.Type("MyClass").Key("OK");
+                ILine key2 = LineRoot.Global.Type("MyClass").Key("OK").Culture("");
 
                 bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
                 int hash1 = LineComparer.Default.GetHashCode(key1);
@@ -69,16 +69,16 @@ namespace docs
             }
             {
                 #region Snippet_5b
-                ILine key1 = LocalizationRoot.Global.Type("MyClass").Key("OK");
-                ILine key2 = LocalizationRoot.Global.Type("MyClass").Key("OK").Culture("");
+                ILine key1 = LineRoot.Global.Type("MyClass").Key("OK");
+                ILine key2 = LineRoot.Global.Type("MyClass").Key("OK").Culture("");
                 string str1 = key1.Culture("fi").ToString();  // <- Selects a culture
                 string str2 = key2.Culture("fi").ToString();  // <- Doesn't change the effective culture
                 #endregion Snippet_5b
             }
             {
                 #region Snippet_6
-                ILine key1 = LocalizationRoot.Global.Section("").Key("OK");
-                ILine key2 = LocalizationRoot.Global.Key("OK");
+                ILine key1 = LineRoot.Global.Section("").Key("OK");
+                ILine key2 = LineRoot.Global.Key("OK");
 
                 bool equals12 = LineComparer.Default.Equals(key1, key2); // Are not equal
                 int hash1 = LineComparer.Default.GetHashCode(key1);

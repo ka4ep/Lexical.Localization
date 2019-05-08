@@ -17,7 +17,7 @@ namespace docs
             IAssetComposition asset_composition = new AssetComposition(asset_1, asset_2);
 
             // Assign the composition to root
-            ILineRoot root = new LocalizationRoot(asset_composition, new CulturePolicy());
+            ILineRoot root = new LineRoot(asset_composition, new CulturePolicy());
             #endregion Snippet
         }
     }

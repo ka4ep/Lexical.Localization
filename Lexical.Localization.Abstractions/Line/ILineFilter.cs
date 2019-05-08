@@ -22,15 +22,8 @@ namespace Lexical.Localization
         /// <summary>
         /// Filters lines against filter rules.
         /// </summary>
-        /// <param name="line"></param>
-        /// <returns></returns>
-        IEnumerable<ILine> Filter(IEnumerable<ILine> line);
-
-        /// <summary>
-        /// Filters lines against filter rules.
-        /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        //IEnumerable<ILine> Filter(IEnumerable<ILine> lines);
+        IEnumerable<ILine> Filter(IEnumerable<ILine> lines);
     }
 }

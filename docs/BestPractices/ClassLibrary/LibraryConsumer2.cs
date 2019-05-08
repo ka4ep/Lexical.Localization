@@ -12,7 +12,7 @@ namespace TutorialProject1
             #region Snippet
             // Install additional localization that was not available in the TutorialLibrary
             IAssetSource source = LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
-            LocalizationRoot.Builder.AddSource(source).Build();
+            LineRoot.Builder.AddSource(source).Build();
 
             MyClass myClass = new MyClass();
 

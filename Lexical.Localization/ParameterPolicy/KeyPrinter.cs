@@ -473,4 +473,29 @@ namespace Lexical.Localization
 
     }
 
+    /// <summary></summary>
+    public static partial class LineExtensions
+    {
+        /// <summary>
+        /// Build name for key. 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="policy">(optional)</param>
+        /// <returns>full name string or null</returns>
+        public static string Print(this ILine key, IParameterPolicy policy)
+        {
+            if (policy == null) policy = KeyPrinter.Default;
+            return policy.Print(key);
+        }
+
+        /// <summary>
+        /// Build name for key. 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>full name string or null</returns>
+        public static string Print(this ILine key)
+            => KeyPrinter.Default.Print(key);
+
+    }
+
 }

@@ -48,7 +48,7 @@ namespace Lexical.Localization
             // Return all 
             if (filterKey == null) return dictionary.Keys.ToList();
             // Create filter.
-            AssetKeyFilter filter = new AssetKeyFilter().KeyRule(filterKey);
+            LineFilter filter = new LineFilter().KeyRule(filterKey);
             // There are no rules
             if (!filter.HasRules) return dictionary.Keys.ToList();
             // Filter with pattern

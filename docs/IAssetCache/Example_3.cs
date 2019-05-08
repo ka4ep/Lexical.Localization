@@ -23,7 +23,7 @@ namespace docs
             asset_cached.Options.SetMaxResourceTotalSize(1024 * 1024 * 1024);
 
             // Assign the asset with cache decoration
-            LocalizationRoot.Global.Asset = asset_cached;
+            LineRoot.Global.Asset = asset_cached;
             #endregion Snippet
         }
     }

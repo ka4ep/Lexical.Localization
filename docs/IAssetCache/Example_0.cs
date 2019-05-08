@@ -22,7 +22,7 @@ namespace docs
             asset_cached.Add(new AssetCachePartCultures(asset_cached.Source, asset_cached.Options));
 
             // Assign the cached asset
-            LocalizationRoot.Global.Asset = asset_cached;
+            LineRoot.Global.Asset = asset_cached;
             #endregion Snippet
         }
     }

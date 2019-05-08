@@ -11,29 +11,20 @@ using System.Linq;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of assigning a new parameter.
-    /// </summary>
-    [Obsolete]
-    public interface ILineParameterAssignable : ILine
-    {
-        /// <summary>
-        /// Create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
-        /// </summary>
-        /// <param name="parameterName">parameter name</param>
-        /// <param name="parameterValue">parameter value</param>
-        /// <returns>new key that is appended to this key</returns>
-        /// <exception cref="LineException">If append failed</exception>
-        ILineParameter AppendParameter(string parameterName, string parameterValue);
-    }
-
-    /// <summary>
     /// Line part that represents a parameter key-value pair.
     /// 
-    /// Comparer may consider parameter as hash-equals comparable, if the 
-    /// <see cref="ILineParameter.ParameterName"/> is key, such as "Culture".
+    /// Implementing classes may implement one of sub-interfaces to detemine compare policy:
+    /// <list type="bullet">
+    ///     <item><see cref="ILineHint"/>not used with comparison.</item>
+    ///     <item><see cref="ILineCanonicalKey"/>hash-equals comparable</item>
+    ///     <item><see cref="ILineNonCanonicalKey"/>hash-equals comparable</item>
+    /// </list>
+    /// 
+    /// If the class doesn't implement any of the sub-interfaces, comparer may consider the parameter as hash-equals comparable, if the 
+    /// <see cref="ILineParameter.ParameterName"/> is known key, such as "Culture".
     /// 
     /// If the parameter class implements <see cref="ILineNonCanonicalKey"/> or <see cref="ILineCanonicalKey"/> then
-    /// the parameter will be considered as hash-equals comparable despite the value of the key.
+    /// the parameter will be considered as hash-equals comparable regardless of the ParameterName.
     /// </summary>
     public interface ILineParameter : ILine
     {

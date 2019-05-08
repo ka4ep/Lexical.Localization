@@ -36,7 +36,7 @@ namespace docs
 
             {
                 #region Snippet_2
-                ILine key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
+                ILine key = LineRoot.Global.Type("MyController").Key("Success").Culture("en");
                 string str = ParameterPolicy.Instance.Print(key);
                 #endregion Snippet_2
             }
@@ -46,7 +46,7 @@ namespace docs
             }
             {
                 #region Snippet_4
-                ILine key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
+                ILine key = LineRoot.Global.Type("MyController").Key("Success").Culture("en");
                 IEnumerable<KeyValuePair<string, string>> parameters = key.GetParameters();
                 string str = ParameterPolicy.Instance.PrintParameters(parameters);
                 #endregion Snippet_4
@@ -56,13 +56,13 @@ namespace docs
                 #region Snippet_5
                 string str = "Culture:en:Type:MyLibrary.MyController:Key:Success";
                 IEnumerable<KeyValuePair<string, string>> parameters = ParameterPolicy.Instance.ParseParameters(str);
-                ILine key = LocalizationRoot.Global.Parameters(parameters);
+                ILine key = LineRoot.Global.Parameters(parameters);
                 #endregion Snippet_5
             }
 
             {
                 #region Snippet_6
-                ILine key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
+                ILine key = LineRoot.Global.Type("MyController").Key("Success").Culture("en");
                 string str = ParameterPolicy.Instance.PrintKey(key);
                 #endregion Snippet_6
             }
@@ -70,7 +70,7 @@ namespace docs
             {
                 #region Snippet_7
                 string str = "Culture:en:Type:MyLibrary.MyController:Key:Success";
-                ILine key = ParameterPolicy.Instance.Parse(str, LocalizationRoot.Global);
+                ILine key = ParameterPolicy.Instance.Parse(str, LineRoot.Global);
                 #endregion Snippet_7
             }
         }

@@ -19,7 +19,7 @@ namespace TutorialProject
                     .Load();
 
             // Create asset root
-            ILineRoot root = new LocalizationRoot(asset, new CulturePolicy());
+            ILineRoot root = new LineRoot(asset, new CulturePolicy());
 
             // Call Controller
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");

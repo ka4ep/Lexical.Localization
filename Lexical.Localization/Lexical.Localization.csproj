@@ -35,33 +35,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Lexical.Localization.Abstractions\Lexical.Localization.Abstractions.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <None Update="LocalizationKey\StringLocalizerKey.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>StringLocalizerKey.cs</LastGenOutput>
-    </None>
-    <None Update="LocalizationKey\StringLocalizerRoot.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>StringLocalizerRoot.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="LocalizationKey\StringLocalizerKey.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>StringLocalizerKey.tt</DependentUpon>
-    </Compile>
-    <Compile Update="LocalizationKey\StringLocalizerRoot.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>StringLocalizerRoot.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>

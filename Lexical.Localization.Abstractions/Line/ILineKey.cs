@@ -40,23 +40,6 @@ namespace Lexical.Localization
     {
     }
 
-    /// <summary>
-    /// Interface for a line that can enumerate non-canonically compared keys
-    /// 
-    /// The preferred implementation is of <see cref="IReadOnlyDictionary{TKey, TValue}"/>.
-    /// </summary>
-    public interface ILineNonCanonicalKeyEnumerable : ILine, IEnumerable<ILineNonCanonicalKey>
-    {
-    }
-
-    /// <summary>
-    /// Interface for a line that can enumerate canonically compared keys (from root towards tail).
-    /// The preferred implementation is of <see cref="IList{T}"/>
-    /// </summary>
-    public interface ILineCanonicalKeyEnumerable : ILine, IEnumerable<ILineCanonicalKey>
-    {
-    }
-
     public static partial class ILineExtensions
     {
         /// <summary>

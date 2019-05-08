@@ -15,7 +15,7 @@ namespace Lexical.Localization
         /// <summary>
         /// (Optional) The assigned logger.
         /// </summary>
-        IObservable<LocalizationString> Logger { get; set; }
+        IObserver<LocalizationString> Logger { get; set; }
     }
 
     public static partial class ILineExtensions
@@ -23,14 +23,11 @@ namespace Lexical.Localization
         /// <summary>
         /// Append observer that monitors resolving of localization strings.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="logger"></param>
         /// <returns>new key</returns>
-        /// <exception cref="LineException">If key doesn't implement <see cref="ILocalizationKeyLoggerAssignable"/></exception>
-        public static ILineLogger Logger(this ILine key, IObserver<LocalizationString> logger)
-        {
-            if (key is ILocalizationKeyLoggerAssignable casted) return casted.Logger(logger);
-            throw new LineException(key, $"doesn't implement {nameof(ILocalizationKeyLoggerAssignable)}.");
-        }
+        /// <exception cref="LineException">Append logger</exception>
+        public static ILineLogger Logger(this ILine line, IObserver<LocalizationString> logger)
+            => line.Append<ILineLogger, IObserver<LocalizationString>>(logger);
     }
 }

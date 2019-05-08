@@ -17,7 +17,7 @@ namespace docs
             #endregion Snippet
 
             // Assign the asset with cache decoration
-            LocalizationRoot.Global.Asset = asset_cached;
+            LineRoot.Global.Asset = asset_cached;
         }
     }
 

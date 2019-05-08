@@ -17,7 +17,7 @@ namespace docs
                 // Create culture policy
                 ICulturePolicy culturePolicy = new CulturePolicy();
                 // Create root
-                ILineRoot root = new LocalizationRoot(asset, culturePolicy);
+                ILineRoot root = new LineRoot(asset, culturePolicy);
                 #endregion Snippet_1a
 
                 #region Snippet_1b
@@ -49,7 +49,7 @@ namespace docs
             {
                 #region Snippet_2a
                 // Create key from global root
-                ILine key = LocalizationRoot.Global.Type("MyController").Key("Hello");
+                ILine key = LineRoot.Global.Type("MyController").Key("Hello");
                 #endregion Snippet_2a
 
                 #region Snippet_2b
@@ -58,12 +58,12 @@ namespace docs
                 // Create asset
                 IAsset asset = new LocalizationAsset(source, ParameterPolicy.Instance);
                 // Assets are added to global static builder. It must be (re-)built after adding.
-                LocalizationRoot.Builder.AddAsset(asset).Build();
+                LineRoot.Builder.AddAsset(asset).Build();
                 #endregion Snippet_2b
 
                 #region Snippet_2c
                 // If ran in multi-threaded initialization, lock to LocalizationRoot.Builder.
-                lock (LocalizationRoot.Builder) LocalizationRoot.Builder.AddAsset(asset).Build();
+                lock (LineRoot.Builder) LineRoot.Builder.AddAsset(asset).Build();
                 #endregion Snippet_2c
 
                 #region Snippet_2d
@@ -73,13 +73,13 @@ namespace docs
 
                 #region Snippet_2e
                 // LocalizationRoot and StringLocalizerRoot are interchangeable. They share the same asset(s).
-                LocalizationRoot.Builder.AddAsset(asset).Build();
+                LineRoot.Builder.AddAsset(asset).Build();
                 IStringLocalizer stringLocalizer = StringLocalizerRoot.Global.Type<MyController>();
                 #endregion Snippet_2e
 
                 #region Snippet_2f
                 // Dynamic instance is acquired with LocalizationRoot.GlobalDynamic
-                dynamic key_ = LocalizationRoot.GlobalDynamic.Section("Section").Key("Key");
+                dynamic key_ = LineRoot.GlobalDynamic.Section("Section").Key("Key");
                 #endregion Snippet_2f
             }
         }

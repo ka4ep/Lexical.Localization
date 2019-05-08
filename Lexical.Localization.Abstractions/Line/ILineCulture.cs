@@ -10,31 +10,6 @@ using System.Globalization;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key has capability of "Culture" parameter assignment.
-    /// </summary>
-    [Obsolete]
-    public interface ILocalizationKeyCultureAssignable : ILine
-    {
-        /// <summary>
-        /// Select a specific culture. 
-        /// 
-        /// Adds <see cref="ILineCulture"/> link.
-        /// </summary>
-        /// <param name="culture">Name for new sub key.</param>
-        /// <returns>new key</returns>
-        ILineCulture Culture(CultureInfo culture);
-
-        /// <summary>
-        /// Set to a specific culture
-        /// </summary>
-        /// <param name="cultureName"></param>
-        /// <returns>new key</returns>
-        /// <exception cref="LineException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
-        /// <exception cref="CultureNotFoundException">if culture was not found</exception>
-        ILineCulture Culture(string cultureName);
-    }
-
-    /// <summary>
     /// Key (may have) has "Culture" parameter assigned.
     /// </summary>
     public interface ILineCulture : ILine
