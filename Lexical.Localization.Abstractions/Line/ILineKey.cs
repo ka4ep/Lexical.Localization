@@ -43,6 +43,34 @@ namespace Lexical.Localization
     public static partial class ILineExtensions
     {
         /// <summary>
+        /// Clone <see cref="ILineKey"/> parts.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="appender">(optional) appender to use for clone. If null uses the appender of <see cref="line"/></param>
+        /// <returns>clone of key parts</returns>
+        /// <exception cref="LineException">If cloning failed.</exception>
+        public static ILine CloneKey(this ILine line, ILineFactory appender = default)
+        {
+            if (appender == null) appender = line.GetAppender();
+            ILine result = null;
+
+            StructList16<ILine> args = new StructList16<ILine>();
+            for (ILine l = line; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+
+            for (int i = args.Count - 1; i >= 0; i--)
+            {
+                ILine l = args[i];
+                if (l is ILineParameterEnumerable lineParameters)
+                {
+                    foreach (ILineParameter lineParameter in lineParameters)
+                        if (lineParameter is ILineKey && lineParameter is ILineArguments argsi) result = appender.Create(result, argsi);
+                }
+                if (l is ILineKey && l is ILineArguments arg) result = appender.Create(result, arg);
+            }
+            return result ?? appender.Create<ILinePart>(null);
+        }
+
+        /// <summary>
         /// Get part that implements <see cref="ILineCanonicalKey"/>, either this or preceding, or null if not found.
         /// </summary>
         /// <param name="part"></param>

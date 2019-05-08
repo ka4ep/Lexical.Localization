@@ -204,6 +204,21 @@ namespace Lexical.Localization
         /// <param name="factory"></param>
         /// <param name="previous"></param>
         /// <param name="arguments"></param>
+        /// <returns>appended part</returns>
+        /// <exception cref="LineException">If append failed due to unexpected reason</exception>
+        public static ILine Create(this ILineFactory factory, ILine previous, ILineArguments arguments)
+        {
+            ILine result = null;
+            if (factory.TryCreate(previous, arguments, out result)) return result;
+            throw new LineException(arguments, "Could not be appended");
+        }
+
+        /// <summary>
+        /// Create line (part) with <paramref name="arguments"/>.
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <param name="previous"></param>
+        /// <param name="arguments"></param>
         /// <param name="line"></param>
         /// <returns>try if create succeeded</returns>
         /// <exception cref="LineException">If append failed due to unexpected reason</exception>
