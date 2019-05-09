@@ -144,35 +144,110 @@ namespace Lexical.Localization
         }
         static IReadOnlyDictionary<string, string> no_noncanonicalkeys = new Dictionary<string, string>(0);
 
-
         /// <summary>
-        /// Get all canonical keys as parameterName,parameterValue in order of from root towards tail.
+        /// Get all canonical keys from tail towards root.
         /// </summary>
-        /// <param name="line">line to read parameters of</param>
+        /// <param name="line">line to read keys from</param>
+        /// <param name="list">result list to write results to</param>
         /// <param name="parameterInfos">(optional) map of infos for determining if parameter is key</param>
+        /// <typeparam name="LIST">List type</typeparam>
         /// <returns>dictionary of keys</returns>
-        public static KeyValuePair<string, string>[] GetCanonicalKeys(this ILine line, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null)
+        public static void GetCanonicalKeys<LIST>(this ILine line, ref LIST list, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null) where LIST : IList<ILineParameter>
         {
-            StructList12<KeyValuePair<string, string>> result = new StructList12<KeyValuePair<string, string>>();
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
                 if (l is ILineParameterEnumerable lineParameters)
                 {
-                    StructList8<KeyValuePair<string, string>> tmp = new StructList8<KeyValuePair<string, string>>();
+                    StructList4<ILineParameter> tmp = new StructList4<ILineParameter>();
                     foreach (var parameter in lineParameters)
                     {
-                        if (parameter is ILineParameter p && p.IsCanonicalKey(parameterInfos) && p.ParameterName != null && p.ParameterValue != null)
-                            tmp.Add(new KeyValuePair<string, string>(p.ParameterName, p.ParameterValue));
+                        if (parameter.IsCanonicalKey(parameterInfos) && parameter.ParameterName != null && parameter.ParameterValue != null) tmp.Add(parameter);
                     }
-                    // Copy tmp to result
-                    for (int i = tmp.Count-1; i >= 0; i--) result.Add(tmp[i]);
+                    for (int i = tmp.Count - 1; i >= 0; i--) list.Add(tmp[i]);
                 }
                 else if (l is ILineParameter lineParameter && l.IsCanonicalKey(parameterInfos))
                 {
-                    result.Add(new KeyValuePair<string, string>(lineParameter.ParameterName, lineParameter.ParameterValue));
+                    if (lineParameter.IsCanonicalKey(parameterInfos) && lineParameter.ParameterName != null && lineParameter.ParameterValue != null)
+                        list.Add(lineParameter);
                 }
             }
-            return result.ToReverseArray();
+        }
+
+        /// <summary>
+        /// Get all canonical keys as parameterName,parameterValue from tail towards root.
+        /// </summary>
+        /// <param name="line">line to read keys from</param>
+        /// <param name="list">result list to write results to</param>
+        /// <param name="parameterInfos">(optional) map of infos for determining if parameter is key</param>
+        /// <typeparam name="LIST">List type</typeparam>
+        /// <returns>dictionary of keys</returns>
+        public static void GetCanonicalKeyPairs<LIST>(this ILine line, ref LIST list, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null) where LIST : IList<KeyValuePair<string, string>>
+        {
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineParameterEnumerable lineParameters)
+                {
+                    StructList4<KeyValuePair<string, string>> tmp = new StructList4<KeyValuePair<string, string>>();
+                    foreach (var parameter in lineParameters)
+                    {
+                        string name = parameter.ParameterName, value = parameter.ParameterValue;
+                        if (parameter.IsCanonicalKey(parameterInfos) && name != null && value != null) tmp.Add(new KeyValuePair<string, string>(name, value));
+                    }
+                    for (int i = tmp.Count - 1; i >= 0; i--) list.Add(tmp[i]);
+                }
+                else if (l is ILineParameter lineParameter && l.IsCanonicalKey(parameterInfos))
+                {
+                    string name = lineParameter.ParameterName, value = lineParameter.ParameterValue;
+                    if (lineParameter.IsCanonicalKey(parameterInfos) && name != null && value != null)
+                        list.Add(new KeyValuePair<string, string>(name, value));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get all non-canonical keys as parameterName,parameterValue. Values that are closer to root are effective
+        /// </summary>
+        /// <param name="line">line to read keys from</param>
+        /// <param name="result">result list to write results to</param>
+        /// <param name="parameterInfos">(optional) map of infos for determining if parameter is key</param>
+        /// <typeparam name="LIST">List type</typeparam>
+        /// <returns>dictionary of keys</returns>
+        public static void GetNonCanonicalKeyPairs<LIST>(this ILine line, ref LIST result, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null) where LIST : IList<KeyValuePair<string, string>>
+        {
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineParameterEnumerable lineParameters)
+                {
+                    foreach (var parameter in lineParameters)
+                    {
+                        string name = parameter.ParameterName, value = parameter.ParameterValue;
+                        if (parameter.IsNonCanonicalKey(parameterInfos) && name != null && value != null)
+                        {
+                            int ix = -1;
+                            for (int i = 0; i < result.Count; i++) if (result[i].Key == name) { ix = i; break; }
+                            if (ix<0)
+                            {
+                                result[ix] = new KeyValuePair<string, string>(name, value);
+                                break;
+                            } else result.Add(new KeyValuePair<string, string>(name, value));
+                        }
+                    }
+                }
+                else if (l is ILineParameter lineParameter && l.IsCanonicalKey(parameterInfos))
+                {
+                    string name = lineParameter.ParameterName, value = lineParameter.ParameterValue;
+                    if (lineParameter.IsNonCanonicalKey(parameterInfos) && name != null && value != null)
+                    {
+                        int ix = -1;
+                        for (int i = 0; i < result.Count; i++) if (result[i].Key == name) { ix = i; break; }
+                        if (ix < 0)
+                        {
+                            result[ix] = new KeyValuePair<string, string>(name, value);
+                            break;
+                        } else result.Add(new KeyValuePair<string, string>(name, value));
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -181,27 +256,10 @@ namespace Lexical.Localization
         /// <param name="line">line to read parameters of</param>
         /// <param name="parameterInfos">(optional) map of infos for determining if parameter is key</param>
         /// <returns>dictionary of keys</returns>
-        public static KeyValuePair<string, string>[] GetNonCanonicalKeyArray(this ILine line, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null)
+        public static KeyValuePair<string, string>[] GetNonCanonicalsArray(this ILine line, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null)
         {
             StructList12<KeyValuePair<string, string>> result = new StructList12<KeyValuePair<string, string>>();
-            for (ILine l = line; l != null; l = l.GetPreviousPart())
-            {
-                if (l is ILineParameterEnumerable lineParameters)
-                {
-                    StructList8<KeyValuePair<string, string>> tmp = new StructList8<KeyValuePair<string, string>>();
-                    foreach (var parameter in lineParameters)
-                    {
-                        if (parameter is ILineParameter p && p.IsNonCanonicalKey(parameterInfos) && p.ParameterName != null && p.ParameterValue != null)
-                            tmp.Add(new KeyValuePair<string, string>(p.ParameterName, p.ParameterValue));
-                    }
-                    // Copy tmp to result
-                    for (int i = tmp.Count - 1; i >= 0; i--) result.Add(tmp[i]);
-                }
-                else if (l is ILineParameter lineParameter && l.IsNonCanonicalKey(parameterInfos))
-                {
-                    result.Add(new KeyValuePair<string, string>(lineParameter.ParameterName, lineParameter.ParameterValue));
-                }
-            }
+            line.GetNonCanonicalKeyPairs<StructList12<KeyValuePair<string, string>>>(ref result, parameterInfos);
             return result.ToReverseArray();
 
         }

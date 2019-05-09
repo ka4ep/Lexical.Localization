@@ -93,7 +93,11 @@ namespace Lexical.Localization
         /// </summary>
         public class Type : StringLocalizerAsset
         {
+            /// <summary>
+            /// The type this is string localizer for.
+            /// </summary>
             public readonly System.Type type;
+
             /// <summary>
             /// 
             /// </summary>

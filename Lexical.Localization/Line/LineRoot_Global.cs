@@ -41,7 +41,7 @@ namespace Lexical.Localization
             var _culturePolicy = new CulturePolicy();
             var _builder = new AssetBuilder.OneBuildInstance();
             builder = _builder;
-            instance = new LineRoot.Mutable(LineAppender.Instance, _builder.Asset, _culturePolicy, LocalizationResolver.Instance);
+            instance = new LineRoot.Mutable(LineAppender.Default, _builder.Asset, _culturePolicy, LocalizationResolver.Instance);
             dynamic = instance;
         }
     }
@@ -55,7 +55,7 @@ namespace Lexical.Localization
     /// </summary>
     public partial class StringLocalizerRoot
     {
-        private static readonly StringLocalizerRoot instance = new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.Instance, LineRoot.Global);
+        private static readonly StringLocalizerRoot instance = new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.Default, LineRoot.Global);
         private static readonly dynamic dynamic;
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Lexical.Localization
 
         static StringLocalizerRoot()
         {
-            instance = new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.Instance, LineRoot.Global);
+            instance = new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.Default, LineRoot.Global);
             dynamic = instance;
         }
     }

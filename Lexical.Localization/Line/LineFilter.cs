@@ -595,63 +595,47 @@ namespace Lexical.Localization
                 {
                     if (part is ILineParameterEnumerable lineParameters)
                     {
+                        StructList4<(string, int, string)> tmp = new StructList4<(string, int, string)>();
                         foreach (ILineParameter parameter in lineParameters)
                         {
                             if (parameter.IsNonCanonicalKey(parameterInfos))
                             {
                                 // Test if parameter is already in list
                                 int ix = -1;
-                                for (int i = 0; i < list.Count; i++)
-                                    if (list[i].Item1 == parameter.ParameterName)
-                                    {
-                                        // Overwrite
-                                        list[i] = (parameter.ParameterName, 0, parameter.ParameterValue);
-                                        ix = i;
-                                        break;
-                                    }
+                                for (int i = 0; i < list.Count; i++) if (list[i].Item1 == parameter.ParameterName) { ix = i; break; }
+                                // Overwrite
+                                if (ix>=0) list[ix] = (parameter.ParameterName, 0, parameter.ParameterValue);
                                 // Add new
-                                if (ix == -1)
-                                {
-                                    list.Add((parameter.ParameterName, 0, parameter.ParameterValue));
-                                }
-                                continue;
+                                else list.Add((parameter.ParameterName, 0, parameter.ParameterValue));
                             }
 
-                            if (parameter.IsCanonicalKey(parameterInfos))
-                            {
-                                // Add to list, fix occurance index later
-                                list.Add((parameter.ParameterName, -1, parameter.ParameterValue));
-                            }
+                            // Add to list, fix occurance index later
+                            else if (parameter.IsCanonicalKey(parameterInfos)) tmp.Add((parameter.ParameterName, -1, parameter.ParameterValue));
                         }
+                        for (int i = tmp.Count - 1; i >= 0; i--) list.Add(tmp[i]);
                     }
                     {
                         if (part is ILineParameter parameter && parameter.ParameterName != null)
                         {
                             if (parameter.IsNonCanonicalKey(parameterInfos))
                             {
-                                // Test if parameter is already in list
-                                int ix = -1;
-                                for (int i = 0; i < list.Count; i++)
-                                    if (list[i].Item1 == parameter.ParameterName)
-                                    {
-                                        // Overwrite
-                                        list[i] = (parameter.ParameterName, 0, parameter.ParameterValue);
-                                        ix = i;
-                                        break;
-                                    }
-                                // Add new
-                                if (ix == -1)
+                                if (parameter.IsNonCanonicalKey(parameterInfos))
                                 {
-                                    list.Add((parameter.ParameterName, 0, parameter.ParameterValue));
+                                    // Test if parameter is already in list
+                                    int ix = -1;
+                                    for (int i = 0; i < list.Count; i++) if (list[i].Item1 == parameter.ParameterName) { ix = i; break; }
+                                    // Overwrite
+                                    if (ix >= 0) list[ix] = (parameter.ParameterName, 0, parameter.ParameterValue);
+                                    // Add new
+                                    else list.Add((parameter.ParameterName, 0, parameter.ParameterValue));
                                 }
-                                continue;
+
+                                // Add to list, fix occurance index later
+                                else if (parameter.IsCanonicalKey(parameterInfos)) list.Add((parameter.ParameterName, -1, parameter.ParameterValue));
                             }
 
-                            if (parameter.IsCanonicalKey(parameterInfos))
-                            {
-                                // Add to list, fix occurance index later
-                                list.Add((parameter.ParameterName, -1, parameter.ParameterValue));
-                            }
+                            // Add to list, fix occurance index later
+                            else if (parameter.IsCanonicalKey(parameterInfos)) list.Add((parameter.ParameterName, -1, parameter.ParameterValue));
                         }
                     }
                 }

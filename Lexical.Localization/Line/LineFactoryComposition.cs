@@ -16,13 +16,40 @@ namespace Lexical.Localization
     /// </summary>
     public class LineFactoryComposition : ILineFactoryCastable, ILineFactoryByArgument, ILineFactoryEnumerable, ILineFactoryCollection
     {
-        List<ILineFactoryByArgument> argFactories = new List<ILineFactoryByArgument>();
-        List<ILineFactoryCastable> castables = new List<ILineFactoryCastable>();
-        Dictionary<Type, ILineFactory> factories0 = new Dictionary<Type, ILineFactory>();
-        Dictionary<Pair<Type, Type>, ILineFactory> factories1 = new Dictionary<Pair<Type, Type>, ILineFactory>(Pair<Type, Type>.EqualityComparer.Default);
-        Dictionary<Triple<Type, Type, Type>, ILineFactory> factories2 = new Dictionary<Triple<Type, Type, Type>, ILineFactory>(Triple<Type, Type, Type>.EqualityComparer.Default);
-        Dictionary<Quad<Type, Type, Type, Type>, ILineFactory> factories3 = new Dictionary<Quad<Type, Type, Type, Type>, ILineFactory>(Quad<Type, Type, Type, Type>.EqualityComparer.Default);
-        bool immutable;
+        /// <summary>
+        /// By argument factories.
+        /// </summary>
+        protected List<ILineFactoryByArgument> argFactories = new List<ILineFactoryByArgument>();
+
+        /// <summary>
+        /// Castable factories.
+        /// </summary>
+        protected List<ILineFactoryCastable> castables = new List<ILineFactoryCastable>();
+
+        /// <summary>
+        /// 0-argument factories.
+        /// </summary>
+        protected Dictionary<Type, ILineFactory> factories0 = new Dictionary<Type, ILineFactory>();
+
+        /// <summary>
+        /// 1-argument factories.
+        /// </summary>
+        protected Dictionary<Pair<Type, Type>, ILineFactory> factories1 = new Dictionary<Pair<Type, Type>, ILineFactory>(Pair<Type, Type>.EqualityComparer.Default);
+
+        /// <summary>
+        /// 2-argument factories.
+        /// </summary>
+        protected Dictionary<Triple<Type, Type, Type>, ILineFactory> factories2 = new Dictionary<Triple<Type, Type, Type>, ILineFactory>(Triple<Type, Type, Type>.EqualityComparer.Default);
+
+        /// <summary>
+        /// 3-argument factories.
+        /// </summary>
+        protected Dictionary<Quad<Type, Type, Type, Type>, ILineFactory> factories3 = new Dictionary<Quad<Type, Type, Type, Type>, ILineFactory>(Quad<Type, Type, Type, Type>.EqualityComparer.Default);
+
+        /// <summary>
+        /// Is factory in immutable state.
+        /// </summary>
+        protected bool immutable;
 
         /// <summary>
         /// Create line part appender collection

@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -20,8 +21,8 @@ namespace Lexical.Localization
     /// </summary>
     public class LineComparer : IEqualityComparer<ILine>
     {
-        private static LineComparer instance = new LineComparer().AddCanonicalComparer(ParameterComparer.Instance).AddComparer(NonCanonicalComparer.Instance).SetReadonly();
-        private static LineComparer ignoreCulture = new LineComparer().AddCanonicalComparer(ParameterComparer.Instance).AddComparer(NonCanonicalComparer.IgnoreCulture).SetReadonly();
+        private static LineComparer instance = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Instance).AddComparer(NonCanonicalComparer.Instance).SetReadonly();
+        private static LineComparer ignoreCulture = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Instance).AddComparer(NonCanonicalComparer.IgnoreCulture).SetReadonly();
 
         /// <summary>
         /// Makes comparisons on interface level. 
@@ -35,7 +36,7 @@ namespace Lexical.Localization
         ///    Type                     non-canonical compare
         ///    Assembly                 non-canonical compare
         ///    Culture                  non-canonical compare
-        ///    Format Args              not compared (<see cref="LocalizationKey.FormatArgsComparer"/>.
+        ///    Format Args              not compared (<see cref="LineFormatArgsComparer"/>.
         ///    Inlining                 not compared
         ///    CulturePolicy            not compared
         ///    Root                     not compared
@@ -58,6 +59,11 @@ namespace Lexical.Localization
         List<IEqualityComparer<ILine>> comparers = new List<IEqualityComparer<ILine>>();
 
         /// <summary>
+        /// (optional) Parameter infos for determining if parameter is key.
+        /// </summary>
+        protected IReadOnlyDictionary<string, IParameterInfo> parameterInfos;
+
+        /// <summary>
         /// Is comparer locked to immutable state.
         /// </summary>
         bool immutable;
@@ -65,8 +71,10 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new comparer. Canonical and non-canonical comparers must be added as components.
         /// </summary>
-        public LineComparer()
+        /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
+        public LineComparer(IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
         {
+            this.parameterInfos = parameterInfos;
         }
 
         /// <summary>
@@ -129,27 +137,20 @@ namespace Lexical.Localization
             }
 
             // Canonical key part comparers
-            if (x is ILine x_tail && y is ILine y_tail)
+            StructList12<ILineParameter> x_canonicals = new StructList12<ILineParameter>(), y_canonicals = new StructList12<ILineParameter>();
+            x.GetCanonicalKeys<StructList12<ILineParameter>>(ref x_canonicals, parameterInfos);
+            y.GetCanonicalKeys<StructList12<ILineParameter>>(ref y_canonicals, parameterInfos);
+            if (x_canonicals.Count != y_canonicals.Count) return false;
+            for (int i=0; i<x_canonicals.Count; i++)
             {
-                for (ILine x_key = x_tail.GetCanonicalKey(), y_key = y_tail.GetCanonicalKey(); x != null || y != null; x_key = x_key.GetPreviousCanonicalKey(), y_key = y_key.GetPreviousCanonicalKey())
-                {
-                    // Ran out of one or another
-                    if (x_key == null && y_key == null) break;
-                    if (x_key == null || y_key == null) return false;
-                    // Reference are equal
-                    if (Object.ReferenceEquals(x_key, y_key)) break;
-                    // Run comparers
-                    foreach (var comparer in canonicalComparers)
-                        if (!comparer.Equals(x_key, y_key)) return false;
-                }
-
-                // Must be equal
-                return true;
+                ILineParameter x_key = x_canonicals[i], y_key = y_canonicals[i];
+                // Run comparers
+                foreach(var comparer in canonicalComparers)
+                    if (!comparer.Equals(x_key, y_key))
+                        return false;
             }
 
-            // Comparing ILine's 
-            // Not implemented
-            return false;
+            return true;
         }
 
         const int FNVHashBasis = unchecked((int)0x811C9DC5);
@@ -187,22 +188,19 @@ namespace Lexical.Localization
             }
 
             // Canonical hashing
-            if (line is ILine tail)
+            StructList12<ILineParameter> list = new StructList12<ILineParameter>();
+            line.GetCanonicalKeys<StructList12<ILineParameter>>(ref list, parameterInfos);
+            for(int i=0; i<list.Count; i++)
             {
-                for (ILine key = tail.GetCanonicalKey(); key != null; key = key.GetPreviousCanonicalKey())
+                var key = list[i];
+                // hash in canonical comparer 
+                foreach (var comparer in canonicalComparers)
                 {
-                    // hash in canonical comparer 
-                    foreach (var comparer in canonicalComparers)
-                        result ^= comparer.GetHashCode(key);
+                    result ^= comparer.GetHashCode(key);
                     result *= FNVHashPrime;
                 }
-
-                return result;
             }
-
-            // Calculate line's hashcode
-            // Not implemented
-            return -1;
+            return result;
         }
     }
 
@@ -227,21 +225,12 @@ namespace Lexical.Localization
         /// <returns></returns>
         public bool Equals(ILine x, ILine y)
         {
-            if (x is ILine x_tail && y is ILine y_tail)
-            {
-                ILine x_part = x_tail, y_part = y_tail;
-
-                string x_parameter = x_tail.GetParameterName();
-                string y_parameter = y_tail.GetParameterName();
-                if (x_parameter == null && y_parameter == null) return true;
-                if (x_parameter == null || y_parameter == null) return false;
-                if (x_parameter != y_parameter) return false;
-                return x_tail.GetParameterValue() == y_tail.GetParameterValue();
-            }
-
-            // Calculate ILines equality
-            // not implemented
-            return false;
+            string x_parameter = x.GetParameterName();
+            string y_parameter = y.GetParameterName();
+            if (x_parameter == null && y_parameter == null) return true;
+            if (x_parameter == null || y_parameter == null) return false;
+            if (x_parameter != y_parameter) return false;
+            return x.GetParameterValue() == y.GetParameterValue();
         }
 
         const int FNVHashBasis = unchecked((int)0x811C9DC5);
@@ -253,19 +242,13 @@ namespace Lexical.Localization
         /// <returns></returns>
         public int GetHashCode(ILine line)
         {
-            if (line is ILine part)
-            {
-                string parameterName = part.GetParameterName();
-                if (parameterName == null) return 0;
-                int hash = FNVHashBasis;
-                hash ^= parameterName.GetHashCode();
-                hash ^= part.GetParameterValue().GetHashCode();
-                return hash;
-            }
-
-            // Calculate ILine
-            // Not implemented
-            return -1;
+            string parameterName = line.GetParameterName();
+            if (parameterName == null) return 0;
+            int hash = FNVHashBasis;
+            hash ^= parameterName.GetHashCode();
+            string parameterValue = line.GetParameterValue();
+            hash ^= parameterValue == null ? 0 : parameterValue.GetHashCode();
+            return hash;
         }
     }
 
@@ -278,8 +261,8 @@ namespace Lexical.Localization
     /// </summary>
     public class NonCanonicalComparer : IEqualityComparer<ILine>
     {
-        private static NonCanonicalComparer all = new NonCanonicalComparer(keyNamesToIgnore: null);
-        private static NonCanonicalComparer Ignore_culture = new NonCanonicalComparer(keyNamesToIgnore: new string[] { "Culture" });
+        private static NonCanonicalComparer all = new NonCanonicalComparer(parameterInfos: ParameterInfos.Default, keyNamesToIgnore: null);
+        private static NonCanonicalComparer Ignore_culture = new NonCanonicalComparer(parameterInfos: ParameterInfos.Default, keyNamesToIgnore: new string[] { "Culture" });
 
         /// <summary>
         /// Default instance that compares every non-canonical parameter.
@@ -297,11 +280,18 @@ namespace Lexical.Localization
         protected HashSet<string> parameterNamesToIgnore;
 
         /// <summary>
+        /// (optional) Parameter infos for determining if parameter is key.
+        /// </summary>
+        protected IReadOnlyDictionary<string, IParameterInfo> parameterInfos;
+
+        /// <summary>
         /// Create new comparer of <see cref="ILineParameter"/> and <see cref="ILineNonCanonicalKey"/> keys.
         /// </summary>
+        /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
         /// <param name="keyNamesToIgnore">(optional) list of parameter names to not to compare</param>
-        public NonCanonicalComparer(IEnumerable<string> keyNamesToIgnore = null)
+        public NonCanonicalComparer(IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null, IEnumerable<string> keyNamesToIgnore = null)
         {
+            this.parameterInfos = parameterInfos;
             if (keyNamesToIgnore != null) this.parameterNamesToIgnore = new HashSet<string>(keyNamesToIgnore);
         }
 
@@ -315,91 +305,26 @@ namespace Lexical.Localization
         /// <returns>true if keys are equals in terms of non-canonical parameters</returns>
         public bool Equals(ILine x, ILine y)
         {
-            if (x is ILine x_tail && y is ILine y_tail)
+            StructList8<KeyValuePair<string, string>> x_parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
+            StructList8<KeyValuePair<string, string>> y_parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
+            x.GetNonCanonicalKeyPairs<StructList8<KeyValuePair<string, string>>>(ref x_parameters, parameterInfos);
+            y.GetNonCanonicalKeyPairs<StructList8<KeyValuePair<string, string>>>(ref y_parameters, parameterInfos);
+
+            // Compare count
+            if (x_parameters.Count != y_parameters.Count) return false;
+
+            // Sort lists
+            sorter.Sort(ref x_parameters);
+            sorter.Sort(ref y_parameters);
+
+            // Pair comparison of the sorted lists
+            for (int i = 0; i < x_parameters.Count; i++)
             {
-                // Get x's (parameter, value) pairs
-                StructList8<KeyValuePair<string, string>> x_parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
-                for (ILineNonCanonicalKey x_key = x_tail.GetNonCanonicalKey(); x_key != null; x_key = x_key.GetPreviousNonCanonicalKey())
-                {
-                    // Get parameter
-                    string x_parameter_name = x_key.GetParameterName(), x_parameter_value = x_key.GetParameterValue();
-                    if (x_parameter_name == null || x_parameter_value == null) continue;
-
-                    // Is this parameter excluded
-                    if (parameterNamesToIgnore != null && parameterNamesToIgnore.Contains(x_parameter_name)) continue;
-
-                    // Previous occurance x_parameters table index
-                    int ix = -1;
-                    // Has this parameter been added already. 
-                    for (int i = 0; i < x_parameters.Count; i++) if (x_parameters[i].Key == x_parameter_name) { ix = i; break; }
-                    // Left-most value stands.
-                    if (ix >= 0)
-                    {
-                        // Update table
-                        x_parameters[ix] = new KeyValuePair<string, string>(x_parameter_name, x_parameter_value);
-                    }
-                    else
-                    {
-                        // Add to list
-                        x_parameters.Add(new KeyValuePair<string, string>(x_parameter_name, x_parameter_value));
-                    }
-                }
-
-                // Get y's (parameter, value) pairs
-                StructList8<KeyValuePair<string, string>> y_parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
-                for (ILineNonCanonicalKey y_key = y_tail.GetNonCanonicalKey(); y_key != null; y_key = y_key.GetPreviousNonCanonicalKey())
-                {
-                    // Is non-canonical
-                    if (y_key is ILineNonCanonicalKey == false) continue;
-
-                    // Get parameter
-                    string y_parameter_name = y_key.GetParameterName(), y_parameter_value = y_key.GetParameterValue();
-                    if (y_parameter_name == null || y_parameter_value == null) continue;
-
-                    // Is this parameter excluded
-                    if (parameterNamesToIgnore != null && parameterNamesToIgnore.Contains(y_parameter_name)) continue;
-
-                    // Previous occurance y_parameters table index
-                    int ix = -1;
-                    // Has this parameter been added already. 
-                    for (int i = 0; i < y_parameters.Count; i++) if (y_parameters[i].Key == y_parameter_name) { ix = i; break; }
-                    // Left-most value stands.
-                    if (ix >= 0)
-                    {
-                        // Update table
-                        y_parameters[ix] = new KeyValuePair<string, string>(y_parameter_name, y_parameter_value);
-                    }
-                    else
-                    {
-                        // Add to list
-                        y_parameters.Add(new KeyValuePair<string, string>(y_parameter_name, y_parameter_value));
-                    }
-                }
-
-                // Remove values where parameterValue==""
-                for (int ix = 0; ix < x_parameters.Count;) if (x_parameters[ix].Value == "") x_parameters.RemoveAt(ix); else ix++;
-                for (int ix = 0; ix < y_parameters.Count;) if (y_parameters[ix].Value == "") y_parameters.RemoveAt(ix); else ix++;
-
-                // Compare count
-                if (x_parameters.Count != y_parameters.Count) return false;
-
-                // Sort arrays
-                sorter.Sort(ref x_parameters);
-                sorter.Sort(ref y_parameters);
-
-                // Pair comparison to sorted lists
-                for (int i = 0; i < x_parameters.Count; i++)
-                {
-                    KeyValuePair<string, string> x_parameter = x_parameters[i], y_parameter = y_parameters[i];
-                    if (x_parameter.Key != y_parameter.Key || x_parameter.Value != y_parameter.Value) return false;
-                }
-
-                return true;
+                KeyValuePair<string, string> x_parameter = x_parameters[i], y_parameter = y_parameters[i];
+                if (x_parameter.Key != y_parameter.Key || x_parameter.Value != y_parameter.Value) return false;
             }
 
-            // Calculate ILines
-            // Not implemented
-            return false;
+            return true;
         }
 
         static StructListSorter<StructList8<KeyValuePair<string, string>>, KeyValuePair<string, string>> sorter = new StructListSorter<StructList8<KeyValuePair<string, string>>, KeyValuePair<string, string>>(KeyValuePairComparer<string, string>.Default);
@@ -413,47 +338,20 @@ namespace Lexical.Localization
         /// <returns></returns>
         public int GetHashCode(ILine line)
         {
-            if (line is ILine tail)
+            StructList8<KeyValuePair<string, string>> parameters = new StructList8<KeyValuePair<string, string>>(KeyValuePairEqualityComparer<string, string>.Default);
+            line.GetNonCanonicalKeyPairs<StructList8<KeyValuePair<string, string>>>(ref parameters, parameterInfos);
+            int hash = 0;
+            for (int i = 0; i < parameters.Count; i++)
             {
-                int hash = 0;
-                // Get x's (parameter, value) pairs
-                for (ILineNonCanonicalKey key = tail.GetNonCanonicalKey(); key != null; key = key.GetPreviousNonCanonicalKey())
+                var param = parameters[i];
+                // Hash in only if value is non-""
+                if (!String.IsNullOrEmpty(param.Value))
                 {
-                    // Get parameters.
-                    string parameterName = key.GetParameterName();
-                    if (parameterName == null) continue;
-
-                    // Is this parameter excluded
-                    if (parameterNamesToIgnore != null && parameterNamesToIgnore.Contains(parameterName)) continue;
-
-                    // Get value.
-                    string parameter_value = key.GetParameterValue();
-                    if (parameter_value == null) continue;
-
-                    // Test if this parameter is yet to occure again towards left of the key
-                    bool firstOccurance = true;
-                    for (ILineNonCanonicalKey k = key.GetPreviousNonCanonicalKey(); k != null; k = k.GetPreviousNonCanonicalKey())
-                        if (k.GetParameterName() == parameterName)
-                        {
-                            firstOccurance = false;
-                            break;
-                        }
-                    // Ignore this occurance as this non-canonical part occurs again.
-                    if (!firstOccurance) continue;
-
-                    // Hash in only if value is non-""
-                    if (parameter_value != "")
-                    {
-                        hash ^= parameterName.GetHashCode();
-                        hash ^= parameter_value.GetHashCode();
-                    }
+                    hash ^= param.Key.GetHashCode();
+                    hash ^= param.Value.GetHashCode();
                 }
-                return hash;
             }
-
-            // Compare ILines
-            // Not implemented
-            return -1;
+            return hash;
         }
     }
 
