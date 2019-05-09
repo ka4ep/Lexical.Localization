@@ -57,7 +57,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Value string parser.
         /// </summary>
-        public ILocalizationStringFormatParser ValueParser { get; protected set; }
+        public IStringFormatParser ValueParser { get; protected set; }
 
         /// <summary>
         /// Xml reader settings
@@ -75,10 +75,10 @@ namespace Lexical.Localization
         /// <param name="extension"></param>
         /// <param name="valueParser"></param>
         /// <param name="xmlReaderSettings"></param>
-        public LocalizationXmlReader(string extension, ILocalizationStringFormat valueParser, XmlReaderSettings xmlReaderSettings = default)
+        public LocalizationXmlReader(string extension, IStringFormat valueParser, XmlReaderSettings xmlReaderSettings = default)
         {
             this.Extension = extension;
-            this.ValueParser = valueParser as ILocalizationStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
+            this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
             this.xmlReaderSettings = xmlReaderSettings ?? CreateXmlReaderSettings();
         }
 

@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Value string parser.
         /// </summary>
-        public ILocalizationStringFormatParser ValueParser { get; protected set; }
+        public IStringFormatParser ValueParser { get; protected set; }
 
         /// <summary>
         /// Create new .resx reader instance with default values.
@@ -46,10 +46,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="ext"></param>
         /// <param name="valueParser"></param>
-        public LocalizationResxReader(string ext, ILocalizationStringFormat valueParser)
+        public LocalizationResxReader(string ext, IStringFormat valueParser)
         {
             this.Extension = ext;
-            this.ValueParser = valueParser as ILocalizationStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
+            this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
         }
 
         /// <summary>

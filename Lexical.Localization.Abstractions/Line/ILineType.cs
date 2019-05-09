@@ -83,18 +83,39 @@ namespace Lexical.Localization
 
         /// <summary>
         /// Search linked list and finds the effective (left-most) <see cref="ILineType"/> key.
-        /// Doesn't return parameter "Type" value.
+        /// 
+        /// Returns parameter "Type" value as <see cref="Type"/>, if <paramref name="resolver"/> is provided.
         /// 
         /// If implements <see cref="ILineType"/> returns the type. 
         /// </summary>
         /// <param name="line"></param>
+        /// <param name="resolver">(optional) type resolver that resolves "Type" parameter into type. Returns null, if could not resolve, exception if resolve fails</param>
         /// <returns>type info or null</returns>
-        public static Type GetType(this ILine line)
+        /// <exception cref="Exception">from <paramref name="resolver"/></exception>
+        public static Type GetType(this ILine line, Func<String, Type> resolver = null)
         {
             Type type = null;
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                if (l is ILineType typeKey && typeKey.Type != null) type = typeKey.Type;
+                if (l is ILineType part && part.Type != null) { type = part.Type; continue; }
+                if (resolver != null && l is ILineParameterEnumerable lineParameters)
+                {
+                    Type tt = null;
+                    foreach (ILineParameter parameter in lineParameters)
+                    {
+                        if (parameter.ParameterName == "Type" && parameter.ParameterValue != null)
+                        {
+                            tt = resolver(parameter.ParameterValue);
+                            if (tt != null) break;
+                        }
+                    }
+                    if (tt != null) { type = tt; continue; }
+                }
+                if (resolver != null && l is ILineParameter lineParameter && lineParameter.ParameterName == "Type" && lineParameter.ParameterValue != null)
+                {
+                    Type t = resolver(lineParameter.ParameterValue);
+                    if (t != null) type = t;
+                }
             }
             return type;
         }
@@ -109,13 +130,13 @@ namespace Lexical.Localization
             string result = null;
             for (ILine part = line; part != null; part = part.GetPreviousPart())
             {
-                if (part is ILineType typeKey && typeKey.Type != null) result = typeKey.Type.FullName;
-                else if (part is ILineParameter parameter && parameter.ParameterName == "Type" && parameter.ParameterValue != null) result = parameter.ParameterValue;
-                else if (part is ILineParameterEnumerable lineParameters)
+                if (part is ILineParameterEnumerable lineParameters)
                 {
                     foreach (ILineParameter lineParameter in lineParameters)
                         if (lineParameter.ParameterName == "Type" && lineParameter.ParameterValue != null) { result = lineParameter.ParameterValue; break; }
                 }
+                else if (part is ILineParameter parameter && parameter.ParameterName == "Type" && parameter.ParameterValue != null) result = parameter.ParameterValue;
+                else if (part is ILineType key && key.Type != null) result = key.Type.FullName;
             }
             return result;
         }

@@ -21,7 +21,7 @@ namespace Lexical.Localization
     {
         public readonly ResourceManager ResourceManager;
         public readonly IParameterPolicy namePolicy;
-        public readonly ILocalizationStringFormatParser ValueParser;
+        public readonly IStringFormatParser ValueParser;
 
         /// <summary>
         /// Name policy where only "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
@@ -105,7 +105,7 @@ namespace Lexical.Localization
         /// <param name="resourceManager">source of language strings and resource files</param>
         /// <param name="namePolicy">policy that converts <see cref="ILine"/> into keys that correlate with keys in <paramref name="resourceManager"/>.</param>
         /// <param name="parser"></param>
-        public ResourceManagerAsset(ResourceManager resourceManager, IParameterPolicy namePolicy, ILocalizationStringFormatParser parser = default)
+        public ResourceManagerAsset(ResourceManager resourceManager, IParameterPolicy namePolicy, IStringFormatParser parser = default)
         {
             this.ResourceManager = resourceManager ?? throw new ArgumentNullException(nameof(resourceManager));
             this.namePolicy = namePolicy ?? throw new ArgumentNullException(nameof(namePolicy));

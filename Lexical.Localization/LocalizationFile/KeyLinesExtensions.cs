@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <param name="keyPolicy"></param>
         /// <param name="valueParser"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, IParameterPolicy keyPolicy, ILocalizationStringFormatParser valueParser)
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, IParameterPolicy keyPolicy, IStringFormatParser valueParser)
             => lines.Select(line => new KeyValuePair<string, IFormulationString>((keyPolicy ?? DefaultPolicy).Print(line.Key), valueParser.Parse(line.Value)));
 
         /// <summary>

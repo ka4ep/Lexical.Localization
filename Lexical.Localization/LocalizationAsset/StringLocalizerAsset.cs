@@ -42,7 +42,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Value string parser
         /// </summary>
-        public readonly ILocalizationStringFormatParser ValueParser;
+        public readonly IStringFormatParser ValueParser;
 
         /// <summary>
         /// 
@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="stringLocalizer"></param>
         /// <param name="valueParser"></param>
-        public StringLocalizerAsset(IStringLocalizer stringLocalizer, ILocalizationStringFormatParser valueParser = default)
+        public StringLocalizerAsset(IStringLocalizer stringLocalizer, IStringFormatParser valueParser = default)
         {
             this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
             this.culture_map = new ConcurrentDictionary<CultureInfo, StringLocalizerAsset>();
@@ -73,7 +73,7 @@ namespace Lexical.Localization
         /// <param name="stringLocalizer"></param>
         /// <param name="culture"></param>
         /// <param name="valueParser"></param>
-        public StringLocalizerAsset(IStringLocalizer stringLocalizer, CultureInfo culture, ILocalizationStringFormatParser valueParser = default)
+        public StringLocalizerAsset(IStringLocalizer stringLocalizer, CultureInfo culture, IStringFormatParser valueParser = default)
         {
             this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
             this.createFunc = ci => new StringLocalizerAsset(stringLocalizer.WithCulture(ci), ci);
@@ -105,7 +105,7 @@ namespace Lexical.Localization
             /// <param name="type"></param>
             /// <param name="culture"></param>
             /// <param name="valueParser"></param>
-            public Type(IStringLocalizer stringLocalizer, System.Type type, CultureInfo culture, ILocalizationStringFormatParser valueParser = default) : base(stringLocalizer, culture, valueParser)
+            public Type(IStringLocalizer stringLocalizer, System.Type type, CultureInfo culture, IStringFormatParser valueParser = default) : base(stringLocalizer, culture, valueParser)
             {
                 this.type = type ?? throw new ArgumentNullException(nameof(type));
                 this.createFunc = ci => new Type(stringLocalizer.WithCulture(ci), type, ci);
@@ -135,7 +135,7 @@ namespace Lexical.Localization
             /// <param name="location">Assembly name</param>
             /// <param name="culture"></param>
             /// <param name="valueParser"></param>
-            public Location(IStringLocalizer stringLocalizer, string basename, string location, CultureInfo culture, ILocalizationStringFormatParser valueParser = default) : base(stringLocalizer, culture, valueParser)
+            public Location(IStringLocalizer stringLocalizer, string basename, string location, CultureInfo culture, IStringFormatParser valueParser = default) : base(stringLocalizer, culture, valueParser)
             {
                 this.basename = basename ?? throw new ArgumentNullException(nameof(basename));
                 this.location = location ?? throw new ArgumentNullException(nameof(location));

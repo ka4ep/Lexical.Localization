@@ -12,13 +12,13 @@ namespace Lexical.Localization
     /// <summary>
     /// Collection of localization formats.
     /// </summary>
-    public class LocalizationStringFormats : ConcurrentDictionary<string, ILocalizationStringFormat>, ILocalizationStringFormats
+    public class StringFormats : ConcurrentDictionary<string, IStringFormat>, IStringFormats
     {
-        private static LocalizationStringFormats instance;
+        private static StringFormats instance;
 
-        static LocalizationStringFormats()
+        static StringFormats()
         {
-            instance = new LocalizationStringFormats();
+            instance = new StringFormats();
             instance["charp"] = LexicalStringFormat.Instance;
             instance[LexicalStringFormat.Instance.Name] = LexicalStringFormat.Instance;
         }
@@ -26,12 +26,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static IReadOnlyDictionary<string, ILocalizationStringFormat> Instance => instance;
+        public static IReadOnlyDictionary<string, IStringFormat> Instance => instance;
 
         /// <summary>
         /// Create new string format map.
         /// </summary>
-        public LocalizationStringFormats() : base(StringComparer.InvariantCultureIgnoreCase)
+        public StringFormats() : base(StringComparer.InvariantCultureIgnoreCase)
         {
         }
 
@@ -39,7 +39,7 @@ namespace Lexical.Localization
         /// Create new string format map.
         /// </summary>
         /// <param name="stringFormats"></param>
-        public LocalizationStringFormats(params ILocalizationStringFormat[] stringFormats) : base(StringComparer.InvariantCultureIgnoreCase)
+        public StringFormats(params IStringFormat[] stringFormats) : base(StringComparer.InvariantCultureIgnoreCase)
         {
             this.AddRange(stringFormats);
         }
@@ -48,14 +48,14 @@ namespace Lexical.Localization
         /// Create new string format map.
         /// </summary>
         /// <param name="stringFormats"></param>
-        public LocalizationStringFormats(IEnumerable<ILocalizationStringFormat> stringFormats) : base(StringComparer.InvariantCultureIgnoreCase)
+        public StringFormats(IEnumerable<IStringFormat> stringFormats) : base(StringComparer.InvariantCultureIgnoreCase)
         {
             this.AddRange(stringFormats);
         }
     }
 
     /// <summary>
-    /// Extensions for <see cref="LocalizationStringFormats"/>.
+    /// Extensions for <see cref="StringFormats"/>.
     /// </summary>
     public static partial class LocalizationStringFormatsExtensions
     {
@@ -64,9 +64,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="map"></param>
         /// <returns></returns>
-        public static LocalizationStringFormats Clone(this IReadOnlyDictionary<string, ILocalizationStringFormat> map)
+        public static StringFormats Clone(this IReadOnlyDictionary<string, IStringFormat> map)
         {
-            LocalizationStringFormats result = new LocalizationStringFormats();
+            StringFormats result = new StringFormats();
             foreach (var line in map)
                 result[line.Key] = line.Value;
             return result;

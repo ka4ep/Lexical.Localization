@@ -25,7 +25,7 @@ namespace Lexical.Localization
         /// 
         /// Format provider is requested for following interfaces:
         /// <list type="bullet">
-        /// <item><see cref="ILocalizationArgumentFormatter"/></item>
+        /// <item><see cref="IArgumentFormatter"/></item>
         /// <item><see cref="ICustomFormatter"/></item>
         /// <item><see cref="IPluralityRuleMap"/></item>
         /// <item><see cref="IPluralityCategory"/></item>

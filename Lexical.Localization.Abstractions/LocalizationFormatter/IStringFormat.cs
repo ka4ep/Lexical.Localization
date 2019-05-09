@@ -16,10 +16,10 @@ namespace Lexical.Localization
     /// 
     /// It has following sub-interfaces:
     /// <list type="bullet">
-    /// <item><see cref="ILocalizationStringFormatParser"/></item>
+    /// <item><see cref="IStringFormatParser"/></item>
     /// </list>
     /// </summary>
-    public interface ILocalizationStringFormat
+    public interface IStringFormat
     {
         /// <summary>
         /// Name of the formulation name, e.g. "csharp", "c", or "lexical"
@@ -33,7 +33,7 @@ namespace Lexical.Localization
     /// For example "You received {plural:0} coin(s)." is a formulation string
     /// that parsed into argument and non-argument sections.
     /// </summary>
-    public interface ILocalizationStringFormatParser : ILocalizationStringFormat
+    public interface IStringFormatParser : IStringFormat
     {
         /// <summary>
         /// Parse formulation string into an <see cref="IFormulationString"/>.
@@ -50,7 +50,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Prints <see cref="IFormulationString"/> into the format.
     /// </summary>
-    public interface ILocalizationStringFormatPrinter : ILocalizationStringFormat
+    public interface IStringFormatPrinter : IStringFormat
     {
         /// <summary>
         /// Print formulation string into string.
@@ -63,12 +63,25 @@ namespace Lexical.Localization
     /// <summary>
     /// A map of formats
     /// </summary>
-    public interface ILocalizationStringFormats : IDictionary<string, ILocalizationStringFormat>
+    public interface IStringFormats : IDictionary<string, IStringFormat>
     {
     }
 
     /// <summary>
-    /// Extenions for <see cref="ILocalizationStringFormat"/>.
+    /// Resolves name to <see cref="IStringFormat"/>.
+    /// </summary>
+    public interface IStringFormatResolver
+    {
+        /// <summary>
+        /// Resolve <paramref name="name"/> to <see cref="IStringFormat"/>.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>string format or null</returns>
+        IStringFormat ResolveStringFormat(string name);
+    }
+
+    /// <summary>
+    /// Extenions for <see cref="IStringFormat"/>.
     /// </summary>
     public static partial class ILocalizationStringFormatExtensions
     {
@@ -82,11 +95,11 @@ namespace Lexical.Localization
         /// <param name="format"></param>
         /// <param name="formulationString"></param>
         /// <returns>formulation string</returns>
-        /// <exception cref="ArgumentException">If <paramref name="format"/> doesn't implement <see cref="ILocalizationStringFormatParser"/></exception>
-        public static IFormulationString Parse(this ILocalizationStringFormat format, string formulationString)
+        /// <exception cref="ArgumentException">If <paramref name="format"/> doesn't implement <see cref="IStringFormatParser"/></exception>
+        public static IFormulationString Parse(this IStringFormat format, string formulationString)
         {
-            if (format is ILocalizationStringFormatParser parser) return parser.Parse(formulationString);
-            throw new ArgumentException($"{format} doesn't implement {nameof(ILocalizationStringFormatParser)}.");
+            if (format is IStringFormatParser parser) return parser.Parse(formulationString);
+            throw new ArgumentException($"{format} doesn't implement {nameof(IStringFormatParser)}.");
         }
 
         /// <summary>
@@ -95,10 +108,10 @@ namespace Lexical.Localization
         /// <param name="format"></param>
         /// <param name="formulationString"></param>
         /// <returns>formulation string</returns>
-        public static string Print(this ILocalizationStringFormat format, IFormulationString formulationString)
+        public static string Print(this IStringFormat format, IFormulationString formulationString)
         {
-            if (format is ILocalizationStringFormatPrinter printer) return printer.Print(formulationString);
-            throw new ArgumentException($"{format} doesn't implement {nameof(ILocalizationStringFormatPrinter)}.");
+            if (format is IStringFormatPrinter printer) return printer.Print(formulationString);
+            throw new ArgumentException($"{format} doesn't implement {nameof(IStringFormatPrinter)}.");
         }
 
         /// <summary>
@@ -112,15 +125,15 @@ namespace Lexical.Localization
         /// <param name="formatName"></param>
         /// <param name="formulationString"></param>
         /// <returns>formulation string</returns>
-        /// <exception cref="ArgumentException">If <paramref name="formatName"/> doesn't implement <see cref="ILocalizationStringFormatParser"/></exception>
-        public static IFormulationString Parse(this IReadOnlyDictionary<string, ILocalizationStringFormat> formats, string formatName, string formulationString)
+        /// <exception cref="ArgumentException">If <paramref name="formatName"/> doesn't implement <see cref="IStringFormatParser"/></exception>
+        public static IFormulationString Parse(this IReadOnlyDictionary<string, IStringFormat> formats, string formatName, string formulationString)
         {
-            ILocalizationStringFormat format;
+            IStringFormat format;
             if (!formats.TryGetValue(formatName, out format))
                 throw new ArgumentException(formatName);
 
-            if (formats is ILocalizationStringFormatParser parser) return parser.Parse(formulationString);
-            throw new ArgumentException($"{formats} doesn't implement {nameof(ILocalizationStringFormatParser)}.");
+            if (formats is IStringFormatParser parser) return parser.Parse(formulationString);
+            throw new ArgumentException($"{formats} doesn't implement {nameof(IStringFormatParser)}.");
         }
 
         /// <summary>
@@ -129,7 +142,7 @@ namespace Lexical.Localization
         /// <param name="formats"></param>
         /// <param name="format"></param>
         /// <returns><paramref name="formats"/></returns>
-        public static IDictionary<string, ILocalizationStringFormat> Add(this IDictionary<string, ILocalizationStringFormat> formats, ILocalizationStringFormat format)
+        public static IDictionary<string, IStringFormat> Add(this IDictionary<string, IStringFormat> formats, IStringFormat format)
         {
             formats[format.Name] = format;
             return formats;
@@ -141,7 +154,7 @@ namespace Lexical.Localization
         /// <param name="formats"></param>
         /// <param name="formatsToAdd"></param>
         /// <returns><paramref name="formats"/></returns>
-        public static IDictionary<string, ILocalizationStringFormat> AddRange(this IDictionary<string, ILocalizationStringFormat> formats, IEnumerable<ILocalizationStringFormat> formatsToAdd)
+        public static IDictionary<string, IStringFormat> AddRange(this IDictionary<string, IStringFormat> formats, IEnumerable<IStringFormat> formatsToAdd)
         {
             foreach (var format in formatsToAdd)
                 formats[format.Name] = format;

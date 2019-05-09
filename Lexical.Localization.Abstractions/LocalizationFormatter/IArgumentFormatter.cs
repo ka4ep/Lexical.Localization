@@ -11,9 +11,9 @@ namespace Lexical.Localization
     /// Argment formatter converts arguments into strings. 
     /// It is an extended interface of <see cref="ICustomFormatter"/>. 
     /// 
-    /// <see cref="ILocalizationArgumentFormatter"/> is provided with <see cref="IFormatProvider"/>.
+    /// <see cref="IArgumentFormatter"/> is provided with <see cref="IFormatProvider"/>.
     /// </summary>
-    public interface ILocalizationArgumentFormatter
+    public interface IArgumentFormatter
     {
         /// <summary>
         /// Converts the value of a specified object to an equivalent string representation using specified format and culture-specific formatting information <paramref name="formatProvider"/>.

@@ -31,14 +31,14 @@ namespace Lexical.Localization
     /// 
     /// <see href="https://docs.microsoft.com/en-us/dotnet/api/system.string.format?view=netframework-4.7.2"/>
     /// </summary>
-    public class LexicalStringFormat : ILocalizationStringFormatParser, ILocalizationStringFormatPrinter
+    public class LexicalStringFormat : IStringFormatParser, IStringFormatPrinter
     {
-        private static ILocalizationStringFormatParser instance => new LexicalStringFormat();
+        private static IStringFormatParser instance => new LexicalStringFormat();
 
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static ILocalizationStringFormatParser Instance => instance;
+        public static IStringFormatParser Instance => instance;
 
         /// <summary>
         /// Name of this string format.
@@ -480,13 +480,13 @@ namespace Lexical.Localization
             public int Length { get; internal set; }
 
             /// <summary>
-            /// (Optional) The function name that is passed to <see cref="ILocalizationArgumentFormatter"/>.
+            /// (Optional) The function name that is passed to <see cref="IArgumentFormatter"/>.
             /// E.g. "plural", "optional", "range", "ordinal".
             /// </summary>
             public string Function { get; internal set; }
 
             /// <summary>
-            /// (Optional) The format text that is passed to <see cref="ICustomFormatter"/>, <see cref="IFormattable"/> and <see cref="ILocalizationArgumentFormatter"/>.
+            /// (Optional) The format text that is passed to <see cref="ICustomFormatter"/>, <see cref="IFormattable"/> and <see cref="IArgumentFormatter"/>.
             /// E.g. "x2".
             /// </summary>
             public string Format { get; internal set; }

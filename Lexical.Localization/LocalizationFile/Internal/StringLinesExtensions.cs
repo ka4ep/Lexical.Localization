@@ -41,7 +41,7 @@ namespace Lexical.Localization.Internal
         /// <param name="keyPolicy"><see cref="IParameterParser"/> implementation used for parsing.</param>
         /// <param name="valueParser"></param>
         /// <returns>lines with <see cref="ILine"/> keys</returns>
-        public static IEnumerable<KeyValuePair<ILine, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, IParameterPolicy keyPolicy, ILocalizationStringFormatParser valueParser)
+        public static IEnumerable<KeyValuePair<ILine, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, IParameterPolicy keyPolicy, IStringFormatParser valueParser)
         {
             foreach (var line in lines)
             {

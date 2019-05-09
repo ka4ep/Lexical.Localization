@@ -25,7 +25,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Value converter
         /// </summary>
-        public readonly ILocalizationStringFormatParser ValueParser;
+        public readonly IStringFormatParser ValueParser;
 
         /// <summary>
         /// Cache of converted assets
@@ -45,7 +45,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="stringLocalizerFactory"></param>
         /// <param name="valueParser"></param>
-        public StringLocalizerFactoryAsset(IStringLocalizerFactory stringLocalizerFactory, ILocalizationStringFormatParser valueParser = default)
+        public StringLocalizerFactoryAsset(IStringLocalizerFactory stringLocalizerFactory, IStringFormatParser valueParser = default)
         {
             this.stringLocalizerFactory = stringLocalizerFactory ?? throw new ArgumentNullException(nameof(stringLocalizerFactory));
             this.map_by_type = new ConcurrentDictionary<String, StringLocalizerAsset.Type>();

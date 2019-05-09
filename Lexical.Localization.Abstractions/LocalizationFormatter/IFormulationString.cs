@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// For example "Welcome, {0}!" is a formulation string. 
     /// When it's in parsed format the argument "{0}" is extracted and the string can be processed more efficiently.
     /// 
-    /// <see cref="IFormulationString"/> is produced by <see cref="ILocalizationStringFormatParser"/>.
+    /// <see cref="IFormulationString"/> is produced by <see cref="IStringFormatParser"/>.
     /// </summary>
     public interface IFormulationString
     {
@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// If same argument occurs twice, then ordered by occurance index.
         /// E.g. "Value={0,10}, x={0:X8}" returns first {0,10} then second {0:X8}.
         /// 
-        /// They are parsed from <see cref="Text"/> by an <see cref="ILocalizationStringFormatParser"/>.
+        /// They are parsed from <see cref="Text"/> by an <see cref="IStringFormatParser"/>.
         /// </summary>
         IFormulationStringArgument[] Arguments { get; }
 
@@ -56,7 +56,7 @@ namespace Lexical.Localization
         /// 
         /// The formatter is requested for following interfaces (Depends on <see cref="ILocalizationResolver"/> implementation.)
         /// <list type="bullet">
-        /// <item><see cref="ILocalizationArgumentFormatter"/></item>
+        /// <item><see cref="IArgumentFormatter"/></item>
         /// <item><see cref="ICustomFormatter"/></item>
         /// <item><see cref="IPluralityRuleMap"/></item>
         /// <item><see cref="IPluralityCategory"/></item>
@@ -149,7 +149,7 @@ namespace Lexical.Localization
         string ArgumentName { get; }
 
         /// <summary>
-        /// (Optional) The function name that is passed to <see cref="ILocalizationArgumentFormatter"/>.
+        /// (Optional) The function name that is passed to <see cref="IArgumentFormatter"/>.
         /// E.g. "plural", "optional", "range", "ordinal".
         /// </summary>
         string Function { get; }
@@ -160,7 +160,7 @@ namespace Lexical.Localization
         int Alignment { get; }
 
         /// <summary>
-        /// (Optional) The format text that is passed to <see cref="ICustomFormatter"/>, <see cref="IFormattable"/> and <see cref="ILocalizationArgumentFormatter"/>.
+        /// (Optional) The format text that is passed to <see cref="ICustomFormatter"/>, <see cref="IFormattable"/> and <see cref="IArgumentFormatter"/>.
         /// E.g. "x2".
         /// </summary>
         string Format { get; }
