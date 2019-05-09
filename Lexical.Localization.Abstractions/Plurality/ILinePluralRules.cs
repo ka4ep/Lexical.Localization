@@ -23,7 +23,7 @@ namespace Lexical.Localization
     /// <summary>
     /// 
     /// </summary>
-    public static partial class IPluralRulesExtensions
+    public static partial class ILineExtensions
     {
         /// <summary>
         /// Assign a specific instance of rules. 

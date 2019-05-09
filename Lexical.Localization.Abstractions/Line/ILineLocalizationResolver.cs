@@ -27,7 +27,7 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <param name="resolver"></param>
         /// <returns>new key</returns>
-        /// <exception cref="LineException">If part append fails/exception>
+        /// <exception cref="LineException">If part append fails</exception>
         public static ILineLocalizationResolver Resolver(this ILine line, ILocalizationResolver resolver)
             => line.Append<ILineLocalizationResolver, ILocalizationResolver>(resolver);
 
@@ -63,8 +63,8 @@ namespace Lexical.Localization
         /// If no applicable <see cref="ILocalizationResolver"/> is found return a value with state <see cref="LocalizationStatus.NoResult"/>.
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>If key has <see cref="ILineFormatArgsPart"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
-        /// If key didn't have <see cref="ILineFormatArgsPart"/> part, then return the formulation string "Error (Code=0x{0:X8})".
+        /// <returns>If key has <see cref="ILineFormatArgs"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
+        /// If key didn't have <see cref="ILineFormatArgs"/> part, then return the formulation string "Error (Code=0x{0:X8})".
         /// otherwise return null</returns>
         public static LocalizationString ResolveFormulatedString(this ILine key)
         {

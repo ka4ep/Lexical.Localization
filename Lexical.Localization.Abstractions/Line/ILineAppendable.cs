@@ -39,6 +39,19 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Find appender from <paramref name="line"/>.
+        /// If its null, follows to previous part. 
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns>appender or null</returns>
+        public static ILineFactory FindAppender(this ILine line)
+        {
+            for (ILine p = line; p != null; p = p.GetPreviousPart())
+                if (p is ILineAppendable appendable && appendable.Appender != null) return appendable.Appender;
+            return null;
+        }
+
+        /// <summary>
         /// Get appender from <paramref name="part"/>.
         /// If its null, follows to previous part. 
         /// </summary>

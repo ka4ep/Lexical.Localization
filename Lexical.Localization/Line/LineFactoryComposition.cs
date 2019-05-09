@@ -291,7 +291,7 @@ namespace Lexical.Localization
     }
 
     /// <summary></summary>
-    public static partial class LineLineExtensions
+    public static partial class LineFactoryExtensions
     {
         /// <summary>
         /// Create a clone of <paramref name="previous"/>'s appender, and add new components to it. 

@@ -34,7 +34,7 @@ namespace Lexical.Localization
     public class LineBase : ILinePart, ILineDefaultHashCode, IDynamicMetaObjectProvider, ILineAppendable
     {
         /// <summary>
-        /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineFormatArgsPart"/> parts.
+        /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineFormatArgs"/> parts.
         /// </summary>
         static IEqualityComparer<ILine> keyAndArgsComparer =
             new LineComparer()
@@ -44,7 +44,7 @@ namespace Lexical.Localization
                 .SetReadonly();
 
         /// <summary>
-        /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineFormatArgsPart"/> parts.
+        /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineFormatArgs"/> parts.
         /// </summary>
         public static IEqualityComparer<ILine> FormatArgsComparer => keyAndArgsComparer;
 
@@ -160,7 +160,7 @@ namespace Lexical.Localization
         {
             var prev = dynamicMetaObject;
             if (prev?.Expression == expression) return prev;
-            return dynamicMetaObject = new LocalizationKeyDynamicMetaObject(Library.Default, expression, BindingRestrictions.GetTypeRestriction(expression, typeof(ILine)), this);
+            return dynamicMetaObject = new LineDynamicMetaObject(Library.Default, expression, BindingRestrictions.GetTypeRestriction(expression, typeof(ILine)), this);
         }
 
         /// <summary>
@@ -208,23 +208,24 @@ namespace Lexical.Localization
             public static DynamicObjectLibrary CreateDefault()
                 => new DynamicObjectLibrary()
                     .AddExtensionMethods(typeof(ILineExtensions))
-                    .AddExtensionMethods(typeof(AssetKeyExtensions))
                     .AddInterface(typeof(ILine))
-                    .AddInterface(typeof(IAssetKeyAssignable))
-                    .AddInterface(typeof(IAssetKeyAssigned))
-                    .AddInterface(typeof(ILine))
+                    .AddInterface(typeof(ILineAppendable))
+                    .AddInterface(typeof(ILineKey))
+                    .AddInterface(typeof(ILineParameter))
                     .AddInterface(typeof(ILineAsset))
-                    .AddInterface(typeof(IAssetKeyAssignable))
-                    .AddInterface(typeof(IAssetKeySectionAssigned))
-                    .AddInterface(typeof(IAssetKeyLocationAssigned))
-                    .AddInterface(typeof(ILineKeyType))
-                    .AddInterface(typeof(ILineAssembly))
-                    .AddInterface(typeof(IAssetKeyResourceAssigned))
-                    .AddExtensionMethods(typeof(ILineExtensions))
+                    .AddInterface(typeof(ILineArguments))
+                    .AddInterface(typeof(ILineAsset))
                     .AddInterface(typeof(ILineCulture))
                     .AddInterface(typeof(ILineCulturePolicy))
-                    .AddInterface(typeof(ILineFormatArgsPart))
-                    .AddInterface(typeof(ILineInlines))
+                    .AddInterface(typeof(ILineAssembly))
+                    .AddInterface(typeof(ILineFormatArgs))
+                    .AddInterface(typeof(ILineFormatProvider))
+                    .AddInterface(typeof(ILineLocalizationResolver))
+                    .AddInterface(typeof(ILineLogger))
+                    .AddInterface(typeof(ILineValue))
+                    .AddInterface(typeof(ILinePluralRules))
+                    .AddInterface(typeof(ILineRoot))
+                    .AddInterface(typeof(ILineType))
                     .AddInterface(typeof(ILineInlines));
         }
     }
@@ -267,8 +268,8 @@ namespace Lexical.Localization
         public IStringLocalizer Create(string basename, string location)
         {
             ILine result = this;
-            if (basename != null) result = result.Append<ILineNonCanonicalKey, string, string>("BaseName", basename);
             if (location != null) result = result.Append<ILineNonCanonicalKey, string, string>("Location", location);
+            if (basename != null) result = result.Append<ILineNonCanonicalKey, string, string>("BaseName", basename);
             return (IStringLocalizer)result;
         }
 
@@ -287,23 +288,39 @@ namespace Lexical.Localization
         /// <returns></returns>
         public IStringLocalizer WithCulture(CultureInfo newCulture)
         {
+            ILine part = this;
             // Find culture key
             ILine oldCultureKey;
-            if (!this.TryGetCultureKey(out oldCultureKey))
+            // Old culture exists
+            if (this.TryGetCultureKey(out oldCultureKey))
             {
-                // No culture key, create new
-                if (oldCultureKey == null) return newCulture == null ? this : (IStringLocalizer)this.Append<ILineCulture, CultureInfo>(newCulture);
                 // Old culture matches the new, return as is
                 if (oldCultureKey.GetCultureName() == newCulture?.Name) return this;
+                // Remove culture part
+                ILineFactory appender = this.GetAppender();
+                StructList16<ILine> args = new StructList16<ILine>();
+                for (ILine l = this; l != null; l = l.GetPreviousPart())
+                {
+                    if (l == oldCultureKey) break; // Stop iteration
+                    if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+                }
+                // Re-append everything but culture
+                part = oldCultureKey?.GetPreviousParameterPart();
+                for (int i = args.Count - 1; i >= 0; i--)
+                {
+                    ILine l = args[i];
+                    if (l is ILineArgumentsEnumerable enumr)
+                        foreach (ILineArguments args_ in enumr)                            
+                            if (args_ is ILineArguments<ILineCulture, CultureInfo> == false && args_.GetParameterName() != "Culture")
+                                part = appender.Create(part, args_);
+                    if (l is ILineArguments arg)
+                        if (arg is ILineArguments<ILineCulture, CultureInfo> == false && arg.GetParameterName() != "Culture")
+                            part = part.Append(arg);
+                }
             }
 
-            // Replace culture part
-            ILine beforeCultureKey = oldCultureKey?.GetPreviousPart();
-            StructList16<ILine> parts = new StructList16<ILine>();
-            for (ILine l = this; l != oldCultureKey; l = l.GetPreviousPart()) parts.Add(l);
-            ILine result = beforeCultureKey;
-            foreach (ILine l in parts) result = result.Append(l);
-            return (IStringLocalizer)result;
+            // Append culture
+            return (IStringLocalizer)this.Append<ILineCulture, CultureInfo>(newCulture);
         }
 
         /// <summary>

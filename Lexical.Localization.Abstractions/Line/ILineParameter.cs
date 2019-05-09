@@ -3,6 +3,7 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
@@ -90,77 +91,13 @@ namespace Lexical.Localization
         public static ILine Parameter(this ILine part, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
         {
             IParameterInfo info = null;
-            if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info) && (info.IsCanonical || info.IsNonCanonical))
+            if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info))
             {
-                if (info.IsCanonical) return part.GetAppender().Create<ILineCanonicalKey, string, string>(part, parameterName, parameterValue);
-                else if (info.IsNonCanonical) return part.GetAppender().Create<ILineNonCanonicalKey, string, string>(part, parameterName, parameterValue);
+                if (info.InterfaceType == typeof(ILineHint)) return part.GetAppender().Create<ILineHint, string, string>(part, parameterName, parameterValue);
+                if (info.InterfaceType == typeof(ILineCanonicalKey)) return part.GetAppender().Create<ILineCanonicalKey, string, string>(part, parameterName, parameterValue);
+                if (info.InterfaceType == typeof(ILineNonCanonicalKey)) return part.GetAppender().Create<ILineNonCanonicalKey, string, string>(part, parameterName, parameterValue);
             }
             return part.GetAppender().Create<ILineParameter, string, string>(part, parameterName, parameterValue);
-        }
-
-        /// <summary>
-        /// Try to create a new key by appending an another key with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="parameterName">parameter name</param>
-        /// <param name="parameterValue">(otional) parameter value.</param>
-        /// <param name="line"></param>
-        /// <returns>true if was appended to <paramref name="line"/></returns>
-        public static bool TryAppendParameter(this ILine part, string parameterName, string parameterValue, out ILine line)
-        {
-            ILineParameter result = null;
-            bool ok = part.GetAppender().TryCreate<ILineParameter, string, string>(part, parameterName, parameterValue, out result);
-            line = result;
-            return ok;
-        }
-
-        /// <summary>
-        /// Try to create a new key by appending an another key node with <paramref name="parameterName"/> and <paramref name="parameterValue"/>.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="parameterName">parameter name</param>
-        /// <param name="parameterValue">(otional) parameter value.</param>
-        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
-        /// <param name="line"></param>
-        /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
-        public static bool TryAppendParameter(this ILine part, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfos, out ILine line)
-        {
-            // Get appender 
-            ILineFactory appender;
-            if (!part.TryGetAppender(out appender)) { line = default; return false; }
-
-            IParameterInfo info = null;
-            if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info) && (info.IsCanonical || info.IsNonCanonical))
-            {
-                if (info.IsCanonical)
-                {
-                    ILineCanonicalKey result = null;
-                    if (part.GetAppender().TryCreate<ILineCanonicalKey, string, string>(part, parameterName, parameterValue, out result))
-                    {
-                        line = result;
-                        return true;
-                    }
-                }
-                else if (info.IsNonCanonical)
-                {
-                    ILineNonCanonicalKey result = null;
-                    if (part.GetAppender().TryCreate<ILineNonCanonicalKey, string, string>(part, parameterName, parameterValue, out result))
-                    {
-                        line = result;
-                        return true;
-                    }
-                }
-            }
-            {
-                ILineParameter result = null;
-                if (part.GetAppender().TryCreate<ILineParameter, string, string>(part, parameterName, parameterValue, out result))
-                {
-                    line = result;
-                    return true;
-                }
-            }
-            line = default;
-            return false;
         }
 
         /// <summary>
@@ -193,32 +130,9 @@ namespace Lexical.Localization
             foreach (var parameter in parameters)
             {
                 if (parameter.Key == null) continue;
-                IParameterInfo info = null;
-                if (parameterInfos != null && parameterInfos.TryGetValue(parameter.Key, out info) && (info.IsCanonical || info.IsNonCanonical))
-                {
-                    if (info.IsCanonical) part = appender.Create<ILineCanonicalKey, string, string>(part, parameter.Key, parameter.Value);
-                    else if (info.IsNonCanonical) part = appender.Create<ILineNonCanonicalKey, string, string>(part, parameter.Key, parameter.Value);
-                }
-                else part = appender.Create<ILineParameter, string, string>(part, parameter.Key, parameter.Value);
+                part = part.Parameter(parameter.Key, parameter.Value, parameterInfos);
             }
             return part;
-        }
-
-        /// <summary>
-        /// Try to create a new key by appending an enumeration of parameters.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="parameters"></param>
-        /// <param name="parameterInfos">(optional) rules whether to create <see cref="ILineCanonicalKey"/>, <see cref="ILineNonCanonicalKey"/>, or <see cref="ILineParameter"/>. If null everything is instantiated as <see cref="ILineParameter"/></param>
-        /// <returns>new key that is appended to this key, or null if could not be appended.</returns>
-        public static bool TryAppendParameters(this ILine part, IEnumerable<KeyValuePair<string, string>> parameters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos, out ILine line)
-        {
-            ILine result = part;
-            foreach(var parameter in parameters)
-                if (!result.TryAppendParameter(parameter.Key, parameter.Value, parameterInfos, out result))
-                    { line = null; return false; }
-            line = result;
-            return true;
         }
 
         /// <summary>
@@ -302,7 +216,7 @@ namespace Lexical.Localization
         public static ILine GetPreviousParameterPart(this ILine line)
         {
             if (line == null) return null;
-            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            for (ILine l = line.GetPreviousPart(); l != null; l = l.GetPreviousPart())
             {
                 if (l is ILineParameter lineParameter && lineParameter.ParameterName != null) return lineParameter;
                 if (l is ILineParameterEnumerable lineParameters && lineParameters.FirstOrDefault() != null)
@@ -318,30 +232,20 @@ namespace Lexical.Localization
         /// <returns>array of parameters</returns>
         public static ILineParameter[] GetParameters(this ILine line)
         {
-            int count = line.GetParameterCount();
-            if (count == 0) return no_parameters;
-            ILineParameter[] result = new ILineParameter[count];
+            StructList12<ILineParameter> list = new StructList12<ILineParameter>();
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                if (l is ILineParameter lineParameter && lineParameter.ParameterName != null && lineParameter.ParameterValue != null) result[--count] = lineParameter;
                 if (l is ILineParameterEnumerable lineParameters)
                 {
-                    int endIx = count;
+                    StructList8<ILineParameter> tmp = new StructList8<ILineParameter>();
                     foreach (var parameter in lineParameters)
-                        if (parameter.ParameterName != null && parameter.ParameterValue != null) result[--count] = parameter;
-
-                    // Reverse between count .. endIx
-                    int mid = count+ ((endIx-count)/2);
-                    for (int i = count, j = endIx-1; i < mid; i++, j--)
-                    {
-                        // Swap result[i] and result[j]
-                        ILineParameter tmp = result[i];
-                        result[i] = result[j];
-                        result[j] = tmp;
-                    }
+                        if (parameter.ParameterName != null && parameter.ParameterValue != null) tmp.Add(parameter);
+                    for (int i = tmp.Count - 1; i >= 0; i--)
+                        list.Add(tmp[i]);
                 }
+                if (l is ILineParameter lineParameter && lineParameter.ParameterName != null && lineParameter.ParameterValue != null) list.Add(lineParameter);
             }
-            return result;
+            return list.ToReverseArray();
         }
         static ILineParameter[] no_parameters = new ILineParameter[0];
 
@@ -352,33 +256,29 @@ namespace Lexical.Localization
         /// <returns>array of parameters</returns>
         public static KeyValuePair<string, string>[] GetParameterAsKeyValues(this ILine line)
         {
-            int count = line.GetParameterCount();
-            if (count == 0) return no_parameter_keyvalues;
-            KeyValuePair<string, string>[] result = new KeyValuePair<string, string>[count];
+            StructList12<ILineParameter> list = new StructList12<ILineParameter>();
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                if (l is ILineParameter lineParameter && lineParameter.ParameterName != null && lineParameter.ParameterValue != null)
-                    result[--count] = new KeyValuePair<string, string>(lineParameter.ParameterName, lineParameter.ParameterValue);
-
                 if (l is ILineParameterEnumerable lineParameters)
                 {
-                    int endIx = count;
+                    StructList8<ILineParameter> tmp = new StructList8<ILineParameter>();
                     foreach (var parameter in lineParameters)
-                        if (parameter.ParameterName != null && parameter.ParameterValue != null)
-                            result[--count] = new KeyValuePair<string, string>(parameter.ParameterName, parameter.ParameterValue);
-
-                    // Reverse between count .. endIx
-                    int mid = count + ((endIx - count) / 2);
-                    for (int i = count, j = endIx - 1; i < mid; i++, j--)
-                    {
-                        // Swap result[i] and result[j]
-                        KeyValuePair<string, string> tmp = result[i];
-                        result[i] = result[j];
-                        result[j] = tmp;
-                    }
+                        if (parameter.ParameterName != null && parameter.ParameterValue != null) tmp.Add(parameter);
+                    for (int i = tmp.Count - 1; i >= 0; i--)
+                        list.Add(tmp[i]);
                 }
+                if (l is ILineParameter lineParameter && lineParameter.ParameterName != null && lineParameter.ParameterValue != null) list.Add(lineParameter);
             }
-
+            
+            // No parameters
+            if (list.Count == 0) return no_parameter_keyvalues;
+            // Reverse order and print as key-values
+            KeyValuePair<string, string>[] result = new KeyValuePair<string, string>[list.Count];
+            for (int i = list.Count - 1, j = 0; i >= 0; i--, j++)
+            {
+                var item = list[i];
+                result[j] = new KeyValuePair<string, string>(item.ParameterName, item.ParameterValue);
+            }
             return result;
         }
         static KeyValuePair<string, string>[] no_parameter_keyvalues = new KeyValuePair<string, string>[0];
@@ -408,78 +308,3 @@ namespace Lexical.Localization
     }
 }
 
-namespace Lexical.Localization.Internal
-{
-    /// <summary>
-    /// <see cref="ILine"/> extension methods with internal class dependencies.
-    /// </summary>
-    public static partial class ILineParameterPartExtensions
-    {
-        /// <summary>
-        /// Break <paramref name="part"/> into effective parameters and write to <paramref name="list"/>.
-        /// The <paramref name="list"/> is allocated from stack by caller.
-        /// 
-        /// For non-canonical parameters, only the left-most is added, with occurance index 0.
-        /// For canonical parameters, the left most occurance starts with index 0, and increments for every new occurance.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="list">(ParameterName, occuranceIndex, ParameterValue)</param>
-        public static void GetEffectiveParameters(this ILine part, ref StructList12<(string, int, string)> list)
-        {
-            for (ILine k = part; k != null; k = k.GetPreviousPart())
-            {
-                // Parameter
-                ILineParameter parametrized = k as ILineParameter;
-                if (parametrized == null) continue;
-                string parameterName = parametrized.ParameterName, parameterValue = parametrized.ParameterValue;
-                if (parameterName == null) continue;
-
-                // Canonical/Non-canonical
-                bool isCanonical = k is ILineCanonicalKey, isNonCanonical = k is ILineNonCanonicalKey;
-                if (!isCanonical && !isNonCanonical) continue;
-
-                if (isNonCanonical)
-                {
-                    // Test if parameter is already in list
-                    int ix = -1;
-                    for (int i = 0; i < list.Count; i++)
-                        if (list[i].Item1 == parameterName)
-                        {
-                            // Overwrite
-                            list[i] = (parameterName, 0, parameterValue);
-                            ix = i;
-                            break;
-                        }
-                    // Add new
-                    if (ix == -1)
-                    {
-                        list.Add((parameterName, 0, parameterValue));
-                    }
-                    continue;
-                }
-
-                if (isCanonical)
-                {
-                    // Add to list, fix occurance index later
-                    list.Add((parameterName, -1, parameterValue));
-                }
-            }
-
-            // Fix occurance indices
-            for (int i = 0; i < list.Count; i++)
-            {
-                (string parameterName, int occurance, string parameterValue) = list[i];
-                if (occurance >= 0) continue;
-                int oix = 0;
-                for (int j = i - 1; j >= 0; j--)
-                {
-                    (string parameterName_, int occurance_, string _) = list[j];
-                    if (parameterName_ == parameterName) { oix = occurance_ + 1; break; }
-                }
-                list[i] = (parameterName, oix, parameterValue);
-            }
-
-        }
-
-    }
-}

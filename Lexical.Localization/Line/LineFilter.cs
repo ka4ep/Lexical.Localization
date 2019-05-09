@@ -29,6 +29,20 @@ namespace Lexical.Localization
         protected MapList<KeyValuePair<string, int>, ParameterRule> parameterRules;
 
         /// <summary>
+        /// (optional) Parameter infos for determining if parameter is key.
+        /// </summary>
+        protected IReadOnlyDictionary<string, IParameterInfo> parameterInfos;
+
+        /// <summary>
+        /// Create line filter. 
+        /// </summary>
+        /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
+        public LineFilter(IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
+        {
+            this.parameterInfos = parameterInfos;
+        }
+
+        /// <summary>
         /// Add generic filter rule.
         /// </summary>
         /// <param name="filter"></param>
@@ -50,7 +64,7 @@ namespace Lexical.Localization
         public LineFilter Rule(ParameterRule parameterRule)
         {
             if (parameterRule == null) throw new ArgumentNullException(nameof(parameterRule));
-            if (parameterRules==null) parameterRules = new MapList<KeyValuePair<string, int>, ParameterRule>(KeyValuePairEqualityComparer<string, int>.Default);
+            if (parameterRules == null) parameterRules = new MapList<KeyValuePair<string, int>, ParameterRule>(KeyValuePairEqualityComparer<string, int>.Default);
             parameterRules.Add(new KeyValuePair<string, int>(parameterRule.ParameterName, parameterRule.OccuranceIndex), parameterRule);
             return this;
         }
@@ -68,7 +82,7 @@ namespace Lexical.Localization
             // Break filterKey into effective non-canonical parameters, and to canonical parameters and occurance index
             // (ParameterName, occuranceIndex, ParameterValue)
             StructList12<(string, int, string)> list = new StructList12<(string, int, string)>();
-            filterKey.GetEffectiveParameters(ref list);
+            filterKey.GetEffectiveParameters(ref list, parameterInfos);
 
             // Add rules
             foreach ((string parameterName, int occuranceIndex, string parameterValue) in list)
@@ -110,7 +124,7 @@ namespace Lexical.Localization
             // Break key into effective non-canonical parameters, and to canonical parameters and occurance index
             // (ParameterName, occuranceIndex, ParameterValue)
             StructList12<(string, int, string)> list = new StructList12<(string, int, string)>();
-            key.GetEffectiveParameters(ref list);
+            key.GetEffectiveParameters(ref list, parameterInfos);
 
             // Evaluate rules
             if (this.parameterRules != null)
@@ -170,7 +184,7 @@ namespace Lexical.Localization
 
                 // Apply parameter filters
                 list.Clear();
-                key.GetEffectiveParameters(ref list);
+                key.GetEffectiveParameters(ref list, parameterInfos);
 
                 // Evaluate rules
                 bool keyOk = true;
@@ -231,7 +245,7 @@ namespace Lexical.Localization
 
                 // Apply parameter filters
                 list.Clear();
-                line.Key.GetEffectiveParameters(ref list);
+                line.Key.GetEffectiveParameters(ref list, parameterInfos);
 
                 // Evaluate rules
                 bool keyOk = true;
@@ -269,10 +283,10 @@ namespace Lexical.Localization
         /// 
         /// If <see cref="IParameterPatternMatch.Success"/> is false then return false.
         /// 
-        /// The whole <paramref name="key"/> is matched against every <see cref="genericFilters"/>. 
-        /// If one of the mismatches then returns false.
+        /// The whole <paramref name="keyMatch"/> is matched against every <see cref="genericFilters"/>. 
+        /// If one mismatches then returns false.
         /// 
-        /// The <paramref name="key"/> is broken into key parts.
+        /// The <paramref name="keyMatch"/> is broken into key parts.
         /// If any rule for (parameterName, occuranceIndex) passes, the filter passes for that key part.
         /// </summary>
         /// <param name="keyMatch"></param>
@@ -321,7 +335,7 @@ namespace Lexical.Localization
                         {
                             IParameterInfo pi;
                             if (!ParameterInfos.Default.TryGetValue(parameterKey.Key, out pi)) continue;
-                            if (pi.IsSection) { parameterValue = pv; break; }
+                            //if (/*pi.IsSection*/) { parameterValue = pv; break; }
                         }
                         else
                         {
@@ -556,5 +570,108 @@ namespace Lexical.Localization
                 => $"{GetType().Name}({nameof(ParameterName)}={ParameterName}, {nameof(OccuranceIndex)}={OccuranceIndex})";
         }
 
+    }
+
+    namespace Internal
+    {
+        /// <summary>
+        /// <see cref="ILine"/> extension methods with internal class dependencies.
+        /// </summary>
+        public static partial class ILineParameterExtensions
+        {
+            /// <summary>
+            /// Break <paramref name="line"/> into effective parameters and write to <paramref name="list"/>.
+            /// The <paramref name="list"/> is allocated from stack by caller.
+            /// 
+            /// For non-canonical parameters, only the left-most is added, with occurance index 0.
+            /// For canonical parameters, the left most occurance starts with index 0, and increments for every new occurance.
+            /// </summary>
+            /// <param name="line"></param>
+            /// <param name="list">(ParameterName, occuranceIndex, ParameterValue)</param>
+            /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key</param>
+            public static void GetEffectiveParameters(this ILine line, ref StructList12<(string, int, string)> list, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
+            {
+                for (ILine part = line; part != null; part = part.GetPreviousPart())
+                {
+                    if (part is ILineParameterEnumerable lineParameters)
+                    {
+                        foreach (ILineParameter parameter in lineParameters)
+                        {
+                            if (parameter.IsNonCanonicalKey(parameterInfos))
+                            {
+                                // Test if parameter is already in list
+                                int ix = -1;
+                                for (int i = 0; i < list.Count; i++)
+                                    if (list[i].Item1 == parameter.ParameterName)
+                                    {
+                                        // Overwrite
+                                        list[i] = (parameter.ParameterName, 0, parameter.ParameterValue);
+                                        ix = i;
+                                        break;
+                                    }
+                                // Add new
+                                if (ix == -1)
+                                {
+                                    list.Add((parameter.ParameterName, 0, parameter.ParameterValue));
+                                }
+                                continue;
+                            }
+
+                            if (parameter.IsCanonicalKey(parameterInfos))
+                            {
+                                // Add to list, fix occurance index later
+                                list.Add((parameter.ParameterName, -1, parameter.ParameterValue));
+                            }
+                        }
+                    }
+                    {
+                        if (part is ILineParameter parameter && parameter.ParameterName != null)
+                        {
+                            if (parameter.IsNonCanonicalKey(parameterInfos))
+                            {
+                                // Test if parameter is already in list
+                                int ix = -1;
+                                for (int i = 0; i < list.Count; i++)
+                                    if (list[i].Item1 == parameter.ParameterName)
+                                    {
+                                        // Overwrite
+                                        list[i] = (parameter.ParameterName, 0, parameter.ParameterValue);
+                                        ix = i;
+                                        break;
+                                    }
+                                // Add new
+                                if (ix == -1)
+                                {
+                                    list.Add((parameter.ParameterName, 0, parameter.ParameterValue));
+                                }
+                                continue;
+                            }
+
+                            if (parameter.IsCanonicalKey(parameterInfos))
+                            {
+                                // Add to list, fix occurance index later
+                                list.Add((parameter.ParameterName, -1, parameter.ParameterValue));
+                            }
+                        }
+                    }
+                }
+
+                // Fix occurance indices
+                for (int i = 0; i < list.Count; i++)
+                {
+                    (string parameterName, int occurance, string parameterValue) = list[i];
+                    if (occurance >= 0) continue;
+                    int oix = 0;
+                    for (int j = i - 1; j >= 0; j--)
+                    {
+                        (string parameterName_, int occurance_, string _) = list[j];
+                        if (parameterName_ == parameterName) { oix = occurance_ + 1; break; }
+                    }
+                    list[i] = (parameterName, oix, parameterValue);
+                }
+
+            }
+
+        }
     }
 }
