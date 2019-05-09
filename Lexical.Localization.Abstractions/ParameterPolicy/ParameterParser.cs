@@ -79,8 +79,6 @@ namespace Lexical.Localization
                 "\\\\[" + unescapeCharactersEscaped + "]"
                 , opts);
             unescapeChar = UnescapeChar;
-
-            _parameterVisitor = parameterVisitor;
         }
 
         /// <summary>
@@ -100,7 +98,7 @@ namespace Lexical.Localization
         public string PrintKey(ILine key)
         {
             StringBuilder sb = new StringBuilder();
-            key.VisitFromRoot(_parameterVisitor, ref sb);
+            PrintKey(key, sb);
             return sb.ToString();
         }
         
@@ -121,21 +119,17 @@ namespace Lexical.Localization
         /// <returns><paramref name="sb"/></returns>
         public StringBuilder PrintKey(ILine key, StringBuilder sb)
         {
-            key.VisitFromRoot(_parameterVisitor, ref sb);
-            return sb;
-        }
-
-        LinePartVisitor<StringBuilder> _parameterVisitor;
-        void parameterVisitor(ILine key, ref StringBuilder sb)
-        {
-            if (key is ILineParameter parameter)
+            StructList12<ILineParameter> list = new StructList12<ILineParameter>();
+            key.GetParameterParts<StructList12<ILineParameter>>(ref list);
+            for (int i=0; i<list.Count; i++)
             {
-                ILineParameter prevKey = key.GetPreviousParameterPart();
-                if (prevKey != null) sb.Append(':');
+                if (i>0) sb.Append(':');
+                var parameter = list[i];
                 sb.Append(EscapeLiteral(parameter.ParameterName));
                 sb.Append(':');
                 sb.Append(EscapeLiteral(parameter.ParameterValue));
             }
+            return sb;
         }
 
         /// <summary>

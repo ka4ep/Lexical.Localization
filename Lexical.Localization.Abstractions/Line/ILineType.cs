@@ -61,25 +61,29 @@ namespace Lexical.Localization
         /// <exception cref="LineException">If key cannot be appended</exception>
         public static ILine<T> Type<T>(this ILine part)
             => (ILine<T>)part.Append<ILineType, Type>(typeof(T));
-        
+
         /// <summary>
         /// Get the effective (closest to root) non-null <see cref="ILineType"/> key or <see cref="ILineParameter"/> key with "Type".
         /// </summary>
-        /// <param name="tail"></param>
+        /// <param name="line"></param>
         /// <returns>key or null</returns>
-        public static ILine GetTypeKey(this ILine tail)
+        public static ILine GetTypeKey(this ILine line)
         {
             ILine result = null;
-            for (ILine part = tail; tail != null; tail = tail.GetPreviousPart())
+            for (ILine part = line; line != null; line = line.GetPreviousPart())
             {
                 if (part is ILineType asmKey && asmKey.Type != null) result = asmKey;
-                else if (part is ILineParameter parameterKey && parameterKey.ParameterName == "Type" && parameterKey.ParameterValue != null) result = parameterKey;
+                if (part is ILineParameter parameterKey && parameterKey.ParameterName == "Type" && parameterKey.ParameterValue != null) result = part;
+                if (part is ILineParameterEnumerable lineParameters)
+                    foreach (var lineParameter in lineParameters)
+                        if (lineParameter.ParameterName == "Type" && lineParameter.ParameterValue != null) { result = part; break; }
             }
             return result;
         }
 
         /// <summary>
-        /// Search linked list and finds the selected (left-most) <see cref="ILineType"/> key.
+        /// Search linked list and finds the effective (left-most) <see cref="ILineType"/> key.
+        /// Doesn't return parameter "Type" value.
         /// 
         /// If implements <see cref="ILineType"/> returns the type. 
         /// </summary>
@@ -96,23 +100,21 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Get effective (closest to root) type value.
+        /// Get effective (closest to root) type name.
         /// </summary>
         /// <param name="line"></param>
         /// <returns>type name or null</returns>
         public static string GetTypeName(this ILine line)
         {
             string result = null;
-            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            for (ILine part = line; part != null; part = part.GetPreviousPart())
             {
-                if (l is ILineType typeKey && typeKey.Type != null) result = typeKey.Type.FullName;
-                else if (l is ILineParameter parameter && parameter.ParameterName == "Type" && parameter.ParameterValue != null) result = parameter.ParameterValue;
-                else if (line is ILineParameterEnumerable lineParameters)
+                if (part is ILineType typeKey && typeKey.Type != null) result = typeKey.Type.FullName;
+                else if (part is ILineParameter parameter && parameter.ParameterName == "Type" && parameter.ParameterValue != null) result = parameter.ParameterValue;
+                else if (part is ILineParameterEnumerable lineParameters)
                 {
-                    var keys = lineParameters.Parameters;
-                    if (keys != null)
-                        foreach (var kv in keys)
-                            if (kv.Key == "Type" && kv.Value != null) return kv.Value;
+                    foreach (ILineParameter lineParameter in lineParameters)
+                        if (lineParameter.ParameterName == "Type" && lineParameter.ParameterValue != null) { result = lineParameter.ParameterValue; break; }
                 }
             }
             return result;

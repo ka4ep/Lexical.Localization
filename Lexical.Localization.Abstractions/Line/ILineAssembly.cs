@@ -85,16 +85,14 @@ namespace Lexical.Localization
         public static string GetAssemblyName(this ILine line)
         {
             string result = null;
-            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            for (ILine part = line; part != null; part = part.GetPreviousPart())
             {
-                if (l is ILineAssembly typeKey && typeKey.Assembly != null) result = typeKey.Assembly.FullName;
-                else if (l is ILineParameter parameter && parameter.ParameterName == "Assembly" && parameter.ParameterValue != null) result = parameter.ParameterValue;
-                else if (line is ILineParameterEnumerable lineParameters)
+                if (part is ILineAssembly typeKey && typeKey.Assembly != null) result = typeKey.Assembly.FullName;
+                else if (part is ILineParameter parameter && parameter.ParameterName == "Assembly" && parameter.ParameterValue != null) result = parameter.ParameterValue;
+                else if (part is ILineParameterEnumerable lineParameters)
                 {
-                    var keys = lineParameters.Parameters;
-                    if (keys != null)
-                        foreach (var kv in keys)
-                            if (kv.Key == "Assembly" && kv.Value != null) return kv.Value;
+                    foreach (ILineParameter lineParameter in lineParameters)
+                        if (lineParameter.ParameterName == "Assembly" && lineParameter.ParameterValue != null) { result = lineParameter.ParameterValue; break; }
                 }
             }
             return result;

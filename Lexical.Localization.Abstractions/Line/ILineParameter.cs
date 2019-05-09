@@ -226,13 +226,13 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Get all parameters as parameterName,parameterValue as array with value from root to tail.
+        /// Get all parameters as parameterName,parameterValue as array with value from tail to root.
         /// </summary>
         /// <param name="line">(optional) line to read parameters of</param>
+        /// <param name="list"></param>
         /// <returns>array of parameters</returns>
-        public static ILineParameter[] GetParameters(this ILine line)
+        public static void GetParameterParts<LIST>(this ILine line, ref LIST list) where LIST : IList<ILineParameter>
         {
-            StructList12<ILineParameter> list = new StructList12<ILineParameter>();
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
                 if (l is ILineParameterEnumerable lineParameters)
@@ -244,10 +244,20 @@ namespace Lexical.Localization
                         list.Add(tmp[i]);
                 }
                 if (l is ILineParameter lineParameter && lineParameter.ParameterName != null && lineParameter.ParameterValue != null) list.Add(lineParameter);
-            }
+            }           
+        }
+
+        /// <summary>
+        /// Get all parameters as parameterName,parameterValue as array with value from root to tail.
+        /// </summary>
+        /// <param name="line">(optional) line to read parameters of</param>
+        /// <returns>array of parameters</returns>
+        public static ILineParameter[] GetParameterArray(this ILine line)
+        {
+            StructList12<ILineParameter> list = new StructList12<ILineParameter>();
+            line.GetParameterParts<StructList12<ILineParameter>>(ref list);
             return list.ToReverseArray();
         }
-        static ILineParameter[] no_parameters = new ILineParameter[0];
 
         /// <summary>
         /// Get all parameters as parameterName,parameterValue as array with value from root to tail.
