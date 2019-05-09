@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create reader
         /// </summary>
-        public LocalizationResourcesReader() : this("resources", LexicalStringFormat.Instance) { }
+        public LocalizationResourcesReader() : this("resources", CSharpFormat.Instance) { }
 
         /// <summary>
         /// Create reader

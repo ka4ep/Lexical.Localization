@@ -43,7 +43,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new .json reader.
         /// </summary>
-        public LocalizationJsonReader() : this("json", LexicalStringFormat.Instance)
+        public LocalizationJsonReader() : this("json", CSharpFormat.Instance)
         {
         }
 
@@ -64,9 +64,9 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public IKeyTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default)
+        public ILineTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default)
         {
-            KeyTree root = new KeyTree(Key.Root);
+            LineTree root = new LineTree(Key.Root);
             using (var json = new JsonTextReader(text))
             {
                 ReadJsonIntoTree(json, root, namePolicy, null);
@@ -82,10 +82,10 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="correspondenceContext">(optional) place to update correspondence. If set <paramref name="json"/> must implement <see cref="JTokenReader"/>.</param>
         /// <returns></returns>
-        public IKeyTree ReadJsonIntoTree(JsonReader json, IKeyTree node, IParameterPolicy namePolicy, JsonCorrespondence correspondenceContext)
+        public ILineTree ReadJsonIntoTree(JsonReader json, ILineTree node, IParameterPolicy namePolicy, JsonCorrespondence correspondenceContext)
         {
-            IKeyTree current = node;
-            Stack<IKeyTree> stack = new Stack<IKeyTree>();
+            ILineTree current = node;
+            Stack<ILineTree> stack = new Stack<ILineTree>();
             JTokenReader tokenReader = json as JTokenReader;
             bool updateCorrespondence = correspondenceContext != null && tokenReader != null;
             while (json.Read())

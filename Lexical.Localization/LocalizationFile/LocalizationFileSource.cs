@@ -184,18 +184,18 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound"></param>
         public LocalizationFileKeyTreeSource(ILocalizationFileFormat fileFormat, string path, string filename, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
 
-        static IKeyTree[] no_trees = new IKeyTree[0];
+        static ILineTree[] no_trees = new ILineTree[0];
 
         /// <summary>
         /// Open file and get new reader.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
-        IEnumerator<IKeyTree> IEnumerable<IKeyTree>.GetEnumerator()
+        IEnumerator<ILineTree> IEnumerable<ILineTree>.GetEnumerator()
         {
-            IKeyTree tree = LocalizationReaderExtensions.ReadKeyTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
-            IKeyTree[] trees = tree == null ? no_trees : new IKeyTree[] { tree };
-            return ((IEnumerable<IKeyTree>)trees).GetEnumerator();
+            ILineTree tree = LocalizationReaderExtensions.ReadKeyTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
+            ILineTree[] trees = tree == null ? no_trees : new ILineTree[] { tree };
+            return ((IEnumerable<ILineTree>)trees).GetEnumerator();
         }
 
         /// <summary>
@@ -205,9 +205,9 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
         {
-            IKeyTree tree = LocalizationReaderExtensions.ReadKeyTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
-            IKeyTree[] trees = tree == null ? no_trees : new IKeyTree[] { tree };
-            return ((IEnumerable<IKeyTree>)trees).GetEnumerator();
+            ILineTree tree = LocalizationReaderExtensions.ReadKeyTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
+            ILineTree[] trees = tree == null ? no_trees : new ILineTree[] { tree };
+            return ((IEnumerable<ILineTree>)trees).GetEnumerator();
         }
 
         /// <summary>

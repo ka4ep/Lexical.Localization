@@ -630,7 +630,7 @@ namespace Lexical.Localization
             this.disposeReader = disposeReader;
 
             if (reader is IEnumerable<KeyValuePair<ILine, IFormulationString>> keyLinesReader) this.Type = CollectionType.KeyLines;
-            else if (reader is IEnumerable<IKeyTree> treesReader) this.Type = CollectionType.KeyTree;
+            else if (reader is IEnumerable<ILineTree> treesReader) this.Type = CollectionType.KeyTree;
             else if (reader is IEnumerable<KeyValuePair<string, IFormulationString>> stringLinesReader) this.Type = CollectionType.StringLines;
             else if (reader is IEnumerable<KeyValuePair<ILine, string>> keyLinesReader_) this.Type = CollectionType.KeyLines;
             else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_) this.Type = CollectionType.StringLines;
@@ -714,7 +714,7 @@ namespace Lexical.Localization
         /// </summary>
         public void Load()
         {
-            if (reader is IEnumerable<KeyValuePair<ILine, IFormulationString>> || reader is IEnumerable<IKeyTree>)
+            if (reader is IEnumerable<KeyValuePair<ILine, IFormulationString>> || reader is IEnumerable<ILineTree>)
             {
                 var _lines = KeyLines;
             }
@@ -750,7 +750,7 @@ namespace Lexical.Localization
                     }
 
                     // Read as tree lines
-                    else if (reader is IEnumerable<IKeyTree> treesReader)
+                    else if (reader is IEnumerable<ILineTree> treesReader)
                     {
                         lines.AddRange(treesReader.SelectMany(tree => tree.ToKeyLines()));
                     }
@@ -768,7 +768,7 @@ namespace Lexical.Localization
                     // Read as key-lines
                     else if (reader is IEnumerable<KeyValuePair<ILine, string>> keyLinesReader_)
                     {
-                        lines.AddRange(keyLinesReader_.Select(line=>new KeyValuePair<ILine, IFormulationString>(line.Key, LexicalStringFormat.Instance.Parse(line.Value))));
+                        lines.AddRange(keyLinesReader_.Select(line=>new KeyValuePair<ILine, IFormulationString>(line.Key, CSharpFormat.Instance.Parse(line.Value))));
                     }
                     else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_)
                     {
@@ -777,7 +777,7 @@ namespace Lexical.Localization
                         if (_stringLines != null && namePolicy is IParameterParser parser)
                             lines.AddRange(_stringLines.ToKeyLines(parser));
                         else
-                            lines.AddRange(stringLinesReader_.ToKeyLines(namePolicy, LexicalStringFormat.Instance));
+                            lines.AddRange(stringLinesReader_.ToKeyLines(namePolicy, CSharpFormat.Instance));
                     }
                     else throw new ArgumentException($"Cannot read {reader.GetType().FullName}: {reader}");
 
@@ -817,7 +817,7 @@ namespace Lexical.Localization
                     }
 
                     // Read as tree lines
-                    else if (reader is IEnumerable<IKeyTree> treesReader)
+                    else if (reader is IEnumerable<ILineTree> treesReader)
                     {
                         lines.AddRange(treesReader.SelectMany(tree => tree.ToStringLines(namePolicy)));
                     }
@@ -834,7 +834,7 @@ namespace Lexical.Localization
                     }
                     else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_)
                     {
-                        lines.AddRange(stringLinesReader_.Select(line => new KeyValuePair<string, IFormulationString>(line.Key, LexicalStringFormat.Instance.Parse(line.Value))));
+                        lines.AddRange(stringLinesReader_.Select(line => new KeyValuePair<string, IFormulationString>(line.Key, CSharpFormat.Instance.Parse(line.Value))));
                     }
                     else if (reader is IEnumerable<KeyValuePair<ILine, string>> keyLinesReader_)
                     {
@@ -843,7 +843,7 @@ namespace Lexical.Localization
                         if (_keyLines != null && namePolicy is IParameterPrinter provider)
                             lines.AddRange(_keyLines.ToStringLines(provider));
                         else
-                            lines.AddRange(keyLinesReader_.ToStringLines(namePolicy, LexicalStringFormat.Instance));
+                            lines.AddRange(keyLinesReader_.ToStringLines(namePolicy, CSharpFormat.Instance));
                     }
                     else throw new ArgumentException($"Cannot read {reader.GetType().FullName}: {reader}");
 

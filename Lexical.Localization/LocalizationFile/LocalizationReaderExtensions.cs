@@ -35,7 +35,7 @@ namespace Lexical.Localization
         /// <param name="srcText"></param>
         /// <param name="namePolicy"></param>
         /// <returns>tree</returns>
-        public static IKeyTree ReadStringAsKeyTree(this ILocalizationFileFormat fileFormat, string srcText, IParameterPolicy namePolicy = default)
+        public static ILineTree ReadStringAsKeyTree(this ILocalizationFileFormat fileFormat, string srcText, IParameterPolicy namePolicy = default)
             => ReadKeyTree(fileFormat, new StringReader(srcText), namePolicy);
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace Lexical.Localization
         /// <param name="srcText"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static IKeyTree ReadKeyTree(this ILocalizationFileFormat fileFormat, TextReader srcText, IParameterPolicy namePolicy = default)
+        public static ILineTree ReadKeyTree(this ILocalizationFileFormat fileFormat, TextReader srcText, IParameterPolicy namePolicy = default)
         {
             if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcText, namePolicy);
             if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcText, namePolicy).ToKeyTree(namePolicy);
@@ -109,7 +109,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static IKeyTree ReadKeyTree(this ILocalizationFileFormat fileFormat, Stream stream, IParameterPolicy namePolicy = default)
+        public static ILineTree ReadKeyTree(this ILocalizationFileFormat fileFormat, Stream stream, IParameterPolicy namePolicy = default)
         {
             if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(stream, namePolicy);
             if (fileFormat is ILocalizationKeyTreeTextReader r2) using (var txt = stream.ReadText()) return r2.ReadKeyTree(txt, namePolicy);

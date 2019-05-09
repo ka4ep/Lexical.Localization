@@ -24,17 +24,17 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// Correspondence between <see cref="IKeyTree"/> and <see cref="XDocument"/>.
+    /// Correspondence between <see cref="ILineTree"/> and <see cref="XDocument"/>.
     /// </summary>
     public class XmlCorrespondence
     {
-        public readonly Correspondence<IKeyTree, XElement> Nodes = new Correspondence<IKeyTree, XElement>();
+        public readonly Correspondence<ILineTree, XElement> Nodes = new Correspondence<ILineTree, XElement>();
         public readonly Dictionary<KeyTreeValue, XText> Values = new Dictionary<KeyTreeValue, XText>(new KeyValueTreeComparer());
     }
 
     public class IniCorrespondence
     {
-        public readonly Correspondence<IKeyTree, IniToken> Nodes = new Correspondence<IKeyTree, IniToken>();
+        public readonly Correspondence<ILineTree, IniToken> Nodes = new Correspondence<ILineTree, IniToken>();
         public readonly Dictionary<KeyTreeValue, IniToken> Values = new Dictionary<KeyTreeValue, IniToken>(new KeyValueTreeComparer());
     }
 
@@ -45,15 +45,15 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// Reference to a value in a <see cref="IKeyTree"/>.
+    /// Reference to a value in a <see cref="ILineTree"/>.
     /// </summary>
     public struct KeyTreeValue : IEquatable<KeyTreeValue>
     {
-        public readonly IKeyTree tree;
+        public readonly ILineTree tree;
         public readonly IFormulationString value;
         public readonly int valueIndex;
 
-        public KeyTreeValue(IKeyTree tree, IFormulationString value, int valueIndex)
+        public KeyTreeValue(ILineTree tree, IFormulationString value, int valueIndex)
         {
             this.tree = tree ?? throw new ArgumentNullException(nameof(tree));
             this.value = value;
@@ -99,7 +99,7 @@ namespace Lexical.Localization.Internal
 
     public class JsonCorrespondence
     {
-        public readonly Correspondence<IKeyTree, JToken> Nodes = new Correspondence<IKeyTree, JToken>();
+        public readonly Correspondence<ILineTree, JToken> Nodes = new Correspondence<ILineTree, JToken>();
         public readonly Dictionary<KeyTreeValue, JValue> Values = new Dictionary<KeyTreeValue, JValue>(new KeyValueTreeComparer());
     }
 

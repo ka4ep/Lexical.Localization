@@ -52,7 +52,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        IKeyTree ReadKeyTree(Stream stream, IParameterPolicy namePolicy = default);
+        ILineTree ReadKeyTree(Stream stream, IParameterPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        IKeyTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default);
+        ILineTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default);
     }
 
     /// <summary>

@@ -199,23 +199,23 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound"></param>
         public LocalizationEmbeddedKeyTreeSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
 
-        static IEnumerable<IKeyTree> empty = new IKeyTree[0];
+        static IEnumerable<ILineTree> empty = new ILineTree[0];
 
         /// <summary>
         /// Open file and get new reader.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
-        IEnumerator<IKeyTree> IEnumerable<IKeyTree>.GetEnumerator()
+        IEnumerator<ILineTree> IEnumerable<ILineTree>.GetEnumerator()
         {
             try
             {
                 using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
                 {
                     if (s == null) return !ThrowIfNotFound ? empty.GetEnumerator() : throw new FileNotFoundException(ResourceName);
-                    IKeyTree tree = FileFormat.ReadKeyTree(s, KeyPolicy);
+                    ILineTree tree = FileFormat.ReadKeyTree(s, KeyPolicy);
                     if (tree == null) return empty.GetEnumerator();
-                    return ((IEnumerable<IKeyTree>)new IKeyTree[] { tree }).GetEnumerator();
+                    return ((IEnumerable<ILineTree>)new ILineTree[] { tree }).GetEnumerator();
                 }
             }
             catch (FileNotFoundException) when (!ThrowIfNotFound)
@@ -230,7 +230,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
-            => ((IEnumerable<IKeyTree>)this).GetEnumerator();
+            => ((IEnumerable<ILineTree>)this).GetEnumerator();
 
         /// <summary>
         /// Add reader to <paramref name="list"/>.

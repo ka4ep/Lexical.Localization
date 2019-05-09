@@ -186,7 +186,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyTree(IKeyTree tree, Stream srcStream, Stream dstStream, IParameterPolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteKeyTree(ILineTree tree, Stream srcStream, Stream dstStream, IParameterPolicy namePolicy, LocalizationFileWriteFlags flags);
     }
 
     /// <summary>
@@ -205,7 +205,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyTree(IKeyTree tree, TextReader srcText, TextWriter dstText, IParameterPolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteKeyTree(ILineTree tree, TextReader srcText, TextWriter dstText, IParameterPolicy namePolicy, LocalizationFileWriteFlags flags);
     }
     #endregion Interface
 }

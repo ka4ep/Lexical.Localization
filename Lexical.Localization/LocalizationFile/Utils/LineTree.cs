@@ -14,7 +14,7 @@ using System.Text;
 namespace Lexical.Localization.Utils
 {
     /// <summary>
-    /// Keys organized into a tree structure.
+    /// Lines organized into a tree structure.
     /// 
     /// The root key has single key Key("", "").
     /// 
@@ -31,7 +31,7 @@ namespace Lexical.Localization.Utils
     ///           
     /// </summary>
     [DebuggerDisplay("{DebugPrint()}")]
-    public class KeyTree : IKeyTree
+    public class LineTree : ILineTree
     {
         /// <summary>
         /// Create tree structure from source of flat key values.
@@ -39,9 +39,9 @@ namespace Lexical.Localization.Utils
         /// <param name="keyValues"></param>
         /// <param name="groupingPolicy"></param>
         /// <returns>tree root ""</returns>
-        public static KeyTree Create(IEnumerable<KeyValuePair<ILine, IFormulationString>> keyValues, IParameterPattern groupingPolicy)
+        public static LineTree Create(IEnumerable<KeyValuePair<ILine, IFormulationString>> keyValues, IParameterPattern groupingPolicy)
         {
-            KeyTree root = new KeyTree(Key.Root);
+            LineTree root = new LineTree(Key.Root);
             root.AddRange(keyValues, groupingPolicy);
             return root;
         }
@@ -49,7 +49,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Parent node, unless is root then null.
         /// </summary>
-        public readonly KeyTree Parent;
+        public readonly LineTree Parent;
 
         protected Key key;
 
@@ -81,7 +81,7 @@ namespace Lexical.Localization.Utils
             }
         }
 
-        ILine IKeyTree.Key
+        ILine ILineTree.Key
         {
             get => key;
             set
@@ -117,9 +117,9 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Child nodes
         /// </summary>
-        List<KeyTree> children;
+        List<LineTree> children;
 
-        MapList<ILine, KeyTree> childLookup;
+        MapList<ILine, LineTree> childLookup;
 
         /// <summary>
         /// Test if has child nodes.
@@ -129,12 +129,12 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Get-or-create child nodes
         /// </summary>
-        public List<KeyTree> Children => children ?? (children = new List<KeyTree>());
+        public List<LineTree> Children => children ?? (children = new List<LineTree>());
 
         /// <summary>
         /// Get-or-create child nodes
         /// </summary>
-        public MapList<ILine, KeyTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<ILine, KeyTree>(LineComparer.Default).AddRange(Children.Where(c=>c.Key!=null).Select(c=>new KeyValuePair<ILine, KeyTree>(c.Key, c))));
+        public MapList<ILine, LineTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<ILine, LineTree>(LineComparer.Default).AddRange(Children.Where(c=>c.Key!=null).Select(c=>new KeyValuePair<ILine, LineTree>(c.Key, c))));
 
         /// <summary>
         /// Test if has values.
@@ -150,7 +150,7 @@ namespace Lexical.Localization.Utils
         /// Create new key tree node.
         /// </summary>
         /// <param name="parameter"></param>
-        public KeyTree(Key parameter)
+        public LineTree(Key parameter)
         {
             this.Key = parameter;
         }
@@ -160,7 +160,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         /// <param name="parameter"></param>
         /// <param name="values">(optional) value to add</param>
-        public KeyTree(Key parameter, params IFormulationString[] values)
+        public LineTree(Key parameter, params IFormulationString[] values)
         {
             this.Key = parameter;
             if (values != null) this.values = new List<IFormulationString>(values);
@@ -171,7 +171,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="parameter"></param>
-        public KeyTree(KeyTree parent, Key parameter)
+        public LineTree(LineTree parent, Key parameter)
         {
             this.Parent = parent;
             this.Key = parameter;
@@ -183,7 +183,7 @@ namespace Lexical.Localization.Utils
         /// <param name="parent"></param>
         /// <param name="parameter"></param>
         /// <param name="values"></param>
-        public KeyTree(KeyTree parent, Key parameter, params IFormulationString[] values)
+        public LineTree(LineTree parent, Key parameter, params IFormulationString[] values)
         {
             this.Parent = parent;
             this.Key = parameter;
@@ -195,13 +195,13 @@ namespace Lexical.Localization.Utils
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public KeyTree GetOrCreateChild(Key key)
+        public LineTree GetOrCreateChild(Key key)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
-            List<KeyTree> children;
+            List<LineTree> children;
             if (ChildrenLookup.TryGetValue(key, out children) && children.Count > 0) return children.First();
 
-            KeyTree child = new KeyTree(this, key);
+            LineTree child = new LineTree(this, key);
             ChildrenLookup.Add(key, child);
             Children.Add(child);
             return child;
@@ -214,27 +214,27 @@ namespace Lexical.Localization.Utils
         {
             if (Parent == null) throw new InvalidOperationException("Cannot remove root");
             Parent.Children.Remove(this);
-            List<KeyTree> lookupTarget;
+            List<LineTree> lookupTarget;
             if (Parent.childLookup != null && Parent.childLookup.TryGetValue(key, out lookupTarget)) lookupTarget.Remove(this);
             if (Parent.children != null) Parent.children.Remove(this);
         }
 
-        IKeyTree IKeyTree.Parent => Parent;
+        ILineTree ILineTree.Parent => Parent;
 
-        IList<IFormulationString> IKeyTree.Values => this.Values;
-        IReadOnlyCollection<IKeyTree> IKeyTree.Children => this.Children;
-        IKeyTree IKeyTree.CreateChild() => this.CreateChild();
-        static IKeyTree[] empty = new IKeyTree[0];
-        IEnumerable<IKeyTree> IKeyTree.GetChildren(ILine key)
+        IList<IFormulationString> ILineTree.Values => this.Values;
+        IReadOnlyCollection<ILineTree> ILineTree.Children => this.Children;
+        ILineTree ILineTree.CreateChild() => this.CreateChild();
+        static ILineTree[] empty = new ILineTree[0];
+        IEnumerable<ILineTree> ILineTree.GetChildren(ILine key)
         {
             if (!HasChildren) return empty;
-            IEnumerable<IKeyTree> children = ChildrenLookup.TryGetList(key);
-            return children ?? (IEnumerable<IKeyTree>) empty;
+            IEnumerable<ILineTree> children = ChildrenLookup.TryGetList(key);
+            return children ?? (IEnumerable<ILineTree>) empty;
         }
 
-        KeyTree CreateChild()
+        LineTree CreateChild()
         {
-            KeyTree result = new KeyTree(this, null);
+            LineTree result = new LineTree(this, null);
             Children.Add(result);
             return result;
         }
@@ -243,7 +243,7 @@ namespace Lexical.Localization.Utils
         {
             StringBuilder sb = new StringBuilder();
             int i = 0;
-            foreach (IKeyTree tree in this.VisitFromRoot())
+            foreach (ILineTree tree in this.VisitFromRoot())
             {
                 if (i++ > 0) sb.Append("/");
                 ILine key = tree.Key;
@@ -269,7 +269,7 @@ namespace Lexical.Localization.Utils
         public virtual string DebugPrint()
         {
             StringBuilder sb = new StringBuilder();
-            foreach(IKeyTree tree in this.VisitFromRoot())
+            foreach(ILineTree tree in this.VisitFromRoot())
             {
                 if (sb.Length > 0) sb.Append("/");
                 ILine key = tree.Key;

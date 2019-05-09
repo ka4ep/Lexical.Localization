@@ -46,9 +46,9 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, IParameterPolicy namePolicy)
+        public static ILineTree ToKeyTree(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, IParameterPolicy namePolicy)
         {
-            KeyTree tree = new KeyTree(Key.Root, null);
+            LineTree tree = new LineTree(Key.Root, null);
             if (namePolicy is IParameterPattern pattern)
                 tree.AddRange(lines, pattern);
             else
@@ -62,7 +62,7 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree tree, IEnumerable<KeyValuePair<ILine, IFormulationString>> lines)
+        public static ILineTree AddRange(this ILineTree tree, IEnumerable<KeyValuePair<ILine, IFormulationString>> lines)
         {
             foreach (var line in lines)
             {
@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="groupingRule"></param>
         /// <returns></returns>
-        public static IKeyTree AddRange(this IKeyTree node, IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, IParameterPattern groupingRule) // Todo separate to sortRule + groupingRule
+        public static ILineTree AddRange(this ILineTree node, IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, IParameterPattern groupingRule) // Todo separate to sortRule + groupingRule
         {
             // Use another method
             //if (groupingRule == null) { node.AddRange(lines); return node; }

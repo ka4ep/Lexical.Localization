@@ -8,16 +8,16 @@ using System.Collections.Generic;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Tree structure that holds key-values. 
+    /// Tree structure that holds lines. 
     /// 
     /// Used for reading and writing structure based localization files such as .xml and .json.
     /// </summary>
-    public interface IKeyTree
+    public interface ILineTree
     {
         /// <summary>
         /// Parent node, unless is root then null.
         /// </summary>
-        IKeyTree Parent { get; }
+        ILineTree Parent { get; }
 
         /// <summary>
         /// Parameters that are associated with this particular node.
@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Child nodes.
         /// </summary>
-        IReadOnlyCollection<IKeyTree> Children { get; }
+        IReadOnlyCollection<ILineTree> Children { get; }
 
         /// <summary>
         /// Test if has values.
@@ -48,14 +48,14 @@ namespace Lexical.Localization
         /// Add new child to the key tree.
         /// </summary>
         /// <returns>new child</returns>
-        IKeyTree CreateChild();
+        ILineTree CreateChild();
 
         /// <summary>
         /// Search children by key.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>child nodes or null if none was found</returns>
-        IEnumerable<IKeyTree> GetChildren(ILine key);
+        IEnumerable<ILineTree> GetChildren(ILine key);
 
         /// <summary>
         /// Remove self from parent.

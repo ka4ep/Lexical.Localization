@@ -64,7 +64,7 @@ namespace Lexical.Localization
             this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
             this.culture_map = new ConcurrentDictionary<CultureInfo, StringLocalizerAsset>();
             this.createFunc = ci => new StringLocalizerAsset(stringLocalizer.WithCulture(ci), ci);
-            this.ValueParser = ValueParser ?? LexicalStringFormat.Instance;
+            this.ValueParser = ValueParser ?? CSharpFormat.Instance;
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Lexical.Localization
         {
             this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
             this.createFunc = ci => new StringLocalizerAsset(stringLocalizer.WithCulture(ci), ci);
-            this.ValueParser = ValueParser ?? LexicalStringFormat.Instance;
+            this.ValueParser = ValueParser ?? CSharpFormat.Instance;
             if (culture == null || culture.Name == "")
             {
                 this.culture_map = new ConcurrentDictionary<CultureInfo, StringLocalizerAsset>();

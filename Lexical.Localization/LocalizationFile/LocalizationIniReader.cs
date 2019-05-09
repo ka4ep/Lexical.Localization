@@ -61,7 +61,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new ini file reader.
         /// </summary>
-        public LocalizationIniReader() : this("ini", LexicalStringFormat.Instance) { }
+        public LocalizationIniReader() : this("ini", CSharpFormat.Instance) { }
 
         /// <summary>
         /// Create new ini file reader.
@@ -80,9 +80,9 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public IKeyTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default)
+        public ILineTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default)
         {
-            KeyTree root = new KeyTree(Key.Root);
+            LineTree root = new LineTree(Key.Root);
             using (var ini = new IniTokenizer(text.ReadToEnd()))
                 ReadIniIntoTree(ini, root, namePolicy, null);
             return root;
@@ -96,9 +96,9 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="correspondence">(optional) if set tokens are associated to key tree. If <paramref name="correspondence"/> is provided, then <paramref name="ini"/> must be a linked list. See <see cref="IniTokenizer.ToLinkedList"/></param>
         /// <returns><paramref name="root"/></returns>
-        public IKeyTree ReadIniIntoTree(IEnumerable<IniToken> ini, IKeyTree root, IParameterPolicy namePolicy, IniCorrespondence correspondence)
+        public ILineTree ReadIniIntoTree(IEnumerable<IniToken> ini, ILineTree root, IParameterPolicy namePolicy, IniCorrespondence correspondence)
         {
-            IKeyTree section = null;
+            ILineTree section = null;
             foreach(IniToken token in ini)
             {
                 switch (token.Type)
@@ -119,7 +119,7 @@ namespace Lexical.Localization
                         ILine key_ = null;
                         if (escaper_key.TryParse(token.KeyText, out key_))
                         {
-                            IKeyTree current = key_ == null ? null : (section??root).GetOrCreate(key_);
+                            ILineTree current = key_ == null ? null : (section??root).GetOrCreate(key_);
                             string value = escaper_value.UnescapeLiteral(token.ValueText);
                             if (value != null)
                             {

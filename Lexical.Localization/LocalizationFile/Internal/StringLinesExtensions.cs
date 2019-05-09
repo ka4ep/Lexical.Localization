@@ -52,13 +52,13 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
-        /// Parse string key of each line and put into <see cref="IKeyTree"/>.
+        /// Parse string key of each line and put into <see cref="ILineTree"/>.
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IKeyTree ToKeyTree(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IParameterPolicy policy)
-            => KeyTree.Create(lines.ToKeyLines(policy), null);
+        public static ILineTree ToKeyTree(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IParameterPolicy policy)
+            => LineTree.Create(lines.ToKeyLines(policy), null);
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset.

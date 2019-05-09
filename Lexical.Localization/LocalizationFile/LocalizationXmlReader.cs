@@ -67,7 +67,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new xml reader
         /// </summary>
-        public LocalizationXmlReader() : this("xml", LexicalStringFormat.Instance, default) { }
+        public LocalizationXmlReader() : this("xml", CSharpFormat.Instance, default) { }
 
         /// <summary>
         /// Create new xml reader
@@ -88,8 +88,8 @@ namespace Lexical.Localization
         /// <param name="element"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public IKeyTree ReadKeyTree(XElement element, IParameterPolicy namePolicy = default)
-            => ReadElement(element, new KeyTree(Key.Root), null);
+        public ILineTree ReadKeyTree(XElement element, IParameterPolicy namePolicy = default)
+            => ReadElement(element, new LineTree(Key.Root), null);
 
         /// <summary>
         /// Read key tree from <paramref name="stream"/>.
@@ -97,8 +97,8 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public IKeyTree ReadKeyTree(Stream stream, IParameterPolicy namePolicy = default)
-            => ReadElement(Load(stream).Root, new KeyTree(Key.Root), null);
+        public ILineTree ReadKeyTree(Stream stream, IParameterPolicy namePolicy = default)
+            => ReadElement(Load(stream).Root, new LineTree(Key.Root), null);
 
         /// <summary>
         /// Read key tree from <paramref name="text"/>.
@@ -106,8 +106,8 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public IKeyTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default)
-            => ReadElement(Load(text).Root, new KeyTree(Key.Root), null);
+        public ILineTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default)
+            => ReadElement(Load(text).Root, new LineTree(Key.Root), null);
 
         /// <summary>
         /// Create default reader settings.
@@ -160,13 +160,13 @@ namespace Lexical.Localization
         /// <param name="parent"></param>
         /// <param name="correspondenceContext">(optional) Correspondence to write element-tree mappings</param>
         /// <returns>parent</returns>
-        public IKeyTree ReadElement(XElement element, IKeyTree parent, XmlCorrespondence correspondenceContext)
+        public ILineTree ReadElement(XElement element, ILineTree parent, XmlCorrespondence correspondenceContext)
         {
             ILine key = ReadKey(element);
 
             if (key != null)
             {
-                IKeyTree node = parent.CreateChild();
+                ILineTree node = parent.CreateChild();
                 node.Key = key;
 
                 if (correspondenceContext != null)

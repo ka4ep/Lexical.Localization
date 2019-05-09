@@ -186,14 +186,14 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound"></param>
         public LocalizationFileProviderReaderKeyTree(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound) { }
 
-        static IEnumerable<IKeyTree> empty = new IKeyTree[0];
+        static IEnumerable<ILineTree> empty = new ILineTree[0];
 
         /// <summary>
         /// Open file and get new reader.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
-        IEnumerator<IKeyTree> IEnumerable<IKeyTree>.GetEnumerator()
+        IEnumerator<ILineTree> IEnumerable<ILineTree>.GetEnumerator()
         {
             try
             {
@@ -201,10 +201,10 @@ namespace Lexical.Localization
                 if (!ThrowIfNotFound && !fi.Exists) return empty.GetEnumerator();
                 using (Stream s = fi.CreateReadStream())
                 {
-                    IKeyTree tree = FileFormat.ReadKeyTree(s, KeyPolicy);
+                    ILineTree tree = FileFormat.ReadKeyTree(s, KeyPolicy);
                     if (tree == null) return empty.GetEnumerator();
-                    IKeyTree[] trees = new IKeyTree[] { tree };
-                    return ((IEnumerable<IKeyTree>)trees).GetEnumerator();
+                    ILineTree[] trees = new ILineTree[] { tree };
+                    return ((IEnumerable<ILineTree>)trees).GetEnumerator();
                 }
             }
             catch (FileNotFoundException) when (!ThrowIfNotFound)
@@ -220,7 +220,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
-            => ((IEnumerable<IKeyTree>)this).GetEnumerator();
+            => ((IEnumerable<ILineTree>)this).GetEnumerator();
 
         /// <summary>
         /// Add reader to <paramref name="list"/>.

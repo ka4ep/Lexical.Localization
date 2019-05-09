@@ -27,7 +27,7 @@ namespace Lexical.Localization
         public static ILineInlines Inline(this ILine key, string text)
         {
             ILineInlines inlinesKey = key.GetOrCreateInlines();
-            if (text == null) inlinesKey.Remove(key); else inlinesKey[key] = LexicalStringFormat.Instance.Parse(text);
+            if (text == null) inlinesKey.Remove(key); else inlinesKey[key] = CSharpFormat.Instance.Parse(text);
             return inlinesKey;
         }
 
@@ -43,7 +43,7 @@ namespace Lexical.Localization
         {
             ILineInlines inlinesKey = key.GetOrCreateInlines();
             ILine subKey = ParameterParser.Instance.Parse(subKeyText, key);
-            if (text == null) inlinesKey.Remove(subKey); else inlinesKey[subKey] = LexicalStringFormat.Instance.Parse(text);
+            if (text == null) inlinesKey.Remove(subKey); else inlinesKey[subKey] = CSharpFormat.Instance.Parse(text);
             return inlinesKey;
         }
 

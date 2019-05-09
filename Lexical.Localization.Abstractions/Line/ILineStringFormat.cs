@@ -64,7 +64,7 @@ namespace Lexical.Localization
                     {
                         if (parameter.ParameterName == "StringFormat" && parameter.ParameterValue != null)
                         {
-                            tt = resolver.ResolveStringFormat(parameter.ParameterValue);
+                            tt = resolver.Resolve(parameter.ParameterValue);
                             if (tt != null) break;
                         }
                     }
@@ -72,7 +72,7 @@ namespace Lexical.Localization
                 }
                 if (resolver != null && l is ILineParameter lineParameter && lineParameter.ParameterName == "StringFormat" && lineParameter.ParameterValue != null)
                 {
-                    IStringFormat t = resolver.ResolveStringFormat(lineParameter.ParameterValue);
+                    IStringFormat t = resolver.Resolve(lineParameter.ParameterValue);
                     if (t != null) type = t;
                 }
             }

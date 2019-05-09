@@ -49,7 +49,7 @@ namespace docs
             }
             {
                 #region Snippet_1c
-                IKeyTree tree = LocalizationReaderMap.Instance.ReadKeyTree(
+                ILineTree tree = LocalizationReaderMap.Instance.ReadKeyTree(
                     filename: "localization.ini", 
                     throwIfNotFound: true);
                 #endregion Snippet_1c
@@ -75,7 +75,7 @@ namespace docs
             }
             {
                 #region Snippet_2c
-                IEnumerable<IKeyTree> tree_reader = 
+                IEnumerable<ILineTree> tree_reader = 
                     LocalizationReaderMap.Instance.FileReaderAsKeyTree(
                         filename: "localization.ini", 
                         throwIfNotFound: true);
@@ -109,7 +109,7 @@ namespace docs
             {
                 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
                 #region Snippet_3c
-                IEnumerable<IKeyTree> tree_reader = 
+                IEnumerable<ILineTree> tree_reader = 
                     LocalizationReaderMap.Instance.EmbeddedReaderAsKeyTree(
                         assembly: asm, 
                         resourceName: "docs.localization.ini", 
@@ -143,7 +143,7 @@ namespace docs
             {
                 #region Snippet_4c
                 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-                IEnumerable<IKeyTree> tree_reader = 
+                IEnumerable<ILineTree> tree_reader = 
                     LocalizationReaderMap.Instance.FileProviderReaderAsKeyTree(
                         fileProvider: fileProvider, 
                         filepath: "localization.ini", 
@@ -174,7 +174,7 @@ namespace docs
                 #region Snippet_5c
                 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
                 {
-                    IKeyTree tree = LocalizationIniReader.Instance.ReadKeyTree(s);
+                    ILineTree tree = LocalizationIniReader.Instance.ReadKeyTree(s);
                 }
                 #endregion Snippet_5c
             }
@@ -205,7 +205,7 @@ namespace docs
                 #region Snippet_6c
                 using (TextReader tr = new StringReader(text))
                 {
-                    IKeyTree tree = LocalizationIniReader.Instance.ReadKeyTree(tr);
+                    ILineTree tree = LocalizationIniReader.Instance.ReadKeyTree(tr);
                 }
                 #endregion Snippet_6c
             }
@@ -230,7 +230,7 @@ namespace docs
             {
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
                 #region Snippet_7c
-                IKeyTree tree = 
+                ILineTree tree = 
                     LocalizationIniReader.Instance.ReadStringAsKeyTree(
                         srcText: text);
                 #endregion Snippet_7c
@@ -375,7 +375,7 @@ namespace docs
             IParameterPolicy namePolicy = null)
         {
             ILine key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
-            yield return new KeyValuePair<ILine, IFormulationString>(key, LexicalStringFormat.Instance.Parse("Hello World!"));
+            yield return new KeyValuePair<ILine, IFormulationString>(key, CSharpFormat.Instance.Parse("Hello World!"));
         }
     }
     #endregion Snippet_30

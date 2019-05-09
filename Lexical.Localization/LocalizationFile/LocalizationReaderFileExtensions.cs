@@ -84,7 +84,7 @@ namespace Lexical.Localization
         /// <returns>tree or null if file was not found and error not thrown</returns>
         /// <exception cref="FileNotFoundException">thrown if file was not found and <paramref name="throwIfNotFound"/> is true</exception>
         /// <exception cref="IOException">on io error</exception>
-        public static IKeyTree ReadKeyTree(this ILocalizationFileFormat fileFormat, string srcFilename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+        public static ILineTree ReadKeyTree(this ILocalizationFileFormat fileFormat, string srcFilename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
         {
             if (!throwIfNotFound && !File.Exists(srcFilename)) return null;
             try
@@ -235,7 +235,7 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
         /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IKeyTree ReadKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+        public static ILineTree ReadKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
             => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].ReadKeyTree(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
@@ -312,7 +312,7 @@ namespace Lexical.Localization
         public static LocalizationFileSource FileAssetSource(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
             => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].FileAssetSource(filename, namePolicy, throwIfNotFound);
 
-        static IKeyTree[] no_trees = new IKeyTree[0];
+        static ILineTree[] no_trees = new ILineTree[0];
         static KeyValuePair<ILine, IFormulationString>[] no_keylines = new KeyValuePair<ILine, IFormulationString>[0];
         static KeyValuePair<string, IFormulationString>[] no_stringlines = new KeyValuePair<string, IFormulationString>[0];
 

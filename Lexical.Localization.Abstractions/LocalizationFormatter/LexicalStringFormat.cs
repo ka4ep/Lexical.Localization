@@ -31,9 +31,9 @@ namespace Lexical.Localization
     /// 
     /// <see href="https://docs.microsoft.com/en-us/dotnet/api/system.string.format?view=netframework-4.7.2"/>
     /// </summary>
-    public class LexicalStringFormat : IStringFormatParser, IStringFormatPrinter
+    public class CSharpFormat : IStringFormatParser, IStringFormatPrinter
     {
-        private static IStringFormatParser instance => new LexicalStringFormat();
+        private static IStringFormatParser instance => new CSharpFormat();
 
         /// <summary>
         /// Default instance.
@@ -43,7 +43,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name of this string format.
         /// </summary>
-        public string Name => "lexical";
+        public string Name => "csharp";
 
         /// <summary>
         /// Format provider to add to each parsed line.
@@ -53,7 +53,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create default format.
         /// </summary>
-        public LexicalStringFormat()
+        public CSharpFormat()
         {
         }
 
@@ -61,7 +61,7 @@ namespace Lexical.Localization
         /// Create format with default <paramref name="formatProvider"/>.
         /// </summary>
         /// <param name="formatProvider">(optional) provider to add to each parsed line.</param>
-        public LexicalStringFormat(IFormatProvider formatProvider)
+        public CSharpFormat(IFormatProvider formatProvider)
         {
             this.FormatProvider = formatProvider;
         }

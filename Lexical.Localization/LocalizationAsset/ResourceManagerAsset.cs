@@ -109,7 +109,7 @@ namespace Lexical.Localization
         {
             this.ResourceManager = resourceManager ?? throw new ArgumentNullException(nameof(resourceManager));
             this.namePolicy = namePolicy ?? throw new ArgumentNullException(nameof(namePolicy));
-            this.ValueParser = parser ?? LexicalStringFormat.Instance;
+            this.ValueParser = parser ?? CSharpFormat.Instance;
         }
 
         public IFormulationString GetString(ILine key)

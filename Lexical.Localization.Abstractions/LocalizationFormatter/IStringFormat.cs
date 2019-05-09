@@ -77,7 +77,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="name"></param>
         /// <returns>string format or null</returns>
-        IStringFormat ResolveStringFormat(string name);
+        IStringFormat Resolve(string name);
     }
 
     /// <summary>

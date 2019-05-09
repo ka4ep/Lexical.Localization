@@ -112,18 +112,18 @@ namespace Lexical.Localization
         /// <summary>
         /// Source of lines
         /// </summary>
-        public IEnumerable<IKeyTree> LineSource { get; protected set; }
+        public IEnumerable<ILineTree> LineSource { get; protected set; }
 
         /// <summary>
         /// Create adapter that adapts IEnumerable&lt;IKeyTree&lt;.
         /// </summary>
         /// <param name="lineSource"></param>
-        public LocalizationKeyTreeSource(IEnumerable<IKeyTree> lineSource)
+        public LocalizationKeyTreeSource(IEnumerable<ILineTree> lineSource)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
         }
 
-        IEnumerator<IKeyTree> IEnumerable<IKeyTree>.GetEnumerator()
+        IEnumerator<ILineTree> IEnumerable<ILineTree>.GetEnumerator()
             => LineSource.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator()
             => LineSource.GetEnumerator();

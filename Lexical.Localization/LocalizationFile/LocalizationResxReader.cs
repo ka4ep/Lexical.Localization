@@ -39,7 +39,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new .resx reader instance with default values.
         /// </summary>
-        public LocalizationResxReader() : this("resx", LexicalStringFormat.Instance) { }
+        public LocalizationResxReader() : this("resx", CSharpFormat.Instance) { }
 
         /// <summary>
         /// Create new .resx reader.
