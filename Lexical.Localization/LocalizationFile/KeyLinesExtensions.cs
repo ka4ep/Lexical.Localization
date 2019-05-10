@@ -15,7 +15,7 @@ using Lexical.Localization.Utils;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Extensions for <see cref="IEnumerable{KeyValuePair{ILine, string}}"/>.
+    /// Extensions for IEnumerable{ILine}}.
     /// </summary>
     public static partial class KeyLinesExtensions
     {
@@ -28,7 +28,7 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <returns></returns>
         public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<ILine> lines, ILinePolicy policy)
-            => lines.Select(line => new KeyValuePair<string, IFormulationString>((policy ?? DefaultPolicy).Print(line.Key), line.Value));
+            => lines.Select(line => new KeyValuePair<string, IFormulationString>((policy ?? DefaultPolicy).Print(line), line.GetValue()));
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset key lines.
@@ -66,7 +66,8 @@ namespace Lexical.Localization
         {
             foreach (var line in lines)
             {
-                tree.GetOrCreate(line.Key).Values.Add(line.Value);
+                ILineTree subtree = tree.GetOrCreate(line);
+                if ((line.GetValue().Status & LocalizationStatus.FormulationFailedNull) != LocalizationStatus.FormulationFailedNull) subtree.Values.Add(line.GetValue());
             }
             return tree;
         }

@@ -218,67 +218,6 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Filters lines against filter rules.
-        /// 
-        /// Each key in <paramref name="lines"/> is matched against every <see cref="genericFilters"/>. 
-        /// If one of the mismatches then returns false.
-        /// 
-        /// Each key in <paramref name="lines"/> is broken into key parts.
-        /// If any rule for (parameterName, occuranceIndex) passes, the filter passes for that key part.
-        /// </summary>
-        /// <param name="lines"></param>
-        /// <returns></returns>
-        public IEnumerable<ILine> Filter(IEnumerable<ILine> lines)
-        {
-            // Break key into effective non-canonical parameters, and to canonical parameters and occurance index
-            // (ParameterName, occuranceIndex, ParameterValue)
-            StructList12<(string, int, string)> list = new StructList12<(string, int, string)>();
-
-            foreach (var line in lines)
-            {
-                // Apply generic filters
-                if (genericFilters != null)
-                {
-                    foreach (var filter in genericFilters)
-                        if (!filter.Filter(line.Key)) continue;
-                }
-
-                // Apply parameter filters
-                list.Clear();
-                line.Key.GetEffectiveParameters(ref list, parameterInfos);
-
-                // Evaluate rules
-                bool keyOk = true;
-                if (this.parameterRules != null)
-                    foreach (var parameterRules in this.parameterRules)
-                    {
-                        List<ParameterRule> rules = parameterRules.Value;
-                        if (rules.Count == 0) continue;
-                        KeyValuePair<string, int> parameterKey = parameterRules.Key;
-
-                        // Find parameter value
-                        string parameterValue = null;
-                        for (int i = 0; i < list.Count; i++)
-                        {
-                            (string pn, int oc, string pv) = list[i];
-                            if (pn == parameterKey.Key && oc == parameterKey.Value) { parameterValue = pv; break; }
-                        }
-
-                        // Apply rules
-                        bool ok = false;
-                        foreach (var rule in rules)
-                        {
-                            ok |= rule.Filter(parameterValue);
-                            if (ok) break;
-                        }
-                        keyOk &= ok;
-                        if (!keyOk) break;
-                    }
-                yield return line;
-            }
-        }
-
-        /// <summary>
         /// Filter by <paramref name="keyMatch"/>.
         /// 
         /// If <see cref="ILinePatternMatch.Success"/> is false then return false.

@@ -91,6 +91,7 @@ namespace Lexical.Localization
         /// If parse fails this method should return an instance where state is <see cref="LocalizationStatus.FormulationErrorMalformed"/>.
         /// If parse succeeds, the returned instance should have state <see cref="LocalizationStatus.FormulationOk"/> or some other formulation state.
         /// If <paramref name="formulationString"/> is null then stat is <see cref="LocalizationStatus.FormulationFailedNull"/>.
+        /// If <paramref name="format"/> is not <see cref="IStringFormatParser"/>, then stat is <see cref="LocalizationStatus.FormulationFailedNoParser"/>.
         /// </summary>
         /// <param name="format"></param>
         /// <param name="formulationString"></param>
@@ -98,8 +99,9 @@ namespace Lexical.Localization
         /// <exception cref="ArgumentException">If <paramref name="format"/> doesn't implement <see cref="IStringFormatParser"/></exception>
         public static IFormulationString Parse(this IStringFormat format, string formulationString)
         {
+            if (formulationString == null) return new FormulationStringStatus(formulationString, LocalizationStatus.FormulationFailedNull);
             if (format is IStringFormatParser parser) return parser.Parse(formulationString);
-            throw new ArgumentException($"{format} doesn't implement {nameof(IStringFormatParser)}.");
+            return new FormulationStringStatus(formulationString, LocalizationStatus.FormulationFailedNoParser);
         }
 
         /// <summary>

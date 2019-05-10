@@ -47,9 +47,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="line"></param>
         /// <param name="resolver"></param>
-        /// <returns>value or null</returns>
-        /// <exception cref="ArgumentException">If format doesn't implement <see cref="IStringFormatParser"/></exception>
-        /// <exception cref="LineException"></exception>
+        /// <returns>value</returns>
         public static IFormulationString GetValue(this ILine line, IStringFormatResolver resolver = null)
         {
             for (ILine part = line; part != null; part = part.GetPreviousPart())
@@ -72,8 +70,10 @@ namespace Lexical.Localization
                     return stringFormat.Parse(lineParameter.ParameterValue);
                 }
             }
-            return null;
+            return new FormulationStringStatus(null, LocalizationStatus.FormulationFailedNull);
         }
+
     }
+
 }
 

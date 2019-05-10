@@ -58,8 +58,6 @@ namespace Lexical.Localization
         /// <list type="bullet">
         /// <item><see cref="IArgumentFormatter"/></item>
         /// <item><see cref="ICustomFormatter"/></item>
-        /// <item><see cref="IPluralityRuleMap"/></item>
-        /// <item><see cref="IPluralityCategory"/></item>
         /// </list>
         /// 
         /// <see cref="ILocalizationResolver"/> combines format providers from asset and key.
@@ -133,7 +131,7 @@ namespace Lexical.Localization
 
         /// <summary>
         /// If format is argument based, then this is the argument index, otherwise -1.
-        /// Also index in <see cref="ILineFormatArgsPart.Args"/>.
+        /// Also index in <see cref="ILineFormatArgs.Args"/>.
         /// </summary>
         int ArgumentIndex { get; }
 

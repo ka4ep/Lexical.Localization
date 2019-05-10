@@ -149,6 +149,10 @@ namespace Lexical.Localization
         FormulationFailed = 0x60UL << Shift.Formulation,
         /// <summary>Formulation string is null</summary>
         FormulationFailedNull = 0x601L << Shift.Formulation,
+        /// <summary>No <see cref="IStringFormatParser"/></summary>
+        FormulationFailedNoParser = 0x607L << Shift.Formulation,
+        /// <summary>Formulation parse failed</summary>
+        FormulationFailedParse = 0x609L << Shift.Formulation,
         /// <summary>Result has not been processed</summary>
         FormulationFailedNoResult = 0x7FUL << Shift.Formulation,
         /// <summary>Mask for severity</summary>
