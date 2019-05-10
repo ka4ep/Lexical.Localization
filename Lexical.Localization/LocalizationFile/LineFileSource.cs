@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Localization file source.
     /// </summary>
-    public abstract class LocalizationFileSource : FileSource, IAssetSource, IEnumerable
+    public abstract class LineFileSource : FileSource, IAssetSource, IEnumerable
     {
         /// <summary>
         /// Key policy to apply to file, if applicable. Depends on file format.
@@ -24,7 +24,7 @@ namespace Lexical.Localization
         /// <summary>
         /// File format 
         /// </summary>
-        public ILocalizationFileFormat FileFormat { get; internal set; }
+        public ILineFileFormat FileFormat { get; internal set; }
 
         /// <summary>
         /// Create abstract file source.
@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// <param name="filename"></param>
         /// <param name="keyPolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileSource(ILocalizationFileFormat fileFormat, string path, string filename, ILinePolicy keyPolicy, bool throwIfNotFound) : base(path, filename, throwIfNotFound)
+        public LineFileSource(ILineFileFormat fileFormat, string path, string filename, ILinePolicy keyPolicy, bool throwIfNotFound) : base(path, filename, throwIfNotFound)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.KeyPolicy = keyPolicy;
@@ -50,7 +50,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Localization file source that reads as IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;.
     /// </summary>
-    public class LocalizationFileStringLinesSource : LocalizationFileSource, ILocalizationStringLinesSource
+    public class StringLineFileSource : LineFileSource, IStringLineSource
     {
         /// <summary>
         /// Create localization file source that reads as string lines.
@@ -60,7 +60,7 @@ namespace Lexical.Localization
         /// <param name="filename">non-rooted relative path, or rooted full path</param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileStringLinesSource(ILocalizationFileFormat fileFormat, string path, string filename, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
+        public StringLineFileSource(ILineFileFormat fileFormat, string path, string filename, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
 
         /// <summary>
         /// Open file and get new reader.
@@ -69,7 +69,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         IEnumerator<KeyValuePair<string, IFormulationString>> IEnumerable<KeyValuePair<string, IFormulationString>>.GetEnumerator()
         {
-            IEnumerable<KeyValuePair<string, IFormulationString>> lines = LocalizationReaderExtensions.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable<KeyValuePair<string, IFormulationString>> lines = LineReaderExtensions.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 
@@ -80,7 +80,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
         {
-            IEnumerable<KeyValuePair<string, IFormulationString>> lines = LocalizationReaderExtensions.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable<KeyValuePair<string, IFormulationString>> lines = LineReaderExtensions.ReadStringLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 
@@ -105,13 +105,13 @@ namespace Lexical.Localization
         /// <param name="newPath"></param>
         /// <returns>clone</returns>
         public override FileSource SetPath(string newPath)
-            => new LocalizationFileStringLinesSource(FileFormat, newPath, FileName, KeyPolicy, ThrowIfNotFound);
+            => new StringLineFileSource(FileFormat, newPath, FileName, KeyPolicy, ThrowIfNotFound);
     }
 
     /// <summary>
     /// Localization file source that reads as IEnumerable&lt;KeyValuePair&lt;IAssetKey, string&gt;&gt;.
     /// </summary>
-    public class LocalizationFileKeyLinesSource : LocalizationFileSource, ILocalizationKeyLinesSource
+    public class KeyLineFileSource : LineFileSource, IKeyLineSource
     {
         /// <summary>
         /// Create localization file source that reads as key lines.
@@ -121,16 +121,16 @@ namespace Lexical.Localization
         /// <param name="filename">non-rooted relative path, or rooted full path</param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileKeyLinesSource(ILocalizationFileFormat fileFormat, string path, string filename, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
+        public KeyLineFileSource(ILineFileFormat fileFormat, string path, string filename, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
 
         /// <summary>
         /// Open file and get new reader.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
-        IEnumerator<KeyValuePair<ILine, IFormulationString>> IEnumerable<KeyValuePair<ILine, IFormulationString>>.GetEnumerator()
+        IEnumerator<ILine> IEnumerable<ILine>.GetEnumerator()
         {
-            IEnumerable<KeyValuePair<ILine, IFormulationString>> lines = LocalizationReaderExtensions.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable<ILine> lines = LineReaderExtensions.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 
@@ -141,7 +141,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
         {
-            IEnumerable lines = LocalizationReaderExtensions.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
+            IEnumerable lines = LineReaderExtensions.ReadKeyLines(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound).ToArray();
             return lines.GetEnumerator();
         }
 
@@ -166,13 +166,13 @@ namespace Lexical.Localization
         /// <param name="newPath"></param>
         /// <returns>clone</returns>
         public override FileSource SetPath(string newPath)
-            => new LocalizationFileKeyLinesSource(FileFormat, newPath, FileName, KeyPolicy, ThrowIfNotFound);
+            => new KeyLineFileSource(FileFormat, newPath, FileName, KeyPolicy, ThrowIfNotFound);
     }
 
     /// <summary>
     /// Localization file source that reads as ILineTree.
     /// </summary>
-    public class LocalizationFileLineTreeSource : LocalizationFileSource, ILocalizationLineTreeSource
+    public class LineTreeFileSource : LineFileSource, ILineTreeSource
     {
         /// <summary>
         /// Create localization file source that reads as key tree.
@@ -182,7 +182,7 @@ namespace Lexical.Localization
         /// <param name="filename">non-rooted relative path, or rooted full path</param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileLineTreeSource(ILocalizationFileFormat fileFormat, string path, string filename, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
+        public LineTreeFileSource(ILineFileFormat fileFormat, string path, string filename, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
 
         static ILineTree[] no_trees = new ILineTree[0];
 
@@ -193,7 +193,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         IEnumerator<ILineTree> IEnumerable<ILineTree>.GetEnumerator()
         {
-            ILineTree tree = LocalizationReaderExtensions.ReadLineTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
+            ILineTree tree = LineReaderExtensions.ReadLineTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
             ILineTree[] trees = tree == null ? no_trees : new ILineTree[] { tree };
             return ((IEnumerable<ILineTree>)trees).GetEnumerator();
         }
@@ -205,7 +205,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
         {
-            ILineTree tree = LocalizationReaderExtensions.ReadLineTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
+            ILineTree tree = LineReaderExtensions.ReadLineTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
             ILineTree[] trees = tree == null ? no_trees : new ILineTree[] { tree };
             return ((IEnumerable<ILineTree>)trees).GetEnumerator();
         }
@@ -231,13 +231,13 @@ namespace Lexical.Localization
         /// <param name="newPath"></param>
         /// <returns>clone</returns>
         public override FileSource SetPath(string newPath)
-            => new LocalizationFileLineTreeSource(FileFormat, newPath, FileName, KeyPolicy, ThrowIfNotFound);
+            => new LineTreeFileSource(FileFormat, newPath, FileName, KeyPolicy, ThrowIfNotFound);
     }
 
     /// <summary>
     /// Localization file source.
     /// </summary>
-    public abstract class LocalizationFilePatternSource : FilePatternSource, IAssetSource
+    public abstract class LineFilePatternSource : FilePatternSource, IAssetSource
     {
         /// <summary>
         /// Key policy to apply to file, if applicable. Depends on file format.
@@ -247,7 +247,7 @@ namespace Lexical.Localization
         /// <summary>
         /// File format 
         /// </summary>
-        public ILocalizationFileFormat FileFormat { get; protected set; }
+        public ILineFileFormat FileFormat { get; protected set; }
 
         /// <summary>
         /// Create abstract file source.
@@ -256,7 +256,7 @@ namespace Lexical.Localization
         /// <param name="path"></param>
         /// <param name="keyPattern"></param>
         /// <param name="namePolicy"></param>
-        public LocalizationFilePatternSource(ILocalizationFileFormat fileFormat, string path, ILinePattern keyPattern, ILinePolicy namePolicy) : base(path, keyPattern)
+        public LineFilePatternSource(ILineFileFormat fileFormat, string path, ILinePattern keyPattern, ILinePolicy namePolicy) : base(path, keyPattern)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.KeyPolicy = namePolicy;

@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Asset source that constructs an asset from re-openable IEnumerable&lt;KeyValuePair&lt;String, String&gt;&gt; string based key-value lines.
     /// </summary>
-    public class LocalizationStringLinesSource : IAssetSource, ILocalizationStringLinesSource
+    public class StringLinesSource : IAssetSource, IStringLineSource
     {
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
@@ -30,7 +30,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lineSource"></param>
         /// <param name="namePolicy"></param>
-        public LocalizationStringLinesSource(IEnumerable<KeyValuePair<string, IFormulationString>> lineSource, ILinePolicy namePolicy)
+        public StringLinesSource(IEnumerable<KeyValuePair<string, IFormulationString>> lineSource, ILinePolicy namePolicy)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
             this.KeyPolicy = namePolicy;
@@ -65,25 +65,25 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Asset source that provides an asset from re-openable IEnumerable&lt;KeyValuePair&lt;IAssetKey, String&lt;&lt;.
+    /// Asset source that provides an asset from re-openable IEnumerable&lt;ILine&lt;.
     /// </summary>
-    public class LocalizationKeyLinesSource : IAssetSource, ILocalizationKeyLinesSource
+    public class KeyLineSource : IAssetSource, IKeyLineSource
     {
         /// <summary>
         /// Source of lines
         /// </summary>
-        public IEnumerable<KeyValuePair<ILine, IFormulationString>> LineSource { get; protected set; }
+        public IEnumerable<ILine> LineSource { get; protected set; }
 
         /// <summary>
         /// Create adapter that adapts IEnumerable&lt;KeyValuePair&lt;IAssetKey, String&lt;&lt;.
         /// </summary>
         /// <param name="lineSource"></param>
-        public LocalizationKeyLinesSource(IEnumerable<KeyValuePair<ILine, IFormulationString>> lineSource)
+        public KeyLineSource(IEnumerable<ILine> lineSource)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
         }
 
-        IEnumerator<KeyValuePair<ILine, IFormulationString>> IEnumerable<KeyValuePair<ILine, IFormulationString>>.GetEnumerator()
+        IEnumerator<ILine> IEnumerable<ILine>.GetEnumerator()
             => LineSource.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator()
             => LineSource.GetEnumerator();
@@ -107,7 +107,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Asset source that provides an asset from re-openable IEnumerable&lt;ILineTree&lt;.
     /// </summary>
-    public class LocalizationLineTreeSource : IAssetSource, ILocalizationLineTreeSource
+    public class LineTreeSource : IAssetSource, ILineTreeSource
     {
         /// <summary>
         /// Source of lines
@@ -118,7 +118,7 @@ namespace Lexical.Localization
         /// Create adapter that adapts IEnumerable&lt;ILineTree&lt;.
         /// </summary>
         /// <param name="lineSource"></param>
-        public LocalizationLineTreeSource(IEnumerable<ILineTree> lineSource)
+        public LineTreeSource(IEnumerable<ILineTree> lineSource)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
         }
@@ -145,14 +145,14 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Asset source that opens a <see cref="Stream"/> and converts to <see cref="IAsset"/> with <see cref="ILocalizationFileFormat"/>.
+    /// Asset source that opens a <see cref="Stream"/> and converts to <see cref="IAsset"/> with <see cref="ILineFileFormat"/>.
     /// </summary>
     public class StreamProviderAssetSource : IAssetSource
     {
         /// <summary>
         /// File format
         /// </summary>
-        public ILocalizationFileFormat FileFormat { get; protected set; }
+        public ILineFileFormat FileFormat { get; protected set; }
 
         /// <summary>
         /// Stream source
@@ -170,7 +170,7 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="streamSource"></param>
         /// <param name="namePolicy"></param>
-        public StreamProviderAssetSource(ILocalizationFileFormat fileFormat, Func<Stream> streamSource, ILinePolicy namePolicy)
+        public StreamProviderAssetSource(ILineFileFormat fileFormat, Func<Stream> streamSource, ILinePolicy namePolicy)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.streamSource = streamSource ?? throw new ArgumentNullException(nameof(streamSource));

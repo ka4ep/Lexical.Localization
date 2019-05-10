@@ -19,8 +19,8 @@ namespace TutorialLibrary1
         /// <summary>
         /// Localization source reference to embedded resource.
         /// </summary>
-        public readonly LocalizationEmbeddedSource LocalizationSource = 
-            LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
+        public readonly LineEmbeddedSource LocalizationSource = 
+            LineReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
 
         public LibraryAssetSources() : base()
         {
@@ -64,14 +64,14 @@ namespace TutorialLibrary1
         /// <summary>
         /// Localization source reference to embedded resource.
         /// </summary>
-        public readonly LocalizationEmbeddedSource LocalizationSource = 
-            LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
+        public readonly LineEmbeddedSource LocalizationSource = 
+            LineReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
 
         /// <summary>
         /// (Optional) External file localization source.
         /// </summary>
         public readonly LocalizationFileSource ExternalLocalizationSource = 
-            LocalizationReaderMap.Instance.FileAssetSource("Localization.xml", throwIfNotFound: false);
+            LineReaderMap.Instance.FileAssetSource("Localization.xml", throwIfNotFound: false);
 
         public LibraryAssetSourcesB() : base()
         {

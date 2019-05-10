@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Collection of localization readers.
     /// </summary>
-    public class LocalizationFileFormatMap : ConcurrentDictionary<string, ILocalizationFileFormat>
+    public class LineFileFormatMap : ConcurrentDictionary<string, ILineFileFormat>
     {
         /// <summary>
         /// Get file extension without "."
@@ -31,7 +31,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new file format map.
         /// </summary>
-        public LocalizationFileFormatMap() : base(StringComparer.InvariantCultureIgnoreCase)
+        public LineFileFormatMap() : base(StringComparer.InvariantCultureIgnoreCase)
         {
         }
 
@@ -39,7 +39,7 @@ namespace Lexical.Localization
         /// Create new file format map.
         /// </summary>
         /// <param name="fileFormats"></param>
-        public LocalizationFileFormatMap(params ILocalizationFileFormat[] fileFormats) : base(StringComparer.InvariantCultureIgnoreCase)
+        public LineFileFormatMap(params ILineFileFormat[] fileFormats) : base(StringComparer.InvariantCultureIgnoreCase)
         {
             this.AddRange(fileFormats);
         }
@@ -48,48 +48,48 @@ namespace Lexical.Localization
         /// Create new file format map.
         /// </summary>
         /// <param name="fileFormats"></param>
-        public LocalizationFileFormatMap(IEnumerable<ILocalizationFileFormat> fileFormats) : base(StringComparer.InvariantCultureIgnoreCase)
+        public LineFileFormatMap(IEnumerable<ILineFileFormat> fileFormats) : base(StringComparer.InvariantCultureIgnoreCase)
         {
             this.AddRange(fileFormats);
         }
     }
 
     /// <summary>
-    /// Extenions for <see cref="LocalizationFileFormatMap"/>.
+    /// Extenions for <see cref="LineFileFormatMap"/>.
     /// </summary>
-    public static partial class LocalizationFileFormatMapExtensions
+    public static partial class LineFileFormatMapExtensions
     {
         /// <summary>
         /// All supported extensions.
         /// </summary>
-        public static IEnumerable<string> Extensions(this IReadOnlyDictionary<string, ILocalizationFileFormat> map)
+        public static IEnumerable<string> Extensions(this IReadOnlyDictionary<string, ILineFileFormat> map)
             => map.Values.Select(f => f.Extension);
 
         /// <summary>
-        /// Infer and get <see cref="ILocalizationFileFormat"/> from <paramref name="filename"/>.
+        /// Infer and get <see cref="ILineFileFormat"/> from <paramref name="filename"/>.
         /// </summary>
         /// <param name="map"></param>
         /// <param name="filename"></param>
         /// <returns>file format</returns>
         /// <exception cref="ArgumentException">thrown if fileformat was not found</exception>
-        public static ILocalizationFileFormat GetFormatByFilename(this IReadOnlyDictionary<string, ILocalizationFileFormat> map, string filename)
+        public static ILineFileFormat GetFormatByFilename(this IReadOnlyDictionary<string, ILineFileFormat> map, string filename)
         {
-            string ext = LocalizationFileFormatMap.GetExtension(filename);
-            ILocalizationFileFormat fileFormat;
+            string ext = LineFileFormatMap.GetExtension(filename);
+            ILineFileFormat fileFormat;
             if (ext != null && map.TryGetValue(ext, out fileFormat)) return fileFormat;
             throw new ArgumentException("Could not resolve file format for filename \"{filename}\"");
         }
 
         /// <summary>
-        /// Try to infer <see cref="ILocalizationFileFormat"/> from <paramref name="filename"/>.
+        /// Try to infer <see cref="ILineFileFormat"/> from <paramref name="filename"/>.
         /// </summary>
         /// <param name="map"></param>
         /// <param name="filename"></param>
         /// <returns>file format or null</returns>
-        public static ILocalizationFileFormat TryGetFormatByFilename(this IReadOnlyDictionary<string, ILocalizationFileFormat> map, string filename)
+        public static ILineFileFormat TryGetFormatByFilename(this IReadOnlyDictionary<string, ILineFileFormat> map, string filename)
         {
-            string ext = LocalizationFileFormatMap.GetExtension(filename);
-            ILocalizationFileFormat fileFormat;
+            string ext = LineFileFormatMap.GetExtension(filename);
+            ILineFileFormat fileFormat;
             if (ext != null && map.TryGetValue(ext, out fileFormat)) return fileFormat;
             return null;
         }
@@ -100,9 +100,9 @@ namespace Lexical.Localization
         /// <param name="map"></param>
         /// <param name="extension">extension to search, case insensitive</param>
         /// <returns>file format or null</returns>
-        public static ILocalizationFileFormat TryGet(this IReadOnlyDictionary<string, ILocalizationFileFormat> map, string extension)
+        public static ILineFileFormat TryGet(this IReadOnlyDictionary<string, ILineFileFormat> map, string extension)
         {
-            ILocalizationFileFormat result = null;
+            ILineFileFormat result = null;
             map.TryGetValue(extension, out result);
             return result;
         }
@@ -113,7 +113,7 @@ namespace Lexical.Localization
         /// <param name="map"></param>
         /// <param name="fileFormat"></param>
         /// <returns></returns>
-        public static IDictionary<string, ILocalizationFileFormat> Add(this IDictionary<string, ILocalizationFileFormat> map, ILocalizationFileFormat fileFormat)
+        public static IDictionary<string, ILineFileFormat> Add(this IDictionary<string, ILineFileFormat> map, ILineFileFormat fileFormat)
         {
             string ext = fileFormat.Extension;
             if (ext == null) throw new ArgumentNullException("Extension");
@@ -128,9 +128,9 @@ namespace Lexical.Localization
         /// <param name="map"></param>
         /// <param name="fileFormats"></param>
         /// <returns></returns>
-        public static IDictionary<string, ILocalizationFileFormat> AddRange(this IDictionary<string, ILocalizationFileFormat> map, IEnumerable<ILocalizationFileFormat> fileFormats)
+        public static IDictionary<string, ILineFileFormat> AddRange(this IDictionary<string, ILineFileFormat> map, IEnumerable<ILineFileFormat> fileFormats)
         {
-            foreach (ILocalizationFileFormat fileFormat in fileFormats)
+            foreach (ILineFileFormat fileFormat in fileFormats)
                 map.Add(fileFormat);
             return map;
         }
@@ -141,9 +141,9 @@ namespace Lexical.Localization
         /// <param name="map"></param>
         /// <param name="fileFormats"></param>
         /// <returns></returns>
-        public static IDictionary<string, ILocalizationFileFormat> AddRange(this IDictionary<string, ILocalizationFileFormat> map, params ILocalizationFileFormat[] fileFormats)
+        public static IDictionary<string, ILineFileFormat> AddRange(this IDictionary<string, ILineFileFormat> map, params ILineFileFormat[] fileFormats)
         {
-            foreach (ILocalizationFileFormat fileFormat in fileFormats)
+            foreach (ILineFileFormat fileFormat in fileFormats)
                 map.Add(fileFormat);
             return map;
         }
@@ -153,7 +153,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="map"></param>
         /// <returns></returns>
-        public static LocalizationFileFormatMap Clone(this IReadOnlyDictionary<string, ILocalizationFileFormat> map)
-            => new LocalizationFileFormatMap(map.Values);
+        public static LineFileFormatMap Clone(this IReadOnlyDictionary<string, ILineFileFormat> map)
+            => new LineFileFormatMap(map.Values);
     }
 }

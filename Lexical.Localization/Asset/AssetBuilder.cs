@@ -61,9 +61,9 @@ namespace Lexical.Localization
         /// <summary>
         /// Builds a list of assets. Adds the following:
         ///   1. The list of <see cref="assets"/> as is
-        ///   2. Build from <see cref="sources"/> elements that dont' implement <see cref="ILocalizationSource"/>
-        ///   3. One asset for each <see cref="ILocalizationStringLinesSource"/> that share <see cref="ILinePolicy"/>.
-        ///   4. One asset for all <see cref="ILocalizationKeyLinesSource"/>.
+        ///   2. Build from <see cref="sources"/> elements that dont' implement <see cref="ILineSource"/>
+        ///   3. One asset for each <see cref="IStringLineSource"/> that share <see cref="ILinePolicy"/>.
+        ///   4. One asset for all <see cref="IKeyLineSource"/>.
         ///   
         /// </summary>
         /// <returns></returns>
@@ -76,24 +76,24 @@ namespace Lexical.Localization
             list.AddRange(assets);
 
             // Build IAssetSources
-            foreach (IAssetSource src in sources.Where(s => s is ILocalizationSource == false))
+            foreach (IAssetSource src in sources.Where(s => s is ILineSource == false))
                 src.Build(list);
 
             // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> sources
             LocalizationAsset __asset = null;
-            foreach (ILocalizationStringLinesSource src in sources.Where(s => s is ILocalizationStringLinesSource).Cast<ILocalizationStringLinesSource>())
+            foreach (IStringLineSource src in sources.Where(s => s is IStringLineSource).Cast<IStringLineSource>())
             {
                 if (__asset == null) __asset = new LocalizationAsset();
                 __asset.Add(src, src.KeyPolicy);
             }
             // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> sources
-            foreach (ILocalizationKeyLinesSource src in sources.Where(s => s is ILocalizationKeyLinesSource).Cast<ILocalizationKeyLinesSource>())
+            foreach (IKeyLineSource src in sources.Where(s => s is IKeyLineSource).Cast<IKeyLineSource>())
             {
                 if (__asset == null) __asset = new LocalizationAsset();
                 __asset.Add(src);
             }
             // ... and IEnumerable<ILineTree> sources
-            foreach (ILocalizationLineTreeSource src in sources.Where(s => s is ILocalizationLineTreeSource).Cast<ILocalizationLineTreeSource>())
+            foreach (ILineTreeSource src in sources.Where(s => s is ILineTreeSource).Cast<ILineTreeSource>())
             {
                 if (__asset == null) __asset = new LocalizationAsset();
                 __asset.Add(src);

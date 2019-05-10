@@ -9,7 +9,7 @@ There are following file formats that are supported with the default class libra
 | .resx | LocalizationResxReader |
 | .resources | LocalizationResourcesReader |
 
-**ILocalizationFileFormat** instance can be acquired from **LocalizationReaderMap** dictionary.
+**ILineFileFormat** instance can be acquired from **LineReaderMap** dictionary.
 [!code-csharp[Snippet](Examples.cs#Snippet_0a)]
 
 And from singleton instances.
@@ -25,7 +25,7 @@ From embedded resource with **.EmbeddedAsset()** method.
 And from a file provider with **.FileProviderAsset()**. 
 [!code-csharp[Snippet](Examples.cs#Snippet_10c)]
 
-The same extension methods are also available in the **LocalizationReaderMap**, which selects the reader class by file extension.
+The same extension methods are also available in the **LineReaderMap**, which selects the reader class by file extension.
 [!code-csharp[Snippet](Examples.cs#Snippet_10d)]
 
 # Read IAssetSource
@@ -39,7 +39,7 @@ Reference to embedded resource source with **.EmbeddedAssetSource()**.
 And file provider with **.FileProviderAssetSource()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_11c)]
 
-The same extension methods are also available in the **LocalizationReaderMap**, which selects the reader class by file extension.
+The same extension methods are also available in the **LineReaderMap**, which selects the reader class by file extension.
 [!code-csharp[Snippet](Examples.cs#Snippet_11d)]
 
 # Read File
@@ -106,12 +106,12 @@ And into a tree.
 
 # Implementing
 <details>
-  <summary><b>ILocalizationReader</b> is the root interface for localization reader classes. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/LocalizationFile/ILocalizationReader.cs#Interface)]
+  <summary><b>ILineReader</b> is the root interface for localization reader classes. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/LocalizationFile/ILineReader.cs#Interface)]
 </details>
 <br/>
-A class that implements **ILocalizationReader** must to implement one of its sub-interfaces. A one that best suits the underlying format.
+A class that implements **ILineReader** must to implement one of its sub-interfaces. A one that best suits the underlying format.
 [!code-csharp[Snippet](Examples.cs#Snippet_30)]
 
-Reader can be added to **LocalizationReaderMap**.
+Reader can be added to **LineReaderMap**.
 [!code-csharp[Snippet](Examples.cs#Snippet_30a)]

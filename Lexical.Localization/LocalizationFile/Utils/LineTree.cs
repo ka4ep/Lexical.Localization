@@ -39,7 +39,7 @@ namespace Lexical.Localization.Utils
         /// <param name="keyValues"></param>
         /// <param name="groupingPolicy"></param>
         /// <returns>tree root ""</returns>
-        public static LineTree Create(IEnumerable<KeyValuePair<ILine, IFormulationString>> keyValues, ILinePattern groupingPolicy)
+        public static LineTree Create(IEnumerable<ILine> keyValues, ILinePattern groupingPolicy)
         {
             LineTree root = new LineTree(new LinePart(LineAppender.Default, null));
             root.AddRange(keyValues, groupingPolicy);

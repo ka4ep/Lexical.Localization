@@ -27,7 +27,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, ILinePolicy policy)
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<ILine> lines, ILinePolicy policy)
             => lines.Select(line => new KeyValuePair<string, IFormulationString>((policy ?? DefaultPolicy).Print(line.Key), line.Value));
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static ILineTree ToLineTree(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, ILinePolicy namePolicy)
+        public static ILineTree ToLineTree(this IEnumerable<ILine> lines, ILinePolicy namePolicy)
         {
             LineTree tree = new LineTree();
             if (namePolicy is ILinePattern pattern)
@@ -62,7 +62,7 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public static ILineTree AddRange(this ILineTree tree, IEnumerable<KeyValuePair<ILine, IFormulationString>> lines)
+        public static ILineTree AddRange(this ILineTree tree, IEnumerable<ILine> lines)
         {
             foreach (var line in lines)
             {
@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="groupingRule"></param>
         /// <returns></returns>
-        public static ILineTree AddRange(this ILineTree node, IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, ILinePattern groupingRule) // Todo separate to sortRule + groupingRule
+        public static ILineTree AddRange(this ILineTree node, IEnumerable<ILine> lines, ILinePattern groupingRule) // Todo separate to sortRule + groupingRule
         {
             // Use another method
             //if (groupingRule == null) { node.AddRange(lines); return node; }
@@ -221,7 +221,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public static IAsset ToAsset(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines)
+        public static IAsset ToAsset(this IEnumerable<ILine> lines)
             => new LocalizationAsset().Add(lines).Load();
 
         /// <summary>
@@ -229,8 +229,8 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines)
-            => new LocalizationKeyLinesSource(lines);
+        public static IAssetSource ToAssetSource(this IEnumerable<ILine> lines)
+            => new KeyLineSource(lines);
 
         /// <summary>
         /// Convert to dictionary.
@@ -238,7 +238,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="keyComparer">(optional) <see cref="ILine"/> comparer</param>
         /// <returns></returns>
-        public static Dictionary<ILine, IFormulationString> ToDictionary(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, IEqualityComparer<ILine> keyComparer = default)
+        public static Dictionary<ILine, IFormulationString> ToDictionary(this IEnumerable<ILine> lines, IEqualityComparer<ILine> keyComparer = default)
         {
             Dictionary<ILine, IFormulationString> result = new Dictionary<ILine, IFormulationString>(keyComparer ?? LineComparer.Default);
             foreach (var line in lines)

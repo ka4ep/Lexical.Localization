@@ -258,12 +258,12 @@ namespace Lexical.Localization
             /// <summary>
             /// Cached result of GetKeyLines(null)
             /// </summary>
-            public List<KeyValuePair<ILine, IFormulationString>> keysLinesPartial;
+            public List<ILine> keysLinesPartial;
 
             /// <summary>
             /// Cached result of GetAllKeyLines(null)
             /// </summary>
-            public List<KeyValuePair<ILine, IFormulationString>> keysLinesAll;
+            public List<ILine> keysLinesAll;
 
             /// <summary>
             /// Cached result of individual GetString() fetches
@@ -362,7 +362,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<ILine, IFormulationString>> GetKeyLines(ILine key = null)
+        public IEnumerable<ILine> GetKeyLines(ILine key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetKeyLines(key);
@@ -378,7 +378,7 @@ namespace Lexical.Localization
             if (_cache.keyLinesPartialIsNull) return null;
 
             // Read from source
-            IEnumerable<KeyValuePair<ILine, IFormulationString>> lines = Source.GetKeyLines(null);
+            IEnumerable<ILine> lines = Source.GetKeyLines(null);
 
             // Got no results
             if (lines == null)
@@ -388,16 +388,16 @@ namespace Lexical.Localization
             }
 
             // Clone keys
-            if (Options.GetCloneKeys()) lines = lines.Select(line => new KeyValuePair<ILine, IFormulationString>(line.Key.CloneKey(LineAppender.Default), line.Value));
+            if (Options.GetCloneKeys()) lines = lines.Select(line => new ILine(line.Key.CloneKey(LineAppender.Default), line.Value));
 
             // Take snapshot
-            lines = new List<KeyValuePair<ILine, IFormulationString>>(lines);
+            lines = new List<ILine>(lines);
 
             // Write to cache
             _cache.m_lock.EnterWriteLock();
             try
             {
-                _cache.keysLinesPartial = (List<KeyValuePair<ILine, IFormulationString>>)lines;
+                _cache.keysLinesPartial = (List<ILine>)lines;
                 foreach (var line in lines)
                     _cache.strings[line.Key] = line.Value;
             }
@@ -415,7 +415,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<ILine, IFormulationString>> GetAllKeyLines(ILine key = null)
+        public IEnumerable<ILine> GetAllKeyLines(ILine key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetAllKeyLines(key);
@@ -431,7 +431,7 @@ namespace Lexical.Localization
             if (_cache.keyLinesAllIsNull) return null;
 
             // Read from source
-            IEnumerable<KeyValuePair<ILine, IFormulationString>> lines = Source.GetAllKeyLines(null);
+            IEnumerable<ILine> lines = Source.GetAllKeyLines(null);
 
             // Got no results
             if (lines == null)
@@ -441,16 +441,16 @@ namespace Lexical.Localization
             }
 
             // Clone keys
-            if (Options.GetCloneKeys()) lines = lines.Select(line => new KeyValuePair<ILine, IFormulationString>(line.Key.CloneKey(LineAppender.Default), line.Value));
+            if (Options.GetCloneKeys()) lines = lines.Select(line => new ILine(line.Key.CloneKey(LineAppender.Default), line.Value));
 
             // Take snapshot
-            lines = new List<KeyValuePair<ILine, IFormulationString>>(lines);
+            lines = new List<ILine>(lines);
 
             // Write to cache
             _cache.m_lock.EnterWriteLock();
             try
             {
-                _cache.keysLinesAll = (List<KeyValuePair<ILine, IFormulationString>>)lines;
+                _cache.keysLinesAll = (List<ILine>)lines;
                 foreach (var line in lines)
                     _cache.strings[line.Key] = line.Value;
             }

@@ -28,7 +28,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<ILine, IFormulationString>> ToKeyLines(this ILineTree node)
+        public static IEnumerable<ILine> ToKeyLines(this ILineTree node)
         {
             Queue<(ILineTree, ILine)> queue = new Queue<(ILineTree, ILine)>();
             queue.Enqueue((node, node.Key));
@@ -41,7 +41,7 @@ namespace Lexical.Localization
                 if (current.Item2 != null && current.Item1.HasValues)
                 {
                     foreach (IFormulationString value in current.Item1.Values)
-                        yield return new KeyValuePair<ILine, IFormulationString>(current.Item2, value);
+                        yield return new ILine(current.Item2, value);
                 }
 
                 // Enqueue children
@@ -82,7 +82,7 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <returns></returns>
         public static IAssetSource ToAssetSource(ILineTree tree)
-            => new LocalizationLineTreeSource(tree == null ? new ILineTree[0] : new ILineTree[] { tree });
+            => new LineTreeSource(tree == null ? new ILineTree[0] : new ILineTree[] { tree });
 
         /// <summary>
         /// Convert <paramref name="trees"/> to <see cref="IAssetSource"/>..
@@ -90,7 +90,7 @@ namespace Lexical.Localization
         /// <param name="trees"></param>
         /// <returns></returns>
         public static IAssetSource ToAssetSource(this IEnumerable<ILineTree> trees)
-            => new LocalizationLineTreeSource(trees);
+            => new LineTreeSource(trees);
 
         /// <summary>
         /// Search child by key.

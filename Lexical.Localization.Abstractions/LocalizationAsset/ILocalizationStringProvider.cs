@@ -45,7 +45,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns>all lines, or null</returns>
-        IEnumerable<KeyValuePair<ILine, IFormulationString>> GetKeyLines(ILine filterKey = null);
+        IEnumerable<ILine> GetKeyLines(ILine filterKey = null);
 
         /// <summary>
         /// Get all localization lines. If cannot return all lines, return what is availale.
@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns>lines, or null</returns>
-        IEnumerable<KeyValuePair<ILine, IFormulationString>> GetAllKeyLines(ILine filterKey = null);
+        IEnumerable<ILine> GetAllKeyLines(ILine filterKey = null);
     }
 
     /// <summary>
@@ -167,15 +167,15 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="filterKey">(optional) key used for filtering results</param>
         /// <returns>key to language string mapping, or null</returns>
-        public static IEnumerable<KeyValuePair<ILine, IFormulationString>> GetKeyLines(this IAsset asset, ILine filterKey = null)
+        public static IEnumerable<ILine> GetKeyLines(this IAsset asset, ILine filterKey = null)
         {
-            IEnumerable<KeyValuePair<ILine, IFormulationString>> result = null;
+            IEnumerable<ILine> result = null;
             if (asset is ILocalizationKeyLinesEnumerable casted) result = casted.GetKeyLines(filterKey);
             if (asset is IAssetComposition composition)
             {
                 foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationKeyLinesEnumerable>())
                 {
-                    IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = component.GetKeyLines(filterKey);
+                    IEnumerable<ILine> _result = component.GetKeyLines(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                 }
                 foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
@@ -185,7 +185,7 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = loaded_asset.GetKeyLines(filterKey);
+                            IEnumerable<ILine> _result = loaded_asset.GetKeyLines(filterKey);
                             if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                         }
                     }
@@ -198,7 +198,7 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in loaded_assets)
                     {
-                        IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = loaded_asset.GetKeyLines(filterKey);
+                        IEnumerable<ILine> _result = loaded_asset.GetKeyLines(filterKey);
                         if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
                     }
                 }
@@ -220,15 +220,15 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="filterKey">(optional) key used for filtering results</param>
         /// <returns>key to language string mapping, or null</returns>
-        public static IEnumerable<KeyValuePair<ILine, IFormulationString>> GetAllKeyLines(this IAsset asset, ILine filterKey = null)
+        public static IEnumerable<ILine> GetAllKeyLines(this IAsset asset, ILine filterKey = null)
         {
-            IEnumerable<KeyValuePair<ILine, IFormulationString>> result = null;
+            IEnumerable<ILine> result = null;
             if (asset is ILocalizationKeyLinesEnumerable casted) result = casted.GetAllKeyLines(filterKey);
             if (asset is IAssetComposition composition)
             {
                 foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationKeyLinesEnumerable>())
                 {
-                    IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = component.GetAllKeyLines(filterKey);
+                    IEnumerable<ILine> _result = component.GetAllKeyLines(filterKey);
                     if (_result == null) return null;
                     if (_result is Array _array && _array.Length == 0) continue;
                     result = result == null ? _result : result.Concat(_result);
@@ -240,7 +240,7 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = loaded_asset.GetAllKeyLines(filterKey);
+                            IEnumerable<ILine> _result = loaded_asset.GetAllKeyLines(filterKey);
                             if (_result == null) return null;
                             if (_result is Array _array && _array.Length == 0) continue;
                             result = result == null ? _result : result.Concat(_result);
@@ -255,7 +255,7 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in loaded_assets)
                     {
-                        IEnumerable<KeyValuePair<ILine, IFormulationString>> _result = loaded_asset.GetAllKeyLines(filterKey);
+                        IEnumerable<ILine> _result = loaded_asset.GetAllKeyLines(filterKey);
                         if (_result == null) return null;
                         if (_result is Array _array && _array.Length == 0) continue;
                         result = result == null ? _result : result.Concat(_result);

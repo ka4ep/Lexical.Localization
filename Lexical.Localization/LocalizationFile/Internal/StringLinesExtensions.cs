@@ -22,13 +22,13 @@ namespace Lexical.Localization.Internal
         /// <param name="lines"></param>
         /// <param name="policy"><see cref="ILineParser"/> implementation used for parsing.</param>
         /// <returns>lines with <see cref="ILine"/> keys</returns>
-        public static IEnumerable<KeyValuePair<ILine, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, ILinePolicy policy)
+        public static IEnumerable<ILine> ToKeyLines(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, ILinePolicy policy)
         {
             foreach (var line in lines)
             {
                 ILine kk;
                 if (policy.TryParse(line.Key, out kk))
-                    yield return new KeyValuePair<ILine, IFormulationString>(kk, line.Value);
+                    yield return new ILine(kk, line.Value);
             }
         }
 
@@ -41,13 +41,13 @@ namespace Lexical.Localization.Internal
         /// <param name="keyPolicy"><see cref="ILineParser"/> implementation used for parsing.</param>
         /// <param name="valueParser"></param>
         /// <returns>lines with <see cref="ILine"/> keys</returns>
-        public static IEnumerable<KeyValuePair<ILine, IFormulationString>> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, ILinePolicy keyPolicy, IStringFormatParser valueParser)
+        public static IEnumerable<ILine> ToKeyLines(this IEnumerable<KeyValuePair<string, string>> lines, ILinePolicy keyPolicy, IStringFormatParser valueParser)
         {
             foreach (var line in lines)
             {
                 ILine kk;
                 if (keyPolicy.TryParse(line.Key, out kk))
-                    yield return new KeyValuePair<ILine, IFormulationString>(kk, valueParser.Parse(line.Value));
+                    yield return new ILine(kk, valueParser.Parse(line.Value));
             }
         }
 
@@ -78,7 +78,7 @@ namespace Lexical.Localization.Internal
         /// <param name="policy"></param>
         /// <returns></returns>
         public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, ILinePolicy policy)
-            => new LocalizationStringLinesSource(lines, policy);
+            => new StringLinesSource(lines, policy);
 
         /// <summary>
         /// Add prefix parameters to each key.

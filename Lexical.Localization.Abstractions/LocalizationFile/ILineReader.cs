@@ -11,24 +11,24 @@ namespace Lexical.Localization
 {
     #region Interface
     /// <summary>
-    /// Signals that file format can be read localization files.
+    /// Signals that file format can read localization files.
     /// 
     /// For reading capability, must implement one of:
     /// <list type="Bullet">
-    /// <item><see cref="ILocalizationKeyLinesStreamReader"/></item>
-    /// <item><see cref="ILocalizationLineTreeStreamReader"/></item>
-    /// <item><see cref="ILocalizationKeyLinesTextReader"/></item>
-    /// <item><see cref="ILocalizationLineTreeTextReader"/></item>
-    /// <item><see cref="ILocalizationStringLinesTextReader"/></item>
-    /// <item><see cref="ILocalizationStringLinesStreamReader"/></item>
+    /// <item><see cref="ILineStreamReader"/></item>
+    /// <item><see cref="ILineTreeStreamReader"/></item>
+    /// <item><see cref="ILineTextReader"/></item>
+    /// <item><see cref="ILineTreeTextReader"/></item>
+    /// <item><see cref="ILineStringTextReader"/></item>
+    /// <item><see cref="ILineStringStreamReader"/></item>
     /// </list>
     /// </summary>
-    public interface ILocalizationReader : ILocalizationFileFormat { }
+    public interface ILineReader : ILineFileFormat { }
 
     /// <summary>
-    /// Reader that can read localization lines from a <see cref="Stream"/>.
+    /// Reader that can read lines from a <see cref="Stream"/>.
     /// </summary>
-    public interface ILocalizationKeyLinesStreamReader : ILocalizationReader
+    public interface ILineStreamReader : ILineReader
     {
         /// <summary>
         /// Read <paramref name="stream"/> into lines.
@@ -37,13 +37,13 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. </param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(Stream stream, ILinePolicy namePolicy = default);
+        IEnumerable<ILine> ReadKeyLines(Stream stream, ILinePolicy namePolicy = default);
     }
 
     /// <summary>
-    /// Reader that can read localization into tree format format a <see cref="Stream"/>.
+    /// Reader that can read tree format from a <see cref="Stream"/>.
     /// </summary>
-    public interface ILocalizationLineTreeStreamReader : ILocalizationReader
+    public interface ILineTreeStreamReader : ILineReader
     {
         /// <summary>
         /// Read <paramref name="stream"/> into tree structuer.
@@ -58,7 +58,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that can read localization lines from a <see cref="TextReader"/>.
     /// </summary>
-    public interface ILocalizationKeyLinesTextReader : ILocalizationReader
+    public interface ILineTextReader : ILineReader
     {
         /// <summary>
         /// Read <paramref name="text"/> into lines.
@@ -67,13 +67,13 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(TextReader text, ILinePolicy namePolicy = default);
+        IEnumerable<ILine> ReadKeyLines(TextReader text, ILinePolicy namePolicy = default);
     }
 
     /// <summary>
     /// Reader that can read localization lines from a <see cref="TextReader"/>.
     /// </summary>
-    public interface ILocalizationLineTreeTextReader : ILocalizationReader
+    public interface ILineTreeTextReader : ILineReader
     {
         /// <summary>
         /// Read <paramref name="text"/> into lines.
@@ -88,7 +88,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that can read string key-values from a <see cref="TextReader"/>.
     /// </summary>
-    public interface ILocalizationStringLinesTextReader : ILocalizationReader
+    public interface ILineStringTextReader : ILineReader
     {
         /// <summary>
         /// Read <paramref name="text"/> into lines.
@@ -103,7 +103,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that can read string key-values from a <see cref="Stream"/>.
     /// </summary>
-    public interface ILocalizationStringLinesStreamReader : ILocalizationReader
+    public interface ILineStringStreamReader : ILineReader
     {
         /// <summary>
         /// Read <paramref name="stream"/> into lines.

@@ -17,14 +17,14 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that reads Microsoft's binary ".resx" files as key,value lines.
     /// </summary>
-    public class LocalizationResxReader : ILocalizationFileFormat, ILocalizationStringLinesStreamReader, ILocalizationStringLinesTextReader
+    public class LineResxReader : ILineFileFormat, ILineStringStreamReader, ILineStringTextReader
     {
-        private readonly static LocalizationResxReader instance = new LocalizationResxReader();
+        private readonly static LineResxReader instance = new LineResxReader();
 
         /// <summary>
         /// Default instance
         /// </summary>
-        public static LocalizationResxReader Instance => instance;
+        public static LineResxReader Instance => instance;
 
         /// <summary>
         /// File extension, "resx" for default.
@@ -39,14 +39,14 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new .resx reader instance with default values.
         /// </summary>
-        public LocalizationResxReader() : this("resx", CSharpFormat.Instance) { }
+        public LineResxReader() : this("resx", CSharpFormat.Instance) { }
 
         /// <summary>
         /// Create new .resx reader.
         /// </summary>
         /// <param name="ext"></param>
         /// <param name="valueParser"></param>
-        public LocalizationResxReader(string ext, IStringFormat valueParser)
+        public LineResxReader(string ext, IStringFormat valueParser)
         {
             this.Extension = ext;
             this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));

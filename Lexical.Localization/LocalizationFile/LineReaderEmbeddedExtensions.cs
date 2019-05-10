@@ -13,9 +13,9 @@ using Lexical.Localization.Utils;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Contains extensions that help instantiating <see cref="IAsset"/> from intermediate key-value formats, and <see cref="ILocalizationFileFormat"/>.
+    /// Contains extensions that help instantiating <see cref="IAsset"/> from intermediate key-value formats, and <see cref="ILineFileFormat"/>.
     /// </summary>
-    public static partial class LocalizationReaderExtensions
+    public static partial class LineReaderExtensions
     {
         /// <summary>
         /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="asm"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -26,8 +26,8 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        public static LocalizationEmbeddedKeyLinesSource EmbeddedReaderAsKeyLines(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationEmbeddedKeyLinesSource(fileFormat, asm, resourceName, namePolicy, throwIfNotFound);
+        public static LineEmbeddedKeyLinesSource EmbeddedReaderAsKeyLines(this ILineFileFormat fileFormat, Assembly asm, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
+            => new LineEmbeddedKeyLinesSource(fileFormat, asm, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="asm"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -38,8 +38,8 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
-        public static LocalizationEmbeddedLineTreeSource EmbeddedReaderAsLineTree(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationEmbeddedLineTreeSource(fileFormat, asm, resourceName, namePolicy, throwIfNotFound);
+        public static LineEmbeddedLineTreeSource EmbeddedReaderAsLineTree(this ILineFileFormat fileFormat, Assembly asm, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
+            => new LineEmbeddedLineTreeSource(fileFormat, asm, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="asm"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -50,8 +50,8 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        public static LocalizationEmbeddedStringLinesSource EmbeddedReaderAsStringLines(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationEmbeddedStringLinesSource(fileFormat, asm, resourceName, namePolicy, throwIfNotFound);
+        public static LineEmbeddedStringLinesSource EmbeddedReaderAsStringLines(this ILineFileFormat fileFormat, Assembly asm, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
+            => new LineEmbeddedStringLinesSource(fileFormat, asm, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset from embedded resource<paramref name="resourceName"/>.
@@ -64,17 +64,17 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) </param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>reloadable localization asset</returns>
-        public static IAsset EmbeddedAsset(this ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
+        public static IAsset EmbeddedAsset(this ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
         {
-            if (fileFormat is ILocalizationLineTreeTextReader || fileFormat is ILocalizationLineTreeStreamReader)
+            if (fileFormat is ILineTreeTextReader || fileFormat is ILineTreeStreamReader)
             {
                 return new LocalizationAsset().Add(fileFormat.EmbeddedReaderAsLineTree(assembly, resourceName, namePolicy, throwIfNotFound), namePolicy).Load();
             }
-            else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
+            else if (fileFormat is ILineTextReader || fileFormat is ILineStreamReader)
             {
                 return new LocalizationAsset().Add(fileFormat.EmbeddedReaderAsKeyLines(assembly, resourceName, namePolicy, throwIfNotFound), namePolicy).Load();
             }
-            else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
+            else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
             {
                 return new LocalizationAsset().Add(fileFormat.EmbeddedReaderAsStringLines(assembly, resourceName, namePolicy, throwIfNotFound), namePolicy).Load();
             }
@@ -90,19 +90,19 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) </param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>asset source</returns>
-        public static LocalizationEmbeddedSource EmbeddedAssetSource(this ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
+        public static LineEmbeddedSource EmbeddedAssetSource(this ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
         {
-            if (fileFormat is ILocalizationLineTreeTextReader || fileFormat is ILocalizationLineTreeStreamReader)
+            if (fileFormat is ILineTreeTextReader || fileFormat is ILineTreeStreamReader)
             {
-                return new LocalizationEmbeddedLineTreeSource(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound);
+                return new LineEmbeddedLineTreeSource(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound);
             }
-            else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
+            else if (fileFormat is ILineTextReader || fileFormat is ILineStreamReader)
             {
-                return new LocalizationEmbeddedKeyLinesSource(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound);
+                return new LineEmbeddedKeyLinesSource(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound);
             }
-            else if (fileFormat is ILocalizationStringLinesTextReader || fileFormat is ILocalizationStringLinesStreamReader)
+            else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
             {
-                return new LocalizationEmbeddedStringLinesSource(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound);
+                return new LineEmbeddedStringLinesSource(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound);
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -117,8 +117,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LocalizationEmbeddedKeyLinesSource EmbeddedReaderAsKeyLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(resourceName)].EmbeddedReaderAsKeyLines(assembly, resourceName, namePolicy, throwIfNotFound);
+        public static LineEmbeddedKeyLinesSource EmbeddedReaderAsKeyLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(resourceName)].EmbeddedReaderAsKeyLines(assembly, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="assembly"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -130,8 +130,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LocalizationEmbeddedLineTreeSource EmbeddedReaderAsLineTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(resourceName)].EmbeddedReaderAsLineTree(assembly, resourceName, namePolicy, throwIfNotFound);
+        public static LineEmbeddedLineTreeSource EmbeddedReaderAsLineTree(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(resourceName)].EmbeddedReaderAsLineTree(assembly, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="assembly"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -143,8 +143,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LocalizationEmbeddedStringLinesSource EmbeddedReaderAsStringLines(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(resourceName)].EmbeddedReaderAsStringLines(assembly, resourceName, namePolicy, throwIfNotFound);
+        public static LineEmbeddedStringLinesSource EmbeddedReaderAsStringLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(resourceName)].EmbeddedReaderAsStringLines(assembly, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset from embedded resource<paramref name="resourceName"/>.
@@ -158,8 +158,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>reloadable localization asset</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IAsset EmbeddedAsset(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly asm, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(resourceName)].EmbeddedAsset(asm, resourceName, namePolicy, throwIfNotFound);
+        public static IAsset EmbeddedAsset(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, Assembly asm, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(resourceName)].EmbeddedAsset(asm, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset source that reads embedded resource <paramref name="resourceName"/>.
@@ -171,8 +171,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>asset source</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LocalizationEmbeddedSource EmbeddedAssetSource(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly asm, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(resourceName)].EmbeddedAssetSource(asm, resourceName, namePolicy, throwIfNotFound);
+        public static LineEmbeddedSource EmbeddedAssetSource(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, Assembly asm, string resourceName, ILinePolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(resourceName)].EmbeddedAssetSource(asm, resourceName, namePolicy, throwIfNotFound);
 
     }
 

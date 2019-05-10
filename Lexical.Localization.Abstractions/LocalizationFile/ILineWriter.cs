@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// Flags for write operation to localization files.
     /// </summary>
     [Flags]
-    public enum LocalizationFileWriteFlags : UInt32
+    public enum LineFileWriteFlags : UInt32
     {
         /// <summary>
         /// No action.
@@ -76,20 +76,20 @@ namespace Lexical.Localization
     /// 
     /// Must implement atleast one of the sub classes.
     /// <list type="Bullet">
-    /// <item><see cref="ILocalizationStringLinesTextWriter"/></item>
-    /// <item><see cref="ILocalizationStringLinesStreamWriter"/></item>
-    /// <item><see cref="ILocalizationKeyLinesTextWriter"/></item>
-    /// <item><see cref="ILocalizationKeyLinesStreamWriter"/></item>
-    /// <item><see cref="ILocalizationLineTreeStreamWriter"/></item>
-    /// <item><see cref="ILocalizationLineTreeTextWriter"/></item>
+    /// <item><see cref="ILineTextWriter"/></item>
+    /// <item><see cref="ILineStreamWriter"/></item>
+    /// <item><see cref="ILineStringTextWriter"/></item>
+    /// <item><see cref="ILineStringStreamWriter"/></item>
+    /// <item><see cref="ILineTreeTextWriter"/></item>
+    /// <item><see cref="ILineTreeStreamWriter"/></item>
     /// </list>
     /// </summary>
-    public interface ILocalizationWriter : ILocalizationFileFormat { }
+    public interface ILineWriter : ILineFileFormat { }
 
     /// <summary>
     /// Writer that can write localization key-values with text writers.
     /// </summary>
-    public interface ILocalizationStringLinesTextWriter : ILocalizationWriter
+    public interface ILineStringTextWriter : ILineWriter
     {
         /// <summary>
         /// Create a container where localization key-values can be written to.
@@ -104,13 +104,13 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, TextReader srcText, TextWriter dstText, ILinePolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, TextReader srcText, TextWriter dstText, ILinePolicy namePolicy, LineFileWriteFlags flags);
     }
 
     /// <summary>
     /// Writer that can write localization key-values to streams.
     /// </summary>
-    public interface ILocalizationStringLinesStreamWriter : ILocalizationWriter
+    public interface ILineStringStreamWriter : ILineWriter
     {
         /// <summary>
         /// Write <paramref name="lines"/> to <paramref name="dstStream"/>.
@@ -125,13 +125,13 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, Stream srcStream, Stream dstStream, ILinePolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, Stream srcStream, Stream dstStream, ILinePolicy namePolicy, LineFileWriteFlags flags);
     }
 
     /// <summary>
     /// Writer that can write localization key-values with text writers.
     /// </summary>
-    public interface ILocalizationKeyLinesTextWriter : ILocalizationWriter
+    public interface ILineTextWriter : ILineWriter
     {
         /// <summary>
         /// Create a container where localization key-values can be written to.
@@ -144,13 +144,13 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyLines(IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, TextReader srcText, TextWriter dstText, ILinePolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteKeyLines(IEnumerable<ILine> lines, TextReader srcText, TextWriter dstText, ILinePolicy namePolicy, LineFileWriteFlags flags);
     }
 
     /// <summary>
     /// Writer that can write localization key-values to streams.
     /// </summary>
-    public interface ILocalizationKeyLinesStreamWriter : ILocalizationWriter
+    public interface ILineStreamWriter : ILineWriter
     {
         /// <summary>
         /// Write <paramref name="lines"/> to <paramref name="dstStream"/>.
@@ -165,13 +165,13 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyLines(IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, Stream srcStream, Stream dstStream, ILinePolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteKeyLines(IEnumerable<ILine> lines, Stream srcStream, Stream dstStream, ILinePolicy namePolicy, LineFileWriteFlags flags);
     }
 
     /// <summary>
     /// Writer that can write localization tree structure to streams.
     /// </summary>
-    public interface ILocalizationLineTreeStreamWriter : ILocalizationWriter
+    public interface ILineTreeStreamWriter : ILineWriter
     {
         /// <summary>
         /// Write <paramref name="tree"/> to <paramref name="dstStream"/>.
@@ -186,13 +186,13 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteLineTree(ILineTree tree, Stream srcStream, Stream dstStream, ILinePolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteLineTree(ILineTree tree, Stream srcStream, Stream dstStream, ILinePolicy namePolicy, LineFileWriteFlags flags);
     }
 
     /// <summary>
     /// Writer that can write localization tree structure to text writer.
     /// </summary>
-    public interface ILocalizationLineTreeTextWriter : ILocalizationWriter
+    public interface ILineTreeTextWriter : ILineWriter
     {
         /// <summary>
         /// Create a container where localization key-values can be written to.
@@ -205,7 +205,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteLineTree(ILineTree tree, TextReader srcText, TextWriter dstText, ILinePolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteLineTree(ILineTree tree, TextReader srcText, TextWriter dstText, ILinePolicy namePolicy, LineFileWriteFlags flags);
     }
     #endregion Interface
 }

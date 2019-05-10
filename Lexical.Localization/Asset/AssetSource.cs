@@ -86,9 +86,9 @@ namespace Lexical.Localization
         /// <param name="fileFormat">(optional) overriding file format to use in case format cannot be infered from file extension</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">thrown if fileformat was not found</exception>
-        public static IAssetBuilder AddLocalizationFile(this IAssetBuilder assetBuilder, string filename, ILinePolicy namePolicy = default, ILocalizationFileFormat fileFormat = null)
+        public static IAssetBuilder AddLocalizationFile(this IAssetBuilder assetBuilder, string filename, ILinePolicy namePolicy = default, ILineFileFormat fileFormat = null)
         {
-            if (fileFormat == null) fileFormat = LocalizationReaderMap.Instance.GetFormatByFilename(filename);
+            if (fileFormat == null) fileFormat = LineReaderMap.Instance.GetFormatByFilename(filename);
             assetBuilder.AddSource( fileFormat.FileAssetSource(filename, namePolicy) );
             return assetBuilder;
         }
@@ -102,9 +102,9 @@ namespace Lexical.Localization
         /// <param name="fileFormat">(optional) overriding file format to use in case format cannot be infered from file extension</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">thrown if fileformat was not found</exception>
-        public static IAssetBuilder AddEmbeddedLocalizationFile(this IAssetBuilder assetBuilder, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, ILocalizationFileFormat fileFormat = null)
+        public static IAssetBuilder AddEmbeddedLocalizationFile(this IAssetBuilder assetBuilder, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, ILineFileFormat fileFormat = null)
         {
-            if (fileFormat == null) fileFormat = LocalizationReaderMap.Instance.GetFormatByFilename(resourceName);
+            if (fileFormat == null) fileFormat = LineReaderMap.Instance.GetFormatByFilename(resourceName);
             assetBuilder.AddSource( fileFormat.EmbeddedAssetSource(assembly, resourceName, namePolicy) );
             return assetBuilder;
         }

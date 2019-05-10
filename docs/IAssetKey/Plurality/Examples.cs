@@ -11,7 +11,7 @@ namespace docs
         {
             {
                 #region Snippet_0a
-                IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample0a.xml");
+                IAsset asset = LineXmlReader.Instance.FileAsset("PluralityExample0a.xml");
                 ILineRoot root = new LineRoot(asset);
                 ILine key = root.Key("Cats").Inline("{0} cat(s)");
 
@@ -60,7 +60,7 @@ namespace docs
 
             {
                 #region Snippet_1a
-                IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample0b.xml");
+                IAsset asset = LineXmlReader.Instance.FileAsset("PluralityExample0b.xml");
                 ILine key = new LineRoot(asset).Key("Cats");
 
                 for (int cats = 0; cats<=2; cats++)
@@ -87,7 +87,7 @@ namespace docs
             {
                 // Plurality permutations for argument 0
                 #region Snippet_3
-                IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample1.xml");
+                IAsset asset = LineXmlReader.Instance.FileAsset("PluralityExample1.xml");
                 ILine key = new LineRoot(asset).Key("CatsDogs");
 
                 for (int cats = 0; cats <= 2; cats++)
@@ -98,7 +98,7 @@ namespace docs
             {
                 // Plurality permutations for argument 1
                 #region Snippet_4
-                IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample2.xml");
+                IAsset asset = LineXmlReader.Instance.FileAsset("PluralityExample2.xml");
                 ILine key = new LineRoot(asset).Key("CatsDogs");
 
                 for (int cats = 0; cats <= 2; cats++)
@@ -109,7 +109,7 @@ namespace docs
             {
                 // Plurality permutations for argument 0 and argument 1
                 #region Snippet_5
-                IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample2-en.xml");
+                IAsset asset = LineXmlReader.Instance.FileAsset("PluralityExample2-en.xml");
                 ILineRoot root = new LineRoot(asset);
                 ILine key = root.Key("CatsDogs").Inline("{0} cat(s) and {1} dog(s)");
 
@@ -121,7 +121,7 @@ namespace docs
             {
                 // Plurality for 4 arguments
                 #region Snippet_6
-                IAsset asset = LocalizationXmlReader.Instance.FileAsset("PluralityExample4.xml");
+                IAsset asset = LineXmlReader.Instance.FileAsset("PluralityExample4.xml");
                 ILine key = new LineRoot(asset).Key("CatsDogsPoniesHorses");
 
                 for (int cats = 0; cats <= 2; cats++)

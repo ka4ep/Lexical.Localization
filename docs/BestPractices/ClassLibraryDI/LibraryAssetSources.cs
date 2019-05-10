@@ -9,13 +9,13 @@ namespace TutorialLibrary2
         /// <summary>
         /// Localization source reference to embedded resource.
         /// </summary>
-        public readonly LocalizationEmbeddedSource LocalizationSource = 
-            LocalizationReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary2-de.xml");
+        public readonly LineEmbeddedSource LocalizationSource = 
+            LineReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary2-de.xml");
 
         /// <summary>
         /// (Optional) External file localization source.
         /// </summary>
-        public readonly LocalizationFileProviderSource ExternalLocalizationSource;
+        public readonly LineFileProviderSource ExternalLocalizationSource;
 
         public LibraryAssetSources() : base()
         {
@@ -29,7 +29,7 @@ namespace TutorialLibrary2
             if (fileProvider != null)
             {
                 ExternalLocalizationSource = 
-                    LocalizationXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary2.xml", throwIfNotFound: false);
+                    LineXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary2.xml", throwIfNotFound: false);
                 Add(ExternalLocalizationSource);
             }
         }

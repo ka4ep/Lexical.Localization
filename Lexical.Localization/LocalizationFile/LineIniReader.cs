@@ -4,14 +4,10 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
@@ -24,14 +20,14 @@ namespace Lexical.Localization
     /// And second level is key-value pairs 'parameterName:parameterValue:.. = value'.
     /// Characters \:= and white-spaces are escaped.
     /// </summary>
-    public class LocalizationIniReader : ILocalizationFileFormat, ILocalizationLineTreeTextReader
+    public class LineIniReader : ILineFileFormat, ILineTreeTextReader
     {
-        private readonly static LocalizationIniReader instance = new LocalizationIniReader();
+        private readonly static LineIniReader instance = new LineIniReader();
 
         /// <summary>
         /// Default instance of .ini localization reader.
         /// </summary>
-        public static LocalizationIniReader Instance => instance;
+        public static LineIniReader Instance => instance;
 
         /// <summary>
         /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.
@@ -61,14 +57,14 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new ini file reader.
         /// </summary>
-        public LocalizationIniReader() : this("ini", CSharpFormat.Instance) { }
+        public LineIniReader() : this("ini", CSharpFormat.Instance) { }
 
         /// <summary>
         /// Create new ini file reader.
         /// </summary>
         /// <param name="ext"></param>
         /// <param name="valueParser"></param>
-        public LocalizationIniReader(string ext, IStringFormat valueParser)
+        public LineIniReader(string ext, IStringFormat valueParser)
         {
             this.Extension = ext;
             this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
@@ -99,7 +95,7 @@ namespace Lexical.Localization
         public ILineTree ReadIniIntoTree(IEnumerable<IniToken> ini, ILineTree root, ILinePolicy namePolicy, IniCorrespondence correspondence)
         {
             ILineTree section = null;
-            foreach(IniToken token in ini)
+            foreach (IniToken token in ini)
             {
                 switch (token.Type)
                 {
@@ -119,7 +115,7 @@ namespace Lexical.Localization
                         ILine key_ = null;
                         if (escaper_key.TryParse(token.KeyText, out key_))
                         {
-                            ILineTree current = key_ == null ? null : (section??root).GetOrCreate(key_);
+                            ILineTree current = key_ == null ? null : (section ?? root).GetOrCreate(key_);
                             string value = escaper_value.UnescapeLiteral(token.ValueText);
                             if (value != null)
                             {

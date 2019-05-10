@@ -37,14 +37,14 @@ namespace Lexical.Localization
     /// <summary>
     /// Signal for asset source that returns language strings
     /// </summary>
-    public interface ILocalizationSource : IAssetSource
+    public interface ILineSource : IAssetSource
     {
     }
 
     /// <summary>
     /// Source that provides string based key-value lines
     /// </summary>
-    public interface ILocalizationStringLinesSource : ILocalizationSource, IEnumerable<KeyValuePair<string, IFormulationString>>
+    public interface IStringLineSource : ILineSource, IEnumerable<KeyValuePair<string, IFormulationString>>
     {
         /// <summary>
         /// Name policy that is used for converting string to <see cref="ILine"/>.
@@ -55,14 +55,14 @@ namespace Lexical.Localization
     /// <summary>
     /// Source that provides <see cref="ILine"/> based key-value lines.
     /// </summary>
-    public interface ILocalizationKeyLinesSource : ILocalizationSource, IEnumerable<KeyValuePair<ILine, IFormulationString>>
+    public interface IKeyLineSource : ILineSource, IEnumerable<ILine>
     {
     }
 
     /// <summary>
     /// Source that provides <see cref="ILineTree"/> based key-value lines.
     /// </summary>
-    public interface ILocalizationLineTreeSource : ILocalizationSource, IEnumerable<ILineTree>
+    public interface ILineTreeSource : ILineSource, IEnumerable<ILineTree>
     {
     }
     #endregion interface_2

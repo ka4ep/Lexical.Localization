@@ -40,10 +40,10 @@ namespace Lexical.Localization
         public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILine filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetStringLines(filterKey);
 
-        public IEnumerable<KeyValuePair<ILine, IFormulationString>> GetKeyLines(ILine filterKey = null)
+        public IEnumerable<ILine> GetKeyLines(ILine filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetKeyLines(filterKey);
 
-        public IEnumerable<KeyValuePair<ILine, IFormulationString>> GetAllKeyLines(ILine filterKey = null)
+        public IEnumerable<ILine> GetAllKeyLines(ILine filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetAllKeyLines(filterKey);
 
         public IEnumerable<string> GetAllResourceNames(ILine filterKey = null)
