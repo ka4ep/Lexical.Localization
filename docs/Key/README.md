@@ -6,7 +6,7 @@
 Key key = new Key("Culture", "en").Append("Type", "MyController").Append("Key", "Success");
 ```
 
-Key can be converted to context dependent key IAssetKey with a parametrizer.
+Key can be converted to context dependent key ILine with a parametrizer.
 
 ```csharp
 

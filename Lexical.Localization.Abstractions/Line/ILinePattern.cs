@@ -57,7 +57,7 @@ namespace Lexical.Localization
     ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
     /// 
     /// </summary>
-    public interface ILinePattern : ILinePolicy
+    public interface ILinePattern : ILineFormatPolicy
     {
         /// <summary>
         /// Pattern in string format

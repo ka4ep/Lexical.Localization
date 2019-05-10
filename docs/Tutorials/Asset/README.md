@@ -57,10 +57,10 @@ namespace TutorialProject
             LocalizationRoot.Builder.Build();
 
             // Take reference of the root
-            IAssetRoot root = LocalizationRoot.Global;
+            ILineRoot root = LocalizationRoot.Global;
 
             // Create key
-            IAssetKey key = root.Type<Program>().Key("Hello").Inline("Hello World!");
+            ILine key = root.Type<Program>().Key("Hello").Inline("Hello World!");
 
             // Print with current culture
             Console.WriteLine(key);

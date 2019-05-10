@@ -15,7 +15,7 @@ The calling assembly must have nuget dependency to [Microsoft.Extensions.Depende
 
 [!code-csharp[Snippet](Example_2.cs#Snippet)]
 
-Extension method **AddLexicalLocalization()** adds IAsset, IAssetRoot, ICultureProvider and IAssetBuilder services to IServiceCollection.
+Extension method **AddLexicalLocalization()** adds IAsset, ILineRoot, ICultureProvider and IAssetBuilder services to IServiceCollection.
 [!code-csharp[Snippet](Example_3.cs#Snippet)]
 
 <details>

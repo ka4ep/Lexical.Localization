@@ -27,7 +27,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Interface to enumerate localization strings as <see cref="KeyValuePair{IAssetKey, String}"/> lines. 
+    /// Interface to enumerate localization strings as <see cref="KeyValuePair{ILine, String}"/> lines. 
     /// 
     /// This interface is used by classes that use <see cref="ILine"/> as intrinsic keys.
     /// </summary>

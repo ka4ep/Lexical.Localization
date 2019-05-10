@@ -12,10 +12,10 @@ IStringLocalizerFactory stringLocalizerFactory = new ResourceManagerStringLocali
 IAsset asset = new StringLocalizerFactoryAsset(stringLocalizerFactory);
 
 // Create root
-IAssetRoot root = new LocalizationRoot(asset, new CulturePolicy());
+ILineRoot root = new LocalizationRoot(asset, new CulturePolicy());
 
 // There are .resx files in "Resources/ConsoleApp1.MyController" with keys "Success" and "Error"
-IAssetKey key = root
+ILine key = root
     .Assembly(Assembly.GetExecutingAssembly())
     .Resource("ConsoleApp1.MyController")
     //.Type(typeof(ConsoleApp1.MyController1))
@@ -40,7 +40,7 @@ asset = stringLocalizerFactory.ToAsset();
 asset = new StringLocalizerAsset(stringLocalizer);
 ```
 
-**StringLocalizerRoot** adapts *IAsset* implementations back to <b><i>IStringLocalizerFactory</i></b>. [Read more.](../IAssetKey/IAssetRoot/#string-localizer)
+**StringLocalizerRoot** adapts *IAsset* implementations back to <b><i>IStringLocalizerFactory</i></b>. [Read more.](../ILine/ILineRoot/#string-localizer)
 
 ```csharp
 // Create asset
@@ -48,7 +48,7 @@ var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Suc
 IAsset asset = new LocalizationAsset(source, KeyPrinter.Default);
 
 // Create root
-IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());
+ILine root = new StringLocalizerRoot(asset, new CulturePolicy());
 
 // Type cast to IStringLocalizerFactory
 IStringLocalizerFactory stringLocalizerFactory = root as IStringLocalizerFactory;
@@ -71,10 +71,10 @@ var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Suc
 IAsset asset = new LocalizationAsset(source, KeyPrinter.Default);
 
 // Create root
-IAssetKey root = new StringLocalizerRoot(asset, new CulturePolicy());
+ILine root = new StringLocalizerRoot(asset, new CulturePolicy());
 
 // Set key
-IAssetKey key = root.Culture("fi").Type(typeof(ConsoleApp1.MyController));
+ILine key = root.Culture("fi").Type(typeof(ConsoleApp1.MyController));
 
 // Type cast key to IStringLocalizer
 IStringLocalizer stringLocalizer = key as IStringLocalizer;

@@ -3,7 +3,7 @@
 *Key* is used as an internal class for serializing localization files and for comparing context-dependent keys.
 [!code-csharp[Snippet](Examples.cs#Snippet_1)]
 
-Key can be converted to context dependent key IAssetKey with a parametrizer.
+Key can be converted to context dependent key ILine with a parametrizer.
 [!code-csharp[Snippet](Examples.cs#Snippet_5)]
 
 # Links

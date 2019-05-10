@@ -112,7 +112,7 @@ IAsset asset = new LocalizationAsset(source, ParameterParser.Instance);
 asset = asset.CreateCache();
 
 // Issue a request which will be cached.
-IAssetKey key = new LocalizationRoot().Key("hello");
+ILine key = new LocalizationRoot().Key("hello");
 IFormulationString str = asset.GetString( key.Culture("en") );
 Console.WriteLine(str);
 

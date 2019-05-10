@@ -44,7 +44,7 @@ The same extension methods are also available in the **LineReaderMap**, which se
 
 # Read File
 Different file formats have different intrinsic formats. 
-* Context free list formats are handled with **IEnumerable&lt;KeyValuePair&lt;IAssetKey, string&gt;&gt;** class.
+* Context free list formats are handled with **IEnumerable&lt;KeyValuePair&lt;ILine, string&gt;&gt;** class.
 * Context dependent list formats are held in **IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;**.
 * Structural file formats with context free keys are held in **ILineTree**.
 

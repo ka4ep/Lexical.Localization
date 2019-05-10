@@ -5,7 +5,7 @@
 [!code-csharp[Snippet](Examples.cs#Snippet_1a)]
 <br/>
 
-<b>.Add(<i>IEnumerable&lt;KeyValuePair&lt;IAssetKey, string&gt;&gt;</i>, IAssetNamePolicy keyPolicy)</b> adds language string source with IAssetKey based keys.
+<b>.Add(<i>IEnumerable&lt;KeyValuePair&lt;ILine, string&gt;&gt;</i>, IAssetNamePolicy keyPolicy)</b> adds language string source with ILine based keys.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c)]
 <br/>
 

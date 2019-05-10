@@ -31,7 +31,7 @@ namespace TutorialLibrary
     public class MyController1
     {
         // Use this reference 
-        static IAssetKey localization = LocalizationRoot.Global.Type(typeof(MyController1));
+        static ILine localization = LocalizationRoot.Global.Type(typeof(MyController1));
 
         public string Do()
         {
@@ -66,14 +66,14 @@ namespace TutorialLibrary
 {
     public class MyController2
     {
-        IAssetKey localization;
+        ILine localization;
 
-        public MyController2(IAssetRoot root)
+        public MyController2(ILineRoot root)
         {
             this.localization = root.Type(GetType());
         }
 
-        public MyController2(IAssetKey<MyController2> localization)
+        public MyController2(ILine<MyController2> localization)
         {
             this.localization = localization;
         }
@@ -86,7 +86,7 @@ namespace TutorialLibrary
 }
 ```
 
-In the setup of the application IAssetRoot needs to be provided for the class.
+In the setup of the application ILineRoot needs to be provided for the class.
 
 
 ```csharp
@@ -111,7 +111,7 @@ namespace TutorialProject
                     .Load();
 
             // Create asset root
-            IAssetRoot root = new LocalizationRoot(asset, new CulturePolicy());
+            ILineRoot root = new LocalizationRoot(asset, new CulturePolicy());
 
             // Call Controller
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");

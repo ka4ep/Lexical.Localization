@@ -1,6 +1,6 @@
 ﻿# Asset Composition
 
-**AssetComposition** is the default class. It unifies a group of assets into one asset, typically so that they can be assigned to IAssetRoot.
+**AssetComposition** is the default class. It unifies a group of assets into one asset, typically so that they can be assigned to ILineRoot.
 [!code-csharp[Snippet](Example_0.cs#Snippet)]
 
 <details>

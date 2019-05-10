@@ -18,7 +18,7 @@ namespace Lexical.Localization
         /// <summary>Request has not been resolved</summary>
         NoResult = 0xFFFFFFFFFFFFFFFFUL,
 
-        //// Resolve - Step that searches formulation string for IAssetKey from IAsset or Inlines.
+        //// Resolve - Step that searches formulation string for ILine from IAsset or Inlines.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResolveOk = 0x00UL << Shift.Resolve,
         /// <summary>Resolved string from asset</summary>

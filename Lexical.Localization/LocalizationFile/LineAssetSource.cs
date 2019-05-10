@@ -18,7 +18,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public ILinePolicy KeyPolicy { get; protected set; }
+        public ILineFormatPolicy KeyPolicy { get; protected set; }
 
         /// <summary>
         /// Line source
@@ -30,7 +30,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lineSource"></param>
         /// <param name="namePolicy"></param>
-        public StringLinesSource(IEnumerable<KeyValuePair<string, IFormulationString>> lineSource, ILinePolicy namePolicy)
+        public StringLinesSource(IEnumerable<KeyValuePair<string, IFormulationString>> lineSource, ILineFormatPolicy namePolicy)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
             this.KeyPolicy = namePolicy;
@@ -75,7 +75,7 @@ namespace Lexical.Localization
         public IEnumerable<ILine> LineSource { get; protected set; }
 
         /// <summary>
-        /// Create adapter that adapts IEnumerable&lt;KeyValuePair&lt;IAssetKey, String&lt;&lt;.
+        /// Create adapter that adapts IEnumerable&lt;KeyValuePair&lt;ILine, String&lt;&lt;.
         /// </summary>
         /// <param name="lineSource"></param>
         public KeyLineSource(IEnumerable<ILine> lineSource)
@@ -162,7 +162,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public ILinePolicy NamePolicy { get; protected set; }
+        public ILineFormatPolicy NamePolicy { get; protected set; }
 
         /// <summary>
         /// 
@@ -170,7 +170,7 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="streamSource"></param>
         /// <param name="namePolicy"></param>
-        public StreamProviderAssetSource(ILineFileFormat fileFormat, Func<Stream> streamSource, ILinePolicy namePolicy)
+        public StreamProviderAssetSource(ILineFileFormat fileFormat, Func<Stream> streamSource, ILineFormatPolicy namePolicy)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.streamSource = streamSource ?? throw new ArgumentNullException(nameof(streamSource));

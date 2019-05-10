@@ -52,6 +52,7 @@ namespace Lexical.Localization
         /// </summary>
         protected MatchEvaluator unescapeChar;
 
+
         /// <summary>
         /// Create new string serializer
         /// </summary>
@@ -161,7 +162,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Parse string into IAssetKey.
+        /// Parse string into ILine.
         /// </summary>
         /// <param name="str"></param>
         /// <param name="prevPart">(optional) previous part to append to</param>
@@ -208,7 +209,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Try parse string into IAssetKey.
+        /// Try parse string into ILine.
         /// </summary>
         /// <param name="keyString"></param>
         /// <param name="result">result key, or null if it contained no parameters and <paramref name="prevPart"/> was null.</param>

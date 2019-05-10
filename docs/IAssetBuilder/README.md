@@ -19,7 +19,7 @@ IAssetBuilder builder = new AssetBuilder(assetSource_0, assetSource_1);
 IAsset asset = builder.Build();
 
 // Create string key
-IAssetKey key = new LocalizationRoot().Key("hello").Culture("en");
+ILine key = new LocalizationRoot().Key("hello").Culture("en");
 // Request string
 IFormulationString str = asset.GetString( key );
 // Print result
@@ -65,7 +65,7 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     IAsset asset = serviceScope.GetService<IAsset>();
 
     // Create string key
-    IAssetKey key = new LocalizationRoot().Key("hello").Culture("en");
+    ILine key = new LocalizationRoot().Key("hello").Culture("en");
     // Request string
     IFormulationString str = asset.GetString(key);
     // Print result
@@ -73,13 +73,13 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
 }
 ```
 
-Extension method **AddLexicalLocalization()** adds IAsset, IAssetRoot, ICultureProvider and IAssetBuilder services to IServiceCollection.
+Extension method **AddLexicalLocalization()** adds IAsset, ILineRoot, ICultureProvider and IAssetBuilder services to IServiceCollection.
 
 ```csharp
 // Initialize service collection
 IServiceCollection serviceCollection = new ServiceCollection();
 
-// Add IAssetBuilder, IAssetRoot and ICulturePolicy to service collection
+// Add IAssetBuilder, ILineRoot and ICulturePolicy to service collection
 serviceCollection.AddLexicalLocalization(
     addStringLocalizerService: false, 
     addCulturePolicyService: false, 
@@ -97,7 +97,7 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     IAsset asset = serviceScope.GetService<IAsset>();
 
     // Create string key
-    IAssetKey key = new LocalizationRoot().Key("hello").Culture("en");
+    ILine key = new LocalizationRoot().Key("hello").Culture("en");
     // Request string
     IFormulationString str = asset.GetString(key);
     // Print result

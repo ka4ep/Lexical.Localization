@@ -7,7 +7,7 @@ using Lexical.Localization.Inlines;
 
 namespace docs
 {
-    public class IAssetKey_Examples
+    public class ILine_Examples
     {
         public static void Main(string[] args)
         {

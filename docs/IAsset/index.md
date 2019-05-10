@@ -104,7 +104,7 @@ Asset interfaces are not called directly but used instead by calling extension m
     </tr>
     <tr>
       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/LocalizationStringsFunc.cs">LocalizationStringsFunc</a></td>
-      <td>Adapts Func&lt;IAssetKey, string&gt; to IAsset</td>
+      <td>Adapts Func&lt;ILine, string&gt; to IAsset</td>
     </tr>
     <tr>
       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/ResourceManagerAsset.cs">ResourceManagerAsset</a></td>

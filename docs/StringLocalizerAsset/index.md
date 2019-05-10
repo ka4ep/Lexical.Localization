@@ -8,7 +8,7 @@ There is an extension method **.ToAsset()** that makes the same conversion.
 **StringLocalizerAsset** adapts <b><i>IStringLocalizer</i></b> implementations to *IAsset*.
 [!code-csharp[Snippet](IopExamples.cs#Snippet_0c)]
 
-**StringLocalizerRoot** adapts *IAsset* implementations back to <b><i>IStringLocalizerFactory</i></b>. [Read more.](../IAssetKey/IAssetRoot/#string-localizer)
+**StringLocalizerRoot** adapts *IAsset* implementations back to <b><i>IStringLocalizerFactory</i></b>. [Read more.](../ILine/ILineRoot/#string-localizer)
 [!code-csharp[Snippet](IopExamples.cs#Snippet_4a)]
 
 And to <b><i>IStringLocalizer</i></b>.

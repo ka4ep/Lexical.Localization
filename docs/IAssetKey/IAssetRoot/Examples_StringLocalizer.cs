@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace docs
 {
-    public class IAssetRoot_StringLocalizer_Examples
+    public class ILineRoot_StringLocalizer_Examples
     {
         public static void Main(string[] args)
         {

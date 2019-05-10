@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Represents an interface to a localization string format. 
+    /// String format of string value. 
     /// 
     /// For example C# format that uses numbered arguments "{0[,parameters]}" that are written inside braces and have
     /// parameters after number.

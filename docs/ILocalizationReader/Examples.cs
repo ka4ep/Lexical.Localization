@@ -372,7 +372,7 @@ namespace docs
 
         public IEnumerable<ILine> ReadKeyLines(
             TextReader text, 
-            ILinePolicy namePolicy = null)
+            ILineFormatPolicy namePolicy = null)
         {
             ILine key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
             yield return new ILine(key, CSharpFormat.Instance.Parse("Hello World!"));

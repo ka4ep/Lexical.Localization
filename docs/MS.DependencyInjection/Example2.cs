@@ -14,7 +14,7 @@ namespace docs
             // Create service collection
             IServiceCollection serviceCollection = new ServiceCollection();
 
-            // Add localization services: IAssetRoot, IAssetKey<T>, IAssetBuilder, ICulturePolicy
+            // Add localization services: ILineRoot, ILine<T>, IAssetBuilder, ICulturePolicy
             //                            IStringLocalizer<T>, IStringLocalizerFactory
             serviceCollection.AddLexicalLocalization(
                 addStringLocalizerService: true,     // <- string localizer

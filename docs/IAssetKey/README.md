@@ -9,19 +9,19 @@ The constructed result is, however, a linked list from tail to root,
 as each link has a directed reference only towards its parent.
 
 ```csharp
-IAssetKey key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
+ILine key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
 ```
 ![linked list](linkedlist.svg)
 <p/>
 Nodes can also be constructed to span a tree structure.
 
 ```csharp
-IAssetRoot root = new LocalizationRoot();
-IAssetKey section1 = root.Section("Section1");
-IAssetKey section2 = section1.Section("Section2");
-IAssetKey section1_1 = section1.Section("Section1.1");
-IAssetKey key1_1_1 = section1_1.Key("Key1");
-IAssetKey key1_1_2 = section1_1.Key("Key2");
+ILineRoot root = new LocalizationRoot();
+ILine section1 = root.Section("Section1");
+ILine section2 = section1.Section("Section2");
+ILine section1_1 = section1.Section("Section1.1");
+ILine key1_1_1 = section1_1.Key("Key1");
+ILine key1_1_2 = section1_1.Key("Key2");
 // ...
 ```
 ![tree](tree.svg)
@@ -32,7 +32,7 @@ Key can be used as a *reference*.
 
 ```csharp
 // Create localization reference
-IAssetKey key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
+ILine key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
 
 // Retrieve string with a reference
 IFormulationString str = asset.GetString(key.Culture("en"));
@@ -53,11 +53,11 @@ IAsset asset = new LocalizationAsset(src, KeyPrinter.Colon_Colon_Colon);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
-IAssetRoot root = new LocalizationRoot(asset, culturePolicy);
+ILineRoot root = new LocalizationRoot(asset, culturePolicy);
 // Set Current Culture
 CultureInfo.CurrentCulture = new CultureInfo("en");
 // Create key specific provider
-IAssetKey key = root.Section("Section").Key("Key");
+ILine key = root.Section("Section").Key("Key");
 // Retieve string from provider
 string str = key.ToString();
 // Retrieve binary resoruce from provider
@@ -70,7 +70,7 @@ Canonical parts typically add to the identity of the key.
 
 ```csharp
 // Add canonical parts
-IAssetKey key = new LocalizationRoot().Section("Section1").Section("Section2").Key("Key");
+ILine key = new LocalizationRoot().Section("Section1").Section("Section2").Key("Key");
 
 // "Section1:Section2:Key"
 string id = KeyPrinter.Colon_Colon_Colon.BuildName(key);
@@ -81,8 +81,8 @@ Non-canonical parts are typically hints, such as **.SetCulture(*string*)**.
 
 ```csharp
 // Add canonical parts, and non-canonical culture
-IAssetKey key1 = new LocalizationRoot().Section("Section").Key("Key").Culture("en");
-IAssetKey key2 = new LocalizationRoot().Culture("en").Section("Section").Key("Key");
+ILine key1 = new LocalizationRoot().Section("Section").Key("Key").Culture("en");
+ILine key2 = new LocalizationRoot().Culture("en").Section("Section").Key("Key");
 
 // "en:Section1:Section2:Key"
 string id1 = KeyPrinter.Colon_Colon_Colon.BuildName(key1);
@@ -93,13 +93,13 @@ string id2 = KeyPrinter.Colon_Colon_Colon.BuildName(key2);
 ## Key Parts
 | Parameter | Canonical | Interface | Extension Method | Description |
 |:---------|:-------|:--------|:---------|:---------|
-| Root | canonical | IAssetRoot |  | Contains asset and culture policy. Keys are constructed from here. |
-| Type | non-canonical | IAssetKeyTypeAssignable | .Type(*Type*) | Type section for grouping by classes and interfaces. |
+| Root | canonical | ILineRoot |  | Contains asset and culture policy. Keys are constructed from here. |
+| Type | non-canonical | ILineTypeAssignable | .Type(*Type*) | Type section for grouping by classes and interfaces. |
 | Location | canonical | IAsseyKeyLocationAssignable | .Location(*string*) | Hint to asset for a directory to search from. |
-| Assembly | non-canonical | IAssetKeyAssemblyAssignable | .Assembly(*Assembly*) | Hint to asset for an assembly to search from. |
-| Resource | canonical | IAssetKeyResourceAssignable | .Resource(*string*) | Hint to asset for an embedded resource path to search from. |
-| Section | canonical | IAssetKeySectionAssignable | .Section(*string*) | Generic section for grouping assets. |
-| Key | canonical | IAssetKeyAssignable | .Key(*string*) | Leaf key |
+| Assembly | non-canonical | ILineAssemblyAssignable | .Assembly(*Assembly*) | Hint to asset for an assembly to search from. |
+| Resource | canonical | ILineResourceAssignable | .Resource(*string*) | Hint to asset for an embedded resource path to search from. |
+| Section | canonical | ILinesectionAssignable | .Section(*string*) | Generic section for grouping assets. |
+| Key | canonical | ILineAssignable | .Key(*string*) | Leaf key |
 | Culture | non-canonical | ILocalizationKeyCultureAssignable | .Culture(*CultureInfo*) | Parameter to override current culture. |
 | N | non-canonical | ILocalizationKeyPluralityAssignable | .N(*Type*) | Key that specifies plurality |
 |  | non-canonical | ILocalizationKeyFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
@@ -110,7 +110,7 @@ Type section is a key that narrows down the scope of localization to a specific 
 
 ```csharp
 // Assign key to localization of type "MyController"
-IAssetKey key = new LocalizationRoot().Type(typeof(MyController));
+ILine key = new LocalizationRoot().Type(typeof(MyController));
 // Search "MyController:Success"
 string str = key.Key("Success").ToString();
 ```
@@ -119,7 +119,7 @@ There is another way with the generic method **.Type&lt;T&gt;()**.
 
 ```csharp
 // Assign key to localization of type "MyController"
-IAssetKey<MyController> key = new LocalizationRoot().Type<MyController>();
+ILine<MyController> key = new LocalizationRoot().Type<MyController>();
 ```
 
 ## Culture Key
@@ -127,9 +127,9 @@ Key can be forced to ignore culture policy, possibly due to lack of policy assig
 
 ```csharp
 // Create root that matches only to english strings
-IAssetKey root_en = new LocalizationRoot().Culture("en");
+ILine root_en = new LocalizationRoot().Culture("en");
 // Create key
-IAssetKey key = root_en.Section("Section").Key("Key");
+ILine key = root_en.Section("Section").Key("Key");
 ```
 
 ## Formatting Args
@@ -146,9 +146,9 @@ The key assigned with a format argument by **.Format(*Object[]* args)** call.
 
 ```csharp
 // Create key "Error"
-IAssetKey key = root.Type("ConsoleApp1.MyController").Key("Error");
+ILine key = root.Type("ConsoleApp1.MyController").Key("Error");
 // Formulate key
-IAssetKey key_formulated = key.Format(0xFeedF00d);
+ILine key_formulated = key.Format(0xFeedF00d);
 ```
 
 The parametrized key can be resolved to formatted string with **.ToString()** or **.ResolveFormulatedString()**.
@@ -175,9 +175,9 @@ Default language strings can be written right into the code with
 
 ```csharp
 // Create root
-IAssetRoot root = new LocalizationRoot();
+ILineRoot root = new LocalizationRoot();
 // Create key and add default value
-IAssetKey key = root.Section("Section").Key("Success").Inline("Success");
+ILine key = root.Section("Section").Key("Success").Inline("Success");
 // Resolve string from inlined key "Success"
 string str = key.ToString();
 ```
@@ -186,7 +186,7 @@ Inlining can be provided for specific cultures with <b>.Inline(<i>string</i>, <i
 
 ```csharp
 // Create key and add default strings
-IAssetKey key = root.Section("Section").Key("Success")
+ILine key = root.Section("Section").Key("Success")
     .Inline("Success")                                 // Add inlining to the root culture ""
     .Inline("Culture:en", "Success")                   // Add inlining to culture "en"
     .Inline("Culture:fi", "Onnistui")                  // Add inlining to culture "fi"
@@ -199,7 +199,7 @@ There are shorter extension methods for every language in namespace **Lexical.Lo
 
 ```csharp
 // Create key and add default strings
-IAssetKey key = root.Section("Section").Key("Success")
+ILine key = root.Section("Section").Key("Success")
     .Inline("Success")                                 // Add inlining to the root culture ""
     .en("Success")                                     // Add inlining to culture "en"
     .fi("Onnistui")                                    // Add inlining to culture "fi"
@@ -211,8 +211,8 @@ Caveat however, that inlining to specific cultures with <b>.Inline(<i>string</i>
 ```csharp
 class MyController__
 {
-    static IAssetKey localization = LocalizationRoot.Global.Type<MyControllerB>();
-    static IAssetKey Success = localization.Key("Success").Inline("Success").sv("Det funkar").fi("Onnistui");
+    static ILine localization = LocalizationRoot.Global.Type<MyControllerB>();
+    static ILine Success = localization.Key("Success").Inline("Success").sv("Det funkar").fi("Onnistui");
 
     public string Do()
     {
@@ -233,20 +233,20 @@ string str = root.Section("Section").Key("Hello");
 
 ## Use in classes
 If class is designed to support dependency injection without string localizers, the constructors should 
-take in argument *IAssetKey&lt;T&gt;* and possibly *IAssetRoot*. See more in [Best Practices](../BestPractices/).
-Constructor argument **IAssetKey&lt;T&gt;** helps the Dependency Injection to assign the localization so that it is scoped in to correct typesection.
+take in argument *ILine&lt;T&gt;* and possibly *ILineRoot*. See more in [Best Practices](../BestPractices/).
+Constructor argument **ILine&lt;T&gt;** helps the Dependency Injection to assign the localization so that it is scoped in to correct typesection.
 
 ```csharp
 class MyController
 {
-    IAssetKey localization;
+    ILine localization;
 
-    public MyController(IAssetKey<MyController> localization)
+    public MyController(ILine<MyController> localization)
     {
         this.localization = localization;
     }
 
-    public MyController(IAssetRoot localizationRoot)
+    public MyController(ILineRoot localizationRoot)
     {
         this.localization = localizationRoot.Type<MyController>();
     }
@@ -263,7 +263,7 @@ If class is designed to use static instance and without dependency injection, lo
 ```csharp
 class MyControllerB
 {
-    static IAssetKey localization = LocalizationRoot.Global.Type<MyControllerB>();
+    static ILine localization = LocalizationRoot.Global.Type<MyControllerB>();
 
     public void Do()
     {

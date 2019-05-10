@@ -43,7 +43,7 @@ Then write this example code **MyController2.cs**
 
 [!code-csharp[snippet](ExampleB1.cs)]
 
-In the setup of the application IAssetRoot needs to be provided for the class.
+In the setup of the application ILineRoot needs to be provided for the class.
 
 [!code-csharp[snippet](ExampleB2.cs)]
 

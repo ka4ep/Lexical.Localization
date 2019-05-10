@@ -60,7 +60,7 @@ namespace Lexical.Localization
         {
             if (useGlobalInstance)
             {
-                // Use StringLocalizerRoot as IAssetRoot
+                // Use StringLocalizerRoot as ILineRoot
                 serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineRoot>(
                     s=>
                     {
@@ -76,7 +76,7 @@ namespace Lexical.Localization
                 serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineRoot, StringLocalizerRoot>());
             }
 
-            // IAssetKeyAssetAssigned
+            // ILineAssetAssigned
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineAsset>(s => s.GetService<ILineRoot>() as ILineAsset));
 
             // ICulturePolicy
@@ -140,7 +140,7 @@ namespace Lexical.Localization
             // IAsset
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAsset>(s => s.GetService<IAssetBuilder>().Build()));
 
-            // IAssetKey<>
+            // ILine<>
             serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(ILineKey<>), typeof(StringLocalizerKey._Type<>)));             
 
             // IStringLocalizer<>

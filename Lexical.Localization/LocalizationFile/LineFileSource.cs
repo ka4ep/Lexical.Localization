@@ -19,7 +19,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Key policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public ILinePolicy KeyPolicy { get; internal set; }
+        public ILineFormatPolicy KeyPolicy { get; internal set; }
 
         /// <summary>
         /// File format 
@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// <param name="filename"></param>
         /// <param name="keyPolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LineFileSource(ILineFileFormat fileFormat, string path, string filename, ILinePolicy keyPolicy, bool throwIfNotFound) : base(path, filename, throwIfNotFound)
+        public LineFileSource(ILineFileFormat fileFormat, string path, string filename, ILineFormatPolicy keyPolicy, bool throwIfNotFound) : base(path, filename, throwIfNotFound)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.KeyPolicy = keyPolicy;
@@ -60,7 +60,7 @@ namespace Lexical.Localization
         /// <param name="filename">non-rooted relative path, or rooted full path</param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public StringLineFileSource(ILineFileFormat fileFormat, string path, string filename, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
+        public StringLineFileSource(ILineFileFormat fileFormat, string path, string filename, ILineFormatPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
 
         /// <summary>
         /// Open file and get new reader.
@@ -109,7 +109,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Localization file source that reads as IEnumerable&lt;KeyValuePair&lt;IAssetKey, string&gt;&gt;.
+    /// Localization file source that reads as IEnumerable&lt;KeyValuePair&lt;ILine, string&gt;&gt;.
     /// </summary>
     public class KeyLineFileSource : LineFileSource, IKeyLineSource
     {
@@ -121,7 +121,7 @@ namespace Lexical.Localization
         /// <param name="filename">non-rooted relative path, or rooted full path</param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public KeyLineFileSource(ILineFileFormat fileFormat, string path, string filename, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
+        public KeyLineFileSource(ILineFileFormat fileFormat, string path, string filename, ILineFormatPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
 
         /// <summary>
         /// Open file and get new reader.
@@ -182,7 +182,7 @@ namespace Lexical.Localization
         /// <param name="filename">non-rooted relative path, or rooted full path</param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LineTreeFileSource(ILineFileFormat fileFormat, string path, string filename, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
+        public LineTreeFileSource(ILineFileFormat fileFormat, string path, string filename, ILineFormatPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
 
         static ILineTree[] no_trees = new ILineTree[0];
 
@@ -242,7 +242,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Key policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public ILinePolicy KeyPolicy { get; protected set; }
+        public ILineFormatPolicy KeyPolicy { get; protected set; }
 
         /// <summary>
         /// File format 
@@ -256,7 +256,7 @@ namespace Lexical.Localization
         /// <param name="path"></param>
         /// <param name="keyPattern"></param>
         /// <param name="namePolicy"></param>
-        public LineFilePatternSource(ILineFileFormat fileFormat, string path, ILinePattern keyPattern, ILinePolicy namePolicy) : base(path, keyPattern)
+        public LineFilePatternSource(ILineFileFormat fileFormat, string path, ILinePattern keyPattern, ILineFormatPolicy namePolicy) : base(path, keyPattern)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.KeyPolicy = namePolicy;

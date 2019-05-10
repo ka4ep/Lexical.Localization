@@ -76,7 +76,7 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public ILineTree ReadLineTree(TextReader text, ILinePolicy namePolicy = default)
+        public ILineTree ReadLineTree(TextReader text, ILineFormatPolicy namePolicy = default)
         {
             LineTree root = new LineTree();
             using (var ini = new IniTokenizer(text.ReadToEnd()))
@@ -92,7 +92,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="correspondence">(optional) if set tokens are associated to key tree. If <paramref name="correspondence"/> is provided, then <paramref name="ini"/> must be a linked list. See <see cref="IniTokenizer.ToLinkedList"/></param>
         /// <returns><paramref name="root"/></returns>
-        public ILineTree ReadIniIntoTree(IEnumerable<IniToken> ini, ILineTree root, ILinePolicy namePolicy, IniCorrespondence correspondence)
+        public ILineTree ReadIniIntoTree(IEnumerable<IniToken> ini, ILineTree root, ILineFormatPolicy namePolicy, IniCorrespondence correspondence)
         {
             ILineTree section = null;
             foreach (IniToken token in ini)

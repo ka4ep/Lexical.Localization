@@ -38,8 +38,8 @@ namespace Lexical.Localization
     /// <summary>
     /// Interface to enumerate binary localization resources as <see cref="ILine"/> references.
     /// 
-    /// If the implementing class uses filenames, the recommended guideline is to use <see cref="IAssetKeyLocationAssigned"/> to
-    /// refer to a folder, and <see cref="IAssetKeyAssigned"/> to refer to a filename. For example, 
+    /// If the implementing class uses filenames, the recommended guideline is to use <see cref="ILineLocationAssigned"/> to
+    /// refer to a folder, and <see cref="ILineAssigned"/> to refer to a filename. For example, 
     /// if the implementation handles following folder:
     /// <list type="bullet">
     /// <item>Assets/</item>

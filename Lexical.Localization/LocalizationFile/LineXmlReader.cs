@@ -88,7 +88,7 @@ namespace Lexical.Localization
         /// <param name="element"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public ILineTree ReadLineTree(XElement element, ILinePolicy namePolicy = default)
+        public ILineTree ReadLineTree(XElement element, ILineFormatPolicy namePolicy = default)
             => ReadElement(element, new LineTree(), null);
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public ILineTree ReadLineTree(Stream stream, ILinePolicy namePolicy = default)
+        public ILineTree ReadLineTree(Stream stream, ILineFormatPolicy namePolicy = default)
             => ReadElement(Load(stream).Root, new LineTree(), null);
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public ILineTree ReadLineTree(TextReader text, ILinePolicy namePolicy = default)
+        public ILineTree ReadLineTree(TextReader text, ILineFormatPolicy namePolicy = default)
             => ReadElement(Load(text).Root, new LineTree(), null);
 
         /// <summary>

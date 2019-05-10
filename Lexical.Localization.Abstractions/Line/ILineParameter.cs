@@ -106,7 +106,7 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <param name="parameters">enumeration of parameters to append</param>
         /// <returns>new key that is appended to this key</returns>
-        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
+        /// <exception cref="LineException">If key doesn't implement ILineParameterAssignable, or append failed</exception>
         public static ILine Parameters(this ILine part, IEnumerable<KeyValuePair<string, string>> parameters)
         {
             ILineFactory appender = part.GetAppender();
@@ -123,7 +123,7 @@ namespace Lexical.Localization
         /// <param name="parameters">enumeration of parameters to append</param>
         /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
         /// <returns>new key that is appended to this key</returns>
-        /// <exception cref="LineException">If key doesn't implement IAssetKeyParameterAssignable, or append failed</exception>
+        /// <exception cref="LineException">If key doesn't implement ILineParameterAssignable, or append failed</exception>
         public static ILine Parameters(this ILine part, IEnumerable<KeyValuePair<string, string>> parameters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
         {
             ILineFactory appender = part.GetAppender();

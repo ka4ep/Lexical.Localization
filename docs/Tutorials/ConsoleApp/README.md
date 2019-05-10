@@ -44,7 +44,7 @@ namespace TutorialProject
 }
 ```
 
-The singleton instance **LocalizationRoot.Global** is one of the ways get a reference to a IAssetRoot. Localization keys are built from a root instance (IAssetKey). 
+The singleton instance **LocalizationRoot.Global** is one of the ways get a reference to a ILineRoot. Localization keys are built from a root instance (ILine). 
 
 The key in the exmaple is appended with two parts that contribute to key identity. 
 The first part **.Type&lt;Program&gt;()** creates a type section with value *"TutorialProject.Program"* which is derived from the class name. 

@@ -3,8 +3,8 @@ Microsoft has introduced an abstraction to dependency injection in the NuGet pac
 
 The extension method **<i>IServiceCollection</i>.AddLexicalLocalization(*addStringLocalizerService*, *addCulturePolicyService*, *useGlobalInstance*, *addCache*)** 
 that adds various localization service implementations. The following services are added:
-* IAssetRoot. If *useGlobalInstance* is true, then the root is **[global static](../IAssetRoot#global-static-root)**.
-* IAssetKey&lt;T&gt;
+* ILineRoot. If *useGlobalInstance* is true, then the root is **[global static](../ILineRoot#global-static-root)**.
+* ILine&lt;T&gt;
 * IAssetBuilder
 * ICulturePolicy, if *addCulturePolicyService* is set to true.
 * IStringLocalizerFactory and *IStringLocalizer&lt;T&gt;*, if *addStringLocalizerService* is set to true.

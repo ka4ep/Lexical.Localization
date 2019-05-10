@@ -104,7 +104,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, TextReader srcText, TextWriter dstText, ILinePolicy namePolicy, LineFileWriteFlags flags);
+        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, TextReader srcText, TextWriter dstText, ILineFormatPolicy namePolicy, LineFileWriteFlags flags);
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, Stream srcStream, Stream dstStream, ILinePolicy namePolicy, LineFileWriteFlags flags);
+        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, Stream srcStream, Stream dstStream, ILineFormatPolicy namePolicy, LineFileWriteFlags flags);
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyLines(IEnumerable<ILine> lines, TextReader srcText, TextWriter dstText, ILinePolicy namePolicy, LineFileWriteFlags flags);
+        void WriteKeyLines(IEnumerable<ILine> lines, TextReader srcText, TextWriter dstText, ILineFormatPolicy namePolicy, LineFileWriteFlags flags);
     }
 
     /// <summary>
@@ -165,7 +165,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyLines(IEnumerable<ILine> lines, Stream srcStream, Stream dstStream, ILinePolicy namePolicy, LineFileWriteFlags flags);
+        void WriteKeyLines(IEnumerable<ILine> lines, Stream srcStream, Stream dstStream, ILineFormatPolicy namePolicy, LineFileWriteFlags flags);
     }
 
     /// <summary>
@@ -186,7 +186,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteLineTree(ILineTree tree, Stream srcStream, Stream dstStream, ILinePolicy namePolicy, LineFileWriteFlags flags);
+        void WriteLineTree(ILineTree tree, Stream srcStream, Stream dstStream, ILineFormatPolicy namePolicy, LineFileWriteFlags flags);
     }
 
     /// <summary>
@@ -205,7 +205,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteLineTree(ILineTree tree, TextReader srcText, TextWriter dstText, ILinePolicy namePolicy, LineFileWriteFlags flags);
+        void WriteLineTree(ILineTree tree, TextReader srcText, TextWriter dstText, ILineFormatPolicy namePolicy, LineFileWriteFlags flags);
     }
     #endregion Interface
 }

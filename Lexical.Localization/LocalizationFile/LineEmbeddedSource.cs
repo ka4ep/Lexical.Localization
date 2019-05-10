@@ -19,7 +19,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public ILinePolicy KeyPolicy { get; internal set; }
+        public ILineFormatPolicy KeyPolicy { get; internal set; }
 
         /// <summary>
         /// File format 
@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="keyPolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LineEmbeddedSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy keyPolicy, bool throwIfNotFound) : base(assembly, resourceName, throwIfNotFound)
+        public LineEmbeddedSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormatPolicy keyPolicy, bool throwIfNotFound) : base(assembly, resourceName, throwIfNotFound)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.KeyPolicy = keyPolicy;
@@ -70,7 +70,7 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if true, throws <see cref="FileNotFoundException"/></param>
-        public LineEmbeddedStringLinesSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
+        public LineEmbeddedStringLinesSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormatPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
 
         /// <summary>
         /// No lines
@@ -123,7 +123,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Reader that opens an embedded resource and reads as IEnumerable&lt;KeyValuePair&lt;IAssetKey, string&gt;&gt;
+    /// Reader that opens an embedded resource and reads as IEnumerable&lt;KeyValuePair&lt;ILine, string&gt;&gt;
     /// </summary>
     public class LineEmbeddedKeyLinesSource : LineEmbeddedSource, IKeyLineSource
     {
@@ -135,7 +135,7 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LineEmbeddedKeyLinesSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
+        public LineEmbeddedKeyLinesSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormatPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
 
         static IEnumerable<ILine> empty = new ILine[0];
 
@@ -197,7 +197,7 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LineEmbeddedLineTreeSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
+        public LineEmbeddedLineTreeSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormatPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
 
         static IEnumerable<ILineTree> empty = new ILineTree[0];
 

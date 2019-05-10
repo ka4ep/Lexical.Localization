@@ -36,13 +36,13 @@ Non-canonical parts are typically hints, such as **.SetCulture(*string*)**.
 ## Key Parts
 | Parameter | Canonical | Interface | Extension Method | Description |
 |:---------|:-------|:--------|:---------|:---------|
-| Root | canonical | IAssetRoot |  | Contains asset and culture policy. Keys are constructed from here. |
-| Type | non-canonical | IAssetKeyTypeAssignable | .Type(*Type*) | Type section for grouping by classes and interfaces. |
+| Root | canonical | ILineRoot |  | Contains asset and culture policy. Keys are constructed from here. |
+| Type | non-canonical | ILineTypeAssignable | .Type(*Type*) | Type section for grouping by classes and interfaces. |
 | Location | canonical | IAsseyKeyLocationAssignable | .Location(*string*) | Hint to asset for a directory to search from. |
-| Assembly | non-canonical | IAssetKeyAssemblyAssignable | .Assembly(*Assembly*) | Hint to asset for an assembly to search from. |
-| Resource | canonical | IAssetKeyResourceAssignable | .Resource(*string*) | Hint to asset for an embedded resource path to search from. |
-| Section | canonical | IAssetKeySectionAssignable | .Section(*string*) | Generic section for grouping assets. |
-| Key | canonical | IAssetKeyAssignable | .Key(*string*) | Leaf key |
+| Assembly | non-canonical | ILineAssemblyAssignable | .Assembly(*Assembly*) | Hint to asset for an assembly to search from. |
+| Resource | canonical | ILineResourceAssignable | .Resource(*string*) | Hint to asset for an embedded resource path to search from. |
+| Section | canonical | ILinesectionAssignable | .Section(*string*) | Generic section for grouping assets. |
+| Key | canonical | ILineAssignable | .Key(*string*) | Leaf key |
 | Culture | non-canonical | ILocalizationKeyCultureAssignable | .Culture(*CultureInfo*) | Parameter to override current culture. |
 | N | non-canonical | ILocalizationKeyPluralityAssignable | .N(*Type*) | Key that specifies plurality |
 |  | non-canonical | ILocalizationKeyFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
@@ -102,8 +102,8 @@ Asset keys from LocalizationRoot and StringLocalizationRoot are dynamically usab
 
 ## Use in classes
 If class is designed to support dependency injection without string localizers, the constructors should 
-take in argument *IAssetKey&lt;T&gt;* and possibly *IAssetRoot*. See more in [Best Practices](../BestPractices/).
-Constructor argument **IAssetKey&lt;T&gt;** helps the Dependency Injection to assign the localization so that it is scoped in to correct typesection.
+take in argument *ILine&lt;T&gt;* and possibly *ILineRoot*. See more in [Best Practices](../BestPractices/).
+Constructor argument **ILine&lt;T&gt;** helps the Dependency Injection to assign the localization so that it is scoped in to correct typesection.
 [!code-csharp[Snippet](Examples.cs#Snippet_11a)]
 
 If class is designed to use static instance and without dependency injection, localization reference can be acquired from **LocalizationRoot**.

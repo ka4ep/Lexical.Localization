@@ -62,7 +62,7 @@ namespace Lexical.Localization
         /// Builds a list of assets. Adds the following:
         ///   1. The list of <see cref="assets"/> as is
         ///   2. Build from <see cref="sources"/> elements that dont' implement <see cref="ILineSource"/>
-        ///   3. One asset for each <see cref="IStringLineSource"/> that share <see cref="ILinePolicy"/>.
+        ///   3. One asset for each <see cref="IStringLineSource"/> that share <see cref="ILineFormatPolicy"/>.
         ///   4. One asset for all <see cref="IKeyLineSource"/>.
         ///   
         /// </summary>
@@ -79,14 +79,14 @@ namespace Lexical.Localization
             foreach (IAssetSource src in sources.Where(s => s is ILineSource == false))
                 src.Build(list);
 
-            // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> sources
+            // Build one asset for all IEnumerable<KeyValuePair<ILine, IFormulationString>> sources
             LocalizationAsset __asset = null;
             foreach (IStringLineSource src in sources.Where(s => s is IStringLineSource).Cast<IStringLineSource>())
             {
                 if (__asset == null) __asset = new LocalizationAsset();
                 __asset.Add(src, src.KeyPolicy);
             }
-            // Build one asset for all IEnumerable<KeyValuePair<IAssetKey, IFormulationString>> sources
+            // Build one asset for all IEnumerable<KeyValuePair<ILine, IFormulationString>> sources
             foreach (IKeyLineSource src in sources.Where(s => s is IKeyLineSource).Cast<IKeyLineSource>())
             {
                 if (__asset == null) __asset = new LocalizationAsset();

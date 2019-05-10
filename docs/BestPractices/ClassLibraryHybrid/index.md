@@ -15,7 +15,7 @@ Internal localization files are typically embedded resources.
 </details>
 
 ## Localization Root
-There should be another class called **LibraryLocalization** that is used as the *IAssetRoot* for the classes that use localization.
+There should be another class called **LibraryLocalization** that is used as the *ILineRoot* for the classes that use localization.
 This root can be linked to the global static root and shares its assets.
 [!code-csharp[Snippet](LibraryLocalization.cs)]
 

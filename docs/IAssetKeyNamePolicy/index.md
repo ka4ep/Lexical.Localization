@@ -1,17 +1,17 @@
-﻿# ILinePolicy
+﻿# ILineFormatPolicy
 <details>
-  <summary><b>ILinePolicy</b> is root interface for *IAssetKey* name converter. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs#ILinePolicy)]
+  <summary><b>ILineFormatPolicy</b> is root interface for *ILine* name converter. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/ILineFormatPolicy.cs#ILineFormatPolicy)]
 </details>
 
 <details>
-  <summary><b>ILinePrinter</b> is sub-interface that prints *IAssetKeys* as *Strings*. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs#ILinePrinter)]
+  <summary><b>ILinePrinter</b> is sub-interface that prints *ILines* as *Strings*. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/ILineFormatPolicy.cs#ILinePrinter)]
 </details>
 
 <details>
-  <summary><b>ILineParser</b> is sub-interface that parses *Strings* into *IAssetKey*. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs#ILineParser)]
+  <summary><b>ILineParser</b> is sub-interface that parses *Strings* into *ILine*. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/ILineFormatPolicy.cs#ILineParser)]
 </details>
 
 <br />
@@ -55,7 +55,7 @@ Example of escaped key "Success\\:Plural".
 # LinePattern
 <details>
   <summary><b>ILinePattern</b> is interface for name patterns. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/ILinePattern.cs#Interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/ILinePattern.cs#Interface)]
 </details>
 <br />
 
@@ -108,10 +108,10 @@ Policy is created by adding rules to KeyPrinter.
 
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
- * [ILinePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs) is the root interface for classes that formulate IAssetKey into identity string.
- * [ILinePrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs) is a subinterface where Build() can be implemented directly.
- * [ILinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/ILinePattern.cs) is a subinterface that formulates parametrization with a template string.
+ * [ILineFormatPolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILineFormatPolicy.cs) is the root interface for classes that formulate ILine into identity string.
+ * [ILinePrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILineFormatPolicy.cs) is a subinterface where Build() can be implemented directly.
+ * [ILinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILinePattern.cs) is a subinterface that formulates parametrization with a template string.
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [KeyPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/KeyPrinter.cs) is implementation of IAssetNameProvider.
- * [LinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/LinePattern.cs) is the default implementation of ILinePattern.
- * [ParameterParser.(https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/ParameterParser.cs) is context-free string format.
+ * [KeyPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/KeyPrinter.cs) is implementation of IAssetNameProvider.
+ * [LinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/LinePattern.cs) is the default implementation of ILinePattern.
+ * [ParameterParser.(https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/ParameterParser.cs) is context-free string format.

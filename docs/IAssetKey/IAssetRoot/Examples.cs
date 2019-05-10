@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace docs
 {
-    public class IAssetRoot_Examples
+    public class ILineRoot_Examples
     {
         public static void Main(string[] args)
         {

@@ -64,7 +64,7 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public ILineTree ReadLineTree(TextReader text, ILinePolicy namePolicy = default)
+        public ILineTree ReadLineTree(TextReader text, ILineFormatPolicy namePolicy = default)
         {
             LineTree root = new LineTree();
             using (var json = new JsonTextReader(text))
@@ -82,7 +82,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="correspondenceContext">(optional) place to update correspondence. If set <paramref name="json"/> must implement <see cref="JTokenReader"/>.</param>
         /// <returns></returns>
-        public ILineTree ReadJsonIntoTree(JsonReader json, ILineTree node, ILinePolicy namePolicy, JsonCorrespondence correspondenceContext)
+        public ILineTree ReadJsonIntoTree(JsonReader json, ILineTree node, ILineFormatPolicy namePolicy, JsonCorrespondence correspondenceContext)
         {
             ILineTree current = node;
             Stack<ILineTree> stack = new Stack<ILineTree>();

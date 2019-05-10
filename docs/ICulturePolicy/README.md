@@ -18,7 +18,7 @@ var source = new Dictionary<string, string> {
 // Create asset with culture policy
 IAsset asset = new LocalizationAsset(source, KeyPrinter.Default);
 // Create root and assign culturePolicy
-IAssetRoot root = new LocalizationRoot(asset, culturePolicy);
+ILineRoot root = new LocalizationRoot(asset, culturePolicy);
 ```
 
 Direct way to use *CulturePolicy* is to assign prefered culture and fallback culture on the provider instance.

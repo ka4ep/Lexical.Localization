@@ -19,7 +19,7 @@ namespace Lexical.Localization
     /// </summary>
     public static partial class KeyLinesExtensions
     {
-        static ILinePolicy DefaultPolicy = KeyPrinter.Default;
+        static ILineFormatPolicy DefaultPolicy = KeyPrinter.Default;
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset key lines.
@@ -27,7 +27,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<ILine> lines, ILinePolicy policy)
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<ILine> lines, ILineFormatPolicy policy)
             => lines.Select(line => new KeyValuePair<string, IFormulationString>((policy ?? DefaultPolicy).Print(line), line.GetValue()));
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <param name="keyPolicy"></param>
         /// <param name="valueParser"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, ILinePolicy keyPolicy, IStringFormatParser valueParser)
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, ILineFormatPolicy keyPolicy, IStringFormatParser valueParser)
             => lines.Select(line => new KeyValuePair<string, IFormulationString>((keyPolicy ?? DefaultPolicy).Print(line.Key), valueParser.Parse(line.Value)));
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static ILineTree ToLineTree(this IEnumerable<ILine> lines, ILinePolicy namePolicy)
+        public static ILineTree ToLineTree(this IEnumerable<ILine> lines, ILineFormatPolicy namePolicy)
         {
             LineTree tree = new LineTree();
             if (namePolicy is ILinePattern pattern)

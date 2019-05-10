@@ -103,9 +103,9 @@ namespace TutorialLibrary2
 {
     public class MyClassB
     {
-        IAssetKey<MyClass> localizer;
+        ILine<MyClass> localizer;
 
-        public MyClassB(IAssetKey<MyClass> localizer)
+        public MyClassB(ILine<MyClass> localizer)
         {
             this.localizer = localizer;
         }
@@ -224,7 +224,7 @@ namespace TutorialProject2
             #endregion Snippet
 
             // Create class
-            IAssetKey<MyClass> classLocalizer = localizer.Type<MyClass>();
+            ILine<MyClass> classLocalizer = localizer.Type<MyClass>();
             MyClassB myClass = new MyClassB(classLocalizer);
 
             // Use the culture that was provided with the class library (LibraryAssetSources)

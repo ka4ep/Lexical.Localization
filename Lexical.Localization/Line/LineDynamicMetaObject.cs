@@ -87,7 +87,7 @@ namespace Lexical.Localization
                 mi = (HasValue ? Value.GetType() : LimitType).GetMethods().Where(_ => _.Name == "ToString" && _.GetParameters().Length == 0).FirstOrDefault();
             }
 
-            // (byte[]) maps to AssetKeyExtensions.GetResource(obj)
+            // (byte[]) maps to LineExtensions.GetResource(obj)
             if (typeof(byte[]).IsAssignableFrom(binder.ReturnType))
             {
                 if (miGetResource == null) miGetResource = typeof(ILineExtensions).GetMethod(nameof(ILineExtensions.GetResource));

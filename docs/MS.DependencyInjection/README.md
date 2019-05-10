@@ -3,8 +3,8 @@ Microsoft has introduced an abstraction to dependency injection in the NuGet pac
 
 The extension method **<i>IServiceCollection</i>.AddLexicalLocalization(*addStringLocalizerService*, *addCulturePolicyService*, *useGlobalInstance*, *addCache*)** 
 that adds various localization service implementations. The following services are added:
-* IAssetRoot. If *useGlobalInstance* is true, then the root is **[global static](../IAssetRoot#global-static-root)**.
-* IAssetKey&lt;T&gt;
+* ILineRoot. If *useGlobalInstance* is true, then the root is **[global static](../ILineRoot#global-static-root)**.
+* ILine&lt;T&gt;
 * IAssetBuilder
 * ICulturePolicy, if *addCulturePolicyService* is set to true.
 * IStringLocalizerFactory and *IStringLocalizer&lt;T&gt;*, if *addStringLocalizerService* is set to true.
@@ -14,7 +14,7 @@ that adds various localization service implementations. The following services a
 // Create service collection
 IServiceCollection serviceCollection = new ServiceCollection();
 
-// Add localization services: IAssetRoot, IAssetKey<T>, IAssetBuilder, ICulturePolicy
+// Add localization services: ILineRoot, ILine<T>, IAssetBuilder, ICulturePolicy
 serviceCollection.AddLexicalLocalization(
     addStringLocalizerService: false,
     addCulturePolicyService: true,
@@ -43,10 +43,10 @@ using (var serviceProvider = serviceCollection.BuildServiceProvider())
     IAsset asset = serviceProvider.GetService<IAsset>();
 
     // Service can provide root
-    IAssetRoot root = serviceProvider.GetService<IAssetRoot>();
+    ILineRoot root = serviceProvider.GetService<ILineRoot>();
 
     // Service can provide type key
-    IAssetKey typeKey = serviceProvider.GetService<IAssetKey<ConsoleApp1.MyController>>();
+    ILine typeKey = serviceProvider.GetService<ILine<ConsoleApp1.MyController>>();
 
     // Get "Hello World!"
     string str = typeKey.Key("Hello").Culture("en").ToString();
@@ -68,7 +68,7 @@ namespace docs
             // Create service collection
             IServiceCollection serviceCollection = new ServiceCollection();
 
-            // Add localization services: IAssetRoot, IAssetKey<T>, IAssetBuilder, ICulturePolicy
+            // Add localization services: ILineRoot, ILine<T>, IAssetBuilder, ICulturePolicy
             serviceCollection.AddLexicalLocalization(
                 addStringLocalizerService: false,
                 addCulturePolicyService: true,
@@ -89,10 +89,10 @@ namespace docs
                 IAsset asset = serviceProvider.GetService<IAsset>();
 
                 // Service can provide root
-                IAssetRoot root = serviceProvider.GetService<IAssetRoot>();
+                ILineRoot root = serviceProvider.GetService<ILineRoot>();
 
                 // Service can provide type key
-                IAssetKey typeKey = serviceProvider.GetService<IAssetKey<ConsoleApp1.MyController>>();
+                ILine typeKey = serviceProvider.GetService<ILine<ConsoleApp1.MyController>>();
 
                 // Get "Hello World!"
                 string str = typeKey.Key("Hello").Culture("en").ToString();
@@ -113,7 +113,7 @@ services *IStringLocalizer&lt;T&gt;* and *IStringLocalizerFactory*.
 // Create service collection
 IServiceCollection serviceCollection = new ServiceCollection();
 
-// Add localization services: IAssetRoot, IAssetKey<T>, IAssetBuilder, ICulturePolicy
+// Add localization services: ILineRoot, ILine<T>, IAssetBuilder, ICulturePolicy
 //                            IStringLocalizer<T>, IStringLocalizerFactory
 serviceCollection.AddLexicalLocalization(
     addStringLocalizerService: true,     // <- string localizer
@@ -163,7 +163,7 @@ namespace docs
             // Create service collection
             IServiceCollection serviceCollection = new ServiceCollection();
 
-            // Add localization services: IAssetRoot, IAssetKey<T>, IAssetBuilder, ICulturePolicy
+            // Add localization services: ILineRoot, ILine<T>, IAssetBuilder, ICulturePolicy
             //                            IStringLocalizer<T>, IStringLocalizerFactory
             serviceCollection.AddLexicalLocalization(
                 addStringLocalizerService: true,     // <- string localizer

@@ -1,5 +1,5 @@
 # Localization Root
-**IAssetRoot** is an interface for root implementations. 
+**ILineRoot** is an interface for root implementations. 
 Root is the place where asset (the localization provider) is tied to key (localization consumer).
 
 **LocalizationRoot** is the default implementation. It's constructed with an asset and a culture policy.
@@ -12,14 +12,14 @@ IAsset asset = new LocalizationAsset(source, ParameterParser.Instance);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
-IAssetRoot root = new LocalizationRoot(asset, culturePolicy);
+ILineRoot root = new LocalizationRoot(asset, culturePolicy);
 ```
 
 Further keys are constructed from root. 
 
 ```csharp
 // Construct key
-IAssetKey key = root.Type("MyController").Key("Hello");
+ILine key = root.Type("MyController").Key("Hello");
 ```
 
 Now that key is associated with an asset and a culture provider, it can provide strings and resources.
@@ -36,7 +36,7 @@ These keys cannot be used as providers, only as references.
 
 ```csharp
 // Create reference
-IAssetKey key = new LocalizationKey._Section(null, "Section").Key("Key");
+ILine key = new LocalizationKey._Section(null, "Section").Key("Key");
 // Retreieve with reference
 IFormulationString str = asset.GetString(key);
 ```
@@ -55,7 +55,7 @@ IAsset asset = new LocalizationAsset(source, ParameterParser.Instance);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
-IAssetRoot root = new StringLocalizerRoot(asset, culturePolicy);
+ILineRoot root = new StringLocalizerRoot(asset, culturePolicy);
 ```
 <br/>
 
@@ -122,7 +122,7 @@ Lexical.Localization introduces a global static root **LocalizationRoot.Global**
 
 ```csharp
 // Create key from global root
-IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Hello");
+ILine key = LocalizationRoot.Global.Type("MyController").Key("Hello");
 ```
 
 Assets are added to the global root with **LocalizationRoot.Builder**.
@@ -168,7 +168,7 @@ dynamic key_ = LocalizationRoot.GlobalDynamic.Section("Section").Key("Key");
 
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
- * [IAssetRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IAssetRoot.cs)
+ * [ILineRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILineRoot.cs)
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [LocalizationRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationKey/LocalizationRoot.cs) ([Global](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationKey/LocalizationRoot_Global.cs))
  * [StringLocalizerRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerRoot.cs) ([Global](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/StringLocalizerRoot_Global.cs))

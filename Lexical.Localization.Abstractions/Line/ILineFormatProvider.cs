@@ -8,7 +8,7 @@ using System;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A key that has been assigned with format provider.
+    /// Part that carries additional <see cref="IFormatProvider"/> for <see cref="IStringFormat"/>.
     /// </summary>
     public interface ILineFormatProvider : ILine
     {

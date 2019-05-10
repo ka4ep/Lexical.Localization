@@ -13,7 +13,7 @@ namespace docs
             // Initialize service collection
             IServiceCollection serviceCollection = new ServiceCollection();
 
-            // Add IAssetBuilder, IAssetRoot and ICulturePolicy to service collection
+            // Add IAssetBuilder, ILineRoot and ICulturePolicy to service collection
             serviceCollection.AddLexicalLocalization(
                 addStringLocalizerService: false, 
                 addCulturePolicyService: false, 

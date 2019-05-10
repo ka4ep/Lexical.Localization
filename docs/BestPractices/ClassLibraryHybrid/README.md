@@ -70,7 +70,7 @@ namespace TutorialLibrary3
 </details>
 
 ## Localization Root
-There should be another class called **LibraryLocalization** that is used as the *IAssetRoot* for the classes that use localization.
+There should be another class called **LibraryLocalization** that is used as the *ILineRoot* for the classes that use localization.
 This root can be linked to the global static root and shares its assets.
 
 ```csharp
@@ -78,7 +78,7 @@ using Lexical.Localization;
 
 namespace TutorialLibrary3
 {
-    internal class LibraryLocalization : StringLocalizerRoot.LinkedTo, IAssetRoot
+    internal class LibraryLocalization : StringLocalizerRoot.LinkedTo, ILineRoot
     {
         private static readonly LibraryLocalization instance = new LibraryLocalization(LocalizationRoot.Global);
 
@@ -92,7 +92,7 @@ namespace TutorialLibrary3
         /// </summary>
         public new static IAssetBuilder Builder => LocalizationRoot.Builder;
 
-        LibraryLocalization(IAssetRoot linkedTo) : base(linkedTo)
+        LibraryLocalization(ILineRoot linkedTo) : base(linkedTo)
         {
             // Add library's internal assets here
             Builder.AddSources(new LibraryAssetSources());
@@ -139,9 +139,9 @@ namespace TutorialLibrary3
 {
     public class MyClassB
     {
-        IAssetKey<MyClass> localizer;
+        ILine<MyClass> localizer;
 
-        public MyClassB(IAssetKey<MyClass> localizer = default)
+        public MyClassB(ILine<MyClass> localizer = default)
         {
             this.localizer = localizer ?? LibraryLocalization.Root.Type<MyClass>();
         }

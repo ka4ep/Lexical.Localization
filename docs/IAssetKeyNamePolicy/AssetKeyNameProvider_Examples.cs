@@ -14,7 +14,7 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "en/MyController/Hello", "Hello World!" } };
                 // Create key name policy
-                ILinePolicy policy = 
+                ILineFormatPolicy policy = 
                     new KeyPrinter()
                         .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: "/") // Sorts parameters
                         .DefaultRule(true, prefixSeparator: "/"); // Default separator
@@ -62,7 +62,7 @@ namespace docs
                 {
                     #region Snippet_3
                     // Create a custom policy 
-                    ILinePolicy myPolicy = new KeyPrinter()
+                    ILineFormatPolicy myPolicy = new KeyPrinter()
                         // Enable non-canonical "Culture" parameter with "/" separator
                         .Rule("Culture", true, postfixSeparator: "/", order: ParameterInfos.Default["Culture"].Order)
                         // Disable other non-canonical parts

@@ -209,7 +209,7 @@ namespace Lexical.Localization
         {
             // No key
             if (line == null) return 0;
-            // Get-or-calculate cached hashcode with IAssetKeyDefaultHashCode.
+            // Get-or-calculate cached hashcode with ILineDefaultHashCode.
             if (this == LineComparer.instance && line is ILineDefaultHashCode defaultHashCode) return defaultHashCode.GetDefaultHashCode();
             // Calculate new hashcode
             return CalculateHashCode(line);

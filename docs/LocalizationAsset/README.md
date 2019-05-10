@@ -15,11 +15,11 @@ IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Loa
 ```
 <br/>
 
-<b>.Add(<i>IEnumerable&lt;KeyValuePair&lt;IAssetKey, string&gt;&gt;</i>, IAssetNamePolicy keyPolicy)</b> adds language string source with IAssetKey based keys.
+<b>.Add(<i>IEnumerable&lt;KeyValuePair&lt;ILine, string&gt;&gt;</i>, IAssetNamePolicy keyPolicy)</b> adds language string source with ILine based keys.
 
 ```csharp
 // Create localization source
-var source = new Dictionary<IAssetKey, string> {
+var source = new Dictionary<ILine, string> {
     { new LocalizationRoot().Type("MyController").Key("hello"),               "Hello World!" },
     { new LocalizationRoot().Type("MyController").Key("hello").Culture("en"), "Hello World!" },
     { new LocalizationRoot().Type("MyController").Key("hello").Culture("de"), "Hallo Welt!"  }
@@ -33,7 +33,7 @@ Keys can be enumerated with **GetAllKeys()**.
 
 ```csharp
 // Extract all keys
-foreach (IAssetKey _key in asset.GetKeyLines(null).Select(line=>line.Key))
+foreach (ILine _key in asset.GetKeyLines(null).Select(line=>line.Key))
     Console.WriteLine(_key);
 ```
 <br/>
@@ -42,7 +42,7 @@ The query can be filtered with a criteria key. It returns only keys that have eq
 
 ```csharp
 // Keys can be filtered
-IAssetKey filterKey = LocalizationRoot.Global.Culture("de");
-foreach (IAssetKey _key in asset.GetKeyLines(filterKey).Select(line => line.Key))
+ILine filterKey = LocalizationRoot.Global.Culture("de");
+foreach (ILine _key in asset.GetKeyLines(filterKey).Select(line => line.Key))
     Console.WriteLine(_key);
 ```

@@ -8,24 +8,28 @@ using System.Collections.Generic;
 
 namespace Lexical.Localization
 {
-    #region ILinePolicy
+    #region ILineFormatPolicy
     /// <summary>
-    /// Line policy does conversions between <see cref="ILine"/> and <see cref="String"/>.
+    /// Line format policy does conversions between <see cref="ILine"/> and <see cref="String"/>.
     /// 
     /// Class that implements to this interface should implement one or both of the following interfaces:
-    ///  <see cref="ILinePrinter"/>
-    ///  <see cref="ILinePattern"/>
+    /// <list type="bullet">
+    ///     <item><see cref="ILinePrinter"/></item>
+    ///     <item><see cref="ILinePattern"/></item>
+    /// </list>
+    /// 
+    /// The parts types that are supported is property of the implementing class.
     /// </summary>
-    public interface ILinePolicy
+    public interface ILineFormatPolicy
     {
     }
-    #endregion ILinePolicy
+    #endregion ILineFormatPolicy
 
     #region ILinePrinter
     /// <summary>
     /// Converts <see cref="ILine"/> to string.
     /// </summary>
-    public interface ILinePrinter : ILinePolicy
+    public interface ILinePrinter : ILineFormatPolicy
     {
         /// <summary>
         /// Print <paramref name="line"/> as <see cref="String"/>.
@@ -42,7 +46,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Parses string into <see cref="ILine"/>.
     /// </summary>
-    public interface ILineParser : ILinePolicy
+    public interface ILineParser : ILineFormatPolicy
     {
         /// <summary>
         /// Parse string into <see cref="ILine"/>.
@@ -66,7 +70,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Alternative parser interface where parts are appended right into previous line.
     /// </summary>
-    public interface ILineAppendParser : ILinePolicy
+    public interface ILineAppendParser : ILineFormatPolicy
     {
         /// <summary>
         /// Parse string into <see cref="ILine"/>.
@@ -93,9 +97,9 @@ namespace Lexical.Localization
     #endregion ILineParser
 
     /// <summary>
-    /// Extension functions for <see cref="ILinePolicy"/>.
+    /// Extension functions for <see cref="ILineFormatPolicy"/>.
     /// </summary>
-    public static partial class ILinePolicyExtensions
+    public static partial class ILineFormatPolicyExtensions
     {
         /// <summary>
         /// Build name for key. 
@@ -103,7 +107,7 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <param name="key"></param>
         /// <returns>full name string or null</returns>
-        public static string Print(this ILinePolicy policy, ILine key)
+        public static string Print(this ILineFormatPolicy policy, ILine key)
         {
             if (policy is ILinePrinter provider)
             {
@@ -124,7 +128,7 @@ namespace Lexical.Localization
         /// <exception cref="LineException">If parse failed</exception>
         /// <exception cref="LineException">If <paramref name="policy"/> doesn't implement <see cref="ILineParser"/>.</exception>
         /// <exception cref="LineException">Error if appender is not available</exception>
-        public static ILine Parse(this ILinePolicy policy, string str, ILine prevPart = default, ILineFactory appender = default)
+        public static ILine Parse(this ILineFormatPolicy policy, string str, ILine prevPart = default, ILineFactory appender = default)
         {
             if (policy is ILineAppendParser appendParser)
             {
@@ -150,7 +154,7 @@ namespace Lexical.Localization
         /// <param name="prevPart">(optional) previous part to append to</param>
         /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
         /// <returns>true if parse was successful (even through resulted key might be null)</returns>
-        public static bool TryParse(this ILinePolicy policy, string str, out ILine result, ILine prevPart = default, ILineFactory appender = default)
+        public static bool TryParse(this ILineFormatPolicy policy, string str, out ILine result, ILine prevPart = default, ILineFactory appender = default)
         {
             if (policy is ILineAppendParser appendParser)
             {

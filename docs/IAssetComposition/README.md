@@ -1,6 +1,6 @@
 # Asset Composition
 
-**AssetComposition** is the default class. It unifies a group of assets into one asset, typically so that they can be assigned to IAssetRoot.
+**AssetComposition** is the default class. It unifies a group of assets into one asset, typically so that they can be assigned to ILineRoot.
 
 ```csharp
 // Create individual assets
@@ -11,7 +11,7 @@ IAsset asset_2 = new ResourceStringDictionary(new Dictionary<string, byte[]> { {
 IAssetComposition asset_composition = new AssetComposition(asset_1, asset_2);
 
 // Assign the composition to root
-IAssetRoot root = new LocalizationRoot(asset_composition, new CulturePolicy());
+ILineRoot root = new LocalizationRoot(asset_composition, new CulturePolicy());
 ```
 
 <details>

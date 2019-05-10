@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. </param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<ILine> ReadKeyLines(Stream stream, ILinePolicy namePolicy = default);
+        IEnumerable<ILine> ReadKeyLines(Stream stream, ILineFormatPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        ILineTree ReadLineTree(Stream stream, ILinePolicy namePolicy = default);
+        ILineTree ReadLineTree(Stream stream, ILineFormatPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<ILine> ReadKeyLines(TextReader text, ILinePolicy namePolicy = default);
+        IEnumerable<ILine> ReadKeyLines(TextReader text, ILineFormatPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -82,7 +82,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        ILineTree ReadLineTree(TextReader text, ILinePolicy namePolicy = default);
+        ILineTree ReadLineTree(TextReader text, ILineFormatPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read string key-values</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, ILinePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, ILineFormatPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>the read string key-values</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, ILinePolicy namePolicy = default);
+        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, ILineFormatPolicy namePolicy = default);
     }
     #endregion Interface
 }

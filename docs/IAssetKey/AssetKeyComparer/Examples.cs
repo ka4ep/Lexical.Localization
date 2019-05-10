@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace docs
 {
-    public class AssetKeyComparer_Examples
+    public class LineComparer_Examples
     {
         public static void Main(string[] args)
         {
