@@ -29,13 +29,13 @@ namespace Lexical.Localization.Internal
     public class XmlCorrespondence
     {
         public readonly Correspondence<ILineTree, XElement> Nodes = new Correspondence<ILineTree, XElement>();
-        public readonly Dictionary<KeyTreeValue, XText> Values = new Dictionary<KeyTreeValue, XText>(new KeyValueTreeComparer());
+        public readonly Dictionary<LineTreeValue, XText> Values = new Dictionary<LineTreeValue, XText>(new KeyValueTreeComparer());
     }
 
     public class IniCorrespondence
     {
         public readonly Correspondence<ILineTree, IniToken> Nodes = new Correspondence<ILineTree, IniToken>();
-        public readonly Dictionary<KeyTreeValue, IniToken> Values = new Dictionary<KeyTreeValue, IniToken>(new KeyValueTreeComparer());
+        public readonly Dictionary<LineTreeValue, IniToken> Values = new Dictionary<LineTreeValue, IniToken>(new KeyValueTreeComparer());
     }
 
     public class ResXCorrespondence
@@ -47,13 +47,13 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Reference to a value in a <see cref="ILineTree"/>.
     /// </summary>
-    public struct KeyTreeValue : IEquatable<KeyTreeValue>
+    public struct LineTreeValue : IEquatable<LineTreeValue>
     {
         public readonly ILineTree tree;
         public readonly IFormulationString value;
         public readonly int valueIndex;
 
-        public KeyTreeValue(ILineTree tree, IFormulationString value, int valueIndex)
+        public LineTreeValue(ILineTree tree, IFormulationString value, int valueIndex)
         {
             this.tree = tree ?? throw new ArgumentNullException(nameof(tree));
             this.value = value;
@@ -61,9 +61,9 @@ namespace Lexical.Localization.Internal
         }
 
         public override bool Equals(object obj)
-            => obj is KeyTreeValue other ? tree == other.tree && FormulationStringComparer.Instance.Equals(value, other.value) && valueIndex == other.valueIndex : false;
+            => obj is LineTreeValue other ? tree == other.tree && FormulationStringComparer.Instance.Equals(value, other.value) && valueIndex == other.valueIndex : false;
 
-        public bool Equals(KeyTreeValue other)
+        public bool Equals(LineTreeValue other)
             => tree == other.tree && FormulationStringComparer.Instance.Equals(value, other.value) && valueIndex == other.valueIndex;
 
         public override int GetHashCode()
@@ -81,12 +81,12 @@ namespace Lexical.Localization.Internal
             => $"{tree}[{valueIndex}]={value}";
     }
 
-    public class KeyValueTreeComparer : IEqualityComparer<KeyTreeValue>
+    public class KeyValueTreeComparer : IEqualityComparer<LineTreeValue>
     {
-        public bool Equals(KeyTreeValue x, KeyTreeValue y)
+        public bool Equals(LineTreeValue x, LineTreeValue y)
             => x.tree == y.tree && FormulationStringComparer.Instance.Equals(x.value, y.value) && x.valueIndex == y.valueIndex;
 
-        public int GetHashCode(KeyTreeValue obj)
+        public int GetHashCode(LineTreeValue obj)
             => obj.GetHashCode();
     }
 
@@ -100,7 +100,7 @@ namespace Lexical.Localization.Internal
     public class JsonCorrespondence
     {
         public readonly Correspondence<ILineTree, JToken> Nodes = new Correspondence<ILineTree, JToken>();
-        public readonly Dictionary<KeyTreeValue, JValue> Values = new Dictionary<KeyTreeValue, JValue>(new KeyValueTreeComparer());
+        public readonly Dictionary<LineTreeValue, JValue> Values = new Dictionary<LineTreeValue, JValue>(new KeyValueTreeComparer());
     }
 
 }

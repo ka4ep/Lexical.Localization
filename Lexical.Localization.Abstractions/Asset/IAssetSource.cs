@@ -62,7 +62,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Source that provides <see cref="ILineTree"/> based key-value lines.
     /// </summary>
-    public interface ILocalizationKeyTreeSource : ILocalizationSource, IEnumerable<ILineTree>
+    public interface ILocalizationLineTreeSource : ILocalizationSource, IEnumerable<ILineTree>
     {
     }
     #endregion interface_2

@@ -172,9 +172,9 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Reader that opens an embedded resource and reads as <see cref="IEnumerable{IKeyTree}"/>.
+    /// Reader that opens an embedded resource and reads as <see cref="IEnumerable{ILineTree}"/>.
     /// </summary>
-    public class LocalizationFileProviderReaderKeyTree : LocalizationFileProviderSource, ILocalizationKeyTreeSource
+    public class LocalizationFileProviderReaderLineTree : LocalizationFileProviderSource, ILocalizationLineTreeSource
     {
         /// <summary>
         /// Create source to localization file in a <paramref name="fileProvider"/>.
@@ -184,7 +184,7 @@ namespace Lexical.Localization
         /// <param name="filepath"></param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileProviderReaderKeyTree(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound) { }
+        public LocalizationFileProviderReaderLineTree(ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound) { }
 
         static IEnumerable<ILineTree> empty = new ILineTree[0];
 
@@ -201,7 +201,7 @@ namespace Lexical.Localization
                 if (!ThrowIfNotFound && !fi.Exists) return empty.GetEnumerator();
                 using (Stream s = fi.CreateReadStream())
                 {
-                    ILineTree tree = FileFormat.ReadKeyTree(s, KeyPolicy);
+                    ILineTree tree = FileFormat.ReadLineTree(s, KeyPolicy);
                     if (tree == null) return empty.GetEnumerator();
                     ILineTree[] trees = new ILineTree[] { tree };
                     return ((IEnumerable<ILineTree>)trees).GetEnumerator();

@@ -38,8 +38,8 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
-        public static LocalizationEmbeddedKeyTreeSource EmbeddedReaderAsKeyTree(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationEmbeddedKeyTreeSource(fileFormat, asm, resourceName, namePolicy, throwIfNotFound);
+        public static LocalizationEmbeddedLineTreeSource EmbeddedReaderAsLineTree(this ILocalizationFileFormat fileFormat, Assembly asm, string resourceName, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+            => new LocalizationEmbeddedLineTreeSource(fileFormat, asm, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="asm"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -66,9 +66,9 @@ namespace Lexical.Localization
         /// <returns>reloadable localization asset</returns>
         public static IAsset EmbeddedAsset(this ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
         {
-            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            if (fileFormat is ILocalizationLineTreeTextReader || fileFormat is ILocalizationLineTreeStreamReader)
             {
-                return new LocalizationAsset().Add(fileFormat.EmbeddedReaderAsKeyTree(assembly, resourceName, namePolicy, throwIfNotFound), namePolicy).Load();
+                return new LocalizationAsset().Add(fileFormat.EmbeddedReaderAsLineTree(assembly, resourceName, namePolicy, throwIfNotFound), namePolicy).Load();
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
@@ -92,9 +92,9 @@ namespace Lexical.Localization
         /// <returns>asset source</returns>
         public static LocalizationEmbeddedSource EmbeddedAssetSource(this ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
         {
-            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            if (fileFormat is ILocalizationLineTreeTextReader || fileFormat is ILocalizationLineTreeStreamReader)
             {
-                return new LocalizationEmbeddedKeyTreeSource(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound);
+                return new LocalizationEmbeddedLineTreeSource(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound);
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
@@ -130,8 +130,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LocalizationEmbeddedKeyTreeSource EmbeddedReaderAsKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly assembly, string resourceName, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(resourceName)].EmbeddedReaderAsKeyTree(assembly, resourceName, namePolicy, throwIfNotFound);
+        public static LocalizationEmbeddedLineTreeSource EmbeddedReaderAsLineTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, Assembly assembly, string resourceName, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(resourceName)].EmbeddedReaderAsLineTree(assembly, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="assembly"/> on <see cref="IEnumerable.GetEnumerator"/>.

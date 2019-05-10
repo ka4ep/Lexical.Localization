@@ -39,8 +39,8 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
-        public static LocalizationFileProviderReaderKeyTree FileProviderReaderAsKeyTree(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationFileProviderReaderKeyTree(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound);
+        public static LocalizationFileProviderReaderLineTree FileProviderReaderAsLineTree(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+            => new LocalizationFileProviderReaderLineTree(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -65,9 +65,9 @@ namespace Lexical.Localization
         /// <returns>asset</returns>
         public static IAsset FileProviderAsset(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
         {
-            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            if (fileFormat is ILocalizationLineTreeTextReader || fileFormat is ILocalizationLineTreeStreamReader)
             {
-                return new LocalizationAsset().Add(fileFormat.FileProviderReaderAsKeyTree(fileProvider, filepath, namePolicy, throwIfNotFound), namePolicy).Load();
+                return new LocalizationAsset().Add(fileFormat.FileProviderReaderAsLineTree(fileProvider, filepath, namePolicy, throwIfNotFound), namePolicy).Load();
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
@@ -91,7 +91,7 @@ namespace Lexical.Localization
         /// <returns>asset source</returns>
         public static LocalizationFileProviderSource FileProviderAssetSource(this ILocalizationFileFormat fileFormat, IFileProvider fileProvider, string filepath, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
         {
-            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            if (fileFormat is ILocalizationLineTreeTextReader || fileFormat is ILocalizationLineTreeStreamReader)
             {
                 return new LocalizationFileProviderKeyLinesSource(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound);
             }
@@ -129,8 +129,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LocalizationFileProviderReaderKeyTree FileProviderReaderAsKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filepath)].FileProviderReaderAsKeyTree(fileProvider, filepath, namePolicy, throwIfNotFound);
+        public static LocalizationFileProviderReaderLineTree FileProviderReaderAsLineTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filepath)].FileProviderReaderAsLineTree(fileProvider, filepath, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.

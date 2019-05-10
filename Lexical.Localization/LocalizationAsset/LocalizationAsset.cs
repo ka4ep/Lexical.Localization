@@ -105,7 +105,7 @@ namespace Lexical.Localization
         /// <item>IEnumerable&gt;KeyValuePair&gt;string, IFormulationString&lt;&lt;</item>
         /// <item>IEnumerable&gt;KeyValuePair&gt;IAssetKey, string&lt;&lt;</item>
         /// <item>IEnumerable&gt;KeyValuePair&gt;string, string&lt;&lt;</item>
-        /// <item>IEnumerable&gt;IKeyTree&lt;</item>
+        /// <item>IEnumerable&gt;ILineTree&lt;</item>
         /// </list>
         /// </summary>
         /// <param name="reader">initial reader</param>
@@ -127,7 +127,7 @@ namespace Lexical.Localization
         /// <list type="bullet">
         /// <item>IEnumerable&gt;KeyValuePair&gt;IAssetKey, string&lt;&lt;</item>
         /// <item>IEnumerable&gt;KeyValuePair&gt;string, string&lt;&lt;</item>
-        /// <item>IEnumerable&gt;IKeyTree&lt;</item>
+        /// <item>IEnumerable&gt;ILineTree&lt;</item>
         /// </list>
         /// </summary>
         /// <param name="reader">initial reader</param>
@@ -340,7 +340,7 @@ namespace Lexical.Localization
                     result.AddRange(__stringLines);
                 }
                 else
-                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.KeyTree) && collectionLine.Value.namePolicy is IParameterPrinter nameProvider)
+                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.LineTree) && collectionLine.Value.namePolicy is IParameterPrinter nameProvider)
                 {
                     var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.Print(line.Key), line.Value));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
@@ -371,7 +371,7 @@ namespace Lexical.Localization
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
                     result.AddRange(__stringLines);
                 } else 
-                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.KeyTree) && collectionLine.Value.namePolicy is IParameterPrinter nameProvider)
+                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.LineTree) && collectionLine.Value.namePolicy is IParameterPrinter nameProvider)
                 {
                     var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.Print(line.Key), line.Value));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
@@ -389,7 +389,7 @@ namespace Lexical.Localization
         /// <list type="bullet">
         /// <item>IEnumerable&gt;KeyValuePair&gt;IAssetKey, string&lt;&lt;</item>
         /// <item>IEnumerable&gt;KeyValuePair&gt;string, string&lt;&lt;</item>
-        /// <item>IEnumerable&gt;IKeyTree&lt;</item>
+        /// <item>IEnumerable&gt;ILineTree&lt;</item>
         /// </list>
         /// </summary>
         /// <param name="reader"></param>
@@ -431,7 +431,7 @@ namespace Lexical.Localization
         /// <list type="bullet">
         /// <item>IEnumerable&gt;KeyValuePair&gt;IAssetKey, string&lt;&lt;</item>
         /// <item>IEnumerable&gt;KeyValuePair&gt;string, string&lt;&lt;</item>
-        /// <item>IEnumerable&gt;IKeyTree&lt;</item>
+        /// <item>IEnumerable&gt;ILineTree&lt;</item>
         /// </list>
         /// </summary>
         /// <param name="reader"></param>
@@ -548,9 +548,9 @@ namespace Lexical.Localization
         KeyLines,
 
         /// <summary>
-        /// Key is IKeyTree
+        /// Key is ILineTree
         /// </summary>
-        KeyTree
+        LineTree
     }
 
     /// <summary>
@@ -630,7 +630,7 @@ namespace Lexical.Localization
             this.disposeReader = disposeReader;
 
             if (reader is IEnumerable<KeyValuePair<ILine, IFormulationString>> keyLinesReader) this.Type = CollectionType.KeyLines;
-            else if (reader is IEnumerable<ILineTree> treesReader) this.Type = CollectionType.KeyTree;
+            else if (reader is IEnumerable<ILineTree> treesReader) this.Type = CollectionType.LineTree;
             else if (reader is IEnumerable<KeyValuePair<string, IFormulationString>> stringLinesReader) this.Type = CollectionType.StringLines;
             else if (reader is IEnumerable<KeyValuePair<ILine, string>> keyLinesReader_) this.Type = CollectionType.KeyLines;
             else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_) this.Type = CollectionType.StringLines;

@@ -80,8 +80,8 @@ namespace Lexical.Localization
     /// <item><see cref="ILocalizationStringLinesStreamWriter"/></item>
     /// <item><see cref="ILocalizationKeyLinesTextWriter"/></item>
     /// <item><see cref="ILocalizationKeyLinesStreamWriter"/></item>
-    /// <item><see cref="ILocalizationKeyTreeStreamWriter"/></item>
-    /// <item><see cref="ILocalizationKeyTreeTextWriter"/></item>
+    /// <item><see cref="ILocalizationLineTreeStreamWriter"/></item>
+    /// <item><see cref="ILocalizationLineTreeTextWriter"/></item>
     /// </list>
     /// </summary>
     public interface ILocalizationWriter : ILocalizationFileFormat { }
@@ -171,7 +171,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Writer that can write localization tree structure to streams.
     /// </summary>
-    public interface ILocalizationKeyTreeStreamWriter : ILocalizationWriter
+    public interface ILocalizationLineTreeStreamWriter : ILocalizationWriter
     {
         /// <summary>
         /// Write <paramref name="tree"/> to <paramref name="dstStream"/>.
@@ -186,13 +186,13 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyTree(ILineTree tree, Stream srcStream, Stream dstStream, IParameterPolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteLineTree(ILineTree tree, Stream srcStream, Stream dstStream, IParameterPolicy namePolicy, LocalizationFileWriteFlags flags);
     }
 
     /// <summary>
     /// Writer that can write localization tree structure to text writer.
     /// </summary>
-    public interface ILocalizationKeyTreeTextWriter : ILocalizationWriter
+    public interface ILocalizationLineTreeTextWriter : ILocalizationWriter
     {
         /// <summary>
         /// Create a container where localization key-values can be written to.
@@ -205,7 +205,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyTree(ILineTree tree, TextReader srcText, TextWriter dstText, IParameterPolicy namePolicy, LocalizationFileWriteFlags flags);
+        void WriteLineTree(ILineTree tree, TextReader srcText, TextWriter dstText, IParameterPolicy namePolicy, LocalizationFileWriteFlags flags);
     }
     #endregion Interface
 }

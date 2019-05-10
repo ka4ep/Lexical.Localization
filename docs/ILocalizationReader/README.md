@@ -105,7 +105,7 @@ IAssetSource assetSource = LocalizationReaderMap.Instance.FileAssetSource(
 Different file formats have different intrinsic formats. 
 * Context free list formats are handled with **IEnumerable&lt;KeyValuePair&lt;IAssetKey, string&gt;&gt;** class.
 * Context dependent list formats are held in **IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;**.
-* Structural file formats with context free keys are held in **IKeyTree**.
+* Structural file formats with context free keys are held in **ILineTree**.
 
 Localization file can be read right away into key lines with **.ReadKeyLines()**.
 
@@ -122,10 +122,10 @@ IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = Localizatio
     namePolicy: ParameterPolicy.Instance,
     throwIfNotFound: true);
 ```
-And into a tree **.ReadKeyTree()**.
+And into a tree **.ReadLineTree()**.
 
 ```csharp
-IKeyTree tree = LocalizationReaderMap.Instance.ReadKeyTree(
+ILineTree tree = LocalizationReaderMap.Instance.ReadLineTree(
     filename: "localization.ini", 
     throwIfNotFound: true);
 ```
@@ -149,11 +149,11 @@ IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader =
         namePolicy: ParameterPolicy.Instance,
         throwIfNotFound: true);
 ```
-And **.FileReaderAsKeyTree()** a tree reader.
+And **.FileReaderAsLineTree()** a tree reader.
 
 ```csharp
-IEnumerable<IKeyTree> tree_reader = 
-    LocalizationReaderMap.Instance.FileReaderAsKeyTree(
+IEnumerable<ILineTree> tree_reader = 
+    LocalizationReaderMap.Instance.FileReaderAsLineTree(
         filename: "localization.ini", 
         throwIfNotFound: true);
 ```
@@ -179,11 +179,11 @@ IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader =
         namePolicy: ParameterPolicy.Instance,
         throwIfNotFound: true);
 ```
-And **.EmbeddedReaderAsKeyTree()** reader of trees
+And **.EmbeddedReaderAsLineTree()** reader of trees
 
 ```csharp
-IEnumerable<IKeyTree> tree_reader = 
-    LocalizationReaderMap.Instance.EmbeddedReaderAsKeyTree(
+IEnumerable<ILineTree> tree_reader = 
+    LocalizationReaderMap.Instance.EmbeddedReaderAsLineTree(
         assembly: asm, 
         resourceName: "docs.localization.ini", 
         throwIfNotFound: true);
@@ -210,12 +210,12 @@ IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader =
         filepath: "localization.ini", 
         throwIfNotFound: true);
 ```
-And **.FileProviderReaderAsKeyTree()** tree reader.
+And **.FileProviderReaderAsLineTree()** tree reader.
 
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-IEnumerable<IKeyTree> tree_reader = 
-    LocalizationReaderMap.Instance.FileProviderReaderAsKeyTree(
+IEnumerable<ILineTree> tree_reader = 
+    LocalizationReaderMap.Instance.FileProviderReaderAsLineTree(
         fileProvider: fileProvider, 
         filepath: "localization.ini", 
         throwIfNotFound: true);
@@ -245,7 +245,7 @@ And into a tree.
 ```csharp
 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
 {
-    IKeyTree tree = LocalizationIniReader.Instance.ReadKeyTree(s);
+    ILineTree tree = LocalizationIniReader.Instance.ReadLineTree(s);
 }
 ```
 
@@ -274,7 +274,7 @@ And into tree.
 ```csharp
 using (TextReader tr = new StringReader(text))
 {
-    IKeyTree tree = LocalizationIniReader.Instance.ReadKeyTree(tr);
+    ILineTree tree = LocalizationIniReader.Instance.ReadLineTree(tr);
 }
 ```
 
@@ -298,8 +298,8 @@ IEnumerable<KeyValuePair<string, IFormulationString>> string_lines =
 And into a tree.
 
 ```csharp
-IKeyTree tree = 
-    LocalizationIniReader.Instance.ReadStringAsKeyTree(
+ILineTree tree = 
+    LocalizationIniReader.Instance.ReadStringAsLineTree(
         srcText: text);
 ```
 
@@ -314,9 +314,9 @@ IKeyTree tree =
 /// For reading capability, must implement one of:
 /// <list type="Bullet">
 /// <item><see cref="ILocalizationKeyLinesStreamReader"/></item>
-/// <item><see cref="ILocalizationKeyTreeStreamReader"/></item>
+/// <item><see cref="ILocalizationLineTreeStreamReader"/></item>
 /// <item><see cref="ILocalizationKeyLinesTextReader"/></item>
-/// <item><see cref="ILocalizationKeyTreeTextReader"/></item>
+/// <item><see cref="ILocalizationLineTreeTextReader"/></item>
 /// <item><see cref="ILocalizationStringLinesTextReader"/></item>
 /// <item><see cref="ILocalizationStringLinesStreamReader"/></item>
 /// </list>
@@ -341,7 +341,7 @@ public interface ILocalizationKeyLinesStreamReader : ILocalizationReader
 /// <summary>
 /// Reader that can read localization into tree format format a <see cref="Stream"/>.
 /// </summary>
-public interface ILocalizationKeyTreeStreamReader : ILocalizationReader
+public interface ILocalizationLineTreeStreamReader : ILocalizationReader
 {
     /// <summary>
     /// Read <paramref name="stream"/> into tree structuer.
@@ -350,7 +350,7 @@ public interface ILocalizationKeyTreeStreamReader : ILocalizationReader
     /// <param name="namePolicy">(optional) name policy.</param>
     /// <returns>lines in tree structure</returns>
     /// <exception cref="IOException"></exception>
-    IKeyTree ReadKeyTree(Stream stream, IParameterPolicy namePolicy = default);
+    ILineTree ReadLineTree(Stream stream, IParameterPolicy namePolicy = default);
 }
 
 /// <summary>
@@ -371,7 +371,7 @@ public interface ILocalizationKeyLinesTextReader : ILocalizationReader
 /// <summary>
 /// Reader that can read localization lines from a <see cref="TextReader"/>.
 /// </summary>
-public interface ILocalizationKeyTreeTextReader : ILocalizationReader
+public interface ILocalizationLineTreeTextReader : ILocalizationReader
 {
     /// <summary>
     /// Read <paramref name="text"/> into lines.
@@ -380,7 +380,7 @@ public interface ILocalizationKeyTreeTextReader : ILocalizationReader
     /// <param name="namePolicy">(optional) name policy.</param>
     /// <returns>lines in tree structure</returns>
     /// <exception cref="IOException"></exception>
-    IKeyTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default);
+    ILineTree ReadLineTree(TextReader text, IParameterPolicy namePolicy = default);
 }
 
 /// <summary>
@@ -427,7 +427,7 @@ class ExtFileFormatReader : ILocalizationKeyLinesTextReader
         IParameterPolicy namePolicy = null)
     {
         IAssetKey key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
-        yield return new KeyValuePair<IAssetKey, IFormulationString>(key, LexicalStringFormat.Instance.Parse("Hello World!"));
+        yield return new KeyValuePair<IAssetKey, IFormulationString>(key, CSharpFormat.Instance.Parse("Hello World!"));
     }
 }
 ```

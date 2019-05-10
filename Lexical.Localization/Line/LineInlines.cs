@@ -81,7 +81,7 @@ namespace Lexical.Localization
         IEnumerator IEnumerable.GetEnumerator() => inlines.GetEnumerator();
     }
 
-    public partial class LineAppender : ILineFactory<ILineInlines, IDictionary<ILine, IFormulationString>>
+    public partial class LineAppender : ILineFactory<ILineInlines, IDictionary<ILine, IFormulationString>>, ILineFactory<ILineInlines>
     {
         /// <summary>
         /// Append part.
@@ -94,6 +94,19 @@ namespace Lexical.Localization
         bool ILineFactory<ILineInlines, IDictionary<ILine, IFormulationString>>.TryCreate(ILineFactory appender, ILine previous, IDictionary<ILine, IFormulationString> inlines, out ILineInlines line)
         {
             line = new LineInlines(appender, previous, inlines);
+            return true;
+        }
+
+        /// <summary>
+        /// Append part.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="previous"></param>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        bool ILineFactory<ILineInlines>.TryCreate(ILineFactory appender, ILine previous, out ILineInlines line)
+        {
+            line = new LineInlines(appender, previous, new Dictionary<ILine, IFormulationString>(LineComparer.Default));
             return true;
         }
     }
@@ -170,7 +183,7 @@ namespace Lexical.Localization
         IEnumerator IEnumerable.GetEnumerator() => inlines.GetEnumerator();
     }
 
-    public partial class StringLocalizerAppender : ILineFactory<ILineInlines, IDictionary<ILine, IFormulationString>>
+    public partial class StringLocalizerAppender : ILineFactory<ILineInlines, IDictionary<ILine, IFormulationString>>, ILineFactory<ILineInlines>
     {
         /// <summary>
         /// Append part.
@@ -183,6 +196,19 @@ namespace Lexical.Localization
         bool ILineFactory<ILineInlines, IDictionary<ILine, IFormulationString>>.TryCreate(ILineFactory appender, ILine previous, IDictionary<ILine, IFormulationString> inlines, out ILineInlines StringLocalizer)
         {
             StringLocalizer = new StringLocalizerInlines(appender, previous, inlines);
+            return true;
+        }
+
+        /// <summary>
+        /// Append part.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="previous"></param>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        bool ILineFactory<ILineInlines>.TryCreate(ILineFactory appender, ILine previous, out ILineInlines line)
+        {
+            line = new LineInlines(appender, previous, new Dictionary<ILine, IFormulationString>(LineComparer.Default));
             return true;
         }
     }

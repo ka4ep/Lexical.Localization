@@ -30,9 +30,9 @@ namespace Lexical.Localization
         /// <returns>localization asset</returns>
         public static IAsset StreamAsset(this ILocalizationFileFormat fileFormat, Stream stream, IParameterPolicy namePolicy = default)
         {
-            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            if (fileFormat is ILocalizationLineTreeTextReader || fileFormat is ILocalizationLineTreeStreamReader)
             {
-                return new LocalizationAsset().Add(new ILineTree[] { fileFormat.ReadKeyTree(stream, namePolicy) }, namePolicy).Load();
+                return new LocalizationAsset().Add(new ILineTree[] { fileFormat.ReadLineTree(stream, namePolicy) }, namePolicy).Load();
             }
             else
             if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)

@@ -20,14 +20,14 @@ namespace Lexical.Localization.Utils
     /// 
     /// Sub-nodes have one or more keys. For example an .ini file
     /// <code>
-    /// [culture:en:type:MyController]
+    /// [Culture:en:Type:MyController]
     /// key:Success = success
     /// </code>
     /// 
     /// Would be parsed into a tree of following structure.
-    ///   KeyTree(Key("Root", ""))
-    ///       KeyTree(Key("Culture", "en).Append("Type", "MyController"))
-    ///           KeyTree(Key("Key", "Success")
+    ///   LineTree(Key("Root", ""))
+    ///       LineTree(Key("Culture", "en).Append("Type", "MyController"))
+    ///           LineTree(Key("Key", "Success")
     ///           
     /// </summary>
     [DebuggerDisplay("{DebugPrint()}")]
@@ -41,7 +41,7 @@ namespace Lexical.Localization.Utils
         /// <returns>tree root ""</returns>
         public static LineTree Create(IEnumerable<KeyValuePair<ILine, IFormulationString>> keyValues, IParameterPattern groupingPolicy)
         {
-            LineTree root = new LineTree(Key.Root);
+            LineTree root = new LineTree(new LinePart(LineAppender.Default, null));
             root.AddRange(keyValues, groupingPolicy);
             return root;
         }
@@ -51,12 +51,15 @@ namespace Lexical.Localization.Utils
         /// </summary>
         public readonly LineTree Parent;
 
-        protected Key key;
+        /// <summary>
+        /// Key of this tree node.
+        /// </summary>
+        protected ILine key;
 
         /// <summary>
         /// Associated parameters contained in an instance of Key.
         /// </summary>
-        public Key Key
+        public ILine Key
         {
             get => key;
             set
@@ -65,13 +68,13 @@ namespace Lexical.Localization.Utils
                 if (key == value) return;
 
                 // Copy key into Key
-                Key oldKey = key;
+                ILine oldKey = key;
                 if (oldKey != null)
                 {
                     if (oldKey.Equals(value)) return;
 
                     // Update parent's lookup table
-                    if (Parent != null && oldKey != null && !Key.Comparer.Default.Equals(oldKey, value))
+                    if (Parent != null && oldKey != null && !LineComparer.Parameters.Equals(oldKey, value))
                     {
                         if (oldKey != null && Parent.ChildrenLookup.ContainsKey(oldKey)) Parent.ChildrenLookup.Remove(oldKey, this);
                         Parent.ChildrenLookup.Add(value, this);
@@ -88,9 +91,9 @@ namespace Lexical.Localization.Utils
             {
                 //if (value == null) throw new ArgumentNullException(nameof(Key));
 
-                Key oldKey = key;
+                ILine oldKey = key;
                 if (oldKey != null && oldKey.Equals(value)) return;
-                Key newKey = value is Key _key ? _key : Key.CreateFrom(value);
+                ILine newKey = value is ILine _key ? _key : value.CloneKey();
                 // Add to parent's lookup table
                 if (oldKey == null)
                 {
@@ -99,7 +102,7 @@ namespace Lexical.Localization.Utils
                 // Update parent's lookup table
                 else
                 {
-                    if (Parent != null && oldKey != null && !Key.Comparer.Default.Equals(oldKey, newKey))
+                    if (Parent != null && oldKey != null && !LineComparer.Parameters.Equals(oldKey, newKey))
                     {
                         if (oldKey != null && Parent.ChildrenLookup.ContainsKey(oldKey)) Parent.ChildrenLookup.Remove(oldKey, this);
                         Parent.ChildrenLookup.Add(newKey, this);
@@ -134,7 +137,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Get-or-create child nodes
         /// </summary>
-        public MapList<ILine, LineTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<ILine, LineTree>(LineComparer.Default).AddRange(Children.Where(c=>c.Key!=null).Select(c=>new KeyValuePair<ILine, LineTree>(c.Key, c))));
+        public MapList<ILine, LineTree> ChildrenLookup => childLookup ?? (childLookup = new MapList<ILine, LineTree>(LineComparer.Parameters).AddRange(Children.Where(c=>c.Key!=null).Select(c=>new KeyValuePair<ILine, LineTree>(c.Key, c))));
 
         /// <summary>
         /// Test if has values.
@@ -149,10 +152,10 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Create new key tree node.
         /// </summary>
-        /// <param name="parameter"></param>
-        public LineTree(Key parameter)
+        /// <param name="parameters"></param>
+        public LineTree(ILine parameters)
         {
-            this.Key = parameter;
+            this.Key = parameters;
         }
 
         /// <summary>
@@ -160,7 +163,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         /// <param name="parameter"></param>
         /// <param name="values">(optional) value to add</param>
-        public LineTree(Key parameter, params IFormulationString[] values)
+        public LineTree(ILine parameter, params IFormulationString[] values)
         {
             this.Key = parameter;
             if (values != null) this.values = new List<IFormulationString>(values);
@@ -171,7 +174,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="parameter"></param>
-        public LineTree(LineTree parent, Key parameter)
+        public LineTree(LineTree parent, ILine parameter)
         {
             this.Parent = parent;
             this.Key = parameter;
@@ -183,7 +186,7 @@ namespace Lexical.Localization.Utils
         /// <param name="parent"></param>
         /// <param name="parameter"></param>
         /// <param name="values"></param>
-        public LineTree(LineTree parent, Key parameter, params IFormulationString[] values)
+        public LineTree(LineTree parent, ILine parameter, params IFormulationString[] values)
         {
             this.Parent = parent;
             this.Key = parameter;
@@ -195,7 +198,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public LineTree GetOrCreateChild(Key key)
+        public LineTree GetOrCreateChild(ILine key)
         {
             if (key == null) throw new ArgumentNullException(nameof(key));
             List<LineTree> children;
@@ -239,6 +242,10 @@ namespace Lexical.Localization.Utils
             return result;
         }
 
+        /// <summary>
+        /// Print tree info
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -266,6 +273,10 @@ namespace Lexical.Localization.Utils
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Print debug info
+        /// </summary>
+        /// <returns></returns>
         public virtual string DebugPrint()
         {
             StringBuilder sb = new StringBuilder();

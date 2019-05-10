@@ -170,9 +170,9 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Localization file source that reads as IKeyTree.
+    /// Localization file source that reads as ILineTree.
     /// </summary>
-    public class LocalizationFileKeyTreeSource : LocalizationFileSource, ILocalizationKeyTreeSource
+    public class LocalizationFileLineTreeSource : LocalizationFileSource, ILocalizationLineTreeSource
     {
         /// <summary>
         /// Create localization file source that reads as key tree.
@@ -182,7 +182,7 @@ namespace Lexical.Localization
         /// <param name="filename">non-rooted relative path, or rooted full path</param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationFileKeyTreeSource(ILocalizationFileFormat fileFormat, string path, string filename, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
+        public LocalizationFileLineTreeSource(ILocalizationFileFormat fileFormat, string path, string filename, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, path, filename, namePolicy, throwIfNotFound) { }
 
         static ILineTree[] no_trees = new ILineTree[0];
 
@@ -193,7 +193,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         IEnumerator<ILineTree> IEnumerable<ILineTree>.GetEnumerator()
         {
-            ILineTree tree = LocalizationReaderExtensions.ReadKeyTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
+            ILineTree tree = LocalizationReaderExtensions.ReadLineTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
             ILineTree[] trees = tree == null ? no_trees : new ILineTree[] { tree };
             return ((IEnumerable<ILineTree>)trees).GetEnumerator();
         }
@@ -205,7 +205,7 @@ namespace Lexical.Localization
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
         {
-            ILineTree tree = LocalizationReaderExtensions.ReadKeyTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
+            ILineTree tree = LocalizationReaderExtensions.ReadLineTree(FileFormat, FilePath, KeyPolicy, ThrowIfNotFound);
             ILineTree[] trees = tree == null ? no_trees : new ILineTree[] { tree };
             return ((IEnumerable<ILineTree>)trees).GetEnumerator();
         }
@@ -231,7 +231,7 @@ namespace Lexical.Localization
         /// <param name="newPath"></param>
         /// <returns>clone</returns>
         public override FileSource SetPath(string newPath)
-            => new LocalizationFileKeyTreeSource(FileFormat, newPath, FileName, KeyPolicy, ThrowIfNotFound);
+            => new LocalizationFileLineTreeSource(FileFormat, newPath, FileName, KeyPolicy, ThrowIfNotFound);
     }
 
     /// <summary>

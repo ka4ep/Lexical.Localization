@@ -20,7 +20,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Class that reads .xml localization files.
     /// </summary>
-    public class LocalizationXmlReader : ILocalizationFileFormat, ILocalizationKeyTreeStreamReader, ILocalizationKeyTreeTextReader
+    public class LocalizationXmlReader : ILocalizationFileFormat, ILocalizationLineTreeStreamReader, ILocalizationLineTreeTextReader
     {
         /// <summary>
         /// Namespace
@@ -88,7 +88,7 @@ namespace Lexical.Localization
         /// <param name="element"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public ILineTree ReadKeyTree(XElement element, IParameterPolicy namePolicy = default)
+        public ILineTree ReadLineTree(XElement element, IParameterPolicy namePolicy = default)
             => ReadElement(element, new LineTree(Key.Root), null);
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public ILineTree ReadKeyTree(Stream stream, IParameterPolicy namePolicy = default)
+        public ILineTree ReadLineTree(Stream stream, IParameterPolicy namePolicy = default)
             => ReadElement(Load(stream).Root, new LineTree(Key.Root), null);
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy">not used</param>
         /// <returns></returns>
-        public ILineTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default)
+        public ILineTree ReadLineTree(TextReader text, IParameterPolicy namePolicy = default)
             => ReadElement(Load(text).Root, new LineTree(Key.Root), null);
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace Lexical.Localization
                             node.Values.Add( formulationString );
 
                             if (correspondenceContext != null)
-                                correspondenceContext.Values[new KeyTreeValue(node, formulationString, node.Values.Count - 1)] = text;
+                                correspondenceContext.Values[new LineTreeValue(node, formulationString, node.Values.Count - 1)] = text;
                         }
                     }
                 }

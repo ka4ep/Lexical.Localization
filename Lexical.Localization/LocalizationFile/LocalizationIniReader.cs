@@ -24,7 +24,7 @@ namespace Lexical.Localization
     /// And second level is key-value pairs 'parameterName:parameterValue:.. = value'.
     /// Characters \:= and white-spaces are escaped.
     /// </summary>
-    public class LocalizationIniReader : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
+    public class LocalizationIniReader : ILocalizationFileFormat, ILocalizationLineTreeTextReader
     {
         private readonly static LocalizationIniReader instance = new LocalizationIniReader();
 
@@ -80,7 +80,7 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public ILineTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default)
+        public ILineTree ReadLineTree(TextReader text, IParameterPolicy namePolicy = default)
         {
             LineTree root = new LineTree(Key.Root);
             using (var ini = new IniTokenizer(text.ReadToEnd()))
@@ -126,7 +126,7 @@ namespace Lexical.Localization
                                 int ix = current.Values.Count;
                                 IFormulationString formulationString = ValueParser.Parse(value);
                                 current.Values.Add(formulationString);
-                                if (correspondence != null) correspondence.Values[new KeyTreeValue(current, formulationString, ix)] = token;
+                                if (correspondence != null) correspondence.Values[new LineTreeValue(current, formulationString, ix)] = token;
                             }
                         }
                         break;

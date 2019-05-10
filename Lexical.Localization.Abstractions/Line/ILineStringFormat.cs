@@ -51,7 +51,7 @@ namespace Lexical.Localization
         /// <param name="resolver">(optional) type resolver that resolves "IStringFormat" parameter into type. Returns null, if could not resolve, exception if resolve fails</param>
         /// <returns>type info or null</returns>
         /// <exception cref="Exception">from <paramref name="resolver"/></exception>
-        public static IStringFormat GetStringFormat(this ILine line, IStringFormatResolver resolver = null)
+        public static IStringFormat FindStringFormat(this ILine line, IStringFormatResolver resolver = null)
         {
             IStringFormat type = null;
             for (ILine l = line; l != null; l = l.GetPreviousPart())
@@ -84,7 +84,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="line"></param>
         /// <returns>type name or null</returns>
-        public static string GetStringFormatName(this ILine line)
+        public static string FindStringFormatName(this ILine line)
         {
             string result = null;
             for (ILine part = line; part != null; part = part.GetPreviousPart())

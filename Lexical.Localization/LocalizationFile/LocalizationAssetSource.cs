@@ -105,9 +105,9 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Asset source that provides an asset from re-openable IEnumerable&lt;IKeyTree&lt;.
+    /// Asset source that provides an asset from re-openable IEnumerable&lt;ILineTree&lt;.
     /// </summary>
-    public class LocalizationKeyTreeSource : IAssetSource, ILocalizationKeyTreeSource
+    public class LocalizationLineTreeSource : IAssetSource, ILocalizationLineTreeSource
     {
         /// <summary>
         /// Source of lines
@@ -115,10 +115,10 @@ namespace Lexical.Localization
         public IEnumerable<ILineTree> LineSource { get; protected set; }
 
         /// <summary>
-        /// Create adapter that adapts IEnumerable&lt;IKeyTree&lt;.
+        /// Create adapter that adapts IEnumerable&lt;ILineTree&lt;.
         /// </summary>
         /// <param name="lineSource"></param>
-        public LocalizationKeyTreeSource(IEnumerable<ILineTree> lineSource)
+        public LocalizationLineTreeSource(IEnumerable<ILineTree> lineSource)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
         }

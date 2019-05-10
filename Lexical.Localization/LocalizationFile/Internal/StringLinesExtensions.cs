@@ -57,7 +57,7 @@ namespace Lexical.Localization.Internal
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static ILineTree ToKeyTree(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IParameterPolicy policy)
+        public static ILineTree ToLineTree(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, IParameterPolicy policy)
             => LineTree.Create(lines.ToKeyLines(policy), null);
 
         /// <summary>

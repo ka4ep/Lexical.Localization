@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static ILineTree ToKeyTree(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, IParameterPolicy namePolicy)
+        public static ILineTree ToLineTree(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, IParameterPolicy namePolicy)
         {
             LineTree tree = new LineTree(Key.Root, null);
             if (namePolicy is IParameterPattern pattern)

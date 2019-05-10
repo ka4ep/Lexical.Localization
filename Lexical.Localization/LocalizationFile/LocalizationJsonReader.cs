@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Class that reads ".json" localization files.
     /// </summary>
-    public class LocalizationJsonReader : ILocalizationFileFormat, ILocalizationKeyTreeTextReader
+    public class LocalizationJsonReader : ILocalizationFileFormat, ILocalizationLineTreeTextReader
     {
         private readonly static LocalizationJsonReader instance = new LocalizationJsonReader();
 
@@ -64,7 +64,7 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public ILineTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default)
+        public ILineTree ReadLineTree(TextReader text, IParameterPolicy namePolicy = default)
         {
             LineTree root = new LineTree(Key.Root);
             using (var json = new JsonTextReader(text))
@@ -128,7 +128,7 @@ namespace Lexical.Localization
                                 int ix = current.Values.Count;
                                 IFormulationString formulationString = ValueParser.Parse(value);
                                 current.Values.Add(formulationString);
-                                if (updateCorrespondence) correspondenceContext.Values[new KeyTreeValue(current, formulationString, ix)] = (JValue) tokenReader.CurrentToken;
+                                if (updateCorrespondence) correspondenceContext.Values[new LineTreeValue(current, formulationString, ix)] = (JValue) tokenReader.CurrentToken;
                             }
                         }
                         break;

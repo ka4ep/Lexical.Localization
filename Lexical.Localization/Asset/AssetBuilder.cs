@@ -92,8 +92,8 @@ namespace Lexical.Localization
                 if (__asset == null) __asset = new LocalizationAsset();
                 __asset.Add(src);
             }
-            // ... and IEnumerable<IKeyTree> sources
-            foreach (ILocalizationKeyTreeSource src in sources.Where(s => s is ILocalizationKeyTreeSource).Cast<ILocalizationKeyTreeSource>())
+            // ... and IEnumerable<ILineTree> sources
+            foreach (ILocalizationLineTreeSource src in sources.Where(s => s is ILocalizationLineTreeSource).Cast<ILocalizationLineTreeSource>())
             {
                 if (__asset == null) __asset = new LocalizationAsset();
                 __asset.Add(src);

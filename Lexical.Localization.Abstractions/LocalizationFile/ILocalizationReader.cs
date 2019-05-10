@@ -16,9 +16,9 @@ namespace Lexical.Localization
     /// For reading capability, must implement one of:
     /// <list type="Bullet">
     /// <item><see cref="ILocalizationKeyLinesStreamReader"/></item>
-    /// <item><see cref="ILocalizationKeyTreeStreamReader"/></item>
+    /// <item><see cref="ILocalizationLineTreeStreamReader"/></item>
     /// <item><see cref="ILocalizationKeyLinesTextReader"/></item>
-    /// <item><see cref="ILocalizationKeyTreeTextReader"/></item>
+    /// <item><see cref="ILocalizationLineTreeTextReader"/></item>
     /// <item><see cref="ILocalizationStringLinesTextReader"/></item>
     /// <item><see cref="ILocalizationStringLinesStreamReader"/></item>
     /// </list>
@@ -43,7 +43,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that can read localization into tree format format a <see cref="Stream"/>.
     /// </summary>
-    public interface ILocalizationKeyTreeStreamReader : ILocalizationReader
+    public interface ILocalizationLineTreeStreamReader : ILocalizationReader
     {
         /// <summary>
         /// Read <paramref name="stream"/> into tree structuer.
@@ -52,7 +52,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        ILineTree ReadKeyTree(Stream stream, IParameterPolicy namePolicy = default);
+        ILineTree ReadLineTree(Stream stream, IParameterPolicy namePolicy = default);
     }
 
     /// <summary>
@@ -73,7 +73,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that can read localization lines from a <see cref="TextReader"/>.
     /// </summary>
-    public interface ILocalizationKeyTreeTextReader : ILocalizationReader
+    public interface ILocalizationLineTreeTextReader : ILocalizationReader
     {
         /// <summary>
         /// Read <paramref name="text"/> into lines.
@@ -82,7 +82,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy">(optional) name policy.</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        ILineTree ReadKeyTree(TextReader text, IParameterPolicy namePolicy = default);
+        ILineTree ReadLineTree(TextReader text, IParameterPolicy namePolicy = default);
     }
 
     /// <summary>

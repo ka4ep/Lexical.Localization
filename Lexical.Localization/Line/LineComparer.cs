@@ -23,6 +23,7 @@ namespace Lexical.Localization
     {
         private static LineComparer instance = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Instance).AddComparer(NonCanonicalComparer.Instance).SetReadonly();
         private static LineComparer ignoreCulture = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Instance).AddComparer(NonCanonicalComparer.IgnoreCulture).SetReadonly();
+        private static LineComparer parameters = new LineComparer(null).AddParameterComparer(ParameterComparer.Instance).SetReadonly();
 
         /// <summary>
         /// Makes comparisons on interface level. 
@@ -44,17 +45,27 @@ namespace Lexical.Localization
         public static LineComparer Default => instance;
 
         /// <summary>
+        /// Comparer that compares parameters.
+        /// </summary>
+        public static LineComparer Parameters => parameters;
+
+        /// <summary>
         /// Comparer that is oblivious to "Culture" parameter.
         /// </summary>
         public static LineComparer IgnoreCulture => ignoreCulture;
 
         /// <summary>
-        /// List of canonical comparers that compare <see cref="ILineCanonicalKey"/> parts separately.
+        /// List of canonical comparers that compare <see cref="ILineCanonicalKey"/> parts.
         /// </summary>
         List<IEqualityComparer<ILine>> canonicalComparers = new List<IEqualityComparer<ILine>>();
 
         /// <summary>
-        /// List of generic comparers.
+        /// List of parameter comparers that compare <see cref="ILineParameter"/> parts.
+        /// </summary>
+        List<IEqualityComparer<ILine>> parameterComparers = new List<IEqualityComparer<ILine>>();
+
+        /// <summary>
+        /// List of generic whole line comparers.
         /// </summary>
         List<IEqualityComparer<ILine>> comparers = new List<IEqualityComparer<ILine>>();
 
@@ -88,6 +99,19 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Add generic key comparer that evaluates hash-equals for the full keys.
+        /// </summary>
+        /// <param name="comparer"></param>
+        /// <returns></returns>
+        public LineComparer AddComparer(IEqualityComparer<ILine> comparer)
+        {
+            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            if (immutable) throw new InvalidOperationException("immutable");
+            comparers.Add(comparer);
+            return this;
+        }
+
+        /// <summary>
         /// Add canonical comparer. Canonical comparer is applied to each key that implements <see cref="ILineCanonicalKey"/>.
         /// </summary>
         /// <param name="comparer"></param>
@@ -101,15 +125,15 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Add generic key comparer that evaluates hash-equals for the full keys.
+        /// Add parameter comparer. Parameter comparer is applied to each key that implements <see cref="ILineParameter"/>.
         /// </summary>
         /// <param name="comparer"></param>
         /// <returns></returns>
-        public LineComparer AddComparer(IEqualityComparer<ILine> comparer)
+        public LineComparer AddParameterComparer(IEqualityComparer<ILine> comparer)
         {
             if (comparer == null) throw new ArgumentNullException(nameof(comparer));
             if (immutable) throw new InvalidOperationException("immutable");
-            comparers.Add(comparer);
+            parameterComparers.Add(comparer);
             return this;
         }
 
@@ -137,17 +161,37 @@ namespace Lexical.Localization
             }
 
             // Canonical key part comparers
-            StructList12<ILineParameter> x_canonicals = new StructList12<ILineParameter>(), y_canonicals = new StructList12<ILineParameter>();
-            x.GetCanonicalKeys<StructList12<ILineParameter>>(ref x_canonicals, parameterInfos);
-            y.GetCanonicalKeys<StructList12<ILineParameter>>(ref y_canonicals, parameterInfos);
-            if (x_canonicals.Count != y_canonicals.Count) return false;
-            for (int i=0; i<x_canonicals.Count; i++)
+            if (canonicalComparers.Count > 0)
             {
-                ILineParameter x_key = x_canonicals[i], y_key = y_canonicals[i];
-                // Run comparers
-                foreach(var comparer in canonicalComparers)
-                    if (!comparer.Equals(x_key, y_key))
-                        return false;
+                StructList12<ILineParameter> x_canonicals = new StructList12<ILineParameter>(), y_canonicals = new StructList12<ILineParameter>();
+                x.GetCanonicalKeys<StructList12<ILineParameter>>(ref x_canonicals, parameterInfos);
+                y.GetCanonicalKeys<StructList12<ILineParameter>>(ref y_canonicals, parameterInfos);
+                if (x_canonicals.Count != y_canonicals.Count) return false;
+                for (int i = 0; i < x_canonicals.Count; i++)
+                {
+                    ILineParameter x_key = x_canonicals[i], y_key = y_canonicals[i];
+                    // Run comparers
+                    for (int j=0; j<canonicalComparers.Count; j++)
+                        if (!canonicalComparers[j].Equals(x_key, y_key))
+                            return false;
+                }
+            }
+
+            // Parameter part comparers
+            if (parameterComparers.Count > 0)
+            {
+                StructList12<ILineParameter> x_parameters = new StructList12<ILineParameter>(), y_parameters = new StructList12<ILineParameter>();
+                x.GetParameterParts<StructList12<ILineParameter>>(ref x_parameters);
+                y.GetParameterParts<StructList12<ILineParameter>>(ref y_parameters);
+                if (x_parameters.Count != y_parameters.Count) return false;
+                for (int i = 0; i < x_parameters.Count; i++)
+                {
+                    ILineParameter x_key = x_parameters[i], y_key = y_parameters[i];
+                    // Run comparers
+                    for (int j = 0; j < parameterComparers.Count; j++)
+                        if (!parameterComparers[j].Equals(x_key, y_key))
+                            return false;
+                }
             }
 
             return true;
@@ -188,18 +232,39 @@ namespace Lexical.Localization
             }
 
             // Canonical hashing
-            StructList12<ILineParameter> list = new StructList12<ILineParameter>();
-            line.GetCanonicalKeys<StructList12<ILineParameter>>(ref list, parameterInfos);
-            for(int i=0; i<list.Count; i++)
+            if (canonicalComparers.Count > 0)
             {
-                var key = list[i];
-                // hash in canonical comparer 
-                foreach (var comparer in canonicalComparers)
+                StructList12<ILineParameter> list = new StructList12<ILineParameter>();
+                line.GetCanonicalKeys<StructList12<ILineParameter>>(ref list, parameterInfos);
+                for (int i = 0; i < list.Count; i++)
                 {
-                    result ^= comparer.GetHashCode(key);
-                    result *= FNVHashPrime;
+                    var key = list[i];
+                    // hash in canonical comparer 
+                    foreach (var comparer in canonicalComparers)
+                    {
+                        result ^= comparer.GetHashCode(key);
+                        result *= FNVHashPrime;
+                    }
                 }
             }
+
+            // Parameter hashing
+            if (parameterComparers.Count > 0)
+            {
+                StructList12<ILineParameter> list = new StructList12<ILineParameter>();
+                line.GetParameterParts<StructList12<ILineParameter>>(ref list);
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var key = list[i];
+                    // hash in canonical comparer 
+                    foreach (var comparer in parameterComparers)
+                    {
+                        result ^= comparer.GetHashCode(key);
+                        result *= FNVHashPrime;
+                    }
+                }
+            }
+
             return result;
         }
     }

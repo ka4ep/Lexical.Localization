@@ -35,8 +35,8 @@ namespace Lexical.Localization
                 if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), namePolicy);
                 if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcFilename.ReadText(), namePolicy).ToStringLines(namePolicy);
                 if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcFilename.ReadStream(), namePolicy).ToStringLines(namePolicy);
-                if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcFilename.ReadText(), namePolicy).ToStringLines(namePolicy);
-                if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(srcFilename.ReadStream(), namePolicy).ToStringLines(namePolicy);
+                if (fileFormat is ILocalizationLineTreeTextReader r2) return r2.ReadLineTree(srcFilename.ReadText(), namePolicy).ToStringLines(namePolicy);
+                if (fileFormat is ILocalizationLineTreeStreamReader r4) return r4.ReadLineTree(srcFilename.ReadStream(), namePolicy).ToStringLines(namePolicy);
             }
             catch (FileNotFoundException) when (!throwIfNotFound)
             {
@@ -62,8 +62,8 @@ namespace Lexical.Localization
             {
                 if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcFilename.ReadText(), namePolicy);
                 if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcFilename.ReadStream(), namePolicy);
-                if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcFilename.ReadText(), namePolicy).ToKeyLines();
-                if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(srcFilename.ReadStream(), namePolicy).ToKeyLines();
+                if (fileFormat is ILocalizationLineTreeTextReader r2) return r2.ReadLineTree(srcFilename.ReadText(), namePolicy).ToKeyLines();
+                if (fileFormat is ILocalizationLineTreeStreamReader r4) return r4.ReadLineTree(srcFilename.ReadStream(), namePolicy).ToKeyLines();
                 if (fileFormat is ILocalizationStringLinesTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), namePolicy).ToKeyLines(namePolicy);
                 if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), namePolicy).ToKeyLines(namePolicy);
             }
@@ -84,17 +84,17 @@ namespace Lexical.Localization
         /// <returns>tree or null if file was not found and error not thrown</returns>
         /// <exception cref="FileNotFoundException">thrown if file was not found and <paramref name="throwIfNotFound"/> is true</exception>
         /// <exception cref="IOException">on io error</exception>
-        public static ILineTree ReadKeyTree(this ILocalizationFileFormat fileFormat, string srcFilename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+        public static ILineTree ReadLineTree(this ILocalizationFileFormat fileFormat, string srcFilename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
         {
             if (!throwIfNotFound && !File.Exists(srcFilename)) return null;
             try
             {
-                if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcFilename.ReadText(), namePolicy);
-                if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcFilename.ReadText(), namePolicy).ToKeyTree(namePolicy);
-                if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(srcFilename.ReadStream(), namePolicy);
-                if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcFilename.ReadStream(), namePolicy).ToKeyTree(namePolicy);
-                if (fileFormat is ILocalizationStringLinesTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), namePolicy).ToKeyTree(namePolicy);
-                if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), namePolicy).ToKeyTree(namePolicy);
+                if (fileFormat is ILocalizationLineTreeTextReader r2) return r2.ReadLineTree(srcFilename.ReadText(), namePolicy);
+                if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcFilename.ReadText(), namePolicy).ToLineTree(namePolicy);
+                if (fileFormat is ILocalizationLineTreeStreamReader r4) return r4.ReadLineTree(srcFilename.ReadStream(), namePolicy);
+                if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcFilename.ReadStream(), namePolicy).ToLineTree(namePolicy);
+                if (fileFormat is ILocalizationStringLinesTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), namePolicy).ToLineTree(namePolicy);
+                if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), namePolicy).ToLineTree(namePolicy);
             }
             catch (FileNotFoundException) when (!throwIfNotFound)
             {
@@ -122,8 +122,8 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
-        public static LocalizationFileKeyTreeSource FileReaderAsKeyTree(this ILocalizationFileFormat fileFormat, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
-            => new LocalizationFileKeyTreeSource(fileFormat, null, filename, namePolicy, throwIfNotFound);
+        public static LocalizationFileLineTreeSource FileReaderAsLineTree(this ILocalizationFileFormat fileFormat, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+            => new LocalizationFileLineTreeSource(fileFormat, null, filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -148,9 +148,9 @@ namespace Lexical.Localization
         /// <returns>reloadable localization asset</returns>
         public static IAsset FileAsset(this ILocalizationFileFormat fileFormat, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
         {
-            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            if (fileFormat is ILocalizationLineTreeTextReader || fileFormat is ILocalizationLineTreeStreamReader)
             {
-                return new LocalizationAsset().Add(fileFormat.FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound), namePolicy).Load();
+                return new LocalizationAsset().Add(fileFormat.FileReaderAsLineTree(filename, namePolicy, throwIfNotFound), namePolicy).Load();
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
@@ -173,9 +173,9 @@ namespace Lexical.Localization
         /// <returns>asset source</returns>
         public static LocalizationFileSource FileAssetSource(this ILocalizationFileFormat fileFormat, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
         {
-            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            if (fileFormat is ILocalizationLineTreeTextReader || fileFormat is ILocalizationLineTreeStreamReader)
             {
-                return new LocalizationFileKeyTreeSource(fileFormat, null, filename, namePolicy, throwIfNotFound);
+                return new LocalizationFileLineTreeSource(fileFormat, null, filename, namePolicy, throwIfNotFound);
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
@@ -199,9 +199,9 @@ namespace Lexical.Localization
         /// <returns>asset source</returns>
         public static LocalizationFileSource FileAssetSource(this ILocalizationFileFormat fileFormat, string path, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
         {
-            if (fileFormat is ILocalizationKeyTreeTextReader || fileFormat is ILocalizationKeyTreeStreamReader)
+            if (fileFormat is ILocalizationLineTreeTextReader || fileFormat is ILocalizationLineTreeStreamReader)
             {
-                return new LocalizationFileKeyTreeSource(fileFormat, path, filename, namePolicy, throwIfNotFound);
+                return new LocalizationFileLineTreeSource(fileFormat, path, filename, namePolicy, throwIfNotFound);
             }
             else if (fileFormat is ILocalizationKeyLinesTextReader || fileFormat is ILocalizationKeyLinesStreamReader)
             {
@@ -235,8 +235,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
         /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static ILineTree ReadKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].ReadKeyTree(filename, namePolicy, throwIfNotFound);
+        public static ILineTree ReadLineTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].ReadLineTree(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Read file into strings file.
@@ -271,8 +271,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
         /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LocalizationFileKeyTreeSource FileReaderAsKeyTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].FileReaderAsKeyTree(filename, namePolicy, throwIfNotFound);
+        public static LocalizationFileLineTreeSource FileReaderAsLineTree(this IReadOnlyDictionary<string, ILocalizationFileFormat> fileFormatProvider, string filename, IParameterPolicy namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LocalizationFileFormatMap.GetExtension(filename)].FileReaderAsLineTree(filename, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.

@@ -15,13 +15,13 @@ namespace Lexical.Localization
     public static class LineTreeExtensions
     {
         /// <summary>
-        /// Flatten <paramref name="keyTree"/> to string lines.
+        /// Flatten <paramref name="LineTree"/> to string lines.
         /// </summary>
-        /// <param name="keyTree"></param>
+        /// <param name="LineTree"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this ILineTree keyTree, IParameterPolicy policy)
-            => keyTree.ToKeyLines().ToStringLines(policy);
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this ILineTree LineTree, IParameterPolicy policy)
+            => LineTree.ToKeyLines().ToStringLines(policy);
 
         /// <summary>
         /// Flatten <paramref name="node"/> to key lines.
@@ -82,7 +82,7 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <returns></returns>
         public static IAssetSource ToAssetSource(ILineTree tree)
-            => new LocalizationKeyTreeSource(tree == null ? new ILineTree[0] : new ILineTree[] { tree });
+            => new LocalizationLineTreeSource(tree == null ? new ILineTree[0] : new ILineTree[] { tree });
 
         /// <summary>
         /// Convert <paramref name="trees"/> to <see cref="IAssetSource"/>..
@@ -90,7 +90,7 @@ namespace Lexical.Localization
         /// <param name="trees"></param>
         /// <returns></returns>
         public static IAssetSource ToAssetSource(this IEnumerable<ILineTree> trees)
-            => new LocalizationKeyTreeSource(trees);
+            => new LocalizationLineTreeSource(trees);
 
         /// <summary>
         /// Search child by key.

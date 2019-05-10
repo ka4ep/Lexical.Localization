@@ -46,13 +46,13 @@ The same extension methods are also available in the **LocalizationReaderMap**, 
 Different file formats have different intrinsic formats. 
 * Context free list formats are handled with **IEnumerable&lt;KeyValuePair&lt;IAssetKey, string&gt;&gt;** class.
 * Context dependent list formats are held in **IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;**.
-* Structural file formats with context free keys are held in **IKeyTree**.
+* Structural file formats with context free keys are held in **ILineTree**.
 
 Localization file can be read right away into key lines with **.ReadKeyLines()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1a)]
 Into string lines with **.ReadStringLines()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1b)]
-And into a tree **.ReadKeyTree()**.
+And into a tree **.ReadLineTree()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c)]
 
 # File Reader
@@ -61,7 +61,7 @@ File reader reads the refered file when **.GetEnumerator()** is called, and will
 [!code-csharp[Snippet](Examples.cs#Snippet_2a)]
 **.FileReaderAsStringLines()** creates a reader that returns string lines.
 [!code-csharp[Snippet](Examples.cs#Snippet_2b)]
-And **.FileReaderAsKeyTree()** a tree reader.
+And **.FileReaderAsLineTree()** a tree reader.
 [!code-csharp[Snippet](Examples.cs#Snippet_2c)]
 
 # Embedded Reader
@@ -69,7 +69,7 @@ Embedded resource reader is created with **.EmbeddedReaderAsKeyLines()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_3a)]
 **.EmbeddedReaderAsStringLines()** creates embedded reader of string lines.
 [!code-csharp[Snippet](Examples.cs#Snippet_3b)]
-And **.EmbeddedReaderAsKeyTree()** reader of trees
+And **.EmbeddedReaderAsLineTree()** reader of trees
 [!code-csharp[Snippet](Examples.cs#Snippet_3c)]
 
 # IFileProvider Reader
@@ -77,7 +77,7 @@ File provider reader is created with **.FileProviderReaderAsKeyLines()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_4a)]
 **.FileProviderReaderAsStringLines()** creates string lines reader
 [!code-csharp[Snippet](Examples.cs#Snippet_4b)]
-And **.FileProviderReaderAsKeyTree()** tree reader.
+And **.FileProviderReaderAsLineTree()** tree reader.
 [!code-csharp[Snippet](Examples.cs#Snippet_4c)]
 
 # Read Stream

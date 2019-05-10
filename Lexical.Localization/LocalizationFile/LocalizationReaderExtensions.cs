@@ -35,8 +35,8 @@ namespace Lexical.Localization
         /// <param name="srcText"></param>
         /// <param name="namePolicy"></param>
         /// <returns>tree</returns>
-        public static ILineTree ReadStringAsKeyTree(this ILocalizationFileFormat fileFormat, string srcText, IParameterPolicy namePolicy = default)
-            => ReadKeyTree(fileFormat, new StringReader(srcText), namePolicy);
+        public static ILineTree ReadStringAsLineTree(this ILocalizationFileFormat fileFormat, string srcText, IParameterPolicy namePolicy = default)
+            => ReadLineTree(fileFormat, new StringReader(srcText), namePolicy);
 
         /// <summary>
         /// Read key-values as strings from text.
@@ -59,8 +59,8 @@ namespace Lexical.Localization
         {
             if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcText, namePolicy);
             if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcText.ReadStream(), namePolicy);
-            if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcText, namePolicy).ToKeyLines();
-            if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(srcText.ReadStream(), namePolicy).ToKeyLines();
+            if (fileFormat is ILocalizationLineTreeTextReader r2) return r2.ReadLineTree(srcText, namePolicy).ToKeyLines();
+            if (fileFormat is ILocalizationLineTreeStreamReader r4) return r4.ReadLineTree(srcText.ReadStream(), namePolicy).ToKeyLines();
             if (fileFormat is ILocalizationStringLinesTextReader r5) return r5.ReadStringLines(srcText, namePolicy).ToKeyLines(namePolicy);
             if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcText.ReadStream(), namePolicy).ToKeyLines(namePolicy);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
@@ -77,8 +77,8 @@ namespace Lexical.Localization
         {
             if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(stream, namePolicy);
             if (fileFormat is ILocalizationKeyLinesTextReader r1) using (var txt = stream.ReadText()) return r1.ReadKeyLines(txt, namePolicy);
-            if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(stream, namePolicy).ToKeyLines();
-            if (fileFormat is ILocalizationKeyTreeTextReader r2) using (var txt = stream.ReadText()) return r2.ReadKeyTree(txt, namePolicy).ToKeyLines();
+            if (fileFormat is ILocalizationLineTreeStreamReader r4) return r4.ReadLineTree(stream, namePolicy).ToKeyLines();
+            if (fileFormat is ILocalizationLineTreeTextReader r2) using (var txt = stream.ReadText()) return r2.ReadLineTree(txt, namePolicy).ToKeyLines();
             if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(stream, namePolicy).ToKeyLines(namePolicy);
             if (fileFormat is ILocalizationStringLinesTextReader r5) using (var txt = stream.ReadText()) return r5.ReadStringLines(txt, namePolicy).ToKeyLines(namePolicy);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
@@ -91,14 +91,14 @@ namespace Lexical.Localization
         /// <param name="srcText"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static ILineTree ReadKeyTree(this ILocalizationFileFormat fileFormat, TextReader srcText, IParameterPolicy namePolicy = default)
+        public static ILineTree ReadLineTree(this ILocalizationFileFormat fileFormat, TextReader srcText, IParameterPolicy namePolicy = default)
         {
-            if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcText, namePolicy);
-            if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcText, namePolicy).ToKeyTree(namePolicy);
-            if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(srcText.ReadStream(), namePolicy);
-            if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcText.ReadStream(), namePolicy).ToKeyTree(namePolicy);
-            if (fileFormat is ILocalizationStringLinesTextReader r5) return r5.ReadStringLines(srcText, namePolicy).ToKeyTree(namePolicy);
-            if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcText.ReadStream(), namePolicy).ToKeyTree(namePolicy);
+            if (fileFormat is ILocalizationLineTreeTextReader r2) return r2.ReadLineTree(srcText, namePolicy);
+            if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcText, namePolicy).ToLineTree(namePolicy);
+            if (fileFormat is ILocalizationLineTreeStreamReader r4) return r4.ReadLineTree(srcText.ReadStream(), namePolicy);
+            if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcText.ReadStream(), namePolicy).ToLineTree(namePolicy);
+            if (fileFormat is ILocalizationStringLinesTextReader r5) return r5.ReadStringLines(srcText, namePolicy).ToLineTree(namePolicy);
+            if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcText.ReadStream(), namePolicy).ToLineTree(namePolicy);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
 
@@ -109,14 +109,14 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static ILineTree ReadKeyTree(this ILocalizationFileFormat fileFormat, Stream stream, IParameterPolicy namePolicy = default)
+        public static ILineTree ReadLineTree(this ILocalizationFileFormat fileFormat, Stream stream, IParameterPolicy namePolicy = default)
         {
-            if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(stream, namePolicy);
-            if (fileFormat is ILocalizationKeyTreeTextReader r2) using (var txt = stream.ReadText()) return r2.ReadKeyTree(txt, namePolicy);
-            if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(stream, namePolicy).ToKeyTree(namePolicy);
-            if (fileFormat is ILocalizationKeyLinesTextReader r1) using (var txt = stream.ReadText()) return r1.ReadKeyLines(txt, namePolicy).ToKeyTree(namePolicy);
-            if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(stream, namePolicy).ToKeyTree(namePolicy);
-            if (fileFormat is ILocalizationStringLinesTextReader r5) using (var txt = stream.ReadText()) return r5.ReadStringLines(txt, namePolicy).ToKeyTree(namePolicy);
+            if (fileFormat is ILocalizationLineTreeStreamReader r4) return r4.ReadLineTree(stream, namePolicy);
+            if (fileFormat is ILocalizationLineTreeTextReader r2) using (var txt = stream.ReadText()) return r2.ReadLineTree(txt, namePolicy);
+            if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(stream, namePolicy).ToLineTree(namePolicy);
+            if (fileFormat is ILocalizationKeyLinesTextReader r1) using (var txt = stream.ReadText()) return r1.ReadKeyLines(txt, namePolicy).ToLineTree(namePolicy);
+            if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(stream, namePolicy).ToLineTree(namePolicy);
+            if (fileFormat is ILocalizationStringLinesTextReader r5) using (var txt = stream.ReadText()) return r5.ReadStringLines(txt, namePolicy).ToLineTree(namePolicy);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
 
@@ -134,8 +134,8 @@ namespace Lexical.Localization
             if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(srcText.ReadStream(), namePolicy);
             if (fileFormat is ILocalizationKeyLinesTextReader r1) return r1.ReadKeyLines(srcText, namePolicy).ToStringLines(namePolicy);
             if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(srcText.ReadStream(), namePolicy).ToStringLines(namePolicy);
-            if (fileFormat is ILocalizationKeyTreeTextReader r2) return r2.ReadKeyTree(srcText, namePolicy).ToStringLines(namePolicy);
-            if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(srcText.ReadStream(), namePolicy).ToStringLines(namePolicy);
+            if (fileFormat is ILocalizationLineTreeTextReader r2) return r2.ReadLineTree(srcText, namePolicy).ToStringLines(namePolicy);
+            if (fileFormat is ILocalizationLineTreeStreamReader r4) return r4.ReadLineTree(srcText.ReadStream(), namePolicy).ToStringLines(namePolicy);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
 
@@ -151,9 +151,9 @@ namespace Lexical.Localization
             if (fileFormat is ILocalizationStringLinesStreamReader r6) return r6.ReadStringLines(stream, namePolicy);
             if (fileFormat is ILocalizationStringLinesTextReader r5) using (var txt = stream.ReadText()) return r5.ReadStringLines(txt, namePolicy);
             if (fileFormat is ILocalizationKeyLinesStreamReader r3) return r3.ReadKeyLines(stream, namePolicy).ToStringLines(namePolicy);
-            if (fileFormat is ILocalizationKeyTreeStreamReader r4) return r4.ReadKeyTree(stream, namePolicy).ToStringLines(namePolicy);
+            if (fileFormat is ILocalizationLineTreeStreamReader r4) return r4.ReadLineTree(stream, namePolicy).ToStringLines(namePolicy);
             if (fileFormat is ILocalizationKeyLinesTextReader r1) using (var txt = stream.ReadText()) return r1.ReadKeyLines(txt, namePolicy).ToStringLines(namePolicy);
-            if (fileFormat is ILocalizationKeyTreeTextReader r2) using (var txt = stream.ReadText()) return r2.ReadKeyTree(txt, namePolicy).ToStringLines(namePolicy);
+            if (fileFormat is ILocalizationLineTreeTextReader r2) using (var txt = stream.ReadText()) return r2.ReadLineTree(txt, namePolicy).ToStringLines(namePolicy);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
 
