@@ -13,7 +13,7 @@ using System.Threading;
 namespace Lexical.Localization.Internal
 {
     /// <summary>
-    /// Resolves class name to instnace of class.
+    /// Resolves class name to instance of the class.
     /// Caches the instances.
     /// </summary>
     /// <typeparam name="T"></typeparam>
@@ -88,20 +88,6 @@ namespace Lexical.Localization.Internal
         /// Function that resolves rules.
         /// </summary>
         protected Func<string, ResultLine> resolveFunc;
-
-        /// <summary>
-        /// Set to disposed and clear cached instances.
-        /// </summary>
-        public void Dispose()
-        {
-            // Start disposing
-            if (Interlocked.CompareExchange(ref disposed, 1L, 0L) != 0L) return;
-            // Release cache
-            cache = null;
-            // Mark disposed
-            Interlocked.CompareExchange(ref disposed, 2L, 1L);
-        }
-
         /// <summary>
         /// Create type resolver with default settings.
         /// 
@@ -177,8 +163,7 @@ namespace Lexical.Localization.Internal
         /// </summary>
         /// <param name="typeName"></param>
         /// <param name="result"></param>
-        /// <returns>value</returns>
-        /// <exception cref="LocalizationException"></exception>
+        /// <returns>true if was resolved with result</returns>
         /// <exception cref="ObjectDisposedException"></exception>
         public bool TryResolve(string typeName, out T result)
         {
@@ -189,6 +174,19 @@ namespace Lexical.Localization.Internal
             if (line.Value == default) { result = default; return false; }
             result = line.Value;
             return true;
+        }
+
+        /// <summary>
+        /// Set to disposed and clear cached instances.
+        /// </summary>
+        public void Dispose()
+        {
+            // Start disposing
+            if (Interlocked.CompareExchange(ref disposed, 1L, 0L) != 0L) return;
+            // Release cache
+            cache = null;
+            // Mark disposed
+            Interlocked.CompareExchange(ref disposed, 2L, 1L);
         }
 
         /// <summary>
