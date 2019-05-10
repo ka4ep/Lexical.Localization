@@ -3,6 +3,7 @@
 // Date:           25.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -67,49 +68,6 @@ namespace Lexical.Localization.Plurality
             PluralRuleExpressionParser.CreateParser(rulesExpression).Select(exp => new PluralRule.Expression(exp.Infos, exp.Rule, exp.Samples));
 
         /// <summary>
-        /// Assembly resolver that looks into AppDomain, but will not load external file.
-        /// </summary>
-        public static Func<AssemblyName, Assembly> DefaultAssemblyResolver = asmName => Assembly.Load(asmName);
-
-        /// <summary>
-        /// Assembly resolver that searches dlls from application directory.
-        /// </summary>
-        public static Func<AssemblyName, Assembly> FileAssemblyResolver = asmName =>
-        {
-            try
-            {
-                Assembly a = Assembly.Load(asmName);
-                if (a != null) return a;
-            }
-            catch (Exception)
-            {
-            }
-
-            string dir = typeof(PluralRulesResolver).Assembly.Location;
-            if (dir != null)
-            {
-                string dllName = asmName.Name + ".dll";
-                string dllPath = Path.Combine(dir, asmName.Name + ".dll");
-                if (!File.Exists(dllPath)) throw new FileNotFoundException(dllName);
-                return Assembly.LoadFile(dllPath);
-            }
-            return null;
-        };
-
-        /// <summary>
-        /// Default type resolver that does following name mapping.
-        /// </summary>
-        public static Func<Assembly, string, bool, Type> DefaultTypeResolver = (Assembly a, string typename, bool throwOnError) => 
-        {
-            // Transform "Unicode.CLDR35", "Unicode.CLDR35,Lexical.Localization" -> "Lexical.Localization.Unicode.CLDR35"
-            if ( (a == null || a.GetName().Name == "Lexical.Localization") && typename.StartsWith("Unicode.CLDR")) typename = "Lexical.Localization." + typename;
-            // Assembly name was specified and it was resolved into Assembly, now try to load the Type from there
-            if (a != null) return a.GetType(typename);
-            // There was no assembly name specified in the type name
-            else return Type.GetType(typename);
-        };
-
-        /// <summary>
         /// Function that converts enumerable to <see cref="IPluralRules"/>.
         /// </summary>
         public static Func<IEnumerable<IPluralRule>, IPluralRulesEnumerable> DefaultRulesFactory =
@@ -123,7 +81,7 @@ namespace Lexical.Localization.Plurality
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public PluralRulesResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver, DefaultRuleExpressionParser, DefaultRulesFactory)
+        public PluralRulesResolver() : this(TypeResolver.DefaultAssemblyResolver, TypeResolver.DefaultTypeResolver, DefaultRuleExpressionParser, DefaultRulesFactory)
         {
         }
 

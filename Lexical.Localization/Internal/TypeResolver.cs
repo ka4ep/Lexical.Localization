@@ -13,11 +13,9 @@ using System.Threading;
 namespace Lexical.Localization.Internal
 {
     /// <summary>
-    /// Resolves class name to instance of the class.
-    /// Caches the instances.
+    /// Base class for type resolver classes.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class TypeResolver<T> : IDisposable
+    public class TypeResolver
     {
         /// <summary>
         /// Assembly resolver that looks into AppDomain, but will not load external file.
@@ -62,12 +60,6 @@ namespace Lexical.Localization.Internal
             else return Type.GetType(typename);
         };
 
-        /// <summary>
-        /// 0 - not disposed
-        /// 1 - disposing
-        /// 2 - disposed
-        /// </summary>
-        long disposed = 0L;
 
         /// <summary>
         /// Function that resolves type name into <see cref="Type"/>.
@@ -79,15 +71,6 @@ namespace Lexical.Localization.Internal
         /// </summary>
         protected Func<AssemblyName, Assembly> assemblyResolver;
 
-        /// <summary>
-        /// Cache of resolved rules.
-        /// </summary>
-        protected ConcurrentDictionary<string, ResultLine> cache = new ConcurrentDictionary<string, ResultLine>();
-
-        /// <summary>
-        /// Function that resolves rules.
-        /// </summary>
-        protected Func<string, ResultLine> resolveFunc;
         /// <summary>
         /// Create type resolver with default settings.
         /// 
@@ -107,6 +90,51 @@ namespace Lexical.Localization.Internal
         {
             this.assemblyResolver = assemblyLoader;
             this.typeResolver = typeResolver;
+        }
+
+    }
+
+    /// <summary>
+    /// Resolves class name to instance of the class.
+    /// Caches the instances.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class TypeResolver<T> : TypeResolver, IDisposable
+    {
+        /// <summary>
+        /// 0 - not disposed
+        /// 1 - disposing
+        /// 2 - disposed
+        /// </summary>
+        long disposed = 0L;
+
+        /// <summary>
+        /// Cache of resolved rules.
+        /// </summary>
+        protected ConcurrentDictionary<string, ResultLine> cache = new ConcurrentDictionary<string, ResultLine>();
+
+        /// <summary>
+        /// Function that resolves rules.
+        /// </summary>
+        protected Func<string, ResultLine> resolveFunc;
+
+        /// <summary>
+        /// Create type resolver with default settings.
+        /// 
+        /// Parses expressions and instantiates types that are found in the app domain.
+        /// Does not load external dll files.
+        /// </summary>
+        public TypeResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver)
+        {
+        }
+
+        /// <summary>
+        /// Create type resolver.
+        /// </summary>
+        /// <param name="assemblyLoader">(optional) function that reads assembly from file.</param>
+        /// <param name="typeResolver">(optional) Function that resolves type name into <see cref="Type"/>.</param>
+        public TypeResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base(assemblyLoader, typeResolver)
+        {
             this.resolveFunc = (string typeName) =>
             {
                 try
@@ -179,7 +207,7 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Set to disposed and clear cached instances.
         /// </summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             // Start disposing
             if (Interlocked.CompareExchange(ref disposed, 1L, 0L) != 0L) return;

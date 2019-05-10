@@ -43,5 +43,20 @@ namespace Lexical.Localization
         {
         }
 
+        /// <summary>
+        /// Dispose or clear resolver.
+        /// </summary>
+        public override void Dispose()
+        {
+            if (this == Instance)
+            {
+                // Don't dispose the global static instance, but clear its cache.
+                cache.Clear();
+            } else
+            {
+                // Continue disposing
+                base.Dispose();
+            }
+        }
     }
 }
