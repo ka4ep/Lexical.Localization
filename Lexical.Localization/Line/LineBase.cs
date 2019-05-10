@@ -168,7 +168,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public string DebugPrint()
-            => ParameterPolicy.Instance.Print(this);
+            => ParameterParser.Instance.Print(this);
 
         /// <summary>
         /// Equals comparison. The default comparer compares <see cref="ILineKey"/> and <see cref="ILineFormatArgsPart"/> parts.

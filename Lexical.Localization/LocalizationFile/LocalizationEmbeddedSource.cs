@@ -19,7 +19,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public IParameterPolicy KeyPolicy { get; internal set; }
+        public ILinePolicy KeyPolicy { get; internal set; }
 
         /// <summary>
         /// File format 
@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="keyPolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationEmbeddedSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, IParameterPolicy keyPolicy, bool throwIfNotFound) : base(assembly, resourceName, throwIfNotFound)
+        public LocalizationEmbeddedSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy keyPolicy, bool throwIfNotFound) : base(assembly, resourceName, throwIfNotFound)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.KeyPolicy = keyPolicy;
@@ -70,7 +70,7 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if true, throws <see cref="FileNotFoundException"/></param>
-        public LocalizationEmbeddedStringLinesSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
+        public LocalizationEmbeddedStringLinesSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
 
         /// <summary>
         /// No lines
@@ -135,7 +135,7 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationEmbeddedKeyLinesSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
+        public LocalizationEmbeddedKeyLinesSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
 
         static IEnumerable<KeyValuePair<ILine, IFormulationString>> empty = new KeyValuePair<ILine, IFormulationString>[0];
 
@@ -197,7 +197,7 @@ namespace Lexical.Localization
         /// <param name="resourceName"></param>
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound"></param>
-        public LocalizationEmbeddedLineTreeSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, IParameterPolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
+        public LocalizationEmbeddedLineTreeSource(ILocalizationFileFormat fileFormat, Assembly assembly, string resourceName, ILinePolicy namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
 
         static IEnumerable<ILineTree> empty = new ILineTree[0];
 

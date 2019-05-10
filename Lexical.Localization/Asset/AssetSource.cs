@@ -86,7 +86,7 @@ namespace Lexical.Localization
         /// <param name="fileFormat">(optional) overriding file format to use in case format cannot be infered from file extension</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">thrown if fileformat was not found</exception>
-        public static IAssetBuilder AddLocalizationFile(this IAssetBuilder assetBuilder, string filename, IParameterPolicy namePolicy = default, ILocalizationFileFormat fileFormat = null)
+        public static IAssetBuilder AddLocalizationFile(this IAssetBuilder assetBuilder, string filename, ILinePolicy namePolicy = default, ILocalizationFileFormat fileFormat = null)
         {
             if (fileFormat == null) fileFormat = LocalizationReaderMap.Instance.GetFormatByFilename(filename);
             assetBuilder.AddSource( fileFormat.FileAssetSource(filename, namePolicy) );
@@ -102,7 +102,7 @@ namespace Lexical.Localization
         /// <param name="fileFormat">(optional) overriding file format to use in case format cannot be infered from file extension</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">thrown if fileformat was not found</exception>
-        public static IAssetBuilder AddEmbeddedLocalizationFile(this IAssetBuilder assetBuilder, Assembly assembly, string resourceName, IParameterPolicy namePolicy = default, ILocalizationFileFormat fileFormat = null)
+        public static IAssetBuilder AddEmbeddedLocalizationFile(this IAssetBuilder assetBuilder, Assembly assembly, string resourceName, ILinePolicy namePolicy = default, ILocalizationFileFormat fileFormat = null)
         {
             if (fileFormat == null) fileFormat = LocalizationReaderMap.Instance.GetFormatByFilename(resourceName);
             assetBuilder.AddSource( fileFormat.EmbeddedAssetSource(assembly, resourceName, namePolicy) );

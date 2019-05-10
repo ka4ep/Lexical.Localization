@@ -8,7 +8,7 @@ Root is the place where asset (the localization provider) is tied to key (locali
 // Create localization source
 var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
 // Create asset
-IAsset asset = new LocalizationAsset(source, ParameterPolicy.Instance);
+IAsset asset = new LocalizationAsset(source, ParameterParser.Instance);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
@@ -51,7 +51,7 @@ StringLocalizerRoot is constructed with an asset and a culture policy, just as L
 // Create localization source
 var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
 // Create asset
-IAsset asset = new LocalizationAsset(source, ParameterPolicy.Instance);
+IAsset asset = new LocalizationAsset(source, ParameterParser.Instance);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
@@ -131,7 +131,7 @@ Assets are added to the global root with **LocalizationRoot.Builder**.
 // Create localization source
 var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
 // Create asset
-IAsset asset = new LocalizationAsset(source, ParameterPolicy.Instance);
+IAsset asset = new LocalizationAsset(source, ParameterParser.Instance);
 // Assets are added to global static builder. It must be (re-)built after adding.
 LocalizationRoot.Builder.AddAsset(asset).Build();
 ```

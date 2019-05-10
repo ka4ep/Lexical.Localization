@@ -525,7 +525,7 @@ namespace Lexical.Localization
                 StringBuilder sb = new StringBuilder();
 
                 // Append key
-                ParameterParser.Instance.PrintKey(Key, sb);
+                ParameterParser.Instance.Print(Key, sb);
 
                 // Append result
                 if (Value != null)

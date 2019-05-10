@@ -9,35 +9,35 @@ using Microsoft.Extensions.Localization;
 
 namespace docs
 {
-    public class ParameterPolicy_Examples
+    public class ParameterParserExamples
     {
         public static void Main(string[] args)
         {
             {
                 #region Snippet_0
                 string str = @"Culture:en:Type:MyController:Key:Ok";
-                ILine key = ParameterPolicy.Instance.Parse(str);
+                ILine key = ParameterParser.Instance.Parse(str);
                 #endregion Snippet_0
             }
             {
                 #region Snippet_0b
                 string str = @"Culture:en:Type:MyController:Key:Ok";
                 ILine root = new StringLocalizerRoot();
-                ILine key = ParameterPolicy.Instance.Parse(str, root);
+                ILine key = ParameterParser.Instance.Parse(str, root);
                 #endregion Snippet_0b
             }
 
             {
                 #region Snippet_1
                 string str = @"Key:Success\:Plural";
-                ILine key = ParameterPolicy.Instance.Parse(str);
+                ILine key = ParameterParser.Instance.Parse(str);
                 #endregion Snippet_1
             }
 
             {
                 #region Snippet_2
                 ILine key = LineRoot.Global.Type("MyController").Key("Success").Culture("en");
-                string str = ParameterPolicy.Instance.Print(key);
+                string str = ParameterParser.Instance.Print(key);
                 #endregion Snippet_2
             }
             {
@@ -48,14 +48,14 @@ namespace docs
                 #region Snippet_4
                 ILine key = LineRoot.Global.Type("MyController").Key("Success").Culture("en");
                 IEnumerable<KeyValuePair<string, string>> parameters = key.GetParameters();
-                string str = ParameterPolicy.Instance.PrintParameters(parameters);
+                string str = ParameterParser.Instance.PrintParameters(parameters);
                 #endregion Snippet_4
             }
 
             {
                 #region Snippet_5
                 string str = "Culture:en:Type:MyLibrary.MyController:Key:Success";
-                IEnumerable<KeyValuePair<string, string>> parameters = ParameterPolicy.Instance.ParseParameters(str);
+                IEnumerable<KeyValuePair<string, string>> parameters = ParameterParser.Instance.ParseParameters(str);
                 ILine key = LineRoot.Global.Parameters(parameters);
                 #endregion Snippet_5
             }
@@ -63,14 +63,14 @@ namespace docs
             {
                 #region Snippet_6
                 ILine key = LineRoot.Global.Type("MyController").Key("Success").Culture("en");
-                string str = ParameterPolicy.Instance.PrintKey(key);
+                string str = ParameterParser.Instance.PrintKey(key);
                 #endregion Snippet_6
             }
 
             {
                 #region Snippet_7
                 string str = "Culture:en:Type:MyLibrary.MyController:Key:Success";
-                ILine key = ParameterPolicy.Instance.Parse(str, LineRoot.Global);
+                ILine key = ParameterParser.Instance.Parse(str, LineRoot.Global);
                 #endregion Snippet_7
             }
         }

@@ -36,12 +36,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.
         /// </summary>
-        protected ParameterPolicy escaper_section = new ParameterPolicy("\\:[]", true, "\\:[]", true);
+        protected ParameterParser escaper_section = new ParameterParser("\\:[]", true, "\\:[]", true);
 
         /// <summary>
         /// Escaper for key parts of .ini files. Escapes '\', ':', '=' characters and white-spaces.
         /// </summary>
-        protected ParameterPolicy escaper_key = new ParameterPolicy("\\:= ", true, "\\:= ", true);
+        protected ParameterParser escaper_key = new ParameterParser("\\:= ", true, "\\:= ", true);
 
         /// <summary>
         /// Escaper for value parts of .ini files. Escapes '\', '{', '}' characters and white-spaces.
@@ -80,9 +80,9 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public ILineTree ReadLineTree(TextReader text, IParameterPolicy namePolicy = default)
+        public ILineTree ReadLineTree(TextReader text, ILinePolicy namePolicy = default)
         {
-            LineTree root = new LineTree(Key.Root);
+            LineTree root = new LineTree();
             using (var ini = new IniTokenizer(text.ReadToEnd()))
                 ReadIniIntoTree(ini, root, namePolicy, null);
             return root;
@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="correspondence">(optional) if set tokens are associated to key tree. If <paramref name="correspondence"/> is provided, then <paramref name="ini"/> must be a linked list. See <see cref="IniTokenizer.ToLinkedList"/></param>
         /// <returns><paramref name="root"/></returns>
-        public ILineTree ReadIniIntoTree(IEnumerable<IniToken> ini, ILineTree root, IParameterPolicy namePolicy, IniCorrespondence correspondence)
+        public ILineTree ReadIniIntoTree(IEnumerable<IniToken> ini, ILineTree root, ILinePolicy namePolicy, IniCorrespondence correspondence)
         {
             ILineTree section = null;
             foreach(IniToken token in ini)

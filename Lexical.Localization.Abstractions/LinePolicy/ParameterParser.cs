@@ -14,9 +14,10 @@ using Lexical.Localization.Internal;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Parameter policy that uses the following format "Key:Value:...".
+    /// Parameter policy that uses the following format "Key:Value:...". 
+    /// Parses to <see cref="ILineParameter"/> parts.
     /// </summary>
-    public class ParameterParser
+    public class ParameterParser : ILinePrinter, ILineParser, ILineAppendParser
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
         static ParameterParser instance = new ParameterParser("\\:", false, "\\:", false);
@@ -95,10 +96,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string PrintKey(ILine key)
+        public string Print(ILine key)
         {
             StringBuilder sb = new StringBuilder();
-            PrintKey(key, sb);
+            Print(key, sb);
             return sb.ToString();
         }
         
@@ -117,7 +118,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="sb"></param>
         /// <returns><paramref name="sb"/></returns>
-        public StringBuilder PrintKey(ILine key, StringBuilder sb)
+        public StringBuilder Print(ILine key, StringBuilder sb)
         {
             StructList12<ILineParameter> list = new StructList12<ILineParameter>();
             key.GetParameterParts<StructList12<ILineParameter>>(ref list);
@@ -162,22 +163,46 @@ namespace Lexical.Localization
         /// <summary>
         /// Parse string into IAssetKey.
         /// </summary>
-        /// <param name="keyString"></param>
-        /// <param name="rootKey">root key to span values from</param>
-        /// <returns>result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</returns>
-        /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
-        public virtual ILine Parse(string keyString, ILine rootKey)
+        /// <param name="str"></param>
+        /// <param name="prevPart">(optional) previous part to append to</param>
+        /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
+        /// <returns>result key, or null if it contained no parameters and <paramref name="prevPart"/> was null.</returns>
+        /// <exception cref="LineException">The parameter is not of the correct format.</exception>
+        public virtual ILine Parse(string str, ILine prevPart = default, ILineFactory appender = default)
         {
-            ILine result = rootKey;
-            MatchCollection matches = ParsePattern.Matches(keyString);
+            if (appender == null) appender = prevPart.GetAppender();
+            MatchCollection matches = ParsePattern.Matches(str);
             foreach (Match m in matches)
             {
-                if (!m.Success) throw new FormatException(keyString);
+                if (!m.Success) throw new LineException(null, str);
                 Group k_key = m.Groups["key"], k_value = m.Groups["value"];
-                if (!k_key.Success || !k_value.Success) throw new FormatException(keyString);
+                if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                result = result.Parameter(key, value);
+                prevPart = appender.Create<ILineParameter, string, string>(prevPart, key, value);
+            }
+            return prevPart;
+        }
+
+        /// <summary>
+        /// Parse to parameter arguments.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public IEnumerable<ILineArguments> Parse(string str)
+        {
+            MatchCollection matches = ParsePattern.Matches(str);
+            int count = matches.Count;
+            ILineArguments[] result = new ILineArguments[count];
+            for (int i=0; i<count; i++)
+            {
+                Match m = matches[i];
+                if (!m.Success) throw new LineException(null, str);
+                Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
+                string key = UnescapeLiteral(k_key.Value);
+                string value = UnescapeLiteral(k_value.Value);
+                result[i] = new ParameterArgument(key, value);
             }
             return result;
         }
@@ -186,23 +211,50 @@ namespace Lexical.Localization
         /// Try parse string into IAssetKey.
         /// </summary>
         /// <param name="keyString"></param>
-        /// <param name="resultKey">result key, or null if it contained no parameters and <paramref name="rootKey"/> was null.</param>
-        /// <param name="rootKey">root key to span values from</param>
+        /// <param name="result">result key, or null if it contained no parameters and <paramref name="prevPart"/> was null.</param>
+        /// <param name="prevPart">(optional) previous part to append to</param>
+        /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
         /// <returns>true if parse was successful</returns>
-        public virtual bool TryParse(string keyString, out ILine resultKey, ILine rootKey)
+        public virtual bool TryParse(string keyString, out ILine result, ILine prevPart = default, ILineFactory appender = default)
         {
-            ILine result = rootKey;
+            if (appender == null && !prevPart.TryGetAppender(out appender)) { result = null; return false; }
             MatchCollection matches = ParsePattern.Matches(keyString);
             foreach (Match m in matches)
             {
-                if (!m.Success) { resultKey = null; return false; }
+                if (!m.Success) { result = null; return false; }
                 Group k_key = m.Groups["key"], k_value = m.Groups["value"];
-                if (!k_key.Success || !k_value.Success) { resultKey = null; return false; }
+                if (!k_key.Success || !k_value.Success) { result = null; return false; }
                 string key = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
-                result = result.Parameter(key, value);
+                ILineParameter parameter;
+                if (appender.TryCreate<ILineParameter, string, string>(prevPart, key, value, out parameter)) prevPart = parameter; else { result = null; return false; }
             }
-            resultKey = result;
+            result = prevPart;
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public bool TryParse(string str, out IEnumerable<ILineArguments> args)
+        {
+            MatchCollection matches = ParsePattern.Matches(str);
+            int count = matches.Count;
+            ILineArguments[] result = new ILineArguments[count];
+            for (int i = 0; i < count; i++)
+            {
+                Match m = matches[i];
+                if (!m.Success) { args = null; return false; }
+                Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                if (!k_key.Success || !k_value.Success) { args = null; return false; }
+                string key = UnescapeLiteral(k_key.Value);
+                string value = UnescapeLiteral(k_value.Value);
+                result[i] = new ParameterArgument(key, value);
+            }
+            args = result;
             return true;
         }
 
@@ -211,15 +263,15 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="keyString"></param>
         /// <returns>parameters</returns>
-        /// <exception cref="System.FormatException">The parameter is not of the correct format.</exception>
+        /// <exception cref="LineException">The parameter is not of the correct format.</exception>
         public IEnumerable<KeyValuePair<string, string>> ParseParameters(string keyString)
         {
             MatchCollection matches = ParsePattern.Matches(keyString);
             foreach (Match m in matches)
             {
-                if (!m.Success) throw new FormatException(keyString);
+                if (!m.Success) throw new LineException(null, keyString);
                 Group k_key = m.Groups["key"], k_value = m.Groups["value"];
-                if (!k_key.Success || !k_value.Success) throw new FormatException(keyString);
+                if (!k_key.Success || !k_value.Success) throw new LineException(null, keyString);
                 string name = UnescapeLiteral(k_key.Value);
                 string value = UnescapeLiteral(k_value.Value);
                 yield return new KeyValuePair<string, string>(name, value);
@@ -307,6 +359,18 @@ namespace Lexical.Localization
                     return new string((char)(c >> 16), 1) + new string((char)(c & 0xffffU), 1);
                 default:
                     return new string(_ch, 1);
+            }
+        }
+
+        class ParameterArgument : ILineArguments<ILineParameter, string, string>
+        {
+            public string Argument0 => ParameterName;
+            public string Argument1 => ParameterValue;
+            readonly string ParameterName, ParameterValue;
+            public ParameterArgument(string parameterName, string parameterValue)
+            {
+                ParameterName = parameterName;
+                ParameterValue = parameterValue;
             }
         }
 

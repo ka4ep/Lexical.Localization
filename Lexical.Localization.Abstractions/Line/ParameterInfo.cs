@@ -80,7 +80,7 @@ namespace Lexical.Localization.Utils
         int Order { get; }
 
         /// <summary>
-        /// Default capture pattern for IParameterPattern.
+        /// Default capture pattern for ILinePattern.
         /// </summary>
         Regex Pattern { get; }
     }
@@ -111,7 +111,7 @@ namespace Lexical.Localization.Utils
         public int Order { get; private set; }
 
         /// <summary>
-        /// Default capture pattern for IParameterPattern.
+        /// Default capture pattern for ILinePattern.
         /// </summary>
         public Regex Pattern { get; private set; }
 
@@ -163,7 +163,7 @@ namespace Lexical.Localization.Utils
         /// <param name="parameterName"></param>
         /// <param name="interfaceType"></param>
         /// <param name="sortingOrder"></param>
-        /// <param name="pattern">(optional) capture pattern for <see cref="IParameterPattern"/></param>
+        /// <param name="pattern">(optional) capture pattern for <see cref="ILinePattern"/></param>
         /// <returns><paramref name="infos"/></returns>
         /// <exception cref="ArgumentException"></exception>
         public static IDictionary<string, IParameterInfo> Add(this IDictionary<string, IParameterInfo> infos, string parameterName, Type interfaceType, int sortingOrder, Regex pattern)

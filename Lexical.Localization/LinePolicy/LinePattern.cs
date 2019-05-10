@@ -56,7 +56,7 @@ namespace Lexical.Localization
     ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
     /// 
     /// </summary>
-    public class ParameterPattern : IParameterPattern, IParameterParser, IParameterPrinter
+    public class LinePattern : ILinePattern, ILineParser, ILineAppendParser, ILinePrinter
     {
         static Regex regex = new Regex(
             @"(?<text>[^\[\{\}\]]+)|" +
@@ -74,11 +74,11 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="pattern"></param>
         /// <returns>pattern or null if parse failed.</returns>
-        public static ParameterPattern TryParse(string pattern)
+        public static LinePattern TryParse(string pattern)
         {
             try
             {
-                return new ParameterPattern(pattern);
+                return new LinePattern(pattern);
             }
             catch (Exception) { }
             {
@@ -105,7 +105,7 @@ namespace Lexical.Localization
         /// <summary>
         /// All parts of the pattern
         /// </summary>
-        public IParameterPatternPart[] AllParts => allParts;
+        public ILinePatternPart[] AllParts => allParts;
 
         /// <summary>
         /// All parts that capture a part of string.
@@ -115,17 +115,17 @@ namespace Lexical.Localization
         /// <summary>
         /// All parts that capture a part of string.
         /// </summary>
-        public IParameterPatternPart[] CaptureParts => captureParts;
+        public ILinePatternPart[] CaptureParts => captureParts;
 
         /// <summary>
         /// Maps parts by part identifier.
         /// </summary>
-        public IReadOnlyDictionary<string, IParameterPatternPart> PartMap { get; internal set; }
+        public IReadOnlyDictionary<string, ILinePatternPart> PartMap { get; internal set; }
 
         /// <summary>
         /// Maps parts by parameter identifier.
         /// </summary>
-        public IReadOnlyDictionary<string, IParameterPatternPart[]> ParameterMap { get; internal set; }
+        public IReadOnlyDictionary<string, ILinePatternPart[]> ParameterMap { get; internal set; }
 
         /// <summary>
         /// List of all parameter names
@@ -147,7 +147,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="pattern"></param>
         /// <exception cref="ArgumentException">If there was a problem parsing the filename pattern</exception>
-        public ParameterPattern(string pattern)
+        public LinePattern(string pattern)
         {
             this.Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
             System.Text.RegularExpressions.MatchCollection matches = regex.Matches(pattern);
@@ -170,7 +170,7 @@ namespace Lexical.Localization
                 }
 
                 // Assert that either optional or required groups match
-                if (!g_o_identifier.Success && !g_r_identifier.Success) throw new ArgumentException($"Could not parse {nameof(ParameterPattern)} \"{pattern}\"");
+                if (!g_o_identifier.Success && !g_r_identifier.Success) throw new ArgumentException($"Could not parse {nameof(LinePattern)} \"{pattern}\"");
 
                 bool optional = g_o_identifier.Success;
 
@@ -243,7 +243,6 @@ namespace Lexical.Localization
             allParts = list.ToArray();
             captureParts = list.Where(part => part.Identifier != null).ToArray();
             PartMap = CaptureParts.ToDictionary(p => p.Identifier);
-            _keyvisitor = KeyVisitor;
             ParameterNames = captureParts.Select(part => part.ParameterName).Distinct().ToArray();
             ParameterMap = ParameterNames.ToDictionary(s => s, parameterName => CaptureParts.Where(part => part.ParameterName == parameterName).OrderBy(p => p.OccuranceIndex).ToArray());
         }
@@ -251,7 +250,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Part info
         /// </summary>
-        public class Part : IParameterPatternPart
+        public class Part : ILinePatternPart
         {
             /// <summary>
             /// Text that represents this part in pattern.
@@ -311,14 +310,14 @@ namespace Lexical.Localization
             /// <summary>
             /// Pattern of this part.
             /// </summary>
-            public Regex Regex => regex ?? IParameterPatternExtensions.GetDefaultPattern(ParameterName);
+            public Regex Regex => regex ?? ILinePatternExtensions.GetDefaultPattern(ParameterName);
 
             /// <summary>
             /// Tests if text is match.
             /// </summary>
             /// <param name="text"></param>
             /// <returns></returns>
-            public bool IsMatch(string text) => Regex == IParameterPatternExtensions.GetDefaultPattern(null) ? true : Regex.IsMatch(text);
+            public bool IsMatch(string text) => Regex == ILinePatternExtensions.GetDefaultPattern(null) ? true : Regex.IsMatch(text);
 
             /// <summary>
             /// Print part
@@ -328,26 +327,32 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Match parameters in <paramref name="key"/> with the parts in the pattern.
+        /// Match parameters in <paramref name="line"/> with the parts in the pattern.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <returns></returns>
-        public IParameterPatternMatch Match(ILine key)
+        public ILinePatternMatch Match(ILine line)
         {
-            ParameterPatternMatch match = new ParameterPatternMatch(this);
-            key.VisitParameters(_keyvisitor, ref match);
+            StructList16<ILineParameter> parameters = new StructList16<ILineParameter>();
+            line.GetParameterParts<StructList16<ILineParameter>>(ref parameters);
+            LinePatternMatch match = new LinePatternMatch(this);
+            // parameters is in reverse order, so iterate from end which is actually the root
+            for(int i=parameters.Count-1; i>=0; i--)
+            {
+                ILineParameter parameter = parameters[i];
+                MatchParameter(parameter.ParameterName, parameter.ParameterValue, match);
+            }
             return match;
         }
 
-        ParameterVisitor<ParameterPatternMatch> _keyvisitor;
-        void KeyVisitor(string parameterName, string parameterValue, ref ParameterPatternMatch match)
+        void MatchParameter(string parameterName, string parameterValue, LinePatternMatch match)
         {
             // Search parts
-            IParameterPatternPart[] parts;
+            ILinePatternPart[] parts;
             if (ParameterMap.TryGetValue(parameterName, out parts))
             {
                 // Iterate each part
-                foreach (IParameterPatternPart part in parts)
+                foreach (ILinePatternPart part in parts)
                 {
                     // Test if part is already filled
                     if (match[part.CaptureIndex] != null) continue;
@@ -366,7 +371,7 @@ namespace Lexical.Localization
             if ((parameterName == "Section" || parameterName == "Location" || parameterName == "Type" || parameterName == "Resource" || parameterName == "Assembly") && ParameterMap.TryGetValue("anysection", out parts))
             {
                 // Iterate each part
-                foreach (IParameterPatternPart part in parts)
+                foreach (ILinePatternPart part in parts)
                 {
                     // Test if part is already filled
                     if (match[part.CaptureIndex] != null) continue;
@@ -386,22 +391,61 @@ namespace Lexical.Localization
         /// Parse string into key.
         /// </summary>
         /// <param name="str">key as string</param>
-        /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <param name="prevPart">(optional) previous part to append to</param>
+        /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
         /// <returns>key result or null if contained no content</returns>
-        /// <exception cref="FormatException">If parse failed</exception>
-        public ILine Parse(string str, ILine rootKey = default)
+        /// <exception cref="LineException">If parse failed</exception>
+        public ILine Parse(string str, ILine prevPart = default, ILineFactory appender = default)
         {
-            IParameterPatternMatch match = this.Match(text: str, filledParameters: null);
-            if (!match.Success) throw new FormatException($"Key \"{str}\" did not match the pattern \"{Pattern}\"");
+            // Get appender
+            if (appender == null) appender = prevPart.GetAppender();
 
-            ILine result = rootKey;
-            foreach (var kp in match)
+            // Match
+            ILinePatternMatch match = this.Match(text: str, filledParameters: null);
+            if (!match.Success) throw new LineException(null, $"Key \"{str}\" did not match the pattern \"{Pattern}\"");
+
+            // Append to line
+            for (int i = 0; i < match.PartValues.Length; i++)
             {
-                if (kp.Key == null || kp.Value == null) continue;
-                string parameterName = kp.Key;
-                if (parameterName == "anysection") parameterName = "Section";
-                result = result == null ? Key.Create(parameterName, kp.Value) : result.Parameter(parameterName, kp.Value);
+                string value = match.PartValues[i];
+                if (value == null) continue;
+                string key = CaptureParts[i].ParameterName;
+                if (key == "anysection") key = "Section";
+                prevPart = appender.Create<ILineParameter, string, string>(prevPart, key, value);
             }
+
+            // Return line
+            return prevPart;
+        }
+
+        /// <summary>
+        /// Parse to parameter arguments.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public IEnumerable<ILineArguments> Parse(string str)
+        {
+            // Match
+            ILinePatternMatch match = this.Match(text: str, filledParameters: null);
+            if (!match.Success) throw new LineException(null, $"Key \"{str}\" did not match the pattern \"{Pattern}\"");
+
+            // Count parts
+            int count = 0;
+            foreach (string partValue in match.PartValues) if (partValue != null) count++;
+
+            // Create args
+            ILineArguments[] result = new ILineArguments[count];
+            int ix = 0;
+            for (int i=0; i<match.PartValues.Length; i++)
+            {
+                string value = match.PartValues[i];
+                if (value == null) continue;
+                string key = CaptureParts[i].ParameterName;
+                if (key == "anysection") key = "Section";
+                result[ix++] = new ParameterArgument(key, value);
+            }
+
+            // Return args
             return result;
         }
 
@@ -409,22 +453,65 @@ namespace Lexical.Localization
         /// Parse string into key.
         /// </summary>
         /// <param name="str"></param>
-        /// <param name="key">key result or null if contained no content</param>
-        /// <param name="rootKey">(optional) root key to span values from</param>
+        /// <param name="result">key result or null if contained no content</param>
+        /// <param name="prevPart">(optional) previous part to append to</param>
+        /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
         /// <returns>true if parse was successful</returns>
-        public bool TryParse(string str, out ILine key, ILine rootKey = default)
+        public bool TryParse(string str, out ILine result, ILine prevPart = default, ILineFactory appender = default)
         {
-            IParameterPatternMatch match = this.Match(text: str, filledParameters: null);
-            if (!match.Success) { key = null; return false; }
-            ILine result = rootKey;
-            foreach (var kp in match)
+            // Get appender
+            if (appender == null && !prevPart.TryGetAppender(out appender)) { result = null; return false; }
+
+            // Match
+            ILinePatternMatch match = this.Match(text: str, filledParameters: null);
+            if (!match.Success) { result = null; return false; }
+
+            // Append to line
+            for (int i = 0; i < match.PartValues.Length; i++)
             {
-                if (kp.Key == null || kp.Value == null) continue;
-                string parameterName = kp.Key;
-                if (parameterName == "anysection") parameterName = "Section";
-                result = result == null ? Key.Create(parameterName, kp.Value) : result.Parameter(parameterName, kp.Value);
+                string value = match.PartValues[i];
+                if (value == null) continue;
+                string key = CaptureParts[i].ParameterName;
+                if (key == "anysection") key = "Section";
+                ILineParameter parameter;
+                if (appender.TryCreate<ILineParameter, string, string>(prevPart, key, value, out parameter)) prevPart = parameter; else { result = null; return false; }
             }
-            key = result;
+
+            // Return line
+            result = prevPart;
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public bool TryParse(string str, out IEnumerable<ILineArguments> args)
+        {
+            // Match
+            ILinePatternMatch match = this.Match(text: str, filledParameters: null);
+            if (!match.Success) { args = null; return false; }
+
+            // Count parts
+            int count = 0;
+            foreach (string partValue in match.PartValues) if (partValue != null) count++;
+
+            // Create args
+            ILineArguments[] result = new ILineArguments[count];
+            int ix = 0;
+            for (int i = 0; i < match.PartValues.Length; i++)
+            {
+                string value = match.PartValues[i];
+                if (value == null) continue;
+                string key = CaptureParts[i].ParameterName;
+                if (key == "anysection") key = "Section";
+                result[ix++] = new ParameterArgument(key, value);
+            }
+
+            // Return args
+            args = result;
             return true;
         }
 
@@ -435,8 +522,8 @@ namespace Lexical.Localization
         /// <returns></returns>
         public string Print(ILine key)
         {
-            IParameterPatternMatch match = Match(key);
-            return IParameterPatternExtensions.Print(this, match.PartValues);
+            ILinePatternMatch match = Match(key);
+            return ILinePatternExtensions.Print(this, match.PartValues);
         }
 
         /// <summary>
@@ -453,28 +540,40 @@ namespace Lexical.Localization
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            if (obj is ParameterPattern other)
+            if (obj is LinePattern other)
                 return other.Pattern == Pattern;
             return false;
+        }
+
+        class ParameterArgument : ILineArguments<ILineParameter, string, string>
+        {
+            public string Argument0 => ParameterName;
+            public string Argument1 => ParameterValue;
+            readonly string ParameterName, ParameterValue;
+            public ParameterArgument(string parameterName, string parameterValue)
+            {
+                ParameterName = parameterName;
+                ParameterValue = parameterValue;
+            }
         }
     }
 
     /// <summary></summary>
-    public static partial class ParameterPatternExtensions
+    public static partial class LinePatternExtensions
     {
         /// <summary>
         /// Convert <paramref name="match"/> into an asset key that contains the captured parameters.
         /// </summary>
         /// <param name="match"></param>
         /// <returns>key or null if <paramref name="match"/> contained no values</returns>
-        public static ILine ToKey(this IParameterPatternMatch match)
+        public static ILine ToKey(this ILinePatternMatch match)
         {
-            Key result = null;
-            foreach(IParameterPatternPart part in match.Pattern.CaptureParts)
+            ILine result = null;
+            foreach(ILinePatternPart part in match.Pattern.CaptureParts)
             {
                 string value = match[part.CaptureIndex];
                 if (value == null) continue;
-                result = Key.Create(result, part.ParameterName, value);
+                result = LineAppender.Default.Create<ILineParameter, string, string>(result, part.ParameterName, value);
             }
             return result;
         }
@@ -484,10 +583,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="match">(optional)</param>
         /// <returns>parameter names and values</returns>
-        public static IEnumerable<KeyValuePair<string, string>> ToParameters(this IParameterPatternMatch match)
+        public static IEnumerable<KeyValuePair<string, string>> ToParameters(this ILinePatternMatch match)
         {
             if (match == null) yield break;
-            foreach (IParameterPatternPart part in match.Pattern.CaptureParts)
+            foreach (ILinePatternPart part in match.Pattern.CaptureParts)
             {
                 string value = match[part.CaptureIndex];
                 if (value == null) continue;
@@ -498,7 +597,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Convert "match" parameters into an array of "non-match" parameters.
         /// 
-        /// "match" parameter is a parameter in the format of <see cref="IParameterPattern"/>, where match contains
+        /// "match" parameter is a parameter in the format of <see cref="ILinePattern"/>, where match contains
         /// capture index "_#". For example "section_0", "section_1". The capture index is removed from the result of 
         /// this function. Keys are orderd by this index.
         /// 
@@ -516,7 +615,7 @@ namespace Lexical.Localization
         public static IEnumerable<KeyValuePair<string, string>> ConvertMatchParametersToNonMatchParameters(IReadOnlyDictionary<string, string> matchParameters)
         {
             if (matchParameters == null) return new KeyValuePair<string, string>[0];
-            if (matchParameters is IParameterPatternMatch match) return ToParameters(match);
+            if (matchParameters is ILinePatternMatch match) return ToParameters(match);
 
             // (parameter name, parameter value, sorting value)
             List<(string, string, int)> list = new List<(string, string, int)>();

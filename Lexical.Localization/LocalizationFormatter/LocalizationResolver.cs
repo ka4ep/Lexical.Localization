@@ -97,7 +97,7 @@ namespace Lexical.Localization
         public LocalizationString ResolveFormulatedString(ILine key)
         {
             // Get args
-            object[] format_args = key.GetFormatArgs();
+            object[] format_args = key.FindFormatArgs();
 
             // Plurality key when there is only one numeric argument. e.g. "Key:N:One"
             ILine pluralityKey = null;

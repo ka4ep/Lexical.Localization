@@ -9,15 +9,15 @@ using System.Collections.Generic;
 namespace Lexical.Localization.Internal
 {
     /// <summary>
-    /// Compares <see cref="IParameterPatternMatch"/>es.
+    /// Compares <see cref="ILinePatternMatch"/>es.
     /// </summary>
-    public class ParameterPatternMatchEqualityComparer : IEqualityComparer<IParameterPatternMatch>
+    public class LinePatternMatchEqualityComparer : IEqualityComparer<ILinePatternMatch>
     {
-        private readonly static ParameterPatternMatchEqualityComparer instance = new ParameterPatternMatchEqualityComparer();
-        public static ParameterPatternMatchEqualityComparer Default => instance;
+        private readonly static LinePatternMatchEqualityComparer instance = new LinePatternMatchEqualityComparer();
+        public static LinePatternMatchEqualityComparer Default => instance;
         static IEqualityComparer<string> stringComparer = EqualityComparer<string>.Default;
 
-        public bool Equals(IParameterPatternMatch x, IParameterPatternMatch y)
+        public bool Equals(ILinePatternMatch x, ILinePatternMatch y)
         {
             if (x == null && y == null) return true;
             if (x == null || y == null) return false;
@@ -31,7 +31,7 @@ namespace Lexical.Localization.Internal
             return true;
         }
 
-        public int GetHashCode(IParameterPatternMatch match)
+        public int GetHashCode(ILinePatternMatch match)
         {
             if (match == null) return 0;
             int result = FNVHashBasis;

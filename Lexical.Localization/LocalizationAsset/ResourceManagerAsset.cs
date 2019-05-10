@@ -20,7 +20,7 @@ namespace Lexical.Localization
         IAssetResourceProvider
     {
         public readonly ResourceManager ResourceManager;
-        public readonly IParameterPolicy namePolicy;
+        public readonly ILinePolicy namePolicy;
         public readonly IStringFormatParser ValueParser;
 
         /// <summary>
@@ -30,21 +30,21 @@ namespace Lexical.Localization
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public  static readonly IParameterPolicy namepolicy_for_type_resourcemanager = new KeyPrinter().Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
+        public  static readonly ILinePolicy namepolicy_for_type_resourcemanager = new KeyPrinter().Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
 
         /// <summary>
         /// Name policy where "Type", "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static readonly IParameterPolicy namepolicy_for_location_resourcemanager = new KeyPrinter().Rule("Type", true, ".").Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
+        public static readonly ILinePolicy namepolicy_for_location_resourcemanager = new KeyPrinter().Rule("Type", true, ".").Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
 
         /// <summary>
         /// Name policy where "Resource", "Type", "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static readonly IParameterPolicy namepolicy_for_root_resourcemanager = new KeyPrinter().Rule("Resource", true, ".").Rule("Type", true, ".").Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
+        public static readonly ILinePolicy namepolicy_for_root_resourcemanager = new KeyPrinter().Rule("Resource", true, ".").Rule("Type", true, ".").Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
 
         /// <summary>
         /// Create resource manager that is assigned to a specific type.
@@ -105,7 +105,7 @@ namespace Lexical.Localization
         /// <param name="resourceManager">source of language strings and resource files</param>
         /// <param name="namePolicy">policy that converts <see cref="ILine"/> into keys that correlate with keys in <paramref name="resourceManager"/>.</param>
         /// <param name="parser"></param>
-        public ResourceManagerAsset(ResourceManager resourceManager, IParameterPolicy namePolicy, IStringFormatParser parser = default)
+        public ResourceManagerAsset(ResourceManager resourceManager, ILinePolicy namePolicy, IStringFormatParser parser = default)
         {
             this.ResourceManager = resourceManager ?? throw new ArgumentNullException(nameof(resourceManager));
             this.namePolicy = namePolicy ?? throw new ArgumentNullException(nameof(namePolicy));

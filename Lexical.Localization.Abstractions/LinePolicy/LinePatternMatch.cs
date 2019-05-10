@@ -11,12 +11,12 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Match result.
     /// </summary>
-    public class ParameterPatternMatch : IParameterPatternMatch
+    public class LinePatternMatch : ILinePatternMatch
     {
         /// <summary>
         /// Reference to name pattern.
         /// </summary>
-        public IParameterPattern Pattern { get; internal set; }
+        public ILinePattern Pattern { get; internal set; }
 
         /// <summary>
         /// Matches part values. One for each corresponding pattern.CaptureParts.
@@ -24,7 +24,7 @@ namespace Lexical.Localization.Internal
         public string[] PartValues { get; }
 
         /// <summary>
-        /// Part values by <see cref="IParameterPattern.CaptureParts" />
+        /// Part values by <see cref="ILinePattern.CaptureParts" />
         /// </summary>
         /// <param name="ix"></param>
         /// <returns></returns>
@@ -35,7 +35,7 @@ namespace Lexical.Localization.Internal
         /// </summary>
         /// <param name="identifier">identifier, e.g. "Culture", "Type"</param>
         /// <returns>value or null</returns>
-        public string this[string identifier] { get { IParameterPatternPart part; if (Pattern.PartMap.TryGetValue(identifier, out part)) return PartValues[part.CaptureIndex]; return null; } }
+        public string this[string identifier] { get { ILinePatternPart part; if (Pattern.PartMap.TryGetValue(identifier, out part)) return PartValues[part.CaptureIndex]; return null; } }
 
         /// <summary>
         /// Cached result.
@@ -62,7 +62,7 @@ namespace Lexical.Localization.Internal
         /// Construct new match.
         /// </summary>
         /// <param name="pattern"></param>
-        public ParameterPatternMatch(IParameterPattern pattern)
+        public LinePatternMatch(ILinePattern pattern)
         {
             this.Pattern = pattern;
             this.PartValues = new string[pattern.CaptureParts.Length];
@@ -113,7 +113,7 @@ namespace Lexical.Localization.Internal
         /// <returns></returns>
         public bool TryGetValue(string key, out string value)
         {
-            IParameterPatternPart p;
+            ILinePatternPart p;
             if (Pattern.PartMap.TryGetValue(key, out p)) { value = PartValues[p.CaptureIndex]; return true; }
             value = default;
             return false;
@@ -130,14 +130,14 @@ namespace Lexical.Localization.Internal
         class MatchEnumerator : IEnumerator<KeyValuePair<string, string>>
         {
             int ix = -1;
-            ParameterPatternMatch match;
-            public MatchEnumerator(ParameterPatternMatch match) { this.match = match; }
+            LinePatternMatch match;
+            public MatchEnumerator(LinePatternMatch match) { this.match = match; }
             public KeyValuePair<string, string> Current
             {
                 get
                 {
                     if (ix < 0 || ix >= match.Pattern.CaptureParts.Length) return new KeyValuePair<string, string>(null, null);
-                    IParameterPatternPart part = match.Pattern.CaptureParts[ix];
+                    ILinePatternPart part = match.Pattern.CaptureParts[ix];
                     return new KeyValuePair<string, string>(part.Identifier, match.PartValues[part.CaptureIndex]);
                 }
             }
@@ -146,7 +146,7 @@ namespace Lexical.Localization.Internal
                 get
                 {
                     if (ix < 0 || ix >= match.Pattern.CaptureParts.Length) return null;
-                    IParameterPatternPart part = match.Pattern.CaptureParts[ix];
+                    ILinePatternPart part = match.Pattern.CaptureParts[ix];
                     return new KeyValuePair<string, string>(part.Identifier, match.PartValues[part.CaptureIndex]);
                 }
             }
@@ -159,18 +159,18 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Compares specific parameters, and those only.
     /// </summary>
-    public class ParameterPatternMatchComparer : IEqualityComparer<IReadOnlyDictionary<string, string>>
+    public class LinePatternMatchComparer : IEqualityComparer<IReadOnlyDictionary<string, string>>
     {
         /// <summary>
         /// The pattern this is comparer to
         /// </summary>
-        public readonly IParameterPattern Pattern;
+        public readonly ILinePattern Pattern;
 
         /// <summary>
         /// Create comparer to <paramref name="pattern"/>.
         /// </summary>
         /// <param name="pattern"></param>
-        public ParameterPatternMatchComparer(IParameterPattern pattern)
+        public LinePatternMatchComparer(ILinePattern pattern)
         {
             this.Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
         }
@@ -187,8 +187,8 @@ namespace Lexical.Localization.Internal
             if (x == null || y == null) return false;
 
             // Cast if x and y are pattern matches
-            IParameterPatternMatch x_match = x as IParameterPatternMatch;
-            IParameterPatternMatch y_match = y as IParameterPatternMatch;
+            ILinePatternMatch x_match = x as ILinePatternMatch;
+            ILinePatternMatch y_match = y as ILinePatternMatch;
             if (x_match?.Pattern != Pattern) x_match = null;
             if (y_match?.Pattern != Pattern) y_match = null;
 
@@ -224,7 +224,7 @@ namespace Lexical.Localization.Internal
         public int GetHashCode(IReadOnlyDictionary<string, string> obj)
         {
             // Cast if is match
-            IParameterPatternMatch match = obj as IParameterPatternMatch;
+            ILinePatternMatch match = obj as ILinePatternMatch;
             if (match?.Pattern != Pattern) match = null;
 
             // hash
@@ -239,91 +239,6 @@ namespace Lexical.Localization.Internal
                 if (value != null) hash ^= value.GetHashCode();
             }
 
-            return hash;
-        }
-    }
-
-    /// <summary>
-    /// Comparer of parameter dictionaries.
-    /// 
-    /// As rule for parameters, if value is null, then it counts as non-existing.
-    /// </summary>
-    public class ParameterComparer : IEqualityComparer<IReadOnlyDictionary<string, string>>
-    {
-        private static ParameterComparer instance = new ParameterComparer();
-
-        /// <summary>
-        /// Default instance
-        /// </summary>
-        public static ParameterComparer Instance => instance;
-
-        /// <summary>
-        /// Compare dictionaries (parameters) for equality.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public bool Equals(IReadOnlyDictionary<string, string> x, IReadOnlyDictionary<string, string> y)
-        {
-            if (x == null && y == null) return true;
-            if (x == null || y == null) return false;
-
-            // Compare match arrays
-            if (x is IParameterPatternMatch x_match && y is IParameterPatternMatch y_match && x_match.Pattern == y_match.Pattern)
-            {
-                int c = x_match.Pattern.CaptureParts.Length;
-                for (int i = 0; i < c; i++)
-                    if (x_match[i] != y_match[i]) return false;
-                return true;
-            }
-
-            // Compare dictionaries
-            int x_value_count = 0;
-            foreach (var x_kp in x)
-            {
-                // If value is null, then it's equivalent to not existing
-                if (x_kp.Value == null) continue;
-
-                // Calculate count
-                x_value_count++;
-
-                // Find matching y value
-                string y_value;
-                if (!y.TryGetValue(x_kp.Key, out y_value)) return false;
-
-                // Match values
-                if (x_kp.Value != y_value) return false;
-            }
-
-            // Now calculate y value count
-            int y_value_count = 0;
-            foreach (var y_kp in y)
-            {
-                // If value is null, then it's equivalent to not existing
-                if (y_kp.Value == null) continue;
-
-                y_value_count++;
-                if (y_value_count > x_value_count) return false;
-            }
-
-            return x_value_count == y_value_count;
-        }
-
-        /// <summary>
-        /// Calculates hashcode for parameters. If value is null, then key-value-pair is ignored.
-        /// Hashing uses xor because order is not relevant.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public int GetHashCode(IReadOnlyDictionary<string, string> obj)
-        {
-            int hash = 0;
-            foreach (var kp in obj)
-            {
-                if (kp.Value == null) continue;
-                hash ^= kp.Key.GetHashCode();
-                hash ^= kp.Value.GetHashCode();
-            }
             return hash;
         }
     }

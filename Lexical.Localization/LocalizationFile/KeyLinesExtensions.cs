@@ -19,7 +19,7 @@ namespace Lexical.Localization
     /// </summary>
     public static partial class KeyLinesExtensions
     {
-        static IParameterPolicy DefaultPolicy = KeyPrinter.Default;
+        static ILinePolicy DefaultPolicy = KeyPrinter.Default;
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset key lines.
@@ -27,7 +27,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, IParameterPolicy policy)
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, ILinePolicy policy)
             => lines.Select(line => new KeyValuePair<string, IFormulationString>((policy ?? DefaultPolicy).Print(line.Key), line.Value));
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <param name="keyPolicy"></param>
         /// <param name="valueParser"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, IParameterPolicy keyPolicy, IStringFormatParser valueParser)
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, ILinePolicy keyPolicy, IStringFormatParser valueParser)
             => lines.Select(line => new KeyValuePair<string, IFormulationString>((keyPolicy ?? DefaultPolicy).Print(line.Key), valueParser.Parse(line.Value)));
 
         /// <summary>
@@ -46,10 +46,10 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static ILineTree ToLineTree(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, IParameterPolicy namePolicy)
+        public static ILineTree ToLineTree(this IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, ILinePolicy namePolicy)
         {
-            LineTree tree = new LineTree(Key.Root, null);
-            if (namePolicy is IParameterPattern pattern)
+            LineTree tree = new LineTree();
+            if (namePolicy is ILinePattern pattern)
                 tree.AddRange(lines, pattern);
             else
                 tree.AddRange(lines);
@@ -74,7 +74,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Default grouping rule.
         /// </summary>
-        public static IParameterPattern DefaultGroupingRule = new ParameterPattern("{Culture}/{Location_n}{Assembly}{Resource_n}/{Type}{Section_n/}/{Key_n}");
+        public static ILinePattern DefaultGroupingRule = new LinePattern("{Culture}/{Location_n}{Assembly}{Resource_n}/{Type}{Section_n/}/{Key_n}");
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
@@ -96,7 +96,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="groupingRule"></param>
         /// <returns></returns>
-        public static ILineTree AddRange(this ILineTree node, IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, IParameterPattern groupingRule) // Todo separate to sortRule + groupingRule
+        public static ILineTree AddRange(this ILineTree node, IEnumerable<KeyValuePair<ILine, IFormulationString>> lines, ILinePattern groupingRule) // Todo separate to sortRule + groupingRule
         {
             // Use another method
             //if (groupingRule == null) { node.AddRange(lines); return node; }

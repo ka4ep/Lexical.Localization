@@ -80,7 +80,7 @@ namespace Lexical.Localization
         /// <summary>
         /// File pattern.
         /// </summary>
-        public IParameterPattern ResourcePattern { get; protected set; }
+        public ILinePattern ResourcePattern { get; protected set; }
 
         /// <summary>
         /// If true, throws <see cref="FileNotFoundException"/> if file is not found.
@@ -93,7 +93,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="assembly"></param>
         /// <param name="resourcePattern"></param>
-        public EmbeddedPatternSource(Assembly assembly, IParameterPattern resourcePattern)
+        public EmbeddedPatternSource(Assembly assembly, ILinePattern resourcePattern)
         {
             this.Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
             this.ResourcePattern = resourcePattern ?? throw new ArgumentNullException(nameof(resourcePattern));

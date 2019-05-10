@@ -111,14 +111,14 @@ namespace Lexical.Localization
         /// <summary>
         /// File pattern.
         /// </summary>
-        public IParameterPattern FilePattern { get; protected set; }
+        public ILinePattern FilePattern { get; protected set; }
 
         /// <summary>
         /// Create abstract file source.
         /// </summary>
         /// <param name="path"></param>
         /// <param name="filePattern"></param>
-        public FilePatternSource(string path, IParameterPattern filePattern)
+        public FilePatternSource(string path, ILinePattern filePattern)
         {
             this.Path = path ?? throw new ArgumentNullException(nameof(path));
             this.FilePattern = filePattern ?? throw new ArgumentNullException(nameof(FilePattern));

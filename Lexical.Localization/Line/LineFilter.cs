@@ -281,7 +281,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Filter by <paramref name="keyMatch"/>.
         /// 
-        /// If <see cref="IParameterPatternMatch.Success"/> is false then return false.
+        /// If <see cref="ILinePatternMatch.Success"/> is false then return false.
         /// 
         /// The whole <paramref name="keyMatch"/> is matched against every <see cref="genericFilters"/>. 
         /// If one mismatches then returns false.
@@ -291,7 +291,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="keyMatch"></param>
         /// <returns>true if <paramref name="keyMatch"/> passes the filter</returns>
-        public bool Filter(IParameterPatternMatch keyMatch)
+        public bool Filter(ILinePatternMatch keyMatch)
         {
             // 
             if (!keyMatch.Success) return false;
@@ -311,7 +311,7 @@ namespace Lexical.Localization
             StructList12<(string, int, string)> list = new StructList12<(string, int, string)>();
             for (int i = 0; i < keyMatch.Pattern.CaptureParts.Length; i++)
             {
-                IParameterPatternPart part = keyMatch.Pattern.CaptureParts[i];
+                ILinePatternPart part = keyMatch.Pattern.CaptureParts[i];
                 string partValue = keyMatch.PartValues[i];
                 if (partValue == null) continue;
                 list.Add((part.ParameterName, part.OccuranceIndex, partValue));

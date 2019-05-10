@@ -27,7 +27,7 @@ namespace docs
                 { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" }
             };
             // Create asset source
-            IAssetSource assetSource = new LocalizationAsset(source, ParameterPolicy.Instance).ToSource();
+            IAssetSource assetSource = new LocalizationAsset(source, ParameterParser.Instance).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 

@@ -1,6 +1,6 @@
-# IParameterPolicy
+# ILinePolicy
 <details>
-  <summary><b>IParameterPolicy</b> is root interface for *IAssetKey* name converter. (<u>Click here</u>)</summary>
+  <summary><b>ILinePolicy</b> is root interface for *IAssetKey* name converter. (<u>Click here</u>)</summary>
 
 ```csharp
 /// <summary>
@@ -8,28 +8,28 @@
 /// 
 /// User of this interface should use extensions methods 
 /// <list type="bullet">
-/// <item><see cref="AssetKeyNamePolicyExtensions.BuildName(IParameterPolicy, IAssetKey)"/></item>
-/// <item><see cref="AssetKeyNamePolicyExtensions.Parse(IParameterPolicy, string, IAssetKey)"/></item>
+/// <item><see cref="AssetKeyNamePolicyExtensions.BuildName(ILinePolicy, IAssetKey)"/></item>
+/// <item><see cref="AssetKeyNamePolicyExtensions.Parse(ILinePolicy, string, IAssetKey)"/></item>
 /// </list>
 /// 
 /// Class that implements to this interface should implement one or both of the following interfaces:
-///  <see cref="IParameterPrinter"/>
-///  <see cref="IParameterPattern"/>
+///  <see cref="ILinePrinter"/>
+///  <see cref="ILinePattern"/>
 /// </summary>
-public interface IParameterPolicy
+public interface ILinePolicy
 {
 }
 ```
 </details>
 
 <details>
-  <summary><b>IParameterPrinter</b> is sub-interface that prints *IAssetKeys* as *Strings*. (<u>Click here</u>)</summary>
+  <summary><b>ILinePrinter</b> is sub-interface that prints *IAssetKeys* as *Strings*. (<u>Click here</u>)</summary>
 
 ```csharp
 /// <summary>
 /// Converts <see cref="IAssetKey"/> to <see cref="String"/>.
 /// </summary>
-public interface IParameterPrinter : IParameterPolicy
+public interface ILinePrinter : ILinePolicy
 {
     /// <summary>
     /// Build path string from key.
@@ -42,13 +42,13 @@ public interface IParameterPrinter : IParameterPolicy
 </details>
 
 <details>
-  <summary><b>IParameterParser</b> is sub-interface that parses *Strings* into *IAssetKey*. (<u>Click here</u>)</summary>
+  <summary><b>ILineParser</b> is sub-interface that parses *Strings* into *IAssetKey*. (<u>Click here</u>)</summary>
 
 ```csharp
 /// <summary>
 /// Parses <see cref="String"/> into <see cref="IAssetKey"/>.
 /// </summary>
-public interface IParameterParser : IParameterPolicy
+public interface ILineParser : ILinePolicy
 {
     /// <summary>
     /// Parse string into key.
@@ -73,14 +73,14 @@ public interface IParameterParser : IParameterPolicy
 
 <br />
 
-| Class | IParameterPrinter | IParameterParser |
+| Class | ILinePrinter | ILineParser |
 |:-------|:-------|:--------|
-| ParameterPolicy | &#9745; | &#9745; |
-| ParameterPattern | &#9745;  | &#9745; |
+| ParameterParser.| &#9745; | &#9745; |
+| LinePattern | &#9745;  | &#9745; |
 | KeyPrinter | &#9745; | &#9744; |
 
-# ParameterPolicy
-**ParameterPolicy** is an *IAssetNameKeyPolicy* class that prints and parses keys into strings using the following notation.
+# ParameterParser.
+**ParameterParser.* is an *IAssetNameKeyPolicy* class that prints and parses keys into strings using the following notation.
 ```none
 parameterName:parameterValue:parameterName:parameterValue:...
 ```
@@ -89,14 +89,14 @@ Keys are converted to strings.
 
 ```csharp
 IAssetKey key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
-string str = ParameterPolicy.Instance.BuildName(key);
+string str = ParameterParser.Instance.BuildName(key);
 ```
 
 And strings parsed to keys.
 
 ```csharp
 string str = @"Culture:en:Type:MyController:Key:Ok";
-IAssetKey key = ParameterPolicy.Instance.Parse(str);
+IAssetKey key = ParameterParser.Instance.Parse(str);
 ```
 
 A specific *root* can be used from which the constructed key is appended from.
@@ -104,7 +104,7 @@ A specific *root* can be used from which the constructed key is appended from.
 ```csharp
 string str = @"Culture:en:Type:MyController:Key:Ok";
 IAssetKey root = new StringLocalizerRoot();
-IAssetKey key = ParameterPolicy.Instance.Parse(str, root);
+IAssetKey key = ParameterParser.Instance.Parse(str, root);
 ```
 
 Policy uses the following escape rules.
@@ -123,12 +123,12 @@ Example of escaped key "Success\\:Plural".
 
 ```csharp
 string str = @"Key:Success\:Plural";
-IAssetKey key = ParameterPolicy.Instance.Parse(str);
+IAssetKey key = ParameterParser.Instance.Parse(str);
 ```
 
-# ParameterPattern
+# LinePattern
 <details>
-  <summary><b>IParameterPattern</b> is interface for name patterns. (<u>Click here</u>)</summary>
+  <summary><b>ILinePattern</b> is interface for name patterns. (<u>Click here</u>)</summary>
 
 ```csharp
 /// <summary>
@@ -175,7 +175,7 @@ IAssetKey key = ParameterPolicy.Instance.Parse(str);
 ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
 /// 
 /// </summary>
-public interface IParameterPattern : IParameterPolicy
+public interface ILinePattern : ILinePolicy
 {
     /// <summary>
     /// Pattern in string format
@@ -185,17 +185,17 @@ public interface IParameterPattern : IParameterPolicy
     /// <summary>
     /// All parts of the pattern
     /// </summary>
-    IParameterPatternPart[] AllParts { get; }
+    ILinePatternPart[] AllParts { get; }
 
     /// <summary>
     /// All parts that capture a part of string.
     /// </summary>
-    IParameterPatternPart[] CaptureParts { get; }
+    ILinePatternPart[] CaptureParts { get; }
     
     /// <summary>
     /// Maps parts by identifier.
     /// </summary>
-    IReadOnlyDictionary<string, IParameterPatternPart> PartMap { get; }
+    IReadOnlyDictionary<string, ILinePatternPart> PartMap { get; }
 
     /// <summary>
     /// List of all parameter names
@@ -205,14 +205,14 @@ public interface IParameterPattern : IParameterPolicy
     /// <summary>
     /// Maps parts by parameter identifier.
     /// </summary>
-    IReadOnlyDictionary<string, IParameterPatternPart[]> ParameterMap { get; }
+    IReadOnlyDictionary<string, ILinePatternPart[]> ParameterMap { get; }
 
     /// <summary>
     /// Match parameters from an object.
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    IParameterPatternMatch Match(IAssetKey key);
+    ILinePatternMatch Match(IAssetKey key);
 
     /// <summary>
     /// A regular expression pattern that captures same parts from a filename string.
@@ -223,7 +223,7 @@ public interface IParameterPattern : IParameterPolicy
 /// <summary>
 /// Part of a pattern.
 /// </summary>
-public interface IParameterPatternPart
+public interface ILinePatternPart
 {
     /// <summary>
     /// Text that represents this part in pattern.
@@ -262,12 +262,12 @@ public interface IParameterPatternPart
     bool Required { get; }
 
     /// <summary>
-    /// Index in <see cref="IParameterPattern.AllParts"/>.
+    /// Index in <see cref="ILinePattern.AllParts"/>.
     /// </summary>
     int Index { get; }
 
     /// <summary>
-    /// Index in <see cref="IParameterPattern.CaptureParts"/>.
+    /// Index in <see cref="ILinePattern.CaptureParts"/>.
     /// </summary>
     int CaptureIndex { get; }
 
@@ -297,12 +297,12 @@ public interface IParameterPatternPart
 /// <summary>
 /// Match result.
 /// </summary>
-public interface IParameterPatternMatch : IReadOnlyDictionary<string, string>
+public interface ILinePatternMatch : IReadOnlyDictionary<string, string>
 {
     /// <summary>
     /// Associated patern.
     /// </summary>
-    IParameterPattern Pattern { get; }
+    ILinePattern Pattern { get; }
 
     /// <summary>
     /// Resolved part values.
@@ -310,7 +310,7 @@ public interface IParameterPatternMatch : IReadOnlyDictionary<string, string>
     string[] PartValues { get; }
 
     /// <summary>
-    /// Part values by part index in <see cref="IParameterPatternPart.CaptureIndex"/>.
+    /// Part values by part index in <see cref="ILinePatternPart.CaptureIndex"/>.
     /// </summary>
     /// <param name="ix"></param>
     /// <returns></returns>
@@ -332,7 +332,7 @@ public interface IParameterPatternMatch : IReadOnlyDictionary<string, string>
 </details>
 <br />
 
-**ParameterPattern** is a regular-expression like pattern to print and extract parameters from keys and strings.
+**LinePattern** is a regular-expression like pattern to print and extract parameters from keys and strings.
 
 ```csharp
 // Let's create an example key
@@ -346,7 +346,7 @@ IAssetKey key = new LocalizationRoot()
 
 ```csharp
 // Create pattern
-IParameterPolicy myPolicy = new ParameterPattern("{Culture/}{Location/}{Type/}{Section/}[Key].txt");
+ILinePolicy myPolicy = new LinePattern("{Culture/}{Location/}{Type/}{Section/}[Key].txt");
 // "en/Patches/MyController/Errors/InvalidState.txt"
 string str = myPolicy.BuildName(key);
 ```
@@ -356,14 +356,14 @@ Braces "{parameter/}" make parameter optional, and brackets "[parameter/]" manda
 
 ```csharp
 // Create pattern
-IParameterPolicy myPolicy = new ParameterPattern("Patches/{Section}[-Key]{-Culture}.png");
+ILinePolicy myPolicy = new LinePattern("Patches/{Section}[-Key]{-Culture}.png");
 ```
 
 Parameter can be added multiple times.
 
 ```csharp
 // Create pattern
-IParameterPolicy myPolicy = new ParameterPattern("{Location/}{Location/}{Location/}{Section}{-Key}{-Culture}.png");
+ILinePolicy myPolicy = new LinePattern("{Location/}{Location/}{Location/}{Section}{-Key}{-Culture}.png");
 // Create key
 IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
 // Converts to "Patches/20181130/icons-ok-de.png"
@@ -375,7 +375,7 @@ If part is required, e.g. "[parametername_n]", then only first part is required 
 
 ```csharp
 // "[Location_n/]" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
-IParameterPolicy myPolicy = new ParameterPattern("[Location_n/]{Section}{-Key}{-Culture}.png");
+ILinePolicy myPolicy = new LinePattern("[Location_n/]{Section}{-Key}{-Culture}.png");
 // Create key
 IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
 // Converts to "Patches/20181130/icons-ok-de.png"
@@ -386,7 +386,7 @@ Parameters need to be added in non-consecutive order, then "_#" can be used to r
 
 ```csharp
 // Create pattern
-IParameterPolicy myPolicy = new ParameterPattern("{Location_3}{Location_2/}{Location_1/}{Location/}{Section}{-Key}{-Culture}.png");
+ILinePolicy myPolicy = new LinePattern("{Location_3}{Location_2/}{Location_1/}{Location/}{Section}{-Key}{-Culture}.png");
 // Create key
 IAssetKey key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
 // Converts to "20181130/Patches/icons-ok-de.png"
@@ -397,7 +397,7 @@ Regular expression can be written inside angle brackets "{parameter&lt;*regexp*&
 
 ```csharp
 // Create pattern with regular expression detail
-IParameterPattern myPolicy = new ParameterPattern("{Location<[^/]+>/}{Section}{-Key}{-Culture}.png");
+ILinePattern myPolicy = new LinePattern("{Location<[^/]+>/}{Section}{-Key}{-Culture}.png");
 // Use its regular expression
 Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");
 ```
@@ -451,7 +451,7 @@ Policy is created by adding rules to KeyPrinter.
 
 ```csharp
 // Create a custom policy 
-IParameterPolicy myPolicy = new KeyPrinter()
+ILinePolicy myPolicy = new KeyPrinter()
     // Enable non-canonical "Culture" parameter with "/" separator
     .Rule("Culture", true, postfixSeparator: "/", order: ParameterInfos.Default["Culture"].Order)
     // Disable other non-canonical parts
@@ -467,10 +467,10 @@ string str = myPolicy.BuildName(key);
 
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
- * [IParameterPolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IParameterPolicy.cs) is the root interface for classes that formulate IAssetKey into identity string.
- * [IParameterPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IParameterPolicy.cs) is a subinterface where Build() can be implemented directly.
- * [IParameterPattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IParameterPattern.cs) is a subinterface that formulates parametrization with a template string.
+ * [ILinePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs) is the root interface for classes that formulate IAssetKey into identity string.
+ * [ILinePrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs) is a subinterface where Build() can be implemented directly.
+ * [ILinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/ILinePattern.cs) is a subinterface that formulates parametrization with a template string.
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [KeyPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/KeyPrinter.cs) is implementation of IAssetNameProvider.
- * [ParameterPattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/ParameterPattern.cs) is the default implementation of IParameterPattern.
- * [ParameterPolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/ParameterPolicy.cs) is context-free string format.
+ * [LinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/LinePattern.cs) is the default implementation of ILinePattern.
+ * [ParameterParser.(https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/ParameterParser.cs) is context-free string format.

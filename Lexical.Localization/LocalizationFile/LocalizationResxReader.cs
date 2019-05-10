@@ -58,7 +58,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, IParameterPolicy namePolicy = default) => ReadElement(XDocument.Load(stream).Root, namePolicy);
+        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, ILinePolicy namePolicy = default) => ReadElement(XDocument.Load(stream).Root, namePolicy);
 
         /// <summary>
         /// Read resx content from <paramref name="text"/>.
@@ -66,7 +66,7 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, IParameterPolicy namePolicy = default) => ReadElement(XDocument.Load(text).Root, namePolicy);
+        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, ILinePolicy namePolicy = default) => ReadElement(XDocument.Load(text).Root, namePolicy);
 
         /// <summary>
         /// Reads lines from xml element.
@@ -74,7 +74,7 @@ namespace Lexical.Localization
         /// <param name="element">parent element that contains data elements</param>
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadElement(XElement element, IParameterPolicy namePolicy)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadElement(XElement element, ILinePolicy namePolicy)
         {
             foreach (XElement dataNode in element.Elements("data"))
             {
@@ -103,7 +103,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="correspondence"></param>
         /// <returns></returns>
-        public List<KeyValuePair<string, IFormulationString>> ReadElement(XElement element, IParameterPolicy namePolicy, ResXCorrespondence correspondence)
+        public List<KeyValuePair<string, IFormulationString>> ReadElement(XElement element, ILinePolicy namePolicy, ResXCorrespondence correspondence)
         {
             List<KeyValuePair<string, IFormulationString>> result = new List<KeyValuePair<string, IFormulationString>>();
 

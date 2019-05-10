@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy that is used for converting string to <see cref="ILine"/>.
         /// </summary>
-        IParameterPolicy KeyPolicy { get; }
+        ILinePolicy KeyPolicy { get; }
     }
 
     /// <summary>

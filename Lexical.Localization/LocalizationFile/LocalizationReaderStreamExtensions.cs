@@ -28,7 +28,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="namePolicy">(optional) </param>
         /// <returns>localization asset</returns>
-        public static IAsset StreamAsset(this ILocalizationFileFormat fileFormat, Stream stream, IParameterPolicy namePolicy = default)
+        public static IAsset StreamAsset(this ILocalizationFileFormat fileFormat, Stream stream, ILinePolicy namePolicy = default)
         {
             if (fileFormat is ILocalizationLineTreeTextReader || fileFormat is ILocalizationLineTreeStreamReader)
             {
@@ -56,7 +56,7 @@ namespace Lexical.Localization
         /// <param name="streamSource"></param>
         /// <param name="namePolicy">(optional) </param>
         /// <returns>localization asset</returns>
-        public static IAssetSource StreamAssetSource(this ILocalizationFileFormat fileFormat, Func<Stream> streamSource, IParameterPolicy namePolicy = default)
+        public static IAssetSource StreamAssetSource(this ILocalizationFileFormat fileFormat, Func<Stream> streamSource, ILinePolicy namePolicy = default)
             => new StreamProviderAssetSource(fileFormat, streamSource, namePolicy);
 
     }

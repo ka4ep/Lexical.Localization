@@ -23,14 +23,14 @@ namespace Lexical.Localization
     /// Parameters with same sort order, are printed out in order of occurance in the key, from left (root) to right (tail).
     /// For example: root.Section("1").Section("2") is printed out as "1.2".
     /// </summary>
-    public class KeyPrinter : IParameterPrinter, ICloneable
+    public class KeyPrinter : ILinePrinter, ICloneable
     {
         /// <summary>
         /// Default name policy. Appends known parameters in <see cref="Utils.ParameterInfos"/> with ":" separator.
         /// 
         /// Example "en:ConsoleApp1:MyController:Success".
         /// </summary>
-        public static IParameterPrinter Default => instance;
+        public static ILinePrinter Default => instance;
         private static readonly KeyPrinter instance = 
             new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":"); // Add known parameters for sorting correcly
@@ -40,7 +40,7 @@ namespace Lexical.Localization
         /// 
         /// Example "en:ConsoleApp1:MyController:Success".
         /// </summary>
-        public static IParameterPrinter Colon_Colon_Colon => colon_colon_colon;
+        public static ILinePrinter Colon_Colon_Colon => colon_colon_colon;
         private static readonly KeyPrinter colon_colon_colon =
             new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
@@ -51,7 +51,7 @@ namespace Lexical.Localization
         /// 
         /// Example "ConsoleApp1:MyController:Success".
         /// </summary>
-        public static IParameterPrinter None_Colon_Colon => none_colon_colon;
+        public static ILinePrinter None_Colon_Colon => none_colon_colon;
         private static readonly KeyPrinter none_colon_colon =
             new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
@@ -63,7 +63,7 @@ namespace Lexical.Localization
         /// 
         /// Example "en:ConsoleApp1:MyController.Success".
         /// </summary>
-        public static IParameterPrinter Colon_Colon_Dot => colon_colon_dot;
+        public static ILinePrinter Colon_Colon_Dot => colon_colon_dot;
         private static readonly KeyPrinter colon_colon_dot = 
             new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// 
         /// Example "en.ConsoleApp1.MyController.Success"
         /// </summary>
-        public static IParameterPrinter Dot_Dot_Dot => dot_dot_dot;
+        public static ILinePrinter Dot_Dot_Dot => dot_dot_dot;
         private static readonly KeyPrinter dot_dot_dot = 
             new KeyPrinter()
             .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
@@ -86,7 +86,7 @@ namespace Lexical.Localization
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static IParameterPrinter None_Dot_Dot => none_dot_dot;
+        public static ILinePrinter None_Dot_Dot => none_dot_dot;
         private static readonly KeyPrinter none_dot_dot = 
             new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
@@ -98,7 +98,7 @@ namespace Lexical.Localization
         /// 
         /// Example "en:ConsoleApp1.MyController.Success".
         /// </summary>
-        public static IParameterPrinter Colon_Dot_Dot => colon_dot_dot;
+        public static ILinePrinter Colon_Dot_Dot => colon_dot_dot;
         private static readonly KeyPrinter colon_dot_dot =
             new KeyPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
@@ -482,7 +482,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="policy">(optional)</param>
         /// <returns>full name string or null</returns>
-        public static string Print(this ILine key, IParameterPolicy policy)
+        public static string Print(this ILine key, ILinePolicy policy)
         {
             if (policy == null) policy = KeyPrinter.Default;
             return policy.Print(key);

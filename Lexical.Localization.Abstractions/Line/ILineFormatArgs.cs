@@ -39,13 +39,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="line"></param>
         /// <returns>culture policy or null</returns>
-        public static Object[] GetFormatArgs(this ILine line)
+        public static Object[] FindFormatArgs(this ILine line)
         {
             if (line is ILineFormatArgs args) return args.Args;
             if (line is ILine tail)
             {
                 for (ILine p = tail; p != null; p = p.GetPreviousPart())
-                    if (p is ILineFormatArgsPart casted && casted.Args != null) return casted.Args;
+                    if (p is ILineFormatArgs casted && casted.Args != null) return casted.Args;
             }
             return null;
         }
@@ -53,7 +53,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Non-canonical comparer that compares <see cref="ILineFormatArgsPart"/> values of keys.
+    /// Non-canonical comparer that compares <see cref="ILineFormatArgs"/> values of keys.
     /// </summary>
     public class LineFormatArgsComparer : IEqualityComparer<ILine>
     {
@@ -66,7 +66,7 @@ namespace Lexical.Localization
         /// <param name="y"></param>
         /// <returns></returns>
         public bool Equals(ILine x, ILine y)
-            => array_comparer.Equals(x?.GetFormatArgs(), y?.GetFormatArgs());
+            => array_comparer.Equals(x?.FindFormatArgs(), y?.FindFormatArgs());
 
         /// <summary>
         /// Calculate hash of last format args value.
@@ -74,6 +74,6 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <returns></returns>
         public int GetHashCode(ILine line)
-            => array_comparer.GetHashCode(line.GetFormatArgs());
+            => array_comparer.GetHashCode(line.FindFormatArgs());
     }
 }

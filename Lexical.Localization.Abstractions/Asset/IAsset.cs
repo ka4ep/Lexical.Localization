@@ -22,6 +22,7 @@ namespace Lexical.Localization
     {
     }
 
+    /// <summary></summary>
     public static partial class IAssetExtensions
     {
         /// <summary>
@@ -58,7 +59,6 @@ namespace Lexical.Localization
         /// Find first instance of <paramref name="type"/>. 
         /// Does not look inside <see cref="IAssetProvider"/>.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="asset"></param>
         /// <param name="type">type to search</param>
         /// <returns>instance of T</returns>
@@ -118,7 +118,6 @@ namespace Lexical.Localization
         /// Try to find first instance of <paramref name="type"/>.
         /// Does not look inside <see cref="IAssetProvider"/>.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="asset"></param>
         /// <param name="type">type to search</param>
         /// <returns>instance of T or null</returns>

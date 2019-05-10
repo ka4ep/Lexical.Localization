@@ -39,7 +39,7 @@ namespace Lexical.Localization.Utils
         /// <param name="keyValues"></param>
         /// <param name="groupingPolicy"></param>
         /// <returns>tree root ""</returns>
-        public static LineTree Create(IEnumerable<KeyValuePair<ILine, IFormulationString>> keyValues, IParameterPattern groupingPolicy)
+        public static LineTree Create(IEnumerable<KeyValuePair<ILine, IFormulationString>> keyValues, ILinePattern groupingPolicy)
         {
             LineTree root = new LineTree(new LinePart(LineAppender.Default, null));
             root.AddRange(keyValues, groupingPolicy);
@@ -150,6 +150,14 @@ namespace Lexical.Localization.Utils
         public List<IFormulationString> Values => values ?? (values = new List<IFormulationString>(1));
 
         /// <summary>
+        /// Create new root.
+        /// </summary>
+        public LineTree()
+        {
+            this.Key = new LinePart(LineAppender.Default, null);
+        }
+
+        /// <summary>
         /// Create new key tree node.
         /// </summary>
         /// <param name="parameters"></param>
@@ -255,7 +263,7 @@ namespace Lexical.Localization.Utils
                 if (i++ > 0) sb.Append("/");
                 ILine key = tree.Key;
                 if (key == null) continue;
-                ParameterPolicy.Instance.PrintKey(key, sb);
+                ParameterParser.Instance.Print(key, sb);
             }
 
             if (HasValues)
@@ -285,7 +293,7 @@ namespace Lexical.Localization.Utils
                 if (sb.Length > 0) sb.Append("/");
                 ILine key = tree.Key;
                 if (key == null) continue;
-                ParameterPolicy.Instance.PrintKey(key, sb);
+                ParameterParser.Instance.Print(key, sb);
             }
             return sb.ToString();
         }

@@ -1,41 +1,41 @@
-﻿# IParameterPolicy
+﻿# ILinePolicy
 <details>
-  <summary><b>IParameterPolicy</b> is root interface for *IAssetKey* name converter. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/IParameterPolicy.cs#IParameterPolicy)]
+  <summary><b>ILinePolicy</b> is root interface for *IAssetKey* name converter. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs#ILinePolicy)]
 </details>
 
 <details>
-  <summary><b>IParameterPrinter</b> is sub-interface that prints *IAssetKeys* as *Strings*. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/IParameterPolicy.cs#IParameterPrinter)]
+  <summary><b>ILinePrinter</b> is sub-interface that prints *IAssetKeys* as *Strings*. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs#ILinePrinter)]
 </details>
 
 <details>
-  <summary><b>IParameterParser</b> is sub-interface that parses *Strings* into *IAssetKey*. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/IParameterPolicy.cs#IParameterParser)]
+  <summary><b>ILineParser</b> is sub-interface that parses *Strings* into *IAssetKey*. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs#ILineParser)]
 </details>
 
 <br />
 
-| Class | IParameterPrinter | IParameterParser |
+| Class | ILinePrinter | ILineParser |
 |:-------|:-------|:--------|
-| ParameterPolicy | &#9745; | &#9745; |
-| ParameterPattern | &#9745;  | &#9745; |
+| ParameterParser.| &#9745; | &#9745; |
+| LinePattern | &#9745;  | &#9745; |
 | KeyPrinter | &#9745; | &#9744; |
 
-# ParameterPolicy
-**ParameterPolicy** is an *IAssetNameKeyPolicy* class that prints and parses keys into strings using the following notation.
+# ParameterParser.
+**ParameterParser.* is an *IAssetNameKeyPolicy* class that prints and parses keys into strings using the following notation.
 ```none
 parameterName:parameterValue:parameterName:parameterValue:...
 ```
 
 Keys are converted to strings.
-[!code-csharp[Snippet](ParameterPolicy_Examples.cs#Snippet_2)]
+[!code-csharp[Snippet](ParameterParser.Examples.cs#Snippet_2)]
 
 And strings parsed to keys.
-[!code-csharp[Snippet](ParameterPolicy_Examples.cs#Snippet_0)]
+[!code-csharp[Snippet](ParameterParser.Examples.cs#Snippet_0)]
 
 A specific *root* can be used from which the constructed key is appended from.
-[!code-csharp[Snippet](ParameterPolicy_Examples.cs#Snippet_0b)]
+[!code-csharp[Snippet](ParameterParser.Examples.cs#Snippet_0b)]
 
 Policy uses the following escape rules.
 
@@ -50,35 +50,35 @@ Policy uses the following escape rules.
 | \\U<i>hhhhhhhh</i> | Unicode 32bit |
 
 Example of escaped key "Success\\:Plural".
-[!code-csharp[Snippet](ParameterPolicy_Examples.cs#Snippet_1)]
+[!code-csharp[Snippet](ParameterParser.Examples.cs#Snippet_1)]
 
-# ParameterPattern
+# LinePattern
 <details>
-  <summary><b>IParameterPattern</b> is interface for name patterns. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/IParameterPattern.cs#Interface)]
+  <summary><b>ILinePattern</b> is interface for name patterns. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/AssetKey/ILinePattern.cs#Interface)]
 </details>
 <br />
 
-**ParameterPattern** is a regular-expression like pattern to print and extract parameters from keys and strings.
-[!code-csharp[Snippet](ParameterPattern_Examples.cs#Snippet_1)]
-[!code-csharp[Snippet](ParameterPattern_Examples.cs#Snippet_2)]
+**LinePattern** is a regular-expression like pattern to print and extract parameters from keys and strings.
+[!code-csharp[Snippet](LinePattern_Examples.cs#Snippet_1)]
+[!code-csharp[Snippet](LinePattern_Examples.cs#Snippet_2)]
 
 Name pattern consists of parameters. They are written in format of "{prefix **ParameterName** suffix}".  
 Braces "{parameter/}" make parameter optional, and brackets "[parameter/]" mandatory.
-[!code-csharp[Snippet](ParameterPattern_Examples.cs#Snippet_3)]
+[!code-csharp[Snippet](LinePattern_Examples.cs#Snippet_3)]
 
 Parameter can be added multiple times.
-[!code-csharp[Snippet](ParameterPattern_Examples.cs#Snippet_4b)]
+[!code-csharp[Snippet](LinePattern_Examples.cs#Snippet_4b)]
 
 A shorter way to add consecutive parameters is use suffix "_n". It translates to the five following occurances.
 If part is required, e.g. "[parametername_n]", then only first part is required and others optional.
-[!code-csharp[Snippet](ParameterPattern_Examples.cs#Snippet_4c)]
+[!code-csharp[Snippet](LinePattern_Examples.cs#Snippet_4c)]
 
 Parameters need to be added in non-consecutive order, then "_#" can be used to represent the occurance index.
-[!code-csharp[Snippet](ParameterPattern_Examples.cs#Snippet_4d)]
+[!code-csharp[Snippet](LinePattern_Examples.cs#Snippet_4d)]
 
 Regular expression can be written inside angle brackets "{parameter&lt;*regexp*&gt;/}", which gives more control over matching.
-[!code-csharp[Snippet](ParameterPattern_Examples.cs#Snippet_5)]
+[!code-csharp[Snippet](LinePattern_Examples.cs#Snippet_5)]
 
 ## Parameters
 Reserved parameter names and respective extension methods.
@@ -108,10 +108,10 @@ Policy is created by adding rules to KeyPrinter.
 
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
- * [IParameterPolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IParameterPolicy.cs) is the root interface for classes that formulate IAssetKey into identity string.
- * [IParameterPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IParameterPolicy.cs) is a subinterface where Build() can be implemented directly.
- * [IParameterPattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/IParameterPattern.cs) is a subinterface that formulates parametrization with a template string.
+ * [ILinePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs) is the root interface for classes that formulate IAssetKey into identity string.
+ * [ILinePrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/ILinePolicy.cs) is a subinterface where Build() can be implemented directly.
+ * [ILinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/AssetKey/ILinePattern.cs) is a subinterface that formulates parametrization with a template string.
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [KeyPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/KeyPrinter.cs) is implementation of IAssetNameProvider.
- * [ParameterPattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/ParameterPattern.cs) is the default implementation of IParameterPattern.
- * [ParameterPolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/ParameterPolicy.cs) is context-free string format.
+ * [LinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/LinePattern.cs) is the default implementation of ILinePattern.
+ * [ParameterParser.(https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/AssetKey/ParameterParser.cs) is context-free string format.

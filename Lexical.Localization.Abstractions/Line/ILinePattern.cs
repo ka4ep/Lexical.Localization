@@ -57,7 +57,7 @@ namespace Lexical.Localization
     ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
     /// 
     /// </summary>
-    public interface IParameterPattern : IParameterPolicy
+    public interface ILinePattern : ILinePolicy
     {
         /// <summary>
         /// Pattern in string format
@@ -67,17 +67,17 @@ namespace Lexical.Localization
         /// <summary>
         /// All parts of the pattern
         /// </summary>
-        IParameterPatternPart[] AllParts { get; }
+        ILinePatternPart[] AllParts { get; }
 
         /// <summary>
         /// All parts that capture a part of string.
         /// </summary>
-        IParameterPatternPart[] CaptureParts { get; }
+        ILinePatternPart[] CaptureParts { get; }
         
         /// <summary>
         /// Maps parts by identifier.
         /// </summary>
-        IReadOnlyDictionary<string, IParameterPatternPart> PartMap { get; }
+        IReadOnlyDictionary<string, ILinePatternPart> PartMap { get; }
 
         /// <summary>
         /// List of all parameter names
@@ -87,14 +87,14 @@ namespace Lexical.Localization
         /// <summary>
         /// Maps parts by parameter identifier.
         /// </summary>
-        IReadOnlyDictionary<string, IParameterPatternPart[]> ParameterMap { get; }
+        IReadOnlyDictionary<string, ILinePatternPart[]> ParameterMap { get; }
 
         /// <summary>
         /// Match parameters from an object.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        IParameterPatternMatch Match(ILine key);
+        ILinePatternMatch Match(ILine key);
 
         /// <summary>
         /// A regular expression pattern that captures same parts from a filename string.
@@ -105,7 +105,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Part of a pattern.
     /// </summary>
-    public interface IParameterPatternPart
+    public interface ILinePatternPart
     {
         /// <summary>
         /// Text that represents this part in pattern.
@@ -133,6 +133,7 @@ namespace Lexical.Localization
         /// Parameter identifier. Does not include occurance index, e.g. "_1".
         /// </summary>
         string ParameterName { get; }
+
         /// <summary>
         /// If set, then is non-matchable Text part.
         /// </summary>
@@ -144,12 +145,12 @@ namespace Lexical.Localization
         bool Required { get; }
 
         /// <summary>
-        /// Index in <see cref="IParameterPattern.AllParts"/>.
+        /// Index in <see cref="ILinePattern.AllParts"/>.
         /// </summary>
         int Index { get; }
 
         /// <summary>
-        /// Index in <see cref="IParameterPattern.CaptureParts"/>.
+        /// Index in <see cref="ILinePattern.CaptureParts"/>.
         /// </summary>
         int CaptureIndex { get; }
 
@@ -179,20 +180,20 @@ namespace Lexical.Localization
     /// <summary>
     /// Match result.
     /// </summary>
-    public interface IParameterPatternMatch : IReadOnlyDictionary<string, string>
+    public interface ILinePatternMatch : IReadOnlyDictionary<string, string>
     {
         /// <summary>
         /// Associated patern.
         /// </summary>
-        IParameterPattern Pattern { get; }
+        ILinePattern Pattern { get; }
 
         /// <summary>
-        /// Resolved part values.
+        /// Resolved part values. Corresponds to <see cref="ILinePattern.CaptureParts"/>.
         /// </summary>
         string[] PartValues { get; }
 
         /// <summary>
-        /// Part values by part index in <see cref="IParameterPatternPart.CaptureIndex"/>.
+        /// Part values by part index in <see cref="ILinePatternPart.CaptureIndex"/>.
         /// </summary>
         /// <param name="ix"></param>
         /// <returns></returns>
@@ -213,9 +214,9 @@ namespace Lexical.Localization
     #endregion Interface
 
     /// <summary>
-    /// Extension methods for <see cref="IParameterPattern"/>.
+    /// Extension methods for <see cref="ILinePattern"/>.
     /// </summary>
-    public static partial class IParameterPatternExtensions
+    public static partial class ILinePatternExtensions
     {
         /// <summary>
         /// Match parameters of an object and convert into a string.
@@ -223,9 +224,9 @@ namespace Lexical.Localization
         /// <param name="pattern"></param>
         /// <param name="key"></param>
         /// <returns>match as string or null</returns>
-        public static string MatchToString(this IParameterPattern pattern, ILine key)
+        public static string MatchToString(this ILinePattern pattern, ILine key)
         {
-            IParameterPatternMatch match = pattern.Match(key);
+            ILinePatternMatch match = pattern.Match(key);
             return pattern.Print(match.PartValues);
         }
 
@@ -235,12 +236,12 @@ namespace Lexical.Localization
         /// <param name="pattern"></param>
         /// <param name="partValues"></param>
         /// <returns>Built name, or null if one of the required parts were not found.</returns>
-        public static string Print(this IParameterPattern pattern, IEnumerable<string> partValues)
+        public static string Print(this ILinePattern pattern, IEnumerable<string> partValues)
         {
             // Count chars
             int length = 0;
             IEnumerator<string> partValuesEtor = partValues.GetEnumerator();
-            foreach (IParameterPatternPart part in pattern.AllParts)
+            foreach (ILinePatternPart part in pattern.AllParts)
             {
                 if (part.Text != null) length += part.Text.Length;
                 else
@@ -256,7 +257,7 @@ namespace Lexical.Localization
             int ix = 0;
             char[] chars = new char[length];
             partValuesEtor.Reset();
-            foreach (IParameterPatternPart part in pattern.AllParts)
+            foreach (ILinePatternPart part in pattern.AllParts)
             {
                 if (part.Text != null) { part.Text.CopyTo(0, chars, ix, part.Text.Length); ix += part.Text.Length; }
                 else
@@ -278,11 +279,11 @@ namespace Lexical.Localization
         /// <param name="pattern"></param>
         /// <param name="parts"></param>
         /// <returns>Built name, or null if one of the required parts were not found.</returns>
-        public static string Print(this IParameterPattern pattern, IReadOnlyDictionary<string, string> parts)
+        public static string Print(this ILinePattern pattern, IReadOnlyDictionary<string, string> parts)
         {
             // Count chars
             int length = 0;
-            foreach (IParameterPatternPart part in pattern.AllParts)
+            foreach (ILinePatternPart part in pattern.AllParts)
             {
                 if (part.Text != null) length += part.Text.Length;
                 else
@@ -298,7 +299,7 @@ namespace Lexical.Localization
             // .. without StringBuilder, there needs to be efficiencies since this may be called frequently.
             int ix = 0;
             char[] chars = new char[length];
-            foreach (IParameterPatternPart part in pattern.AllParts)
+            foreach (ILinePatternPart part in pattern.AllParts)
             {
                 if (part.Text != null) { part.Text.CopyTo(0, chars, ix, part.Text.Length); ix += part.Text.Length; }
                 else
@@ -317,7 +318,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Flags for <see cref="BuildRegexString(IParameterPattern, IReadOnlyDictionary{string, string}, BuildRegexFlags)"/>.
+        /// Flags for <see cref="BuildRegexString(ILinePattern, IReadOnlyDictionary{string, string}, BuildRegexFlags)"/>.
         /// </summary>
         [Flags]
         public enum BuildRegexFlags : Int32
@@ -360,13 +361,13 @@ namespace Lexical.Localization
         /// <paramref name="pattern"/>
         /// <paramref name="filledParameters"/>>
         /// <returns>regex</returns>
-        public static string BuildRegexString(this IParameterPattern pattern, IReadOnlyDictionary<string, string> filledParameters, BuildRegexFlags flags = BuildRegexFlags.All)
+        public static string BuildRegexString(this ILinePattern pattern, IReadOnlyDictionary<string, string> filledParameters, BuildRegexFlags flags = BuildRegexFlags.All)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append('^');
             for (int i = 0; i < pattern.AllParts.Length; i++)
             {
-                IParameterPatternPart part = pattern.AllParts[i];
+                ILinePatternPart part = pattern.AllParts[i];
 
                 // Add regular part
                 if (part.Text != null) { sb.Append(Escape(part.Text, flags, BuildRegexFlags.Escape_NonPart)); continue; }
@@ -409,7 +410,7 @@ namespace Lexical.Localization
         /// <param name="pattern"></param>
         /// <param name="filledParameters"></param>
         /// <returns></returns>
-        public static Regex BuildRegex(this IParameterPattern pattern, IReadOnlyDictionary<string, string> filledParameters)
+        public static Regex BuildRegex(this ILinePattern pattern, IReadOnlyDictionary<string, string> filledParameters)
         {
             string pattern_text = pattern.BuildRegexString(filledParameters);
             RegexOptions options = RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
@@ -424,7 +425,7 @@ namespace Lexical.Localization
         /// <param name="parameters"></param>
         /// <param name="allParts">if true tests if all capture parts match, if false, if non-optional parts match</param>
         /// <returns></returns>
-        public static bool TestSuccess(this IParameterPattern pattern, IReadOnlyDictionary<string, string> parameters, bool allParts)
+        public static bool TestSuccess(this ILinePattern pattern, IReadOnlyDictionary<string, string> parameters, bool allParts)
         {
             if (parameters == null) return false;
             foreach (var part in pattern.CaptureParts)
@@ -463,16 +464,16 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="filledParameters"></param>
         /// <returns>match object</returns>
-        public static IParameterPatternMatch Match(this IParameterPattern pattern, string text, IReadOnlyDictionary<string, string> filledParameters = null)
+        public static ILinePatternMatch Match(this ILinePattern pattern, string text, IReadOnlyDictionary<string, string> filledParameters = null)
         {
             bool hasFilledParameters = false;
             if (filledParameters != null && filledParameters.Count > 0) foreach (var kp in filledParameters) if (kp.Value != null) { hasFilledParameters = true; break; }
             Regex regex = hasFilledParameters ? pattern.Regex : pattern.BuildRegex(filledParameters);
             System.Text.RegularExpressions.Match match = regex.Match(text);
-            ParameterPatternMatch _match = new ParameterPatternMatch(pattern);
+            LinePatternMatch _match = new LinePatternMatch(pattern);
             if (match.Success)
             {
-                foreach (IParameterPatternPart part in pattern.CaptureParts)
+                foreach (ILinePatternPart part in pattern.CaptureParts)
                 {
                     string prefilled_value;
                     if (hasFilledParameters && filledParameters.TryGetValue(part.Identifier, out prefilled_value))
@@ -497,12 +498,12 @@ namespace Lexical.Localization
         /// <param name="values"></param>
         /// <param name="overwrite"></param>
         /// <returns></returns>
-        public static IParameterPatternMatch Add(this IParameterPatternMatch match, IReadOnlyDictionary<string, string> values, bool overwrite = true)
+        public static ILinePatternMatch Add(this ILinePatternMatch match, IReadOnlyDictionary<string, string> values, bool overwrite = true)
         {
             foreach (var kp in values)
             {
                 if (kp.Value == null) continue;
-                IParameterPatternPart part;
+                ILinePatternPart part;
                 if (!match.Pattern.PartMap.TryGetValue(kp.Key, out part)) continue;
                 if (!overwrite && match.PartValues[part.CaptureIndex] != null) continue;
                 match.PartValues[part.CaptureIndex] = kp.Value;
@@ -517,7 +518,7 @@ namespace Lexical.Localization
         /// <param name="match"></param>
         /// <param name="overwrite"></param>
         /// <returns></returns>
-        public static IParameterPatternMatch Add(this IParameterPatternMatch _match, Match match, bool overwrite = true)
+        public static ILinePatternMatch Add(this ILinePatternMatch _match, Match match, bool overwrite = true)
         {
             foreach (var part in _match.Pattern.CaptureParts)
             {

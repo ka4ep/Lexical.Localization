@@ -56,7 +56,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, IParameterPolicy namePolicy = default)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, ILinePolicy namePolicy = default)
         {
             using (var reader = new System.Resources.ResourceReader(stream))
             {

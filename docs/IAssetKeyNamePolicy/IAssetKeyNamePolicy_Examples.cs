@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace docs
 {
-    public class IParameterPolicy_Examples
+    public class ILinePolicy_Examples
     {
         public static void Main(string[] args)
         {
@@ -14,7 +14,7 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "en/MyController/Hello", "Hello World!" } };
                 // Create key name policy
-                IParameterPolicy policy =
+                ILinePolicy policy =
                     new KeyPrinter()
                         .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: "/") // Sorts parameters
                         .DefaultRule(true, prefixSeparator: "/"); // Default separator
@@ -59,7 +59,7 @@ namespace docs
                 {
                     #region Snippet_3
                     // Create a custom policy 
-                    IParameterPolicy myPolicy = new KeyPrinter()
+                    ILinePolicy myPolicy = new KeyPrinter()
                         // Enable non-canonical "Culture" parameter with "/" separator
                         .Rule("Culture", true, "", "/")
                         // Disable other non-canonical parts
@@ -76,8 +76,8 @@ namespace docs
 
                 {
                     #region Snippet_4
-                    // Create similiar policy with ParameterPattern
-                    IParameterPolicy myPolicy = new ParameterPattern("{culture/}{location/}{type/}{section/}[Key].txt");
+                    // Create similiar policy with LinePattern
+                    ILinePolicy myPolicy = new LinePattern("{culture/}{location/}{type/}{section/}[Key].txt");
                     // "en/Patches/MyController/Errors/InvalidState.txt"
                     string str = myPolicy.Print(key);
                     #endregion Snippet_4
@@ -86,7 +86,7 @@ namespace docs
                 {
                     #region Snippet_4a
                     // Create name pattern
-                    IParameterPolicy myPolicy = new ParameterPattern("Patches/{Section}[-key]{-culture}.png");
+                    ILinePolicy myPolicy = new LinePattern("Patches/{Section}[-key]{-culture}.png");
                     #endregion Snippet_4a
                     // "Patches/icons-ok-de.png"
                     string str = myPolicy.Print(key);
@@ -94,7 +94,7 @@ namespace docs
                 {
                     #region Snippet_4b
                     // Create name pattern
-                    IParameterPolicy myPolicy = new ParameterPattern("{location_0/}{location_1/}{location_n/}{Section}{-key}{-culture}.png");
+                    ILinePolicy myPolicy = new LinePattern("{location_0/}{location_1/}{location_n/}{Section}{-key}{-culture}.png");
                     // Create key
                     ILine key2 = new LineRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
@@ -104,7 +104,7 @@ namespace docs
                 {
                     #region Snippet_4c
                     // Create name pattern with regular expression detail
-                    IParameterPattern myPolicy = new ParameterPattern("{location<[^/]+>/}{Section}{-key}{-culture}.png");
+                    ILinePattern myPolicy = new LinePattern("{location<[^/]+>/}{Section}{-key}{-culture}.png");
                     // Use its regular expression
                     Match match = myPolicy.Regex.Match("patches/icons-ok-de.png");
                     #endregion Snippet_4c

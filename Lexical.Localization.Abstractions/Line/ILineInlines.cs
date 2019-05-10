@@ -20,22 +20,22 @@ namespace Lexical.Localization
         /// <summary>
         /// Add inlined language string.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="subKeyText">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
         /// <param name="text"></param>
-        /// <returns>new key with inliens or <paramref name="key"/></returns>
+        /// <returns>new key with inliens or <paramref name="line"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine Inline(this ILine key, string subKeyText, string text)
+        public static ILine Inline(this ILine line, string subKeyText, string text)
         {
-            ILineInlines inlinesKey = key.GetOrCreateInlines();
-            ILine subKey = ParameterParser.Instance.Parse(subKeyText, key);
+            ILineInlines inlinesKey = line.GetOrCreateInlines();
+            ILine subKey = ParameterParser.Instance.Parse(subKeyText, line);
             if (text == null)
             {
                 inlinesKey.Remove(subKey);
             }
             else
             {
-                IStringFormat stringFormat = key.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Instance;
+                IStringFormat stringFormat = line.FindStringFormat(/*StringFormatResolver.Default*/) ?? CSharpFormat.Instance;
                 inlinesKey[subKey] = stringFormat.Parse(text);
             }
             return inlinesKey;
@@ -44,15 +44,15 @@ namespace Lexical.Localization
         /// <summary>
         /// Add inlined language string.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="subKeyText">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
         /// <param name="text"></param>
-        /// <returns>new key with inliens or <paramref name="key"/></returns>
+        /// <returns>new key with inliens or <paramref name="line"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine Inline(this ILine key, string subKeyText, IFormulationString text)
+        public static ILine Inline(this ILine line, string subKeyText, IFormulationString text)
         {
-            ILineInlines inlinesKey = key.GetOrCreateInlines();
-            ILine subKey = ParameterParser.Instance.Parse(subKeyText, key);
+            ILineInlines inlinesKey = line.GetOrCreateInlines();
+            ILine subKey = ParameterParser.Instance.Parse(subKeyText, line);
             if (text == null) inlinesKey.Remove(subKey); else inlinesKey[subKey] = text;
             return inlinesKey;
         }
