@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// A key that has been assigned with logger.
+    /// Logger hint, that is forwarded every resolved string by <see cref="ILineStringResolver"/>.
     /// </summary>
     public interface ILineLogger : ILine
     {

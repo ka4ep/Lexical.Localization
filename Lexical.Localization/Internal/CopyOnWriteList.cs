@@ -28,6 +28,9 @@ namespace Lexical.Localization.Internal
             set { lock (m_lock) { list[index] = value; snapshot = null; } }
         }
 
+        /// <summary>
+        /// Count
+        /// </summary>
         public int Count
         {
             get
@@ -38,8 +41,14 @@ namespace Lexical.Localization.Internal
             }
         }
 
+        /// <summary>
+        /// Is in readonly state
+        /// </summary>
         public virtual bool IsReadOnly => false;
 
+        /// <summary>
+        /// Synchronize object
+        /// </summary>
         protected internal object m_lock = new object();
 
         /// <summary>
@@ -53,13 +62,23 @@ namespace Lexical.Localization.Internal
         public T[] Array 
             => snapshot ?? BuildCow();
 
+        /// <summary>
+        /// List of elements
+        /// </summary>
         protected List<T> list;
 
+        /// <summary>
+        /// Create copy-on-write list
+        /// </summary>
         public CopyOnWriteList()
         {
             list = new List<T>();
         }
 
+        /// <summary>
+        /// Create copy-on-write list.
+        /// </summary>
+        /// <param name="strsEnumr"></param>
         public CopyOnWriteList(IEnumerable<T> strsEnumr)
         {
             this.list = new List<T>(strsEnumr);
@@ -70,25 +89,75 @@ namespace Lexical.Localization.Internal
         /// </summary>
         public class Immutable : CopyOnWriteList<T>
         {
+            /// <summary>
+            /// Is read-only
+            /// </summary>
             public override bool IsReadOnly => true;
+
+            /// <summary>
+            /// Create immutable version of copy-on-write-list.
+            /// </summary>
             public Immutable() : base() { }
+
+            /// <summary>
+            /// Create immutable version of copy-on-write-list.
+            /// </summary>
+            /// <param name="strsEnumr"></param>
             public Immutable(IEnumerable<T> strsEnumr) : base(strsEnumr) { }
+
+            /// <summary>
+            /// Insert
+            /// </summary>
+            /// <param name="index"></param>
+            /// <param name="item"></param>
             public override void Insert(int index, T item) => throw new InvalidOperationException("Immutable");
+
+            /// <summary>
+            /// Remove
+            /// </summary>
+            /// <param name="item"></param>
+            /// <returns></returns>
             public override bool Remove(T item) => throw new InvalidOperationException("Immutable");
+
+            /// <summary>
+            /// Remove At
+            /// </summary>
+            /// <param name="index"></param>
             public override void RemoveAt(int index) => throw new InvalidOperationException("Immutable");
+
+            /// <summary>
+            /// Add
+            /// </summary>
+            /// <param name="item"></param>
             public override void Add(T item) => throw new InvalidOperationException("Immutable");
+
+            /// <summary>
+            /// Clear
+            /// </summary>
             public override void Clear() => throw new InvalidOperationException("Immutable");
         }
 
+        /// <summary>
+        /// Construct array
+        /// </summary>
+        /// <returns></returns>
         protected virtual T[] BuildCow()
         {
             lock (m_lock) return snapshot = list.ToArray();
         }
+
+        /// <summary>
+        /// Clear last array
+        /// </summary>
         protected virtual void ClearCache()
         {
             this.snapshot = null;
         }
 
+        /// <summary>
+        /// Add element
+        /// </summary>
+        /// <param name="item"></param>
         public virtual void Add(T item)
         {
             lock (m_lock)
@@ -98,6 +167,10 @@ namespace Lexical.Localization.Internal
             }
         }
 
+        /// <summary>
+        /// Add elements
+        /// </summary>
+        /// <param name="items"></param>
         public virtual void AddRange(IEnumerable<T> items)
         {
             lock (m_lock)
@@ -107,6 +180,9 @@ namespace Lexical.Localization.Internal
             }
         }
 
+        /// <summary>
+        /// Clear elements
+        /// </summary>
         public virtual void Clear()
         {
             lock (m_lock)
@@ -117,6 +193,11 @@ namespace Lexical.Localization.Internal
             }
         }
 
+        /// <summary>
+        /// Test if contains element
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public bool Contains(T item)
         {
             var snapshot = Array;
@@ -125,12 +206,22 @@ namespace Lexical.Localization.Internal
             return false;
         }
 
+        /// <summary>
+        /// Copy elements to array
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="arrayIndex"></param>
         public void CopyTo(T[] array, int arrayIndex)
         {
             var snapshot = Array;
             System.Array.Copy(snapshot, 0, array, arrayIndex, snapshot.Length);
         }
 
+        /// <summary>
+        /// Index of element.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public int IndexOf(T item)
         {
             var snapshot = Array;
@@ -139,6 +230,11 @@ namespace Lexical.Localization.Internal
             return -1;
         }
 
+        /// <summary>
+        /// Insert element
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="item"></param>
         public virtual void Insert(int index, T item)
         {
             lock (m_lock)
@@ -148,6 +244,10 @@ namespace Lexical.Localization.Internal
             }
         }
 
+        /// <summary>
+        /// Copy elements from <paramref name="newContent"/>.
+        /// </summary>
+        /// <param name="newContent"></param>
         public void CopyFrom(IEnumerable<T> newContent)
         {
             lock (m_lock)
@@ -158,6 +258,11 @@ namespace Lexical.Localization.Internal
             }
         }
 
+        /// <summary>
+        /// Remove element
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public virtual bool Remove(T item)
         {
             lock (m_lock)
@@ -168,6 +273,10 @@ namespace Lexical.Localization.Internal
             }
         }
 
+        /// <summary>
+        /// Remove element at index.
+        /// </summary>
+        /// <param name="index"></param>
         public virtual void RemoveAt(int index)
         {
             lock (m_lock)

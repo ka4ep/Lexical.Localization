@@ -14,9 +14,20 @@ namespace Lexical.Localization.Internal
     public class LinePatternMatchEqualityComparer : IEqualityComparer<ILinePatternMatch>
     {
         private readonly static LinePatternMatchEqualityComparer instance = new LinePatternMatchEqualityComparer();
+
+        /// <summary>
+        /// Default comparer
+        /// </summary>
         public static LinePatternMatchEqualityComparer Default => instance;
+
         static IEqualityComparer<string> stringComparer = EqualityComparer<string>.Default;
 
+        /// <summary>
+        /// Compare pattern matches.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public bool Equals(ILinePatternMatch x, ILinePatternMatch y)
         {
             if (x == null && y == null) return true;
@@ -31,6 +42,11 @@ namespace Lexical.Localization.Internal
             return true;
         }
 
+        /// <summary>
+        /// Calculate hash-code.
+        /// </summary>
+        /// <param name="match"></param>
+        /// <returns></returns>
         public int GetHashCode(ILinePatternMatch match)
         {
             if (match == null) return 0;

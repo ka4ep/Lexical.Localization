@@ -49,6 +49,9 @@ namespace Lexical.Localization.Internal
             set => this.Put(left, value);
         }
 
+        /// <summary>
+        /// Create bijection map.
+        /// </summary>
         public BijectionMap()
         {
             tableLeft = new Dictionary<L, R>();
@@ -57,6 +60,11 @@ namespace Lexical.Localization.Internal
             RightComparer = EqualityComparer<R>.Default;
         }
 
+        /// <summary>
+        /// Create bijection map with custom comparers.
+        /// </summary>
+        /// <param name="leftComparer">(optional) comparer</param>
+        /// <param name="rightComparer">(optional) comparer</param>
         public BijectionMap(IEqualityComparer<L> leftComparer, IEqualityComparer<R> rightComparer)
         {
             LeftComparer = leftComparer ?? EqualityComparer<L>.Default;
@@ -65,6 +73,10 @@ namespace Lexical.Localization.Internal
             tableRight = new Dictionary<R, L>(RightComparer);
         }
 
+        /// <summary>
+        /// Create bijection map with default comparers, copy initial values from <paramref name="copyFrom"/>.
+        /// </summary>
+        /// <param name="copyFrom"></param>
         public BijectionMap(BijectionMap<L, R> copyFrom)
         {
             LeftComparer = copyFrom.LeftComparer;
@@ -74,6 +86,10 @@ namespace Lexical.Localization.Internal
             AddAll(copyFrom);
         }
 
+        /// <summary>
+        /// Add contents from another bijection map.
+        /// </summary>
+        /// <param name="dictionary"></param>
         public void AddAll(BijectionMap<L, R> dictionary)
         {
             foreach (var entry in dictionary.tableLeft)
@@ -83,6 +99,11 @@ namespace Lexical.Localization.Internal
             }
         }
 
+        /// <summary>
+        /// Retain all entries whose left side is within <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns></returns>
         public bool RetainAllLeft(ICollection<L> values)
         {
             // Probably not the best of implementations
@@ -105,6 +126,11 @@ namespace Lexical.Localization.Internal
             return result;
         }
 
+        /// <summary>
+        /// Retain all entries whose right side is within <paramref name="values"/>.
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns></returns>
         public bool RetainAllRight(ICollection<R> values)
         {
             // Probably not the best of implementations
@@ -126,12 +152,28 @@ namespace Lexical.Localization.Internal
             return result;
         }
 
+        /// <summary>
+        /// Test if left values contain <paramref name="leftValue"/>.
+        /// </summary>
+        /// <param name="leftValue"></param>
+        /// <returns></returns>
         public bool ContainsLeft(L leftValue)
             => tableLeft.ContainsKey(leftValue);
 
+        /// <summary>
+        /// Test if right values contain <paramref name="rightValue"/>.
+        /// </summary>
+        /// <param name="rightValue"></param>
+        /// <returns></returns>
         public bool ContainsRight(R rightValue)
             => tableRight.ContainsKey(rightValue);
 
+        /// <summary>
+        /// Test if contains pair.
+        /// </summary>
+        /// <param name="leftValue"></param>
+        /// <param name="rightValue"></param>
+        /// <returns></returns>
         public bool Contains(L leftValue, R rightValue)
         {
             if (leftValue == null || rightValue == null) return false;
@@ -140,6 +182,11 @@ namespace Lexical.Localization.Internal
             return RightComparer.Equals(r, rightValue);
         }
 
+        /// <summary>
+        /// Put left, right value pair.
+        /// </summary>
+        /// <param name="leftValue"></param>
+        /// <param name="rightValue"></param>
         public void Put(L leftValue, R rightValue)
         {
             if (leftValue == null) throw new ArgumentNullException(nameof(leftValue));
@@ -155,6 +202,12 @@ namespace Lexical.Localization.Internal
             tableRight[rightValue] = leftValue;
         }
 
+        /// <summary>
+        /// Remove left, right pair.
+        /// </summary>
+        /// <param name="leftValue"></param>
+        /// <param name="rightValue"></param>
+        /// <returns></returns>
         public bool Remove(L leftValue, R rightValue)
         {
             if (leftValue == null || rightValue == null) return false;
@@ -166,23 +219,56 @@ namespace Lexical.Localization.Internal
             return true;
         }
 
+        /// <summary>
+        /// Test if is empty.
+        /// </summary>
         public bool IsEmpty 
             => tableLeft.Count == 0;
 
+        /// <summary>
+        /// Get entry count.
+        /// </summary>
         public int Count => tableLeft.Count;
 
+        /// <summary>
+        /// Get value on the left with right key.
+        /// </summary>
+        /// <param name="rightValue"></param>
+        /// <returns></returns>
         public L GetLeft(R rightValue)
             => tableRight[rightValue];
 
+        /// <summary>
+        /// Try get value on the left with right key.
+        /// </summary>
+        /// <param name="rightValue"></param>
+        /// <param name="leftValue"></param>
+        /// <returns></returns>
         public bool TryGetLeft(R rightValue, out L leftValue)
             => tableRight.TryGetValue(rightValue, out leftValue);
 
+        /// <summary>
+        /// Get value on the right with left key.
+        /// </summary>
+        /// <param name="leftValue"></param>
+        /// <returns></returns>
         public R GetRight(L leftValue)
             => tableLeft[leftValue];
 
+        /// <summary>
+        /// Try get value on the right with left key.
+        /// </summary>
+        /// <param name="leftValue"></param>
+        /// <param name="rightValue"></param>
+        /// <returns></returns>
         public bool TryGetRight(L leftValue, out R rightValue)
             => tableLeft.TryGetValue(leftValue, out rightValue);
 
+        /// <summary>
+        /// Remove with left key.
+        /// </summary>
+        /// <param name="leftValue"></param>
+        /// <returns></returns>
         public R RemoveWithLeft(L leftValue)
         {
             R oldR = default(R);
@@ -194,6 +280,11 @@ namespace Lexical.Localization.Internal
             return oldR;
         }
 
+        /// <summary>
+        /// Remove with right key.
+        /// </summary>
+        /// <param name="rightValue"></param>
+        /// <returns></returns>
         public L RemoveWithRight(R rightValue)
         {
             L oldL = default(L);
@@ -233,12 +324,19 @@ namespace Lexical.Localization.Internal
         public Dictionary<R, L> GetRightToLeftDictionary()
             => tableRight;
 
+        /// <summary>
+        /// Clear entriees.
+        /// </summary>
         public virtual void Clear()
         {
             tableLeft.Clear();
             tableRight.Clear();
         }
 
+        /// <summary>
+        /// Print entries.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             int count = 0;
@@ -255,6 +353,10 @@ namespace Lexical.Localization.Internal
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Create clone.
+        /// </summary>
+        /// <returns></returns>
         public object Clone()
         {
             BijectionMap<L, R> clone = new BijectionMap<L, R>(tableLeft.Comparer, tableRight.Comparer);
@@ -262,6 +364,10 @@ namespace Lexical.Localization.Internal
             return clone;
         }
 
+        /// <summary>
+        /// Enumerate pairs.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<KeyValuePair<L, R>> GetEnumerator()
             => tableLeft.GetEnumerator();
 

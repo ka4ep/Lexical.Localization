@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Default grouping rule.
         /// </summary>
-        public static ILinePattern DefaultGroupingRule = new LinePattern("{Culture}/{Location_n}{Assembly}{Resource_n}/{Type}{Section_n/}/{Key_n}");
+        public static ILinePattern DefaultGroupingRule = new LinePattern("{Culture}/{Location_n}{Assembly}{BaseName_n}/{Type}{Section_n/}/{Key_n}");
 
         /// <summary>
         /// Add an enumeration of key,value pairs. Each key will constructed a new node.
