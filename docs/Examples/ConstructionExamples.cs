@@ -36,7 +36,7 @@ namespace docs
             {
                 #region Snippet_Plain_1
                 AssetBuilder builder = new AssetBuilder();
-                builder.AddStrings(languageStrings, KeyPrinter.Default);
+                builder.AddStrings(languageStrings, LineParameterPrinter.Default);
 
                 CulturePolicy culturePolicy = new CulturePolicy();
                 culturePolicy.SetCultures("en", "fi", "");
@@ -71,7 +71,7 @@ namespace docs
                 #region Snippet_Singleton
                 // How to setup singleton instance
                 (LineRoot.Global.CulturePolicy as ICulturePolicyAssignable).SetToCurrentThreadCulture();
-                LineRoot.Builder.AddStrings(languageStrings, KeyPrinter.Default);
+                LineRoot.Builder.AddStrings(languageStrings, LineParameterPrinter.Default);
                 LineRoot.Builder.Build();
 
                 // Try it out

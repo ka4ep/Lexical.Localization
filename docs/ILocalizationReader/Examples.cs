@@ -43,7 +43,7 @@ namespace docs
                 #region Snippet_1b
                 IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LineReaderMap.Instance.ReadStringLines(
                     filename: "localization.ini", 
-                    namePolicy: ParameterParser.Instance,
+                    namePolicy: LineFormat.Instance,
                     throwIfNotFound: true);
                 #endregion Snippet_1b
             }
@@ -68,7 +68,7 @@ namespace docs
                 IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader = 
                     LineReaderMap.Instance.FileReaderAsStringLines(
                         filename: "localization.ini",
-                        namePolicy: ParameterParser.Instance,
+                        namePolicy: LineFormat.Instance,
                         throwIfNotFound: true);
                 #endregion Snippet_2b
                 var lines = string_lines_reader.ToArray();
@@ -101,7 +101,7 @@ namespace docs
                     LineReaderMap.Instance.EmbeddedReaderAsStringLines(
                         assembly: asm, 
                         resourceName: "docs.localization.ini", 
-                        namePolicy: ParameterParser.Instance,
+                        namePolicy: LineFormat.Instance,
                         throwIfNotFound: true);
                 #endregion Snippet_3b
                 var lines = string_lines_reader.ToArray();
@@ -166,7 +166,7 @@ namespace docs
                 {
                     IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LineIniReader.Instance.ReadStringLines(
                         stream: s,
-                        namePolicy: ParameterParser.Instance);
+                        namePolicy: LineFormat.Instance);
                 }
                 #endregion Snippet_5b
             }
@@ -196,7 +196,7 @@ namespace docs
                 {
                     IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LineIniReader.Instance.ReadStringLines(
                         srcText: tr,
-                        namePolicy: ParameterParser.Instance);
+                        namePolicy: LineFormat.Instance);
                 }
                 #endregion Snippet_6b
             }
@@ -224,7 +224,7 @@ namespace docs
                 IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = 
                     LineIniReader.Instance.ReadStringAsStringLines(
                         srcText: text,
-                        namePolicy: ParameterParser.Instance);
+                        namePolicy: LineFormat.Instance);
                 #endregion Snippet_7b
             }
             {
@@ -372,7 +372,7 @@ namespace docs
 
         public IEnumerable<ILine> ReadKeyLines(
             TextReader text, 
-            ILineFormatPolicy namePolicy = null)
+            ILineFormat namePolicy = null)
         {
             ILine key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
             yield return new ILine(key, CSharpFormat.Instance.Parse("Hello World!"));

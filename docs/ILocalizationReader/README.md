@@ -119,7 +119,7 @@ Into string lines with **.ReadStringLines()**.
 ```csharp
 IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LineReaderMap.Instance.ReadStringLines(
     filename: "localization.ini", 
-    namePolicy: ParameterParser.Instance,
+    namePolicy: LineFormat.Instance,
     throwIfNotFound: true);
 ```
 And into a tree **.ReadLineTree()**.
@@ -146,7 +146,7 @@ IEnumerable<KeyValuePair<ILine, IFormulationString>> key_lines_reader =
 IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader = 
     LineReaderMap.Instance.FileReaderAsStringLines(
         filename: "localization.ini",
-        namePolicy: ParameterParser.Instance,
+        namePolicy: LineFormat.Instance,
         throwIfNotFound: true);
 ```
 And **.FileReaderAsLineTree()** a tree reader.
@@ -176,7 +176,7 @@ IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader =
     LineReaderMap.Instance.EmbeddedReaderAsStringLines(
         assembly: asm, 
         resourceName: "docs.localization.ini", 
-        namePolicy: ParameterParser.Instance,
+        namePolicy: LineFormat.Instance,
         throwIfNotFound: true);
 ```
 And **.EmbeddedReaderAsLineTree()** reader of trees
@@ -237,7 +237,7 @@ using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.R
 {
     IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
         stream: s,
-        namePolicy: ParameterParser.Instance);
+        namePolicy: LineFormat.Instance);
 }
 ```
 And into a tree.
@@ -266,7 +266,7 @@ using (TextReader tr = new StringReader(text))
 {
     IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
         srcText: tr,
-        namePolicy: ParameterParser.Instance);
+        namePolicy: LineFormat.Instance);
 }
 ```
 And into tree.
@@ -293,7 +293,7 @@ Into string lines.
 IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = 
     LocalizationIniReader.Instance.ReadStringAsStringLines(
         srcText: text,
-        namePolicy: ParameterParser.Instance);
+        namePolicy: LineFormat.Instance);
 ```
 And into a tree.
 
@@ -335,7 +335,7 @@ public interface ILineStreamReader : ILineReader
     /// <param name="namePolicy">(optional) name policy. </param>
     /// <returns>the read lines</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(Stream stream, ILineFormatPolicy namePolicy = default);
+    IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(Stream stream, ILineFormat namePolicy = default);
 }
 
 /// <summary>
@@ -350,7 +350,7 @@ public interface ILineTreeStreamReader : ILineReader
     /// <param name="namePolicy">(optional) name policy.</param>
     /// <returns>lines in tree structure</returns>
     /// <exception cref="IOException"></exception>
-    ILineTree ReadLineTree(Stream stream, ILineFormatPolicy namePolicy = default);
+    ILineTree ReadLineTree(Stream stream, ILineFormat namePolicy = default);
 }
 
 /// <summary>
@@ -365,7 +365,7 @@ public interface ILineTextReader : ILineReader
     /// <param name="namePolicy">(optional) name policy.</param>
     /// <returns>the read lines</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(TextReader text, ILineFormatPolicy namePolicy = default);
+    IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(TextReader text, ILineFormat namePolicy = default);
 }
 
 /// <summary>
@@ -380,7 +380,7 @@ public interface ILineTreeTextReader : ILineReader
     /// <param name="namePolicy">(optional) name policy.</param>
     /// <returns>lines in tree structure</returns>
     /// <exception cref="IOException"></exception>
-    ILineTree ReadLineTree(TextReader text, ILineFormatPolicy namePolicy = default);
+    ILineTree ReadLineTree(TextReader text, ILineFormat namePolicy = default);
 }
 
 /// <summary>
@@ -395,7 +395,7 @@ public interface ILineStringTextReader : ILineReader
     /// <param name="namePolicy">(optional) name policy.</param>
     /// <returns>the read string key-values</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, ILineFormatPolicy namePolicy = default);
+    IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, ILineFormat namePolicy = default);
 }
 
 /// <summary>
@@ -410,7 +410,7 @@ public interface ILineStringStreamReader : ILineReader
     /// <param name="namePolicy">(optional) name policy.</param>
     /// <returns>the read string key-values</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, ILineFormatPolicy namePolicy = default);
+    IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, ILineFormat namePolicy = default);
 }
 ```
 </details>
@@ -424,7 +424,7 @@ class ExtFileFormatReader : ILineTextReader
 
     public IEnumerable<KeyValuePair<ILine, IFormulationString>> ReadKeyLines(
         TextReader text, 
-        ILineFormatPolicy namePolicy = null)
+        ILineFormat namePolicy = null)
     {
         ILine key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
         yield return new KeyValuePair<ILine, IFormulationString>(key, CSharpFormat.Instance.Parse("Hello World!"));

@@ -12,7 +12,7 @@ namespace docs
         public static void Main(string[] args)
         {
             {
-                IAsset asset = new LocalizationAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, ParameterParser.Instance);
+                IAsset asset = new LocalizationAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, LineFormat.Instance);
                 // Assign the composition to root
                 ILineRoot root = new LineRoot(asset, new CulturePolicy());
                 #region Snippet_0
@@ -55,7 +55,7 @@ namespace docs
                 // Language string source
                 Dictionary<string, string> src = new Dictionary<string, string> { { "en:Section:Key", "Hello World!" } };
                 // Create Asset
-                IAsset asset = new LocalizationAsset(src, KeyPrinter.Colon_Colon_Colon);
+                IAsset asset = new LocalizationAsset(src, LineParameterPrinter.Colon_Colon_Colon);
                 // Create culture policy
                 ICulturePolicy culturePolicy = new CulturePolicy();
                 // Create root
@@ -77,7 +77,7 @@ namespace docs
                 ILine key = new LineRoot().Section("Section1").Section("Section2").Key("Key");
 
                 // "Section1:Section2:Key"
-                string id = KeyPrinter.Colon_Colon_Colon.Print(key);
+                string id = LineParameterPrinter.Colon_Colon_Colon.Print(key);
                 #endregion Snippet_4a
             }
             {
@@ -87,9 +87,9 @@ namespace docs
                 ILine key2 = new LineRoot().Culture("en").Section("Section").Key("Key");
 
                 // "en:Section1:Section2:Key"
-                string id1 = KeyPrinter.Colon_Colon_Colon.Print(key1);
+                string id1 = LineParameterPrinter.Colon_Colon_Colon.Print(key1);
                 // "en:Section1:Section2:Key"
-                string id2 = KeyPrinter.Colon_Colon_Colon.Print(key2);
+                string id2 = LineParameterPrinter.Colon_Colon_Colon.Print(key2);
                 #endregion Snippet_4b
             }
 
@@ -100,7 +100,7 @@ namespace docs
                 Dictionary<string, string> strs = new Dictionary<string, string>();
                 strs["ConsoleApp1.MyController:Error"] = "Error (Code=0x{0:X8})";
                 // Create asset
-                IAsset asset = new LocalizationAsset(strs, KeyPrinter.Default);
+                IAsset asset = new LocalizationAsset(strs, LineParameterPrinter.Default);
                 // Create root
                 ILineRoot root = new LineRoot(asset);
                 #endregion Snippet_6a

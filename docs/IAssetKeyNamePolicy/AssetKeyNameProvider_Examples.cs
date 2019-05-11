@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace docs
 {
-    public class KeyPrinter_Examples
+    public class LineParameterPrinter_Examples
     {
         public static void Main(string[] args)
         {
@@ -14,8 +14,8 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "en/MyController/Hello", "Hello World!" } };
                 // Create key name policy
-                ILineFormatPolicy policy = 
-                    new KeyPrinter()
+                ILineFormat policy = 
+                    new LineParameterPrinter()
                         .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: "/") // Sorts parameters
                         .DefaultRule(true, prefixSeparator: "/"); // Default separator
                 // Create asset
@@ -47,22 +47,22 @@ namespace docs
                 {
                     #region Snippet_2
                     // "en:Patches:Controllers:MyController:Errors:InvalidState"
-                    string str1 = KeyPrinter.Default.Print(key);
+                    string str1 = LineParameterPrinter.Default.Print(key);
                     // "en.Patches.Controllers.MyController.Errors.InvalidState"
-                    string str2 = KeyPrinter.Dot_Dot_Dot.Print(key);
+                    string str2 = LineParameterPrinter.Dot_Dot_Dot.Print(key);
                     // "Patches:Controllers:MyController:Errors:InvalidState"
-                    string str3 = KeyPrinter.None_Colon_Colon.Print(key);
+                    string str3 = LineParameterPrinter.None_Colon_Colon.Print(key);
                     // "en:Patches.Controllers.MyController.Errors.InvalidState"
-                    string str4 = KeyPrinter.Colon_Dot_Dot.Print(key);
+                    string str4 = LineParameterPrinter.Colon_Dot_Dot.Print(key);
                     // "en:Patches:Controllers:MyController:Errors.InvalidState"
-                    string str5 = KeyPrinter.Colon_Colon_Dot.Print(key);
+                    string str5 = LineParameterPrinter.Colon_Colon_Dot.Print(key);
                     #endregion Snippet_2
                 }
 
                 {
                     #region Snippet_3
                     // Create a custom policy 
-                    ILineFormatPolicy myPolicy = new KeyPrinter()
+                    ILineFormat myPolicy = new LineParameterPrinter()
                         // Enable non-canonical "Culture" parameter with "/" separator
                         .Rule("Culture", true, postfixSeparator: "/", order: ParameterInfos.Default["Culture"].Order)
                         // Disable other non-canonical parts

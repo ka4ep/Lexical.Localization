@@ -17,7 +17,7 @@ namespace docs
             // Add IAssetSource that adds cache 
             builder.AddCache();
             // Add IAssetSource that adds strings
-            builder.AddStrings(strings, KeyPrinter.Default);
+            builder.AddStrings(strings, LineParameterPrinter.Default);
             #endregion Snippet
 
             // Instantiate IAsset

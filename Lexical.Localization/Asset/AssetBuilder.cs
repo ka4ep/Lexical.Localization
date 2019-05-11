@@ -62,7 +62,7 @@ namespace Lexical.Localization
         /// Builds a list of assets. Adds the following:
         ///   1. The list of <see cref="assets"/> as is
         ///   2. Build from <see cref="sources"/> elements that dont' implement <see cref="ILineSource"/>
-        ///   3. One asset for each <see cref="IStringLineSource"/> that share <see cref="ILineFormatPolicy"/>.
+        ///   3. One asset for each <see cref="IStringLineSource"/> that share <see cref="ILineFormat"/>.
         ///   4. One asset for all <see cref="IKeyLineSource"/>.
         ///   
         /// </summary>

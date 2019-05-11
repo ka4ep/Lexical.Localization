@@ -8,7 +8,7 @@ Asset cache needs to be populated with [IAssetCacheParts](https://github.com/tag
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } };
-IAsset asset = new LocalizationAsset(source, ParameterParser.Instance);
+IAsset asset = new LocalizationAsset(source, LineFormat.Instance);
 
 // Create cache
 IAssetCache asset_cached = new AssetCache(asset);
@@ -68,7 +68,7 @@ public interface IAssetCachePart : IAsset
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } };
-IAsset asset = new LocalizationAsset(source, ParameterParser.Instance);
+IAsset asset = new LocalizationAsset(source, LineFormat.Instance);
 
 // Create cache
 IAssetCache asset_cached = asset.CreateCache();
@@ -106,7 +106,7 @@ Table of Asset cache option's keys
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } };
-IAsset asset = new LocalizationAsset(source, ParameterParser.Instance);
+IAsset asset = new LocalizationAsset(source, LineFormat.Instance);
 
 // Cache it
 asset = asset.CreateCache();

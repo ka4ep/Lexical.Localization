@@ -112,7 +112,7 @@ namespace Lexical.Localization
         /// <param name="keyPolicy"></param>
         /// <param name="comparer">(optional) comparer to use</param>
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
-        public LocalizationAsset(IEnumerable reader, ILineFormatPolicy keyPolicy, IEqualityComparer<ILine> comparer = default, Func<Exception, bool> errorHandler = null) : base()
+        public LocalizationAsset(IEnumerable reader, ILineFormat keyPolicy, IEqualityComparer<ILine> comparer = default, Func<Exception, bool> errorHandler = null) : base()
         {
             this.comparer = comparer ?? LineComparer.Default;
             this.errorHandler = errorHandler;
@@ -397,7 +397,7 @@ namespace Lexical.Localization
         /// <param name="errorHandler">(optional) overrides default handler.</param>
         /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="LocalizationAsset"/></param>
         /// <returns></returns>
-        public LocalizationAsset Add(IEnumerable reader, ILineFormatPolicy namePolicy = null, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
+        public LocalizationAsset Add(IEnumerable reader, ILineFormat namePolicy = null, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
         {
             // Reader argument not null
             if (reader == null) throw new ArgumentNullException(nameof(reader));
@@ -588,7 +588,7 @@ namespace Lexical.Localization
         /// 
         /// If source is string lines the parses into strings into <see cref="ILine"/>.
         /// </summary>
-        protected internal ILineFormatPolicy namePolicy;
+        protected internal ILineFormat namePolicy;
 
         /// <summary>
         /// Handler that processes file load errors, and file monitoring errors.
@@ -621,11 +621,11 @@ namespace Lexical.Localization
         /// <param name="errorHandler">(optional) handles file load and observe errors for logging and capturing exceptions. If <paramref name="errorHandler"/> returns true then exception is caught and not thrown</param>
         /// <param name="parent"></param>
         /// <param name="disposeReader"></param>
-        public Collection(IEnumerable reader, ILineFormatPolicy namePolicy, Func<Exception, bool> errorHandler, LocalizationAsset parent, bool disposeReader)
+        public Collection(IEnumerable reader, ILineFormat namePolicy, Func<Exception, bool> errorHandler, LocalizationAsset parent, bool disposeReader)
         {
             this.parent = parent;
             this.reader = reader;
-            this.namePolicy = namePolicy ?? ParameterParser.Instance;
+            this.namePolicy = namePolicy ?? LineFormat.Instance;
             this.errorHandler = errorHandler;
             this.disposeReader = disposeReader;
 
@@ -956,7 +956,7 @@ namespace Lexical.Localization
         /// <param name="dictionary"></param>
         /// <param name="namePolicy">instructions how to convert key to string</param>
         /// <returns></returns>
-        public static IAssetBuilder AddStrings(this IAssetBuilder builder, IReadOnlyDictionary<string, string> dictionary, ILineFormatPolicy namePolicy)
+        public static IAssetBuilder AddStrings(this IAssetBuilder builder, IReadOnlyDictionary<string, string> dictionary, ILineFormat namePolicy)
         {
             builder.AddAsset(new LocalizationAsset(dictionary, namePolicy));
             return builder;
@@ -969,7 +969,7 @@ namespace Lexical.Localization
         /// <param name="dictionary"></param>
         /// <param name="namePolicy">instructions how to convert key to string</param>
         /// <returns></returns>
-        public static IAssetComposition AddStrings(this IAssetComposition composition, IReadOnlyDictionary<string, string> dictionary, ILineFormatPolicy namePolicy)
+        public static IAssetComposition AddStrings(this IAssetComposition composition, IReadOnlyDictionary<string, string> dictionary, ILineFormat namePolicy)
         {
             composition.Add(new LocalizationAsset(dictionary, namePolicy));
             return composition;

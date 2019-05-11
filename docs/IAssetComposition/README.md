@@ -4,8 +4,8 @@
 
 ```csharp
 // Create individual assets
-IAsset asset_1 = new LocalizationAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, ParameterParser.Instance);
-IAsset asset_2 = new ResourceStringDictionary(new Dictionary<string, byte[]> { { "Culture:en:Key:Hello.Icon", new byte[] { 1, 2, 3 } } }, ParameterParser.Instance);
+IAsset asset_1 = new LocalizationAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, LineFormat.Instance);
+IAsset asset_2 = new ResourceStringDictionary(new Dictionary<string, byte[]> { { "Culture:en:Key:Hello.Icon", new byte[] { 1, 2, 3 } } }, LineFormat.Instance);
 
 // Create composition asset
 IAssetComposition asset_composition = new AssetComposition(asset_1, asset_2);

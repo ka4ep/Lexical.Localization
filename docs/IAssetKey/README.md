@@ -49,7 +49,7 @@ Extension methods can be used for retrieving strings and binary resources.
 // Language string source
 Dictionary<string, string> src = new Dictionary<string, string> { { "en:Section:Key", "Hello World!" } };
 // Create Asset
-IAsset asset = new LocalizationAsset(src, KeyPrinter.Colon_Colon_Colon);
+IAsset asset = new LocalizationAsset(src, LineParameterPrinter.Colon_Colon_Colon);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
@@ -73,7 +73,7 @@ Canonical parts typically add to the identity of the key.
 ILine key = new LocalizationRoot().Section("Section1").Section("Section2").Key("Key");
 
 // "Section1:Section2:Key"
-string id = KeyPrinter.Colon_Colon_Colon.BuildName(key);
+string id = LineParameterPrinter.Colon_Colon_Colon.BuildName(key);
 ```
 
 For parts that are *non-canonical* the position doesn't matter.
@@ -85,9 +85,9 @@ ILine key1 = new LocalizationRoot().Section("Section").Key("Key").Culture("en");
 ILine key2 = new LocalizationRoot().Culture("en").Section("Section").Key("Key");
 
 // "en:Section1:Section2:Key"
-string id1 = KeyPrinter.Colon_Colon_Colon.BuildName(key1);
+string id1 = LineParameterPrinter.Colon_Colon_Colon.BuildName(key1);
 // "en:Section1:Section2:Key"
-string id2 = KeyPrinter.Colon_Colon_Colon.BuildName(key2);
+string id2 = LineParameterPrinter.Colon_Colon_Colon.BuildName(key2);
 ```
 
 ## Key Parts

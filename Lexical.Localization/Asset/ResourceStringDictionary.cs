@@ -25,14 +25,14 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy that converts <see cref="ILine"/> to string, and back to <see cref="ILine"/>.
         /// </summary>
-        ILineFormatPolicy namePolicy;
+        ILineFormat namePolicy;
 
         /// <summary>
         /// Create language byte[] resolver that uses a dictionary as a backend.
         /// </summary>
         /// <param name="dictionary">dictionary</param>
         /// <param name="namePolicy">policy that describes how to convert localization key to dictionary key</param>
-        public ResourceStringDictionary(IReadOnlyDictionary<string, byte[]> dictionary, ILineFormatPolicy namePolicy = default)
+        public ResourceStringDictionary(IReadOnlyDictionary<string, byte[]> dictionary, ILineFormat namePolicy = default)
         {
             this.dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
             this.namePolicy = namePolicy ?? throw new ArgumentNullException(nameof(namePolicy));
@@ -165,7 +165,7 @@ namespace Lexical.Localization
         /// <param name="dictionary"></param>
         /// <param name="namePolicy">instructions how to convert key to byte[]</param>
         /// <returns></returns>
-        public static IAssetBuilder AddResources(this IAssetBuilder builder, IReadOnlyDictionary<String, byte[]> dictionary, ILineFormatPolicy namePolicy)
+        public static IAssetBuilder AddResources(this IAssetBuilder builder, IReadOnlyDictionary<String, byte[]> dictionary, ILineFormat namePolicy)
         {
             builder.AddAsset(new ResourceStringDictionary(dictionary, namePolicy));
             return builder;
@@ -178,7 +178,7 @@ namespace Lexical.Localization
         /// <param name="dictionary"></param>
         /// <param name="namePolicy">instructions how to convert key to byte[]</param>
         /// <returns></returns>
-        public static IAssetComposition AddResources(this IAssetComposition composition, IReadOnlyDictionary<String, byte[]> dictionary, ILineFormatPolicy namePolicy)
+        public static IAssetComposition AddResources(this IAssetComposition composition, IReadOnlyDictionary<String, byte[]> dictionary, ILineFormat namePolicy)
         {
             composition.Add(new ResourceStringDictionary(dictionary, namePolicy));
             return composition;

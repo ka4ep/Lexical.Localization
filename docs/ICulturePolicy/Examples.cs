@@ -23,7 +23,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!" }
                 };
                 // Create asset with culture policy
-                IAsset asset = new LocalizationAsset(source, KeyPrinter.Default);
+                IAsset asset = new LocalizationAsset(source, LineParameterPrinter.Default);
                 // Create root and assign culturePolicy
                 ILineRoot root = new LineRoot(asset, culturePolicy);
                 #endregion Snippet_1

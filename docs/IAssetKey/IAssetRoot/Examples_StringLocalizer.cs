@@ -13,7 +13,7 @@ namespace docs
             // Create localization source
             var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
             // Create asset
-            IAsset asset = new LocalizationAsset(source, ParameterParser.Instance);
+            IAsset asset = new LocalizationAsset(source, LineFormat.Instance);
             // Create culture policy
             ICulturePolicy culturePolicy = new CulturePolicy();
             // Create root

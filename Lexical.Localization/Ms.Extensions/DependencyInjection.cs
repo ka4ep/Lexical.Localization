@@ -94,8 +94,8 @@ namespace Lexical.Localization
                 }
             }
 
-            // ILocalizationResolver
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILocalizationResolver>( LocalizationResolver.Instance ));
+            // ILineResolver
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineStringResolver>( LineStringResolver.Instance ));
 
             // UnicodePluralityRules as 
             //serviceCollection.TryAdd(ServiceDescriptor.Singleton<IPluralRules>(UnicodeCLDR.Instance));
@@ -177,10 +177,10 @@ namespace Lexical.Localization
         /// <returns></returns>
         static IServiceCollection AddLoggerAdapter(this IServiceCollection serviceCollection)
         {
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IObserver<LocalizationString>), s =>
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IObserver<LineString>), s =>
             {
                 ILogger<ILocalizationKey> logger = s.GetService<ILogger<ILocalizationKey>>();
-                IObserver<LocalizationString> adapter = logger == null ? null : new LocalizationLogger(logger);
+                IObserver<LineString> adapter = logger == null ? null : new LocalizationLogger(logger);
                 return adapter;
             }));
             return serviceCollection;

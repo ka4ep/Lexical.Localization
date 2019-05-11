@@ -21,9 +21,9 @@ namespace docs
 
 
             ILineRoot_StringLocalizer_Examples.Main(args);
-            KeyPrinter_Examples.Main(args);
-            ParameterParserExamples.Main(args);
-            ILineFormatPolicy_Examples.Main(args);
+            LineParameterPrinter_Examples.Main(args);
+            LineFormatExamples.Main(args);
+            ILineFormat_Examples.Main(args);
             LinePattern_Examples.Main(args);
 
             LocalizationReader_Examples.Main(args);
@@ -33,9 +33,9 @@ namespace docs
             Plurality_Examples.Main(args);
             TutorialProject.ExampleB.Main(args);
             TutorialProject.ExampleC.Main(args);
-            ParameterParserExamples.Main(args);
+            LineFormatExamples.Main(args);
             ICulturePolicy_Examples.Main(args);
-            ILineFormatPolicy_Examples.Main(args);
+            ILineFormat_Examples.Main(args);
             Ms_Localization_IopExamples.Main(args);
             Console.ReadKey();
         }

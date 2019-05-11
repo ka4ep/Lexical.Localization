@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace docs
 {
-    public class ILineFormatPolicy_Examples
+    public class ILineFormat_Examples
     {
         public static void Main(string[] args)
         {
@@ -14,8 +14,8 @@ namespace docs
                 // Create localization source
                 var source = new Dictionary<string, string> { { "en/MyController/Hello", "Hello World!" } };
                 // Create key name policy
-                ILineFormatPolicy policy =
-                    new KeyPrinter()
+                ILineFormat policy =
+                    new LineParameterPrinter()
                         .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: "/") // Sorts parameters
                         .DefaultRule(true, prefixSeparator: "/"); // Default separator
                 // Create asset
@@ -46,20 +46,20 @@ namespace docs
                 {
                     #region Snippet_2
                     // "en:Patches:MyController:Errors:InvalidState"
-                    string str1 = KeyPrinter.Default.Print(key);
+                    string str1 = LineParameterPrinter.Default.Print(key);
                     // "en.Patches.MyController.Errors.InvalidState"
-                    string str2 = KeyPrinter.Dot_Dot_Dot.Print(key);
+                    string str2 = LineParameterPrinter.Dot_Dot_Dot.Print(key);
                     // "Patches:MyController:Errors:InvalidState"
-                    string str3 = KeyPrinter.None_Colon_Colon.Print(key);
+                    string str3 = LineParameterPrinter.None_Colon_Colon.Print(key);
                     // "en:Patches.MyController.Errors.InvalidState"
-                    string str4 = KeyPrinter.Colon_Dot_Dot.Print(key);
+                    string str4 = LineParameterPrinter.Colon_Dot_Dot.Print(key);
                     #endregion Snippet_2
                 }
 
                 {
                     #region Snippet_3
                     // Create a custom policy 
-                    ILineFormatPolicy myPolicy = new KeyPrinter()
+                    ILineFormat myPolicy = new LineParameterPrinter()
                         // Enable non-canonical "Culture" parameter with "/" separator
                         .Rule("Culture", true, "", "/")
                         // Disable other non-canonical parts
@@ -77,7 +77,7 @@ namespace docs
                 {
                     #region Snippet_4
                     // Create similiar policy with LinePattern
-                    ILineFormatPolicy myPolicy = new LinePattern("{culture/}{location/}{type/}{section/}[Key].txt");
+                    ILineFormat myPolicy = new LinePattern("{culture/}{location/}{type/}{section/}[Key].txt");
                     // "en/Patches/MyController/Errors/InvalidState.txt"
                     string str = myPolicy.Print(key);
                     #endregion Snippet_4
@@ -86,7 +86,7 @@ namespace docs
                 {
                     #region Snippet_4a
                     // Create name pattern
-                    ILineFormatPolicy myPolicy = new LinePattern("Patches/{Section}[-key]{-culture}.png");
+                    ILineFormat myPolicy = new LinePattern("Patches/{Section}[-key]{-culture}.png");
                     #endregion Snippet_4a
                     // "Patches/icons-ok-de.png"
                     string str = myPolicy.Print(key);
@@ -94,7 +94,7 @@ namespace docs
                 {
                     #region Snippet_4b
                     // Create name pattern
-                    ILineFormatPolicy myPolicy = new LinePattern("{location_0/}{location_1/}{location_n/}{Section}{-key}{-culture}.png");
+                    ILineFormat myPolicy = new LinePattern("{location_0/}{location_1/}{location_n/}{Section}{-key}{-culture}.png");
                     // Create key
                     ILine key2 = new LineRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
