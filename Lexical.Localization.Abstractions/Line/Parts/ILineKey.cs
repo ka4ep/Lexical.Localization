@@ -5,9 +5,7 @@
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
 using Lexical.Localization.Utils;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lexical.Localization
 {
@@ -80,7 +78,7 @@ namespace Lexical.Localization
         /// Clone <see cref="ILineKey"/> parts.
         /// </summary>
         /// <param name="line"></param>
-        /// <param name="appender">(optional) appender to use for clone. If null uses the appender of <see cref="line"/></param>
+        /// <param name="appender">(optional) appender to use for clone. If null uses the appender of <paramref name="line"/></param>
         /// <returns>clone of key parts</returns>
         /// <exception cref="LineException">If cloning failed.</exception>
         public static ILine CloneKey(this ILine line, ILineFactory appender = default)
@@ -225,11 +223,12 @@ namespace Lexical.Localization
                         {
                             int ix = -1;
                             for (int i = 0; i < result.Count; i++) if (result[i].Key == name) { ix = i; break; }
-                            if (ix<0)
+                            if (ix < 0)
                             {
                                 result[ix] = new KeyValuePair<string, string>(name, value);
                                 break;
-                            } else result.Add(new KeyValuePair<string, string>(name, value));
+                            }
+                            else result.Add(new KeyValuePair<string, string>(name, value));
                         }
                     }
                 }
@@ -244,7 +243,8 @@ namespace Lexical.Localization
                         {
                             result[ix] = new KeyValuePair<string, string>(name, value);
                             break;
-                        } else result.Add(new KeyValuePair<string, string>(name, value));
+                        }
+                        else result.Add(new KeyValuePair<string, string>(name, value));
                     }
                 }
             }

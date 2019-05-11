@@ -14,22 +14,22 @@ namespace Lexical.Localization
     /// Line part that carries <see cref="ILineInlines"/>. 
     /// </summary>
     [Serializable]
-    public class LineInlines : LineBase, ILineInlines, ILineArguments<IDictionary<ILine, IFormulationString>>
+    public class LineInlines : LineBase, ILineInlines, ILineArguments<IDictionary<ILine, ILine>>
     {
         /// <summary>
         /// Inlines.
         /// </summary>
-        protected IDictionary<ILine, IFormulationString> inlines;
+        protected IDictionary<ILine, ILine> inlines;
 
         /// <summary>
         /// ILineInlines property
         /// </summary>
-        public IDictionary<ILine, IFormulationString> Inlines { get => inlines; set => throw new InvalidOperationException(); }
+        public IDictionary<ILine, ILine> Inlines { get => inlines; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public IDictionary<ILine, IFormulationString> Argument0 => inlines;
+        public IDictionary<ILine, ILine> Argument0 => inlines;
 
         /// <summary>
         /// Create new line part.
@@ -37,9 +37,9 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="inlines"></param>
-        public LineInlines(ILineFactory appender, ILine prevKey, IDictionary<ILine, IFormulationString> inlines) : base(appender, prevKey)
+        public LineInlines(ILineFactory appender, ILine prevKey, IDictionary<ILine, ILine> inlines) : base(appender, prevKey)
         {
-            this.inlines = inlines ?? new Dictionary<ILine, IFormulationString>( LineComparer.Default );
+            this.inlines = inlines ?? new Dictionary<ILine, ILine>( LineComparer.Default );
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <param name="context"></param>
         public LineInlines(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.inlines = info.GetValue("Inlines", typeof(IDictionary<ILine, IFormulationString>)) as IDictionary<ILine, IFormulationString>;
+            this.inlines = info.GetValue("Inlines", typeof(IDictionary<ILine, ILine>)) as IDictionary<ILine, ILine>;
         }
 
         /// <summary>
@@ -63,25 +63,25 @@ namespace Lexical.Localization
             info.AddValue("Inlines", inlines);
         }
 
-        ICollection<ILine> IDictionary<ILine, IFormulationString>.Keys => inlines.Keys;
-        ICollection<IFormulationString> IDictionary<ILine, IFormulationString>.Values => inlines.Values;
-        int ICollection<KeyValuePair<ILine, IFormulationString>>.Count => inlines.Count;
-        bool ICollection<KeyValuePair<ILine, IFormulationString>>.IsReadOnly => inlines.IsReadOnly;
-        IFormulationString IDictionary<ILine, IFormulationString>.this[ILine key] { get => inlines[key]; set => inlines[key] = value; }
-        void IDictionary<ILine, IFormulationString>.Add(ILine key, IFormulationString value) => inlines.Add(key, value);
-        bool IDictionary<ILine, IFormulationString>.ContainsKey(ILine key) => inlines.ContainsKey(key);
-        bool IDictionary<ILine, IFormulationString>.Remove(ILine key) => inlines.Remove(key);
-        bool IDictionary<ILine, IFormulationString>.TryGetValue(ILine key, out IFormulationString value) => inlines.TryGetValue(key, out value);
-        void ICollection<KeyValuePair<ILine, IFormulationString>>.Add(KeyValuePair<ILine, IFormulationString> item) => inlines.Add(item);
-        void ICollection<KeyValuePair<ILine, IFormulationString>>.Clear() => inlines.Clear();
-        bool ICollection<KeyValuePair<ILine, IFormulationString>>.Contains(KeyValuePair<ILine, IFormulationString> item) => inlines.Contains(item);
-        void ICollection<KeyValuePair<ILine, IFormulationString>>.CopyTo(KeyValuePair<ILine, IFormulationString>[] array, int arrayIndex) => inlines.CopyTo(array, arrayIndex);
-        bool ICollection<KeyValuePair<ILine, IFormulationString>>.Remove(KeyValuePair<ILine, IFormulationString> item) => inlines.Remove(item);
-        IEnumerator<KeyValuePair<ILine, IFormulationString>> IEnumerable<KeyValuePair<ILine, IFormulationString>>.GetEnumerator() => inlines.GetEnumerator();
+        ICollection<ILine> IDictionary<ILine, ILine>.Keys => inlines.Keys;
+        ICollection<ILine> IDictionary<ILine, ILine>.Values => inlines.Values;
+        int ICollection<KeyValuePair<ILine, ILine>>.Count => inlines.Count;
+        bool ICollection<KeyValuePair<ILine, ILine>>.IsReadOnly => inlines.IsReadOnly;
+        ILine IDictionary<ILine, ILine>.this[ILine key] { get => inlines[key]; set => inlines[key] = value; }
+        void IDictionary<ILine, ILine>.Add(ILine key, ILine value) => inlines.Add(key, value);
+        bool IDictionary<ILine, ILine>.ContainsKey(ILine key) => inlines.ContainsKey(key);
+        bool IDictionary<ILine, ILine>.Remove(ILine key) => inlines.Remove(key);
+        bool IDictionary<ILine, ILine>.TryGetValue(ILine key, out ILine value) => inlines.TryGetValue(key, out value);
+        void ICollection<KeyValuePair<ILine, ILine>>.Add(KeyValuePair<ILine, ILine> item) => inlines.Add(item);
+        void ICollection<KeyValuePair<ILine, ILine>>.Clear() => inlines.Clear();
+        bool ICollection<KeyValuePair<ILine, ILine>>.Contains(KeyValuePair<ILine, ILine> item) => inlines.Contains(item);
+        void ICollection<KeyValuePair<ILine, ILine>>.CopyTo(KeyValuePair<ILine, ILine>[] array, int arrayIndex) => inlines.CopyTo(array, arrayIndex);
+        bool ICollection<KeyValuePair<ILine, ILine>>.Remove(KeyValuePair<ILine, ILine> item) => inlines.Remove(item);
+        IEnumerator<KeyValuePair<ILine, ILine>> IEnumerable<KeyValuePair<ILine, ILine>>.GetEnumerator() => inlines.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => inlines.GetEnumerator();
     }
 
-    public partial class LineAppender : ILineFactory<ILineInlines, IDictionary<ILine, IFormulationString>>, ILineFactory<ILineInlines>
+    public partial class LineAppender : ILineFactory<ILineInlines, IDictionary<ILine, ILine>>, ILineFactory<ILineInlines>
     {
         /// <summary>
         /// Append part.
@@ -91,7 +91,7 @@ namespace Lexical.Localization
         /// <param name="inlines"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineInlines, IDictionary<ILine, IFormulationString>>.TryCreate(ILineFactory appender, ILine previous, IDictionary<ILine, IFormulationString> inlines, out ILineInlines line)
+        bool ILineFactory<ILineInlines, IDictionary<ILine, ILine>>.TryCreate(ILineFactory appender, ILine previous, IDictionary<ILine, ILine> inlines, out ILineInlines line)
         {
             line = new LineInlines(appender, previous, inlines);
             return true;
@@ -106,7 +106,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         bool ILineFactory<ILineInlines>.TryCreate(ILineFactory appender, ILine previous, out ILineInlines line)
         {
-            line = new LineInlines(appender, previous, new Dictionary<ILine, IFormulationString>(LineComparer.Default));
+            line = new LineInlines(appender, previous, new Dictionary<ILine, ILine>(LineComparer.Default));
             return true;
         }
     }
@@ -116,22 +116,22 @@ namespace Lexical.Localization
     /// StringLocalizer part that carries <see cref="ILineInlines"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerInlines : StringLocalizerBase, ILineInlines, ILineArguments<IDictionary<ILine, IFormulationString>>
+    public class StringLocalizerInlines : StringLocalizerBase, ILineInlines, ILineArguments<IDictionary<ILine, ILine>>
     {
         /// <summary>
         /// Inlines.
         /// </summary>
-        protected IDictionary<ILine, IFormulationString> inlines;
+        protected IDictionary<ILine, ILine> inlines;
 
         /// <summary>
         /// ILineInlines property
         /// </summary>
-        public IDictionary<ILine, IFormulationString> Inlines { get => inlines; set => throw new InvalidOperationException(); }
+        public IDictionary<ILine, ILine> Inlines { get => inlines; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public IDictionary<ILine, IFormulationString> Argument0 => inlines;
+        public IDictionary<ILine, ILine> Argument0 => inlines;
 
         /// <summary>
         /// Create new StringLocalizer part.
@@ -139,9 +139,9 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="inlines"></param>
-        public StringLocalizerInlines(ILineFactory appender, ILine prevKey, IDictionary<ILine, IFormulationString> inlines) : base(appender, prevKey)
+        public StringLocalizerInlines(ILineFactory appender, ILine prevKey, IDictionary<ILine, ILine> inlines) : base(appender, prevKey)
         {
-            this.inlines = inlines ?? new Dictionary<ILine, IFormulationString>(LineComparer.Default);
+            this.inlines = inlines ?? new Dictionary<ILine, ILine>(LineComparer.Default);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Lexical.Localization
         /// <param name="context"></param>
         public StringLocalizerInlines(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.inlines = info.GetValue("Inlines", typeof(IDictionary<ILine, IFormulationString>)) as IDictionary<ILine, IFormulationString>;
+            this.inlines = info.GetValue("Inlines", typeof(IDictionary<ILine, ILine>)) as IDictionary<ILine, ILine>;
         }
 
         /// <summary>
@@ -165,25 +165,25 @@ namespace Lexical.Localization
             info.AddValue("Inlines", inlines);
         }
 
-        ICollection<ILine> IDictionary<ILine, IFormulationString>.Keys => inlines.Keys;
-        ICollection<IFormulationString> IDictionary<ILine, IFormulationString>.Values => inlines.Values;
-        int ICollection<KeyValuePair<ILine, IFormulationString>>.Count => inlines.Count;
-        bool ICollection<KeyValuePair<ILine, IFormulationString>>.IsReadOnly => inlines.IsReadOnly;
-        IFormulationString IDictionary<ILine, IFormulationString>.this[ILine key] { get => inlines[key]; set => inlines[key] = value; }
-        void IDictionary<ILine, IFormulationString>.Add(ILine key, IFormulationString value) => inlines.Add(key, value);
-        bool IDictionary<ILine, IFormulationString>.ContainsKey(ILine key) => inlines.ContainsKey(key);
-        bool IDictionary<ILine, IFormulationString>.Remove(ILine key) => inlines.Remove(key);
-        bool IDictionary<ILine, IFormulationString>.TryGetValue(ILine key, out IFormulationString value) => inlines.TryGetValue(key, out value);
-        void ICollection<KeyValuePair<ILine, IFormulationString>>.Add(KeyValuePair<ILine, IFormulationString> item) => inlines.Add(item);
-        void ICollection<KeyValuePair<ILine, IFormulationString>>.Clear() => inlines.Clear();
-        bool ICollection<KeyValuePair<ILine, IFormulationString>>.Contains(KeyValuePair<ILine, IFormulationString> item) => inlines.Contains(item);
-        void ICollection<KeyValuePair<ILine, IFormulationString>>.CopyTo(KeyValuePair<ILine, IFormulationString>[] array, int arrayIndex) => inlines.CopyTo(array, arrayIndex);
-        bool ICollection<KeyValuePair<ILine, IFormulationString>>.Remove(KeyValuePair<ILine, IFormulationString> item) => inlines.Remove(item);
-        IEnumerator<KeyValuePair<ILine, IFormulationString>> IEnumerable<KeyValuePair<ILine, IFormulationString>>.GetEnumerator() => inlines.GetEnumerator();
+        ICollection<ILine> IDictionary<ILine, ILine>.Keys => inlines.Keys;
+        ICollection<ILine> IDictionary<ILine, ILine>.Values => inlines.Values;
+        int ICollection<KeyValuePair<ILine, ILine>>.Count => inlines.Count;
+        bool ICollection<KeyValuePair<ILine, ILine>>.IsReadOnly => inlines.IsReadOnly;
+        ILine IDictionary<ILine, ILine>.this[ILine key] { get => inlines[key]; set => inlines[key] = value; }
+        void IDictionary<ILine, ILine>.Add(ILine key, ILine value) => inlines.Add(key, value);
+        bool IDictionary<ILine, ILine>.ContainsKey(ILine key) => inlines.ContainsKey(key);
+        bool IDictionary<ILine, ILine>.Remove(ILine key) => inlines.Remove(key);
+        bool IDictionary<ILine, ILine>.TryGetValue(ILine key, out ILine value) => inlines.TryGetValue(key, out value);
+        void ICollection<KeyValuePair<ILine, ILine>>.Add(KeyValuePair<ILine, ILine> item) => inlines.Add(item);
+        void ICollection<KeyValuePair<ILine, ILine>>.Clear() => inlines.Clear();
+        bool ICollection<KeyValuePair<ILine, ILine>>.Contains(KeyValuePair<ILine, ILine> item) => inlines.Contains(item);
+        void ICollection<KeyValuePair<ILine, ILine>>.CopyTo(KeyValuePair<ILine, ILine>[] array, int arrayIndex) => inlines.CopyTo(array, arrayIndex);
+        bool ICollection<KeyValuePair<ILine, ILine>>.Remove(KeyValuePair<ILine, ILine> item) => inlines.Remove(item);
+        IEnumerator<KeyValuePair<ILine, ILine>> IEnumerable<KeyValuePair<ILine, ILine>>.GetEnumerator() => inlines.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => inlines.GetEnumerator();
     }
 
-    public partial class StringLocalizerAppender : ILineFactory<ILineInlines, IDictionary<ILine, IFormulationString>>, ILineFactory<ILineInlines>
+    public partial class StringLocalizerAppender : ILineFactory<ILineInlines, IDictionary<ILine, ILine>>, ILineFactory<ILineInlines>
     {
         /// <summary>
         /// Append part.
@@ -193,7 +193,7 @@ namespace Lexical.Localization
         /// <param name="inlines"></param>
         /// <param name="StringLocalizer"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineInlines, IDictionary<ILine, IFormulationString>>.TryCreate(ILineFactory appender, ILine previous, IDictionary<ILine, IFormulationString> inlines, out ILineInlines StringLocalizer)
+        bool ILineFactory<ILineInlines, IDictionary<ILine, ILine>>.TryCreate(ILineFactory appender, ILine previous, IDictionary<ILine, ILine> inlines, out ILineInlines StringLocalizer)
         {
             StringLocalizer = new StringLocalizerInlines(appender, previous, inlines);
             return true;
@@ -208,7 +208,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         bool ILineFactory<ILineInlines>.TryCreate(ILineFactory appender, ILine previous, out ILineInlines line)
         {
-            line = new LineInlines(appender, previous, new Dictionary<ILine, IFormulationString>(LineComparer.Default));
+            line = new LineInlines(appender, previous, new Dictionary<ILine, ILine>(LineComparer.Default));
             return true;
         }
     }

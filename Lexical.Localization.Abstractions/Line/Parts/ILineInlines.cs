@@ -11,7 +11,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Key that has multiple value assignments.
     /// </summary>
-    public interface ILineInlines : ILine, IDictionary<ILine, IFormulationString>
+    public interface ILineInlines : ILine, IDictionary<ILine, ILine>
     {
     }
 
@@ -22,23 +22,26 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="line"></param>
         /// <param name="subKeyText">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
-        /// <param name="text"></param>
-        /// <returns>new key with inliens or <paramref name="line"/></returns>
+        /// <param name="valueText">(optional) value to add, if null removes previously existing the inline</param>
+        /// <returns>new line with inlines or <paramref name="line"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine Inline(this ILine line, string subKeyText, string text)
+        public static ILine Inline(this ILine line, string subKeyText, string valueText)
         {
-            ILineInlines inlinesKey = line.GetOrCreateInlines();
-            ILine subKey = LineFormat.Instance.Parse(subKeyText, line);
-            if (text == null)
+            ILineInlines inlines;
+            line = line.GetOrCreateInlines(out inlines);
+            ILine subline = LineFormat.Instance.Parse(subKeyText, line);
+            if (valueText == null)
             {
-                inlinesKey.Remove(subKey);
+                inlines.Remove(subline);
             }
             else
             {
-                IStringFormat stringFormat = line.FindStringFormat(/*StringFormatResolver.Default*/) ?? CSharpFormat.Instance;
-                inlinesKey[subKey] = stringFormat.Parse(text);
+                IStringFormat stringFormat = subline.FindStringFormat(/*StringFormatResolver.Default*/) ?? CSharpFormat.Instance;
+                IFormulationString formulation = stringFormat.Parse(valueText);
+                ILine value = subline.Value(formulation);
+                inlines[subline] = value;
             }
-            return inlinesKey;
+            return line;
         }
 
         /// <summary>
@@ -46,15 +49,23 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="line"></param>
         /// <param name="subKeyText">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
-        /// <param name="text"></param>
-        /// <returns>new key with inliens or <paramref name="line"/></returns>
+        /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
+        /// <returns>new line with inlines or <paramref name="line"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine Inline(this ILine line, string subKeyText, IFormulationString text)
+        public static ILine Inline(this ILine line, string subKeyText, IFormulationString value)
         {
-            ILineInlines inlinesKey = line.GetOrCreateInlines();
-            ILine subKey = LineFormat.Instance.Parse(subKeyText, line);
-            if (text == null) inlinesKey.Remove(subKey); else inlinesKey[subKey] = text;
-            return inlinesKey;
+            ILineInlines inlines;
+            line = line.GetOrCreateInlines(out inlines);
+            ILine subline = LineFormat.Instance.Parse(subKeyText, line);
+            if (value == null)
+            {
+                inlines.Remove(subline);
+            }
+            else
+            {
+                inlines[subline] = subline.Value(value);
+            }
+            return line;
         }
 
         /// <summary>
@@ -73,10 +84,16 @@ namespace Lexical.Localization
         /// Get or create <see cref="ILineInlines"/> section in the <paramref name="line"/>.
         /// </summary>
         /// <param name="line"></param>
-        /// <returns>inlines key</returns>
+        /// <param name="inlines">inlines with dictionary</param>
+        /// <returns><paramref name="line"/> or inlines key</returns>
         /// <exception cref="LineException">If <paramref name="line"/> doesn't implement <see cref="ILineInlines"/></exception>
-        public static ILineInlines GetOrCreateInlines(this ILine line)
-            => line.FindInlines() ?? line.Append<ILineInlines>();
+        public static ILine GetOrCreateInlines(this ILine line, out ILineInlines inlines)
+        {
+            ILineInlines _inlines = line.FindInlines();
+            if (_inlines != null) { inlines = _inlines; return line; }
+            inlines = _inlines = line.Append<ILineInlines>();
+            return _inlines;
+        }
 
         /// <summary>
         /// Walks linked list and searches for all inlines.
