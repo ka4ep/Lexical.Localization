@@ -16,18 +16,40 @@ namespace Lexical.Localization.Internal
     /// </summary>
     public static class Hex
     {
+        /// <summary>
+        /// Print <paramref name="value"/> as hex-string.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static String Print(decimal value) => value.ToString("X", CultureInfo.InvariantCulture);
-        public static String Print(ulong value) => value.ToString("X", CultureInfo.InvariantCulture);
-        public static String Print(uint value) => value.ToString("X", CultureInfo.InvariantCulture);
-        public static String Print(BigInteger value) => value.ToString("X", CultureInfo.InvariantCulture);
-        public static BigInteger ToBigInteger(String str) => BigInteger.Parse(str);
 
+        /// <summary>
+        /// Print <paramref name="value"/> as hex-string.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static String Print(ulong value) => value.ToString("X", CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Print <paramref name="value"/> as hex-string.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static String Print(uint value) => value.ToString("X", CultureInfo.InvariantCulture);
+
+        /// <summary>
+        /// Print <paramref name="value"/> as hex-string.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static String Print(BigInteger value) => value.ToString("X", CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Parse a string to uint. String must not start with '0x'.
         /// UInt can accomodate only 8 meaningful hex-decimals.
         /// </summary>
         /// <param name="str">string of hexadecimal characters [0-9a-fA-F]</param>
+        /// <param name="startIndex">character start index</param>
         /// <returns>value</returns>
         /// <exception cref="System.FormatException"></exception>
         public static uint ToUInt(String str, int startIndex = 0)
@@ -300,9 +322,20 @@ namespace Lexical.Localization.Internal
 
     }
 
+    /// <summary>
+    /// Enumerable of hex characters (0..15)
+    /// </summary>
     public struct HexEnumerable : IEnumerable<int>
     {
+        /// <summary>
+        /// Character source
+        /// </summary>
         public readonly IEnumerable<char> charStream;
+
+        /// <summary>
+        /// Create enumerable
+        /// </summary>
+        /// <param name="charStream"></param>
         public HexEnumerable(IEnumerable<char> charStream)
         {
             this.charStream = charStream;
@@ -326,8 +359,16 @@ namespace Lexical.Localization.Internal
     /// </summary>
     public struct HexEnumerator : IEnumerator<int>
     {
+        /// <summary>
+        /// Current character (0..15)
+        /// </summary>
         public int Current => current;
+
+        /// <summary>
+        /// Is parse error detected
+        /// </summary>
         public bool Error => error;
+
         bool error;
         IEnumerator<char> charStream;
         CharEnumerator charStream2;
@@ -336,6 +377,10 @@ namespace Lexical.Localization.Internal
         int current;
         bool eos;
 
+        /// <summary>
+        /// Create enumerator
+        /// </summary>
+        /// <param name="charStream"></param>
         public HexEnumerator(IEnumerator<char> charStream)
         {
             this.charStream = charStream ?? throw new ArgumentNullException(nameof(charStream));
@@ -345,6 +390,10 @@ namespace Lexical.Localization.Internal
             eos = false;
         }
 
+        /// <summary>
+        /// Create enumerator
+        /// </summary>
+        /// <param name="charStream"></param>
         public HexEnumerator(CharEnumerator charStream)
         {
             this.charStream = null;
@@ -354,12 +403,19 @@ namespace Lexical.Localization.Internal
             eos = false;
         }
 
+        /// <summary>
+        /// Dispose
+        /// </summary>
         public void Dispose()
         {
             if (charStream != null) charStream.Dispose();
             else charStream2.Dispose();
         }
 
+        /// <summary>
+        /// Move next
+        /// </summary>
+        /// <returns></returns>
         public bool MoveNext()
         {
             if (eos) return false;
@@ -379,6 +435,9 @@ namespace Lexical.Localization.Internal
             return true;
         }
 
+        /// <summary>
+        /// Reset enumerator.
+        /// </summary>
         public void Reset()
         {
             if (charStream != null) charStream.Reset(); else charStream2.Reset();

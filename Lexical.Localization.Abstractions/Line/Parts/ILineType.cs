@@ -84,7 +84,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Search linked list and finds the effective (left-most) <see cref="ILineType"/> key.
         /// 
-        /// Returns parameter "Type" value as <see cref="Type"/>, if <paramref name="resolver"/> is provided.
+        /// Returns parameter "Type" value as <see cref="System.Type"/>, if <paramref name="resolver"/> is provided.
         /// 
         /// If implements <see cref="ILineType"/> returns the type. 
         /// </summary>

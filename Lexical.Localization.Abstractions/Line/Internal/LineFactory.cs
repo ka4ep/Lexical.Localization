@@ -149,6 +149,7 @@ namespace Lexical.Localization
         /// <param name="a0"></param>
         /// <param name="a1"></param>
         /// <param name="a2"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
         public bool TryCreate(ILineFactory appender, ILine previous, A0 a0, A1 a1, A2 a2, out Intf result)
         {

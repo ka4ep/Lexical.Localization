@@ -260,7 +260,7 @@ namespace Lexical.Localization.Plurality
             /// <summary>
             /// Create rule that evaluates with <paramref name="ruleExpression"/>.
             /// 
-            /// Extracts <see cref="PluralRuleInfo" from <paramref name="infoExpression"/> expression.
+            /// Extracts <see cref="PluralRuleInfo"/> from <paramref name="infoExpression"/> expression.
             /// </summary>
             /// <param name="infoExpression">info expression</param>
             /// <param name="ruleExpression"></param>

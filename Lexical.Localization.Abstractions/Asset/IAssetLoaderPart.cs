@@ -12,7 +12,7 @@ namespace Lexical.Localization
     #region interface
     /// <summary>
     /// Interface for objects that load assets from IAssetLoader depending on parameters of a <see cref="ILinePattern"/>.
-    /// This interface is used with <see cref="LocalizationAssetLoader"/>.
+    /// This interface is used with <see cref="IAssetLoader"/>.
     /// 
     /// For example, localization files are separated by culture, then file pattern could be "localization{-culture}.ini".
     /// Then this loader can load different files depending on culture value.
@@ -123,7 +123,7 @@ namespace Lexical.Localization
         /// Append new assemblies to search embedded resources from.
         /// </summary>
         /// <param name="part"></param>
-        /// <param name="paths"></param>
+        /// <param name="assemblies"></param>
         /// <returns>part</returns>
         public static IAssetLoaderPart AddAssemblies(this IAssetLoaderPart part, IEnumerable<Assembly> assemblies)
         {

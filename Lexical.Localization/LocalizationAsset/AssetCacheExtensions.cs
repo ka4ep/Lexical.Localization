@@ -7,15 +7,16 @@ using System;
 
 namespace Lexical.Localization
 {
+    /// <summary></summary>
     public static partial class AssetCacheExtensions
     {
         /// <summary>
         /// Add cache feature to asset builder.
         /// 
-        /// Adds <see cref="AssetCachePartResources"/>, <see cref="AssetStringsCachePart"/> and <see cref="AssetCulturesCachePart"/>.
+        /// Adds <see cref="AssetCachePartResources"/>.
         /// </summary>
         /// <param name="assetBuilder"></param>
-        /// <param name="configureCache">(optional) add custom cache features here/param>
+        /// <param name="configureCache">(optional) add custom cache features here</param>
         /// <returns></returns>
         public static IAssetBuilder AddCache(this IAssetBuilder assetBuilder, Action<IAssetCache> configureCache = default)
         {
@@ -31,10 +32,10 @@ namespace Lexical.Localization
         /// <summary>
         /// Wrap asset in cache decorator.
         /// 
-        /// Adds <see cref="AssetCachePartResources"/>, <see cref="AssetStringsCachePart"/> and <see cref="AssetCulturesCachePart"/>.
+        /// Adds <see cref="AssetCachePartResources"/>.
         /// </summary>
         /// <param name="asset"></param>
-        /// <param name="configureCache">(optional) add custom cache features here/param>
+        /// <param name="configureCache">(optional) add custom cache features here</param>
         /// <returns>asset with cache</returns>
         public static IAssetCache CreateCache(this IAsset asset, Action<IAssetCache> configureCache = default)
         {

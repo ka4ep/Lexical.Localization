@@ -27,14 +27,12 @@ namespace Lexical.Localization
         /// <list type="bullet">
         /// <item><see cref="IArgumentFormatter"/></item>
         /// <item><see cref="ICustomFormatter"/></item>
-        /// <item><see cref="IPluralityRuleMap"/></item>
-        /// <item><see cref="IPluralityCategory"/></item>
         /// </list>        
         /// </summary>
         /// <param name="key"></param>
         /// <param name="formatProvider"></param>
         /// <returns>new key</returns>
-        /// <exception cref="LineException">If key doesn't implement <see cref="ILocalizationKeyFormatProviderAssignable"/></exception>
+        /// <exception cref="LineException">If <see cref="ILineFormatProvider"/> could not be appended</exception>
         public static ILineFormatProvider FormatProvider(this ILine key, IFormatProvider formatProvider)
             => key.Append<ILineFormatProvider, IFormatProvider>(formatProvider);
     }

@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Lexical.Utils
+namespace Lexical.Localization.Internal
 {
     /// <summary>
     /// A list where the first 1 element(s) are stack allocated, and rest are allocated from heap when needed.

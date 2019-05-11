@@ -502,6 +502,7 @@ namespace Lexical.Localization
         /// <param name="factory"></param>
         /// <param name="a0"></param>
         /// <param name="a1"></param>
+        /// <param name="a2"></param>
         /// <param name="previous">(optional) previous part</param>
         /// <typeparam name="Intf"></typeparam>
         /// <typeparam name="A0"></typeparam>
@@ -528,6 +529,7 @@ namespace Lexical.Localization
         /// <param name="previous">(optional) previous part</param>
         /// <param name="a0"></param>
         /// <param name="a1"></param>
+        /// <param name="a2"></param>
         /// <param name="line">result</param>
         /// <typeparam name="Intf"></typeparam>
         /// <typeparam name="A0"></typeparam>

@@ -31,6 +31,9 @@ namespace Lexical.Localization
     }
     #endregion interface
 
+    /// <summary>
+    /// Extension methods.
+    /// </summary>
     public static partial class IAssetBuilderExtensions
     {
         /// <summary>

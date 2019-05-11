@@ -38,8 +38,8 @@ namespace Lexical.Localization
     /// <summary>
     /// Interface to enumerate binary localization resources as <see cref="ILine"/> references.
     /// 
-    /// If the implementing class uses filenames, the recommended guideline is to use <see cref="ILineLocationAssigned"/> to
-    /// refer to a folder, and <see cref="ILineAssigned"/> to refer to a filename. For example, 
+    /// If the implementing class uses filenames, the recommended guideline is to use "Location" parameters to refer to folder.
+    /// The last "Location" parameter refers to a file.
     /// if the implementation handles following folder:
     /// <list type="bullet">
     /// <item>Assets/</item>
@@ -47,13 +47,13 @@ namespace Lexical.Localization
     /// <item>Assets/Gfx/Logo.svg</item>
     /// </list>
     /// 
-    /// Then it would return a key as <code>root.Location("Assets").Location("Gfx").Key("Logo.svg");</code>.
+    /// Then it would return a key as <code>root.Location("Assets").Location("Gfx").Location("Logo.svg");</code>.
     /// 
     /// If the implementing class returns embedded resources from internal assemblies, then the recommended guideline is to return
-    /// "Assembly" part to refer to the <see cref="AssemblyName.Name"/>, and "Resource" to refer to any resource part in the .dll.
+    /// "Assembly" part to refer to the <see cref="AssemblyName.Name"/>, and "BaseName" to refer to any resource part in the .dll.
     /// 
     /// For example, for resource file "mylib.dll/mylib.resources.Logo.svg" the key could be composed as 
-    /// <code>root.Assembly("mylib").Resource("mylib.resources").Key("Logo.svg");</code>.
+    /// <code>root.Assembly("mylib").BaseName("mylib.resources").Key("Logo.svg");</code>.
     /// </summary>
     public interface IAssetResourceKeysEnumerable : IAsset
     {

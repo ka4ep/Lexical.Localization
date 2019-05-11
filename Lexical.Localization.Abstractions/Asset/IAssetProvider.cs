@@ -23,7 +23,7 @@ namespace Lexical.Localization
         /// For example, <see cref="IAssetLoader"/> implementation matches based 
         /// on the options of it's parts (<see cref="IAssetLoaderPart.Options"/>).
         /// 
-        /// <see cref="IAssetLoaderPartOptions.MatchParameters"/> is a list of parameters to 
+        /// <see cref="IAssetLoaderPartOptionsExtensions.GetMatchParameters"/> is a list of parameters to 
         /// match against detected filenames.
         /// </summary>
         /// <param name="key">key as criteria, or null for no criteria</param>

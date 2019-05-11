@@ -17,17 +17,29 @@ namespace Lexical.Localization
     /// </summary>
     public interface IAssetCache : IAssetComposition
     {
+        /// <summary>
+        /// Source asset.
+        /// </summary>
         IAsset Source { get; }
 
+        /// <summary>
+        /// Cache options.
+        /// </summary>
         AssetCacheOptions Options { get; }
     }
 
+    /// <summary>
+    /// Part that addresses a feature (an interface) to cache.
+    /// </summary>
     public interface IAssetCachePart : IAsset
     {
     }
     #endregion interfaces
 
     #region options
+    /// <summary>
+    /// Cache options dictionary
+    /// </summary>
     public class AssetCacheOptions : Dictionary<string, object>
     {
         /// <summary>
@@ -47,11 +59,16 @@ namespace Lexical.Localization
         /// <returns></returns>
         public AssetCacheOptions Set<T>(string key, T value) { this[key] = value; return this; }
 
+        /// <summary>
+        /// Print info.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}({String.Join(", ", this.Select(kp=>$"{kp.Key}={kp.Value}"))})";
     }
     #endregion options
 
+    /// <summary></summary>
     #region extensions
     public static partial class IAssetCacheExtensions
     {

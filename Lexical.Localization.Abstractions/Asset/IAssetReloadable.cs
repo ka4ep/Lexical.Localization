@@ -8,6 +8,11 @@ using System.Linq;
 
 namespace Lexical.Localization
 {
+    /// <summary>
+    /// The source of asset can be reloaded.
+    /// 
+    /// For example, is asset is file, the file is reloaded. If asset is cache, the cache is cleared.
+    /// </summary>
     public interface IAssetReloadable : IAsset
     {
         /// <summary>

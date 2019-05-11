@@ -10,13 +10,16 @@ using System.Linq;
 
 namespace Lexical.Localization
 {
+    /// <summary>
+    /// Asset that can enumerate supported cultures.
+    /// </summary>
     public interface ILocalizationAssetCultureCapabilities : IAsset
     {
         /// <summary>
         /// List supported cultures.
         /// 
         /// Same cultures may be returned multiple times.
-        /// Caller can use <see cref="Enumerable.Distinct"/> to remove reoccurances.
+        /// Caller can use .Distinct() to remove reoccurances.
         /// 
         /// If contains keys for root culture "", then root culture is returned.
         /// </summary>
@@ -30,7 +33,7 @@ namespace Lexical.Localization
         /// List supported cultures.
         /// 
         /// Same cultures may be returned multiple times.
-        /// Caller can use <see cref="Enumerable.Distinct"/> to remove reoccurances.
+        /// Caller can use .Distinct() to remove reoccurances.
         /// 
         /// If contains keys for root culture "", then root culture is returned.
         /// </summary>

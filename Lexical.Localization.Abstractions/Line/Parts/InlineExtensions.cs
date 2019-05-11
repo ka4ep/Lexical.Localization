@@ -1,7 +1,13 @@
-﻿using Lexical.Localization;
-
+﻿// --------------------------------------------------------
+// Copyright:      Toni Kalajainen
+// Date:           11.5.2019
+// Url:            http://lexical.fi
+// --------------------------------------------------------
 namespace Lexical.Localization.Inlines
 {
+    /// <summary>
+    /// Inline culture extensions
+    /// </summary>
     public static class InlineExtensions
     {
         /// <summary>
@@ -2309,41 +2315,5 @@ namespace Lexical.Localization.Inlines
         public static ILine zu(this ILine line, IFormulationString text) => line.InlineCulture("zu", text);
         
 
-        /// <summary>
-        /// Inline <paramref name="valueText"/> to <paramref name="culture"/>.
-        /// </summary>
-        /// <param name="line"></param>
-        /// <param name="culture">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
-        /// <param name="valueText">value to add</param>
-        /// <returns>new line with inlines or <paramref name="line"/></returns>
-        /// <exception cref="LineException">If key can't be inlined.</exception>
-        static ILine InlineCulture(this ILine line, string culture, string valueText)
-        {
-            ILineInlines inlines;
-            line = line.GetOrCreateInlines(out inlines);
-            ILine subline = line.Culture(culture);
-            IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Instance;
-            IFormulationString formulation = stringFormat.Parse(valueText);
-            ILine value = subline.Value(formulation);
-            inlines[subline] = value;
-            return line;
-        }
-
-        /// <summary>
-        /// Inline <paramref name="value"/> to <paramref name="culture"/>.
-        /// </summary>
-        /// <param name="line"></param>
-        /// <param name="culture">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
-        /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
-        /// <returns>new line with inlines or <paramref name="line"/></returns>
-        /// <exception cref="LineException">If key can't be inlined.</exception>
-        static ILine InlineCulture(this ILine line, string culture, IFormulationString value)
-        {
-            ILineInlines inlines;
-            line = line.GetOrCreateInlines(out inlines);
-            ILine subline = line.Culture(culture);
-            inlines[subline] = subline.Value(value);
-            return line;
-        }
     }
 }

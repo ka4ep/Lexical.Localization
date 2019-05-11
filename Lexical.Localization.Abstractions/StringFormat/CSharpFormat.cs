@@ -460,7 +460,7 @@ namespace Lexical.Localization
             public int OccuranceIndex { get; internal set; }
 
             /// <summary>
-            /// Argument index. Refers to index in the args array of <see cref="ILineFormatArgsPart.Args"/>.
+            /// Argument index. Refers to index in the args array of <see cref="ILineFormatArgs.Args"/>.
             /// </summary>
             public int ArgumentIndex { get; internal set; }
 
