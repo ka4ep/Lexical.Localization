@@ -3,13 +3,16 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using System;
 using System.Collections.Generic;
 
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key that has multiple value assignments.
+    /// Line that has multiple subline assignments.
+    /// 
+    /// This interface intherits dictionary that contains subline assignments.
+    /// The Key of the dictionary is used for comparing, and should use default LineComparer.
+    /// The Value of the dictionary contains the full subline with value.
     /// </summary>
     public interface ILineInlines : ILine, IDictionary<ILine, ILine>
     {
@@ -36,7 +39,7 @@ namespace Lexical.Localization
             }
             else
             {
-                IStringFormat stringFormat = subline.FindStringFormat(/*StringFormatResolver.Default*/) ?? CSharpFormat.Instance;
+                IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Instance;
                 IFormulationString formulation = stringFormat.Parse(valueText);
                 ILine value = subline.Value(formulation);
                 inlines[subline] = value;

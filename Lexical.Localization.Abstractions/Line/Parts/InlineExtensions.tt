@@ -70,7 +70,7 @@ namespace Lexical.Localization.Inlines
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
             ILine subline = line.Culture(culture);
-            IStringFormat stringFormat = subline.FindStringFormat(/*StringFormatResolver.Default*/) ?? CSharpFormat.Instance;
+            IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Instance;
             IFormulationString formulation = stringFormat.Parse(valueText);
             ILine value = subline.Value(formulation);
             inlines[subline] = value;

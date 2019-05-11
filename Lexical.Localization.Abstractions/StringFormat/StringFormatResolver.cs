@@ -22,7 +22,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static StringFormatResolver Instance => instance.Value;
+        public static StringFormatResolver Default => instance.Value;
 
         /// <summary>
         /// Create type resolver with default settings.
@@ -48,7 +48,7 @@ namespace Lexical.Localization
         /// </summary>
         public override void Dispose()
         {
-            if (this == Instance)
+            if (this == Default)
             {
                 // Don't dispose the global static instance, but clear its cache.
                 cache.Clear();
