@@ -41,6 +41,54 @@ namespace Lexical.Localization
     public static partial class ILineExtensions
     {
         /// <summary>
+        /// Append "Key" non-canonical key.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException"></exception>
+        public static ILine Key(this ILine line, string key)
+            => line.Append<ILineCanonicalKey, string, string>("Key", key);
+
+        /// <summary>
+        /// Append "Section" key.
+        /// 
+        /// Section is a key that points to a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="location"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key could not be appended</exception>
+        public static ILineCanonicalKey Section(this ILine key, string location)
+            => key.Append<ILineCanonicalKey, string, string>("Section", location);
+
+        /// <summary>
+        /// Append "Location" key.
+        /// 
+        /// Location is a key that points to folder where asset is to be loaded.
+        /// For example adding "Icons" location section, would mean that when key is matched to file assets, only "Icons" folder is used.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="location"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key could not be appended</exception>
+        public static ILineCanonicalKey Location(this ILine key, string location)
+            => key.Append<ILineCanonicalKey, string, string>("Location", location);
+
+        /// <summary>
+        /// Append "BaseName" key.
+        /// 
+        /// BaseName means a part of a path to assembly's embedded resource.
+        /// For instance, resource hint matches in name pattern "[Assembly.][BaseName.]{Type.}{Section.}{Key}".
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="resource"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key could not be appended</exception>
+        public static ILineCanonicalKey BaseName(this ILine key, string resource)
+            => key.Append<ILineCanonicalKey, string, string>("BaseName", resource);
+
+        /// <summary>
         /// Tests if <paramref name="linePart"/> is canonical key.
         /// </summary>
         /// <param name="linePart"></param>

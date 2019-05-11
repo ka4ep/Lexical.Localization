@@ -6,10 +6,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Lexical.Localization.Internal
+namespace Lexical.Utils
 {
     /// <summary>
-    /// A list where first 1 elements are struct elements. Rest are allocated from heap if needed.
+    /// A list where the first 1 element(s) are stack allocated, and rest are allocated from heap when needed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct StructList1<T> : IList<T>
@@ -288,7 +288,7 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// A list where first 2 elements are struct elements. Rest are allocated from heap if needed.
+    /// A list where the first 2 element(s) are stack allocated, and rest are allocated from heap when needed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct StructList2<T> : IList<T>
@@ -582,7 +582,7 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// A list where first 3 elements are struct elements. Rest are allocated from heap if needed.
+    /// A list where the first 3 element(s) are stack allocated, and rest are allocated from heap when needed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct StructList3<T> : IList<T>
@@ -891,7 +891,7 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// A list where first 4 elements are struct elements. Rest are allocated from heap if needed.
+    /// A list where the first 4 element(s) are stack allocated, and rest are allocated from heap when needed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct StructList4<T> : IList<T>
@@ -1215,7 +1215,7 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// A list where first 5 elements are struct elements. Rest are allocated from heap if needed.
+    /// A list where the first 5 element(s) are stack allocated, and rest are allocated from heap when needed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct StructList5<T> : IList<T>
@@ -1554,7 +1554,7 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// A list where first 8 elements are struct elements. Rest are allocated from heap if needed.
+    /// A list where the first 8 element(s) are stack allocated, and rest are allocated from heap when needed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct StructList8<T> : IList<T>
@@ -1938,7 +1938,7 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// A list where first 12 elements are struct elements. Rest are allocated from heap if needed.
+    /// A list where the first 12 element(s) are stack allocated, and rest are allocated from heap when needed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct StructList12<T> : IList<T>
@@ -2382,7 +2382,7 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// A list where first 16 elements are struct elements. Rest are allocated from heap if needed.
+    /// A list where the first 16 element(s) are stack allocated, and rest are allocated from heap when needed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct StructList16<T> : IList<T>
@@ -2886,7 +2886,7 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// A list where first 20 elements are struct elements. Rest are allocated from heap if needed.
+    /// A list where the first 20 element(s) are stack allocated, and rest are allocated from heap when needed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct StructList20<T> : IList<T>
@@ -3450,7 +3450,7 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// A list where first 24 elements are struct elements. Rest are allocated from heap if needed.
+    /// A list where the first 24 element(s) are stack allocated, and rest are allocated from heap when needed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct StructList24<T> : IList<T>
@@ -4074,7 +4074,7 @@ namespace Lexical.Localization.Internal
     }
 
     /// <summary>
-    /// A list where first 32 elements are struct elements. Rest are allocated from heap if needed.
+    /// A list where the first 32 element(s) are stack allocated, and rest are allocated from heap when needed.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public struct StructList32<T> : IList<T>

@@ -11,7 +11,8 @@ using System.Reflection;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Signals that the class can append parts.
+    /// Line factory can append new parts to <see cref="ILine"/>s. 
+    /// Appended parts are typically immutable, and form a linked list or a trie.
     /// </summary>
     public interface ILineFactory
     {

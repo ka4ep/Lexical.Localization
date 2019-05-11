@@ -4,14 +4,13 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 
 namespace Lexical.Localization
 {
     /// <summary>
     /// Plurality constants.
     /// </summary>
+    [Obsolete]
     public static class Plurality_
     {
         public const int MAX_NUMERIC_ARGUMENTS_TO_PERMUTATE = 2;

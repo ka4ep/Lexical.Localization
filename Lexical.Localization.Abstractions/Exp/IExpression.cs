@@ -3,10 +3,7 @@
 // Date:           17.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Plurality;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lexical.Localization.Exp
 {
@@ -33,7 +30,8 @@ namespace Lexical.Localization.Exp
     /// <summary>
     /// 
     /// </summary>
-    public enum UnaryOp {
+    public enum UnaryOp
+    {
         /// <summary>+</summary>
         Plus,
         /// <summary>-</summary>
