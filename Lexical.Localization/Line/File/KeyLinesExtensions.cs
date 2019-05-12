@@ -93,11 +93,11 @@ namespace Lexical.Localization
         /// Non-capture parts such as "/" in pattern "{Section}/{Culture}", specify separator of tree node levels.
         /// 
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="tree"></param>
         /// <param name="lines"></param>
         /// <param name="groupingRule"></param>
         /// <returns></returns>
-        public static ILineTree AddRange(this ILineTree node, IEnumerable<ILine> lines, ILinePattern groupingRule) // Todo separate to sortRule + groupingRule
+        public static ILineTree AddRange(this ILineTree tree, IEnumerable<ILine> lines, ILinePattern groupingRule) // Todo separate to sortRule + groupingRule
         {
             // Use another method
             //if (groupingRule == null) { node.AddRange(lines); return node; }
@@ -105,6 +105,7 @@ namespace Lexical.Localization
             StructList16<Parameter> parameters = new StructList16<Parameter>(null);
             foreach (var line in lines)
             {
+                //line.GetParameterParts<StructList16<>
                 // Convert key into parts
                 for (ILine k = line.Key; k != null; k = k.GetPreviousPart())
                 {
@@ -204,12 +205,12 @@ namespace Lexical.Localization
                 if (levelKey != null) { key_levels.Add(levelKey); levelKey = null; }
 
                 // Yield line
-                node.AddRecursive(key_levels, line.Value);
+                tree.AddRecursive(key_levels, line.Value);
                 key_levels.Clear();
                 parameters.Clear();
             }
 
-            return node;
+            return tree;
         }
 
         // Reorder parts according to grouping rule

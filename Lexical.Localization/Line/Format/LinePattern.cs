@@ -19,7 +19,7 @@ namespace Lexical.Localization
     /// Parameter parts:
     ///  {Culture}           - Matches to key.Culture("en")
     ///  {Assembly}          - Matches to key.Assembly(asm).
-    ///  {Resource}          - Matches to key.Resource("xx").
+    ///  {BaseName}          - Matches to key.BaseName("xx").
     ///  {Type}              - Matches to key.Type(type)
     ///  {Section}           - Matches to key.Section("xx")
     ///  {Location}          - Matches to key.Location("xx") and a physical folder, separator is '/'.
@@ -46,7 +46,7 @@ namespace Lexical.Localization
     ///  "{Section&lt;[^:]*&gt;.}"
     /// 
     /// Regular expressions can be used for greedy match when matching against filenames and embedded resources.
-    ///  "{Assembly.}{Resource&lt;.*&gt;.}{Type.}{Section.}{Key}"
+    ///  "{Assembly.}{BaseName&lt;.*&gt;.}{Type.}{Section.}{Key}"
     /// 
     /// Examples:
     ///   "[Assembly.]Resources.localization{-Culture}.json"

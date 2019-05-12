@@ -33,6 +33,7 @@ namespace Lexical.Localization
         public static ILinePrinter Default => instance;
         private static readonly LineParameterPrinter instance = 
             new LineParameterPrinter()
+                .Ignore("Value")
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":"); // Add known parameters for sorting correcly
 
         /// <summary>
@@ -43,6 +44,7 @@ namespace Lexical.Localization
         public static ILinePrinter Colon_Colon_Colon => colon_colon_colon;
         private static readonly LineParameterPrinter colon_colon_colon =
             new LineParameterPrinter()
+                .Ignore("Value")
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
                 .DefaultRule(true, prefixSeparator: ":"); // Add policy for unknown parameters
 
@@ -55,6 +57,7 @@ namespace Lexical.Localization
         private static readonly LineParameterPrinter none_colon_colon =
             new LineParameterPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
+                .Ignore("Value")
                 .Ignore("Culture") // Ignore Culture
                 .DefaultRule(true, prefixSeparator: ":");
 
@@ -66,6 +69,7 @@ namespace Lexical.Localization
         public static ILinePrinter Colon_Colon_Dot => colon_colon_dot;
         private static readonly LineParameterPrinter colon_colon_dot = 
             new LineParameterPrinter()
+                .Ignore("Value")
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
                 .Separator("Key", prefixSeparator: ".")
                 .DefaultRule(true, prefixSeparator: ":");
@@ -78,6 +82,7 @@ namespace Lexical.Localization
         public static ILinePrinter Dot_Dot_Dot => dot_dot_dot;
         private static readonly LineParameterPrinter dot_dot_dot = 
             new LineParameterPrinter()
+            .Ignore("Value")
             .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
             .DefaultRule(true, prefixSeparator: ".");
 
@@ -89,6 +94,7 @@ namespace Lexical.Localization
         public static ILinePrinter None_Dot_Dot => none_dot_dot;
         private static readonly LineParameterPrinter none_dot_dot = 
             new LineParameterPrinter()
+                .Ignore("Value")
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
                 .Ignore("Culture") // Ignore Culture
                 .DefaultRule(true, prefixSeparator: ".");
@@ -101,6 +107,7 @@ namespace Lexical.Localization
         public static ILinePrinter Colon_Dot_Dot => colon_dot_dot;
         private static readonly LineParameterPrinter colon_dot_dot =
             new LineParameterPrinter()
+                .Ignore("Value")
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
                 .Separator("Culture", postfixSeparator: ":") // Print with ":"
                 .DefaultRule(true, prefixSeparator: ".");

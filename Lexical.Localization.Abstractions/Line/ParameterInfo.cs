@@ -65,11 +65,11 @@ namespace Lexical.Localization.Utils
         String ParameterName { get; }
 
         /// <summary>
-        /// Describes how the parameter is to be compared.
+        /// Type of the parameter:
         /// <list type="bullet">
         ///     <item><see cref="ILineHint"/>not used with comparison.</item>
-        ///     <item><see cref="ILineCanonicalKey"/>hash-equals comparable</item>
-        ///     <item><see cref="ILineNonCanonicalKey"/>hash-equals comparable</item>
+        ///     <item><see cref="ILineCanonicalKey"/>hash-equals comparable key (reoccuring)</item>
+        ///     <item><see cref="ILineNonCanonicalKey"/>hash-equals comparable key</item>
         /// </list>
         /// </summary>
         Type InterfaceType { get; }
@@ -186,7 +186,7 @@ namespace Lexical.Localization.Utils
             => infos.Values.Where(pi => pi.InterfaceType == typeof(ILineNonCanonicalKey));
 
         /// <summary>
-        /// Comparable parameters (non-root).
+        /// Comparable parameters.
         /// </summary>
         public static IEnumerable<IParameterInfo> Comparables(this IReadOnlyDictionary<string, IParameterInfo> infos)
             => infos.Values.Where(pi => pi.InterfaceType == typeof(ILineCanonicalKey) || pi.InterfaceType == typeof(ILineNonCanonicalKey));

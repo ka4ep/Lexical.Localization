@@ -18,7 +18,7 @@ namespace Lexical.Localization
     ///     <item><see cref="ILinePattern"/></item>
     /// </list>
     /// 
-    /// The parts types that are supported is property of the implementing class.
+    /// The decision on what types are instantiated is a configuration decision of the implementing class.
     /// </summary>
     public interface ILineFormat
     {
@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Print <paramref name="line"/> as <see cref="String"/>.
         /// 
-        /// The parts types that are supported is internal to the implementing class.
+        /// The decision on what types are instantiated is a configuration decision of the implementing class.
         /// </summary>
         /// <param name="line"></param>
         /// <returns>full name string</returns>
@@ -51,7 +51,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Parse string into <see cref="ILine"/>.
         /// 
-        /// The part types that are instantiated is internal to the implementing class.
+        /// The decision on what types are instantiated is a configuration decision of the implementing class.
         /// </summary>
         /// <param name="str">key as string</param>
         /// <returns>Arguments that can be used for constructing or appending to a line</returns>
@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Parse string into <see cref="ILine"/>.
         /// 
-        /// The part types that are instantiated is internal to the implementing class.
+        /// The decision on what types are instantiated is a configuration decision of the implementing class.
         /// </summary>
         /// <param name="str">key as string</param>
         /// <param name="prevPart">(optional) previous part to append to</param>

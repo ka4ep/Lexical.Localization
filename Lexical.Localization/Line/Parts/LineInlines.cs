@@ -213,4 +213,58 @@ namespace Lexical.Localization
         }
     }
 
+    /// <summary></summary>
+    public static partial class LineExtensions
+    {
+        /// <summary>
+        /// Add inlined language string.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="subKeyText">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
+        /// <param name="valueText">(optional) value to add, if null removes previously existing the inline</param>
+        /// <returns>new line with inlines or <paramref name="line"/></returns>
+        /// <exception cref="LineException">If key can't be inlined.</exception>
+        public static ILine Inline(this ILine line, string subKeyText, string valueText)
+        {
+            ILineInlines inlines;
+            line = line.GetOrCreateInlines(out inlines);
+            ILine subline = LineFormat.Instance.Parse(subKeyText, line);
+            if (valueText == null)
+            {
+                inlines.Remove(subline);
+            }
+            else
+            {
+                IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Instance;
+                IFormulationString formulation = stringFormat.Parse(valueText);
+                ILine value = subline.Value(formulation);
+                inlines[subline] = value;
+            }
+            return line;
+        }
+
+        /// <summary>
+        /// Add inlined language string.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="subKeyText">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
+        /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
+        /// <returns>new line with inlines or <paramref name="line"/></returns>
+        /// <exception cref="LineException">If key can't be inlined.</exception>
+        public static ILine Inline(this ILine line, string subKeyText, IFormulationString value)
+        {
+            ILineInlines inlines;
+            line = line.GetOrCreateInlines(out inlines);
+            ILine subline = LineFormat.Instance.Parse(subKeyText, line);
+            if (value == null)
+            {
+                inlines.Remove(subline);
+            }
+            else
+            {
+                inlines[subline] = subline.Value(value);
+            }
+            return line;
+        }
+    }
 }

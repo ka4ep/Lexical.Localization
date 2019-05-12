@@ -3,6 +3,7 @@
 // Date:           7.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
 using System.Text;
 
@@ -203,7 +204,21 @@ namespace Lexical.Localization
                 StringBuilder sb = new StringBuilder();
 
                 // Append key
-                LineFormat.Instance.Print(Line, sb);
+                if (Line != null)
+                {
+                    StructList12<ILineParameter> list = new StructList12<ILineParameter>();
+                    Line.GetParameterParts<StructList12<ILineParameter>>(ref list);
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        if (i > 0) sb.Append(':');
+                        var parameter = list[i];
+                        if (parameter.ParameterName == "Value") continue;
+                        sb.Append(parameter.ParameterName);
+                        sb.Append(':');
+                        sb.Append(parameter.ParameterValue);
+                    }
+                    sb.Append(" = ");
+                }
 
                 // Append result
                 if (Value != null)

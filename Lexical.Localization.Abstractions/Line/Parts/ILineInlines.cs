@@ -24,15 +24,15 @@ namespace Lexical.Localization
         /// Add inlined language string.
         /// </summary>
         /// <param name="line"></param>
-        /// <param name="subKeyText">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
+        /// <param name="subKey">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
         /// <param name="valueText">(optional) value to add, if null removes previously existing the inline</param>
         /// <returns>new line with inlines or <paramref name="line"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine Inline(this ILine line, string subKeyText, string valueText)
+        public static ILine Inline(this ILine line, ILine subKey, string valueText)
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = LineFormat.Instance.Parse(subKeyText, line);
+            ILine subline = line.Concat(subKey);
             if (valueText == null)
             {
                 inlines.Remove(subline);
@@ -51,15 +51,15 @@ namespace Lexical.Localization
         /// Add inlined language string.
         /// </summary>
         /// <param name="line"></param>
-        /// <param name="subKeyText">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
+        /// <param name="subKey">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
         /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
         /// <returns>new line with inlines or <paramref name="line"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine Inline(this ILine line, string subKeyText, IFormulationString value)
+        public static ILine Inline(this ILine line, ILine subKey, IFormulationString value)
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = LineFormat.Instance.Parse(subKeyText, line);
+            ILine subline = line.Concat(subKey);
             if (value == null)
             {
                 inlines.Remove(subline);

@@ -192,7 +192,7 @@ namespace Lexical.Localization
         /// <summary>Mask for argument status</summary>
         Custom1Mask = 0x7FUL << Shift.Custom1,
 
-        /// <summary>Last bit is unused</summary>
+        /// <summary>Last bit is reserverd</summary>
         Reserved3 = 0x8000000000000000UL
     }
 
@@ -207,10 +207,10 @@ namespace Lexical.Localization
         internal const int Plurality = 14;
         internal const int Argument = 21;
         internal const int Formulation = 28;
-        internal const int Reserved0 = 35;  // Reserved for future use
-        internal const int Reserved1 = 42;  // Reserved for future use
-        internal const int Custom0 = 49;    // ILineResolver implemtation can use for any custom purpose.
-        internal const int Custom1 = 56;    // ILineResolver implemtation can use for any custom purpose.
+        internal const int Custom0 = 35;    // ILineResolver implemtation can use for any custom purpose.
+        internal const int Custom1 = 42;    // ILineResolver implemtation can use for any custom purpose.
+        internal const int Reserved0 = 49;  // Reserved for future use
+        internal const int Reserved1 = 56;  // Reserved for future use
 
         // bit shifts for severity bits (2bits) of each category.
         internal const int ResolveSeverity = Resolve + 5;
@@ -218,15 +218,15 @@ namespace Lexical.Localization
         internal const int PluralitySeverity = Plurality + 5;
         internal const int ArgumentSeverity = Argument + 5;
         internal const int FormulationSeverity = Formulation + 5;
-        internal const int Reserved0Severity = Reserved0 + 5;  // Reserved for future use
-        internal const int Reserved1Severity = Reserved1 + 5;  // Reserved for future use
         internal const int Custom0Severity = Custom0 + 5;
         internal const int Custom1Severity = Custom1 + 5;
+        internal const int Reserved0Severity = Reserved0 + 5;  // Reserved for future use
+        internal const int Reserved1Severity = Reserved1 + 5;  // Reserved for future use
 
     }
 
     /// <summary></summary>
-    public static class LocalizationStatusExtensions
+    public static class LineStatusExtensions
     {
         /// <summary>
         /// Severity for the step that resolves <see cref="ILine"/> into formulation string.
