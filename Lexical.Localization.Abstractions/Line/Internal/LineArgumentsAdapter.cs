@@ -11,6 +11,35 @@ using System.Text;
 namespace Lexical.Localization.Line.Internal
 {
     /// <summary>
+    /// Builds 
+    /// </summary>
+    public class LineFactoryByArgumentBuilder
+    {
+        /// <summary>
+        /// Default instance
+        /// </summary>
+        static LineFactoryByArgumentBuilder instance = new LineFactoryByArgumentBuilder();
+
+        /// <summary>
+        /// Singleton Instance
+        /// </summary>
+        public static LineFactoryByArgumentBuilder Instance => instance;
+
+        /// <summary>
+        /// Creates a line factory that is specialized for handling <see cref="ILineArguments"/> of specific
+        /// implementing <paramref name="classType"/>.
+        /// </summary>
+        /// <param name="classType">type that implements <see cref="ILineArguments"/> once or more than once</param>
+        /// <returns></returns>
+        public ILineFactoryByArgument Build(Type classType)
+        {
+            // 1. iterate every interface
+            // 2. Build one factory or array of factories
+            return null;
+        }
+    }
+
+    /// <summary>
     /// Adapts <see cref="ILineArguments"/> into type-casted query.
     /// </summary>
     public class LineArgumentsAdapterComposition : ILineFactoryByArgument

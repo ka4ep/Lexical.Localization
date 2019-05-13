@@ -3,14 +3,14 @@
 // Date:           19.2.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Lexical.Localization.Internal;
-using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
@@ -94,11 +94,12 @@ namespace Lexical.Localization
         {
             // Regex.Escape doen't work for brackets []
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
-            string escapeCharactersEscaped = escapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape(""+c)).Aggregate((a,b)=>a+b);
+            string escapeCharactersEscaped = escapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape("" + c)).Aggregate((a, b) => a + b);
             if (escapeControlCharacters)
             {
                 LiteralEscape = new Regex("[" + escapeCharactersEscaped + "]|[\\x00-\\x1f]", opts);
-            } else
+            }
+            else
             {
                 LiteralEscape = new Regex("[" + escapeCharactersEscaped + "]", opts);
             }
@@ -106,7 +107,7 @@ namespace Lexical.Localization
 
             string unescapeCharactersEscaped = unescapeCharacters.Select(c => c == ']' ? "\\]" : Regex.Escape("" + c)).Aggregate((a, b) => a + b);
             LiteralUnescape = new Regex(
-                unescapeControlCharacters ? 
+                unescapeControlCharacters ?
                 "\\\\([0abtfnrv" + unescapeCharactersEscaped + "]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8})" :
                 "\\\\[" + unescapeCharactersEscaped + "]"
                 , opts);
@@ -135,7 +136,7 @@ namespace Lexical.Localization
             Print(key, sb);
             return sb.ToString();
         }
-        
+
         /// <summary>
         /// Convert a sequence of key,value pairs to a string.
         /// 
@@ -153,17 +154,35 @@ namespace Lexical.Localization
         /// <returns><paramref name="sb"/></returns>
         public StringBuilder Print(ILine key, StringBuilder sb)
         {
-            StructList12<ILineParameter> list = new StructList12<ILineParameter>();
-            key.GetParameterParts<StructList12<ILineParameter>>(ref list);
-            for (int i=0; i<list.Count; i++)
+            if (HasParameterRules)
             {
-                if (i>0) sb.Append(':');
-                var parameter = list[i];
-                sb.Append(EscapeLiteral(parameter.ParameterName));
-                sb.Append(':');
-                sb.Append(EscapeLiteral(parameter.ParameterValue));
+                StructList12<(ILineParameter, int)> list = new StructList12<(ILineParameter, int)>();
+                key.GetParameterPartsWithOccurance<StructList12<(ILineParameter, int)>>(ref list);
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (i > 0) sb.Append(':');
+                    (ILineParameter parameter, int occ) = list[i];
+                    if (!Qualify(parameter, occ)) continue;
+                    sb.Append(EscapeLiteral(parameter.ParameterName));
+                    sb.Append(':');
+                    sb.Append(EscapeLiteral(parameter.ParameterValue));
+                }
+                return sb;
             }
-            return sb;
+            else
+            {
+                StructList12<ILineParameter> list = new StructList12<ILineParameter>();
+                key.GetParameterParts<StructList12<ILineParameter>>(ref list);
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (i > 0) sb.Append(':');
+                    var parameter = list[i];
+                    sb.Append(EscapeLiteral(parameter.ParameterName));
+                    sb.Append(':');
+                    sb.Append(EscapeLiteral(parameter.ParameterValue));
+                }
+                return sb;
+            }
         }
 
         /// <summary>
@@ -183,12 +202,28 @@ namespace Lexical.Localization
         public string PrintParameters(IEnumerable<KeyValuePair<string, string>> keyParameters)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var parameter in keyParameters)
+            if (HasParameterRules)
             {
-                if (sb.Length > 0) sb.Append(':');
-                sb.Append(EscapeLiteral(parameter.Key));
-                sb.Append(':');
-                sb.Append(EscapeLiteral(parameter.Value));
+                StructList8<(string, int)> list = new StructList8<(string, int)>();
+                foreach (var parameter in keyParameters)
+                {
+                    int occ = AddOccurance(ref list, parameter.Key);
+                    if (!Qualify(new ParameterArgument(parameter.Key, parameter.Value), occ)) continue;
+                    if (sb.Length > 0) sb.Append(':');
+                    sb.Append(EscapeLiteral(parameter.Key));
+                    sb.Append(':');
+                    sb.Append(EscapeLiteral(parameter.Value));
+                }
+            }
+            else
+            {
+                foreach (var parameter in keyParameters)
+                {
+                    if (sb.Length > 0) sb.Append(':');
+                    sb.Append(EscapeLiteral(parameter.Key));
+                    sb.Append(':');
+                    sb.Append(EscapeLiteral(parameter.Value));
+                }
             }
             return sb.ToString();
         }
@@ -205,16 +240,50 @@ namespace Lexical.Localization
         {
             if (appender == null) appender = prevPart.GetAppender();
             MatchCollection matches = ParsePattern.Matches(str);
-            foreach (Match m in matches)
+            if (HasParameterRules)
             {
-                if (!m.Success) throw new LineException(null, str);
-                Group k_key = m.Groups["key"], k_value = m.Groups["value"];
-                if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
-                string key = UnescapeLiteral(k_key.Value);
-                string value = UnescapeLiteral(k_value.Value);
-                prevPart = appender.Create<ILineParameter, string, string>(prevPart, key, value);
+                StructList8<(string, int)> list = new StructList8<(string, int)>();
+                foreach (Match m in matches)
+                {
+                    if (!m.Success) throw new LineException(null, str);
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    int occ = AddOccurance(ref list, parameterName);
+                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
+                    if (!Qualify(arg as ILineParameter, occ)) continue;
+                    prevPart = appender.Create(prevPart, arg);
+                }
+            }
+            else
+            {
+                foreach (Match m in matches)
+                {
+                    if (!m.Success) throw new LineException(null, str);
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
+                    prevPart = appender.Create(prevPart, arg);
+                }
             }
             return prevPart;
+        }
+
+        ILineArguments CreateLineArgument(string parameterName, string parameterValue)
+        {
+            IParameterInfo parameterInfo;
+            if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out parameterInfo))
+            {
+                if (parameterInfo.InterfaceType == typeof(ILineParameter)) return new ParameterArgument(parameterName, parameterValue);
+                if (parameterInfo.InterfaceType == typeof(ILineHint)) return new HintArgument(parameterName, parameterValue);
+                if (parameterInfo.InterfaceType == typeof(ILineCanonicalKey)) return new KeyCanonicalArgument(parameterName, parameterValue);
+                if (parameterInfo.InterfaceType == typeof(ILineNonCanonicalKey)) return new KeyNonCanonicalArgument(parameterName, parameterValue);
+                return (ILineArguments)typeof(Argument<>).MakeGenericType(parameterInfo.InterfaceType).GetConstructors()[0].Invoke(new object[] { parameterName, parameterValue });
+            }
+            return new ParameterArgument(parameterName, parameterValue);
         }
 
         /// <summary>
@@ -225,19 +294,41 @@ namespace Lexical.Localization
         public IEnumerable<ILineArguments> Parse(string str)
         {
             MatchCollection matches = ParsePattern.Matches(str);
-            int count = matches.Count;
-            ILineArguments[] result = new ILineArguments[count];
-            for (int i=0; i<count; i++)
+            if (HasParameterRules)
             {
-                Match m = matches[i];
-                if (!m.Success) throw new LineException(null, str);
-                Group k_key = m.Groups["key"], k_value = m.Groups["value"];
-                if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
-                string key = UnescapeLiteral(k_key.Value);
-                string value = UnescapeLiteral(k_value.Value);
-                result[i] = new ParameterArgument(key, value);
+                StructList8<ILineArguments> result = new StructList8<ILineArguments>();
+                StructList8<(string, int)> list = new StructList8<(string, int)>();
+                for (int i = 0; i < matches.Count; i++)
+                {
+                    Match m = matches[i];
+                    if (!m.Success) throw new LineException(null, str);
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
+                    int occ = AddOccurance(ref list, parameterName);
+                    if (!Qualify(arg as ILineParameter, occ)) continue;
+                    result.Add(arg);
+                }
+                return result.ToArray();
             }
-            return result;
+            else
+            {
+                int count = matches.Count;
+                ILineArguments[] result = new ILineArguments[count];
+                for (int i = 0; i < count; i++)
+                {
+                    Match m = matches[i];
+                    if (!m.Success) throw new LineException(null, str);
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    result[i] = CreateLineArgument(parameterName, parameterValue);
+                }
+                return result;
+            }
         }
 
         /// <summary>
@@ -252,18 +343,41 @@ namespace Lexical.Localization
         {
             if (appender == null && !prevPart.TryGetAppender(out appender)) { result = null; return false; }
             MatchCollection matches = ParsePattern.Matches(keyString);
-            foreach (Match m in matches)
+            if (HasParameterRules)
             {
-                if (!m.Success) { result = null; return false; }
-                Group k_key = m.Groups["key"], k_value = m.Groups["value"];
-                if (!k_key.Success || !k_value.Success) { result = null; return false; }
-                string key = UnescapeLiteral(k_key.Value);
-                string value = UnescapeLiteral(k_value.Value);
-                ILineParameter parameter;
-                if (appender.TryCreate<ILineParameter, string, string>(prevPart, key, value, out parameter)) prevPart = parameter; else { result = null; return false; }
+                StructList8<(string, int)> list = new StructList8<(string, int)>();
+                foreach (Match m in matches)
+                {
+                    if (!m.Success) { result = null; return false; }
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) { result = null; return false; }
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
+                    int occ = AddOccurance(ref list, parameterName);
+                    if (!Qualify(arg as ILineParameter, occ)) continue;
+                    ILine tmp;
+                    if (appender.TryCreate(prevPart, arg, out tmp)) prevPart = tmp; else { result = null; return false; }
+                }
+                result = prevPart;
+                return true;
             }
-            result = prevPart;
-            return true;
+            else
+            {
+                foreach (Match m in matches)
+                {
+                    if (!m.Success) { result = null; return false; }
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) { result = null; return false; }
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
+                    ILine tmp;
+                    if (appender.TryCreate(prevPart, arg, out tmp)) prevPart = tmp; else { result = null; return false; }
+                }
+                result = prevPart;
+                return true;
+            }
         }
 
         /// <summary>
@@ -275,20 +389,43 @@ namespace Lexical.Localization
         public bool TryParse(string str, out IEnumerable<ILineArguments> args)
         {
             MatchCollection matches = ParsePattern.Matches(str);
-            int count = matches.Count;
-            ILineArguments[] result = new ILineArguments[count];
-            for (int i = 0; i < count; i++)
+            if (HasParameterRules)
             {
-                Match m = matches[i];
-                if (!m.Success) { args = null; return false; }
-                Group k_key = m.Groups["key"], k_value = m.Groups["value"];
-                if (!k_key.Success || !k_value.Success) { args = null; return false; }
-                string key = UnescapeLiteral(k_key.Value);
-                string value = UnescapeLiteral(k_value.Value);
-                result[i] = new ParameterArgument(key, value);
+                StructList8<ILineArguments> result = new StructList8<ILineArguments>();
+                StructList8<(string, int)> list = new StructList8<(string, int)>();
+                for (int i = 0; i < matches.Count; i++)
+                {
+                    Match m = matches[i];
+                    if (!m.Success) { args = null; return false; }
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
+                    int occ = AddOccurance(ref list, parameterName);
+                    if (!Qualify(arg as ILineParameter, occ)) continue;
+                    result.Add(arg);
+                }
+                args = result.ToArray();
+                return true;
             }
-            args = result;
-            return true;
+            else
+            {
+                int count = matches.Count;
+                ILineArguments[] result = new ILineArguments[count];
+                for (int i = 0; i < count; i++)
+                {
+                    Match m = matches[i];
+                    if (!m.Success) throw new LineException(null, str);
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    result[i] = CreateLineArgument(parameterName, parameterValue);
+                }
+                args = result;
+                return true;
+            }
         }
 
         /// <summary>
@@ -300,14 +437,32 @@ namespace Lexical.Localization
         public IEnumerable<KeyValuePair<string, string>> ParseParameters(string keyString)
         {
             MatchCollection matches = ParsePattern.Matches(keyString);
-            foreach (Match m in matches)
+            if (HasParameterRules)
             {
-                if (!m.Success) throw new LineException(null, keyString);
-                Group k_key = m.Groups["key"], k_value = m.Groups["value"];
-                if (!k_key.Success || !k_value.Success) throw new LineException(null, keyString);
-                string name = UnescapeLiteral(k_key.Value);
-                string value = UnescapeLiteral(k_value.Value);
-                yield return new KeyValuePair<string, string>(name, value);
+                StructList8<(string, int)> list = new StructList8<(string, int)>();
+                foreach (Match m in matches)
+                {
+                    if (!m.Success) throw new LineException(null, keyString);
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) throw new LineException(null, keyString);
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    int occ = AddOccurance(ref list, parameterName);
+                    if (!Qualify((ILineParameter)CreateLineArgument(parameterName, parameterValue), occ)) continue;
+                    yield return new KeyValuePair<string, string>(parameterName, parameterValue);
+                }
+            }
+            else
+            {
+                foreach (Match m in matches)
+                {
+                    if (!m.Success) throw new LineException(null, keyString);
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) throw new LineException(null, keyString);
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    yield return new KeyValuePair<string, string>(parameterName, parameterValue);
+                }
             }
         }
 
@@ -321,14 +476,32 @@ namespace Lexical.Localization
         {
             if (keyString == null) return false;
             MatchCollection matches = ParsePattern.Matches(keyString);
-            foreach (Match m in matches)
+            if (HasParameterRules)
             {
-                if (!m.Success) { result = null; return false; }
-                Group k_key = m.Groups["key"], k_value = m.Groups["value"];
-                if (!k_key.Success || !k_value.Success) return false;
-                string name = UnescapeLiteral(k_key.Value);
-                string value = UnescapeLiteral(k_value.Value);
-                result.Add(new KeyValuePair<string, string>(name, value));
+                StructList8<(string, int)> list = new StructList8<(string, int)>();
+                foreach (Match m in matches)
+                {
+                    if (!m.Success) { result = null; return false; }
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) return false;
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    int occ = AddOccurance(ref list, parameterName);
+                    if (!Qualify((ILineParameter)CreateLineArgument(parameterName, parameterValue), occ)) continue;
+                    result.Add(new KeyValuePair<string, string>(parameterName, parameterValue));
+                }
+            }
+            else
+            {
+                foreach (Match m in matches)
+                {
+                    if (!m.Success) { result = null; return false; }
+                    Group k_key = m.Groups["key"], k_value = m.Groups["value"];
+                    if (!k_key.Success || !k_value.Success) return false;
+                    string parameterName = UnescapeLiteral(k_key.Value);
+                    string parameterValue = UnescapeLiteral(k_value.Value);
+                    result.Add(new KeyValuePair<string, string>(parameterName, parameterValue));
+                }
             }
             return true;
         }
@@ -395,6 +568,35 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Add occurance index of a specific parameter name.
+        /// </summary>
+        /// <param name="paramOccurances">catalog of parameter occurances</param>
+        /// <param name="parameterName"></param>
+        /// <returns>occurance of <paramref name="parameterName"/></returns>
+        static int AddOccurance(ref StructList8<(string, int)> paramOccurances, string parameterName)
+        {
+            for (int i = 0; i < paramOccurances.Count; i++)
+            {
+                (string name, int occ) = paramOccurances[i];
+                if (name == parameterName)
+                {
+                    paramOccurances[i] = (name, occ + 1);
+                    return occ + 1;
+                }
+            }
+            paramOccurances.Add((parameterName, 0));
+            return 0;
+        }
+
+        class Argument<T> : ILineArguments<T, string, string>, ILineParameter
+        {
+            public string Argument0 => ParameterName;
+            public string Argument1 => ParameterValue;
+            public string ParameterName { get; set; }
+            public string ParameterValue { get; set; }
+            public Argument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
+        }
         class ParameterArgument : ILineArguments<ILineParameter, string, string>, ILineParameter
         {
             public string Argument0 => ParameterName;
