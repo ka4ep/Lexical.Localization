@@ -117,7 +117,7 @@ namespace Lexical.Localization.Line.Internal
             {
                 ILine result = previous;
                 foreach (var f in factories)
-                    f.TryCreate(factory, result, arguments, out result);
+                    if (!f.TryCreate(factory, result, arguments, out result)) { line = default; return false; }
                 line = result;
                 return true;
             }
