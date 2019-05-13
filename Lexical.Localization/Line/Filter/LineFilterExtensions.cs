@@ -99,21 +99,27 @@ namespace Lexical.Localization
         /// <param name="keyMatch">(optional) </param>
         /// <returns>true if line is qualified by the filter, false if disqualified</returns>
         public static bool Filter(this ILineFilter filter, ILinePatternMatch keyMatch)
-        {
-            // Match was failure to begin with
-            if (keyMatch == null || !keyMatch.Success) return false;
+            => keyMatch != null && keyMatch.Success && filter.Filter(keyMatch.ToLine());
 
+        /// <summary>
+        /// Convert <paramref name="match"/> to line where occurance indices are correct.
+        /// </summary>
+        /// <param name="match"></param>
+        /// <returns></returns>
+        public static ILine ToLine(this ILinePatternMatch match)
+        {
             // Apply parameter filters
             ILine line = null;
-            for (int i = 0; i < keyMatch.PartValues.Length; i++)
+            for (int i = 0; i < match.PartValues.Length; i++)
             {
-                string parameterValue = keyMatch.PartValues[i];
+                string parameterValue = match.PartValues[i];
                 if (parameterValue == null) continue;
-                string parameterName = keyMatch.Pattern.CaptureParts[i].ParameterName;
+                string parameterName = match.Pattern.CaptureParts[i].ParameterName;
                 line = new LineParameter(null, line, parameterName, parameterValue);
-            }
 
-            return filter.Filter(line);
+                // TODO Put line parts in occurance order //
+            }
+            return line;
         }
 
     }
