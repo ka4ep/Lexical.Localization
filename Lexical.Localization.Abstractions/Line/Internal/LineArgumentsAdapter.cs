@@ -130,7 +130,7 @@ namespace Lexical.Localization.Line.Internal
                 if (arguments is ILineArguments<Intf>)
                 {
                     Intf result;
-                    if (factory is ILineFactory<Intf> casted && casted.TryCreate<Intf>(previous, out result)) { line = result; return true; }
+                    if (factory is ILineFactory<Intf> casted && casted.TryCreate(factory, previous, out result)) { line = result; return true; }
                     ILineFactory<Intf> _casted;
                     if (factory is ILineFactoryCastable castable && ((_casted = castable.Cast<Intf>()) != null) && _casted.TryCreate(factory, previous, out result)) { line = result; return true; }
                 }
@@ -146,7 +146,7 @@ namespace Lexical.Localization.Line.Internal
                 if (arguments is ILineArguments<Intf, A0> args)
                 {
                     Intf result;
-                    if (factory is ILineFactory<Intf> casted && casted.TryCreate<Intf, A0>(previous, args.Argument0, out result)) { line = result; return true; }
+                    if (factory is ILineFactory<Intf, A0> casted && casted.TryCreate(factory, previous, args.Argument0, out result)) { line = result; return true; }
                     ILineFactory<Intf, A0> _casted;
                     if (factory is ILineFactoryCastable castable && ((_casted = castable.Cast<Intf, A0>()) != null) && _casted.TryCreate(factory, previous, args.Argument0, out result)) { line = result; return true; }
                 }
@@ -162,7 +162,7 @@ namespace Lexical.Localization.Line.Internal
                 if (arguments is ILineArguments<Intf, A0, A1> args)
                 {
                     Intf result;
-                    if (factory is ILineFactory<Intf> casted && casted.TryCreate<Intf, A0, A1>(previous, args.Argument0, args.Argument1, out result)) { line = result; return true; }
+                    if (factory is ILineFactory<Intf, A0, A1> casted && casted.TryCreate(factory, previous, args.Argument0, args.Argument1, out result)) { line = result; return true; }
                     ILineFactory<Intf, A0, A1> _casted;
                     if (factory is ILineFactoryCastable castable && ((_casted = castable.Cast<Intf, A0, A1>()) != null) && _casted.TryCreate(factory, previous, args.Argument0, args.Argument1, out result)) { line = result; return true; }
                 }
@@ -178,7 +178,7 @@ namespace Lexical.Localization.Line.Internal
                 if (arguments is ILineArguments<Intf, A0, A1, A2> args)
                 {
                     Intf result;
-                    if (factory is ILineFactory<Intf> casted && casted.TryCreate<Intf, A0, A1, A2>(previous, args.Argument0, args.Argument1, args.Argument2, out result)) { line = result; return true; }
+                    if (factory is ILineFactory<Intf, A0, A1, A2> casted && casted.TryCreate(factory, previous, args.Argument0, args.Argument1, args.Argument2, out result)) { line = result; return true; }
                     ILineFactory<Intf, A0, A1, A2> _casted;
                     if (factory is ILineFactoryCastable castable && ((_casted = castable.Cast<Intf, A0, A1, A2>()) != null) && _casted.TryCreate(factory, previous, args.Argument0, args.Argument1, args.Argument2, out result)) { line = result; return true; }
                 }
