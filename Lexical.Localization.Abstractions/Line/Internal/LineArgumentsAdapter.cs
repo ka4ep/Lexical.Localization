@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 namespace Lexical.Localization.Line.Internal
 {
     /// <summary>
-    /// Adapts <see cref="ILineFactoryByArgument"/> so that it forwards <see cref="ILineArguments"/> to call <see cref="ILineFactory{Intf}"/> and <see cref="ILineFactoryCastable"/> implementations without reflection.
+    /// Creates adapters as <see cref="ILineFactoryByArgument"/> for classes that implement <see cref="ILineArguments"/>.
     /// </summary>
     public class LineFactoryByArgumentAdapter
     {
@@ -54,30 +54,30 @@ namespace Lexical.Localization.Line.Internal
         /// <summary>
         /// Get-or-Create adapter
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="factory"></param>
+        /// <param name="argumentType">Argument class that implements <see cref="ILineArguments"/> once or more than once</param>
+        /// <param name="factory">Factory that forwards calls for the specific <paramref name="argumentType"/></param>
         /// <returns></returns>
         /// <exception cref="LineException">If adapter construction fails</exception>
-        public bool TryGet(Type type, out ILineFactoryByArgument factory)
+        public bool TryGet(Type argumentType, out ILineFactoryByArgument factory)
         {
-            ILineFactoryByArgument f = cache.GetOrAdd(type, valueFactory);
+            ILineFactoryByArgument f = cache.GetOrAdd(argumentType, valueFactory);
             factory = f;
             return f != null;
         }
 
         /// <summary>
-        /// Creates a line factory that is specialized for handling <see cref="ILineArguments"/> of specific implementing <paramref name="classType"/>.
+        /// Creates a line factory that is specialized for handling <see cref="ILineArguments"/> of specific implementing <paramref name="argumentType"/>.
         /// </summary>
-        /// <param name="classType">type that implements <see cref="ILineArguments"/> once or more than once</param>
-        /// <returns>factory or null</returns>
+        /// <param name="argumentType">Argument class that implements <see cref="ILineArguments"/> once or more than once</param>
+        /// <returns>Factory that forwards calls for the specific <paramref name="argumentType"/> or null</returns>
         /// <exception cref="LineException">If adapter construction fails</exception>
-        public ILineFactoryByArgument Build(Type classType)
+        public ILineFactoryByArgument Build(Type argumentType)
         {
             try
             {
                 StructList8<ILineFactoryByArgument> factories = new StructList8<ILineFactoryByArgument>();
 
-                Type[] intfs = classType.GetInterfaces();
+                Type[] intfs = argumentType.GetInterfaces();
                 foreach (Type intf in intfs)
                 {
                     Type intfGeneric = intf.GetGenericTypeDefinition();
@@ -117,7 +117,7 @@ namespace Lexical.Localization.Line.Internal
             {
                 ILine result = previous;
                 foreach (var f in factories)
-                    if (!f.TryCreate(factory, result, arguments, out result)) { line = default; return false; }
+                    f.TryCreate(factory, result, arguments, out result);
                 line = result;
                 return true;
             }
