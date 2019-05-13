@@ -33,9 +33,9 @@ namespace docs
                 #region Snippet_1b
                 // Create localization source
                 var source = new Dictionary<ILine, string> {
-                    { LineFormat.Instance.Parse("Type:MyController:Key:hello", Key.Root),            "Hello World!" },
-                    { LineFormat.Instance.Parse("Culture:en:Type:MyController:Key:hello", Key.Root), "Hello World!" },
-                    { LineFormat.Instance.Parse("Culture:de:Type:MyController:Key:hello", Key.Root), "Hallo Welt!"  }
+                    { LineFormat.Parameters.Parse("Type:MyController:Key:hello", Key.Root),            "Hello World!" },
+                    { LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello", Key.Root), "Hello World!" },
+                    { LineFormat.Parameters.Parse("Culture:de:Type:MyController:Key:hello", Key.Root), "Hallo Welt!"  }
                 };
                 // Create asset with string source
                 IAsset asset = new LocalizationAsset().Add(source).Load();

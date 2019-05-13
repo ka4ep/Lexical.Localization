@@ -625,7 +625,7 @@ namespace Lexical.Localization
         {
             this.parent = parent;
             this.reader = reader;
-            this.namePolicy = namePolicy ?? LineFormat.Instance;
+            this.namePolicy = namePolicy ?? LineFormat.Parameters;
             this.errorHandler = errorHandler;
             this.disposeReader = disposeReader;
 

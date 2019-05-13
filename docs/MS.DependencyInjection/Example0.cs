@@ -24,7 +24,7 @@ namespace docs
             // Create localization source
             var source = new Dictionary<string, string> { { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" } };
             // Create asset source
-            IAssetSource assetSource = new LocalizationAsset(source, LineFormat.Instance).ToSource();
+            IAssetSource assetSource = new LocalizationAsset(source, LineFormat.Parameters).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
             #endregion Snippet_2

@@ -16,28 +16,28 @@ namespace docs
             {
                 #region Snippet_0
                 string str = @"Culture:en:Type:MyController:Key:Ok";
-                ILine key = LineFormat.Instance.Parse(str);
+                ILine key = LineFormat.Parameters.Parse(str);
                 #endregion Snippet_0
             }
             {
                 #region Snippet_0b
                 string str = @"Culture:en:Type:MyController:Key:Ok";
                 ILine root = new StringLocalizerRoot();
-                ILine key = LineFormat.Instance.Parse(str, root);
+                ILine key = LineFormat.Parameters.Parse(str, root);
                 #endregion Snippet_0b
             }
 
             {
                 #region Snippet_1
                 string str = @"Key:Success\:Plural";
-                ILine key = LineFormat.Instance.Parse(str);
+                ILine key = LineFormat.Parameters.Parse(str);
                 #endregion Snippet_1
             }
 
             {
                 #region Snippet_2
                 ILine key = LineRoot.Global.Type("MyController").Key("Success").Culture("en");
-                string str = LineFormat.Instance.Print(key);
+                string str = LineFormat.Parameters.Print(key);
                 #endregion Snippet_2
             }
             {
@@ -48,14 +48,14 @@ namespace docs
                 #region Snippet_4
                 ILine key = LineRoot.Global.Type("MyController").Key("Success").Culture("en");
                 IEnumerable<KeyValuePair<string, string>> parameters = key.GetParameters();
-                string str = LineFormat.Instance.PrintParameters(parameters);
+                string str = LineFormat.Parameters.PrintParameters(parameters);
                 #endregion Snippet_4
             }
 
             {
                 #region Snippet_5
                 string str = "Culture:en:Type:MyLibrary.MyController:Key:Success";
-                IEnumerable<KeyValuePair<string, string>> parameters = LineFormat.Instance.ParseParameters(str);
+                IEnumerable<KeyValuePair<string, string>> parameters = LineFormat.Parameters.ParseParameters(str);
                 ILine key = LineRoot.Global.Parameters(parameters);
                 #endregion Snippet_5
             }
@@ -63,14 +63,14 @@ namespace docs
             {
                 #region Snippet_6
                 ILine key = LineRoot.Global.Type("MyController").Key("Success").Culture("en");
-                string str = LineFormat.Instance.PrintKey(key);
+                string str = LineFormat.Parameters.PrintKey(key);
                 #endregion Snippet_6
             }
 
             {
                 #region Snippet_7
                 string str = "Culture:en:Type:MyLibrary.MyController:Key:Success";
-                ILine key = LineFormat.Instance.Parse(str, LineRoot.Global);
+                ILine key = LineFormat.Parameters.Parse(str, LineRoot.Global);
                 #endregion Snippet_7
             }
         }

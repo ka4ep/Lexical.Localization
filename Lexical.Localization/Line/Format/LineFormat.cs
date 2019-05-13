@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
@@ -17,15 +18,38 @@ namespace Lexical.Localization
     /// Parameter policy that uses the following format "Key:Value:...". 
     /// Parses to <see cref="ILineParameter"/> parts.
     /// </summary>
-    public class LineFormat : ILinePrinter, ILineParser, ILineAppendParser
+    public class LineFormat : LineParameterFilterComposition, ILinePrinter, ILineParser, ILineAppendParser
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
-        static LineFormat instance = new LineFormat("\\:", false, "\\:", false);
 
         /// <summary>
-        /// Generic string serializer where colons can be used in the key and value literals.
+        /// Format that prints and parses parameters except "Value" parameter.
+        /// 
+        /// Uses <see cref="ParameterInfos.Default"/> to instantiate known keys and hints as they are.
+        /// Unknown parameters are instantated as <see cref="ILineParameter"/> and left for the caller to interpret.
         /// </summary>
-        public static LineFormat Instance => instance;
+        static LineFormat parameters = new LineFormat("\\:", false, "\\:", false, ParameterInfos.Default).Rule("Value", -1, "").SetReadonly() as LineFormat;
+
+        /// <summary>
+        /// Format that prints and parses all parameters.
+        /// 
+        /// Uses <see cref="ParameterInfos.Default"/> to instantiate known keys and hints as they are.
+        /// Unknown parameters are instantated as <see cref="ILineParameter"/> and left for the caller to interpret.
+        /// </summary>
+        static LineFormat parametersInclValue = new LineFormat("\\:", false, "\\:", false, ParameterInfos.Default).SetReadonly() as LineFormat;
+
+        /// <summary>
+        /// Format that prints and parses parameters 
+        /// </summary>
+        public static LineFormat Parameters => parameters;
+
+        /// <summary>
+        /// Format that prints and parses all parameters.
+        /// 
+        /// Uses <see cref="ParameterInfos.Default"/> to instantiate known keys and hints as they are.
+        /// Unknown parameters are instantated as <see cref="ILineParameter"/> and left for the caller to interpret.
+        /// </summary>
+        public static LineFormat ParametersInclValue => parametersInclValue;
 
         /// <summary>
         /// Pattern that parses "ParameterName:ParameterValue" texts.
@@ -52,6 +76,11 @@ namespace Lexical.Localization
         /// </summary>
         protected MatchEvaluator unescapeChar;
 
+        /// <summary>
+        /// (optional) Parameter infos for determining if parameter is key.
+        /// </summary>
+        protected IReadOnlyDictionary<string, IParameterInfo> parameterInfos;
+
 
         /// <summary>
         /// Create new string serializer
@@ -60,7 +89,8 @@ namespace Lexical.Localization
         /// <param name="escapeControlCharacters">Escape characters 0x00 - 0x1f</param>
         /// <param name="unescapeCharacters">list of characters that are to be unescaped</param>
         /// <param name="unescapeControlCharacters">Unescape tnab0f</param>
-        public LineFormat(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters)
+        /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
+        public LineFormat(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null)
         {
             // Regex.Escape doen't work for brackets []
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
@@ -81,6 +111,8 @@ namespace Lexical.Localization
                 "\\\\[" + unescapeCharactersEscaped + "]"
                 , opts);
             unescapeChar = UnescapeChar;
+
+            this.parameterInfos = parameterInfos;
         }
 
         /// <summary>

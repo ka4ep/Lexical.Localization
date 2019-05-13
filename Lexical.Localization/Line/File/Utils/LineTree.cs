@@ -263,7 +263,7 @@ namespace Lexical.Localization.Utils
                 if (i++ > 0) sb.Append("/");
                 ILine key = tree.Key;
                 if (key == null) continue;
-                LineFormat.Instance.Print(key, sb);
+                LineFormat.Parameters.Print(key, sb);
             }
 
             if (HasValues)
@@ -293,7 +293,7 @@ namespace Lexical.Localization.Utils
                 if (sb.Length > 0) sb.Append("/");
                 ILine key = tree.Key;
                 if (key == null) continue;
-                LineFormat.Instance.Print(key, sb);
+                LineFormat.Parameters.Print(key, sb);
             }
             return sb.ToString();
         }

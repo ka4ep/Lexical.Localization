@@ -248,6 +248,52 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Break <paramref name="line"/> into parameters and write with occurance index to <paramref name="list"/>.
+        /// 0 is the first occurance for tha parameter name, 1 the second, etc.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="list">(Parameter, occuranceIndex) of parameters in order of from tail to root</param>
+        public static void GetParameterPartsWithOccurance<LIST>(this ILine line, ref LIST list) where LIST : IList<(ILineParameter, int)>
+        {
+            for (ILine part = line; part != null; part = part.GetPreviousPart())
+            {
+                if (part is ILineParameterEnumerable lineParameters)
+                {
+                    // Enumerate to invert order
+                    StructList4<ILineParameter> tmp = new StructList4<ILineParameter>();
+                    foreach (ILineParameter _parameter in lineParameters)
+                        if (!String.IsNullOrEmpty(_parameter.ParameterName) && _parameter.ParameterValue != null) tmp.Add(_parameter);
+                    // Add to list
+                    for(int i=tmp.Count-1; i>=0; i--)
+                    {
+                        string name = tmp[i].ParameterName;
+                        int c = list.Count;
+                        list.Add((tmp[i], 0));
+
+                        // Fix occurance
+                        int occIx = 0;
+                        for (int j=c; j>=0; j--)
+                            if (list[j].Item1.ParameterName == name) list[j] = (list[j].Item1, ++occIx);
+                    }
+                }
+
+                if (part is ILineParameter parameter && parameter.ParameterName != null)
+                {
+                    string name = parameter.ParameterName;
+                    int c = list.Count;
+                    list.Add((parameter, 0));
+
+                    // Fix occurance
+                    int occIx = 0;
+                    for (int j = c; j >= 0; j--)
+                        if (list[j].Item1.ParameterName == name) list[j] = (list[j].Item1, ++occIx);
+                }
+            }
+        }
+
+
+
+        /// <summary>
         /// Get all parameters as parameterName,parameterValue as array with value from root to tail.
         /// </summary>
         /// <param name="line">(optional) line to read parameters of</param>

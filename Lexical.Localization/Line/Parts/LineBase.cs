@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace Lexical.Localization
         /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineFormatArgs"/> parts.
         /// </summary>
         static IEqualityComparer<ILine> keyAndArgsComparer =
-            new LineComparer()
+            new LineComparer(ParameterInfos.Default)
                 .AddCanonicalComparer(ParameterComparer.Instance)
                 .AddComparer(NonCanonicalComparer.Instance)
                 .AddComparer(new LineFormatArgsComparer())
@@ -168,10 +169,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public string DebugPrint()
-            => LineFormat.Instance.Print(this);
+            => LineFormat.Parameters.Print(this);
 
         /// <summary>
-        /// Equals comparison. The default comparer compares <see cref="ILineKey"/> and <see cref="ILineFormatArgsPart"/> parts.
+        /// Equals comparison. The default comparer compares <see cref="ILineKey"/> and <see cref="ILineFormatArgs"/> parts.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>

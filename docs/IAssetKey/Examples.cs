@@ -12,7 +12,7 @@ namespace docs
         public static void Main(string[] args)
         {
             {
-                IAsset asset = new LocalizationAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, LineFormat.Instance);
+                IAsset asset = new LocalizationAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, LineFormat.Parameters);
                 // Assign the composition to root
                 ILineRoot root = new LineRoot(asset, new CulturePolicy());
                 #region Snippet_0

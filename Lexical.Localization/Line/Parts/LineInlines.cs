@@ -228,7 +228,7 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = LineFormat.Instance.Parse(subKeyText, line);
+            ILine subline = LineFormat.Parameters.Parse(subKeyText, line);
             if (valueText == null)
             {
                 inlines.Remove(subline);
@@ -255,7 +255,7 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = LineFormat.Instance.Parse(subKeyText, line);
+            ILine subline = LineFormat.Parameters.Parse(subKeyText, line);
             if (value == null)
             {
                 inlines.Remove(subline);
