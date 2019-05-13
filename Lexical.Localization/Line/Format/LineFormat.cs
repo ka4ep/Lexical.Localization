@@ -18,7 +18,7 @@ namespace Lexical.Localization
     /// Parameter policy that uses the following format "Key:Value:...". 
     /// Parses to <see cref="ILineParameter"/> parts.
     /// </summary>
-    public class LineFormat : LineParameterFilterComposition, ILinePrinter, ILineParser, ILineAppendParser
+    public class LineFormat : LineParameterQualifierComposition, ILinePrinter, ILineParser, ILineAppendParser
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
 

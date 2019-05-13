@@ -48,7 +48,7 @@ namespace Lexical.Localization
             // Return all 
             if (filterKey == null) return dictionary.Keys.ToList();
             // Create filter.
-            LineFilter filter = new LineFilter().Rule(filterKey);
+            LineQualifier filter = new LineQualifier().Rule(filterKey);
             // There are no rules
             if (!filter.HasRules) return dictionary.Keys.ToList();
             // Filter with pattern
@@ -73,7 +73,7 @@ namespace Lexical.Localization
                 {
                     ILine key;
                     if (!parser.TryParse(line.Key, out key)) continue;
-                    if (!filter.Filter(key)) continue;
+                    if (!filter.Qualify(key)) continue;
                     yield return line.Key;
                 }
             }

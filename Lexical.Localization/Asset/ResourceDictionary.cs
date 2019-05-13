@@ -40,9 +40,9 @@ namespace Lexical.Localization
             // Return all 
             if (filterKey == null) return dictionary.Keys.ToList();
             // Create filter.
-            LineFilter filter = new LineFilter().Rule(filterKey);
+            LineQualifier filter = new LineQualifier().Rule(filterKey);
             // Return keys as list
-            return filter.Filter(dictionary.Keys).ToList();
+            return filter.Qualify(dictionary.Keys).ToList();
         }
 
         /// <summary>

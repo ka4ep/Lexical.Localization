@@ -305,9 +305,9 @@ namespace Lexical.Localization
             // Return all
             if (filterKey == null) return _lines;
             // Create filter
-            LineFilter filter = new LineFilter().Rule(filterKey);
+            LineQualifier filter = new LineQualifier().Rule(filterKey);
             // Apply filter
-            return _lines.Where(line => filter.Filter(line.Key));
+            return _lines.Where(line => filter.Qualify(line.Key));
         }
 
         /// <summary>
@@ -328,7 +328,7 @@ namespace Lexical.Localization
             // Return all 
             if (filterKey == null) return StringLines;
             // Create filter.
-            LineFilter filter = new LineFilter().Rule(filterKey);
+            LineQualifier filter = new LineQualifier().Rule(filterKey);
             // Apply filter
             List<KeyValuePair<string, IFormulationString>> result = null;
             foreach (var collectionLine in collections.ToArray())
@@ -360,7 +360,7 @@ namespace Lexical.Localization
             // Return all 
             if (filterKey == null) return StringLines;
             // Create filter.
-            LineFilter filter = new LineFilter().Rule(filterKey);
+            LineQualifier filter = new LineQualifier().Rule(filterKey);
             // Apply filter
             List<KeyValuePair<string, IFormulationString>> result = null;
             foreach (var collectionLine in collections.ToArray())

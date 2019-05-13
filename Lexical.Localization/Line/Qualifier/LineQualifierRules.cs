@@ -11,7 +11,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Filter rules.
     /// </summary>
-    public abstract class LineFilterRule : ILineFilterParameterEvaluatable, ILineFilterParameterNameConstraint, ILineFilterParameterOccuranceConstraint
+    public abstract class LineQualifierRule : ILineParameterQualifierEvaluatable, ILineParameterQualifierNameConstraint, ILineParameterQualifierOccuranceConstraint
     {
         /// <summary>
         /// Parameter name to apply rule to.
@@ -33,7 +33,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="parameterName"></param>
         /// <param name="occuranceIndex">occurance of parameter name this rule applies to. Use 0 for non-canonical parameters.</param>
-        public LineFilterRule(string parameterName, int occuranceIndex)
+        public LineQualifierRule(string parameterName, int occuranceIndex)
         {
             this.ParameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
             this.OccuranceIndex = occuranceIndex;
@@ -57,7 +57,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Filter rule that matches paramter value against <see cref="Pattern"/>.
         /// </summary>
-        public class Regex : LineFilterRule
+        public class Regex : LineQualifierRule
         {
             /// <summary>
             /// Regex pattern
@@ -95,7 +95,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Filter rule that matches paramter value against one value.
         /// </summary>
-        public class IsEqualTo : LineFilterRule
+        public class IsEqualTo : LineQualifierRule
         {
             /// <summary>
             /// Accepted value
@@ -133,7 +133,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Filter rule that matches parameter value against a set of valid values.
         /// </summary>
-        public class IsInGroup : LineFilterRule
+        public class IsInGroup : LineQualifierRule
         {
             /// <summary>
             /// List of accepted values.
@@ -182,7 +182,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Filter rule that asserts that the parameter is null or "".
         /// </summary>
-        public class IsEmpty : LineFilterRule
+        public class IsEmpty : LineQualifierRule
         {
             /// <summary>
             /// Create rule that approves emptry (null or "") parameter value.
