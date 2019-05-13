@@ -11,7 +11,7 @@ using System.Text;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Measures qualification of a <see cref="ILine"/>.
+    /// Measures qualification of <see cref="ILine"/>s according to configured rules.
     /// </summary>
     public class LineQualifier : LineParameterQualifierComposition, ILineQualifier, ILineQualifierComposition, ILineQualifierEnumerable, ILineQualifierEvaluatable, ILineQualifierLinesEvaluatable
     {

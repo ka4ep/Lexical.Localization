@@ -3,6 +3,7 @@
 // Date:           2.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Line.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -211,6 +212,8 @@ namespace Lexical.Localization
         {
             ILine result = null;
             if (factory.TryCreate(previous, arguments, out result)) return result;
+            ILineFactoryByArgument byArgFactory;
+            if (LineFactoryByArgumentAdapter.Instance.TryGet(factory.GetType(), out byArgFactory) && byArgFactory.TryCreate(factory, previous, arguments, out result)) return result;
             throw new LineException(arguments, "Could not be appended");
         }
 
@@ -227,138 +230,10 @@ namespace Lexical.Localization
         {
             if (factory == null) throw new LineException(previous, "Appender is not found.");
             if (factory is ILineFactoryByArgument argFactory && argFactory.TryCreate(factory, previous, arguments, out line)) return true;
-
-            // TODO Fix reflection //
-
-            try
-            {
-                Type[] intfs = arguments.GetType().GetInterfaces();
-                foreach (Type intf in intfs)
-                {
-                    Type intfGeneric = intf.GetGenericTypeDefinition();
-                    if (intfGeneric == null) continue;
-                    Type[] typeArgs = intf.GetGenericArguments();
-
-                    // ILineArguments<>
-                    if (intfGeneric == typeof(ILineArguments<>))
-                    {
-                        Type factoryIntfType = typeof(ILineFactory<>).MakeGenericType(typeArgs);
-                        if (factoryIntfType.IsAssignableFrom(factory.GetType()))
-                        {
-                            object[] parameters = new object[] { factory, previous, null };
-                            object boolResult = factoryIntfType.GetMethod("TryCreate").Invoke(factory, parameters);
-                            if ((bool)boolResult)
-                            {
-                                line = parameters[parameters.Length - 1] as ILine;
-                                return true;
-                            }
-                        }
-
-                        if (factory is ILineFactoryCastable castable)
-                        {
-                            MethodInfo mi = typeof(ILineFactoryCastable).GetMethods().Where(m => m.Name == "Cast" && m.GetGenericArguments() != null && m.GetGenericArguments().Length == 1).FirstOrDefault();
-                            mi = mi.MakeGenericMethod(typeArgs);
-                            object lineResult = mi.Invoke(factory, new object[0]);
-                            if (lineResult is ILine _result)
-                            {
-                                line = _result;
-                                return true;
-                            }
-                        }
-                    }
-
-                    // ILineArguments<,>
-                    if (intfGeneric == typeof(ILineArguments<,>))
-                    {
-                        Type factoryIntfType = typeof(ILineFactory<,>).MakeGenericType(typeArgs);
-                        if (factoryIntfType.IsAssignableFrom(factory.GetType()))
-                        {
-                            object[] parameters = new object[] { factory, previous, null };
-                            object boolResult = factoryIntfType.GetMethod("TryCreate").Invoke(factory, parameters);
-                            if ((bool)boolResult)
-                            {
-                                line = parameters[parameters.Length - 1] as ILine;
-                                return true;
-                            }
-                        }
-
-                        if (factory is ILineFactoryCastable castable)
-                        {
-                            MethodInfo mi = typeof(ILineFactoryCastable).GetMethods().Where(m => m.Name == "Cast" && m.GetGenericArguments() != null && m.GetGenericArguments().Length == 2).FirstOrDefault();
-                            mi = mi.MakeGenericMethod(typeArgs);
-                            object lineResult = mi.Invoke(factory, new object[0]);
-                            if (lineResult is ILine _result)
-                            {
-                                line = _result;
-                                return true;
-                            }
-                        }
-                    }
-
-                    // ILineArguments<,,>
-                    if (intfGeneric == typeof(ILineArguments<,,>))
-                    {
-                        Type factoryIntfType = typeof(ILineFactory<,,>).MakeGenericType(typeArgs);
-                        if (factoryIntfType.IsAssignableFrom(factory.GetType()))
-                        {
-                            object[] parameters = new object[] { factory, previous, null };
-                            object boolResult = factoryIntfType.GetMethod("TryCreate").Invoke(factory, parameters);
-                            if ((bool)boolResult)
-                            {
-                                line = parameters[parameters.Length - 1] as ILine;
-                                return true;
-                            }
-                        }
-
-                        if (factory is ILineFactoryCastable castable)
-                        {
-                            MethodInfo mi = typeof(ILineFactoryCastable).GetMethods().Where(m => m.Name == "Cast" && m.GetGenericArguments() != null && m.GetGenericArguments().Length == 3).FirstOrDefault();
-                            mi = mi.MakeGenericMethod(typeArgs);
-                            object lineResult = mi.Invoke(factory, new object[0]);
-                            if (lineResult is ILine _result)
-                            {
-                                line = _result;
-                                return true;
-                            }
-                        }
-                    }
-
-                    // ILineArguments<,,,>
-                    if (intfGeneric == typeof(ILineArguments<,,,>))
-                    {
-                        Type factoryIntfType = typeof(ILineFactory<,,,>).MakeGenericType(typeArgs);
-                        if (factoryIntfType.IsAssignableFrom(factory.GetType()))
-                        {
-                            object[] parameters = new object[] { factory, previous, null };
-                            object boolResult = factoryIntfType.GetMethod("TryCreate").Invoke(factory, parameters);
-                            if ((bool)boolResult)
-                            {
-                                line = parameters[parameters.Length - 1] as ILine;
-                                return true;
-                            }
-                        }
-
-                        if (factory is ILineFactoryCastable castable)
-                        {
-                            MethodInfo mi = typeof(ILineFactoryCastable).GetMethods().Where(m => m.Name == "Cast" && m.GetGenericArguments() != null && m.GetGenericArguments().Length == 4).FirstOrDefault();
-                            mi = mi.MakeGenericMethod(typeArgs);
-                            object lineResult = mi.Invoke(factory, new object[0]);
-                            if (lineResult is ILine _result)
-                            {
-                                line = _result;
-                                return true;
-                            }
-                        }
-                    }
-
-                }
-
-                line = default;
-                return false;
-            } catch (Exception e)
-            {
-                throw new LineException(previous, e.Message, e);
-            }
+            ILineFactoryByArgument byArgFactory;
+            if (LineFactoryByArgumentAdapter.Instance.TryGet(factory.GetType(), out byArgFactory) && byArgFactory.TryCreate(factory, previous, arguments, out line)) return true;
+            line = default;
+            return false;
         }
 
         /// <summary>
