@@ -395,16 +395,37 @@ namespace Lexical.Localization
             }
         }
 
-        class ParameterArgument : ILineArguments<ILineParameter, string, string>
+        class ParameterArgument : ILineArguments<ILineParameter, string, string>, ILineParameter
         {
             public string Argument0 => ParameterName;
             public string Argument1 => ParameterValue;
-            readonly string ParameterName, ParameterValue;
-            public ParameterArgument(string parameterName, string parameterValue)
-            {
-                ParameterName = parameterName;
-                ParameterValue = parameterValue;
-            }
+            public string ParameterName { get; set; }
+            public string ParameterValue { get; set; }
+            public ParameterArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
+        }
+        class HintArgument : ILineArguments<ILineHint, string, string>, ILineHint
+        {
+            public string Argument0 => ParameterName;
+            public string Argument1 => ParameterValue;
+            public string ParameterName { get; set; }
+            public string ParameterValue { get; set; }
+            public HintArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
+        }
+        class KeyCanonicalArgument : ILineArguments<ILineCanonicalKey, string, string>, ILineCanonicalKey
+        {
+            public string Argument0 => ParameterName;
+            public string Argument1 => ParameterValue;
+            public string ParameterName { get; set; }
+            public string ParameterValue { get; set; }
+            public KeyCanonicalArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
+        }
+        class KeyNonCanonicalArgument : ILineArguments<ILineNonCanonicalKey, string, string>, ILineNonCanonicalKey
+        {
+            public string Argument0 => ParameterName;
+            public string Argument1 => ParameterValue;
+            public string ParameterName { get; set; }
+            public string ParameterValue { get; set; }
+            public KeyNonCanonicalArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
         }
 
     }

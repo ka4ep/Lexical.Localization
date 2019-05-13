@@ -42,9 +42,9 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// <see cref="ILineParameter"/> specific rule.
+    /// Can evaluate <see cref="ILineParameter"/> whether it qualifies or not.
     /// </summary>
-    public interface ILineFilterParameterEvaluatable : ILineFilter
+    public interface ILineFilterParameterEvaluatable : ILineFilterParameter
     {
         /// <summary>
         /// Test rule with <paramref name="parameter"/>.
@@ -59,6 +59,13 @@ namespace Lexical.Localization
     /// 
     /// </summary>
     public interface ILineFilterEnumerable : ILineFilter, IEnumerable<ILineFilter>
+    {
+    }
+
+    /// <summary>
+    /// <see cref="ILineParameter"/> specific rule.
+    /// </summary>
+    public interface ILineFilterParameter : ILineFilter
     {
     }
 
@@ -115,8 +122,9 @@ namespace Lexical.Localization
         /// <param name="filter"></param>
         /// <param name="key"></param>
         /// <returns>true if line is qualified by the filter, false if disqualified</returns>
+        /// <exception cref="InvalidOperationException">If filter is not applicable</exception>
         public static bool Filter(this ILineFilter filter, ILine key)
-            => filter is ILineFilterEvaluatable eval ? eval.Filter(key) : false;
+            => filter is ILineFilterEvaluatable eval ? eval.Filter(key) : throw new InvalidOperationException($"{filter} doesn't implement {nameof(ILineFilterEvaluatable)}");
 
         /// <summary>
         /// Filters lines against filter rules.
@@ -124,6 +132,7 @@ namespace Lexical.Localization
         /// <param name="filter"></param>
         /// <param name="lines"></param>
         /// <returns>all lines that were qualified</returns>
+        /// <exception cref="InvalidOperationException">If filter is not applicable</exception>
         public static IEnumerable<ILine> Filter(this ILineFilter filter, IEnumerable<ILine> lines)
             => filter is ILineFilterLinesEvaluatable eval ? eval.Filter(lines) : _filter(filter, lines);
 
@@ -136,7 +145,7 @@ namespace Lexical.Localization
             }
             else
             {
-                yield break;
+                throw new InvalidOperationException($"{filter} doesn't implement {nameof(ILineFilterEvaluatable)}");
             }
         }
 
@@ -147,8 +156,9 @@ namespace Lexical.Localization
         /// <param name="parameter">parameter part of a compared key (note ParameterName="" for empty), or null if value did not occur</param>
         /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc</param>
         /// <returns>true if line is qualified by the filter, false if disqualified</returns>
+        /// <exception cref="InvalidOperationException">If filter is not applicable</exception>
         public static bool Filter(this ILineFilter filter, ILineParameter parameter, int occuranceIndex)
-            => filter is ILineFilterParameterEvaluatable eval ? eval.Filter(parameter, occuranceIndex) : false;
+            => filter is ILineFilterParameterEvaluatable eval ? eval.Filter(parameter, occuranceIndex) : throw new InvalidOperationException($"{filter} doesn't implement {nameof(ILineFilterParameterEvaluatable)}");
 
         /// <summary>
         /// Set line filter as read-only.
