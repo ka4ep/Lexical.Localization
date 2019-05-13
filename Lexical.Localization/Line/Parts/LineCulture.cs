@@ -69,7 +69,7 @@ namespace Lexical.Localization
         /// <param name="culture"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineCulture, CultureInfo>.TryCreate(ILineFactory appender, ILine previous, CultureInfo culture, out ILineCulture line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, CultureInfo culture, out ILineCulture line)
         {
             line = new LineCulture(appender, previous, culture);
             return true;
@@ -135,7 +135,7 @@ namespace Lexical.Localization
         /// <param name="culture"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineCulture, CultureInfo>.TryCreate(ILineFactory appender, ILine previous, CultureInfo culture, out ILineCulture line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, CultureInfo culture, out ILineCulture line)
         {
             line = new StringLocalizerCulture(appender, previous, culture);
             return true;

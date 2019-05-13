@@ -72,7 +72,7 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineAsset, IAsset>.TryCreate(ILineFactory appender, ILine previous, IAsset asset, out ILineAsset line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IAsset asset, out ILineAsset line)
         {
             line = new LineAsset(appender, previous, asset);
             return true;
@@ -143,7 +143,7 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="StringLocalizer"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineAsset, IAsset>.TryCreate(ILineFactory appender, ILine previous, IAsset asset, out ILineAsset StringLocalizer)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IAsset asset, out ILineAsset StringLocalizer)
         {
             StringLocalizer = new StringLocalizerLineAsset(appender, previous, asset);
             return true;

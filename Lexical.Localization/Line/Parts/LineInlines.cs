@@ -91,7 +91,7 @@ namespace Lexical.Localization
         /// <param name="inlines"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineInlines, IDictionary<ILine, ILine>>.TryCreate(ILineFactory appender, ILine previous, IDictionary<ILine, ILine> inlines, out ILineInlines line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IDictionary<ILine, ILine> inlines, out ILineInlines line)
         {
             line = new LineInlines(appender, previous, inlines);
             return true;
@@ -104,7 +104,7 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineInlines>.TryCreate(ILineFactory appender, ILine previous, out ILineInlines line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, out ILineInlines line)
         {
             line = new LineInlines(appender, previous, new Dictionary<ILine, ILine>(LineComparer.Default));
             return true;
@@ -193,7 +193,7 @@ namespace Lexical.Localization
         /// <param name="inlines"></param>
         /// <param name="StringLocalizer"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineInlines, IDictionary<ILine, ILine>>.TryCreate(ILineFactory appender, ILine previous, IDictionary<ILine, ILine> inlines, out ILineInlines StringLocalizer)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IDictionary<ILine, ILine> inlines, out ILineInlines StringLocalizer)
         {
             StringLocalizer = new StringLocalizerInlines(appender, previous, inlines);
             return true;
@@ -206,7 +206,7 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineInlines>.TryCreate(ILineFactory appender, ILine previous, out ILineInlines line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, out ILineInlines line)
         {
             line = new LineInlines(appender, previous, new Dictionary<ILine, ILine>(LineComparer.Default));
             return true;

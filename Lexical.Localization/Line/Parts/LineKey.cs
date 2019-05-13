@@ -102,7 +102,7 @@ namespace Lexical.Localization
         /// <param name="parameterValue"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineNonCanonicalKey, string, string>.TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineNonCanonicalKey key)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineNonCanonicalKey key)
         {
             key = new LineKey.NonCanonical(appender, previous, parameterName, parameterValue);
             return true;
@@ -117,7 +117,7 @@ namespace Lexical.Localization
         /// <param name="parameterValue"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineCanonicalKey, string, string>.TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineCanonicalKey key)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineCanonicalKey key)
         {
             key = new LineKey.Canonical(this, previous, parameterName, parameterValue);
             return true;
@@ -219,7 +219,7 @@ namespace Lexical.Localization
         /// <param name="parameterValue"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineNonCanonicalKey, string, string>.TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineNonCanonicalKey key)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineNonCanonicalKey key)
         {
             key = new _StringLocalizerKey.NonCanonical(appender, previous, parameterName, parameterValue);
             return true;
@@ -234,7 +234,7 @@ namespace Lexical.Localization
         /// <param name="parameterValue"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineCanonicalKey, string, string>.TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineCanonicalKey key)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineCanonicalKey key)
         {
             key = new _StringLocalizerKey.Canonical(this, previous, parameterName, parameterValue);
             return true;

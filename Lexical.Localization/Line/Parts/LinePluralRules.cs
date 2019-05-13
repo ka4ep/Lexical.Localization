@@ -73,7 +73,7 @@ namespace Lexical.Localization
         /// <param name="formatProvider"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILinePluralRules, IPluralRules>.TryCreate(ILineFactory appender, ILine previous, IPluralRules formatProvider, out ILinePluralRules line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IPluralRules formatProvider, out ILinePluralRules line)
         {
             line = new LinePluralRules(appender, previous, formatProvider);
             return true;
@@ -144,7 +144,7 @@ namespace Lexical.Localization
         /// <param name="formatProvider"></param>
         /// <param name="StringLocalizer"></param>
         /// <returns></returns>
-        bool ILineFactory<ILinePluralRules, IPluralRules>.TryCreate(ILineFactory appender, ILine previous, IPluralRules formatProvider, out ILinePluralRules StringLocalizer)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IPluralRules formatProvider, out ILinePluralRules StringLocalizer)
         {
             StringLocalizer = new StringLocalizerPluralRules(appender, previous, formatProvider);
             return true;

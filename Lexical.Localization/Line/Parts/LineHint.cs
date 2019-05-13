@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <param name="parameterValue"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineHint, string, string>.TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineHint result)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineHint result)
         {
             result = new LineHint(appender, previous, parameterName, parameterValue);
             return true;
@@ -97,7 +97,7 @@ namespace Lexical.Localization
         /// <param name="parameterValue"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineHint, string, string>.TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineHint result)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineHint result)
         {
             result = new StringLocalizerHint(appender, previous, parameterName, parameterValue);
             return true;

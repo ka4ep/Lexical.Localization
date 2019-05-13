@@ -73,7 +73,7 @@ namespace Lexical.Localization
         /// <param name="formatProvider"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineFormatProvider, IFormatProvider>.TryCreate(ILineFactory appender, ILine previous, IFormatProvider formatProvider, out ILineFormatProvider line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IFormatProvider formatProvider, out ILineFormatProvider line)
         {
             line = new LineFormatProvider(appender, previous, formatProvider);
             return true;
@@ -144,7 +144,7 @@ namespace Lexical.Localization
         /// <param name="formatProvider"></param>
         /// <param name="StringLocalizer"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineFormatProvider, IFormatProvider>.TryCreate(ILineFactory appender, ILine previous, IFormatProvider formatProvider, out ILineFormatProvider StringLocalizer)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IFormatProvider formatProvider, out ILineFormatProvider StringLocalizer)
         {
             StringLocalizer = new StringLocalizerFormatProvider(appender, previous, formatProvider);
             return true;

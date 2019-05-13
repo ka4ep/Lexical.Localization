@@ -103,7 +103,7 @@ namespace Lexical.Localization
         /// <param name="type"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineType, Type>.TryCreate(ILineFactory appender, ILine previous, Type type, out ILineType result)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, Type type, out ILineType result)
         {
             result = typeConstructor.Create(type, appender, previous);
             return true;
@@ -235,7 +235,7 @@ namespace Lexical.Localization
         /// <param name="type"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineType, Type>.TryCreate(ILineFactory appender, ILine previous, Type type, out ILineType result)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, Type type, out ILineType result)
         {
             result = typeConstructor.Create(type, appender, previous);
             return true;

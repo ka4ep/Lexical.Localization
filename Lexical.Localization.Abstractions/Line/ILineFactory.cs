@@ -373,9 +373,9 @@ namespace Lexical.Localization
         {
             if (factory == null) throw new LineException(previous, "Appender is not found.");
             Intf result = default;
+            if (factory is ILineFactory<Intf> _casted && _casted.TryCreate(factory, previous, out result)) return result;
             ILineFactory<Intf> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf>()) != null && casted.TryCreate(factory, previous, out result)) return result;
-            if (factory is ILineFactory<Intf> _casted && _casted.TryCreate(factory, previous, out result)) return result;
             ILine result_ = null;
             if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf>(), out result_) && result_ is Intf result__) return result__;
             throw new LineException(previous, $"Appender doesn't have capability to append {nameof(Intf)}.");
@@ -393,9 +393,9 @@ namespace Lexical.Localization
         {
             if (factory == null) throw new LineException(previous, "Appender is not found.");
             Intf result = default;
+            if (factory is ILineFactory<Intf> _casted && _casted.TryCreate(factory, previous, out result)) { line = result; return true; }
             ILineFactory<Intf> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf>()) != null && casted.TryCreate(factory, previous, out result)) { line = result; return true; }
-            if (factory is ILineFactory<Intf> _casted && _casted.TryCreate(factory, previous, out result)) { line = result; return true; }
             ILine result_ = null;
             if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf>(), out result_) && result_ is Intf result__) { line = result__; return true; }
             line = default;
@@ -416,9 +416,9 @@ namespace Lexical.Localization
         {
             if (factory == null) throw new LineException(previous, "Appender is not found.");
             Intf result = default;
+            if (factory is ILineFactory<Intf, A0> _casted && _casted.TryCreate(factory, previous, a0, out result)) return result;
             ILineFactory<Intf, A0> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf, A0>()) != null && casted.TryCreate(factory, previous, a0, out result)) return result;
-            if (factory is ILineFactory<Intf, A0> _casted && _casted.TryCreate(factory, previous, a0, out result)) return result;
             ILine result_ = null;
             if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf, A0>(a0), out result_) && result_ is Intf result__) return result__;
             throw new LineException(previous, $"Appender doesn't have capability to append {nameof(Intf)}.");
@@ -438,9 +438,9 @@ namespace Lexical.Localization
         {
             if (factory == null) throw new LineException(previous, "Appender is not found.");
             Intf result = default;
+            if (factory is ILineFactory<Intf, A0> _casted && _casted.TryCreate(factory, previous, a0, out result)) { line = result; return true; }
             ILineFactory<Intf, A0> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf, A0>()) != null && casted.TryCreate(factory, previous, a0, out result)) { line = result; return true; }
-            if (factory is ILineFactory<Intf, A0> _casted && _casted.TryCreate(factory, previous, a0, out result)) { line = result; return true; }
             ILine result_ = null;
             if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf, A0>(a0), out result_) && result_ is Intf result__) { line = result__; return true; }
             line = default;
@@ -487,9 +487,9 @@ namespace Lexical.Localization
         {
             if (factory == null) throw new LineException(previous, "Appender is not found.");
             Intf result = default;
+            if (factory is ILineFactory<Intf, A0, A1> _casted && _casted.TryCreate(factory, previous, a0, a1, out result)) { line = result; return true; }
             ILineFactory<Intf, A0, A1> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf, A0, A1>()) != null && casted.TryCreate(factory, previous, a0, a1, out result)) { line = result; return true; }
-            if (factory is ILineFactory<Intf, A0, A1> _casted && _casted.TryCreate(factory, previous, a0, a1, out result)) { line = result; return true; }
             ILine result_ = null;
             if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf, A0, A1>(a0, a1), out result_) && result_ is Intf result__) { line = result__; return true; }
             line = default;
@@ -514,9 +514,9 @@ namespace Lexical.Localization
         {
             if (factory == null) throw new LineException(previous, "Appender is not found.");
             Intf result = default;
+            if (factory is ILineFactory<Intf, A0, A1, A2> _casted && _casted.TryCreate(factory, previous, a0, a1, a2, out result)) return result;
             ILineFactory<Intf, A0, A1, A2> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf, A0, A1, A2>()) != null && casted.TryCreate(factory, previous, a0, a1, a2, out result)) return result;
-            if (factory is ILineFactory<Intf, A0, A1, A2> _casted && _casted.TryCreate(factory, previous, a0, a1, a2, out result)) return result;
             ILine result_ = null;
             if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf, A0, A1, A2>(a0, a1, a2), out result_) && result_ is Intf result__) return result__;
             throw new LineException(previous, $"Appender doesn't have capability to append {nameof(Intf)}.");
@@ -540,9 +540,9 @@ namespace Lexical.Localization
         {
             if (factory == null) throw new LineException(previous, "Appender is not found.");
             Intf result = default;
+            if (factory is ILineFactory<Intf, A0, A1, A2> _casted && _casted.TryCreate(factory, previous, a0, a1, a2, out result)) { line = result; return true; }
             ILineFactory<Intf, A0, A1, A2> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf, A0, A1, A2>()) != null && casted.TryCreate(factory, previous, a0, a1, a2, out result)) { line = result; return true; }
-            if (factory is ILineFactory<Intf, A0, A1, A2> _casted && _casted.TryCreate(factory, previous, a0, a1, a2, out result)) { line = result; return true; }
             ILine result_ = null;
             if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf, A0, A1, A2>(a0, a1, a2), out result_) && result_ is Intf result__) { line = result__; return true; }
             line = default;

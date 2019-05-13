@@ -73,7 +73,7 @@ namespace Lexical.Localization
         /// <param name="assembly"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineAssembly, Assembly>.TryCreate(ILineFactory appender, ILine previous, Assembly assembly, out ILineAssembly line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, Assembly assembly, out ILineAssembly line)
         {
             line = new LineAssembly(appender, previous, assembly);
             return true;
@@ -144,7 +144,7 @@ namespace Lexical.Localization
         /// <param name="assembly"></param>
         /// <param name="StringLocalizer"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineAssembly, Assembly>.TryCreate(ILineFactory appender, ILine previous, Assembly assembly, out ILineAssembly StringLocalizer)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, Assembly assembly, out ILineAssembly StringLocalizer)
         {
             StringLocalizer = new StringLocalizerAssembly(appender, previous, assembly);
             return true;

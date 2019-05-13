@@ -50,7 +50,7 @@ namespace Lexical.Localization
         /// <param name="logger"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineLogger, IObserver<LineString>>.TryCreate(ILineFactory appender, ILine previous, IObserver<LineString> logger, out ILineLogger line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IObserver<LineString> logger, out ILineLogger line)
         {
             line = new LineLogger(appender, previous, logger);
             return true;
@@ -100,7 +100,7 @@ namespace Lexical.Localization
         /// <param name="logger"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineLogger, IObserver<LineString>>.TryCreate(ILineFactory appender, ILine previous, IObserver<LineString> logger, out ILineLogger line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IObserver<LineString> logger, out ILineLogger line)
         {
             line = new StringLocalizerLogger(appender, previous, logger);
             return true;

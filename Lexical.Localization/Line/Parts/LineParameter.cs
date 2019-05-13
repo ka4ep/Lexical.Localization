@@ -101,7 +101,7 @@ namespace Lexical.Localization
         /// <param name="parameterValue"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineParameter, string, string>.TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineParameter result)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineParameter result)
         {
             result = new LineParameter(appender, previous, parameterName, parameterValue);
             return true;
@@ -201,7 +201,7 @@ namespace Lexical.Localization
         /// <param name="parameterValue"></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        bool ILineFactory<ILineParameter, string, string>.TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineParameter result)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineParameter result)
         {
             result = new StringLocalizerParameter(appender, previous, parameterName, parameterValue);
             return true;
