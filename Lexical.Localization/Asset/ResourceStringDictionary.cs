@@ -23,19 +23,19 @@ namespace Lexical.Localization
         protected IReadOnlyDictionary<string, byte[]> dictionary;
 
         /// <summary>
-        /// Name policy that converts <see cref="ILine"/> to string, and back to <see cref="ILine"/>.
+        /// Line format that converts <see cref="ILine"/> to string, and back to <see cref="ILine"/>.
         /// </summary>
-        ILineFormat namePolicy;
+        ILineFormat lineFormat;
 
         /// <summary>
         /// Create language byte[] resolver that uses a dictionary as a backend.
         /// </summary>
         /// <param name="dictionary">dictionary</param>
-        /// <param name="namePolicy">policy that describes how to convert localization key to dictionary key</param>
-        public ResourceStringDictionary(IReadOnlyDictionary<string, byte[]> dictionary, ILineFormat namePolicy = default)
+        /// <param name="lineFormat">line format for converting lines to strings</param>
+        public ResourceStringDictionary(IReadOnlyDictionary<string, byte[]> dictionary, ILineFormat lineFormat = default)
         {
             this.dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
-            this.namePolicy = namePolicy ?? throw new ArgumentNullException(nameof(namePolicy));
+            this.lineFormat = lineFormat ?? throw new ArgumentNullException(nameof(lineFormat));
         }
 
         /// <summary>
@@ -48,13 +48,13 @@ namespace Lexical.Localization
             // Return all 
             if (filterKey == null) return dictionary.Keys.ToList();
             // Create filter.
-            LineQualifier filter = new LineQualifier().Rule(filterKey);
+            LineQualifier filter = new LineQualifier().Rule(filterKey) as LineQualifier;
             // There are no rules
             if (!filter.HasRules) return dictionary.Keys.ToList();
             // Filter with pattern
-            if (namePolicy is ILinePattern pattern_) return Filter1(pattern_).ToList();
+            if (lineFormat is ILinePattern pattern_) return Filter1(pattern_).ToList();
             // Filter with parser
-            if (namePolicy is ILineParser parser_) return Filter2(parser_).ToList();
+            if (lineFormat is ILineParser parser_) return Filter2(parser_).ToList();
             // Return nothing
             return null;
 
@@ -63,7 +63,7 @@ namespace Lexical.Localization
                 foreach (var line in dictionary)
                 {
                     ILinePatternMatch match = pattern.Match(line.Key);
-                    if (!match.Success || !filter.Filter(match)) continue;
+                    if (!match.Success || !filter.Qualify(match)) continue;
                     yield return line.Key;
                 }
             }
@@ -93,7 +93,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public IEnumerable<CultureInfo> GetSupportedCultures()
         {
-            if (namePolicy is ILinePattern pattern)
+            if (lineFormat is ILinePattern pattern)
             {
                 ILinePatternPart culturePart;
                 if (!pattern.PartMap.TryGetValue("Culture", out culturePart)) return null;
@@ -110,8 +110,9 @@ namespace Lexical.Localization
                 }
                 return result.Values.ToArray();
             }
-            else if (namePolicy is ILineParser parser)
+            else if (lineFormat is ILineParser parser)
             {
+                //lineFormat.Parse()
                 return dictionary.Keys.Select(k => parser.TryParse(k, Key.Root)?.GetCultureInfo()).Where(ci => ci != null).Distinct().ToArray();
             }
             else
@@ -122,14 +123,14 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Get resource from <see cref="dictionary"/> by converting <paramref name="key"/> to <see cref="string"/> with <see cref="namePolicy"/>.
+        /// Get resource from <see cref="dictionary"/> by converting <paramref name="key"/> to <see cref="string"/> with <see cref="lineFormat"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>resource or null</returns>
         public byte[] GetResource(ILine key)
         {
             byte[] result = null;
-            string id = namePolicy.Print(key);
+            string id = lineFormat.Print(key);
 
             // Search dictionary
             dictionary.TryGetValue(id, out result);
@@ -137,7 +138,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Open stream to resource from <see cref="dictionary"/> by converting <paramref name="key"/> to <see cref="string"/> with <see cref="namePolicy"/>.
+        /// Open stream to resource from <see cref="dictionary"/> by converting <paramref name="key"/> to <see cref="string"/> with <see cref="lineFormat"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>

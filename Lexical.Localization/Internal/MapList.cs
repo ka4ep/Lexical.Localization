@@ -12,7 +12,7 @@ namespace Lexical.Localization.Internal
     /// </summary>
     /// <typeparam name="Key"></typeparam>
     /// <typeparam name="Value"></typeparam>
-    public class MapList<Key, Value> : Dictionary<Key, List<Value>>, IEnumerable<Value>
+    public class MapList<Key, Value> : Dictionary<Key, List<Value>>//, IEnumerable<Value>
     {
         /// <summary>
         /// Create map list.
@@ -168,7 +168,7 @@ namespace Lexical.Localization.Internal
         /// Get all values
         /// </summary>
         /// <returns></returns>
-        IEnumerator<Value> IEnumerable<Value>.GetEnumerator()
+        public IEnumerable<Value> AllValues()
         {
             foreach (var line in this)
                 foreach (var _value in line.Value)

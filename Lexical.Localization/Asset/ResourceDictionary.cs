@@ -40,7 +40,7 @@ namespace Lexical.Localization
             // Return all 
             if (filterKey == null) return dictionary.Keys.ToList();
             // Create filter.
-            LineQualifier filter = new LineQualifier().Rule(filterKey);
+            LineQualifier filter = new LineQualifier().Rule(filterKey) as LineQualifier;
             // Return keys as list
             return filter.Qualify(dictionary.Keys).ToList();
         }

@@ -105,7 +105,7 @@ namespace Lexical.Localization
         /// <param name="qualifier"></param>
         /// <param name="keyMatch">(optional) </param>
         /// <returns>true if line is qualified, false if disqualified</returns>
-        public static bool Qualifier(this ILineQualifier qualifier, ILinePatternMatch keyMatch)
+        public static bool Qualify(this ILineQualifier qualifier, ILinePatternMatch keyMatch)
             => keyMatch != null && keyMatch.Success && qualifier.Qualify(keyMatch.ToLine());
 
         /// <summary>

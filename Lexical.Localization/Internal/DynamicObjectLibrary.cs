@@ -19,18 +19,59 @@ namespace Lexical.Localization.Internal
     /// </summary>
     public class DynamicObjectLibrary
     {
+        /// <summary>
+        /// Extension method types
+        /// </summary>
         public readonly List<Type> exts = new List<Type>();
+
+        /// <summary>
+        /// Interface types
+        /// </summary>
         public readonly List<Type> intfs = new List<Type>();
+
+        /// <summary>
+        /// Class types
+        /// </summary>
         public readonly List<Type> classes = new List<Type>();
 
+        /// <summary>
+        /// Interface methods
+        /// </summary>
         public readonly MapList<string, MethodInfo> intf_methods = new MapList<string, MethodInfo>();
+
+        /// <summary>
+        /// Interface properties
+        /// </summary>
         public readonly MapList<string, PropertyInfo> intf_properties = new MapList<string, PropertyInfo>();
+
+        /// <summary>
+        /// Interface indexers
+        /// </summary>
         public readonly List<PropertyInfo> intf_indexers = new List<PropertyInfo>();
+
+        /// <summary>
+        /// Extension methods
+        /// </summary>
         public readonly MapList<string, MethodInfo> ext_methods = new MapList<string, MethodInfo>();
 
+        /// <summary>
+        /// Class fields
+        /// </summary>
         public readonly MapList<string, FieldInfo> class_fields = new MapList<string, FieldInfo>();
+
+        /// <summary>
+        /// Class methods
+        /// </summary>
         public readonly MapList<string, MethodInfo> class_methods = new MapList<string, MethodInfo>();
+
+        /// <summary>
+        /// Class properties
+        /// </summary>
         public readonly MapList<string, PropertyInfo> class_properties = new MapList<string, PropertyInfo>();
+
+        /// <summary>
+        /// Class indexers
+        /// </summary>
         public readonly List<PropertyInfo> class_indexers = new List<PropertyInfo>();
 
         MapList<string, FieldInfo> fields;
@@ -38,11 +79,29 @@ namespace Lexical.Localization.Internal
         MapList<string, PropertyInfo> properties;
         List<PropertyInfo> indexers;
 
+        /// <summary>
+        /// Fields by name
+        /// </summary>
         public MapList<string, FieldInfo> Fields => fields ?? (fields = class_fields.ToMapList());
+
+        /// <summary>
+        /// Methods by name
+        /// </summary>
         public MapList<string, MethodInfo> Methods => methods ?? (methods = class_methods.Concat(intf_methods).Concat(ext_methods).ToMapList());
+
+        /// <summary>
+        /// Properties by name
+        /// </summary>
         public MapList<string, PropertyInfo> Properties => properties ?? (properties = class_properties.Concat(intf_properties).ToMapList());
+
+        /// <summary>
+        /// Indexers
+        /// </summary>
         public List<PropertyInfo> Indexers => indexers ?? (indexers = class_indexers.Concat(intf_indexers).ToList());
 
+        /// <summary>
+        /// Clear cache
+        /// </summary>
         protected void ClearCache()
         {
             fields = null;
@@ -51,6 +110,11 @@ namespace Lexical.Localization.Internal
             indexers = null;
         }
 
+        /// <summary>
+        /// Add interface to support
+        /// </summary>
+        /// <param name="intfType"></param>
+        /// <returns></returns>
         public DynamicObjectLibrary AddInterface(Type intfType)
         {
             ClearCache();
@@ -71,6 +135,11 @@ namespace Lexical.Localization.Internal
             return this;
         }
 
+        /// <summary>
+        /// Add extension methods to support
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public DynamicObjectLibrary AddExtensionMethods(Type type)
         {
             ClearCache();
@@ -84,6 +153,11 @@ namespace Lexical.Localization.Internal
             return this;
         }
 
+        /// <summary>
+        /// Add class to support
+        /// </summary>
+        /// <param name="clazz"></param>
+        /// <returns></returns>
         public DynamicObjectLibrary AddClass(Type clazz)
         {
             ClearCache();
@@ -112,13 +186,61 @@ namespace Lexical.Localization.Internal
             return this;
         }
 
+
+        /// <summary>
+        /// Add an extension method
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public DynamicObjectLibrary AddExtensionMethod(MethodInfo info) { ext_methods.Add(info.Name, info); return this; }
+
+        /// <summary>
+        /// Add a property
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public DynamicObjectLibrary AddInterfaceProperty(PropertyInfo info) { intf_properties.Add(info.Name, info); return this; }
+
+        /// <summary>
+        /// Add interface index
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public DynamicObjectLibrary AddInterfaceIndex(PropertyInfo info) { intf_indexers.Add(info); return this; }
+
+        /// <summary>
+        /// Add interface method
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public DynamicObjectLibrary AddInterfaceMethod(MethodInfo info) { intf_methods.Add(info.Name, info); return this; }
+
+        /// <summary>
+        /// Add class field
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public DynamicObjectLibrary AddClassField(FieldInfo info) { class_fields.Add(info.Name, info); return this; }
+
+        /// <summary>
+        /// Add class property
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public DynamicObjectLibrary AddClassProperty(PropertyInfo info) { class_properties.Add(info.Name, info); return this; }
+
+        /// <summary>
+        /// Add class index
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public DynamicObjectLibrary AddClassIndex(PropertyInfo info) { class_indexers.Add(info); return this; }
+
+        /// <summary>
+        /// Add class method
+        /// </summary>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public DynamicObjectLibrary AddClassMethod(MethodInfo info) { class_methods.Add(info.Name, info); return this; }
 
 

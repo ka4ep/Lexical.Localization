@@ -14,6 +14,7 @@ namespace Lexical.Localization
     using Microsoft.Extensions.DependencyInjection.Extensions;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Localization;
+    using Lexical.Localization.Internal;
 
     public static partial class MsLocalizationExtensions
     {
@@ -141,20 +142,20 @@ namespace Lexical.Localization
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAsset>(s => s.GetService<IAssetBuilder>().Build()));
 
             // ILine<>
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(ILineKey<>), typeof(StringLocalizerKey._Type<>)));             
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(ILine<>), typeof(StringLocalizerType<>)));             
 
             // IStringLocalizer<>
             // IStringLocalizerFactory
             if (addStringLocalizerService)
             {
                 // Service request for IStringLocalizer<> instances
-                serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IStringLocalizer<>), typeof(StringLocalizerKey._Type<>)));
+                serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IStringLocalizer<>), typeof(StringLocalizerType<>)));
                 // Service reqeust for IStringLocalizerFactory
                 serviceCollection.TryAdd(ServiceDescriptor.Singleton<IStringLocalizerFactory>(s =>
                 {
                     ILineRoot localizationRoot = s.GetService<ILineRoot>();
                     // Use the StringLocalizerKey or StringLocalizerRoot implementation from th service.
-                    if (localizationRoot is StringLocalizerKey casted) return casted;
+                    if (localizationRoot is IStringLocalizerFactory casted) return casted;
                     // Create new root that implements IStringLocalizerFactory and acquires asset and policy with delegate
                     return new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.Default, localizationRoot);
                 }));
@@ -179,8 +180,8 @@ namespace Lexical.Localization
         {
             serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IObserver<LineString>), s =>
             {
-                ILogger<ILocalizationKey> logger = s.GetService<ILogger<ILocalizationKey>>();
-                IObserver<LineString> adapter = logger == null ? null : new LocalizationLogger(logger);
+                ILogger<ILine> logger = s.GetService<ILogger<ILine>>();
+                IObserver<LineString> adapter = logger == null ? null : new LineILogger(logger);
                 return adapter;
             }));
             return serviceCollection;
