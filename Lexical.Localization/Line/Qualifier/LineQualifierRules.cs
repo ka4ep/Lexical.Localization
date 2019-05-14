@@ -45,7 +45,7 @@ namespace Lexical.Localization
         /// <param name="parameter">value that occured in the compared key (note "" for empty)</param>
         /// <param name="occuranceIndex"></param>
         /// <returns></returns>
-        public abstract bool Filter(ILineParameter parameter, int occuranceIndex);
+        public abstract bool Qualify(ILineParameter parameter, int occuranceIndex);
 
         /// <summary>
         /// Print rule
@@ -81,7 +81,7 @@ namespace Lexical.Localization
             /// <param name="parameter"></param>
             /// <param name="occuranceIndex"></param>
             /// <returns></returns>
-            public override bool Filter(ILineParameter parameter, int occuranceIndex)
+            public override bool Qualify(ILineParameter parameter, int occuranceIndex)
                 => parameter.ParameterName != ParameterName || (parameter.ParameterValue != null && Pattern.Match(parameter.ParameterValue).Success);
 
             /// <summary>
@@ -119,7 +119,7 @@ namespace Lexical.Localization
             /// <param name="parameter"></param>
             /// <param name="occuranceIndex"></param>
             /// <returns>true if line is passed by the filter, false if rejected</returns>
-            public override bool Filter(ILineParameter parameter, int occuranceIndex)
+            public override bool Qualify(ILineParameter parameter, int occuranceIndex)
                 => parameter.ParameterName != ParameterName || parameter.ParameterValue == Value;
 
             /// <summary>
@@ -168,7 +168,7 @@ namespace Lexical.Localization
             /// <param name="parameter"></param>
             /// <param name="occuranceIdex"></param>
             /// <returns></returns>
-            public override bool Filter(ILineParameter parameter, int occuranceIdex)
+            public override bool Qualify(ILineParameter parameter, int occuranceIdex)
                 => parameter.ParameterName != ParameterName || (acceptsEmpty && String.IsNullOrEmpty(parameter.ParameterValue)) || (parameter.ParameterValue != null && values.Contains(parameter.ParameterValue));
 
             /// <summary>
@@ -199,7 +199,7 @@ namespace Lexical.Localization
             /// <param name="parameter"></param>
             /// <param name="occuranceIndex"></param>
             /// <returns></returns>
-            public override bool Filter(ILineParameter parameter, int occuranceIndex)
+            public override bool Qualify(ILineParameter parameter, int occuranceIndex)
                 => parameter.ParameterName != ParameterName || String.IsNullOrEmpty(parameter.ParameterValue);
 
             /// <summary>

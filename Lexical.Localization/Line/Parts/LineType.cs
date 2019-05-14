@@ -88,7 +88,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LineAppender : ILineFactory<ILineType, Type>
+    public partial class LineAppender : ILineFactory<ILineType, Type>, ILineFactoryCastable
     {
         /// <summary>
         /// Constructor of runtime types.
@@ -110,35 +110,70 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Creates type appenders
+        /// </summary>
+        static RuntimeConstructor<ILineFactory> typeAppenderConstructor = new RuntimeConstructor<ILineFactory>(typeof(LineTypeFactory<>));
+
+        /// <summary>
         /// Address ILine{T} request.
         /// </summary>
-        protected override void PostConstruction() => Add(new TypeAppender());
-
-        class TypeAppender : ILineFactoryCastable
+        public virtual ILineFactory<Part> Cast<Part>() where Part : ILine
         {
-            static RuntimeConstructor<TypeAppender> typeConstructor = new RuntimeConstructor<TypeAppender>(typeof(TypeAppender<>));
-            public ILineFactory<Part> Cast<Part>() where Part : ILine
+            if (typeof(Part).GetGenericTypeDefinition() == typeof(ILine<>))
             {
-                if (typeof(Part).GetGenericTypeDefinition() == typeof(ILine<>))
-                {
-                    Type[] args = typeof(Part).GetGenericArguments();
-                    if (args != null && args.Length == 1) return (ILineFactory<Part>)typeConstructor.Create(args[0]);
-                }
-                return null;
+                Type[] args = typeof(Part).GetGenericArguments();
+                if (args != null && args.Length == 1) return (ILineFactory<Part>)typeAppenderConstructor.Create(args[0]);
             }
-            public ILineFactory<Part, A0> Cast<Part, A0>() where Part : ILine => null;
-            public ILineFactory<Part, A0, A1> Cast<Part, A0, A1>() where Part : ILine => null;
-            public ILineFactory<Part, A0, A1, A2> Cast<Part, A0, A1, A2>() where Part : ILine => null;
+            return null;
         }
 
-        class TypeAppender<T> : ILineFactory<ILine<T>>
+        /// <summary>
+        /// LineType factory.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        protected class LineTypeFactory<T> : ILineFactory<ILine<T>>
         {
+            /// <summary>
+            /// Create line type.
+            /// </summary>
+            /// <param name="appender"></param>
+            /// <param name="previous"></param>
+            /// <param name="result"></param>
+            /// <returns></returns>
             public bool TryCreate(ILineFactory appender, ILine previous, out ILine<T> result)
             {
                 result = new LineType<T>(appender, previous);
                 return true;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <returns></returns>
+        public virtual ILineFactory<Part, A0> Cast<Part, A0>() where Part : ILine => null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <typeparam name="A1"></typeparam>
+        /// <returns></returns>
+        public virtual ILineFactory<Part, A0, A1> Cast<Part, A0, A1>() where Part : ILine => null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <returns></returns>
+        public virtual ILineFactory<Part, A0, A1, A2> Cast<Part, A0, A1, A2>() where Part : ILine => null;
+
     }
 
     /// <summary>
@@ -242,35 +277,70 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Creates type appenders
+        /// </summary>
+        static RuntimeConstructor<ILineFactory> typeAppenderConstructor = new RuntimeConstructor<ILineFactory>(typeof(StringLocalizerTypeFactory<>));
+
+        /// <summary>
         /// Address ILine{T} request.
         /// </summary>
-        protected override void PostConstruction() => Add(new TypeAppender());
-
-        class TypeAppender : ILineFactoryCastable
+        public virtual ILineFactory<Part> Cast<Part>() where Part : ILine
         {
-            static RuntimeConstructor<TypeAppender> typeConstructor = new RuntimeConstructor<TypeAppender>(typeof(TypeAppender<>));
-            public ILineFactory<Part> Cast<Part>() where Part : ILine
+            if (typeof(Part).GetGenericTypeDefinition() == typeof(ILine<>))
             {
-                if (typeof(Part).GetGenericTypeDefinition() == typeof(ILine<>))
-                {
-                    Type[] args = typeof(Part).GetGenericArguments();
-                    if (args != null && args.Length == 1) return (ILineFactory<Part>)typeConstructor.Create(args[0]);
-                }
-                return null;
+                Type[] args = typeof(Part).GetGenericArguments();
+                if (args != null && args.Length == 1) return (ILineFactory<Part>)typeAppenderConstructor.Create(args[0]);
             }
-            public ILineFactory<Part, A0> Cast<Part, A0>() where Part : ILine => null;
-            public ILineFactory<Part, A0, A1> Cast<Part, A0, A1>() where Part : ILine => null;
-            public ILineFactory<Part, A0, A1, A2> Cast<Part, A0, A1, A2>() where Part : ILine => null;
+            return null;
         }
 
-        class TypeAppender<T> : ILineFactory<ILine<T>>
+        /// <summary>
+        /// StringLocalizerType factory.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        protected class StringLocalizerTypeFactory<T> : ILineFactory<ILine<T>>
         {
+            /// <summary>
+            /// Create StringLocalizer type.
+            /// </summary>
+            /// <param name="appender"></param>
+            /// <param name="previous"></param>
+            /// <param name="result"></param>
+            /// <returns></returns>
             public bool TryCreate(ILineFactory appender, ILine previous, out ILine<T> result)
             {
                 result = new StringLocalizerType<T>(appender, previous);
                 return true;
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <returns></returns>
+        public virtual ILineFactory<Part, A0> Cast<Part, A0>() where Part : ILine => null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <typeparam name="A1"></typeparam>
+        /// <returns></returns>
+        public virtual ILineFactory<Part, A0, A1> Cast<Part, A0, A1>() where Part : ILine => null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="Part"></typeparam>
+        /// <typeparam name="A0"></typeparam>
+        /// <typeparam name="A1"></typeparam>
+        /// <typeparam name="A2"></typeparam>
+        /// <returns></returns>
+        public virtual ILineFactory<Part, A0, A1, A2> Cast<Part, A0, A1, A2>() where Part : ILine => null;
+
     }
 
 }
