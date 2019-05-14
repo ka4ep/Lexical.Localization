@@ -28,7 +28,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Polity to read keys.
         /// </summary>
-        protected LineFormat namePolicy = new LineFormat(" :\\", false, " :\\", false);
+        protected LineFormat lineFormat = new LineFormat(" :\\", false, " :\\", false, ParameterInfos.Default);
 
         /// <summary>
         /// File extension, default "json"
@@ -39,6 +39,11 @@ namespace Lexical.Localization
         /// Value string parser.
         /// </summary>
         public IStringFormatParser ValueParser { get; protected set; }
+
+        /// <summary>
+        /// (optional) Parameter infos for determining if parameter is key.
+        /// </summary>
+        protected IParameterInfos parameterInfos;
 
         /// <summary>
         /// Create new .json reader.
@@ -62,14 +67,14 @@ namespace Lexical.Localization
         /// Json text into a tree.
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">unused</param>
         /// <returns></returns>
-        public ILineTree ReadLineTree(TextReader text, ILineFormat namePolicy = default)
+        public ILineTree ReadLineTree(TextReader text, ILineFormat lineFormat = default)
         {
             LineTree root = new LineTree();
             using (var json = new JsonTextReader(text))
             {
-                ReadJsonIntoTree(json, root, namePolicy, null);
+                ReadJsonIntoTree(json, root, lineFormat, null);
             }
             return root;
         }
@@ -79,11 +84,12 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="json"></param>
         /// <param name="node">parent node to under which add nodes</param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">unused</param>
         /// <param name="correspondenceContext">(optional) place to update correspondence. If set <paramref name="json"/> must implement <see cref="JTokenReader"/>.</param>
         /// <returns></returns>
-        public ILineTree ReadJsonIntoTree(JsonReader json, ILineTree node, ILineFormat namePolicy, JsonCorrespondence correspondenceContext)
+        public ILineTree ReadJsonIntoTree(JsonReader json, ILineTree node, ILineFormat lineFormat, JsonCorrespondence correspondenceContext)
         {
+            LineFormat _lineFormat = this.lineFormat.GetParameterInfos() == lineFormat.GetParameterInfos() ? this.lineFormat : new LineFormat(" :\\", false, " :\\", false, lineFormat.GetParameterInfos());
             ILineTree current = node;
             Stack<ILineTree> stack = new Stack<ILineTree>();
             JTokenReader tokenReader = json as JTokenReader;
@@ -101,7 +107,7 @@ namespace Lexical.Localization
                         break;
                     case JsonToken.PropertyName:
                         ILine key = null;
-                        if (this.namePolicy.TryParse(json.Value?.ToString(), out key))
+                        if (_lineFormat.TryParse(json.Value?.ToString(), out key))
                         { 
                             current = key == null ? stack.Peek() : stack.Peek()?.Create(key);
                             if (current != null && updateCorrespondence && !correspondenceContext.Nodes.ContainsLeft(current))

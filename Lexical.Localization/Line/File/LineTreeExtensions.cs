@@ -21,14 +21,14 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <returns></returns>
         public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this ILineTree LineTree, ILineFormat policy)
-            => LineTree.ToKeyLines().ToStringLines(policy);
+            => LineTree.ToLines().ToStringLines(policy);
 
         /// <summary>
         /// Flatten <paramref name="node"/> to key lines.
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public static IEnumerable<ILine> ToKeyLines(this ILineTree node)
+        public static IEnumerable<ILine> ToLines(this ILineTree node)
         {
             Queue<(ILineTree, ILine)> queue = new Queue<(ILineTree, ILine)>();
             queue.Enqueue((node, node.Key));
@@ -41,7 +41,7 @@ namespace Lexical.Localization
                 if (current.Item2 != null && current.Item1.HasValues)
                 {
                     foreach (IFormulationString value in current.Item1.Values)
-                        yield return new ILine(current.Item2, value);
+                        yield return current.Item2.Value(value);
                 }
 
                 // Enqueue children

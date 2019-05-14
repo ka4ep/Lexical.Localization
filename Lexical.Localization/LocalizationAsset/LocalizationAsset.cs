@@ -752,7 +752,7 @@ namespace Lexical.Localization
                     // Read as tree lines
                     else if (reader is IEnumerable<ILineTree> treesReader)
                     {
-                        lines.AddRange(treesReader.SelectMany(tree => tree.ToKeyLines()));
+                        lines.AddRange(treesReader.SelectMany(tree => tree.ToLines()));
                     }
 
                     // Read as string lines
@@ -761,9 +761,9 @@ namespace Lexical.Localization
                         // Convert from string lines
                         var _stringLines = stringLines;
                         if (_stringLines != null && namePolicy is ILineParser parser)
-                            lines.AddRange(_stringLines.ToKeyLines(parser));
+                            lines.AddRange(_stringLines.ToLines(parser));
                         else
-                            lines.AddRange(stringLinesReader.ToKeyLines(namePolicy));
+                            lines.AddRange(stringLinesReader.ToLines(namePolicy));
                     }
                     // Read as key-lines
                     else if (reader is IEnumerable<KeyValuePair<ILine, string>> keyLinesReader_)
@@ -775,9 +775,9 @@ namespace Lexical.Localization
                         // Convert from string lines
                         var _stringLines = stringLines;
                         if (_stringLines != null && namePolicy is ILineParser parser)
-                            lines.AddRange(_stringLines.ToKeyLines(parser));
+                            lines.AddRange(_stringLines.ToLines(parser));
                         else
-                            lines.AddRange(stringLinesReader_.ToKeyLines(namePolicy, CSharpFormat.Instance));
+                            lines.AddRange(stringLinesReader_.ToLines(namePolicy, CSharpFormat.Instance));
                     }
                     else throw new ArgumentException($"Cannot read {reader.GetType().FullName}: {reader}");
 

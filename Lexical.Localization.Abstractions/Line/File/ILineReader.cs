@@ -3,7 +3,6 @@
 // Date:           24.2.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -34,10 +33,10 @@ namespace Lexical.Localization
         /// Read <paramref name="stream"/> into lines.
         /// </summary>
         /// <param name="stream"></param>
-        /// <param name="namePolicy">(optional) name policy. </param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<ILine> ReadKeyLines(Stream stream, ILineFormat namePolicy = default);
+        IEnumerable<ILine> ReadLines(Stream stream, ILineFormat lineFormat = default);
     }
 
     /// <summary>
@@ -46,13 +45,13 @@ namespace Lexical.Localization
     public interface ILineTreeStreamReader : ILineReader
     {
         /// <summary>
-        /// Read <paramref name="stream"/> into tree structuer.
+        /// Read <paramref name="stream"/> into tree structure.
         /// </summary>
         /// <param name="stream"></param>
-        /// <param name="namePolicy">(optional) name policy.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        ILineTree ReadLineTree(Stream stream, ILineFormat namePolicy = default);
+        ILineTree ReadLineTree(Stream stream, ILineFormat lineFormat = default);
     }
 
     /// <summary>
@@ -61,13 +60,13 @@ namespace Lexical.Localization
     public interface ILineTextReader : ILineReader
     {
         /// <summary>
-        /// Read <paramref name="text"/> into lines.
+        /// Read <paramref name="text"/> into tree structure.
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="namePolicy">(optional) name policy.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <returns>the read lines</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<ILine> ReadKeyLines(TextReader text, ILineFormat namePolicy = default);
+        IEnumerable<ILine> ReadLines(TextReader text, ILineFormat lineFormat = default);
     }
 
     /// <summary>
@@ -79,10 +78,10 @@ namespace Lexical.Localization
         /// Read <paramref name="text"/> into lines.
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="namePolicy">(optional) name policy.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <returns>lines in tree structure</returns>
         /// <exception cref="IOException"></exception>
-        ILineTree ReadLineTree(TextReader text, ILineFormat namePolicy = default);
+        ILineTree ReadLineTree(TextReader text, ILineFormat lineFormat = default);
     }
 
     /// <summary>
@@ -94,10 +93,10 @@ namespace Lexical.Localization
         /// Read <paramref name="text"/> into lines.
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="namePolicy">(optional) name policy.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <returns>the read string key-values</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, ILineFormat namePolicy = default);
+        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, ILineFormat lineFormat = default);
     }
 
     /// <summary>
@@ -109,10 +108,10 @@ namespace Lexical.Localization
         /// Read <paramref name="stream"/> into lines.
         /// </summary>
         /// <param name="stream"></param>
-        /// <param name="namePolicy">(optional) name policy.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <returns>the read string key-values</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, ILineFormat namePolicy = default);
+        IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default);
     }
     #endregion Interface
 }

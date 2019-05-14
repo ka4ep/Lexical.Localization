@@ -94,7 +94,7 @@ namespace Lexical.Localization
         /// <param name="linePart"></param>
         /// <param name="parameterInfos">(optional) If provided, then is used to evaluate <see cref="ILineParameter"/></param>
         /// <returns></returns>
-        public static bool IsCanonicalKey(this ILine linePart, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null)
+        public static bool IsCanonicalKey(this ILine linePart, IParameterInfos parameterInfos = null)
         {
             // Assert arguments
             if (linePart == null) return false;
@@ -111,7 +111,7 @@ namespace Lexical.Localization
         /// <param name="linePart"></param>
         /// <param name="parameterInfos">(optional) If provided, then is used to evaluate <see cref="ILineParameter"/></param>
         /// <returns></returns>
-        public static bool IsNonCanonicalKey(this ILine linePart, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null)
+        public static bool IsNonCanonicalKey(this ILine linePart, IParameterInfos parameterInfos = null)
         {
             // Assert arguments
             if (linePart == null) return false;
@@ -157,7 +157,7 @@ namespace Lexical.Localization
         /// <param name="parameterName"></param>
         /// <param name="parameterInfos">(optional) map of infos for determining if parameter is key</param>
         /// <returns>value or null</returns>
-        public static string GetNonCanonicalKey(this ILine line, string parameterName, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null)
+        public static string GetNonCanonicalKey(this ILine line, string parameterName, IParameterInfos parameterInfos = null)
         {
             string result = null;
             for (ILine l = line; l != null; l = l.GetPreviousPart())
@@ -176,7 +176,7 @@ namespace Lexical.Localization
         /// <param name="line">line to read parameters of</param>
         /// <param name="parameterInfos">(optional) map of infos for determining if parameter is key</param>
         /// <returns>dictionary of keys</returns>
-        public static IReadOnlyDictionary<string, string> GetNonCanonicalKeys(this ILine line, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null)
+        public static IReadOnlyDictionary<string, string> GetNonCanonicalKeys(this ILine line, IParameterInfos parameterInfos = null)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
             for (ILine l = line; l != null; l = l.GetPreviousPart())
@@ -198,7 +198,7 @@ namespace Lexical.Localization
         /// <param name="parameterInfos">(optional) map of infos for determining if parameter is key</param>
         /// <typeparam name="LIST">List type</typeparam>
         /// <returns>dictionary of keys</returns>
-        public static void GetCanonicalKeys<LIST>(this ILine line, ref LIST list, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null) where LIST : IList<ILineParameter>
+        public static void GetCanonicalKeys<LIST>(this ILine line, ref LIST list, IParameterInfos parameterInfos = null) where LIST : IList<ILineParameter>
         {
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
@@ -227,7 +227,7 @@ namespace Lexical.Localization
         /// <param name="parameterInfos">(optional) map of infos for determining if parameter is key</param>
         /// <typeparam name="LIST">List type</typeparam>
         /// <returns>dictionary of keys</returns>
-        public static void GetCanonicalKeyPairs<LIST>(this ILine line, ref LIST list, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null) where LIST : IList<KeyValuePair<string, string>>
+        public static void GetCanonicalKeyPairs<LIST>(this ILine line, ref LIST list, IParameterInfos parameterInfos = null) where LIST : IList<KeyValuePair<string, string>>
         {
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
@@ -258,7 +258,7 @@ namespace Lexical.Localization
         /// <param name="parameterInfos">(optional) map of infos for determining if parameter is key</param>
         /// <typeparam name="LIST">List type</typeparam>
         /// <returns>dictionary of keys</returns>
-        public static void GetNonCanonicalKeyPairs<LIST>(this ILine line, ref LIST result, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null) where LIST : IList<KeyValuePair<string, string>>
+        public static void GetNonCanonicalKeyPairs<LIST>(this ILine line, ref LIST result, IParameterInfos parameterInfos = null) where LIST : IList<KeyValuePair<string, string>>
         {
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
@@ -304,7 +304,7 @@ namespace Lexical.Localization
         /// <param name="line">line to read parameters of</param>
         /// <param name="parameterInfos">(optional) map of infos for determining if parameter is key</param>
         /// <returns>dictionary of keys</returns>
-        public static KeyValuePair<string, string>[] GetNonCanonicalsArray(this ILine line, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null)
+        public static KeyValuePair<string, string>[] GetNonCanonicalsArray(this ILine line, IParameterInfos parameterInfos = null)
         {
             StructList12<KeyValuePair<string, string>> result = new StructList12<KeyValuePair<string, string>>();
             line.GetNonCanonicalKeyPairs<StructList12<KeyValuePair<string, string>>>(ref result, parameterInfos);

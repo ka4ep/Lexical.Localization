@@ -109,7 +109,7 @@ namespace Lexical.Localization
         public string Path { get; protected set; }
 
         /// <summary>
-        /// File pattern.
+        /// File name pattern.
         /// </summary>
         public ILinePattern FilePattern { get; protected set; }
 

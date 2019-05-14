@@ -32,12 +32,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.
         /// </summary>
-        protected LineFormat escaper_section = new LineFormat("\\:[]", true, "\\:[]", true);
+        protected LineFormat escaper_section = new LineFormat("\\:[]", true, "\\:[]", true, ParameterInfos.Default);
 
         /// <summary>
         /// Escaper for key parts of .ini files. Escapes '\', ':', '=' characters and white-spaces.
         /// </summary>
-        protected LineFormat escaper_key = new LineFormat("\\:= ", true, "\\:= ", true);
+        protected LineFormat escaper_key = new LineFormat("\\:= ", true, "\\:= ", true, ParameterInfos.Default);
 
         /// <summary>
         /// Escaper for value parts of .ini files. Escapes '\', '{', '}' characters and white-spaces.
@@ -68,19 +68,19 @@ namespace Lexical.Localization
         {
             this.Extension = ext;
             this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
-        }
+    }
 
         /// <summary>
         /// Json text into a tree.
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <returns></returns>
-        public ILineTree ReadLineTree(TextReader text, ILineFormat namePolicy = default)
+        public ILineTree ReadLineTree(TextReader text, ILineFormat lineFormat = default)
         {
             LineTree root = new LineTree();
             using (var ini = new IniTokenizer(text.ReadToEnd()))
-                ReadIniIntoTree(ini, root, namePolicy, null);
+                ReadIniIntoTree(ini, root, lineFormat, null);
             return root;
         }
 
@@ -89,11 +89,14 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="ini">ini token stream. </param>
         /// <param name="root">parent node to under which add nodes</param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">unused</param>
         /// <param name="correspondence">(optional) if set tokens are associated to key tree. If <paramref name="correspondence"/> is provided, then <paramref name="ini"/> must be a linked list. See <see cref="IniTokenizer.ToLinkedList"/></param>
         /// <returns><paramref name="root"/></returns>
-        public ILineTree ReadIniIntoTree(IEnumerable<IniToken> ini, ILineTree root, ILineFormat namePolicy, IniCorrespondence correspondence)
+        public ILineTree ReadIniIntoTree(IEnumerable<IniToken> ini, ILineTree root, ILineFormat lineFormat, IniCorrespondence correspondence)
         {
+            ILineFormat _escaper_section = escaper_section.GetParameterInfos() == lineFormat.GetParameterInfos() ? escaper_section : new LineFormat("\\:[]", true, "\\:[]", true, lineFormat.GetParameterInfos());
+            ILineFormat _escaper_key = escaper_key.GetParameterInfos() == lineFormat.GetParameterInfos() ? escaper_key : new LineFormat("\\:= ", true, "\\:= ", true, lineFormat.GetParameterInfos());
+
             ILineTree section = null;
             foreach (IniToken token in ini)
             {
@@ -101,7 +104,7 @@ namespace Lexical.Localization
                 {
                     case IniTokenType.Section:
                         ILine key = null;
-                        if (escaper_section.TryParse(token.ValueText, out key))
+                        if (_escaper_section.TryParse(token.ValueText, out key))
                         {
                             section = key == null ? null : root.Create(key);
                             if (section != null && correspondence != null) correspondence.Nodes.Put(section, token);
@@ -113,7 +116,7 @@ namespace Lexical.Localization
                         break;
                     case IniTokenType.KeyValue:
                         ILine key_ = null;
-                        if (escaper_key.TryParse(token.KeyText, out key_))
+                        if (_escaper_key.TryParse(token.KeyText, out key_))
                         {
                             ILineTree current = key_ == null ? null : (section ?? root).GetOrCreate(key_);
                             string value = escaper_value.UnescapeLiteral(token.ValueText);

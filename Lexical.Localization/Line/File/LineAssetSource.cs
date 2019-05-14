@@ -18,7 +18,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public ILineFormat KeyPolicy { get; protected set; }
+        public ILineFormat LineFormat { get; protected set; }
 
         /// <summary>
         /// Line source
@@ -29,11 +29,11 @@ namespace Lexical.Localization
         /// Create adapter that adapts IEnumerable&lt;KeyValuePair&lt;String, String&gt;&gt; into <see cref="IAssetSource"/>.
         /// </summary>
         /// <param name="lineSource"></param>
-        /// <param name="namePolicy"></param>
-        public StringLinesSource(IEnumerable<KeyValuePair<string, IFormulationString>> lineSource, ILineFormat namePolicy)
+        /// <param name="lineFormat"></param>
+        public StringLinesSource(IEnumerable<KeyValuePair<string, IFormulationString>> lineSource, ILineFormat lineFormat)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
-            this.KeyPolicy = namePolicy;
+            this.LineFormat = lineFormat;
         }
 
         IEnumerator<KeyValuePair<string, IFormulationString>> IEnumerable<KeyValuePair<string, IFormulationString>>.GetEnumerator()
@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public void Build(IList<IAsset> list)
-            => list.Add(new LocalizationAsset(this, KeyPolicy));
+            => list.Add(new LocalizationAsset(this, LineFormat));
 
         /// <summary>
         /// Post build action.
@@ -169,12 +169,12 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="fileFormat"></param>
         /// <param name="streamSource"></param>
-        /// <param name="namePolicy"></param>
-        public StreamProviderAssetSource(ILineFileFormat fileFormat, Func<Stream> streamSource, ILineFormat namePolicy)
+        /// <param name="lineFormat"></param>
+        public StreamProviderAssetSource(ILineFileFormat fileFormat, Func<Stream> streamSource, ILineFormat lineFormat)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
             this.streamSource = streamSource ?? throw new ArgumentNullException(nameof(streamSource));
-            this.NamePolicy = namePolicy;
+            this.NamePolicy = lineFormat;
         }
 
         /// <summary>

@@ -28,7 +28,7 @@ namespace Lexical.Localization
         /// <param name="qualifierKey">parameters</param>
         /// <param name="parameterInfos">(optional) infos for determining which keys are non-canonical</param>
         /// <returns><paramref name="qualifier"/></returns>
-        public static ILineQualifier Rule(this ILineQualifier qualifier, ILine qualifierKey, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null)
+        public static ILineQualifier Rule(this ILineQualifier qualifier, ILine qualifierKey, IParameterInfos parameterInfos = null)
         {
             // Break qualifierKey into effective non-canonical parameters, and to canonical parameters and occurance index
             StructList12<(ILineParameter, int)> list = new StructList12<(ILineParameter, int)>();

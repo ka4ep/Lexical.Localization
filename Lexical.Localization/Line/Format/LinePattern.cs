@@ -56,7 +56,7 @@ namespace Lexical.Localization
     ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
     /// 
     /// </summary>
-    public class LinePattern : ILinePattern, ILineParser, ILineAppendParser, ILinePrinter
+    public class LinePattern : ILinePattern, ILineParser, ILineAppendParser, ILinePrinter, ILineFormatParameterInfos
     {
         static Regex regex = new Regex(
             @"(?<text>[^\[\{\}\]]+)|" +
@@ -143,13 +143,25 @@ namespace Lexical.Localization
         public Regex Regex => cachedRegex ?? (cachedRegex = this.BuildRegex(null));
 
         /// <summary>
+        /// Parameter infos.
+        /// </summary>
+        public IParameterInfos ParameterInfos { get => parameterInfos; set => new InvalidOperationException("read-only"); }
+
+        /// <summary>
+        /// (optional) Parameter infos for determining if parameter is key.
+        /// </summary>
+        protected IParameterInfos parameterInfos;
+
+        /// <summary>
         /// Create pattern
         /// </summary>
         /// <param name="pattern"></param>
+        /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
         /// <exception cref="ArgumentException">If there was a problem parsing the filename pattern</exception>
-        public LinePattern(string pattern)
+        public LinePattern(string pattern, IParameterInfos parameterInfos = null)
         {
             this.Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
+            this.parameterInfos = parameterInfos;
             System.Text.RegularExpressions.MatchCollection matches = regex.Matches(pattern);
             //if (matches.Count == 0) throw new ArgumentException($"Failed to parse filename pattern \"{pattern}\"");
 

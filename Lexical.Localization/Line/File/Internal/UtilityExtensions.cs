@@ -12,17 +12,27 @@ using System.Text;
 
 namespace Lexical.Localization.Internal
 {
+    /// <summary>
+    /// Utilities
+    /// </summary>
     public static class UtilityExtensions
     {
-        public static Encoding Encoding = new UTF8Encoding(false);
+        /// <summary>
+        /// Default encoding.
+        /// </summary>
+        public static readonly Encoding Encoding = new UTF8Encoding(false);
 
-
-        public static byte[] ReadFully(this Stream s)
+        /// <summary>
+        /// Read bytes from <paramref name="stream"/>.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public static byte[] ReadFully(this Stream stream)
         {
-            if (s == null) return null;
+            if (stream == null) return null;
 
             // Try to read stream completely.
-            int len_ = (int)s.Length;
+            int len_ = (int)stream.Length;
             if (len_ > 2147483647) throw new IOException("File size over 2GB");
             byte[] data = new byte[len_];
 
@@ -30,7 +40,7 @@ namespace Lexical.Localization.Internal
             int ix = 0;
             while (ix < len_)
             {
-                int count = s.Read(data, ix, len_ - ix);
+                int count = stream.Read(data, ix, len_ - ix);
 
                 // "returns zero (0) if the end of the stream has been reached."
                 if (count == 0) break;

@@ -88,7 +88,7 @@ namespace Lexical.Localization
         /// <returns>new parameter part</returns>
         /// <exception cref="LineException">If part could not be appended</exception>
         /// <returns>new part</returns>
-        public static ILine Parameter(this ILine part, string parameterName, string parameterValue, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
+        public static ILine Parameter(this ILine part, string parameterName, string parameterValue, IParameterInfos parameterInfos)
         {
             IParameterInfo info = null;
             if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info))
@@ -124,7 +124,7 @@ namespace Lexical.Localization
         /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
         /// <returns>new key that is appended to this key</returns>
         /// <exception cref="LineException">If key doesn't implement ILineParameterAssignable, or append failed</exception>
-        public static ILine Parameters(this ILine part, IEnumerable<KeyValuePair<string, string>> parameters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
+        public static ILine Parameters(this ILine part, IEnumerable<KeyValuePair<string, string>> parameters, IParameterInfos parameterInfos)
         {
             ILineFactory appender = part.GetAppender();
             foreach (var parameter in parameters)
@@ -359,6 +359,22 @@ namespace Lexical.Localization
                         visitor(parameter_, ref data);
             if (line is ILineParameter parameter && parameter.ParameterName!=null && parameter.ParameterValue != null)
                 visitor(parameter, ref data);
+        }
+
+        /// <summary>
+        /// Get parameters from root to tail.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        public static IEnumerable<KeyValuePair<string, string>> GetParameters(this ILine line)
+        {
+            StructList12<ILineParameter> pars = new StructList12<ILineParameter>();
+            line.GetParameterParts<StructList12<ILineParameter>>(ref pars);
+            for (int i = pars.Count - 1; i >= 0; i--)
+            {
+                ILineParameter p = pars[i];
+                yield return new KeyValuePair<string, string>(p.ParameterName, p.ParameterValue);
+            }
         }
 
     }

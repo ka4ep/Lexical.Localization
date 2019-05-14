@@ -238,23 +238,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         /// <exception cref="LineException">on append error</exception>
         public static ILine Concat(this ILine line, ILine anotherLine)
-        {
-            ILineFactory appender = line.GetAppender();
-            ILine result = line;
-            StructList16<ILine> args = new StructList16<ILine>();
-            for (ILine l = anotherLine; l != null; l=l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
-            for(int i=args.Count-1; i>=0; i--)
-            {
-                ILine l = args[i];
-                if (l is ILineArgumentsEnumerable enumr)
-                    foreach (ILineArguments args_ in enumr)
-                        result = appender.Create(result, args_);
-
-                if (l is ILineArguments arg)
-                    result = result.Append(arg);
-            }
-            return result;
-        }
+            => line.GetAppender().Concat(line, anotherLine);
 
         /// <summary>
         /// Concatenate <paramref name="anotherLine"/> to <paramref name="line"/>.
@@ -264,41 +248,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         /// <exception cref="LineException">on append error</exception>
         public static ILine ConcatIfNew(this ILine line, ILine anotherLine)
-        {
-            ILineFactory appender = line.GetAppender();
-            ILine result = line;
-            KeyValuePair<string, string>[] parameters = null;
-
-            StructList16<ILine> _args = new StructList16<ILine>();
-            for (ILine l = anotherLine; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) _args.Add(l);
-            for (int i = _args.Count - 1; i >= 0; i--)
-            {
-                ILine l = _args[i];
-                if (l is ILineArgumentsEnumerable enumr)
-                    foreach (ILineArguments args_ in enumr)
-                    {
-                        if (args_ is ILineArguments<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
-                        if (args_ is ILineArguments<ILineNonCanonicalKey, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
-                        if (args_ is ILineArguments<ILineCanonicalKey, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
-                        result = appender.Create(result, args_);
-                    }
-
-                if (l is ILineArguments args)
-                {
-                    if (args is ILineArguments<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
-                    if (args is ILineArguments<ILineNonCanonicalKey, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
-                    if (args is ILineArguments<ILineCanonicalKey, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
-                    result = appender.Create(result, args);
-                }
-            }
-            return result;
-
-            bool ContainsParameter(string parameterName, string parameterValue)
-            {
-                if (parameters == null) parameters = line.GetParameterAsKeyValues();
-                return parameters.Contains(new KeyValuePair<string, string>(parameterName, parameterValue), KeyValuePairEqualityComparer<string, string>.Default);
-            }
-        }
+            => line.GetAppender().ConcatIfNew(line, anotherLine);
 
         /// <summary>
         /// Append <paramref name="anotherLine"/> to <paramref name="line"/>.
@@ -310,21 +260,9 @@ namespace Lexical.Localization
         /// <exception cref="LineException">on append error</exception>
         public static bool TryConcat(this ILine line, ILine anotherLine, out ILine result)
         {
-            ILine _result = line;
-            StructList16<ILine> _args = new StructList16<ILine>();
-            for (ILine l = anotherLine; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) _args.Add(l);
-            for (int i = _args.Count - 1; i >= 0; i--)
-            {
-                ILine l = _args[i];
-                if (l is ILineArgumentsEnumerable enumr)
-                    foreach (ILineArguments args_ in enumr)
-                        if (!_result.TryAppend(args_, out _result)) { result = null; return false; }
-                        
-
-                if (l is ILineArguments args)
-                    if (!_result.TryAppend(args, out _result)) { result = null; return false; }
-            }
-            result = _result;
+            ILineFactory appender;
+            if (line.TryGetAppender(out appender)) return appender.TryConcat(line, anotherLine, out result);
+            result = null;
             return false;
         }
 

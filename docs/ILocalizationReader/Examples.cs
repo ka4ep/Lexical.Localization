@@ -34,7 +34,7 @@ namespace docs
 
             {
                 #region Snippet_1a
-                IEnumerable<ILine> key_lines = LineReaderMap.Instance.ReadKeyLines(
+                IEnumerable<ILine> key_lines = LineReaderMap.Instance.ReadLines(
                     filename: "localization.ini", 
                     throwIfNotFound: true);
                 #endregion Snippet_1a
@@ -43,7 +43,7 @@ namespace docs
                 #region Snippet_1b
                 IEnumerable<KeyValuePair<string, IFormulationString>> string_lines = LineReaderMap.Instance.ReadStringLines(
                     filename: "localization.ini", 
-                    namePolicy: LineFormat.Parameters,
+                    lineFormat: LineFormat.Parameters,
                     throwIfNotFound: true);
                 #endregion Snippet_1b
             }
@@ -58,7 +58,7 @@ namespace docs
             {
                 #region Snippet_2a
                 IEnumerable<ILine> key_lines_reader = 
-                    LineReaderMap.Instance.FileReaderAsKeyLines(
+                    LineReaderMap.Instance.FileReader(
                         filename: "localization.ini", 
                         throwIfNotFound: true);
                 #endregion Snippet_2a
@@ -68,7 +68,7 @@ namespace docs
                 IEnumerable<KeyValuePair<string, IFormulationString>> string_lines_reader = 
                     LineReaderMap.Instance.FileReaderAsStringLines(
                         filename: "localization.ini",
-                        namePolicy: LineFormat.Parameters,
+                        lineFormat: LineFormat.Parameters,
                         throwIfNotFound: true);
                 #endregion Snippet_2b
                 var lines = string_lines_reader.ToArray();
@@ -87,7 +87,7 @@ namespace docs
                 #region Snippet_3a
                 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
                 IEnumerable<ILine> key_lines_reader = 
-                    LineReaderMap.Instance.EmbeddedReaderAsKeyLines(
+                    LineReaderMap.Instance.EmbeddedReader(
                         assembly: asm, 
                         resourceName: "docs.localization.ini", 
                         throwIfNotFound: true);
@@ -122,7 +122,7 @@ namespace docs
                 #region Snippet_4a
                 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
                 IEnumerable<ILine> key_lines_reader = 
-                    LineReaderMap.Instance.FileProviderReaderAsKeyLines(
+                    LineReaderMap.Instance.FileProviderReader(
                         fileProvider: fileProvider, 
                         filepath: "localization.ini", 
                         throwIfNotFound: true);
@@ -156,7 +156,7 @@ namespace docs
                 #region Snippet_5a
                 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
                 {
-                    IEnumerable<ILine> key_lines = LineIniReader.Instance.ReadKeyLines(s);
+                    IEnumerable<ILine> key_lines = LineIniReader.Instance.ReadLines(s);
                 }
                 #endregion Snippet_5a
             }
@@ -185,7 +185,7 @@ namespace docs
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
                 using (TextReader tr = new StringReader(text))
                 {
-                    IEnumerable<ILine> key_lines = LineIniReader.Instance.ReadKeyLines(tr);
+                    IEnumerable<ILine> key_lines = LineIniReader.Instance.ReadLines(tr);
                 }
                 #endregion Snippet_6a
             }
@@ -214,7 +214,7 @@ namespace docs
                 #region Snippet_7a
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
                 IEnumerable<ILine> key_lines = 
-                    LineIniReader.Instance.ReadStringAsKeyLines(
+                    LineIniReader.Instance.ReadString(
                         srcText: text);
                 #endregion Snippet_7a
             }
@@ -370,7 +370,7 @@ namespace docs
     {
         public string Extension => "ext";
 
-        public IEnumerable<ILine> ReadKeyLines(
+        public IEnumerable<ILine> ReadLines(
             TextReader text, 
             ILineFormat namePolicy = null)
         {

@@ -20,29 +20,29 @@ namespace Lexical.Localization
     public static partial class LineReaderExtensions
     {
         /// <summary>
-        /// Read localization strings from <see cref="Stream"/> into most suitable asset implementation.
+        /// Read localization lines from <see cref="Stream"/> into most suitable asset implementation.
         /// 
         /// File cannot be reloaded. 
         /// </summary>
         /// <param name="fileFormat"></param>
         /// <param name="stream"></param>
-        /// <param name="namePolicy">(optional) </param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <returns>localization asset</returns>
-        public static IAsset StreamAsset(this ILineFileFormat fileFormat, Stream stream, ILineFormat namePolicy = default)
+        public static IAsset StreamAsset(this ILineFileFormat fileFormat, Stream stream, ILineFormat lineFormat = default)
         {
             if (fileFormat is ILineTreeTextReader || fileFormat is ILineTreeStreamReader)
             {
-                return new LocalizationAsset().Add(new ILineTree[] { fileFormat.ReadLineTree(stream, namePolicy) }, namePolicy).Load();
+                return new LocalizationAsset().Add(new ILineTree[] { fileFormat.ReadLineTree(stream, lineFormat) }, lineFormat).Load();
             }
             else
             if (fileFormat is ILineTextReader || fileFormat is ILineStreamReader)
             {
-                return new LocalizationAsset().Add(fileFormat.ReadKeyLines(stream, namePolicy), namePolicy).Load();
+                return new LocalizationAsset().Add(fileFormat.ReadLines(stream, lineFormat), lineFormat).Load();
             }
             else
             if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
             {
-                return new LocalizationAsset().Add(fileFormat.ReadStringLines(stream, namePolicy), namePolicy).Load();
+                return new LocalizationAsset().Add(fileFormat.ReadStringLines(stream, lineFormat), lineFormat).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -54,10 +54,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="fileFormat"></param>
         /// <param name="streamSource"></param>
-        /// <param name="namePolicy">(optional) </param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <returns>localization asset</returns>
-        public static IAssetSource StreamAssetSource(this ILineFileFormat fileFormat, Func<Stream> streamSource, ILineFormat namePolicy = default)
-            => new StreamProviderAssetSource(fileFormat, streamSource, namePolicy);
+        public static IAssetSource StreamAssetSource(this ILineFileFormat fileFormat, Func<Stream> streamSource, ILineFormat lineFormat = default)
+            => new StreamProviderAssetSource(fileFormat, streamSource, lineFormat);
 
     }
 

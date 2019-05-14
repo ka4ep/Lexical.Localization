@@ -72,7 +72,7 @@ namespace Lexical.Localization
         /// <summary>
         /// (optional) Parameter infos for determining if parameter is key.
         /// </summary>
-        protected IReadOnlyDictionary<string, IParameterInfo> parameterInfos;
+        protected IParameterInfos parameterInfos;
 
         /// <summary>
         /// Is comparer locked to immutable state.
@@ -83,7 +83,7 @@ namespace Lexical.Localization
         /// Create new comparer. Canonical and non-canonical comparers must be added as components.
         /// </summary>
         /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
-        public LineComparer(IReadOnlyDictionary<string, IParameterInfo> parameterInfos)
+        public LineComparer(IParameterInfos parameterInfos)
         {
             this.parameterInfos = parameterInfos;
         }
@@ -347,14 +347,14 @@ namespace Lexical.Localization
         /// <summary>
         /// (optional) Parameter infos for determining if parameter is key.
         /// </summary>
-        protected IReadOnlyDictionary<string, IParameterInfo> parameterInfos;
+        protected IParameterInfos parameterInfos;
 
         /// <summary>
         /// Create new comparer of <see cref="ILineParameter"/> and <see cref="ILineNonCanonicalKey"/> keys.
         /// </summary>
         /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
         /// <param name="keyNamesToIgnore">(optional) list of parameter names to not to compare</param>
-        public NonCanonicalComparer(IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null, IEnumerable<string> keyNamesToIgnore = null)
+        public NonCanonicalComparer(IParameterInfos parameterInfos = null, IEnumerable<string> keyNamesToIgnore = null)
         {
             this.parameterInfos = parameterInfos;
             if (keyNamesToIgnore != null) this.parameterNamesToIgnore = new HashSet<string>(keyNamesToIgnore);

@@ -20,7 +20,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public ILineFormat KeyPolicy { get; internal set; }
+        public ILineFormat LineFormat { get; internal set; }
 
         /// <summary>
         /// File format 
@@ -33,12 +33,12 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="keyPolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <param name="throwIfNotFound"></param>
-        public LineFileProviderSource(ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat keyPolicy, bool throwIfNotFound) : base(fileProvider, filepath, throwIfNotFound)
+        public LineFileProviderSource(ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat, bool throwIfNotFound) : base(fileProvider, filepath, throwIfNotFound)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.KeyPolicy = keyPolicy;
+            this.LineFormat = lineFormat;
         }
 
         /// <summary>
@@ -59,9 +59,9 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <param name="throwIfNotFound"></param>
-        public StringLineFileProviderSource(ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat namePolicy, bool throwIfNotFound) : base(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound) { }
+        public StringLineFileProviderSource(ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat, bool throwIfNotFound) : base(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound) { }
 
         static IEnumerable<KeyValuePair<string, IFormulationString>> empty = new KeyValuePair<string, IFormulationString>[0];
 
@@ -77,7 +77,7 @@ namespace Lexical.Localization
                 IFileInfo fi = FileProvider.GetFileInfo(FilePath);
                 if (!ThrowIfNotFound && !fi.Exists) return empty.GetEnumerator();
                 using (Stream s = fi.CreateReadStream())
-                    return FileFormat.ReadStringLines(s, KeyPolicy).GetEnumerator();
+                    return FileFormat.ReadStringLines(s, LineFormat).GetEnumerator();
             }
             catch (FileNotFoundException) when (!ThrowIfNotFound)
             {
@@ -98,7 +98,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public override void Build(IList<IAsset> list)
-            => list.Add(new LocalizationAsset(this, KeyPolicy));
+            => list.Add(new LocalizationAsset(this, LineFormat));
 
         /// <summary>
         /// Post build action.
@@ -120,9 +120,9 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <param name="throwIfNotFound"></param>
-        public KeyLineFileProviderSource(ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat namePolicy, bool throwIfNotFound) : base(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound) { }
+        public KeyLineFileProviderSource(ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat, bool throwIfNotFound) : base(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound) { }
 
         static IEnumerable<ILine> empty = new ILine[0];
 
@@ -138,7 +138,7 @@ namespace Lexical.Localization
                 IFileInfo fi = FileProvider.GetFileInfo(FilePath);
                 if (!ThrowIfNotFound && !fi.Exists) return empty.GetEnumerator();
                 using (Stream s = fi.CreateReadStream())
-                    return FileFormat.ReadKeyLines(s, KeyPolicy).GetEnumerator();
+                    return FileFormat.ReadLines(s, LineFormat).GetEnumerator();
             }
             catch (FileNotFoundException) when (!ThrowIfNotFound)
             {
@@ -182,9 +182,9 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <param name="throwIfNotFound"></param>
-        public LineTreeFileProviderSource(ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat namePolicy, bool throwIfNotFound) : base(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound) { }
+        public LineTreeFileProviderSource(ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat, bool throwIfNotFound) : base(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound) { }
 
         static IEnumerable<ILineTree> empty = new ILineTree[0];
 
@@ -201,7 +201,7 @@ namespace Lexical.Localization
                 if (!ThrowIfNotFound && !fi.Exists) return empty.GetEnumerator();
                 using (Stream s = fi.CreateReadStream())
                 {
-                    ILineTree tree = FileFormat.ReadLineTree(s, KeyPolicy);
+                    ILineTree tree = FileFormat.ReadLineTree(s, LineFormat);
                     if (tree == null) return empty.GetEnumerator();
                     ILineTree[] trees = new ILineTree[] { tree };
                     return ((IEnumerable<ILineTree>)trees).GetEnumerator();

@@ -3,11 +3,10 @@
 // Date:           2.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using Lexical.Localization.Line.Internal;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace Lexical.Localization
 {
@@ -467,6 +466,113 @@ namespace Lexical.Localization
         /// <exception cref="InvalidOperationException">if key already exists and <paramref name="policy"/> is <see cref="LineFactoryAddPolicy.ThrowIfExists"/></exception>
         public static ILineFactoryCollection Add<Line, A0, A1, A2>(this ILineFactoryCollection collection, Func<ILineFactory, ILine, A0, A1, A2, Line> func, LineFactoryAddPolicy policy = LineFactoryAddPolicy.ThrowIfExists) where Line : ILine
             => collection.Add(new Delegate3<Line, A0, A1, A2>(func), policy);
+
+        /// <summary>
+        /// Concatenate <paramref name="right"/> to <paramref name="left"/>.
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException">on append error</exception>
+        public static ILine Concat(this ILineFactory factory, ILine left, ILine right)
+        {
+            ILine result = left;
+            StructList16<ILine> args = new StructList16<ILine>();
+            for (ILine l = right; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+            for (int i = args.Count - 1; i >= 0; i--)
+            {
+                ILine l = args[i];
+                if (l is ILineArgumentsEnumerable enumr)
+                    foreach (ILineArguments args_ in enumr)
+                        result = factory.Create(result, args_);
+
+                if (l is ILineArguments arg)
+                    result = result.Append(arg);
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// Append <paramref name="right"/> to <paramref name="left"/>.
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <param name="left">part to append to</param>
+        /// <param name="right"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException">on append error</exception>
+        public static bool TryConcat(this ILineFactory factory, ILine left, ILine right, out ILine result)
+        {
+            ILine _result = left;
+            StructList16<ILine> _args = new StructList16<ILine>();
+            for (ILine l = right; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) _args.Add(l);
+            for (int i = _args.Count - 1; i >= 0; i--)
+            {
+                ILine l = _args[i];
+                if (l is ILineArgumentsEnumerable enumr)
+                    foreach (ILineArguments args_ in enumr)
+                        if (!factory.TryCreate(args_, out _result)) { result = null; return false; }
+
+
+                if (l is ILineArguments args)
+                    if (!factory.TryCreate(args, out _result)) { result = null; return false; }
+            }
+            result = _result;
+            return false;
+        }
+
+        /// <summary>
+        /// Concatenate <paramref name="right"/> to <paramref name="left"/>.
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <param name="left">part to append to</param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException">on append error</exception>
+        public static ILine ConcatIfNew(this ILineFactory factory, ILine left, ILine right)
+        {
+            ILine result = left;
+            KeyValuePair<string, string>[] parameters = null;
+
+            StructList16<ILine> _args = new StructList16<ILine>();
+            for (ILine l = right; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) _args.Add(l);
+            for (int i = _args.Count - 1; i >= 0; i--)
+            {
+                ILine l = _args[i];
+                if (l is ILineArgumentsEnumerable enumr)
+                    foreach (ILineArguments args_ in enumr)
+                    {
+                        if (args_ is ILineArguments<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
+                        if (args_ is ILineArguments<ILineNonCanonicalKey, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
+                        if (args_ is ILineArguments<ILineCanonicalKey, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
+                        result = factory.Create(result, args_);
+                    }
+
+                if (l is ILineArguments args)
+                {
+                    if (args is ILineArguments<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
+                    if (args is ILineArguments<ILineNonCanonicalKey, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
+                    if (args is ILineArguments<ILineCanonicalKey, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
+                    result = factory.Create(result, args);
+                }
+            }
+            return result;
+
+            bool ContainsParameter(string parameterName, string parameterValue)
+            {
+                if (parameters == null) parameters = left.GetParameterAsKeyValues();
+                for(int i=0; i<parameters.Length; i++)
+                {
+                    var p = parameters[i];
+                    if (p.Key == parameterName && p.Value == parameterValue) return true;
+                }
+                return false;
+            }
+        }
+
+
     }
 
 }

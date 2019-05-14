@@ -56,25 +56,25 @@ namespace Lexical.Localization
         /// Read resx content from <paramref name="stream"/>.
         /// </summary>
         /// <param name="stream"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">unused</param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, ILineFormat namePolicy = default) => ReadElement(XDocument.Load(stream).Root, namePolicy);
+        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default) => ReadElement(XDocument.Load(stream).Root, lineFormat);
 
         /// <summary>
         /// Read resx content from <paramref name="text"/>.
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">unused</param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, ILineFormat namePolicy = default) => ReadElement(XDocument.Load(text).Root, namePolicy);
+        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(TextReader text, ILineFormat lineFormat = default) => ReadElement(XDocument.Load(text).Root, lineFormat);
 
         /// <summary>
         /// Reads lines from xml element.
         /// </summary>
         /// <param name="element">parent element that contains data elements</param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">unused</param>
         /// <returns>lines</returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadElement(XElement element, ILineFormat namePolicy)
+        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadElement(XElement element, ILineFormat lineFormat)
         {
             foreach (XElement dataNode in element.Elements("data"))
             {
@@ -100,10 +100,10 @@ namespace Lexical.Localization
         /// Read lines from xml element, update <paramref name="correspondence"/>.
         /// </summary>
         /// <param name="element"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">unused</param>
         /// <param name="correspondence"></param>
         /// <returns></returns>
-        public List<KeyValuePair<string, IFormulationString>> ReadElement(XElement element, ILineFormat namePolicy, ResXCorrespondence correspondence)
+        public List<KeyValuePair<string, IFormulationString>> ReadElement(XElement element, ILineFormat lineFormat, ResXCorrespondence correspondence)
         {
             List<KeyValuePair<string, IFormulationString>> result = new List<KeyValuePair<string, IFormulationString>>();
 

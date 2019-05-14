@@ -19,7 +19,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
         /// </summary>
-        public ILineFormat KeyPolicy { get; internal set; }
+        public ILineFormat LineFormat { get; internal set; }
 
         /// <summary>
         /// File format 
@@ -32,12 +32,12 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="assembly"></param>
         /// <param name="resourceName"></param>
-        /// <param name="keyPolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <param name="throwIfNotFound"></param>
-        public LineEmbeddedSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormat keyPolicy, bool throwIfNotFound) : base(assembly, resourceName, throwIfNotFound)
+        public LineEmbeddedSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormat lineFormat, bool throwIfNotFound) : base(assembly, resourceName, throwIfNotFound)
         {
             this.FileFormat = fileFormat ?? throw new ArgumentNullException(nameof(fileFormat));
-            this.KeyPolicy = keyPolicy;
+            this.LineFormat = lineFormat;
             this.Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
             this.ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
             this.ThrowIfNotFound = throwIfNotFound;
@@ -68,9 +68,9 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="assembly"></param>
         /// <param name="resourceName"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <param name="throwIfNotFound">if true, throws <see cref="FileNotFoundException"/></param>
-        public LineEmbeddedStringLinesSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormat namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
+        public LineEmbeddedStringLinesSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormat lineFormat, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, lineFormat, throwIfNotFound) { }
 
         /// <summary>
         /// No lines
@@ -89,7 +89,7 @@ namespace Lexical.Localization
                 using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
                 {
                     if (s == null) return !ThrowIfNotFound ? empty.GetEnumerator() : throw new FileNotFoundException(ResourceName);
-                    return FileFormat.ReadStringLines(s, KeyPolicy).GetEnumerator();
+                    return FileFormat.ReadStringLines(s, LineFormat).GetEnumerator();
                 }
             }
             catch (FileNotFoundException) when (!ThrowIfNotFound)
@@ -111,7 +111,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public override void Build(IList<IAsset> list)
-            => list.Add(new LocalizationAsset(this, KeyPolicy));
+            => list.Add(new LocalizationAsset(this, LineFormat));
 
         /// <summary>
         /// Post build action.
@@ -133,9 +133,9 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="assembly"></param>
         /// <param name="resourceName"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <param name="throwIfNotFound"></param>
-        public LineEmbeddedKeyLinesSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormat namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
+        public LineEmbeddedKeyLinesSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormat lineFormat, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, lineFormat, throwIfNotFound) { }
 
         static IEnumerable<ILine> empty = new ILine[0];
 
@@ -151,7 +151,7 @@ namespace Lexical.Localization
                 using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
                 {
                     if (s == null) return !ThrowIfNotFound ? empty.GetEnumerator() : throw new FileNotFoundException(ResourceName);
-                    return FileFormat.ReadKeyLines(s, KeyPolicy).GetEnumerator();
+                    return FileFormat.ReadLines(s, LineFormat).GetEnumerator();
                 }
             }
             catch (FileNotFoundException) when (!ThrowIfNotFound)
@@ -195,9 +195,9 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="assembly"></param>
         /// <param name="resourceName"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <param name="throwIfNotFound"></param>
-        public LineEmbeddedLineTreeSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormat namePolicy, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, namePolicy, throwIfNotFound) { }
+        public LineEmbeddedLineTreeSource(ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormat lineFormat, bool throwIfNotFound) : base(fileFormat, assembly, resourceName, lineFormat, throwIfNotFound) { }
 
         static IEnumerable<ILineTree> empty = new ILineTree[0];
 
@@ -213,7 +213,7 @@ namespace Lexical.Localization
                 using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
                 {
                     if (s == null) return !ThrowIfNotFound ? empty.GetEnumerator() : throw new FileNotFoundException(ResourceName);
-                    ILineTree tree = FileFormat.ReadLineTree(s, KeyPolicy);
+                    ILineTree tree = FileFormat.ReadLineTree(s, LineFormat);
                     if (tree == null) return empty.GetEnumerator();
                     return ((IEnumerable<ILineTree>)new ILineTree[] { tree }).GetEnumerator();
                 }

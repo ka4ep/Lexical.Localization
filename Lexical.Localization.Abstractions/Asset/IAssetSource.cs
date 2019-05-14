@@ -35,7 +35,7 @@ namespace Lexical.Localization
 
     #region interface_2
     /// <summary>
-    /// Signal for asset source that returns language strings
+    /// Signal for asset source that returns localization lines.
     /// </summary>
     public interface ILineSource : IAssetSource
     {
@@ -47,9 +47,9 @@ namespace Lexical.Localization
     public interface IStringLineSource : ILineSource, IEnumerable<KeyValuePair<string, IFormulationString>>
     {
         /// <summary>
-        /// Name policy that is used for converting string to <see cref="ILine"/>.
+        /// Format that is used for converting string to <see cref="ILine"/>.
         /// </summary>
-        ILineFormat KeyPolicy { get; }
+        ILineFormat LineFormat { get; }
     }
 
     /// <summary>

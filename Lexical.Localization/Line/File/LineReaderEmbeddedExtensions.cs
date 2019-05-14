@@ -26,7 +26,7 @@ namespace Lexical.Localization
         /// <param name="namePolicy"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        public static LineEmbeddedKeyLinesSource EmbeddedReaderAsKeyLines(this ILineFileFormat fileFormat, Assembly asm, string resourceName, ILineFormat namePolicy = default, bool throwIfNotFound = true)
+        public static LineEmbeddedKeyLinesSource EmbeddedReader(this ILineFileFormat fileFormat, Assembly asm, string resourceName, ILineFormat namePolicy = default, bool throwIfNotFound = true)
             => new LineEmbeddedKeyLinesSource(fileFormat, asm, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Lexical.Localization
             }
             else if (fileFormat is ILineTextReader || fileFormat is ILineStreamReader)
             {
-                return new LocalizationAsset().Add(fileFormat.EmbeddedReaderAsKeyLines(assembly, resourceName, namePolicy, throwIfNotFound), namePolicy).Load();
+                return new LocalizationAsset().Add(fileFormat.EmbeddedReader(assembly, resourceName, namePolicy, throwIfNotFound), namePolicy).Load();
             }
             else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
             {
@@ -117,8 +117,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LineEmbeddedKeyLinesSource EmbeddedReaderAsKeyLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, Assembly assembly, string resourceName, ILineFormat namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LineFileFormatMap.GetExtension(resourceName)].EmbeddedReaderAsKeyLines(assembly, resourceName, namePolicy, throwIfNotFound);
+        public static LineEmbeddedKeyLinesSource EmbeddedReader(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, Assembly assembly, string resourceName, ILineFormat namePolicy = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(resourceName)].EmbeddedReader(assembly, resourceName, namePolicy, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens embedded <paramref name="resourceName"/> from <paramref name="assembly"/> on <see cref="IEnumerable.GetEnumerator"/>.

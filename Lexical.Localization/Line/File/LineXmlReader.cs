@@ -6,11 +6,9 @@
 using Lexical.Localization.Internal;
 using Lexical.Localization.Utils;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -86,28 +84,28 @@ namespace Lexical.Localization
         /// Read key tree from <paramref name="element"/>
         /// </summary>
         /// <param name="element"></param>
-        /// <param name="namePolicy">not used</param>
+        /// <param name="lineFormat">uses parameter info</param>
         /// <returns></returns>
-        public ILineTree ReadLineTree(XElement element, ILineFormat namePolicy = default)
-            => ReadElement(element, new LineTree(), null);
+        public ILineTree ReadLineTree(XElement element, ILineFormat lineFormat = default)
+            => ReadElement(element, new LineTree(), null, lineFormat.GetParameterInfos());
 
         /// <summary>
         /// Read key tree from <paramref name="stream"/>.
         /// </summary>
         /// <param name="stream"></param>
-        /// <param name="namePolicy">not used</param>
+        /// <param name="lineFormat">uses parameter info</param>
         /// <returns></returns>
-        public ILineTree ReadLineTree(Stream stream, ILineFormat namePolicy = default)
-            => ReadElement(Load(stream).Root, new LineTree(), null);
+        public ILineTree ReadLineTree(Stream stream, ILineFormat lineFormat = default)
+            => ReadElement(Load(stream).Root, new LineTree(), null, lineFormat.GetParameterInfos());
 
         /// <summary>
         /// Read key tree from <paramref name="text"/>.
         /// </summary>
         /// <param name="text"></param>
-        /// <param name="namePolicy">not used</param>
+        /// <param name="lineFormat">uses parameter info</param>
         /// <returns></returns>
-        public ILineTree ReadLineTree(TextReader text, ILineFormat namePolicy = default)
-            => ReadElement(Load(text).Root, new LineTree(), null);
+        public ILineTree ReadLineTree(TextReader text, ILineFormat lineFormat = default)
+            => ReadElement(Load(text).Root, new LineTree(), null, lineFormat.GetParameterInfos());
 
         /// <summary>
         /// Create default reader settings.
@@ -159,10 +157,11 @@ namespace Lexical.Localization
         /// <param name="element"></param>
         /// <param name="parent"></param>
         /// <param name="correspondenceContext">(optional) Correspondence to write element-tree mappings</param>
+        /// <param name="parameterInfos"></param>
         /// <returns>parent</returns>
-        public ILineTree ReadElement(XElement element, ILineTree parent, XmlCorrespondence correspondenceContext)
+        public ILineTree ReadElement(XElement element, ILineTree parent, XmlCorrespondence correspondenceContext, IParameterInfos parameterInfos)
         {
-            ILine key = ReadKey(element);
+            ILine key = ReadKey(element, parameterInfos);
 
             if (key != null)
             {
@@ -180,7 +179,7 @@ namespace Lexical.Localization
                         if (!string.IsNullOrEmpty(trimmedXmlValue))
                         {
                             IFormulationString formulationString = ValueParser.Parse(trimmedXmlValue);
-                            node.Values.Add( formulationString );
+                            node.Values.Add(formulationString);
 
                             if (correspondenceContext != null)
                                 correspondenceContext.Values[new LineTreeValue(node, formulationString, node.Values.Count - 1)] = text;
@@ -191,7 +190,7 @@ namespace Lexical.Localization
                 if (element.HasElements)
                 {
                     foreach (XElement e in element.Elements())
-                        ReadElement(e, node, correspondenceContext);
+                        ReadElement(e, node, correspondenceContext, parameterInfos);
                 }
             }
             else
@@ -199,7 +198,7 @@ namespace Lexical.Localization
                 if (element.HasElements)
                 {
                     foreach (XElement e in element.Elements())
-                        ReadElement(e, parent, correspondenceContext);
+                        ReadElement(e, parent, correspondenceContext, parameterInfos);
                 }
             }
 
@@ -217,13 +216,13 @@ namespace Lexical.Localization
             int len = value.Length;
             if (len == 0) return value;
             int startIx = 0;
-            for(; startIx<len; startIx++)
+            for (; startIx < len; startIx++)
             {
                 char ch = value[startIx];
                 if (ch != 10 && ch != 13 && ch != 32 && ch != 11) break;
             }
             int endIx = len - 1;
-            for(;endIx>=startIx;endIx--)
+            for (; endIx >= startIx; endIx--)
             {
                 char ch = value[endIx];
                 if (ch != 10 && ch != 13 && ch != 32 && ch != 11) break;
@@ -237,21 +236,22 @@ namespace Lexical.Localization
         /// Read key from <paramref name="element"/>.
         /// </summary>
         /// <param name="element"></param>
+        /// <param name="parameterInfos"></param>
         /// <returns>key or null</returns>
-        public ILine ReadKey(XElement element)
+        public ILine ReadKey(XElement element, IParameterInfos parameterInfos)
         {
-            Key key;
+            ILine result;
             // <line type="MyClass" type="something" key="something">
             if (element.Name == NameLine)
             {
-                key = null;
+                result = null;
             }
             // <type:MyClass>
             else if (element.Name.NamespaceName != null && element.Name.NamespaceName.StartsWith(URN_))
             {
                 string parameterName = element.Name.NamespaceName.Substring(URN_.Length);
                 string parameterValue = element.Name.LocalName;
-                key = Key.Create(null, parameterName, parameterValue);
+                result = Append(parameterInfos, null, parameterName, parameterValue);
             }
             else return null;
 
@@ -269,12 +269,24 @@ namespace Lexical.Localization
                         Group g_name = m.Groups["name"];
                         if (m.Success && g_name.Success) parameterName = g_name.Value;
                         // Append parameter
-                        key = Key.Create(key, parameterName, parameterValue);
+                        result = Append(parameterInfos, result, parameterName, parameterValue);
                     }
                 }
             }
 
-            return key;
+            return result;
+        }
+
+        ILine Append(IParameterInfos parameterInfos, ILine prev, string parameterName, string parameterValue)
+        {
+            IParameterInfo info;
+            if (parameterInfos.TryGetValue(parameterName, out info) && info != null)
+            {
+                if (info.InterfaceType == typeof(ILineHint)) return new LineHint(null, prev, parameterName, parameterValue);
+                if (info.InterfaceType == typeof(ILineCanonicalKey)) return new LineKey.Canonical(null, prev, parameterName, parameterValue);
+                if (info.InterfaceType == typeof(ILineNonCanonicalKey)) return new LineKey.NonCanonical(null, prev, parameterName, parameterValue);
+            }
+            return new LineParameter(null, prev, parameterName, parameterValue);
         }
 
         /// <summary>
@@ -287,9 +299,10 @@ namespace Lexical.Localization
         /// List all children of <paramref name="parent"/> with a readable <see cref="ILine"/>.
         /// </summary>
         /// <param name="parent"></param>
+        /// <param name="parameterInfos"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<ILine, XElement>> ListChildrenWithKeys(XElement parent)
-            => parent.Elements().Select(e => new KeyValuePair<ILine, XElement>(ReadKey(e), e)).Where(line => line.Key != null);
+        public IEnumerable<KeyValuePair<ILine, XElement>> ListChildrenWithKeys(XElement parent, IParameterInfos parameterInfos)
+            => parent.Elements().Select(e => new KeyValuePair<ILine, XElement>(ReadKey(e, parameterInfos), e)).Where(line => line.Key != null);
 
         /*
         public class TrimmerXmlReader : XmlTextReader

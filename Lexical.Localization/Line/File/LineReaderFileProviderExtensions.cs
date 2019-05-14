@@ -24,11 +24,11 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        public static KeyLineFileProviderSource FileProviderReaderAsKeyLines(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat namePolicy = default, bool throwIfNotFound = true)
-            => new KeyLineFileProviderSource(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound);
+        public static KeyLineFileProviderSource FileProviderReader(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => new KeyLineFileProviderSource(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -36,11 +36,11 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
-        public static LineTreeFileProviderSource FileProviderReaderAsLineTree(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat namePolicy = default, bool throwIfNotFound = true)
-            => new LineTreeFileProviderSource(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound);
+        public static LineTreeFileProviderSource FileProviderReaderAsLineTree(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => new LineTreeFileProviderSource(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -48,11 +48,11 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        public static StringLineFileProviderSource FileProviderReaderAsStringLines(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat namePolicy = default, bool throwIfNotFound = true)
-            => new StringLineFileProviderSource(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound);
+        public static StringLineFileProviderSource FileProviderReaderAsStringLines(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => new StringLineFileProviderSource(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset source that reads FileProvider resource at <paramref name="filepath"/>.
@@ -60,22 +60,22 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy">(optional) </param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>asset</returns>
-        public static IAsset FileProviderAsset(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat namePolicy = default, bool throwIfNotFound = true)
+        public static IAsset FileProviderAsset(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
         {
             if (fileFormat is ILineTreeTextReader || fileFormat is ILineTreeStreamReader)
             {
-                return new LocalizationAsset().Add(fileFormat.FileProviderReaderAsLineTree(fileProvider, filepath, namePolicy, throwIfNotFound), namePolicy).Load();
+                return new LocalizationAsset().Add(fileFormat.FileProviderReaderAsLineTree(fileProvider, filepath, lineFormat, throwIfNotFound), lineFormat).Load();
             }
             else if (fileFormat is ILineTextReader || fileFormat is ILineStreamReader)
             {
-                return new LocalizationAsset().Add(fileFormat.FileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy, throwIfNotFound), namePolicy).Load();
+                return new LocalizationAsset().Add(fileFormat.FileProviderReader(fileProvider, filepath, lineFormat, throwIfNotFound), lineFormat).Load();
             }
             else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
             {
-                return new LocalizationAsset().Add(fileFormat.FileProviderReaderAsStringLines(fileProvider, filepath, namePolicy, throwIfNotFound), namePolicy).Load();
+                return new LocalizationAsset().Add(fileFormat.FileProviderReaderAsStringLines(fileProvider, filepath, lineFormat, throwIfNotFound), lineFormat).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -86,22 +86,22 @@ namespace Lexical.Localization
         /// <param name="fileFormat"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy">(optional) </param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>asset source</returns>
-        public static LineFileProviderSource FileProviderAssetSource(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat namePolicy = default, bool throwIfNotFound = true)
+        public static LineFileProviderSource FileProviderAssetSource(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
         {
             if (fileFormat is ILineTreeTextReader || fileFormat is ILineTreeStreamReader)
             {
-                return new KeyLineFileProviderSource(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound);
+                return new KeyLineFileProviderSource(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound);
             }
             else if (fileFormat is ILineTextReader || fileFormat is ILineStreamReader)
             {
-                return new KeyLineFileProviderSource(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound);
+                return new KeyLineFileProviderSource(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound);
             }
             else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
             {
-                return new StringLineFileProviderSource(fileFormat, fileProvider, filepath, namePolicy, throwIfNotFound);
+                return new StringLineFileProviderSource(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound);
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -112,12 +112,12 @@ namespace Lexical.Localization
         /// <param name="fileFormatProvider"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static KeyLineFileProviderSource FileProviderReaderAsKeyLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderReaderAsKeyLines(fileProvider, filepath, namePolicy, throwIfNotFound);
+        public static KeyLineFileProviderSource FileProviderReader(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderReader(fileProvider, filepath, lineFormat, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -125,12 +125,12 @@ namespace Lexical.Localization
         /// <param name="fileFormatProvider"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>tree</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LineTreeFileProviderSource FileProviderReaderAsLineTree(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderReaderAsLineTree(fileProvider, filepath, namePolicy, throwIfNotFound);
+        public static LineTreeFileProviderSource FileProviderReaderAsLineTree(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderReaderAsLineTree(fileProvider, filepath, lineFormat, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filepath"/> from <paramref name="fileProvider"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -138,12 +138,12 @@ namespace Lexical.Localization
         /// <param name="fileFormatProvider"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static StringLineFileProviderSource FileProviderReaderAsStringLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderReaderAsStringLines(fileProvider, filepath, namePolicy, throwIfNotFound);
+        public static StringLineFileProviderSource FileProviderReaderAsStringLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderReaderAsStringLines(fileProvider, filepath, lineFormat, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset source that reads FileProvider resource at <paramref name="filepath"/>.
@@ -151,12 +151,12 @@ namespace Lexical.Localization
         /// <param name="fileFormatProvider"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy">(optional) </param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>asset</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IAsset FileProviderAsset(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat namePolicy = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderAsset(fileProvider, filepath, namePolicy, throwIfNotFound);
+        public static IAsset FileProviderAsset(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderAsset(fileProvider, filepath, lineFormat, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset that reads from FileProvider.
@@ -164,12 +164,12 @@ namespace Lexical.Localization
         /// <param name="fileFormatProvider"></param>
         /// <param name="fileProvider"></param>
         /// <param name="filepath"></param>
-        /// <param name="namePolicy">(optional) </param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>asset source</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LineFileProviderSource FileProviderAssetSource(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat namePolicy = default, bool throwIfNotFound = true, ILine prefix = null, ILine suffix = null)
-            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderAssetSource(fileProvider, filepath, namePolicy, throwIfNotFound);
+        public static LineFileProviderSource FileProviderAssetSource(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderAssetSource(fileProvider, filepath, lineFormat, throwIfNotFound);
 
     }
 }

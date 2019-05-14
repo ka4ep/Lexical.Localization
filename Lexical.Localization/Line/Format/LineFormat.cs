@@ -18,7 +18,7 @@ namespace Lexical.Localization
     /// Parameter policy that uses the following format "Key:Value:...". 
     /// Parses to <see cref="ILineParameter"/> parts.
     /// </summary>
-    public class LineFormat : LineParameterQualifierComposition, ILinePrinter, ILineParser, ILineAppendParser
+    public class LineFormat : LineParameterQualifierComposition, ILinePrinter, ILineParser, ILineAppendParser, ILineFormatParameterInfos
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
 
@@ -28,7 +28,7 @@ namespace Lexical.Localization
         /// Uses <see cref="ParameterInfos.Default"/> to instantiate known keys and hints as they are.
         /// Unknown parameters are instantated as <see cref="ILineParameter"/> and left for the caller to interpret.
         /// </summary>
-        static LineFormat parameters = new LineFormat("\\:", false, "\\:", false, ParameterInfos.Default).Rule("Value", -1, "").SetReadonly() as LineFormat;
+        static LineFormat parameters = new LineFormat("\\:", false, "\\:", false, Utils.ParameterInfos.Default).Rule("Value", -1, "").SetReadonly() as LineFormat;
 
         /// <summary>
         /// Format that prints and parses all parameters.
@@ -36,7 +36,7 @@ namespace Lexical.Localization
         /// Uses <see cref="ParameterInfos.Default"/> to instantiate known keys and hints as they are.
         /// Unknown parameters are instantated as <see cref="ILineParameter"/> and left for the caller to interpret.
         /// </summary>
-        static LineFormat parametersInclValue = new LineFormat("\\:", false, "\\:", false, ParameterInfos.Default).SetReadonly() as LineFormat;
+        static LineFormat parametersInclValue = new LineFormat("\\:", false, "\\:", false, Utils.ParameterInfos.Default).SetReadonly() as LineFormat;
 
         /// <summary>
         /// Format that prints and parses parameters 
@@ -50,6 +50,11 @@ namespace Lexical.Localization
         /// Unknown parameters are instantated as <see cref="ILineParameter"/> and left for the caller to interpret.
         /// </summary>
         public static LineFormat ParametersInclValue => parametersInclValue;
+
+        /// <summary>
+        /// Parameter infos.
+        /// </summary>
+        public IParameterInfos ParameterInfos { get => parameterInfos; set => new InvalidOperationException("read-only"); }
 
         /// <summary>
         /// Pattern that parses "ParameterName:ParameterValue" texts.
@@ -79,8 +84,7 @@ namespace Lexical.Localization
         /// <summary>
         /// (optional) Parameter infos for determining if parameter is key.
         /// </summary>
-        protected IReadOnlyDictionary<string, IParameterInfo> parameterInfos;
-
+        protected IParameterInfos parameterInfos;
 
         /// <summary>
         /// Create new string serializer
@@ -90,7 +94,7 @@ namespace Lexical.Localization
         /// <param name="unescapeCharacters">list of characters that are to be unescaped</param>
         /// <param name="unescapeControlCharacters">Unescape tnab0f</param>
         /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
-        public LineFormat(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters, IReadOnlyDictionary<string, IParameterInfo> parameterInfos = null)
+        public LineFormat(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters, IParameterInfos parameterInfos = null)
         {
             // Regex.Escape doen't work for brackets []
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);

@@ -17,7 +17,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Extensions for IEnumerable{ILine}}.
     /// </summary>
-    public static partial class KeyLinesExtensions
+    public static partial class LinesExtensions
     {
         static ILineFormat DefaultPolicy = LineParameterPrinter.Default;
 
@@ -25,32 +25,32 @@ namespace Lexical.Localization
         /// Convert <paramref name="lines"/> to asset key lines.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="policy"></param>
+        /// <param name="lineFormat"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<ILine> lines, ILineFormat policy)
-            => lines.Select(line => new KeyValuePair<string, IFormulationString>((policy ?? DefaultPolicy).Print(line), line.GetValue()));
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<ILine> lines, ILineFormat lineFormat)
+            => lines.Select(line => new KeyValuePair<string, IFormulationString>((lineFormat ?? DefaultPolicy).Print(line), line.GetValue()));
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset key lines.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="keyPolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <param name="valueParser"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, ILineFormat keyPolicy, IStringFormatParser valueParser)
-            => lines.Select(line => new KeyValuePair<string, IFormulationString>((keyPolicy ?? DefaultPolicy).Print(line.Key), valueParser.Parse(line.Value)));
+        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, ILineFormat lineFormat, IStringFormatParser valueParser)
+            => lines.Select(line => new KeyValuePair<string, IFormulationString>((lineFormat ?? DefaultPolicy).Print(line.Key), valueParser.Parse(line.Value)));
 
         /// <summary>
         /// Convert <paramref name="lines"/> to Key Tree of one level.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="namePolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <returns></returns>
-        public static ILineTree ToLineTree(this IEnumerable<ILine> lines, ILineFormat namePolicy)
+        public static ILineTree ToLineTree(this IEnumerable<ILine> lines, ILineFormat lineFormat)
         {
             LineTree tree = new LineTree();
-            if (namePolicy is ILinePattern pattern)
-                tree.AddRange(lines, pattern);
+            if (lineFormat is ILinePattern pattern)
+                tree.AddRange(lines, pattern, lineFormat.GetParameterInfos());
             else
                 tree.AddRange(lines);
             return tree;
@@ -96,44 +96,25 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <param name="lines"></param>
         /// <param name="groupingRule"></param>
+        /// <param name="parameterInfos"></param>
         /// <returns></returns>
-        public static ILineTree AddRange(this ILineTree tree, IEnumerable<ILine> lines, ILinePattern groupingRule) // Todo separate to sortRule + groupingRule
+        public static ILineTree AddRange(this ILineTree tree, IEnumerable<ILine> lines, ILinePattern groupingRule, IParameterInfos parameterInfos) // Todo separate to sortRule + groupingRule
         {
             // Use another method
             //if (groupingRule == null) { node.AddRange(lines); return node; }
-
-            StructList16<Parameter> parameters = new StructList16<Parameter>(null);
+            StructList16<ILineParameter> parameters = new StructList16<ILineParameter>(null);
             foreach (var line in lines)
             {
-                //line.GetParameterParts<StructList16<>
-                // Convert key into parts
-                for (ILine k = line.Key; k != null; k = k.GetPreviousPart())
-                {
-                    string parameterName = k.GetParameterName(), parameterValue = k.GetParameterValue();
-                    if (parameterName == null || parameterValue == null) continue;
-                    bool isCanonical = k is ILineCanonicalKey, isNonCanonical = k is ILineNonCanonicalKey;
-                    if (!isCanonical && !isNonCanonical) continue;
-
-                    // Overwrite previously assigned non-canonical parameter
-                    if (isNonCanonical)
-                    {
-                        // Find previous occurance
-                        int ixx = -1;
-                        for (int i = 0; i < parameters.Count; i++) if (parameters[i].parameterName == parameterName) { ixx = i; break; }
-                        // Overwrite previous occurance, only left-most is effective
-                        if (ixx >= 0) { parameters[ixx] = new Parameter(parameterName, parameterValue, isCanonical, isNonCanonical); continue; }
-                    }
-                    // Add parameter to list
-                    parameters.Add(new Parameter(parameterName, parameterValue, isCanonical, isNonCanonical));
-                }
+                parameters.Clear();
+                line.GetParameterParts(ref parameters);
                 parameterListSorter.Reverse(ref parameters);
 
                 // Key for the current level. 
-                Key levelKey = null;
+                ILine levelKey = null;
                 // Build levels with this collection
                 List<ILine> key_levels = new List<ILine>();
                 // Visit both lists concurrently
-                Parameter next_parameter = default;
+                ILineParameter next_parameter = default;
                 if (groupingRule != null)
                 {
                     foreach (var part in groupingRule.AllParts)
@@ -156,38 +137,38 @@ namespace Lexical.Localization
                             // Copy 
                             next_parameter = parameters[ix];
                             // Already added before
-                            if (next_parameter.isUnused) continue;
+                            if (next_parameter.ParameterName == null) continue;
                             // Get name
-                            string parameter_name = next_parameter.parameterName;
+                            string parameter_name = next_parameter.ParameterName;
                             // Parameter matches the name in the pattern's capture part
                             if (parameter_name == part.ParameterName) { next_parameter_ix = ix; break; }
                             // Matches with "anysection"
-                            IParameterInfo info;
-                            if (part.ParameterName == "anysection" && ParameterInfos.Default.TryGetValue(parameter_name, out info) && info.IsSection) { next_parameter_ix = ix; break; }
+                            //IParameterInfo info;
+                            //if (part.ParameterName == "anysection" && ParameterInfos.Default.TryGetValue(parameter_name, out info) && info.IsSection) { next_parameter_ix = ix; break; }
                         }
                         // No matching parameter for this capture part
                         if (next_parameter_ix < 0) continue;
 
                         // This part is canonical.
-                        if (next_parameter.isCanonical)
+                        if (next_parameter.IsCanonicalKey(parameterInfos))
                         {
                             // There (may be) are other canonical parts between part_ix and next_part_is. We have to add them here.
                             for (int ix = 0; ix < next_parameter_ix; ix++)
                             {
                                 // Copy
-                                Parameter parameter = parameters[ix];
+                                ILineParameter parameter = parameters[ix];
                                 // Has been added before
-                                if (parameter.isUnused || !parameter.isCanonical) continue;
+                                if ((parameter.ParameterName == null) || !parameter.IsCanonicalKey(parameterInfos)) continue;
                                 // Append to level's key
-                                levelKey = parameter.CreateKey(levelKey);
+                                levelKey = LineAppender.Default.Concat(parameter, levelKey);
                                 // Mark handled
-                                parameters[ix] = Parameter.Unused;
+                                parameters[ix] = unused;
                             }
                         }
                         // Append to level's key
-                        levelKey = next_parameter.CreateKey(levelKey);
+                        levelKey = LineAppender.Default.Concat(next_parameter, levelKey);
                         // Mark handled
-                        parameters[next_parameter_ix] = Parameter.Unused;
+                        parameters[next_parameter_ix] = unused;
                         // Yield level
                         if (part.PostfixSeparator.Contains("/")) { key_levels.Add(levelKey); levelKey = null; }
                     }
@@ -197,15 +178,15 @@ namespace Lexical.Localization
                 for (int ix = 0; ix < parameters.Count; ix++)
                 {
                     // Copy
-                    Parameter parameter = parameters[ix];
-                    if (!parameter.isUnused) levelKey = parameter.CreateKey(levelKey);
+                    ILineParameter parameter = parameters[ix];
+                    if (parameter.ParameterName != null) levelKey = LineAppender.Default.Concat(parameter, levelKey);
                 }
 
                 // yield levelKey
                 if (levelKey != null) { key_levels.Add(levelKey); levelKey = null; }
 
                 // Yield line
-                tree.AddRecursive(key_levels, line.Value);
+                tree.AddRecursive(key_levels, line.GetValue());
                 key_levels.Clear();
                 parameters.Clear();
             }
@@ -214,7 +195,9 @@ namespace Lexical.Localization
         }
 
         // Reorder parts according to grouping rule
-        static StructListSorter<StructList16<Parameter>, Parameter> parameterListSorter = new StructListSorter<StructList16<Parameter>, Parameter>(null);
+        static StructListSorter<StructList16<ILineParameter>, ILineParameter> parameterListSorter = new StructListSorter<StructList16<ILineParameter>, ILineParameter>(null);
+
+        static ILineParameter unused = new LineParameter(null, null, null, null);
 
         /// <summary>
         /// Create an asset that uses <paramref name="lines"/>.
@@ -244,46 +227,9 @@ namespace Lexical.Localization
         {
             Dictionary<ILine, IFormulationString> result = new Dictionary<ILine, IFormulationString>(keyComparer ?? LineComparer.Default);
             foreach (var line in lines)
-                if (line.Key != null) result[line.Key] = line.Value;
+                if (line != null) result[line] = line.GetValue();
             return result;
         }
-    }
-
-    internal struct Parameter
-    {
-        public static Parameter Unused = new Parameter { parameterName = null, parameterValue = null, flags = 0 };
-
-        public string parameterName;
-        public string parameterValue;
-
-        public bool isUnused => (flags & 1) == 0;
-        public bool isCanonical => (flags & 2) == 2;
-        public bool isNonCanonical => (flags & 4) == 4;
-
-        /// <summary>
-        /// 1 - unallocated
-        /// 2 - is canonical
-        /// 4 - is non canonical
-        /// </summary>
-        public int flags;
-
-        public Parameter(string parameterName, string parameterValue, bool isCanonical, bool isNonCanonical)
-        {
-            this.parameterName = parameterName;
-            this.parameterValue = parameterValue;
-            int _flags = 1;
-            if (isCanonical) _flags |= 2;
-            if (isNonCanonical) _flags |= 4;
-            this.flags = _flags;
-        }
-
-        public Key CreateKey(Key prev = default)
-            => ((flags & 2) == 2) ? new Key.Canonical(prev, parameterName, parameterValue) :
-               ((flags & 4) == 4) ? new Key.NonCanonical(prev, parameterName, parameterValue) :
-               new Key(prev, parameterName, parameterValue);
-
-        public override string ToString()
-            => parameterName == null || parameterValue == null ? null : parameterName + ":" + parameterValue;
     }
 
 }

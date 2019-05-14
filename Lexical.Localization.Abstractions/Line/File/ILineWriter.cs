@@ -101,10 +101,10 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="srcText">(optional) source text, used if previous content are updated.</param>
         /// <param name="dstText"></param>
-        /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, TextReader srcText, TextWriter dstText, ILineFormat namePolicy, LineFileWriteFlags flags);
+        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, TextReader srcText, TextWriter dstText, ILineFormat lineFormat, LineFileWriteFlags flags);
     }
 
     /// <summary>
@@ -122,10 +122,10 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
         /// <param name="dstStream">stream to write to.</param>
-        /// <param name="namePolicy">(optional) name policy.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, Stream srcStream, Stream dstStream, ILineFormat namePolicy, LineFileWriteFlags flags);
+        void WriteStringLines(IEnumerable<KeyValuePair<string, IFormulationString>> lines, Stream srcStream, Stream dstStream, ILineFormat lineFormat, LineFileWriteFlags flags);
     }
 
     /// <summary>
@@ -141,10 +141,10 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="srcText">(optional) source text, used if previous content are updated.</param>
         /// <param name="dstText"></param>
-        /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyLines(IEnumerable<ILine> lines, TextReader srcText, TextWriter dstText, ILineFormat namePolicy, LineFileWriteFlags flags);
+        void WriteLines(IEnumerable<ILine> lines, TextReader srcText, TextWriter dstText, ILineFormat lineFormat, LineFileWriteFlags flags);
     }
 
     /// <summary>
@@ -162,10 +162,10 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
         /// <param name="dstStream">stream to write to.</param>
-        /// <param name="namePolicy">(optional) name policy.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteKeyLines(IEnumerable<ILine> lines, Stream srcStream, Stream dstStream, ILineFormat namePolicy, LineFileWriteFlags flags);
+        void WriteLines(IEnumerable<ILine> lines, Stream srcStream, Stream dstStream, ILineFormat lineFormat, LineFileWriteFlags flags);
     }
 
     /// <summary>
@@ -183,10 +183,10 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
         /// <param name="dstStream"></param>
-        /// <param name="namePolicy">(optional) name policy.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteLineTree(ILineTree tree, Stream srcStream, Stream dstStream, ILineFormat namePolicy, LineFileWriteFlags flags);
+        void WriteLineTree(ILineTree tree, Stream srcStream, Stream dstStream, ILineFormat lineFormat, LineFileWriteFlags flags);
     }
 
     /// <summary>
@@ -202,10 +202,10 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <param name="srcText">(optional) source text, used if previous content is updated.</param>
         /// <param name="dstText"></param>
-        /// <param name="namePolicy">(optional) name policy. If null, uses the default policy for the file format.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteLineTree(ILineTree tree, TextReader srcText, TextWriter dstText, ILineFormat namePolicy, LineFileWriteFlags flags);
+        void WriteLineTree(ILineTree tree, TextReader srcText, TextWriter dstText, ILineFormat lineFormat, LineFileWriteFlags flags);
     }
     #endregion Interface
 }

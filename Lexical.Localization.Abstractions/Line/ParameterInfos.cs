@@ -5,7 +5,6 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Lexical.Localization.Utils
@@ -13,9 +12,9 @@ namespace Lexical.Localization.Utils
     /// <summary>
     /// Information about parameters.
     /// </summary>
-    public class ParameterInfos : Dictionary<string, IParameterInfo>
+    public class ParameterInfos : Dictionary<string, IParameterInfo>, IParameterInfosEnumerable, IParameterInfosMap, IParameterInfosWritable
     {
-        private static IReadOnlyDictionary<string, IParameterInfo> instance = new ParameterInfos()
+        private static ParameterInfos instance = new ParameterInfos()
             .Add("Culture", interfaceType: typeof(ILineNonCanonicalKey), sortingOrder: -6000, pattern: new Regex(@"^([a-z]{2,5})(-([A-Za-z]{2,7}))?$", RegexOptions.CultureInvariant | RegexOptions.Compiled))
             .Add("Location", interfaceType: typeof(ILineCanonicalKey), sortingOrder: -4000, pattern: null)
             .Add("Assembly", interfaceType: typeof(ILineNonCanonicalKey), sortingOrder: -2000, pattern: null)
@@ -46,43 +45,14 @@ namespace Lexical.Localization.Utils
             .Add("PluralRules", interfaceType: typeof(ILineHint), sortingOrder: -22000, pattern: null)
             .Add("StringFormatFunctions", interfaceType: typeof(ILineHint), sortingOrder: -21000, pattern: null)
             .Add("StringFormat", interfaceType: typeof(ILineHint), sortingOrder: -200000, pattern: null)
-            as IReadOnlyDictionary<string, IParameterInfo>;
+            as ParameterInfos;
 
         /// <summary>
         /// Default instance that contains info about well-known parameters.
         /// </summary>
-        public static IReadOnlyDictionary<string, IParameterInfo> Default => instance;
-    }
+        public static IParameterInfos Default => instance;
 
-    /// <summary>
-    /// Interface for basic parameter info.
-    /// </summary>
-    public interface IParameterInfo
-    {
-        /// <summary>
-        /// The parameter name
-        /// </summary>
-        String ParameterName { get; }
-
-        /// <summary>
-        /// Type of the parameter:
-        /// <list type="bullet">
-        ///     <item><see cref="ILineHint"/>not used with comparison.</item>
-        ///     <item><see cref="ILineCanonicalKey"/>hash-equals comparable key (reoccuring)</item>
-        ///     <item><see cref="ILineNonCanonicalKey"/>hash-equals comparable key</item>
-        /// </list>
-        /// </summary>
-        Type InterfaceType { get; }
-
-        /// <summary>
-        /// Suggested sorting order. Smaller number is sorted to left, higher to right when formulating a string.
-        /// </summary>
-        int Order { get; }
-
-        /// <summary>
-        /// Default capture pattern for ILinePattern.
-        /// </summary>
-        Regex Pattern { get; }
+        IEnumerator<IParameterInfo> IEnumerable<IParameterInfo>.GetEnumerator() => Values.GetEnumerator();
     }
 
     /// <summary>
@@ -137,60 +107,4 @@ namespace Lexical.Localization.Utils
         }
     }
 
-    /// <summary>
-    /// Extension methods for parameter infos.
-    /// </summary>
-    public static class IParameterInfoExtensions
-    {
-        /// <summary>
-        /// Add <paramref name="info"/> entry to <paramref name="infos"/>.
-        /// </summary>
-        /// <param name="infos"></param>
-        /// <param name="info"></param>
-        /// <returns><paramref name="infos"/></returns>
-        /// <exception cref="ArgumentException"></exception>
-        public static IDictionary<string, IParameterInfo> Add(this IDictionary<string, IParameterInfo> infos, IParameterInfo info)
-        {
-            if (infos.ContainsKey(info.ParameterName)) throw new ArgumentException($"Parameter {info.ParameterName} already exists", nameof(info));
-            infos[info.ParameterName] = info;
-            return infos;
-        }
-
-        /// <summary>
-        /// Add info entry to <paramref name="infos"/>.
-        /// </summary>
-        /// <param name="infos"></param>
-        /// <param name="parameterName"></param>
-        /// <param name="interfaceType"></param>
-        /// <param name="sortingOrder"></param>
-        /// <param name="pattern">(optional) capture pattern for <see cref="ILinePattern"/></param>
-        /// <returns><paramref name="infos"/></returns>
-        /// <exception cref="ArgumentException"></exception>
-        public static IDictionary<string, IParameterInfo> Add(this IDictionary<string, IParameterInfo> infos, string parameterName, Type interfaceType, int sortingOrder, Regex pattern)
-        {
-            if (infos.ContainsKey(parameterName)) throw new ArgumentException($"Parameter {parameterName} already exists", nameof(parameterName));
-            infos[parameterName] = new ParameterInfo(parameterName, interfaceType, sortingOrder, pattern);
-            return infos;
-        }
-
-        /// <summary>
-        /// Canonical parameters.
-        /// </summary>
-        public static IEnumerable<IParameterInfo> Canonicals(this IReadOnlyDictionary<string, IParameterInfo> infos)
-            => infos.Values.Where(pi => pi.InterfaceType == typeof(ILineCanonicalKey));
-
-        /// <summary>
-        /// Non-canonical parameters.
-        /// </summary>
-        public static IEnumerable<IParameterInfo> NonCanonicals(this IReadOnlyDictionary<string, IParameterInfo> infos)
-            => infos.Values.Where(pi => pi.InterfaceType == typeof(ILineNonCanonicalKey));
-
-        /// <summary>
-        /// Comparable parameters.
-        /// </summary>
-        public static IEnumerable<IParameterInfo> Comparables(this IReadOnlyDictionary<string, IParameterInfo> infos)
-            => infos.Values.Where(pi => pi.InterfaceType == typeof(ILineCanonicalKey) || pi.InterfaceType == typeof(ILineNonCanonicalKey));
-
-
-    }
 }
