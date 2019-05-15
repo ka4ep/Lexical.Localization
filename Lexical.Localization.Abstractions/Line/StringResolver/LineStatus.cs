@@ -243,6 +243,13 @@ namespace Lexical.Localization
             => (int)((ulong)status >> Shift.ResolveSeverity) & 3;
 
         /// <summary>
+        /// Get resolve step status code.
+        /// </summary>
+        /// <param name="status"></param>
+        public static LineStatus Resolve(this LineStatus status)
+            => status & LineStatus.ResolveMask;
+
+        /// <summary>
         /// Severity for the step that matches culture.
         /// 
         /// <list type="table">
@@ -257,6 +264,13 @@ namespace Lexical.Localization
             => (int)((ulong)status >> Shift.CultureSeverity) & 3;
 
         /// <summary>
+        /// Get culture step status code.
+        /// </summary>
+        /// <param name="status"></param>
+        public static LineStatus Culture(this LineStatus status)
+            => status & LineStatus.CultureMask;
+
+        /// <summary>
         /// Severity for the step applies Plurality_.
         /// 
         /// <list type="table">
@@ -268,6 +282,13 @@ namespace Lexical.Localization
         /// </summary>
         public static int PluralitySeverity(this LineStatus status) 
             => (int)((ulong)status >> Shift.PluralitySeverity) & 3;
+
+        /// <summary>
+        /// Get plurality step status code.
+        /// </summary>
+        /// <param name="status"></param>
+        public static LineStatus Plurality(this LineStatus status)
+            => status & LineStatus.PluralityMask;
 
         /// <summary>
         /// Severity for the step that converts arguments into strings
@@ -284,6 +305,13 @@ namespace Lexical.Localization
             => (int)((ulong)status >> Shift.ArgumentSeverity) & 3;
 
         /// <summary>
+        /// Get argument status code.
+        /// </summary>
+        /// <param name="status"></param>
+        public static LineStatus Argument(this LineStatus status)
+            => status & LineStatus.ArgumentMask;
+
+        /// <summary>
         /// Severity for the step that parses formulation string and applies arguments.
         /// 
         /// <list type="table">
@@ -296,6 +324,13 @@ namespace Lexical.Localization
         /// <param name="status"></param>
         public static int FormulationSeverity(this LineStatus status) 
             => (int)((ulong)status >> Shift.FormulationSeverity) & 3;
+
+        /// <summary>
+        /// Get formulation step status code.
+        /// </summary>
+        /// <param name="status"></param>
+        public static LineStatus Formulation(this LineStatus status)
+            => status & LineStatus.FormulationMask;
 
         /// <summary>
         /// Severity for <see cref="ILineStringResolver"/> implementation specific "Custom0" status.
@@ -314,6 +349,13 @@ namespace Lexical.Localization
             => (int)((ulong)status >> Shift.Custom0Severity) & 3;
 
         /// <summary>
+        /// Get custom0 status code.
+        /// </summary>
+        /// <param name="status"></param>
+        public static LineStatus Custom0(this LineStatus status)
+            => status & LineStatus.Custom0Mask;
+
+        /// <summary>
         /// Severity for <see cref="ILineStringResolver"/> implementation specific "Custom1" status.
         /// 
         /// "Custom1" is a status code that is specific to the <see cref="ILineStringResolver"/> implementation.
@@ -328,6 +370,13 @@ namespace Lexical.Localization
         /// <param name="status"></param>
         public static int Custom1Severity(this LineStatus status) 
             => (int)((ulong)status >> Shift.Custom1Severity) & 3;
+
+        /// <summary>
+        /// Get custom1 status code.
+        /// </summary>
+        /// <param name="status"></param>
+        public static LineStatus Custom1(this LineStatus status)
+            => status & LineStatus.Custom1Mask;
 
         /// <summary>
         /// Highest severity value out of each category.

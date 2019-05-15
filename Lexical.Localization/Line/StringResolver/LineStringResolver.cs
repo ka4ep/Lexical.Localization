@@ -222,10 +222,10 @@ namespace Lexical.Localization
         static LineString Format(ILine key, CultureInfo culture, IFormulationString formulationString, object[] args)
         {
             // Convert to strings
-            string[] arg_strings = new string[formulationString.Arguments.Length];
-            for(int i=0; i< formulationString.Arguments.Length; i++)
+            string[] arg_strings = new string[formulationString.Placeholders.Length];
+            for(int i=0; i< formulationString.Placeholders.Length; i++)
             {
-                IFormulationStringArgument argumentFormulation = formulationString.Arguments[i];
+                IPlaceholder argumentFormulation = formulationString.Placeholders[i];
                 int argIndex = argumentFormulation.ArgumentIndex;
                 if (args!=null && argIndex >= 0 && argIndex < args.Length)
                 {
@@ -242,7 +242,7 @@ namespace Lexical.Localization
             foreach(var part in formulationString.Parts)
             {
                 if (part.Kind == FormulationStringPartKind.Text) c += part.Length;
-                else if (part.Kind == FormulationStringPartKind.Argument && part is IFormulationStringArgument arg) c += arg_strings[arg.ArgumentsIndex].Length;
+                else if (part.Kind == FormulationStringPartKind.Placeholder && part is IPlaceholder arg) c += arg_strings[arg.ArgumentsIndex].Length;
             }
 
             // Put together string
@@ -255,7 +255,7 @@ namespace Lexical.Localization
                     formulationString.Text.CopyTo(part.Index, chars, ix, part.Length);
                     ix += part.Length;
                 }
-                else if (part.Kind == FormulationStringPartKind.Argument && part is IFormulationStringArgument arg)
+                else if (part.Kind == FormulationStringPartKind.Placeholder && part is IPlaceholder arg)
                 {
                     string str = arg_strings[arg.ArgumentsIndex];
                     if (str != null)

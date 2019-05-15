@@ -198,7 +198,7 @@ namespace Lexical.Localization.Exp
     /// <summary>
     /// Function call expression
     /// </summary>
-    public interface IFunctionExpression : IExpression
+    public interface ICallExpression : IExpression
     {
         /// <summary>
         /// Function name

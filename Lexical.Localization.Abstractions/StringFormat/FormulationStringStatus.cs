@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// </summary>
     public class FormulationStringStatus : IFormulationString
     {
-        static IFormulationStringArgument[] no_arguments = new IFormulationStringArgument[0];
+        static IPlaceholder[] no_arguments = new IPlaceholder[0];
         static IFormulationStringPart[] no_parts = new IFormulationStringPart[0];
         static FormulationStringStatus _null = new FormulationStringStatus(null, LineStatus.FormulationFailedNull);
         static FormulationStringStatus _no_parser = new FormulationStringStatus(null, LineStatus.FormulationFailedNoParser);
@@ -51,7 +51,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Get arguments
         /// </summary>
-        public IFormulationStringArgument[] Arguments => no_arguments;
+        public IPlaceholder[] Placeholders => no_arguments;
 
         /// <summary>
         /// Get format provider.

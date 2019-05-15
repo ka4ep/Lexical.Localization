@@ -216,21 +216,26 @@ namespace Lexical.Localization.Exp
     }
 
     /// <summary>
-    /// 
+    /// Function call
     /// </summary>
-    public class FunctionExpression : Expression, IFunctionExpression
+    public class CallExpression : Expression, ICallExpression
     {
-        /// <summary> </summary>
+        /// <summary> 
+        /// Function Name
+        /// </summary>
         public String Name { get; internal set; }
 
-        /// <summary> </summary>
+        /// <summary> 
+        /// Function arguments
+        /// </summary>
         public IExpression[] Args { get; internal set; }
+
         /// <summary>
-        /// 
+        /// Create function call expression
         /// </summary>
         /// <param name="name"></param>
         /// <param name="args"></param>
-        public FunctionExpression(string name, params IExpression[] args)
+        public CallExpression(string name, params IExpression[] args)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Args = args ?? throw new ArgumentNullException(nameof(args));

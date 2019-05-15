@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.StringFormat;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -97,7 +98,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Parsed arguments. Set in <see cref="Build"/>.
             /// </summary>
-            IFormulationStringArgument[] arguments;
+            IPlaceholder[] arguments;
 
             /// <summary>
             /// String as sequence of parts. Set in <see cref="Build"/>.
@@ -127,7 +128,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Get the parsed arguments.
             /// </summary>
-            public IFormulationStringArgument[] Arguments { get { if (status == LineStatus.FormulationFailedNoResult) Build(); return arguments; } }
+            public IPlaceholder[] Placeholders { get { if (status == LineStatus.FormulationFailedNoResult) Build(); return arguments; } }
 
             /// <summary>
             /// (optional) Get associated format provider. This is typically a plurality rules and  originates from a localization file.
@@ -179,17 +180,17 @@ namespace Lexical.Localization
                 for (int i = 0; i < partArray.Length; i++)
                 {
                     if (partArray[i] is TextPart textPart) textPart.PartsIndex = i;
-                    else if (partArray[i] is Argument argPart) argPart.PartsIndex = i;
+                    else if (partArray[i] is PlaceHolder argPart) argPart.PartsIndex = i;
                 }
 
                 // Create arguments array
                 int argumentCount = 0;
-                for (int i = 0; i < parts.Count; i++) if (parts[i] is IFormulationStringArgument) argumentCount++;
-                var argumentsArray = new IFormulationStringArgument[argumentCount];
+                for (int i = 0; i < parts.Count; i++) if (parts[i] is IPlaceholder) argumentCount++;
+                var argumentsArray = new IPlaceholder[argumentCount];
                 int j = 0;
-                for (int i = 0; i < parts.Count; i++) if (parts[i] is Argument argPart) argumentsArray[j++] = argPart;
-                Array.Sort(argumentsArray, ArgumentOrderComparer.Instance);
-                for (int i = 0; i < argumentsArray.Length; i++) ((Argument)argumentsArray[i]).ArgumentsIndex = i;
+                for (int i = 0; i < parts.Count; i++) if (parts[i] is PlaceHolder argPart) argumentsArray[j++] = argPart;
+                Array.Sort(argumentsArray, PlaceholderOrderComparer.Instance);
+                for (int i = 0; i < argumentsArray.Length; i++) ((PlaceHolder)argumentsArray[i]).ArgumentsIndex = i;
 
                 // Write status.
                 Thread.MemoryBarrier();
@@ -199,19 +200,19 @@ namespace Lexical.Localization
             }
 
             /// <summary>
-            /// Comparer that compares first by argument index, then by occurance index.
+            /// Comparer that compares first by placeholder index, then by occurance index.
             /// </summary>
-            class ArgumentOrderComparer : IComparer<IFormulationStringArgument>
+            class PlaceholderOrderComparer : IComparer<IPlaceholder>
             {
-                static IComparer<IFormulationStringArgument> instance = new ArgumentOrderComparer();
-                public static IComparer<IFormulationStringArgument> Instance => instance;
+                static IComparer<IPlaceholder> instance = new PlaceholderOrderComparer();
+                public static IComparer<IPlaceholder> Instance => instance;
 
-                public int Compare(IFormulationStringArgument x, IFormulationStringArgument y)
+                public int Compare(IPlaceholder x, IPlaceholder y)
                 {
                     int c = x.ArgumentIndex - y.ArgumentIndex;
                     if (c < 0) return -1;
                     if (c > 0) return 1;
-                    c = x.OccuranceIndex - y.OccuranceIndex;
+                    c = x.PlaceholderIndex - y.PlaceholderIndex;
                     if (c < 0) return -1;
                     if (c > 0) return 1;
                     return c;
@@ -274,7 +275,7 @@ namespace Lexical.Localization
         {
             static IFormulationString instance => new Null();
             static IFormulationStringPart[] parts = new IFormulationStringPart[0];
-            static IFormulationStringArgument[] arguments = new IFormulationStringArgument[0];
+            static IPlaceholder[] arguments = new IPlaceholder[0];
             /// <summary>
             /// Default instance.
             /// </summary>
@@ -286,7 +287,7 @@ namespace Lexical.Localization
             /// <summary />
             public IFormulationStringPart[] Parts => parts;
             /// <summary />
-            public IFormulationStringArgument[] Arguments => arguments;
+            public IPlaceholder[] Placeholders => arguments;
             /// <summary />
             public IFormatProvider FormatProvider => null;
 
@@ -319,7 +320,7 @@ namespace Lexical.Localization
         {
             static IFormulationString instance => new Empty();
             static IFormulationStringPart[] parts = new IFormulationStringPart[0];
-            static IFormulationStringArgument[] arguments = new IFormulationStringArgument[0];
+            static IPlaceholder[] arguments = new IPlaceholder[0];
             /// <summary>
             /// Default instance.
             /// </summary>
@@ -331,7 +332,7 @@ namespace Lexical.Localization
             /// <summary />
             public IFormulationStringPart[] Parts => parts;
             /// <summary />
-            public IFormulationStringArgument[] Arguments => arguments;
+            public IPlaceholder[] Placeholders => arguments;
             /// <summary />
             public IFormatProvider FormatProvider => null;
 
@@ -437,7 +438,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Parsed argument info.
         /// </summary>
-        public class Argument : IFormulationStringArgument
+        public class PlaceHolder : IPlaceholder
         {
             /// <summary>
             /// The 'parent' formulation string.
@@ -447,7 +448,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Part type
             /// </summary>
-            public FormulationStringPartKind Kind => FormulationStringPartKind.Argument;
+            public FormulationStringPartKind Kind => FormulationStringPartKind.Placeholder;
 
             /// <summary>
             /// The whole argument definition as it appears in the formulation string.
@@ -457,7 +458,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Occurance index in <see cref="FormulationString"/>.
             /// </summary>
-            public int OccuranceIndex { get; internal set; }
+            public int PlaceholderIndex { get; internal set; }
 
             /// <summary>
             /// Argument index. Refers to index in the args array of <see cref="ILineFormatArgs.Args"/>.
@@ -522,14 +523,14 @@ namespace Lexical.Localization
             /// <param name="function">(optional)</param>
             /// <param name="format">(optional)</param>
             /// <param name="alignment"></param>
-            public Argument(IFormulationString formulationString, int index, int length, int occuranceIndex, int argumentIndex, string function, string format, int alignment)
+            public PlaceHolder(IFormulationString formulationString, int index, int length, int occuranceIndex, int argumentIndex, string function, string format, int alignment)
             {
                 FormulationString = formulationString ?? throw new ArgumentNullException(nameof(formulationString));
                 Index = index;
                 Length = length;
                 Function = function;
                 Format = format;
-                OccuranceIndex = occuranceIndex;
+                PlaceholderIndex = occuranceIndex;
                 ArgumentIndex = argumentIndex;
                 Alignment = alignment;
             }
@@ -743,7 +744,7 @@ namespace Lexical.Localization
                 }
 
                 // Create argument part
-                IFormulationStringPart argument = new Argument(formulationString, partIx, length, ++occuranceIx, argumentIndex, function, format, alignment);
+                IFormulationStringPart argument = new PlaceHolder(formulationString, partIx, length, ++occuranceIx, argumentIndex, function, format, alignment);
                 // Reset to 'Text' state
                 ResetPartState(endIx);
                 // Return the constructed argument
