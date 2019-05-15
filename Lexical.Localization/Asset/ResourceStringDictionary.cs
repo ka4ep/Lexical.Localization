@@ -113,7 +113,11 @@ namespace Lexical.Localization
             else if (lineFormat is ILineParser parser)
             {
                 //lineFormat.Parse()
-                return dictionary.Keys.Select(k => parser.TryParse(k, Key.Root)?.GetCultureInfo()).Where(ci => ci != null).Distinct().ToArray();
+                return dictionary.Keys.Select(k => {
+                    ILine l;
+                    CultureInfo c;
+                    return parser.TryParse(k, out l) && l.TryGetCultureInfo(out c) ? c : null;
+                }).Where(ci => ci != null).Distinct().ToArray();            
             }
             else
             {

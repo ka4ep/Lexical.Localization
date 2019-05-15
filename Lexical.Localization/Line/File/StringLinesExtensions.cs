@@ -39,7 +39,7 @@ namespace Lexical.Localization
         /// <param name="lineFormat"><see cref="ILineParser"/> parses strings to lines.</param>
         /// <returns></returns>
         public static ILineTree ToLineTree(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, ILineFormat lineFormat)
-            => LineTree.Create(lines.ToLines(lineFormat), null);
+            => LineTree.Create(lines.ToLines(lineFormat), null, lineFormat.GetParameterInfos());
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset.

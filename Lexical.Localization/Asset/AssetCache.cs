@@ -168,13 +168,29 @@ namespace Lexical.Localization
         static CultureInfo NO_CULTURE = CultureInfo.GetCultureInfo("");
         ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
 
+        /// <summary>
+        /// Source asset that this is cache of.
+        /// </summary>
         public IAsset Source { get; protected set; }
+
+        /// <summary>
+        /// Cache options.
+        /// </summary>
         public AssetCacheOptions Options { get; internal set; }
+
+        /// <summary>
+        /// Version.
+        /// </summary>
         protected volatile int iteration;
 
         CultureInfo[] cultures;
         bool culturesCached;
 
+        /// <summary>
+        /// Create part that caches cultures.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="options"></param>
         public AssetCachePartCultures(IAsset source, AssetCacheOptions options)
         {
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
@@ -200,6 +216,10 @@ namespace Lexical.Localization
             return this;
         }
 
+        /// <summary>
+        /// Get cultures from source and cache result until invalidated.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<CultureInfo> GetSupportedCultures()
         {
             var _cultures = cultures;
@@ -223,9 +243,16 @@ namespace Lexical.Localization
             return _cultures;
         }
 
+        /// <summary>
+        /// Print into
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}({Source.ToString()})";
 
+        /// <summary>
+        /// Dispose cache
+        /// </summary>
         public void Dispose()
         {
             Source = null;
@@ -238,7 +265,14 @@ namespace Lexical.Localization
     /// </summary>
     public class AssetCachePartStrings : IAssetCachePart, ILocalizationKeyLinesEnumerable, ILocalizationStringLinesEnumerable, ILocalizationStringProvider, IAssetReloadable, IDisposable
     {
+        /// <summary>
+        /// Source asset that this is cache of.
+        /// </summary>
         public IAsset Source { get; internal set; }
+
+        /// <summary>
+        /// Cache options.
+        /// </summary>
         public AssetCacheOptions Options { get; internal set; }
 
         LineComparer comparer;
@@ -306,6 +340,11 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Create strings cache
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="options"></param>
         public AssetCachePartStrings(IAsset source, AssetCacheOptions options)
         {
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
@@ -314,6 +353,10 @@ namespace Lexical.Localization
             this.cache = new Cache(comparer);
         }
 
+        /// <summary>
+        /// Flush cache
+        /// </summary>
+        /// <returns></returns>
         public IAsset Reload()
         {
             // Discard previous cache
@@ -323,6 +366,11 @@ namespace Lexical.Localization
             return this;
         }
 
+        /// <summary>
+        /// Get-and-cache string
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public IFormulationString GetString(ILine key)
         {
             Cache _cache = this.cache;
@@ -362,10 +410,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<ILine> GetKeyLines(ILine key = null)
+        public IEnumerable<ILine> GetLines(ILine key = null)
         {
             // Filtered queries are not cached
-            if (key != null) return Source.GetKeyLines(key);
+            if (key != null) return Source.GetLines(key);
 
             // Get cache instance
             Cache _cache = this.cache;
@@ -378,7 +426,7 @@ namespace Lexical.Localization
             if (_cache.keyLinesPartialIsNull) return null;
 
             // Read from source
-            IEnumerable<ILine> lines = Source.GetKeyLines(null);
+            IEnumerable<ILine> lines = Source.GetLines(null);
 
             // Got no results
             if (lines == null)
@@ -388,7 +436,7 @@ namespace Lexical.Localization
             }
 
             // Clone keys
-            if (Options.GetCloneKeys()) lines = lines.Select(line => new ILine(line.Key.CloneKey(LineAppender.Default), line.Value));
+            if (Options.GetCloneKeys()) lines = lines.Select(line => line.CloneKey(LineAppender.Default));
 
             // Take snapshot
             lines = new List<ILine>(lines);
@@ -399,7 +447,7 @@ namespace Lexical.Localization
             {
                 _cache.keysLinesPartial = (List<ILine>)lines;
                 foreach (var line in lines)
-                    _cache.strings[line.Key] = line.Value;
+                    _cache.strings[line] = line.GetValue();
             }
             finally
             {
@@ -415,10 +463,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<ILine> GetAllKeyLines(ILine key = null)
+        public IEnumerable<ILine> GetAllLines(ILine key = null)
         {
             // Filtered queries are not cached
-            if (key != null) return Source.GetAllKeyLines(key);
+            if (key != null) return Source.GetAllLines(key);
 
             // Get cache instance
             Cache _cache = this.cache;
@@ -431,7 +479,7 @@ namespace Lexical.Localization
             if (_cache.keyLinesAllIsNull) return null;
 
             // Read from source
-            IEnumerable<ILine> lines = Source.GetAllKeyLines(null);
+            IEnumerable<ILine> lines = Source.GetAllLines(null);
 
             // Got no results
             if (lines == null)
@@ -441,7 +489,7 @@ namespace Lexical.Localization
             }
 
             // Clone keys
-            if (Options.GetCloneKeys()) lines = lines.Select(line => new ILine(line.Key.CloneKey(LineAppender.Default), line.Value));
+            if (Options.GetCloneKeys()) lines = lines.Select(line => line.CloneKey(LineAppender.Default));
 
             // Take snapshot
             lines = new List<ILine>(lines);
@@ -452,7 +500,7 @@ namespace Lexical.Localization
             {
                 _cache.keysLinesAll = (List<ILine>)lines;
                 foreach (var line in lines)
-                    _cache.strings[line.Key] = line.Value;
+                    _cache.strings[line] = line.GetValue();
             }
             finally
             {
@@ -582,7 +630,14 @@ namespace Lexical.Localization
     /// </summary>
     public class AssetCachePartResources : IAssetCachePart, IAssetResourceKeysEnumerable, IAssetResourceNamesEnumerable, IAssetResourceProvider, IAssetReloadable, IDisposable
     {
+        /// <summary>
+        /// Source this is cache of
+        /// </summary>
         public IAsset Source { get; internal set; }
+
+        /// <summary>
+        /// Options
+        /// </summary>
         public AssetCacheOptions Options { get; internal set; }
 
         LineComparer comparer;
@@ -650,6 +705,11 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Resources cache
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="options"></param>
         public AssetCachePartResources(IAsset source, AssetCacheOptions options)
         {
             this.Source = source ?? throw new ArgumentNullException(nameof(source));
@@ -658,6 +718,10 @@ namespace Lexical.Localization
             this.cache = new Cache(comparer);
         }
 
+        /// <summary>
+        /// Flush cache
+        /// </summary>
+        /// <returns></returns>
         public IAsset Reload()
         {
             // Discard previous cache
@@ -667,6 +731,11 @@ namespace Lexical.Localization
             return this;
         }
 
+        /// <summary>
+        /// Get resource
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public byte[] GetResource(ILine key)
         {
             Cache _cache = this.cache;
@@ -1040,19 +1109,34 @@ namespace Lexical.Localization
             => $"{GetType().Name}({Source.ToString()})";
     }
 
+    /// <summary></summary>
     public static partial class LocalizationCacheExtensions
     {
+        /// <summary>
+        /// Add part that caches GetCultures
+        /// </summary>
+        /// <param name="cache"></param>
+        /// <returns></returns>
         public static IAssetCache AddCulturesCache(this IAssetCache cache)
         {
             cache.Add(new AssetCachePartCultures(cache.Source, cache.Options));
             return cache;
         }
+
+        /// <summary>
+        /// Add part that caches strings
+        /// </summary>
+        /// <param name="cache"></param>
+        /// <returns></returns>
         public static IAssetCache AddStringsCache(this IAssetCache cache)
         {
             cache.Add(new AssetCachePartStrings(cache.Source, cache.Options));
             return cache;
         }
 
+        /// <summary>
+        /// Key to option to clone keys
+        /// </summary>
         public const string Key_CloneKeys = "CloneKeys";
 
         /// <summary>
@@ -1079,18 +1163,39 @@ namespace Lexical.Localization
             return true;
         }
 
+        /// <summary>
+        /// Add cache part that caches binary resources
+        /// </summary>
+        /// <param name="cache"></param>
+        /// <returns></returns>
         public static IAssetCache AddResourceCache(this IAssetCache cache)
         {
             cache.Add(new AssetCachePartResources(cache.Source, cache.Options));
             return cache;
         }
 
+        /// <summary>
+        /// Key to option for maximum resource count
+        /// </summary>
         public const string Key_MaxResourceCount = "MaxResourceCount";
+
+        /// <summary>
+        /// Set maximum resource count
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="newValue"></param>
+        /// <returns></returns>
         public static AssetCacheOptions SetMaxResourceCount(this AssetCacheOptions options, int newValue)
         {
             options.Set<int>(Key_MaxResourceCount, newValue);
             return options;
         }
+
+        /// <summary>
+        /// Get maximum resource option
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
         public static int GetMaxResourceCount(this AssetCacheOptions options)
         {
             object value;
@@ -1098,12 +1203,28 @@ namespace Lexical.Localization
             return Int32.MaxValue;
         }
 
+        /// <summary>
+        /// Key to option for maximum resource size
+        /// </summary>
         public const string Key_MaxResourceSize = "MaxResourceSize";
+
+        /// <summary>
+        /// Set maximum resource size
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="newValue"></param>
+        /// <returns></returns>
         public static AssetCacheOptions SetMaxResourceSize(this AssetCacheOptions options, int newValue)
         {
             options.Set<int>(Key_MaxResourceSize, newValue);
             return options;
         }
+
+        /// <summary>
+        /// Get maximum resource size
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
         public static int GetMaxResourceSize(this AssetCacheOptions options)
         {
             object value;
@@ -1111,12 +1232,28 @@ namespace Lexical.Localization
             return 4096;
         }
 
+        /// <summary>
+        /// Key to option for maximum resource total size
+        /// </summary>
         public const string Key_MaxResourceTotalSize = "MaxResourceTotalSize";
+
+        /// <summary>
+        /// Set maximum resource total size
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="newValue"></param>
+        /// <returns></returns>
         public static AssetCacheOptions SetMaxResourceTotalSize(this AssetCacheOptions options, int newValue)
         {
             options.Set<int>(Key_MaxResourceTotalSize, newValue);
             return options;
         }
+
+        /// <summary>
+        /// Get maximum resource total size option
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
         public static int GetMaxResourceTotalSize(this AssetCacheOptions options)
         {
             object value;
@@ -1124,12 +1261,28 @@ namespace Lexical.Localization
             return 1024 * 1024;
         }
 
+        /// <summary>
+        /// Key to option to cache streams as bytes
+        /// </summary>
         public const string Key_CacheStreams = "CacheStreams";
+
+        /// <summary>
+        /// Set option for cache streams
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="newValue"></param>
+        /// <returns></returns>
         public static AssetCacheOptions SetCacheStreams(this AssetCacheOptions options, bool newValue)
         {
             options.Set<bool>(Key_CacheStreams, newValue);
             return options;
         }
+
+        /// <summary>
+        /// Get options for cache streams
+        /// </summary>
+        /// <param name="options"></param>
+        /// <returns></returns>
         public static bool GetCacheStreams(this AssetCacheOptions options)
         {
             object value;

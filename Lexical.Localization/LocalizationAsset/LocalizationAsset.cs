@@ -33,33 +33,33 @@ namespace Lexical.Localization
         /// Get or load key-lines
         /// </summary>
         /// <returns></returns>
-        protected virtual Dictionary<ILine, IFormulationString> KeyLines => keyLines ?? LoadKeyLines();
+        protected virtual Dictionary<ILine, ILine> KeyLines => keyLines ?? LoadKeyLines();
 
         /// <summary>
         /// Get or load key-lines
         /// </summary>
         /// <returns></returns>
-        protected virtual Dictionary<string, IFormulationString> StringLines => stringLines ?? LoadStringLines();
+        protected virtual Dictionary<string, ILine> StringLines => stringLines ?? LoadStringLines();
 
         /// <summary>
         /// String lines sorted by name policy.
         /// </summary>
-        protected virtual Dictionary<ILinePrinter, Dictionary<string, IFormulationString>> StringLinesByProvider => stringLinesByProvider ?? LoadStringLinesByProvider();
+        protected virtual Dictionary<ILinePrinter, Dictionary<string, ILine>> StringLinesByLineFormat => stringLinesByLineFormat ?? LoadStringLinesByLineFormat();
 
         /// <summary>
         /// Loaded and active key lines. It is compiled union of all sources.
         /// </summary>
-        protected Dictionary<ILine, IFormulationString> keyLines;
+        protected Dictionary<ILine, ILine> keyLines;
 
         /// <summary>
         /// Loaded and active string lines. It is compiled union of all sources.
         /// </summary>
-        protected Dictionary<string, IFormulationString> stringLines;
+        protected Dictionary<string, ILine> stringLines;
 
         /// <summary>
         /// String lines sorted by name policy.
         /// </summary>
-        protected Dictionary<ILinePrinter, Dictionary<string, IFormulationString>> stringLinesByProvider;
+        protected Dictionary<ILinePrinter, Dictionary<string, ILine>> stringLinesByLineFormat;
 
         /// <summary>
         /// Collections of lines and source readers. They are read when <see cref="Load"/> is called.
@@ -192,13 +192,13 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns>new key lines</returns>
         /// <exception cref="Exception">If load fails</exception>
-        protected virtual Dictionary<ILine, IFormulationString> LoadKeyLines()
+        protected virtual Dictionary<ILine, ILine> LoadKeyLines()
         {
-            Dictionary<ILine, IFormulationString> newLines = new Dictionary<ILine, IFormulationString>(comparer);
+            Dictionary<ILine, ILine> newLines = new Dictionary<ILine, ILine>(comparer);
             foreach (var collectionsLine in collections.ToArray())
             {
                 foreach (var line in collectionsLine.Value.KeyLines)
-                    newLines[line.Key] = line.Value;
+                    newLines[line] = line;
             }
             return this.keyLines = newLines;
         }
@@ -208,43 +208,54 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns>new key lines</returns>
         /// <exception cref="Exception">If load fails</exception>
-        protected virtual Dictionary<string, IFormulationString> LoadStringLines()
+        protected virtual Dictionary<string, ILine> LoadStringLines()
         {
-            Dictionary<string, IFormulationString> newLines = new Dictionary<string, IFormulationString>();
+            Dictionary<string, ILine> newLines = new Dictionary<string, ILine>();
             foreach (var collectionsLine in collections.ToArray())
             {
                 foreach (var line in collectionsLine.Value.StringLines)
-                    newLines[line.Key] = line.Value;
+                {
+                    IFormulationString formulation = line.Value;
+                    ILine value = formulation == null ? nullLine: new LineValue(null, null, formulation);
+                    newLines[line.Key] = value;
+                }
             }
             return this.stringLines = newLines;
         }
+
+        static ILine nullLine = new LineValue(null, null, FormulationStringStatus.Null);
 
         /// <summary>
         /// Replaces <see cref="stringLines"/> with a new dictionary that is filled with lines from <see cref="collections"/>.
         /// </summary>
         /// <returns>new key lines</returns>
         /// <exception cref="Exception">If load fails</exception>
-        protected virtual Dictionary<ILinePrinter, Dictionary<string, IFormulationString>> LoadStringLinesByProvider()
+        protected virtual Dictionary<ILinePrinter, Dictionary<string, ILine>> LoadStringLinesByLineFormat()
         {
-            Dictionary<ILinePrinter, Dictionary<string, IFormulationString>> byProvider = new Dictionary<ILinePrinter, Dictionary<string, IFormulationString>>();
+            Dictionary<ILinePrinter, Dictionary<string, ILine>> byLineFormat = new Dictionary<ILinePrinter, Dictionary<string, ILine>>();
 
             foreach (var collectionsLine in collections.ToArray())
             {
                 Collection c = collectionsLine.Value;
                 if (c.Type == CollectionType.StringLines)
                 {
-                    Dictionary<string, IFormulationString> newLines;
                     ILinePrinter provider = c.namePolicy as ILinePrinter;
                     if (provider == null) continue;
-                    if (!byProvider.TryGetValue(provider, out newLines))
-                        byProvider[provider] = newLines = new Dictionary<string, IFormulationString>();
 
+                    // Get-or-create dictionary
+                    Dictionary<string, ILine> newLines;
+                    if (!byLineFormat.TryGetValue(provider, out newLines)) byLineFormat[provider] = newLines = new Dictionary<string, ILine>();
+                    
                     foreach (var line in c.StringLines)
-                        newLines[line.Key] = line.Value;
+                    {
+                        IFormulationString formulation = line.Value;
+                        ILine value = formulation == null ? nullLine : new LineValue(null, null, formulation);
+                        newLines[line.Key] = value;
+                    }
                 } 
             }
 
-            return this.stringLinesByProvider = byProvider;
+            return this.stringLinesByLineFormat = byLineFormat;
         }
 
         /// <summary>
@@ -252,14 +263,17 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>string or null</returns>
-        public virtual IFormulationString GetString(ILine key)
+        public virtual ILine GetString(ILine key)
         {
-            IFormulationString result = null;
+            ILine result = null;
             if (KeyLines.TryGetValue(key, out result)) return result;
-            foreach(var line in StringLinesByProvider)
+            foreach(var line in StringLinesByLineFormat)
             {
+                // Convert line's key to string
                 string id = line.Key.Print(key);
-                if (line.Value.TryGetValue(id, out result)) return result;
+                // Search with string
+                ILine value;
+                if (line.Value.TryGetValue(id, out value)) return value;
             }
 
             return null;
@@ -280,7 +294,8 @@ namespace Lexical.Localization
                 foreach (var line in collectionLine.Value.KeyLines)
                 {
                     if (cultures == null) cultures = new HashSet<CultureInfo>();
-                    CultureInfo ci = line.Key.GetCultureInfo() ?? rootCulture;
+                    CultureInfo ci;
+                    if (!line.TryGetCultureInfo(out ci)) ci = rootCulture;
                     cultures.Add(ci);
                 }
             }
@@ -298,16 +313,16 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) filter key</param>
         /// <returns>list of key-lines, or null if could not be provided</returns>
-        public IEnumerable<ILine> GetKeyLines(ILine filterKey = null)
+        public IEnumerable<ILine> GetLines(ILine filterKey = null)
         {
             // Get snapshot
             var _lines = KeyLines;
             // Return all
-            if (filterKey == null) return _lines;
+            if (filterKey == null) return _lines.Values;
             // Create filter
-            LineQualifier filter = new LineQualifier().Rule(filterKey);
+            LineQualifier filter = new LineQualifier().Rule(filterKey) as LineQualifier;
             // Apply filter
-            return _lines.Where(line => filter.Qualify(line.Key));
+            return _lines.Where(line => filter.Qualify(line.Key)).Select(kv=>kv.Value);
         }
 
         /// <summary>
@@ -315,8 +330,8 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey">(optional) filter key</param>
         /// <returns>list of key-lines, or null if could not be provided</returns>
-        public IEnumerable<ILine> GetAllKeyLines(ILine filterKey = null)
-            => GetKeyLines(filterKey);
+        public IEnumerable<ILine> GetAllLines(ILine filterKey = null)
+            => GetLines(filterKey);
 
         /// <summary>
         /// Get string lines
@@ -326,23 +341,25 @@ namespace Lexical.Localization
         public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILine filterKey = null)
         {
             // Return all 
-            if (filterKey == null) return StringLines;
+            if (filterKey == null) return StringLines.Select(kv => new KeyValuePair<string, IFormulationString>(kv.Key, kv.Value.GetValue()));
             // Create filter.
-            LineQualifier filter = new LineQualifier().Rule(filterKey);
+            LineQualifier filter = new LineQualifier().Rule(filterKey) as LineQualifier;
             // Apply filter
             List<KeyValuePair<string, IFormulationString>> result = null;
             foreach (var collectionLine in collections.ToArray())
             {
+                // Source is of string lines
                 if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is ILinePrinter nameProvider_ && collectionLine.Value.namePolicy is ILineParser nameParser_)
                 {
-                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider_.Print(line.Key), line.Value));
+                    // Parse to keys and then qualify
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Qualify(line)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider_.Print(line), line.GetValue()));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
                     result.AddRange(__stringLines);
                 }
                 else
                 if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.LineTree) && collectionLine.Value.namePolicy is ILinePrinter nameProvider)
                 {
-                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.Print(line.Key), line.Value));
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Qualify(line)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.Print(line), line.GetValue()));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
                     result.AddRange(__stringLines);
                 }
@@ -358,22 +375,22 @@ namespace Lexical.Localization
         public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(ILine filterKey = null)
         {
             // Return all 
-            if (filterKey == null) return StringLines;
+            if (filterKey == null) return StringLines.Select(kv => new KeyValuePair<string, IFormulationString>(kv.Key, kv.Value.GetValue()));
             // Create filter.
-            LineQualifier filter = new LineQualifier().Rule(filterKey);
+            LineQualifier filter = new LineQualifier().Rule(filterKey) as LineQualifier;
             // Apply filter
             List<KeyValuePair<string, IFormulationString>> result = null;
             foreach (var collectionLine in collections.ToArray())
             {
                 if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is ILinePrinter nameProvider_ && collectionLine.Value.namePolicy is ILineParser nameParser_)
                 {
-                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider_.Print(line.Key), line.Value));
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Qualify(line)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider_.Print(line), line.GetValue()));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
                     result.AddRange(__stringLines);
                 } else 
                 if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.LineTree) && collectionLine.Value.namePolicy is ILinePrinter nameProvider)
                 {
-                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Filter(line.Key)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.Print(line.Key), line.Value));
+                    var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Qualify(line)).Select(line => new KeyValuePair<string, IFormulationString>(nameProvider.Print(line), line.GetValue()));
                     if (result == null) result = new List<KeyValuePair<string, IFormulationString>>();
                     result.AddRange(__stringLines);
                 }
@@ -768,7 +785,7 @@ namespace Lexical.Localization
                     // Read as key-lines
                     else if (reader is IEnumerable<KeyValuePair<ILine, string>> keyLinesReader_)
                     {
-                        lines.AddRange(keyLinesReader_.Select(line=>new ILine(line.Key, CSharpFormat.Instance.Parse(line.Value))));
+                        lines.AddRange(keyLinesReader_.Select(line=>line.Key.Value(CSharpFormat.Instance.Parse(line.Value))));
                     }
                     else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_)
                     {

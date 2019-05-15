@@ -36,13 +36,14 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Create tree structure from source of flat key values.
         /// </summary>
-        /// <param name="keyValues"></param>
+        /// <param name="lines"></param>
         /// <param name="groupingPolicy"></param>
+        /// <param name="parameterInfos"></param>
         /// <returns>tree root ""</returns>
-        public static LineTree Create(IEnumerable<ILine> keyValues, ILinePattern groupingPolicy)
+        public static LineTree Create(IEnumerable<ILine> lines, ILinePattern groupingPolicy, IParameterInfos parameterInfos)
         {
             LineTree root = new LineTree(new LinePart(LineAppender.Default, null));
-            root.AddRange(keyValues, groupingPolicy);
+            root.AddRange(lines, groupingPolicy, parameterInfos);
             return root;
         }
 

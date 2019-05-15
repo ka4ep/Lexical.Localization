@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
+using System.Text;
 using System.Threading;
 
 namespace Lexical.Localization
@@ -169,7 +170,44 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public string DebugPrint()
-            => LineFormat.Parameters.Print(this);
+        {
+            StringBuilder sb = new StringBuilder();
+            StructList12<ILineParameter> list = new StructList12<ILineParameter>();
+
+            int c = 0;
+            foreach(ILine line in GetInlines())
+            {
+                if (c++> 0) sb.Append("\n");
+                list.Clear();
+                line.GetParameterParts<StructList12<ILineParameter>>(ref list);
+                for (int i = list.Count-1; i >=0; i--)
+                {
+                    if (i < list.Count-1) sb.Append(':');
+                    var parameter = list[i];
+                    if (parameter.ParameterName != "Value") continue;
+                    sb.Append(parameter.ParameterName);
+                    sb.Append(':');
+                    sb.Append(parameter.ParameterValue);
+                }
+                string value = this.GetParameter("Value");
+                if (value != null)
+                {
+                    sb.Append(" = ");
+                    sb.Append(value);
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        IEnumerable<ILine> GetInlines()
+        {
+            yield return this;
+            for (ILine line = this; line != null; line = line.GetPreviousPart())
+                if (line is ILineInlines inlines)
+                    foreach (var l in inlines)
+                        yield return l.Value;
+        }
 
         /// <summary>
         /// Equals comparison. The default comparer compares <see cref="ILineKey"/> and <see cref="ILineFormatArgs"/> parts.

@@ -79,14 +79,14 @@ namespace docs
                 IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
                 #region Snippet_3a
                 // Extract all keys
-                foreach (ILine _key in asset.GetKeyLines(null).Select(line=>line.Key))
+                foreach (ILine _key in asset.GetLines(null).Select(line=>line.Key))
                     Console.WriteLine(_key);
                 #endregion Snippet_3a
 
                 #region Snippet_3b
                 // Keys can be filtered
                 ILine filterKey = LineRoot.Global.Culture("de");
-                foreach (ILine _key in asset.GetKeyLines(filterKey).Select(line => line.Key))
+                foreach (ILine _key in asset.GetLines(filterKey).Select(line => line.Key))
                     Console.WriteLine(_key);
                 #endregion Snippet_3b
 
