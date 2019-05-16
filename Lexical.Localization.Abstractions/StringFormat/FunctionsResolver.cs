@@ -10,19 +10,19 @@ using System.Reflection;
 namespace Lexical.Localization.StringFormat
 {
     /// <summary>
-    /// Resolves string format class name to string format.
+    /// Resolves function class name to <see cref="IFunctions"/>.
     /// </summary>
-    public class StringFormatResolver : TypeResolver<IStringFormat>, IStringFormatResolver
+    public class FunctionsResolver : TypeResolver<IFunctions>, IFunctionsResolver
     {
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static readonly Lazy<StringFormatResolver> instance = new Lazy<StringFormatResolver>();
+        public static readonly Lazy<FunctionsResolver> instance = new Lazy<FunctionsResolver>();
 
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static StringFormatResolver Default => instance.Value;
+        public static FunctionsResolver Default => instance.Value;
 
         /// <summary>
         /// Create type resolver with default settings.
@@ -30,7 +30,7 @@ namespace Lexical.Localization.StringFormat
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public StringFormatResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver)
+        public FunctionsResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver)
         {
         }
 
@@ -39,7 +39,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="assemblyLoader">(optional) function that reads assembly from file.</param>
         /// <param name="typeResolver">(optional) Function that resolves type name into <see cref="Type"/>.</param>
-        public StringFormatResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base(assemblyLoader, typeResolver)
+        public FunctionsResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base(assemblyLoader, typeResolver)
         {
         }
 

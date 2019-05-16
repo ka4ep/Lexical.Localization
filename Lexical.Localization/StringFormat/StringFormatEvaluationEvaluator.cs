@@ -9,8 +9,28 @@ using System.Collections.Generic;
 
 namespace Lexical.Localization.StringFormat
 {
-    public partial struct StringFormatEvaluationContext
+    /// <summary>
+    /// String evaluation context
+    /// </summary>
+    public struct StringFormatEvaluationEvaluator
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public FunctionEvaluationContext FunctionEvaluationCtx;
+
+        /// <summary>
+        /// (optional) Format Arguments.
+        /// Used when string format uses arguments by index, e.g. "Hello, {0}"
+        /// </summary>
+        public object[] Args;
+
+        /// <summary>
+        /// (optional) Format arguments by name
+        /// Used when string format uses arguments by name, e.g. "Hello, %s"
+        /// </summary>
+        public IReadOnlyDictionary<string, object> ArgsByName;
+
         /// <summary>
         /// Evaluate expression into object.
         /// 

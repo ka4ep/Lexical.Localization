@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lexical.Localization.StringFormat
 {
@@ -72,7 +73,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="ctx"></param>
         /// <returns>Object, String, Long, Double or null</returns>
         /// <exception cref="Exception">On unexpected situation</exception>
-        object Evaluate(ref StringFormatEvaluationContext ctx);
+        object Evaluate(ref FunctionEvaluationContext ctx);
     }
 
     /// <summary>
@@ -87,7 +88,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="arg0"></param>
         /// <returns>Object, String, Long, Double or null</returns>
         /// <exception cref="Exception">On unexpected situation</exception>
-        object Evaluate(ref StringFormatEvaluationContext ctx, object arg0);
+        object Evaluate(ref FunctionEvaluationContext ctx, object arg0);
     }
 
     /// <summary>
@@ -103,7 +104,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="arg1"></param>
         /// <returns>Object, String, Long, Double or null</returns>
         /// <exception cref="Exception">On unexpected situation</exception>
-        object Evaluate(ref StringFormatEvaluationContext ctx, object arg0, object arg1);
+        object Evaluate(ref FunctionEvaluationContext ctx, object arg0, object arg1);
     }
 
     /// <summary>
@@ -120,7 +121,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="arg2"></param>
         /// <returns>Object, String, Long, Double or null</returns>
         /// <exception cref="Exception">On unexpected situation</exception>
-        object Evaluate(ref StringFormatEvaluationContext ctx, object arg0, object arg1, object arg2);
+        object Evaluate(ref FunctionEvaluationContext ctx, object arg0, object arg1, object arg2);
     }
 
     /// <summary>
@@ -135,7 +136,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="args"></param>
         /// <returns>Object, String, Long, Double or null</returns>
         /// <exception cref="Exception">On unexpected situation</exception>
-        object Evaluate(ref StringFormatEvaluationContext ctx, object[] args);
+        object Evaluate(ref FunctionEvaluationContext ctx, object[] args);
     }
 
     /// <summary>
@@ -152,6 +153,45 @@ namespace Lexical.Localization.StringFormat
         /// Argument type
         /// </summary>
         public Type Type;
+    }
+
+    /// <summary>
+    /// Resolves name to <see cref="IFunctions"/>.
+    /// </summary>
+    public interface IFunctionsResolver
+    {
+        /// <summary>
+        /// Resolve <paramref name="name"/> to <see cref="IFunctions"/>.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>functions or null</returns>
+        IFunctions Resolve(string name);
+    }
+
+    /// <summary>
+    /// String evaluation context
+    /// </summary>
+    public partial struct FunctionEvaluationContext
+    {
+        /// <summary>
+        /// Custom format provider, excluding culture.
+        /// </summary>
+        public IFormatProvider FormatProvider;
+
+        /// <summary>
+        /// (optional) Active culture.
+        /// </summary>
+        public CultureInfo Culture;
+
+        /// <summary>
+        /// (optional) Functions.
+        /// </summary>
+        public IFunctions Functions;
+
+        /// <summary>
+        /// (optional) The <see cref="ILine"/> that is being evaluated.
+        /// </summary>
+        public ILine Line;
     }
 
     /// <summary></summary>
@@ -199,7 +239,7 @@ namespace Lexical.Localization.StringFormat
         /// <returns>Object, String, Long, Double or null</returns>
         /// <exception cref="KeyNotFoundException">If function is not found</exception>
         /// <exception cref="Exception">On unexpected situation</exception>
-        public static object Evaluate(this IFunctions functions, string functionName, ref StringFormatEvaluationContext ctx)
+        public static object Evaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx)
         {
             if (functions == null) throw new ArgumentNullException(nameof(functions));
             if (functionName == null) throw new ArgumentNullException(nameof(functionName));
@@ -223,7 +263,7 @@ namespace Lexical.Localization.StringFormat
         /// <returns>Object, String, Long, Double or null</returns>
         /// <exception cref="KeyNotFoundException">If function is not found</exception>
         /// <exception cref="Exception">On unexpected situation</exception>
-        public static object Evaluate(this IFunctions functions, string functionName, ref StringFormatEvaluationContext ctx, object arg0)
+        public static object Evaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object arg0)
         {
             if (functions == null) throw new ArgumentNullException(nameof(functions));
             if (functionName == null) throw new ArgumentNullException(nameof(functionName));
@@ -248,7 +288,7 @@ namespace Lexical.Localization.StringFormat
         /// <returns>Object, String, Long, Double or null</returns>
         /// <exception cref="KeyNotFoundException">If function is not found</exception>
         /// <exception cref="Exception">On unexpected situation</exception>
-        public static object Evaluate(this IFunctions functions, string functionName, ref StringFormatEvaluationContext ctx, object arg0, object arg1)
+        public static object Evaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object arg0, object arg1)
         {
             if (functions == null) throw new ArgumentNullException(nameof(functions));
             if (functionName == null) throw new ArgumentNullException(nameof(functionName));
@@ -274,7 +314,7 @@ namespace Lexical.Localization.StringFormat
         /// <returns>Object, String, Long, Double or null</returns>
         /// <exception cref="KeyNotFoundException">If function is not found</exception>
         /// <exception cref="Exception">On unexpected situation</exception>
-        public static object Evaluate(this IFunctions functions, string functionName, ref StringFormatEvaluationContext ctx, object arg0, object arg1, object arg2)
+        public static object Evaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object arg0, object arg1, object arg2)
         {
             if (functions == null) throw new ArgumentNullException(nameof(functions));
             if (functionName == null) throw new ArgumentNullException(nameof(functionName));
@@ -298,7 +338,7 @@ namespace Lexical.Localization.StringFormat
         /// <returns>Object, String, Long, Double or null</returns>
         /// <exception cref="KeyNotFoundException">If function is not found</exception>
         /// <exception cref="Exception">On unexpected situation</exception>
-        public static object Evaluate(this IFunctions functions, string functionName, ref StringFormatEvaluationContext ctx, object[] args)
+        public static object Evaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object[] args)
         {
             if (functions == null) throw new ArgumentNullException(nameof(functions));
             if (functionName == null) throw new ArgumentNullException(nameof(functionName));

@@ -3,41 +3,43 @@
 // Date:           3.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.StringFormat;
 using System;
+using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Line part that carries format provider.
+    /// Line part that contains functions for string formats to use.
     /// </summary>
     [Serializable]
-    public class LineStringFormat : LineParameterBase, ILineStringFormat, ILineHint, ILineArguments<ILineStringFormat, IStringFormat>
+    public class LineFunctions : LineParameterBase, ILineFunctions, ILineHint, ILineArguments<ILineFunctions, IFunctions>
     {
         /// <summary>
-        /// String format
+        /// Functions for string formats to use
         /// </summary>
-        protected IStringFormat stringFormat;
+        protected IFunctions functions;
 
         /// <summary>
         /// Assembly property
         /// </summary>
-        public IStringFormat StringFormat { get => stringFormat; set => throw new InvalidOperationException(); }
+        public IFunctions Functions { get => functions; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public IStringFormat Argument0 => stringFormat;
+        public IFunctions Argument0 => functions;
 
         /// <summary>
         /// Create new line part.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
-        /// <param name="stringFormat"></param>
-        public LineStringFormat(ILineFactory appender, ILine prevKey, IStringFormat stringFormat) : base(appender, prevKey, "StringFormat", stringFormat?.GetType()?.FullName)
+        /// <param name="functions"></param>
+        public LineFunctions(ILineFactory appender, ILine prevKey, IFunctions functions) : base(appender, prevKey, "Functions", functions?.GetType()?.FullName)
         {
-            this.stringFormat = stringFormat;
+            this.functions = functions;
         }
 
         /// <summary>
@@ -45,9 +47,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public LineStringFormat(SerializationInfo info, StreamingContext context) : base(info, context)
+        public LineFunctions(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.stringFormat = info.GetValue("StringFormat", typeof(IStringFormat)) as IStringFormat;
+            this.functions = info.GetValue("Functions", typeof(IFunctions)) as IFunctions;
         }
 
         /// <summary>
@@ -58,23 +60,23 @@ namespace Lexical.Localization
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("StringFormat", stringFormat);
+            info.AddValue("Functions", functions);
         }
     }
 
-    public partial class LineAppender : ILineFactory<ILineStringFormat, IStringFormat>
+    public partial class LineAppender : ILineFactory<ILineFunctions, IFunctions>
     {
         /// <summary>
         /// Append part.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="previous"></param>
-        /// <param name="stringFormat"></param>
+        /// <param name="functions"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, IStringFormat stringFormat, out ILineStringFormat line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IFunctions functions, out ILineFunctions line)
         {
-            line = new LineStringFormat(appender, previous, stringFormat);
+            line = new LineFunctions(appender, previous, functions);
             return true;
         }
     }
@@ -83,32 +85,32 @@ namespace Lexical.Localization
     /// StringLocalizer part that carries format provider.
     /// </summary>
     [Serializable]
-    public class StringLocalizerStringFormat : StringLocalizerParameterBase, ILineStringFormat, ILineHint, ILineArguments<ILineStringFormat, IStringFormat>
+    public class StringLocalizerFunctions : StringLocalizerParameterBase, ILineFunctions, ILineHint, ILineArguments<ILineFunctions, IFunctions>
     {
         /// <summary>
         /// Format provider
         /// </summary>
-        protected IStringFormat stringFormat;
+        protected IFunctions functions;
 
         /// <summary>
         /// Assembly property
         /// </summary>
-        public IStringFormat StringFormat { get => stringFormat; set => throw new InvalidOperationException(); }
+        public IFunctions Functions { get => functions; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public IStringFormat Argument0 => stringFormat;
+        public IFunctions Argument0 => functions;
 
         /// <summary>
         /// Create new line part.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
-        /// <param name="stringFormat"></param>
-        public StringLocalizerStringFormat(ILineFactory appender, ILine prevKey, IStringFormat stringFormat) : base(appender, prevKey, "StringFormat", stringFormat?.GetType()?.FullName)
+        /// <param name="functions"></param>
+        public StringLocalizerFunctions(ILineFactory appender, ILine prevKey, IFunctions functions) : base(appender, prevKey, "Functions", functions?.GetType()?.FullName)
         {
-            this.stringFormat = stringFormat;
+            this.functions = functions;
         }
 
         /// <summary>
@@ -116,9 +118,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public StringLocalizerStringFormat(SerializationInfo info, StreamingContext context) : base(info, context)
+        public StringLocalizerFunctions(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.stringFormat = info.GetValue("StringFormat", typeof(IStringFormat)) as IStringFormat;
+            this.functions = info.GetValue("Functions", typeof(IFunctions)) as IFunctions;
         }
 
         /// <summary>
@@ -129,23 +131,23 @@ namespace Lexical.Localization
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("StringFormat", stringFormat);
+            info.AddValue("Functions", functions);
         }
     }
 
-    public partial class StringLocalizerAppender : ILineFactory<ILineStringFormat, IStringFormat>
+    public partial class StringLocalizerAppender : ILineFactory<ILineFunctions, IFunctions>
     {
         /// <summary>
         /// Append part.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="previous"></param>
-        /// <param name="stringFormat"></param>
+        /// <param name="functions"></param>
         /// <param name="StringLocalizer"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, IStringFormat stringFormat, out ILineStringFormat StringLocalizer)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IFunctions functions, out ILineFunctions StringLocalizer)
         {
-            StringLocalizer = new StringLocalizerStringFormat(appender, previous, stringFormat);
+            StringLocalizer = new StringLocalizerFunctions(appender, previous, functions);
             return true;
         }
     }
