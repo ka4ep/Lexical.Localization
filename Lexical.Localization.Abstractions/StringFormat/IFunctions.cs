@@ -87,21 +87,19 @@ namespace Lexical.Localization.StringFormat
         /// <param name="functions"></param>
         /// <param name="functionName"></param>
         /// <param name="ctx"></param>
-        /// <returns>Object, String, Long, Double or null</returns>
-        /// <exception cref="KeyNotFoundException">If function is not found</exception>
-        /// <exception cref="Exception">On unexpected situation</exception>
-        public static object Evaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx)
+        /// <param name="result">Object, String, Long, Double or null</param>
+        /// <returns>true if evaluated, false if not</returns>
+        /// <exception cref="Exception">On unexpected error</exception>
+        public static bool TryEvaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, out object result)
         {
-            if (functions == null) throw new ArgumentNullException(nameof(functions));
-            if (functionName == null) throw new ArgumentNullException(nameof(functionName));
+            if (functions == null || functionName == null) { result = null; return false; }
             IFunction func;
             if (functions is IFunctionsQueryable queryable && queryable.TryGetValue(functionName, out func))
             {
-                if (func is IFunction0 func0) return func0.Evaluate(ref ctx);
-                if (func is IFunctionN funcN) return funcN.Evaluate(ref ctx, no_args);
-                throw new InvalidOperationException($"{func} is not callable");
+                if (func is IFunction0 func0 && func0.TryEvaluate(ref ctx, out result)) return true;
+                if (func is IFunctionN funcN && funcN.TryEvaluate(ref ctx, no_args, out result)) return true;
             }
-            throw new KeyNotFoundException(functionName);
+            result = null; return false;
         }
 
         /// <summary>
@@ -111,21 +109,19 @@ namespace Lexical.Localization.StringFormat
         /// <param name="functionName"></param>
         /// <param name="ctx"></param>
         /// <param name="arg0">Function argument</param>
-        /// <returns>Object, String, Long, Double or null</returns>
-        /// <exception cref="KeyNotFoundException">If function is not found</exception>
-        /// <exception cref="Exception">On unexpected situation</exception>
-        public static object Evaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object arg0)
+        /// <param name="result">Object, String, Long, Double or null</param>
+        /// <returns>true if evaluated, false if not</returns>
+        /// <exception cref="Exception">On unexpected error</exception>
+        public static bool TryEvaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object arg0, out object result)
         {
-            if (functions == null) throw new ArgumentNullException(nameof(functions));
-            if (functionName == null) throw new ArgumentNullException(nameof(functionName));
+            if (functions == null || functionName == null) { result = null; return false; }
             IFunction func;
             if (functions is IFunctionsQueryable queryable && queryable.TryGetValue(functionName, out func))
             {
-                if (func is IFunction1 func1) return func1.Evaluate(ref ctx, arg0);
-                if (func is IFunctionN funcN) return funcN.Evaluate(ref ctx, new object[] { arg0 } ?? no_args);
-                throw new InvalidOperationException($"{func} is not callable");
+                if (func is IFunction1 func1) return func1.TryEvaluate(ref ctx, arg0, out result);
+                if (func is IFunctionN funcN) return funcN.TryEvaluate(ref ctx, new object[] { arg0 } ?? no_args, out result);
             }
-            throw new KeyNotFoundException(functionName);
+            result = null; return false;
         }
 
         /// <summary>
@@ -136,21 +132,19 @@ namespace Lexical.Localization.StringFormat
         /// <param name="ctx"></param>
         /// <param name="arg0">Function argument</param>
         /// <param name="arg1"></param>
-        /// <returns>Object, String, Long, Double or null</returns>
-        /// <exception cref="KeyNotFoundException">If function is not found</exception>
-        /// <exception cref="Exception">On unexpected situation</exception>
-        public static object Evaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object arg0, object arg1)
+        /// <param name="result">Object, String, Long, Double or null</param>
+        /// <returns>true if evaluated, false if not</returns>
+        /// <exception cref="Exception">On unexpected error</exception>
+        public static bool TryEvaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object arg0, object arg1, out object result)
         {
-            if (functions == null) throw new ArgumentNullException(nameof(functions));
-            if (functionName == null) throw new ArgumentNullException(nameof(functionName));
+            if (functions == null || functionName == null) { result = null; return false; }
             IFunction func;
             if (functions is IFunctionsQueryable queryable && queryable.TryGetValue(functionName, out func))
             {
-                if (func is IFunction2 func2) return func2.Evaluate(ref ctx, arg0, arg1);
-                if (func is IFunctionN funcN) return funcN.Evaluate(ref ctx, new object[] { arg0, arg1 });
-                throw new InvalidOperationException($"{func} is not callable");
+                if (func is IFunction2 func2 && func2.TryEvaluate(ref ctx, arg0, arg1, out result)) return true;
+                if (func is IFunctionN funcN && funcN.TryEvaluate(ref ctx, new object[] { arg0, arg1 }, out result)) return true;
             }
-            throw new KeyNotFoundException(functionName);
+            result = null; return false;
         }
 
         /// <summary>
@@ -162,21 +156,19 @@ namespace Lexical.Localization.StringFormat
         /// <param name="arg0">Function argument</param>
         /// <param name="arg1"></param>
         /// <param name="arg2"></param>
-        /// <returns>Object, String, Long, Double or null</returns>
-        /// <exception cref="KeyNotFoundException">If function is not found</exception>
-        /// <exception cref="Exception">On unexpected situation</exception>
-        public static object Evaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object arg0, object arg1, object arg2)
+        /// <param name="result">Object, String, Long, Double or null</param>
+        /// <returns>true if evaluated, false if not</returns>
+        /// <exception cref="Exception">On unexpected error</exception>
+        public static bool TryEvaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object arg0, object arg1, object arg2, out object result)
         {
-            if (functions == null) throw new ArgumentNullException(nameof(functions));
-            if (functionName == null) throw new ArgumentNullException(nameof(functionName));
+            if (functions == null || functionName == null) { result = null; return false; }
             IFunction func;
             if (functions is IFunctionsQueryable queryable && queryable.TryGetValue(functionName, out func))
             {
-                if (func is IFunction3 func3) return func3.Evaluate(ref ctx, arg0, arg1, arg2);
-                if (func is IFunctionN funcN) return funcN.Evaluate(ref ctx, new object[] { arg0, arg1, arg2 });
-                throw new InvalidOperationException($"{func} is not callable");
+                if (func is IFunction3 func3 && func3.TryEvaluate(ref ctx, arg0, arg1, arg2, out result)) return true;
+                if (func is IFunctionN funcN && funcN.TryEvaluate(ref ctx, new object[] { arg0, arg1, arg2 }, out result)) return true;
             }
-            throw new KeyNotFoundException(functionName);
+            result = null; return false;
         }
 
         /// <summary>
@@ -186,40 +178,38 @@ namespace Lexical.Localization.StringFormat
         /// <param name="functionName"></param>
         /// <param name="ctx"></param>
         /// <param name="args">Function arguments</param>
-        /// <returns>Object, String, Long, Double or null</returns>
-        /// <exception cref="KeyNotFoundException">If function is not found</exception>
-        /// <exception cref="Exception">On unexpected situation</exception>
-        public static object Evaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object[] args)
+        /// <param name="result">Object, String, Long, Double or null</param>
+        /// <returns>true if evaluated, false if not</returns>
+        /// <exception cref="Exception">On unexpected error</exception>
+        public static bool TryEvaluate(this IFunctions functions, string functionName, ref FunctionEvaluationContext ctx, object[] args, out object result)
         {
-            if (functions == null) throw new ArgumentNullException(nameof(functions));
-            if (functionName == null) throw new ArgumentNullException(nameof(functionName));
+            if (functions == null || functionName == null) { result = null; return false; }
             IFunction func;
             if (functions is IFunctionsQueryable queryable && queryable.TryGetValue(functionName, out func))
             {
                 if (args == null || args.Length == 0)
                 {
-                    if (func is IFunction0 func0) return func0.Evaluate(ref ctx);
-                    if (func is IFunctionN funcN) return funcN.Evaluate(ref ctx, args ?? no_args);
+                    if (func is IFunction0 func0 && func0.TryEvaluate(ref ctx, out result)) return true;
+                    if (func is IFunctionN funcN && funcN.TryEvaluate(ref ctx, args ?? no_args, out result)) return true;
                 }
                 if (args.Length == 1)
                 {
-                    if (func is IFunction1 func1) return func1.Evaluate(ref ctx, args[0]);
-                    if (func is IFunctionN funcN) return funcN.Evaluate(ref ctx, args);
+                    if (func is IFunction1 func1 && func1.TryEvaluate(ref ctx, args[0], out result)) return true;
+                    if (func is IFunctionN funcN && funcN.TryEvaluate(ref ctx, args, out result)) return true;
                 }
                 if (args.Length == 2)
                 {
-                    if (func is IFunction2 func2) return func2.Evaluate(ref ctx, args[0], args[1]);
-                    if (func is IFunctionN funcN) return funcN.Evaluate(ref ctx, args);
+                    if (func is IFunction2 func2 && func2.TryEvaluate(ref ctx, args[0], args[1], out result)) return true;
+                    if (func is IFunctionN funcN && funcN.TryEvaluate(ref ctx, args, out result)) return true;
                 }
                 if (args.Length == 3)
                 {
-                    if (func is IFunction3 func3) return func3.Evaluate(ref ctx, args[0], args[1], args[2]);
-                    if (func is IFunctionN funcN) return funcN.Evaluate(ref ctx, args);
+                    if (func is IFunction3 func3 && func3.TryEvaluate(ref ctx, args[0], args[1], args[2], out result)) return true;
+                    if (func is IFunctionN funcN && funcN.TryEvaluate(ref ctx, args, out result)) return true;
                 }
-                if (func is IFunctionN funcN_) return funcN_.Evaluate(ref ctx, args);
-                throw new InvalidOperationException($"{func} is not callable");
+                if (func is IFunctionN funcN_ && funcN_.TryEvaluate(ref ctx, args, out result)) return true;
             }
-            throw new KeyNotFoundException(functionName);
+            result = null; return false;
         }
 
         static object[] no_args = new object[0];
