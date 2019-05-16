@@ -70,7 +70,7 @@ namespace Lexical.Localization
                     return stringFormat.Parse(lineParameter.ParameterValue);
                 }
             }
-            return new FormulationStringStatus(null, LineStatus.FormulationFailedNull);
+            return new StatusFormulationString(null, LineStatus.FormulationFailedNull);
         }
 
     }

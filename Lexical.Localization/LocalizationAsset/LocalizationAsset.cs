@@ -223,7 +223,7 @@ namespace Lexical.Localization
             return this.stringLines = newLines;
         }
 
-        static ILine nullLine = new LineValue(null, null, FormulationStringStatus.Null);
+        static ILine nullLine = new LineValue(null, null, StatusFormulationString.Null);
 
         /// <summary>
         /// Replaces <see cref="stringLines"/> with a new dictionary that is filled with lines from <see cref="collections"/>.
