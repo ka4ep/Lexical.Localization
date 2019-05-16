@@ -11,7 +11,7 @@
     <PackageProjectUrl>https://lexical.fi/Localization/index.html</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tagcode/Lexical.Localization</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <PackageTags>Localization Lexical</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageIconUrl>http://avalanche.fi/theme/logo_blue.svg</PackageIconUrl>

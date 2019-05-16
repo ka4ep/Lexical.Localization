@@ -46,13 +46,13 @@ namespace Lexical.Localization
         /// (optional) Formatters to apply to the formulation string.
         /// Some asset files may enforce their own rules.
         /// 
-        /// The formatter is requested for following interfaces (Depends on <see cref="ILineStringResolver"/> implementation.)
+        /// The formatter is requested for following interfaces (Depends on <see cref="IStringResolver"/> implementation.)
         /// <list type="bullet">
         /// <item><see cref="IArgumentFormatter"/></item>
         /// <item><see cref="ICustomFormatter"/></item>
         /// </list>
         /// 
-        /// <see cref="ILineStringResolver"/> combines format providers from asset and key.
+        /// <see cref="IStringResolver"/> combines format providers from asset and key.
         /// The format provider that comes from <see cref="IFormulationString"/> has the highest priority.
         /// </summary>
         IFormatProvider FormatProvider { get; }

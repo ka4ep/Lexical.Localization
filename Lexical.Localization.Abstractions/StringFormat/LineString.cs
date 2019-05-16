@@ -101,9 +101,9 @@ namespace Lexical.Localization
         public int FormulationSeverity => Status.FormulationSeverity();
 
         /// <summary>
-        /// Severity for <see cref="ILineStringResolver"/> implementation specific "Custom0" status.
+        /// Severity for <see cref="IStringResolver"/> implementation specific "Custom0" status.
         /// 
-        /// "Custom0" is a status code that is specific to the <see cref="ILineStringResolver"/> implementation.
+        /// "Custom0" is a status code that is specific to the <see cref="IStringResolver"/> implementation.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
@@ -115,9 +115,9 @@ namespace Lexical.Localization
         public int Custom0Severity => Status.Custom0Severity();
 
         /// <summary>
-        /// Severity for <see cref="ILineStringResolver"/> implementation specific "Custom1" status.
+        /// Severity for <see cref="IStringResolver"/> implementation specific "Custom1" status.
         /// 
-        /// "Custom1" is a status code that is specific to the <see cref="ILineStringResolver"/> implementation.
+        /// "Custom1" is a status code that is specific to the <see cref="IStringResolver"/> implementation.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>

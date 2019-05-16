@@ -9,25 +9,25 @@ using System.Runtime.Serialization;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Line part that carries <see cref="ILineStringResolverPart"/>. 
+    /// Line part that carries <see cref="ILineStringResolver"/>. 
     /// </summary>
     [Serializable]
-    public class LineStringResolverPart : LineBase, ILineStringResolverPart, ILineArguments<ILineStringResolver>
+    public class LineStringResolverPart : LineBase, ILineStringResolver, ILineArguments<IStringResolver>
     {
         /// <summary>
         /// Localization resolver.
         /// </summary>
-        protected ILineStringResolver resolver;
+        protected IStringResolver resolver;
 
         /// <summary>
         /// ILineLineResolver property
         /// </summary>
-        public ILineStringResolver Resolver { get => resolver; set => throw new InvalidOperationException(); }
+        public IStringResolver Resolver { get => resolver; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public ILineStringResolver Argument0 => resolver;
+        public IStringResolver Argument0 => resolver;
 
         /// <summary>
         /// Create new line part.
@@ -35,7 +35,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="LineResolver"></param>
-        public LineStringResolverPart(ILineFactory appender, ILine prevKey, ILineStringResolver LineResolver) : base(appender, prevKey)
+        public LineStringResolverPart(ILineFactory appender, ILine prevKey, IStringResolver LineResolver) : base(appender, prevKey)
         {
             this.resolver = LineResolver;
         }
@@ -47,7 +47,7 @@ namespace Lexical.Localization
         /// <param name="context"></param>
         public LineStringResolverPart(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.resolver = info.GetValue("LineResolver", typeof(ILineStringResolver)) as ILineStringResolver;
+            this.resolver = info.GetValue("LineResolver", typeof(IStringResolver)) as IStringResolver;
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LineAppender : ILineFactory<ILineStringResolverPart, ILineStringResolver>
+    public partial class LineAppender : ILineFactory<ILineStringResolver, IStringResolver>
     {
         /// <summary>
         /// Append part.
@@ -72,7 +72,7 @@ namespace Lexical.Localization
         /// <param name="LineResolver"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, ILineStringResolver LineResolver, out ILineStringResolverPart line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IStringResolver LineResolver, out ILineStringResolver line)
         {
             line = new LineStringResolverPart(appender, previous, LineResolver);
             return true;
@@ -80,25 +80,25 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// StringLocalizer part that carries <see cref="ILineStringResolverPart"/>. 
+    /// StringLocalizer part that carries <see cref="ILineStringResolver"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerLineResolver : StringLocalizerBase, ILineStringResolverPart, ILineArguments<ILineStringResolver>
+    public class StringLocalizerLineResolver : StringLocalizerBase, ILineStringResolver, ILineArguments<IStringResolver>
     {
         /// <summary>
         /// Localization resolver.
         /// </summary>
-        protected ILineStringResolver resolver;
+        protected IStringResolver resolver;
 
         /// <summary>
         /// ILineLineResolver property
         /// </summary>
-        public ILineStringResolver Resolver { get => resolver; set => throw new InvalidOperationException(); }
+        public IStringResolver Resolver { get => resolver; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public ILineStringResolver Argument0 => resolver;
+        public IStringResolver Argument0 => resolver;
 
         /// <summary>
         /// Create new StringLocalizer part.
@@ -106,7 +106,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="LineResolver"></param>
-        public StringLocalizerLineResolver(ILineFactory appender, ILine prevKey, ILineStringResolver LineResolver) : base(appender, prevKey)
+        public StringLocalizerLineResolver(ILineFactory appender, ILine prevKey, IStringResolver LineResolver) : base(appender, prevKey)
         {
             this.resolver = LineResolver;
         }
@@ -118,7 +118,7 @@ namespace Lexical.Localization
         /// <param name="context"></param>
         public StringLocalizerLineResolver(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.resolver = info.GetValue("LineResolver", typeof(ILineStringResolver)) as ILineStringResolver;
+            this.resolver = info.GetValue("LineResolver", typeof(IStringResolver)) as IStringResolver;
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class StringLocalizerAppender : ILineFactory<ILineStringResolverPart, ILineStringResolver>
+    public partial class StringLocalizerAppender : ILineFactory<ILineStringResolver, IStringResolver>
     {
         /// <summary>
         /// Append part.
@@ -143,7 +143,7 @@ namespace Lexical.Localization
         /// <param name="LineResolver"></param>
         /// <param name="StringLocalizer"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, ILineStringResolver LineResolver, out ILineStringResolverPart StringLocalizer)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IStringResolver LineResolver, out ILineStringResolver StringLocalizer)
         {
             StringLocalizer = new StringLocalizerLineResolver(appender, previous, LineResolver);
             return true;

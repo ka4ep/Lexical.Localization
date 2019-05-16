@@ -8,19 +8,19 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// The default localization formatter implementation.
     /// </summary>
-    public class LineStringResolver : ILineStringResolver
+    public class StringResolver : IStringResolver
     {
-        private static LineStringResolver instance = new LineStringResolver();
+        private static StringResolver instance = new StringResolver();
 
         /// <summary>
         /// Default instance
         /// </summary>
-        public static LineStringResolver Instance => instance;
+        public static StringResolver Instance => instance;
 
         /// <summary>
         /// Resolve the formulation string. 

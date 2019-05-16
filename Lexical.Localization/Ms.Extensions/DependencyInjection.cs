@@ -96,7 +96,7 @@ namespace Lexical.Localization
             }
 
             // ILineResolver
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineStringResolver>( LineStringResolver.Instance ));
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton<IStringResolver>( StringResolver.Instance ));
 
             // UnicodePluralityRules as 
             //serviceCollection.TryAdd(ServiceDescriptor.Singleton<IPluralRules>(UnicodeCLDR.Instance));

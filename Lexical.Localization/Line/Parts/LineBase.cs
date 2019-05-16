@@ -259,7 +259,7 @@ namespace Lexical.Localization
                     .AddInterface(typeof(ILineAssembly))
                     .AddInterface(typeof(ILineFormatArgs))
                     .AddInterface(typeof(ILineFormatProvider))
-                    .AddInterface(typeof(ILineStringResolverPart))
+                    .AddInterface(typeof(ILineStringResolver))
                     .AddInterface(typeof(ILineLogger))
                     .AddInterface(typeof(ILineValue))
                     .AddInterface(typeof(ILinePluralRules))

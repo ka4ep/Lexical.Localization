@@ -3,6 +3,7 @@
 // Date:           20.3.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.StringFormat;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -11,12 +12,12 @@ namespace Lexical.Localization
     /// <summary>
     /// A key that has been assigned with resolver.
     /// </summary>
-    public interface ILineStringResolverPart : ILine
+    public interface ILineStringResolver : ILine
     {
         /// <summary>
         /// (Optional) The assigned resolver.
         /// </summary>
-        ILineStringResolver Resolver { get; set; }
+        IStringResolver Resolver { get; set; }
     }
 
     public static partial class ILineExtensions
@@ -28,15 +29,15 @@ namespace Lexical.Localization
         /// <param name="resolver"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If part append fails</exception>
-        public static ILineStringResolverPart Resolver(this ILine line, ILineStringResolver resolver)
-            => line.Append<ILineStringResolverPart, ILineStringResolver>(resolver);
+        public static ILineStringResolver Resolver(this ILine line, IStringResolver resolver)
+            => line.Append<ILineStringResolver, IStringResolver>(resolver);
 
         /// <summary>
         /// Get formulation string, but does not apply arguments.
         /// 
-        /// Tries to resolve string with each <see cref="ILineStringResolver"/> until result other than <see cref="LineStatus.NoResult"/> is found.
+        /// Tries to resolve string with each <see cref="IStringResolver"/> until result other than <see cref="LineStatus.NoResult"/> is found.
         /// 
-        /// If no applicable <see cref="ILineStringResolver"/> is found return a value with state <see cref="LineStatus.NoResult"/>.
+        /// If no applicable <see cref="IStringResolver"/> is found return a value with state <see cref="LineStatus.NoResult"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -45,8 +46,8 @@ namespace Lexical.Localization
             LineString result = new LineString(key, null, LineStatus.NoResult);
             for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
-                ILineStringResolver _formatter;
-                if (k is ILineStringResolverPart formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
+                IStringResolver _formatter;
+                if (k is ILineStringResolver formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
                 {
                     LineString str = _formatter.ResolveString(key);
                     if (str.Severity <= result.Severity) result = str;
@@ -58,9 +59,9 @@ namespace Lexical.Localization
         /// <summary>
         /// Resolve and formulate string (applies arguments).
         /// 
-        /// Tries to resolve string with each <see cref="ILineStringResolver"/> until result other than <see cref="LineStatus.NoResult"/> is found.
+        /// Tries to resolve string with each <see cref="IStringResolver"/> until result other than <see cref="LineStatus.NoResult"/> is found.
         /// 
-        /// If no applicable <see cref="ILineStringResolver"/> is found return a value with state <see cref="LineStatus.NoResult"/>.
+        /// If no applicable <see cref="IStringResolver"/> is found return a value with state <see cref="LineStatus.NoResult"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>If key has <see cref="ILineFormatArgs"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
@@ -71,8 +72,8 @@ namespace Lexical.Localization
             LineString result = new LineString(key, null, LineStatus.NoResult);
             for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
-                ILineStringResolver _formatter;
-                if (k is ILineStringResolverPart formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
+                IStringResolver _formatter;
+                if (k is ILineStringResolver formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
                 {
                     LineString str = _formatter.ResolveFormulatedString(key);
                     if (str.Severity <= result.Severity) result = str;

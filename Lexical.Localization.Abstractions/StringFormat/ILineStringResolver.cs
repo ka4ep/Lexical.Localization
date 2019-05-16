@@ -3,12 +3,12 @@
 // Date:           20.3.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-namespace Lexical.Localization
+namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// Resolver that resolves <see cref="ILine"/> into <see cref="LineString"/>.
     /// </summary>
-    public interface ILineStringResolver
+    public interface IStringResolver
     {
         /// <summary>
         /// Resolve <paramref name="key"/> into <see cref="IFormulationString"/>, but don't apply arguments.
