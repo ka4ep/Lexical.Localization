@@ -154,7 +154,7 @@ namespace Lexical.Localization.StringFormat
                 var y_arg = y as IPlaceholder;
                 if (x_arg.PlaceholderIndex != y_arg.PlaceholderIndex) return false;
                 if ((x_arg.Expression == null) != (y_arg.Expression == null)) return false;
-                if ((x_arg.Expression != null) && (y_arg.Expression != null)) return StringFormatExpressionEquals.Equals(x_arg, y_arg);
+                if ((x_arg.Expression != null) && (y_arg.Expression != null)) return PlaceholderExpressionEquals.Equals(x_arg, y_arg);
             }
 
             return true;
@@ -178,7 +178,7 @@ namespace Lexical.Localization.StringFormat
 
             if (o.Kind == FormatStringPartKind.Placeholder && o is IPlaceholder arg)
             {
-                result = new StringFormatExpressionHashCode().Hash(arg.Expression).Hash(arg.PlaceholderIndex);
+                result = new PlaceholderExpressionHashCode().Hash(arg.Expression).Hash(arg.PlaceholderIndex);
             }
 
             return result;

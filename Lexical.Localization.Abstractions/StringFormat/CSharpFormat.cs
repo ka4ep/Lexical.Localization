@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// Lexical string format similiar to C# string format, with one difference, function descriptions can be added to the argument description.

@@ -7,7 +7,7 @@ using Lexical.Localization.Internal;
 using System;
 using System.Text;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// Result of an operation that resolves a <see cref="ILine"/> into a string within an executing context, such as one that includes current active culture.

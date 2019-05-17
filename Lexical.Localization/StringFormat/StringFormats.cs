@@ -7,7 +7,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// Collection of localization formats.

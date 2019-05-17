@@ -5,7 +5,7 @@
 // --------------------------------------------------------
 using System;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// Class that carries a status code result as <see cref="IFormatString"/>.

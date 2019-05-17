@@ -10,7 +10,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Makes equals comparison for expressions that are used with string format placeholders.
     /// </summary>
-    public class StringFormatExpressionEquals
+    public class PlaceholderExpressionEquals
     {
         /// <summary>
         /// Hash in expression

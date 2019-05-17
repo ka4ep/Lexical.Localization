@@ -3,6 +3,7 @@
 // Date:           25.2.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.StringFormat;
 using System.Collections.Generic;
 
 namespace Lexical.Localization

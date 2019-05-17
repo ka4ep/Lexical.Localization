@@ -6,7 +6,7 @@
 using Lexical.Localization.Exp;
 using System;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// Preparsed or lazy parsed format string. 

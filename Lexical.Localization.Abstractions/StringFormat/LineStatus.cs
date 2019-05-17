@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// Status code for <see cref="LineString"/>.

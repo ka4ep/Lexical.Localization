@@ -12,12 +12,12 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Calculates <see cref="IExpression"/> hashcode of <see cref="IPlaceholder"/>s.
     /// </summary>
-    public struct StringFormatExpressionHashCode
+    public struct PlaceholderExpressionHashCode
     {
         /// <summary>
         /// Start value
         /// </summary>
-        public static readonly StringFormatExpressionHashCode Initial = unchecked((int)0x811C9DC5);
+        public static readonly PlaceholderExpressionHashCode Initial = unchecked((int)0x811C9DC5);
 
         /// <summary>
         /// Prime factor
@@ -33,20 +33,20 @@ namespace Lexical.Localization.StringFormat
         /// Convert to int
         /// </summary>
         /// <param name="r"></param>
-        public static implicit operator int(StringFormatExpressionHashCode r) => r.HashCode;
+        public static implicit operator int(PlaceholderExpressionHashCode r) => r.HashCode;
 
         /// <summary>
         /// Convert to struct
         /// </summary>
         /// <param name="code"></param>
-        public static implicit operator StringFormatExpressionHashCode(int code) => new StringFormatExpressionHashCode { HashCode = code };
+        public static implicit operator PlaceholderExpressionHashCode(int code) => new PlaceholderExpressionHashCode { HashCode = code };
 
         /// <summary>
         /// Hash in string
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public StringFormatExpressionHashCode Hash(string str)
+        public PlaceholderExpressionHashCode Hash(string str)
         {
             if (str != null)
             {
@@ -64,7 +64,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="ch"></param>
         /// <returns></returns>
-        public StringFormatExpressionHashCode Hash(char ch)
+        public PlaceholderExpressionHashCode Hash(char ch)
         {
             HashCode ^= ch;
             HashCode *= FNVHashPrime;
@@ -76,7 +76,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="v"></param>
         /// <returns></returns>
-        public StringFormatExpressionHashCode Hash(int v)
+        public PlaceholderExpressionHashCode Hash(int v)
         {
             HashCode ^= v;
             HashCode *= FNVHashPrime;
@@ -89,7 +89,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="enumr"></param>
         /// <returns></returns>
-        public StringFormatExpressionHashCode Hash(IEnumerable enumr)
+        public PlaceholderExpressionHashCode Hash(IEnumerable enumr)
         {
             if (enumr == null) return this;
             IEnumerator etor = enumr.GetEnumerator();
@@ -108,7 +108,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        public StringFormatExpressionHashCode Hash(IExpression exp)
+        public PlaceholderExpressionHashCode Hash(IExpression exp)
         {
             if (exp == null) return this;
             if (exp is IUnaryOpExpression uop) return Hash(nameof(IUnaryOpExpression)).Hash((int)uop.Op).Hash(uop.Element);

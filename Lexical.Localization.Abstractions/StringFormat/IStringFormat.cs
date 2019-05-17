@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// String format of string value. 

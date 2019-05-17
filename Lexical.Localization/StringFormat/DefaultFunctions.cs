@@ -56,15 +56,16 @@ namespace Lexical.Localization.StringFormat
         /// <param name="ctx"></param>
         /// <param name="format">string that contains the formatting, e.g. "X8"</param>
         /// <param name="argument"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
-        public object Evaluate(ref FunctionEvaluationContext ctx, object format, object argument)
+        public bool TryEvaluate(ref FunctionEvaluationContext ctx, object format, object argument, out object result)
         {
-            if (argument == null) return null;
+            if (argument == null) { result = null; return false; }
             string formatStr = format?.ToString();
-            if (formatStr != null && argument is IFormattable formattable) return formattable.ToString(formatStr, ctx.Culture);
-            if (ctx.Culture.GetFormat(typeof(ICustomFormatter)) is ICustomFormatter customFormatter_)
-                return customFormatter_.Format(formatStr, argument, ctx.Culture);
-            return ctx.Culture == null ? String.Format("{0:" + formatStr + "}", argument) : String.Format(ctx.Culture, "{0:" + formatStr + "}", argument);
+            if (formatStr != null && argument is IFormattable formattable) { result = formattable.ToString(formatStr, ctx.Culture); return true; }
+            if (ctx.Culture.GetFormat(typeof(ICustomFormatter)) is ICustomFormatter customFormatter_) { result = customFormatter_.Format(formatStr, argument, ctx.Culture); return true; }
+            result = ctx.Culture == null ? String.Format("{0:" + formatStr + "}", argument) : String.Format(ctx.Culture, "{0:" + formatStr + "}", argument);
+            return true;
         }
     }
 
@@ -97,26 +98,29 @@ namespace Lexical.Localization.StringFormat
         /// <param name="ctx"></param>
         /// <param name="str"></param>
         /// <param name="alignment">Int32 or Int64, negative value is padding to left of <paramref name="str"/>, positive value is padding to right of <paramref name="str"/></param>
+        /// <param name="result"></param>
         /// <returns></returns>
-        public object Evaluate(ref FunctionEvaluationContext ctx, object str, object alignment)
+        public bool TryEvaluate(ref FunctionEvaluationContext ctx, object str, object alignment, out object result)
         {
             String s = str?.ToString();
-            if (s == null) return null;
+            if (s == null) { result = null; return false; }
             int a;
             if (alignment is Int32 i) a = i;
             else if (alignment is Int64 ii) a = (Int32)ii;
-            else return s;
+            else { result = s; return true; }
 
-            if (a == 0) return s;
+            if (a == 0) { result = s; return true; }
             if (a > 0)
             {
-                if (s.Length >= a) return a;
-                return s + new string(' ', a - s.Length);
+                if (s.Length >= a) { result = s; return true; }
+                result = s + new string(' ', a - s.Length);
+                return true;
             }
             {
                 a = -a;
-                if (s.Length <= a) return a;
-                return new string(' ', a - s.Length) + s;
+                if (s.Length <= a) { result = s; return true; }
+                result = new string(' ', a - s.Length) + s;
+                return true;
             }
 
         }
