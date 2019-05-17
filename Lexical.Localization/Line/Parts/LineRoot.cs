@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// Localization root where culture policy and language strings cannot be modified after construction.
     /// </summary>
     [Serializable]
-    public partial class LineRoot : LineBase, ILineRoot, ILineCulturePolicy, ILineAsset, ILineStringResolver, ILineFormatProvider, ILineLogger, ILineFunctions
+    public partial class LineRoot : LineBase, ILineRoot, ILineCulturePolicy, ILineAsset, ILineStringResolver, ILineFormatProvider, ILineLogger, ILineFunctions, ILineStringFormat
     {
         /// <summary>
         /// (Optional) The assigned culture policy.
@@ -47,6 +47,11 @@ namespace Lexical.Localization
         protected IFunctions functions;
 
         /// <summary>
+        /// (optional) String format for "Value" parameters.
+        /// </summary>
+        protected IStringFormat stringFormat;
+
+        /// <summary>
         /// Culture policy. Writable if <see cref="Mutable"/>.
         /// </summary>
         /// <exception cref="InvalidOperationException">If writing to not <see cref="Mutable"/>.</exception>
@@ -77,6 +82,11 @@ namespace Lexical.Localization
         public virtual IObserver<LineString> Logger { get => logger; set { throw new InvalidOperationException(); } }
 
         /// <summary>
+        /// StringFormat for "Value" parameters.
+        /// </summary>
+        public virtual IStringFormat StringFormat { get => stringFormat; set { throw new InvalidOperationException(); } }
+
+        /// <summary>
         /// Functions
         /// </summary>
         public virtual IFunctions Functions { get => functions; set { throw new InvalidOperationException(); } }
@@ -90,7 +100,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Construct new root.
         /// </summary>
-        public LineRoot() : this(LineAppender.Default, null, null, null, StringResolver.Instance, null, null, null) { }
+        public LineRoot() : this(LineAppender.Default, null, null, null, StringResolver.Instance, CSharpFormat.Instance, null, null, null) { }
 
         /// <summary>
         /// Construct new root
@@ -98,11 +108,12 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="culturePolicy"></param>
         /// <param name="resolver"></param>
+        /// <param name="stringFormat"></param>
         /// <param name="formatProvider"></param>
         /// <param name="logger"></param>
         /// <param name="functions"></param>
-        public LineRoot(IAsset asset, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) : 
-            this(LineAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, formatProvider, logger, functions)
+        public LineRoot(IAsset asset, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IStringFormat stringFormat = null, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) : 
+            this(LineAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
         {
         }
 
@@ -114,14 +125,16 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="culturePolicy"></param>
         /// <param name="resolver"></param>
+        /// <param name="stringFormat"></param>
         /// <param name="formatProvider"></param>
         /// <param name="logger"></param>
         /// <param name="functions"></param>
-        protected LineRoot(ILineFactory appender, ILine prevKey, IAsset asset, ICulturePolicy culturePolicy, IStringResolver resolver, IFormatProvider formatProvider, IObserver<LineString> logger, IFunctions functions) : base(appender, prevKey)
+        protected LineRoot(ILineFactory appender, ILine prevKey, IAsset asset, ICulturePolicy culturePolicy, IStringResolver resolver, IStringFormat stringFormat, IFormatProvider formatProvider, IObserver<LineString> logger, IFunctions functions) : base(appender, prevKey)
         {
             this.culturePolicy = culturePolicy;
             this.asset = asset;
             this.resolver = resolver;
+            this.stringFormat = stringFormat;
             this.formatProvider = formatProvider;
             this.logger = logger;
             this.functions = functions;
@@ -140,11 +153,12 @@ namespace Lexical.Localization
             /// <param name="asset"></param>
             /// <param name="culturePolicy"></param>
             /// <param name="resolver"></param>
+            /// <param name="stringFormat"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
             /// <param name="functions"></param>
-            public LinkedTo(ILineFactory appender, ILine prevKey, IAsset asset = null, ICulturePolicy culturePolicy = null, IStringResolver resolver = null, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
-                base(appender, prevKey, asset, culturePolicy, resolver, formatProvider, logger, functions)
+            public LinkedTo(ILineFactory appender, ILine prevKey, IAsset asset = null, ICulturePolicy culturePolicy = null, IStringResolver resolver = null, IStringFormat stringFormat = null, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
+                base(appender, prevKey, asset, culturePolicy, resolver, stringFormat, formatProvider, logger, functions)
             { }
         }
 
@@ -192,9 +206,15 @@ namespace Lexical.Localization
             public override IFunctions Functions { get => functions; set => functions = value; }
 
             /// <summary>
+            /// StringFormat for "Value" parameters.
+            /// </summary>
+            public override IStringFormat StringFormat { get => stringFormat; set => stringFormat = value; }
+
+
+            /// <summary>
             /// Construct mutable root.
             /// </summary>
-            public Mutable() : base(StringLocalizerAppender.Default, null, null, null, StringResolver.Instance, null, null, null) { }
+            public Mutable() : base(StringLocalizerAppender.Default, null, null, null, StringResolver.Instance, CSharpFormat.Instance, null, null, null) { }
 
             /// <summary>
             /// Construct new root
@@ -203,11 +223,12 @@ namespace Lexical.Localization
             /// <param name="asset"></param>
             /// <param name="culturePolicy"></param>
             /// <param name="resolver"></param>
+            /// <param name="stringFormat"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
             /// <param name="functions"></param>
-            public Mutable(ILineFactory appender = default, IAsset asset = null, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
-                this(appender ?? LineAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, formatProvider, logger, functions)
+            public Mutable(ILineFactory appender = default, IAsset asset = null, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IStringFormat stringFormat = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
+                this(appender ?? LineAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
             {
             }
 
@@ -219,11 +240,12 @@ namespace Lexical.Localization
             /// <param name="asset"></param>
             /// <param name="culturePolicy"></param>
             /// <param name="resolver"></param>
+            /// <param name="stringFormat"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
             /// <param name="functions"></param>
-            public Mutable(ILineFactory appender, ILine prevKey, IAsset asset, ICulturePolicy culturePolicy, IStringResolver resolver, IFormatProvider formatProvider, IObserver<LineString> logger, IFunctions functions) : 
-                base(appender, prevKey, asset, culturePolicy, resolver, formatProvider, logger, functions)
+            public Mutable(ILineFactory appender, ILine prevKey, IAsset asset, ICulturePolicy culturePolicy, IStringResolver resolver, IStringFormat stringFormat, IFormatProvider formatProvider, IObserver<LineString> logger, IFunctions functions) : 
+                base(appender, prevKey, asset, culturePolicy, resolver, stringFormat, formatProvider, logger, functions)
             {
             }
 
@@ -273,7 +295,7 @@ namespace Lexical.Localization
     /// Localization root where culture policy and language strings cannot be modified after construction.
     /// </summary>
     [Serializable]
-    public partial class StringLocalizerRoot : StringLocalizerBase, ILineRoot, ILineCulturePolicy, ILineAsset, ILineStringResolver, ILineFormatProvider, ILineLogger, ILineFunctions
+    public partial class StringLocalizerRoot : StringLocalizerBase, ILineRoot, ILineCulturePolicy, ILineAsset, ILineStringResolver, ILineFormatProvider, ILineLogger, ILineFunctions, ILineStringFormat
     {
         /// <summary>
         /// (Optional) The assigned culture policy.
@@ -304,6 +326,11 @@ namespace Lexical.Localization
         /// (optional) Functions for string formats to use.
         /// </summary>
         protected IFunctions functions;
+
+        /// <summary>
+        /// (optional) String format for "Value" parameters.
+        /// </summary>
+        protected IStringFormat stringFormat;
 
         /// <summary>
         /// Culture policy. Writable if <see cref="Mutable"/>.
@@ -341,6 +368,11 @@ namespace Lexical.Localization
         public virtual IFunctions Functions { get => functions; set { throw new InvalidOperationException(); } }
 
         /// <summary>
+        /// StringFormat for "Value" parameters.
+        /// </summary>
+        public virtual IStringFormat StringFormat { get => stringFormat; set { throw new InvalidOperationException(); } }
+
+        /// <summary>
         /// Create new root with default settings
         /// </summary>
         /// <returns></returns>
@@ -349,7 +381,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Construct new root.
         /// </summary>
-        public StringLocalizerRoot() : this(StringLocalizerAppender.Default, null, null, null, StringResolver.Instance, null, null, null) { }
+        public StringLocalizerRoot() : this(StringLocalizerAppender.Default, null, null, null, StringResolver.Instance, CSharpFormat.Instance, null, null, null) { }
 
         /// <summary>
         /// Construct new root
@@ -357,11 +389,12 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="culturePolicy"></param>
         /// <param name="resolver"></param>
+        /// <param name="stringFormat"></param>
         /// <param name="formatProvider"></param>
         /// <param name="logger"></param>
         /// <param name="functions"></param>
-        public StringLocalizerRoot(IAsset asset, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
-            this(StringLocalizerAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, formatProvider, logger, functions)
+        public StringLocalizerRoot(IAsset asset, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IStringFormat stringFormat = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
+            this(StringLocalizerAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
         {
         }
 
@@ -373,14 +406,16 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="culturePolicy"></param>
         /// <param name="resolver"></param>
+        /// <param name="stringFormat"></param>
         /// <param name="formatProvider"></param>
         /// <param name="logger"></param>
         /// <param name="functions"></param>
-        protected StringLocalizerRoot(ILineFactory appender, ILine prevKey, IAsset asset, ICulturePolicy culturePolicy, IStringResolver resolver, IFormatProvider formatProvider, IObserver<LineString> logger, IFunctions functions) : base(appender, prevKey)
+        protected StringLocalizerRoot(ILineFactory appender, ILine prevKey, IAsset asset, ICulturePolicy culturePolicy, IStringResolver resolver, IStringFormat stringFormat, IFormatProvider formatProvider, IObserver<LineString> logger, IFunctions functions) : base(appender, prevKey)
         {
             this.culturePolicy = culturePolicy;
             this.asset = asset;
             this.resolver = resolver;
+            this.stringFormat = stringFormat;
             this.formatProvider = formatProvider;
             this.logger = logger;
             this.functions = functions;
@@ -399,11 +434,12 @@ namespace Lexical.Localization
             /// <param name="asset"></param>
             /// <param name="culturePolicy"></param>
             /// <param name="resolver"></param>
+            /// <param name="stringFormat"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
             /// <param name="functions"></param>
-            public LinkedTo(ILineFactory appender, ILine prevKey, IAsset asset = null, ICulturePolicy culturePolicy = null, IStringResolver resolver = null, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
-                base(appender, prevKey, asset, culturePolicy, resolver, formatProvider, logger, functions)
+            public LinkedTo(ILineFactory appender, ILine prevKey, IAsset asset = null, ICulturePolicy culturePolicy = null, IStringResolver resolver = null, IStringFormat stringFormat = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
+                base(appender, prevKey, asset, culturePolicy, resolver, stringFormat, formatProvider, logger, functions)
             { }
         }
 
@@ -453,7 +489,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Construct mutable root.
             /// </summary>
-            public Mutable() : base(StringLocalizerAppender.Default, null, null, null, StringResolver.Instance, null, null, null) { }
+            public Mutable() : base(StringLocalizerAppender.Default, null, null, null, StringResolver.Instance, CSharpFormat.Instance, null, null, null) { }
 
             /// <summary>
             /// Construct new root
@@ -462,11 +498,12 @@ namespace Lexical.Localization
             /// <param name="asset"></param>
             /// <param name="culturePolicy"></param>
             /// <param name="resolver"></param>
+            /// <param name="stringFormat"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
             /// <param name="functions"></param>
-            public Mutable(ILineFactory appender = default, IAsset asset = null, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
-                this(appender ?? StringLocalizerAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, formatProvider, logger, functions)
+            public Mutable(ILineFactory appender = default, IAsset asset = null, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IStringFormat stringFormat = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
+                this(appender ?? StringLocalizerAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
             {
             }
 
@@ -478,11 +515,12 @@ namespace Lexical.Localization
             /// <param name="asset"></param>
             /// <param name="culturePolicy"></param>
             /// <param name="resolver"></param>
+            /// <param name="stringFormat"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
             /// <param name="functions"></param>
-            public Mutable(ILineFactory appender, ILine prevKey, IAsset asset, ICulturePolicy culturePolicy, IStringResolver resolver, IFormatProvider formatProvider, IObserver<LineString> logger, IFunctions functions = null) :
-                base(appender, prevKey, asset, culturePolicy, resolver, formatProvider, logger, functions)
+            public Mutable(ILineFactory appender, ILine prevKey, IAsset asset, ICulturePolicy culturePolicy, IStringResolver resolver, IStringFormat stringFormat = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
+                base(appender, prevKey, asset, culturePolicy, resolver, stringFormat, formatProvider, logger, functions)
             {
             }
 

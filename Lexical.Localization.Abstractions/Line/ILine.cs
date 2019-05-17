@@ -4,6 +4,8 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 
+using Lexical.Localization.StringFormat;
+
 namespace Lexical.Localization
 {
     /// <summary>
@@ -15,34 +17,7 @@ namespace Lexical.Localization
 
     public static partial class ILineExtensions
     {
-        /// <summary>
-        /// Find <see cref="IAsset"/> and get format string.
-        /// Ignores culture policy, ignores inlining, ignores formatting.
-        /// 
-        /// <see cref="ResolveString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns>format string</returns>
-        /// <exception cref="LineException">If resolving failed or resolver was not found</exception>
-        public static IFormatString GetString(this ILine key)
-        {
-            IAsset asset = key.FindAsset();
-            if (asset == null) throw new LineException(key, "String resolver was not found.");
-            IFormatString str = asset.GetString(key);
-            if (str == null) throw new LineException(key, "String was not found.");
-            return str;
-        }
 
-        /// <summary>
-        /// Find <see cref="IAsset"/> and get format string.
-        /// Ignores culture policy, ignores inlining, ignores formatting.
-        /// 
-        /// <see cref="ResolveString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns>format string, or null if format string was not found, or if resolver was not found</returns>
-        public static IFormatString TryGetString(this ILine key)
-            => key.FindAsset()?.GetString(key);
 
         /// <summary>
         /// Find <see cref="IAsset"/> and get language string.

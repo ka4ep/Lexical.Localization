@@ -60,14 +60,14 @@ namespace Lexical.Localization
                     {
                         if (parameter.ParameterName == "Value" && parameter.ParameterValue != null)
                         {
-                            IStringFormat stringFormat = line.FindStringFormat(resolver) ?? CSharpFormat.Instance;
+                            IStringFormat stringFormat = line.FindStringFormat(resolver);
                             return stringFormat.Parse(parameter.ParameterValue);
                         }
                     }
                 }
                 if (resolver != null && part is ILineParameter lineParameter && lineParameter.ParameterName == "Value" && lineParameter.ParameterValue != null)
                 {
-                    IStringFormat stringFormat = line.FindStringFormat(resolver) ?? CSharpFormat.Instance;
+                    IStringFormat stringFormat = line.FindStringFormat(resolver);
                     return stringFormat.Parse(lineParameter.ParameterValue);
                 }
             }

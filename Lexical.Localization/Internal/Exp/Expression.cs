@@ -137,6 +137,7 @@ namespace Lexical.Localization.Exp
         /// <param name="op"></param>
         /// <param name="a"></param>
         /// <param name="b"></param>
+        /// <param name="c"></param>
         public TrinaryOpExpression(TrinaryOp op, IExpression a, IExpression b, IExpression c)
         {
             Op = op;

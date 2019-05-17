@@ -3,6 +3,7 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.StringFormat;
 using System;
 
 namespace Lexical.Localization
@@ -54,6 +55,44 @@ namespace Lexical.Localization
                 if (line is ILineAsset lineAsset && lineAsset.Asset != null)
                     return lineAsset.Asset;
             return null;
+        }
+
+        /// <summary>
+        /// Get key-matching value from associated <see cref="IAsset"/>.
+        /// Ignores culture policy, ignores inlining, ignores formatting.
+        /// 
+        /// <see cref="ResolveString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns>format string</returns>
+        /// <exception cref="LineException">If resolving failed or resolver was not found</exception>
+        public static IFormatString GetAssetValue(this ILine key)
+        {
+            IAsset asset = key.FindAsset();
+            if (asset == null) throw new LineException(key, "String resolver was not found.");
+            ILine line = asset.GetString(key);
+            if (line == null) throw new LineException(key, "String was not found.");
+            return line.GetValue();
+        }
+
+        /// <summary>
+        /// Try get key-matching value from associated <see cref="IAsset"/>.
+        /// Ignores culture policy, ignores inlining, ignores formatting.
+        /// 
+        /// <see cref="ResolveString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="result"></param>
+        /// <returns>format string, or null if format string was not found, or if resolver was not found</returns>
+        public static bool TryGetAssetValue(this ILine key, out IFormatString result)
+        {
+            IAsset asset = key.FindAsset();
+            if (asset == null) { result = null; return false; }
+            ILine line = asset.GetString(key);
+            if (line == null) { result = null; return false; }
+            IFormatString str = line.GetValue();
+            result = str;
+            return str.Text != null;
         }
     }
 

@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using Lexical.Localization.Internal;
+using Lexical.Localization.StringFormat;
 using Microsoft.Extensions.Logging;
 
 namespace Lexical.Localization
