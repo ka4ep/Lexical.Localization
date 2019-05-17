@@ -5,7 +5,6 @@
 // --------------------------------------------------------
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Lexical.Localization.StringFormat
 {
@@ -82,9 +81,9 @@ namespace Lexical.Localization.StringFormat
             int result = FNVHashBasis;
 
             // Hash Status
-            UInt64 code = (UInt64) o.Status.Format();
+            UInt64 code = (UInt64)o.Status.Format();
             result ^= (int)(code & 0xffffffff);
-            result ^= (int)(code>>32);
+            result ^= (int)(code >> 32);
             result *= FNVHashPrime;
 
             // Hash FormatProvider
@@ -122,13 +121,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="y"></param>
         /// <returns>-1, 0, 1</returns>
         public int Compare(IFormatStringPart x, IFormatStringPart y)
-        {
-            string _x = x?.Text, _y = y?.Text;
-            if (_x == null && _y == null) return 0;
-            if (_x == null) return -1;
-            if (_y == null) return 1;
-            return _x.CompareTo(_y);
-        }
+            => x.PartsIndex - y.PartsIndex;
 
         /// <summary>
         /// Compare format strings for equality.
@@ -153,6 +146,7 @@ namespace Lexical.Localization.StringFormat
                 var x_arg = x as IPlaceholder;
                 var y_arg = y as IPlaceholder;
                 if (x_arg.PlaceholderIndex != y_arg.PlaceholderIndex) return false;
+                if (x_arg.PluralCategory != y_arg.PluralCategory) return false;
                 if ((x_arg.Expression == null) != (y_arg.Expression == null)) return false;
                 if ((x_arg.Expression != null) && (y_arg.Expression != null)) return PlaceholderExpressionEquals.Equals(x_arg, y_arg);
             }
@@ -178,7 +172,7 @@ namespace Lexical.Localization.StringFormat
 
             if (o.Kind == FormatStringPartKind.Placeholder && o is IPlaceholder arg)
             {
-                result = new PlaceholderExpressionHashCode().Hash(arg.Expression).Hash(arg.PlaceholderIndex);
+                result = new PlaceholderExpressionHashCode().Hash(arg.PluralCategory).Hash(arg.Expression).Hash(arg.PlaceholderIndex);
             }
 
             return result;

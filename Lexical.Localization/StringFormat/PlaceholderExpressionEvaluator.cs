@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using Lexical.Localization.Exp;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Lexical.Localization.StringFormat
@@ -73,20 +74,6 @@ namespace Lexical.Localization.StringFormat
             return null;
         }
 
-        bool EvaluateEquals(object left, object right)
-        {
-            if (left == null && right == null) return true;
-            if (left == null || right == null) return false;
-            return left.Equals(right);
-        }
-
-        bool EvaluateNotEquals(object left, object right)
-        {
-            if (left == null && right == null) return false;
-            if (left == null || right == null) return true;
-            return !left.Equals(right);
-        }
-
         object EvaluateCall(ICallExpression call)
         {
             object result;
@@ -153,7 +140,7 @@ namespace Lexical.Localization.StringFormat
                 BinaryOp.And => EvaluateAnd(a, b),
                 BinaryOp.Coalesce => EvaluateCoalesce(a, b),
                 BinaryOp.Divide => EvaluateDivide(a, b),
-                BinaryOp.Equal => EvaluateEquals(a, b),
+                BinaryOp.Equal => EvaluateEqual(a, b),
                 BinaryOp.GreaterThan => EvaluateGreaterThan(a, b),
                 BinaryOp.GreaterThanOrEqual => EvaluateGreaterThanOrEqual(a, b),
                 BinaryOp.In => EvaluateIn(a, b),
@@ -164,7 +151,7 @@ namespace Lexical.Localization.StringFormat
                 BinaryOp.LogicalOr => EvaluateLogicalOr(a , b),
                 BinaryOp.Modulo => EvaluateModulo(a, b),
                 BinaryOp.Multiply => EvaluateMultiply(a, b),
-                BinaryOp.NotEqual => EvaluateNotEquals(a, b),
+                BinaryOp.NotEqual => EvaluateNotEqual(a, b),
                 BinaryOp.Or => EvaluateOr(a, b),
                 BinaryOp.Power => EvaluatePower(a, b),
                 BinaryOp.RightShift => EvaluateRightShift(a, b),
@@ -173,95 +160,131 @@ namespace Lexical.Localization.StringFormat
                 _ => throw new ArgumentException($"Unsupported {nameof(BinaryOp)} {bop.Op}")
               };
         }
+        bool isInteger(object a) => a is int || a is uint || a is long || a is ulong;
+        bool isFloat(object a) => a is float || a is double;
+        string toString(object a) => a == null ? "" : a is string str ? str : a.ToString();
+        double toFloat(object a) => a switch { float f => f, double d => d, _ => Double.Parse(toString(a)) };
+        long toInteger(object a) => a switch { int i => i, long l => l, uint ui => ui, ulong ul => (long)ul, _ => long.Parse(toString(a)) };
+        bool toBool(object a) => a switch { bool b => b, _ => bool.Parse(toString(a)) };
         object EvaluateAdd(object a, object b)
         {
-            return null;
+            if (a == null) return b;
+            if (b == null) return a;
+            if (a is string || b is string) return toString(a) + toString(b);
+            if (isFloat(a) || isFloat(b)) return toFloat(a) + toFloat(b);
+            if (isInteger(a) || isInteger(b)) return toInteger(a) + toInteger(b);
+            return toString(a) + toString(b);
         }
         object EvaluateAnd(object a, object b)
-        {
-            return null;
-        }
+            => isInteger(a) && isInteger(b) ? toInteger(a) & toInteger(b) : throw new ArgumentException($"Cannot evaluate And with arguments {a} and {b}");
         object EvaluateCoalesce(object a, object b)
-        {
-            return null;
-        }
+            => a == null ? b : a;
         object EvaluateDivide(object a, object b)
         {
-            return null;
+            if (isFloat(a) || isFloat(b)) return toFloat(a) / toFloat(b);
+            if (isInteger(a) || isInteger(b)) return toInteger(a) / toInteger(b);
+            throw new ArgumentException($"Cannot evaluate '/' with arguments {a} and {b}");
         }
         object EvaluateEqual(object a, object b)
         {
-            return null;
+            if (a == null && b == null) return true;
+            if (a == null || b == null) return false;
+            if (a is string || b is string) return toString(a) == toString(b);
+            if (isFloat(a) || isFloat(b)) return toFloat(a) == toFloat(b);
+            if (isInteger(a) || isInteger(b)) return toInteger(a) == toInteger(b);
+            return toString(a) == toString(b);
         }
         object EvaluateGreaterThan(object a, object b)
         {
-            return null;
+            if (isFloat(a) || isFloat(b)) return toFloat(a) > toFloat(b);
+            if (isInteger(a) || isInteger(b)) return toInteger(a) > toInteger(b);
+            throw new ArgumentException($"Cannot evaluate '>' with arguments {a} and {b}");
         }
         object EvaluateGreaterThanOrEqual(object a, object b)
         {
-            return null;
+            if (isFloat(a) || isFloat(b)) return toFloat(a) >= toFloat(b);
+            if (isInteger(a) || isInteger(b)) return toInteger(a) >= toInteger(b);
+            throw new ArgumentException($"Cannot evaluate '>=' with arguments {a} and {b}");
         }
         object EvaluateIn(object a, object b)
         {
-            return null;
+            if (a == null || b == null) return false;
+            if (b is IEnumerable enumr)
+            {
+                foreach (object o in enumr)
+                    if ((bool)EvaluateEqual(a, o)) return true;
+                return false;
+            }
+            throw new ArgumentException($"Cannot evaluate 'in' with arguments {a} and {b}");
         }
         object EvaluateLeftShift(object a, object b)
         {
-            return null;
+            if (isInteger(a) || isInteger(b)) return toInteger(a) << (int)toInteger(b);
+            throw new ArgumentException($"Cannot evaluate '<<' with arguments {a} and {b}");
         }
         object EvaluateLessThan(object a, object b)
         {
-            return null;
+            if (isFloat(a) || isFloat(b)) return toFloat(a) < toFloat(b);
+            if (isInteger(a) || isInteger(b)) return toInteger(a) < toInteger(b);
+            throw new ArgumentException($"Cannot evaluate '<' with arguments {a} and {b}");
         }
         object EvaluateLessThanOrEqual(object a, object b)
         {
-            return null;
+            if (isFloat(a) || isFloat(b)) return toFloat(a) <= toFloat(b);
+            if (isInteger(a) || isInteger(b)) return toInteger(a) <= toInteger(b);
+            throw new ArgumentException($"Cannot evaluate '<=' with arguments {a} and {b}");
         }
         object EvaluateLogicalAnd(object a, object b)
-        {
-            return null;
-        }
+            => toBool(a) && toBool(b);
         object EvaluateLogicalOr(object a, object b)
-        {
-            return null;
-        }
+            => toBool(a) || toBool(b);
         object EvaluateModulo(object a, object b)
         {
-            return null;
+            if (isFloat(a) || isFloat(b)) return toFloat(a) % toFloat(b);
+            if (isInteger(a) || isInteger(b)) return toInteger(a) % toInteger(b);
+            throw new ArgumentException($"Cannot evaluate '%' with arguments {a} and {b}");
         }
         object EvaluateMultiply(object a, object b)
         {
-            return null;
+            if (isFloat(a) || isFloat(b)) return toFloat(a) * toFloat(b);
+            if (isInteger(a) || isInteger(b)) return toInteger(a) * toInteger(b);
+            throw new ArgumentException($"Cannot evaluate '*' with arguments {a} and {b}");
         }
         object EvaluateNotEqual(object a, object b)
         {
-            return null;
+            if (a == null && b == null) return false;
+            if (a == null || b == null) return true;
+            if (a is string || b is string) return toString(a) != toString(b);
+            if (isFloat(a) || isFloat(b)) return toFloat(a) != toFloat(b);
+            if (isInteger(a) || isInteger(b)) return toInteger(a) != toInteger(b);
+            return toString(a) != toString(b);
         }
         object EvaluateOr(object a, object b)
-        {
-            return null;
-        }
+            => isInteger(a) && isInteger(b) ? toInteger(a) | toInteger(b) : throw new ArgumentException($"Cannot evaluate Or with arguments {a} and {b}");
         object EvaluatePower(object a, object b)
         {
-            return null;
+            if (isFloat(a) || isFloat(b)) return Math.Pow(toFloat(a), toFloat(b));
+            if (isInteger(a) || isInteger(b)) return Math.Pow(toInteger(a), toInteger(b));
+            throw new ArgumentException($"Cannot evaluate 'pow' with arguments {a} and {b}");
         }
         object EvaluateRightShift(object a, object b)
         {
-            return null;
+            if (isInteger(a) || isInteger(b)) return toInteger(a) >> (int)toInteger(b);
+            throw new ArgumentException($"Cannot evaluate '>>' with arguments {a} and {b}");
         }
         object EvaluateSubtract(object a, object b)
         {
-            return null;
+            if (isFloat(a) || isFloat(b)) return toFloat(a) - toFloat(b);
+            if (isInteger(a) || isInteger(b)) return toInteger(a) - toInteger(b);
+            throw new ArgumentException($"Cannot evaluate '-' with arguments {a} and {b}");
         }
         object EvaluateXor(object a, object b)
         {
-            return null;
+            if (isInteger(a) || isInteger(b)) return toInteger(a) ^ toInteger(b);
+            throw new ArgumentException($"Cannot evaluate '^' with arguments {a} and {b}");
         }
         object EvaluateCondition(object a, object b, object c)
-        {
-            return null;
-        }
-
+            => toBool(a) ? b : c;
     }
 
 }

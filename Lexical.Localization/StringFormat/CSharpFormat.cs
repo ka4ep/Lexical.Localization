@@ -3,19 +3,19 @@
 // Date:           8.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Exp;
 using Lexical.Localization.Internal;
-using Lexical.Localization.StringFormat;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 
 namespace Lexical.Localization.StringFormat
 {
     /// <summary>
-    /// Lexical string format similiar to C# string format, with one difference, function descriptions can be added to the argument description.
+    /// C# string format, with one difference, plural category is configurable at the left of placeholder with ':' separator. 
+    /// Corresponding plural case must be configured in the supplying localization lines.
     /// 
-    ///     "Text {[function:]0:[,alignment][:format]} text".
+    ///     "Text {[pluralCategory:]argumentIndex:[,alignment][:format]} text".
     /// 
     /// Rules:
     ///  1. Arguments are numbered and inside braces:
@@ -98,7 +98,7 @@ namespace Lexical.Localization.StringFormat
             /// <summary>
             /// Parsed arguments. Set in <see cref="Build"/>.
             /// </summary>
-            IPlaceholder[] arguments;
+            IPlaceholder[] placeholders;
 
             /// <summary>
             /// String as sequence of parts. Set in <see cref="Build"/>.
@@ -126,9 +126,9 @@ namespace Lexical.Localization.StringFormat
             public IFormatStringPart[] Parts { get { if (status == LineStatus.FormatFailedNoResult) Build(); return parts; } }
 
             /// <summary>
-            /// Get the parsed arguments.
+            /// Get placeholders.
             /// </summary>
-            public IPlaceholder[] Placeholders { get { if (status == LineStatus.FormatFailedNoResult) Build(); return arguments; } }
+            public IPlaceholder[] Placeholders { get { if (status == LineStatus.FormatFailedNoResult) Build(); return placeholders; } }
 
             /// <summary>
             /// (optional) Get associated format provider. This is typically a plurality rules and  originates from a localization file.
@@ -136,7 +136,7 @@ namespace Lexical.Localization.StringFormat
             public virtual IFormatProvider FormatProvider => null;
 
             /// <summary>
-            /// Create format string that parses arguments lazily.
+            /// Create format string that parses formulation <paramref name="text"/> lazily.
             /// </summary>
             /// <param name="text"></param>
             public FormatString(string text)
@@ -163,7 +163,7 @@ namespace Lexical.Localization.StringFormat
                 }
 
                 // Unify text parts
-                for (int i=1; i<parts.Count;)
+                for (int i = 1; i < parts.Count;)
                 {
                     if (parts[i - 1] is TextPart left && parts[i] is TextPart right)
                     {
@@ -180,50 +180,31 @@ namespace Lexical.Localization.StringFormat
                 for (int i = 0; i < partArray.Length; i++)
                 {
                     if (partArray[i] is TextPart textPart) textPart.PartsIndex = i;
-                    else if (partArray[i] is PlaceHolder argPart) argPart.PartsIndex = i;
+                    else if (partArray[i] is Placeholder argPart) argPart.PartsIndex = i;
                 }
 
                 // Create arguments array
                 int argumentCount = 0;
                 for (int i = 0; i < parts.Count; i++) if (parts[i] is IPlaceholder) argumentCount++;
-                var argumentsArray = new IPlaceholder[argumentCount];
+                var placeholdersArray = new IPlaceholder[argumentCount];
                 int j = 0;
-                for (int i = 0; i < parts.Count; i++) if (parts[i] is PlaceHolder argPart) argumentsArray[j++] = argPart;
-                Array.Sort(argumentsArray, PlaceholderOrderComparer.Instance);
-                for (int i = 0; i < argumentsArray.Length; i++) ((PlaceHolder)argumentsArray[i]).ArgumentsIndex = i;
+                for (int i = 0; i < parts.Count; i++) if (parts[i] is Placeholder argPart) placeholdersArray[j++] = argPart;
+                Array.Sort(placeholdersArray, FormatStringPartComparer.Instance);
+                for (int i = 0; i < placeholdersArray.Length; i++) ((Placeholder)placeholdersArray[i]).PlaceholderIndex = i;
 
                 // Write status.
                 Thread.MemoryBarrier();
-                this.arguments = argumentsArray;
+                this.placeholders = placeholdersArray;
                 this.parts = partArray;
                 this.status = parser.status;
             }
 
-            /// <summary>
-            /// Comparer that compares first by placeholder index, then by occurance index.
-            /// </summary>
-            class PlaceholderOrderComparer : IComparer<IPlaceholder>
-            {
-                static IComparer<IPlaceholder> instance = new PlaceholderOrderComparer();
-                public static IComparer<IPlaceholder> Instance => instance;
-
-                public int Compare(IPlaceholder x, IPlaceholder y)
-                {
-                    int c = x.ArgumentIndex - y.ArgumentIndex;
-                    if (c < 0) return -1;
-                    if (c > 0) return 1;
-                    c = x.PlaceholderIndex - y.PlaceholderIndex;
-                    if (c < 0) return -1;
-                    if (c > 0) return 1;
-                    return c;
-                }
-            }
 
             /// <summary>
             /// Calculate hashcode
             /// </summary>
             /// <returns></returns>
-            public override int GetHashCode() 
+            public override int GetHashCode()
                 => FormatStringComparer.Instance.GetHashCode(this);
 
             /// <summary>
@@ -363,7 +344,7 @@ namespace Lexical.Localization.StringFormat
         public class TextPart : IFormatStringPart
         {
             /// <summary>
-            /// Unify two parts
+            /// Unify two text parts
             /// </summary>
             /// <param name="leftPart"></param>
             /// <param name="rightPart"></param>
@@ -418,7 +399,7 @@ namespace Lexical.Localization.StringFormat
             /// Calculate hashcode
             /// </summary>
             /// <returns></returns>
-            public override int GetHashCode() 
+            public override int GetHashCode()
                 => FormatStringPartComparer.Instance.GetHashCode(this);
 
             /// <summary>
@@ -436,9 +417,9 @@ namespace Lexical.Localization.StringFormat
         }
 
         /// <summary>
-        /// Parsed argument info.
+        /// Placeholder info.
         /// </summary>
-        public class PlaceHolder : IPlaceholder
+        public class Placeholder : IPlaceholder
         {
             /// <summary>
             /// The 'parent' format string.
@@ -461,16 +442,6 @@ namespace Lexical.Localization.StringFormat
             public int PlaceholderIndex { get; internal set; }
 
             /// <summary>
-            /// Argument index. Refers to index in the args array of <see cref="ILineFormatArgs.Args"/>.
-            /// </summary>
-            public int ArgumentIndex { get; internal set; }
-
-            /// <summary>
-            /// Argument name.
-            /// </summary>
-            public string ArgumentName => null;
-
-            /// <summary>
             /// Start index of first character of the argument in the format string.
             /// </summary>
             public int Index { get; internal set; }
@@ -481,31 +452,9 @@ namespace Lexical.Localization.StringFormat
             public int Length { get; internal set; }
 
             /// <summary>
-            /// (Optional) The function name that is passed to <see cref="IArgumentFormatter"/>.
-            /// E.g. "plural", "optional", "range", "ordinal".
+            /// Plural category, such as: cardinal, ordinal, optional (with default ruies)
             /// </summary>
-            public string Function { get; internal set; }
-
-            /// <summary>
-            /// (Optional) The format text that is passed to <see cref="ICustomFormatter"/>, <see cref="IFormattable"/> and <see cref="IArgumentFormatter"/>.
-            /// E.g. "x2".
-            /// </summary>
-            public string Format { get; internal set; }
-
-            /// <summary>
-            /// Alignment is an integer that defines field width. If negative then field is left-aligned, if positive then right-aligned.
-            /// </summary>
-            public int Alignment { get; internal set; }
-
-            /// <summary>
-            /// Get default value
-            /// </summary>
-            public string DefaultValue => null;
-
-            /// <summary>
-            /// Index in Arguments array.
-            /// </summary>
-            public int ArgumentsIndex { get; internal set; }
+            public string PluralCategory { get; internal set; }
 
             /// <summary>
             /// Index in parts array.
@@ -513,26 +462,29 @@ namespace Lexical.Localization.StringFormat
             public int PartsIndex { get; internal set; }
 
             /// <summary>
+            /// Expression that describes a function that evaluates to string within the evaluation context.
+            /// </summary>
+            public IExpression Expression { get; internal set; }
+
+            /// <summary>
             /// Create argument info.
             /// </summary>
             /// <param name="formatString"></param>
             /// <param name="index">first character index</param>
             /// <param name="length">character length</param>
-            /// <param name="occuranceIndex"></param>
-            /// <param name="argumentIndex"></param>
-            /// <param name="function">(optional)</param>
-            /// <param name="format">(optional)</param>
-            /// <param name="alignment"></param>
-            public PlaceHolder(IFormatString formatString, int index, int length, int occuranceIndex, int argumentIndex, string function, string format, int alignment)
+            /// <param name="partsIndex"></param>
+            /// <param name="placeholderIndex"></param>
+            /// <param name="pluralCategory"></param>
+            /// <param name="expression">(optional)</param>
+            public Placeholder(IFormatString formatString, int index, int length, int partsIndex, int placeholderIndex, string pluralCategory, IExpression expression)
             {
                 FormatString = formatString ?? throw new ArgumentNullException(nameof(formatString));
                 Index = index;
                 Length = length;
-                Function = function;
-                Format = format;
-                PlaceholderIndex = occuranceIndex;
-                ArgumentIndex = argumentIndex;
-                Alignment = alignment;
+                PluralCategory = pluralCategory;
+                Expression = expression;
+                PartsIndex = partsIndex;
+                PlaceholderIndex = placeholderIndex;
             }
 
             /// <summary>
@@ -558,7 +510,7 @@ namespace Lexical.Localization.StringFormat
                 => FormatString.Text.Substring(Index, Length);
         }
 
-        enum ParserState { Text, ArgumentStart, Function, Index, Alignment, Format, ArgumentEnd }
+        enum ParserState { Text, ArgumentStart, PluralCategory, Index, Alignment, Format, ArgumentEnd }
 
         /// <summary>
         /// Parser that breaks format string into parts
@@ -581,19 +533,19 @@ namespace Lexical.Localization.StringFormat
             bool escaped;
 
             /// <summary>
-            /// Argument occurance index
+            /// Placeholder index
             /// </summary>
-            int occuranceIx;
+            int placeholderIndex;
 
             /// <summary>
             /// Part's start index
             /// </summary>
-            int partIx;
+            int strIx;
 
             /// <summary>
             /// Function text indices
             /// </summary>
-            int functionStartIx, functionEndIx;
+            int pluralCategoryStartIx, pluralCategoryEndIx;
 
             /// <summary>
             /// Argument index indices
@@ -635,9 +587,9 @@ namespace Lexical.Localization.StringFormat
                 str = formatString.Text;
                 state = ParserState.Text;
                 escaped = false;
-                partIx = 0;
-                occuranceIx = -1;
-                functionStartIx = -1; functionEndIx = -1;
+                strIx = 0;
+                placeholderIndex = -1;
+                pluralCategoryStartIx = -1; pluralCategoryEndIx = -1;
                 indexStartIx = -1; indexEndIx = -1;
                 alignmentStartIx = -1; alignmentEndIx = -1;
                 formatStartIx = -1; formatEndIx = -1;
@@ -658,21 +610,21 @@ namespace Lexical.Localization.StringFormat
             IFormatStringPart CompletePart(int endIx)
             {
                 // Calculate character length
-                int length = endIx - partIx;
+                int length = endIx - strIx;
                 // No parts
                 if (length == 0) return null;
                 // Return text part
                 if (state == ParserState.Text)
                 {
-                    IFormatStringPart part = new TextPart(formatString, partIx, length);
+                    IFormatStringPart part = new TextPart(formatString, strIx, length);
                     ResetPartState(endIx);
                     return part;
                 }
                 // Argument ended too soon '{}' or '{function}', return as text part and mark error
-                if (state == ParserState.ArgumentStart || state == ParserState.Function)
+                if (state == ParserState.ArgumentStart || state == ParserState.PluralCategory)
                 {
                     status = LineStatus.FormatErrorMalformed;
-                    IFormatStringPart part = new TextPart(formatString, partIx, length);
+                    IFormatStringPart part = new TextPart(formatString, strIx, length);
                     ResetPartState(endIx);
                     return part;
                 }
@@ -689,7 +641,8 @@ namespace Lexical.Localization.StringFormat
                     alignmentEndIx = endIx;
                     // Unfinished, did not get '}'
                     status = LineStatus.FormatErrorMalformed;
-                } else if (state == ParserState.Format)
+                }
+                else if (state == ParserState.Format)
                 {
                     formatEndIx = endIx;
                     // Unfinished, did not get '}'
@@ -697,9 +650,9 @@ namespace Lexical.Localization.StringFormat
                 }
 
                 // Error with argument index, return as text 
-                if (indexStartIx<0||indexEndIx<0||indexStartIx>=indexEndIx)
+                if (indexStartIx < 0 || indexEndIx < 0 || indexStartIx >= indexEndIx)
                 {
-                    IFormatStringPart part = new TextPart(formatString, partIx, length);
+                    IFormatStringPart part = new TextPart(formatString, strIx, length);
                     status = LineStatus.FormatErrorMalformed;
                     ResetPartState(endIx);
                     return part;
@@ -709,20 +662,20 @@ namespace Lexical.Localization.StringFormat
                 int argumentIndex;
                 try
                 {
-                    string argumentIndexText = str.Substring(indexStartIx, indexEndIx-indexStartIx);
+                    string argumentIndexText = str.Substring(indexStartIx, indexEndIx - indexStartIx);
                     argumentIndex = int.Parse(argumentIndexText, CultureInfo.InvariantCulture);
                 }
                 catch (Exception)
                 {
                     // Parse failed, probably too large number
-                    IFormatStringPart part = new TextPart(formatString, partIx, length);
+                    IFormatStringPart part = new TextPart(formatString, strIx, length);
                     status = LineStatus.FormatErrorMalformed;
                     ResetPartState(endIx);
                     return part;
                 }
 
                 // Function text
-                string function = functionStartIx >= 0 && functionEndIx >= 0 && functionStartIx < functionEndIx ? str.Substring(functionStartIx, functionEndIx - functionStartIx) : null;
+                string pluralCategory = pluralCategoryStartIx >= 0 && pluralCategoryEndIx >= 0 && pluralCategoryStartIx < pluralCategoryEndIx ? str.Substring(pluralCategoryStartIx, pluralCategoryEndIx - pluralCategoryStartIx) : null;
 
                 // Format text
                 string format = formatStartIx >= 0 && formatEndIx >= 0 && formatStartIx < formatEndIx ? str.Substring(formatStartIx, formatEndIx - formatStartIx) : null;
@@ -744,11 +697,14 @@ namespace Lexical.Localization.StringFormat
                 }
 
                 // Create argument part
-                IFormatStringPart argument = new PlaceHolder(formatString, partIx, length, ++occuranceIx, argumentIndex, function, format, alignment);
+                IExpression exp = new ArgumentIndexExpression(argumentIndex);
+                if (format != null) exp = new CallExpression("Format", exp);
+                if (alignment != 0) exp = new CallExpression("Alignment", exp, new ConstantExpression(alignment));
+                IFormatStringPart part_ = new Placeholder(formatString, strIx, length, -1, ++placeholderIndex, pluralCategory, exp);
                 // Reset to 'Text' state
                 ResetPartState(endIx);
                 // Return the constructed argument
-                return argument;
+                return part_;
             }
 
             /// <summary>
@@ -756,8 +712,8 @@ namespace Lexical.Localization.StringFormat
             /// </summary>
             void ResetPartState(int startIx)
             {
-                partIx = startIx;
-                functionStartIx = -1; functionEndIx = -1;
+                strIx = startIx;
+                pluralCategoryStartIx = -1; pluralCategoryEndIx = -1;
                 indexStartIx = -1; indexEndIx = -1;
                 alignmentStartIx = -1; alignmentEndIx = -1;
                 formatStartIx = -1; formatEndIx = -1;
@@ -814,7 +770,7 @@ namespace Lexical.Localization.StringFormat
                             // End argument
                             state = ParserState.ArgumentEnd;
                             // Complete previous part, and reset state
-                            IFormatStringPart part = CompletePart(i+1);
+                            IFormatStringPart part = CompletePart(i + 1);
                             //
                             return part;
                         }
@@ -843,15 +799,15 @@ namespace Lexical.Localization.StringFormat
                         else
                         // function char
                         {
-                            if (functionStartIx < 0) functionStartIx = i;
-                            functionEndIx = i + 1;
-                            state = ParserState.Function;
+                            if (pluralCategoryStartIx < 0) pluralCategoryStartIx = i;
+                            pluralCategoryEndIx = i + 1;
+                            state = ParserState.PluralCategory;
                         }
                         continue;
                     }
 
-                    // At Function state
-                    if (state == ParserState.Function)
+                    // At PluralCategory state
+                    if (state == ParserState.PluralCategory)
                     {
                         // Change to Index state
                         if (ch == ':')
@@ -861,8 +817,8 @@ namespace Lexical.Localization.StringFormat
                         else
                         // Move indices
                         {
-                            if (functionStartIx < 0) functionStartIx = i;
-                            functionEndIx = i + 1;
+                            if (pluralCategoryStartIx < 0) pluralCategoryStartIx = i;
+                            pluralCategoryEndIx = i + 1;
                         }
                         continue;
                     }
