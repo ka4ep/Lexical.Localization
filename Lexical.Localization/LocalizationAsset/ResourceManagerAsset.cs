@@ -112,7 +112,7 @@ namespace Lexical.Localization
             this.ValueParser = parser ?? CSharpFormat.Instance;
         }
 
-        public IFormulationString GetString(ILine key)
+        public IFormatString GetString(ILine key)
         {
             string id = namePolicy.Print(key);
             CultureInfo culture = key.GetCultureInfo();

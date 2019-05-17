@@ -34,14 +34,14 @@ namespace Lexical.Localization
         /// <summary>
         /// Resolved string.
         /// 
-        /// Depending on what was requested, either formulation string as is, or formatted string with arguments applied to the formulation.
+        /// Depending on what was requested, either format string as is, or formatted string with arguments applied to the format.
         /// 
         /// Null, if value was not available.
         /// </summary>
         public String Value;
 
         /// <summary>
-        /// Severity for the step that resolves <see cref="ILine"/> into formulation string.
+        /// Severity for the step that resolves <see cref="ILine"/> into format string.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
@@ -89,7 +89,7 @@ namespace Lexical.Localization
         public int ArgumentSeverity => Status.ArgumentSeverity();
 
         /// <summary>
-        /// Severity for the step that parses formulation string and applies arguments.
+        /// Severity for the step that parses format string and applies arguments.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
@@ -98,10 +98,10 @@ namespace Lexical.Localization
         /// <item>3 Failed, no value</item>
         /// </list>
         /// </summary>
-        public int FormulationSeverity => Status.FormulationSeverity();
+        public int FormatSeverity => Status.FormatSeverity();
 
         /// <summary>
-        /// Severity for <see cref="IStringResolver"/> implementation specific "Custom0" status.
+        /// Severity for implementation specific "Custom0" status.
         /// 
         /// "Custom0" is a status code that is specific to the <see cref="IStringResolver"/> implementation.
         /// 
@@ -115,7 +115,7 @@ namespace Lexical.Localization
         public int Custom0Severity => Status.Custom0Severity();
 
         /// <summary>
-        /// Severity for <see cref="IStringResolver"/> implementation specific "Custom1" status.
+        /// Severity for implementation specific "Custom1" status.
         /// 
         /// "Custom1" is a status code that is specific to the <see cref="IStringResolver"/> implementation.
         /// 

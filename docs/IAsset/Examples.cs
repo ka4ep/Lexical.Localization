@@ -19,7 +19,7 @@ namespace docs
                 // Create key
                 ILine key = new LineRoot().Key("hello").Culture("en");
                 // Resolve string - Call to LocalizationAssetExtensions.GetString()
-                IFormulationString str = asset.GetString(key);
+                IFormatString str = asset.GetString(key);
                 #endregion Snippet_2
 
             }

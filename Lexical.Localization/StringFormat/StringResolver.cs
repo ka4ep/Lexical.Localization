@@ -23,7 +23,7 @@ namespace Lexical.Localization.StringFormat
         public static StringResolver Instance => instance;
 
         /// <summary>
-        /// Resolve the formulation string. 
+        /// Resolve the format string. 
         /// 
         /// Uses the following algorithm:
         ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="ILineExtensions.FindCulturePolicy(ILine)"/>.
@@ -33,7 +33,7 @@ namespace Lexical.Localization.StringFormat
         ///      b. Search asset with culture
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>formulation string (without formulating it) or null</returns>
+        /// <returns>format string (without formulating it) or null</returns>
         public LineString ResolveString(ILine key)
         {
             // If there is no explicitly assigned culture in the key, try cultures from culture policy
@@ -42,9 +42,9 @@ namespace Lexical.Localization.StringFormat
             bool rootCultureTried = false;
             if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
             {
-                IFormulationString languageString = null;
+                IFormatString languageString = null;
                 // Get inlines
-                IDictionary<ILine, IFormulationString> inlines = key.FindInlines();
+                IDictionary<ILine, IFormatString> inlines = key.FindInlines();
                 foreach (CultureInfo culture in cultures)
                 {
                     bool rootCulture = culture.Name == "";
@@ -62,9 +62,9 @@ namespace Lexical.Localization.StringFormat
 
             if (!rootCultureTried)
             {
-                IFormulationString languageString = null;
+                IFormatString languageString = null;
                 // Get inlines
-                IDictionary<ILine, IFormulationString> inlines = key.FindInlines();
+                IDictionary<ILine, IFormatString> inlines = key.FindInlines();
                 // Try inlines with key
                 if (languageString == null && inlines != null) inlines.TryGetValue(key, out languageString);
                 // Try asset with key
@@ -92,7 +92,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="key"></param>
         /// <returns>If key has <see cref="ILineFormatArgsPart"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
-        /// If key didn't have <see cref="ILineFormatArgsPart"/> part, then return the formulation string "Error (Code=0x{0:X8})".
+        /// If key didn't have <see cref="ILineFormatArgsPart"/> part, then return the format string "Error (Code=0x{0:X8})".
         /// otherwise return null</returns>
         public LineString ResolveFormulatedString(ILine key)
         {
@@ -130,9 +130,9 @@ namespace Lexical.Localization.StringFormat
             IEnumerable<CultureInfo> cultures = null;
             if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
             {
-                IFormulationString languageString = null;
+                IFormatString languageString = null;
                 // Get inlines
-                IDictionary<ILine, IFormulationString> inlines = key.FindInlines();
+                IDictionary<ILine, IFormatString> inlines = key.FindInlines();
                 foreach (CultureInfo culture in cultures)
                 {
                     bool rootCulture = culture.Name == "";
@@ -166,7 +166,7 @@ namespace Lexical.Localization.StringFormat
                     if (languageString == null) languageString = key_with_culture.TryGetString();
                     // Formulate language string
                     if (languageString != null && format_args != null) return Format(key, culture, languageString, format_args);
-                    // Return formulation without arguments applied
+                    // Return format without arguments applied
                     if (languageString != null) return new LineString(key, languageString.Text, 0UL);
                 }
             }
@@ -174,9 +174,9 @@ namespace Lexical.Localization.StringFormat
             // Try key as is
             if (!rootCultureTried)
             {
-                IFormulationString languageString = null;
+                IFormatString languageString = null;
                 // Get inlines
-                IDictionary<ILine, IFormulationString> inlines = key.FindInlines();
+                IDictionary<ILine, IFormatString> inlines = key.FindInlines();
                 // Try inlines with plurality key
                 if (languageString == null && inlines != null && pluralityKey != null) inlines.TryGetValue(pluralityKey, out languageString);
                 // Try inlines with plurality key permutations
@@ -202,7 +202,7 @@ namespace Lexical.Localization.StringFormat
                 if (languageString == null) languageString = key.TryGetString();
                 // Formulate language string
                 if (languageString != null && format_args != null) return Format(key, rootCulture, languageString, format_args);
-                // Return formulation without applying arguments
+                // Return format without applying arguments
                 if (languageString != null) return new LineString(key, languageString.Text, 0UL);
             }
 
@@ -212,24 +212,24 @@ namespace Lexical.Localization.StringFormat
         static CultureInfo rootCulture = CultureInfo.GetCultureInfo("");
 
         /// <summary>
-        /// Apply <paramref name="args"/> into <paramref name="formulationString"/>.
+        /// Apply <paramref name="args"/> into <paramref name="formatString"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="culture"></param>
-        /// <param name="formulationString"></param>
+        /// <param name="formatString"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        static LineString Format(ILine key, CultureInfo culture, IFormulationString formulationString, object[] args)
+        static LineString Format(ILine key, CultureInfo culture, IFormatString formatString, object[] args)
         {
             // Convert to strings
-            string[] arg_strings = new string[formulationString.Placeholders.Length];
-            for(int i=0; i< formulationString.Placeholders.Length; i++)
+            string[] arg_strings = new string[formatString.Placeholders.Length];
+            for(int i=0; i< formatString.Placeholders.Length; i++)
             {
-                IPlaceholder argumentFormulation = formulationString.Placeholders[i];
-                int argIndex = argumentFormulation.ArgumentIndex;
+                IPlaceholder argumentFormat = formatString.Placeholders[i];
+                int argIndex = argumentFormat.ArgumentIndex;
                 if (args!=null && argIndex >= 0 && argIndex < args.Length)
                 {
-                    arg_strings[i] = Format(args[argIndex], argumentFormulation.Format, culture);
+                    arg_strings[i] = Format(args[argIndex], argumentFormat.Format, culture);
                 }
                 else
                 {
@@ -239,23 +239,23 @@ namespace Lexical.Localization.StringFormat
 
             // Count characters
             int c = 0;
-            foreach(var part in formulationString.Parts)
+            foreach(var part in formatString.Parts)
             {
-                if (part.Kind == FormulationStringPartKind.Text) c += part.Length;
-                else if (part.Kind == FormulationStringPartKind.Placeholder && part is IPlaceholder arg) c += arg_strings[arg.ArgumentsIndex].Length;
+                if (part.Kind == FormatStringPartKind.Text) c += part.Length;
+                else if (part.Kind == FormatStringPartKind.Placeholder && part is IPlaceholder arg) c += arg_strings[arg.ArgumentsIndex].Length;
             }
 
             // Put together string
             char[] chars = new char[c];
             int ix = 0;
-            foreach (var part in formulationString.Parts)
+            foreach (var part in formatString.Parts)
             {
-                if (part.Kind == FormulationStringPartKind.Text)
+                if (part.Kind == FormatStringPartKind.Text)
                 {
-                    formulationString.Text.CopyTo(part.Index, chars, ix, part.Length);
+                    formatString.Text.CopyTo(part.Index, chars, ix, part.Length);
                     ix += part.Length;
                 }
-                else if (part.Kind == FormulationStringPartKind.Placeholder && part is IPlaceholder arg)
+                else if (part.Kind == FormatStringPartKind.Placeholder && part is IPlaceholder arg)
                 {
                     string str = arg_strings[arg.ArgumentsIndex];
                     if (str != null)

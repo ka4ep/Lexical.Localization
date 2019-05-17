@@ -68,32 +68,32 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Create lazily parsed string <paramref name="formulationString"/>.
+        /// Create lazily parsed string <paramref name="formatString"/>.
         /// </summary>
-        /// <param name="formulationString"></param>
+        /// <param name="formatString"></param>
         /// <returns>preparsed</returns>
-        public IFormulationString Parse(string formulationString)
+        public IFormatString Parse(string formatString)
         {
-            if (formulationString == null) return Null.Instance;
-            if (formulationString == "") return Empty.Instance;
-            if (FormatProvider != null) return new FormulationStringWithFormatProvider(formulationString, FormatProvider);
-            return new FormulationString(formulationString);
+            if (formatString == null) return Null.Instance;
+            if (formatString == "") return Empty.Instance;
+            if (FormatProvider != null) return new FormatStringWithFormatProvider(formatString, FormatProvider);
+            return new FormatString(formatString);
         }
 
         /// <summary>
         /// Print as string
         /// </summary>
-        /// <param name="formulationString"></param>
+        /// <param name="formatString"></param>
         /// <returns>string or null</returns>
-        public string Print(IFormulationString formulationString)
+        public string Print(IFormatString formatString)
         {
-            return formulationString?.Text;
+            return formatString?.Text;
         }
 
         /// <summary>
-        /// Lazily parsed formulation string.
+        /// Lazily parsed format string.
         /// </summary>
-        public class FormulationString : IFormulationString
+        public class FormatString : IFormatString
         {
             /// <summary>
             /// Parsed arguments. Set in <see cref="Build"/>.
@@ -103,7 +103,7 @@ namespace Lexical.Localization
             /// <summary>
             /// String as sequence of parts. Set in <see cref="Build"/>.
             /// </summary>
-            IFormulationStringPart[] parts;
+            IFormatStringPart[] parts;
 
             /// <summary>
             /// Parse status. Set in <see cref="Build"/>.
@@ -111,24 +111,24 @@ namespace Lexical.Localization
             LineStatus status;
 
             /// <summary>
-            /// Get the original formulation string.
+            /// Get the original format string.
             /// </summary>
             public string Text { get; internal set; }
 
             /// <summary>
             /// Get parse status.
             /// </summary>
-            public LineStatus Status { get { if (status == LineStatus.FormulationFailedNoResult) Build(); return status; } }
+            public LineStatus Status { get { if (status == LineStatus.FormatFailedNoResult) Build(); return status; } }
 
             /// <summary>
-            /// Formulation string broken into sequence of text and argument parts.
+            /// Format string broken into sequence of text and argument parts.
             /// </summary>
-            public IFormulationStringPart[] Parts { get { if (status == LineStatus.FormulationFailedNoResult) Build(); return parts; } }
+            public IFormatStringPart[] Parts { get { if (status == LineStatus.FormatFailedNoResult) Build(); return parts; } }
 
             /// <summary>
             /// Get the parsed arguments.
             /// </summary>
-            public IPlaceholder[] Placeholders { get { if (status == LineStatus.FormulationFailedNoResult) Build(); return arguments; } }
+            public IPlaceholder[] Placeholders { get { if (status == LineStatus.FormatFailedNoResult) Build(); return arguments; } }
 
             /// <summary>
             /// (optional) Get associated format provider. This is typically a plurality rules and  originates from a localization file.
@@ -136,13 +136,13 @@ namespace Lexical.Localization
             public virtual IFormatProvider FormatProvider => null;
 
             /// <summary>
-            /// Create formulation string that parses arguments lazily.
+            /// Create format string that parses arguments lazily.
             /// </summary>
             /// <param name="text"></param>
-            public FormulationString(string text)
+            public FormatString(string text)
             {
                 Text = text;
-                status = text == null ? LineStatus.FormulationFailedNull : LineStatus.FormulationFailedNoResult;
+                status = text == null ? LineStatus.FormatFailedNull : LineStatus.FormatFailedNoResult;
             }
 
             /// <summary>
@@ -150,7 +150,7 @@ namespace Lexical.Localization
             /// </summary>
             protected void Build()
             {
-                StructList8<IFormulationStringPart> parts = new StructList8<IFormulationStringPart>();
+                StructList8<IFormatStringPart> parts = new StructList8<IFormatStringPart>();
 
                 // Create parser
                 Parser parser = new Parser(this);
@@ -158,7 +158,7 @@ namespace Lexical.Localization
                 // Read parts
                 while (parser.HasMore)
                 {
-                    IFormulationStringPart part = parser.ReadNext();
+                    IFormatStringPart part = parser.ReadNext();
                     if (part != null) parts.Add(part);
                 }
 
@@ -174,7 +174,7 @@ namespace Lexical.Localization
                 }
 
                 // Create parts array
-                var partArray = new IFormulationStringPart[parts.Count];
+                var partArray = new IFormatStringPart[parts.Count];
                 parts.CopyTo(partArray, 0);
                 // Set PartsArrayIndex
                 for (int i = 0; i < partArray.Length; i++)
@@ -224,7 +224,7 @@ namespace Lexical.Localization
             /// </summary>
             /// <returns></returns>
             public override int GetHashCode() 
-                => FormulationStringComparer.Instance.GetHashCode(this);
+                => FormatStringComparer.Instance.GetHashCode(this);
 
             /// <summary>
             /// Compare for equality
@@ -232,10 +232,10 @@ namespace Lexical.Localization
             /// <param name="obj"></param>
             /// <returns></returns>
             public override bool Equals(object obj)
-                => obj is IFormulationString other ? FormulationStringComparer.Instance.Equals(this, other) : false;
+                => obj is IFormatString other ? FormatStringComparer.Instance.Equals(this, other) : false;
 
             /// <summary>
-            /// Formulation string.
+            /// Format string.
             /// </summary>
             /// <returns></returns>
             public override string ToString()
@@ -243,9 +243,9 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Version of formulation string that carries an associated format provider.
+        /// Version of format string that carries an associated format provider.
         /// </summary>
-        public class FormulationStringWithFormatProvider : FormulationString
+        public class FormatStringWithFormatProvider : FormatString
         {
             /// <summary>
             /// (optional) Associated format provider.
@@ -258,34 +258,34 @@ namespace Lexical.Localization
             public override IFormatProvider FormatProvider => formatProvider;
 
             /// <summary>
-            /// Create lazily parsed formulation string that carries a <paramref name="formatProvider"/>.
+            /// Create lazily parsed format string that carries a <paramref name="formatProvider"/>.
             /// </summary>
             /// <param name="text"></param>
             /// <param name="formatProvider"></param>
-            public FormulationStringWithFormatProvider(string text, IFormatProvider formatProvider) : base(text)
+            public FormatStringWithFormatProvider(string text, IFormatProvider formatProvider) : base(text)
             {
                 this.formatProvider = formatProvider;
             }
         }
 
         /// <summary>
-        /// Null formulation string.
+        /// Null format string.
         /// </summary>
-        public class Null : IFormulationString
+        public class Null : IFormatString
         {
-            static IFormulationString instance => new Null();
-            static IFormulationStringPart[] parts = new IFormulationStringPart[0];
+            static IFormatString instance => new Null();
+            static IFormatStringPart[] parts = new IFormatStringPart[0];
             static IPlaceholder[] arguments = new IPlaceholder[0];
             /// <summary>
             /// Default instance.
             /// </summary>
-            public static IFormulationString Instance => instance;
+            public static IFormatString Instance => instance;
             /// <summary />
-            public LineStatus Status => LineStatus.FormulationFailedNull;
+            public LineStatus Status => LineStatus.FormatFailedNull;
             /// <summary />
             public string Text => null;
             /// <summary />
-            public IFormulationStringPart[] Parts => parts;
+            public IFormatStringPart[] Parts => parts;
             /// <summary />
             public IPlaceholder[] Placeholders => arguments;
             /// <summary />
@@ -294,7 +294,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Cached hashcode
             /// </summary>
-            int hashcode => FormulationStringComparer.Instance.GetHashCode(this);
+            int hashcode => FormatStringComparer.Instance.GetHashCode(this);
 
             /// <summary>
             /// Calculate hashcode
@@ -309,28 +309,28 @@ namespace Lexical.Localization
             /// <param name="obj"></param>
             /// <returns></returns>
             public override bool Equals(object obj)
-                => obj is IFormulationString other ? FormulationStringComparer.Instance.Equals(this, other) : false;
+                => obj is IFormatString other ? FormatStringComparer.Instance.Equals(this, other) : false;
 
         }
 
         /// <summary>
-        /// Empty formulation string.
+        /// Empty format string.
         /// </summary>
-        public class Empty : IFormulationString
+        public class Empty : IFormatString
         {
-            static IFormulationString instance => new Empty();
-            static IFormulationStringPart[] parts = new IFormulationStringPart[0];
+            static IFormatString instance => new Empty();
+            static IFormatStringPart[] parts = new IFormatStringPart[0];
             static IPlaceholder[] arguments = new IPlaceholder[0];
             /// <summary>
             /// Default instance.
             /// </summary>
-            public static IFormulationString Instance => instance;
+            public static IFormatString Instance => instance;
             /// <summary />
-            public LineStatus Status => LineStatus.FormulationFailedNull;
+            public LineStatus Status => LineStatus.FormatFailedNull;
             /// <summary />
             public string Text => "";
             /// <summary />
-            public IFormulationStringPart[] Parts => parts;
+            public IFormatStringPart[] Parts => parts;
             /// <summary />
             public IPlaceholder[] Placeholders => arguments;
             /// <summary />
@@ -339,7 +339,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Cached hashcode
             /// </summary>
-            int hashcode => FormulationStringComparer.Instance.GetHashCode(this);
+            int hashcode => FormatStringComparer.Instance.GetHashCode(this);
 
             /// <summary>
             /// Calculate hashcode
@@ -354,13 +354,13 @@ namespace Lexical.Localization
             /// <param name="obj"></param>
             /// <returns></returns>
             public override bool Equals(object obj)
-                => obj is IFormulationString other ? FormulationStringComparer.Instance.Equals(this, other) : false;
+                => obj is IFormatString other ? FormatStringComparer.Instance.Equals(this, other) : false;
         }
 
         /// <summary>
         /// Text part
         /// </summary>
-        public class TextPart : IFormulationStringPart
+        public class TextPart : IFormatStringPart
         {
             /// <summary>
             /// Unify two parts
@@ -369,32 +369,32 @@ namespace Lexical.Localization
             /// <param name="rightPart"></param>
             /// <returns></returns>
             internal static TextPart Unify(TextPart leftPart, TextPart rightPart)
-                => new TextPart(leftPart.FormulationString, leftPart.Index, rightPart.Index - leftPart.Index + rightPart.Length);
+                => new TextPart(leftPart.FormatString, leftPart.Index, rightPart.Index - leftPart.Index + rightPart.Length);
 
             /// <summary>
-            /// The 'parent' formulation string.
+            /// The 'parent' format string.
             /// </summary>
-            public IFormulationString FormulationString { get; internal set; }
+            public IFormatString FormatString { get; internal set; }
 
             /// <summary>
             /// Part type
             /// </summary>
-            public FormulationStringPartKind Kind => FormulationStringPartKind.Text;
+            public FormatStringPartKind Kind => FormatStringPartKind.Text;
 
             /// <summary>
-            /// Start index of first character of the argument in the formulation string.
+            /// Start index of first character of the argument in the format string.
             /// </summary>
             public int Index { get; internal set; }
 
             /// <summary>
-            /// Length of characters in the formulation string.
+            /// Length of characters in the format string.
             /// </summary>
             public int Length { get; internal set; }
 
             /// <summary>
-            /// The text part as it appears in the formulation string.
+            /// The text part as it appears in the format string.
             /// </summary>
-            public string Text => FormulationString.Text.Substring(Index, Length);
+            public string Text => FormatString.Text.Substring(Index, Length);
 
             /// <summary>
             /// Index in Parts array.
@@ -404,12 +404,12 @@ namespace Lexical.Localization
             /// <summary>
             /// Create text part.
             /// </summary>
-            /// <param name="formulationString"></param>
+            /// <param name="formatString"></param>
             /// <param name="index">first character index</param>
             /// <param name="length">character length</param>
-            public TextPart(IFormulationString formulationString, int index, int length)
+            public TextPart(IFormatString formatString, int index, int length)
             {
-                FormulationString = formulationString;
+                FormatString = formatString;
                 Index = index;
                 Length = length;
             }
@@ -419,7 +419,7 @@ namespace Lexical.Localization
             /// </summary>
             /// <returns></returns>
             public override int GetHashCode() 
-                => FormulationStringPartComparer.Instance.GetHashCode(this);
+                => FormatStringPartComparer.Instance.GetHashCode(this);
 
             /// <summary>
             /// Compare for equality
@@ -427,12 +427,12 @@ namespace Lexical.Localization
             /// <param name="obj"></param>
             /// <returns></returns>
             public override bool Equals(object obj)
-                => FormulationStringPartComparer.Instance.Equals(obj);
+                => FormatStringPartComparer.Instance.Equals(obj);
 
             /// <summary>
-            /// The text part as it appears in the formulation string.
+            /// The text part as it appears in the format string.
             /// </summary>
-            public override string ToString() => FormulationString.Text.Substring(Index, Length);
+            public override string ToString() => FormatString.Text.Substring(Index, Length);
         }
 
         /// <summary>
@@ -441,22 +441,22 @@ namespace Lexical.Localization
         public class PlaceHolder : IPlaceholder
         {
             /// <summary>
-            /// The 'parent' formulation string.
+            /// The 'parent' format string.
             /// </summary>
-            public IFormulationString FormulationString { get; internal set; }
+            public IFormatString FormatString { get; internal set; }
 
             /// <summary>
             /// Part type
             /// </summary>
-            public FormulationStringPartKind Kind => FormulationStringPartKind.Placeholder;
+            public FormatStringPartKind Kind => FormatStringPartKind.Placeholder;
 
             /// <summary>
-            /// The whole argument definition as it appears in the formulation string.
+            /// The whole argument definition as it appears in the format string.
             /// </summary>
-            public string Text => FormulationString.Text.Substring(Index, Length);
+            public string Text => FormatString.Text.Substring(Index, Length);
 
             /// <summary>
-            /// Occurance index in <see cref="FormulationString"/>.
+            /// Occurance index in <see cref="FormatString"/>.
             /// </summary>
             public int PlaceholderIndex { get; internal set; }
 
@@ -471,12 +471,12 @@ namespace Lexical.Localization
             public string ArgumentName => null;
 
             /// <summary>
-            /// Start index of first character of the argument in the formulation string.
+            /// Start index of first character of the argument in the format string.
             /// </summary>
             public int Index { get; internal set; }
 
             /// <summary>
-            /// Length of characters in the formulation string.
+            /// Length of characters in the format string.
             /// </summary>
             public int Length { get; internal set; }
 
@@ -515,7 +515,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Create argument info.
             /// </summary>
-            /// <param name="formulationString"></param>
+            /// <param name="formatString"></param>
             /// <param name="index">first character index</param>
             /// <param name="length">character length</param>
             /// <param name="occuranceIndex"></param>
@@ -523,9 +523,9 @@ namespace Lexical.Localization
             /// <param name="function">(optional)</param>
             /// <param name="format">(optional)</param>
             /// <param name="alignment"></param>
-            public PlaceHolder(IFormulationString formulationString, int index, int length, int occuranceIndex, int argumentIndex, string function, string format, int alignment)
+            public PlaceHolder(IFormatString formatString, int index, int length, int occuranceIndex, int argumentIndex, string function, string format, int alignment)
             {
-                FormulationString = formulationString ?? throw new ArgumentNullException(nameof(formulationString));
+                FormatString = formatString ?? throw new ArgumentNullException(nameof(formatString));
                 Index = index;
                 Length = length;
                 Function = function;
@@ -540,7 +540,7 @@ namespace Lexical.Localization
             /// </summary>
             /// <returns></returns>
             public override int GetHashCode()
-                => FormulationStringPartComparer.Instance.GetHashCode(this);
+                => FormatStringPartComparer.Instance.GetHashCode(this);
 
             /// <summary>
             /// Compare for equality
@@ -548,25 +548,25 @@ namespace Lexical.Localization
             /// <param name="obj"></param>
             /// <returns></returns>
             public override bool Equals(object obj)
-                => FormulationStringPartComparer.Instance.Equals(obj);
+                => FormatStringPartComparer.Instance.Equals(obj);
 
             /// <summary>
-            /// Print argument formulation as it is in the formulation string. Example "{0:x2}".
+            /// Print argument format as it is in the format string. Example "{0:x2}".
             /// </summary>
             /// <returns></returns>
             public override string ToString()
-                => FormulationString.Text.Substring(Index, Length);
+                => FormatString.Text.Substring(Index, Length);
         }
 
         enum ParserState { Text, ArgumentStart, Function, Index, Alignment, Format, ArgumentEnd }
 
         /// <summary>
-        /// Parser that breaks formulation string into parts
+        /// Parser that breaks format string into parts
         /// </summary>
         struct Parser
         {
             /// <summary>
-            /// Formulation string
+            /// Format string
             /// </summary>
             String str;
 
@@ -621,18 +621,18 @@ namespace Lexical.Localization
             int i;
 
             /// <summary>
-            /// Formulation string
+            /// Format string
             /// </summary>
-            IFormulationString formulationString;
+            IFormatString formatString;
 
             /// <summary>
             /// Initialize parser
             /// </summary>
-            /// <param name="formulationString"></param>
-            public Parser(IFormulationString formulationString)
+            /// <param name="formatString"></param>
+            public Parser(IFormatString formatString)
             {
-                this.formulationString = formulationString;
-                str = formulationString.Text;
+                this.formatString = formatString;
+                str = formatString.Text;
                 state = ParserState.Text;
                 escaped = false;
                 partIx = 0;
@@ -642,7 +642,7 @@ namespace Lexical.Localization
                 alignmentStartIx = -1; alignmentEndIx = -1;
                 formatStartIx = -1; formatEndIx = -1;
                 i = -1;
-                status = LineStatus.FormulationOk;
+                status = LineStatus.FormatOk;
             }
 
             /// <summary>
@@ -655,7 +655,7 @@ namespace Lexical.Localization
             /// </summary>
             /// <param name="endIx">end index</param>
             /// <returns>new part or null</returns>
-            IFormulationStringPart CompletePart(int endIx)
+            IFormatStringPart CompletePart(int endIx)
             {
                 // Calculate character length
                 int length = endIx - partIx;
@@ -664,15 +664,15 @@ namespace Lexical.Localization
                 // Return text part
                 if (state == ParserState.Text)
                 {
-                    IFormulationStringPart part = new TextPart(formulationString, partIx, length);
+                    IFormatStringPart part = new TextPart(formatString, partIx, length);
                     ResetPartState(endIx);
                     return part;
                 }
                 // Argument ended too soon '{}' or '{function}', return as text part and mark error
                 if (state == ParserState.ArgumentStart || state == ParserState.Function)
                 {
-                    status = LineStatus.FormulationErrorMalformed;
-                    IFormulationStringPart part = new TextPart(formulationString, partIx, length);
+                    status = LineStatus.FormatErrorMalformed;
+                    IFormatStringPart part = new TextPart(formatString, partIx, length);
                     ResetPartState(endIx);
                     return part;
                 }
@@ -681,26 +681,26 @@ namespace Lexical.Localization
                 {
                     indexEndIx = endIx;
                     // Unfinished, did not get '}'
-                    status = LineStatus.FormulationErrorMalformed;
+                    status = LineStatus.FormatErrorMalformed;
                 }
                 // Complete at alignment
                 else if (state == ParserState.Alignment)
                 {
                     alignmentEndIx = endIx;
                     // Unfinished, did not get '}'
-                    status = LineStatus.FormulationErrorMalformed;
+                    status = LineStatus.FormatErrorMalformed;
                 } else if (state == ParserState.Format)
                 {
                     formatEndIx = endIx;
                     // Unfinished, did not get '}'
-                    status = LineStatus.FormulationErrorMalformed;
+                    status = LineStatus.FormatErrorMalformed;
                 }
 
                 // Error with argument index, return as text 
                 if (indexStartIx<0||indexEndIx<0||indexStartIx>=indexEndIx)
                 {
-                    IFormulationStringPart part = new TextPart(formulationString, partIx, length);
-                    status = LineStatus.FormulationErrorMalformed;
+                    IFormatStringPart part = new TextPart(formatString, partIx, length);
+                    status = LineStatus.FormatErrorMalformed;
                     ResetPartState(endIx);
                     return part;
                 }
@@ -715,8 +715,8 @@ namespace Lexical.Localization
                 catch (Exception)
                 {
                     // Parse failed, probably too large number
-                    IFormulationStringPart part = new TextPart(formulationString, partIx, length);
-                    status = LineStatus.FormulationErrorMalformed;
+                    IFormatStringPart part = new TextPart(formatString, partIx, length);
+                    status = LineStatus.FormatErrorMalformed;
                     ResetPartState(endIx);
                     return part;
                 }
@@ -739,12 +739,12 @@ namespace Lexical.Localization
                     catch (Exception)
                     {
                         // Parse failed, probably too large number
-                        status = LineStatus.FormulationErrorMalformed;
+                        status = LineStatus.FormatErrorMalformed;
                     }
                 }
 
                 // Create argument part
-                IFormulationStringPart argument = new PlaceHolder(formulationString, partIx, length, ++occuranceIx, argumentIndex, function, format, alignment);
+                IFormatStringPart argument = new PlaceHolder(formatString, partIx, length, ++occuranceIx, argumentIndex, function, format, alignment);
                 // Reset to 'Text' state
                 ResetPartState(endIx);
                 // Return the constructed argument
@@ -768,7 +768,7 @@ namespace Lexical.Localization
             /// Read next character
             /// </summary>
             /// <returns>possible part</returns>
-            public IFormulationStringPart ReadNext()
+            public IFormatStringPart ReadNext()
             {
                 while (HasMore)
                 {
@@ -790,7 +790,7 @@ namespace Lexical.Localization
                         if (state == ParserState.Text)
                         {
                             // Complate previous part, and reset state
-                            IFormulationStringPart part = CompletePart(i);
+                            IFormatStringPart part = CompletePart(i);
                             // Start argument
                             state = ParserState.ArgumentStart;
                             // 
@@ -798,8 +798,8 @@ namespace Lexical.Localization
                         }
                         else
                         {
-                            // Already in argument formulation and got unexpected unescaped '{'
-                            status = LineStatus.FormulationErrorMalformed;
+                            // Already in argument format and got unexpected unescaped '{'
+                            status = LineStatus.FormatErrorMalformed;
                             //
                             continue;
                         }
@@ -814,14 +814,14 @@ namespace Lexical.Localization
                             // End argument
                             state = ParserState.ArgumentEnd;
                             // Complete previous part, and reset state
-                            IFormulationStringPart part = CompletePart(i+1);
+                            IFormatStringPart part = CompletePart(i+1);
                             //
                             return part;
                         }
                         else
                         {
                             // In text state and got unexpected unescaped '}'
-                            //status = LocalizationStatus.FormulationErrorMalformed;
+                            //status = LocalizationStatus.FormatErrorMalformed;
                             // Go on
                             continue;
                         }
@@ -890,7 +890,7 @@ namespace Lexical.Localization
                             continue;
                         }
                         // Unexpected character
-                        status = LineStatus.FormulationErrorMalformed;
+                        status = LineStatus.FormatErrorMalformed;
                         return CompletePart(i);
                     }
 
@@ -911,7 +911,7 @@ namespace Lexical.Localization
                             continue;
                         }
                         // Unexpected character
-                        status = LineStatus.FormulationErrorMalformed;
+                        status = LineStatus.FormatErrorMalformed;
                         return CompletePart(i);
                     }
 

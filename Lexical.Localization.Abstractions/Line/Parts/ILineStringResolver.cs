@@ -33,7 +33,7 @@ namespace Lexical.Localization
             => line.Append<ILineStringResolver, IStringResolver>(resolver);
 
         /// <summary>
-        /// Get formulation string, but does not apply arguments.
+        /// Get format string, but does not apply arguments.
         /// 
         /// Tries to resolve string with each <see cref="IStringResolver"/> until result other than <see cref="LineStatus.NoResult"/> is found.
         /// 
@@ -65,7 +65,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>If key has <see cref="ILineFormatArgs"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
-        /// If key didn't have <see cref="ILineFormatArgs"/> part, then return the formulation string "Error (Code=0x{0:X8})".
+        /// If key didn't have <see cref="ILineFormatArgs"/> part, then return the format string "Error (Code=0x{0:X8})".
         /// otherwise return null</returns>
         public static LineString ResolveFormulatedString(this ILine key)
         {

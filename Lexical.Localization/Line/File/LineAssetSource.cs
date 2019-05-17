@@ -23,20 +23,20 @@ namespace Lexical.Localization
         /// <summary>
         /// Line source
         /// </summary>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> LineSource { get; protected set; }
+        public IEnumerable<KeyValuePair<string, IFormatString>> LineSource { get; protected set; }
 
         /// <summary>
         /// Create adapter that adapts IEnumerable&lt;KeyValuePair&lt;String, String&gt;&gt; into <see cref="IAssetSource"/>.
         /// </summary>
         /// <param name="lineSource"></param>
         /// <param name="lineFormat"></param>
-        public StringLinesSource(IEnumerable<KeyValuePair<string, IFormulationString>> lineSource, ILineFormat lineFormat)
+        public StringLinesSource(IEnumerable<KeyValuePair<string, IFormatString>> lineSource, ILineFormat lineFormat)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
             this.LineFormat = lineFormat;
         }
 
-        IEnumerator<KeyValuePair<string, IFormulationString>> IEnumerable<KeyValuePair<string, IFormulationString>>.GetEnumerator()
+        IEnumerator<KeyValuePair<string, IFormatString>> IEnumerable<KeyValuePair<string, IFormatString>>.GetEnumerator()
             => LineSource.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator()
             => LineSource.GetEnumerator();

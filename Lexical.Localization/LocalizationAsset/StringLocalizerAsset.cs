@@ -170,7 +170,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IFormulationString GetString(ILine key)
+        public IFormatString GetString(ILine key)
         {
             CultureInfo key_culture = key.GetCultureInfo();
             if (key_culture != null)
@@ -288,7 +288,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> GetStringLines(ILine key = null)
+        public IEnumerable<KeyValuePair<string, IFormatString>> GetStringLines(ILine key = null)
         {
             CultureInfo key_culture = key?.GetCultureInfo();
             IStringLocalizer localizer = key == null ? stringLocalizer : FindStringLocalizer(key, key_culture).stringLocalizer;
@@ -302,7 +302,7 @@ namespace Lexical.Localization
                 return localizer
                     .GetAllStrings(false)
                     ?.Where(str => !str.ResourceNotFound)
-                    ?.Select(str => new KeyValuePair<string, IFormulationString>(prefix == null ? str.Name : prefix + str.Name, ValueParser.Parse(str.Value)))
+                    ?.Select(str => new KeyValuePair<string, IFormatString>(prefix == null ? str.Name : prefix + str.Name, ValueParser.Parse(str.Value)))
                     ?.Where(kp => kp.Value != null)
                     ?.ToArray();
             }
@@ -317,7 +317,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> GetAllStringLines(ILine key = null)
+        public IEnumerable<KeyValuePair<string, IFormatString>> GetAllStringLines(ILine key = null)
         {
             return GetStringLines(key);
         }

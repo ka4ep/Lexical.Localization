@@ -116,7 +116,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Associated values.
         /// </summary>
-        List<IFormulationString> values;
+        List<IFormatString> values;
 
         /// <summary>
         /// Child nodes
@@ -148,7 +148,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Get-or-create values list.
         /// </summary>
-        public List<IFormulationString> Values => values ?? (values = new List<IFormulationString>(1));
+        public List<IFormatString> Values => values ?? (values = new List<IFormatString>(1));
 
         /// <summary>
         /// Create new root.
@@ -172,10 +172,10 @@ namespace Lexical.Localization.Utils
         /// </summary>
         /// <param name="parameter"></param>
         /// <param name="values">(optional) value to add</param>
-        public LineTree(ILine parameter, params IFormulationString[] values)
+        public LineTree(ILine parameter, params IFormatString[] values)
         {
             this.Key = parameter;
-            if (values != null) this.values = new List<IFormulationString>(values);
+            if (values != null) this.values = new List<IFormatString>(values);
         }
 
         /// <summary>
@@ -195,11 +195,11 @@ namespace Lexical.Localization.Utils
         /// <param name="parent"></param>
         /// <param name="parameter"></param>
         /// <param name="values"></param>
-        public LineTree(LineTree parent, ILine parameter, params IFormulationString[] values)
+        public LineTree(LineTree parent, ILine parameter, params IFormatString[] values)
         {
             this.Parent = parent;
             this.Key = parameter;
-            this.values = new List<IFormulationString>(values);
+            this.values = new List<IFormatString>(values);
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Lexical.Localization.Utils
 
         ILineTree ILineTree.Parent => Parent;
 
-        IList<IFormulationString> ILineTree.Values => this.Values;
+        IList<IFormatString> ILineTree.Values => this.Values;
         IReadOnlyCollection<ILineTree> ILineTree.Children => this.Children;
         ILineTree ILineTree.CreateChild() => this.CreateChild();
         static ILineTree[] empty = new ILineTree[0];
@@ -271,7 +271,7 @@ namespace Lexical.Localization.Utils
             {
                 sb.Append(" [");
                 int ix = 0;
-                foreach(IFormulationString value in Values)
+                foreach(IFormatString value in Values)
                 {
                     if (ix++ > 0) sb.Append(", ");
                     sb.Append(value.Text);

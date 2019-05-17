@@ -15,7 +15,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Localization string value.
         /// </summary>
-        IFormulationString Value { get; set; }
+        IFormatString Value { get; set; }
     }
     
     /// <summary></summary>
@@ -27,8 +27,8 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILineValue Value(this ILine part, IFormulationString value)
-            => part.Append<ILineValue, IFormulationString>(value);
+        public static ILineValue Value(this ILine part, IFormatString value)
+            => part.Append<ILineValue, IFormatString>(value);
 
         /// <summary>
         /// Append "Value" parameter.
@@ -40,7 +40,7 @@ namespace Lexical.Localization
             => part.Append<ILineHint, string, string>("Value", value);
 
         /// <summary>
-        /// Get the <see cref="IFormulationString"/> of a <see cref="ILineValue"/>.
+        /// Get the <see cref="IFormatString"/> of a <see cref="ILineValue"/>.
         /// 
         /// If parameter "Value" exists and <paramref name="resolver"/> is provided then value is resolved using
         /// the default string format or the format that can be found.
@@ -48,7 +48,7 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <param name="resolver"></param>
         /// <returns>value</returns>
-        public static IFormulationString GetValue(this ILine line, IStringFormatResolver resolver = null)
+        public static IFormatString GetValue(this ILine line, IStringFormatResolver resolver = null)
         {
             for (ILine part = line; part != null; part = part.GetPreviousPart())
             {
@@ -70,7 +70,7 @@ namespace Lexical.Localization
                     return stringFormat.Parse(lineParameter.ParameterValue);
                 }
             }
-            return new StatusFormulationString(null, LineStatus.FormulationFailedNull);
+            return new StatusFormatString(null, LineStatus.FormatFailedNull);
         }
 
     }

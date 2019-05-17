@@ -236,8 +236,8 @@ namespace Lexical.Localization
             else
             {
                 IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Instance;
-                IFormulationString formulation = stringFormat.Parse(valueText);
-                ILine value = subline.Value(formulation);
+                IFormatString format = stringFormat.Parse(valueText);
+                ILine value = subline.Value(format);
                 inlines[subline] = value;
             }
             return line;
@@ -251,7 +251,7 @@ namespace Lexical.Localization
         /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
         /// <returns>new line with inlines or <paramref name="line"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine Inline(this ILine line, string subKeyText, IFormulationString value)
+        public static ILine Inline(this ILine line, string subKeyText, IFormatString value)
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);

@@ -178,11 +178,11 @@ namespace Lexical.Localization
                         string trimmedXmlValue = Trim(text?.Value);
                         if (!string.IsNullOrEmpty(trimmedXmlValue))
                         {
-                            IFormulationString formulationString = ValueParser.Parse(trimmedXmlValue);
-                            node.Values.Add(formulationString);
+                            IFormatString formatString = ValueParser.Parse(trimmedXmlValue);
+                            node.Values.Add(formatString);
 
                             if (correspondenceContext != null)
-                                correspondenceContext.Values[new LineTreeValue(node, formulationString, node.Values.Count - 1)] = text;
+                                correspondenceContext.Values[new LineTreeValue(node, formatString, node.Values.Count - 1)] = text;
                         }
                     }
                 }

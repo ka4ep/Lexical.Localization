@@ -10,38 +10,38 @@ using System.Text;
 namespace Lexical.Localization.StringFormat
 {
     /// <summary>
-    /// Compares formulation strings
+    /// Compares format strings
     /// </summary>
-    public class FormulationStringComparer : IEqualityComparer<IFormulationString>, IComparer<IFormulationString>
+    public class FormatStringComparer : IEqualityComparer<IFormatString>, IComparer<IFormatString>
     {
-        private static FormulationStringComparer instance = new FormulationStringComparer(FormulationStringPartComparer.Instance, FormulationStringPartComparer.Instance);
+        private static FormatStringComparer instance = new FormatStringComparer(FormatStringPartComparer.Instance, FormatStringPartComparer.Instance);
 
         /// <summary>
         /// Default instance
         /// </summary>
-        public static FormulationStringComparer Instance => instance;
+        public static FormatStringComparer Instance => instance;
 
-        IEqualityComparer<IFormulationStringPart> partComparer;
-        IComparer<IFormulationStringPart> partComparer2;
+        IEqualityComparer<IFormatStringPart> partComparer;
+        IComparer<IFormatStringPart> partComparer2;
 
         /// <summary>
         /// Create part comparer
         /// </summary>
         /// <param name="partComparer"></param>
         /// <param name="partComparer2"></param>
-        public FormulationStringComparer(IEqualityComparer<IFormulationStringPart> partComparer, IComparer<IFormulationStringPart> partComparer2)
+        public FormatStringComparer(IEqualityComparer<IFormatStringPart> partComparer, IComparer<IFormatStringPart> partComparer2)
         {
             this.partComparer = partComparer;
             this.partComparer2 = partComparer2;
         }
 
         /// <summary>
-        /// Compare formulation strings for sorting order
+        /// Compare format strings for sorting order
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns>-1, 0, 1</returns>
-        public int Compare(IFormulationString x, IFormulationString y)
+        public int Compare(IFormatString x, IFormatString y)
         {
             string _x = x?.Text, _y = y?.Text;
             if (_x == null && _y == null) return 0;
@@ -51,12 +51,12 @@ namespace Lexical.Localization.StringFormat
         }
 
         /// <summary>
-        /// Compare formulation strings for equality.
+        /// Compare format strings for equality.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public bool Equals(IFormulationString x, IFormulationString y)
+        public bool Equals(IFormatString x, IFormatString y)
         {
             if (x == null && y == null) return true;
             if (x == null || y == null) return false;
@@ -76,13 +76,13 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
-        public int GetHashCode(IFormulationString o)
+        public int GetHashCode(IFormatString o)
         {
             if (o == null) return 0;
             int result = FNVHashBasis;
 
             // Hash Status
-            UInt64 code = (UInt64) o.Status.Formulation();
+            UInt64 code = (UInt64) o.Status.Format();
             result ^= (int)(code & 0xffffffff);
             result ^= (int)(code>>32);
             result *= FNVHashPrime;
@@ -104,24 +104,24 @@ namespace Lexical.Localization.StringFormat
     }
 
     /// <summary>
-    /// Compares formulation strings
+    /// Compares format strings
     /// </summary>
-    public class FormulationStringPartComparer : IEqualityComparer<IFormulationStringPart>, IComparer<IFormulationStringPart>
+    public class FormatStringPartComparer : IEqualityComparer<IFormatStringPart>, IComparer<IFormatStringPart>
     {
-        private static FormulationStringPartComparer instance = new FormulationStringPartComparer();
+        private static FormatStringPartComparer instance = new FormatStringPartComparer();
 
         /// <summary>
         /// Default instance
         /// </summary>
-        public static FormulationStringPartComparer Instance => instance;
+        public static FormatStringPartComparer Instance => instance;
 
         /// <summary>
-        /// Compare formulation string parts for sorting order
+        /// Compare format string parts for sorting order
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns>-1, 0, 1</returns>
-        public int Compare(IFormulationStringPart x, IFormulationStringPart y)
+        public int Compare(IFormatStringPart x, IFormatStringPart y)
         {
             string _x = x?.Text, _y = y?.Text;
             if (_x == null && _y == null) return 0;
@@ -131,24 +131,24 @@ namespace Lexical.Localization.StringFormat
         }
 
         /// <summary>
-        /// Compare formulation strings for equality.
+        /// Compare format strings for equality.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public bool Equals(IFormulationStringPart x, IFormulationStringPart y)
+        public bool Equals(IFormatStringPart x, IFormatStringPart y)
         {
             if (x == null && y == null) return true;
             if (x == null || y == null) return false;
             if (x == y) return true;
             if (x.Kind != y.Kind) return false;
 
-            if (x.Kind == FormulationStringPartKind.Text)
+            if (x.Kind == FormatStringPartKind.Text)
             {
                 if (x.Text != y.Text) return false;
             }
 
-            if (x.Kind == FormulationStringPartKind.Placeholder)
+            if (x.Kind == FormatStringPartKind.Placeholder)
             {
                 var x_arg = x as IPlaceholder;
                 var y_arg = y as IPlaceholder;
@@ -165,18 +165,18 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
-        public int GetHashCode(IFormulationStringPart o)
+        public int GetHashCode(IFormatStringPart o)
         {
             if (o == null) return 0;
             int result = FNVHashBasis;
 
-            if (o.Kind == FormulationStringPartKind.Text)
+            if (o.Kind == FormatStringPartKind.Text)
             {
                 result ^= o.Text.GetHashCode();
                 result *= FNVHashPrime;
             }
 
-            if (o.Kind == FormulationStringPartKind.Placeholder && o is IPlaceholder arg)
+            if (o.Kind == FormatStringPartKind.Placeholder && o is IPlaceholder arg)
             {
                 result = new StringFormatExpressionHashCode().Hash(arg.Expression).Hash(arg.PlaceholderIndex);
             }

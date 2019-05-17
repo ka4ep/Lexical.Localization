@@ -123,9 +123,9 @@ namespace Lexical.Localization
                             if (value != null)
                             {
                                 int ix = current.Values.Count;
-                                IFormulationString formulationString = ValueParser.Parse(value);
-                                current.Values.Add(formulationString);
-                                if (correspondence != null) correspondence.Values[new LineTreeValue(current, formulationString, ix)] = token;
+                                IFormatString formatString = ValueParser.Parse(value);
+                                current.Values.Add(formatString);
+                                if (correspondence != null) correspondence.Values[new LineTreeValue(current, formatString, ix)] = token;
                             }
                         }
                         break;

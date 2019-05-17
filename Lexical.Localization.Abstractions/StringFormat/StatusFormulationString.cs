@@ -8,30 +8,30 @@ using System;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Class that carries a status code result as <see cref="IFormulationString"/>.
+    /// Class that carries a status code result as <see cref="IFormatString"/>.
     /// </summary>
-    public class StatusFormulationString : IFormulationString
+    public class StatusFormatString : IFormatString
     {
         static IPlaceholder[] no_arguments = new IPlaceholder[0];
-        static IFormulationStringPart[] no_parts = new IFormulationStringPart[0];
-        static StatusFormulationString _null = new StatusFormulationString(null, LineStatus.FormulationFailedNull);
-        static StatusFormulationString _no_parser = new StatusFormulationString(null, LineStatus.FormulationFailedNoParser);
-        static StatusFormulationString _parse_failed = new StatusFormulationString(null, LineStatus.FormulationFailedParse);
+        static IFormatStringPart[] no_parts = new IFormatStringPart[0];
+        static StatusFormatString _null = new StatusFormatString(null, LineStatus.FormatFailedNull);
+        static StatusFormatString _no_parser = new StatusFormatString(null, LineStatus.FormatFailedNoParser);
+        static StatusFormatString _parse_failed = new StatusFormatString(null, LineStatus.FormatFailedParse);
 
         /// <summary>
         /// Status for null value.
         /// </summary>
-        public static StatusFormulationString Null => _null;
+        public static StatusFormatString Null => _null;
 
         /// <summary>
         /// Status for null value.
         /// </summary>
-        public static StatusFormulationString ParseFailed => _parse_failed;
+        public static StatusFormatString ParseFailed => _parse_failed;
 
         /// <summary>
         /// Status for null value.
         /// </summary>
-        public static StatusFormulationString NoParser => _no_parser;
+        public static StatusFormatString NoParser => _no_parser;
 
         /// <summary>
         /// Get the status
@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Get the parts
         /// </summary>
-        public IFormulationStringPart[] Parts => no_parts;
+        public IFormatStringPart[] Parts => no_parts;
 
         /// <summary>
         /// Get arguments
@@ -63,7 +63,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="text"></param>
         /// <param name="status"></param>
-        public StatusFormulationString(string text, LineStatus status)
+        public StatusFormatString(string text, LineStatus status)
         {
             this.Status = status;
             this.Text = text;

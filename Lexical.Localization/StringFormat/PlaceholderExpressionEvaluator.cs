@@ -12,7 +12,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// String evaluation context
     /// </summary>
-    public struct StringFormatEvaluationEvaluator
+    public struct PlaceholderExpressionEvaluator
     {
         /// <summary>
         /// 

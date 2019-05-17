@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Line's format argument assignments. Arguments are matched to placeholders in formulation string.
+    /// Line's format argument assignments. Arguments are matched to placeholders in format string.
     /// 
     /// For example for string "Hello, {0}" the placeholder {0} is matched to argument at index 0.
     /// </summary>

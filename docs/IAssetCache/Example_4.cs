@@ -18,7 +18,7 @@ namespace docs
 
             // Issue a request which will be cached.
             ILine key = new LineRoot().Key("hello");
-            IFormulationString str = asset.GetString( key.Culture("en") );
+            IFormatString str = asset.GetString( key.Culture("en") );
             Console.WriteLine(str);
 
             // Clear cache

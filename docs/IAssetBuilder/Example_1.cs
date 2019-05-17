@@ -26,7 +26,7 @@ namespace docs
             // Create string key
             ILine key = new LineRoot().Key("hello").Culture("en");
             // Request string
-            IFormulationString str = asset.GetString(key);
+            IFormatString str = asset.GetString(key);
             // Print result
             Console.WriteLine(str);
         }

@@ -63,14 +63,14 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound"></param>
         public StringLineFileProviderSource(ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat, bool throwIfNotFound) : base(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound) { }
 
-        static IEnumerable<KeyValuePair<string, IFormulationString>> empty = new KeyValuePair<string, IFormulationString>[0];
+        static IEnumerable<KeyValuePair<string, IFormatString>> empty = new KeyValuePair<string, IFormatString>[0];
 
         /// <summary>
         /// Open file and get new reader.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
-        IEnumerator<KeyValuePair<string, IFormulationString>> IEnumerable<KeyValuePair<string, IFormulationString>>.GetEnumerator()
+        IEnumerator<KeyValuePair<string, IFormatString>> IEnumerable<KeyValuePair<string, IFormatString>>.GetEnumerator()
         {
             try
             {
@@ -91,7 +91,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
-            => ((IEnumerable<KeyValuePair<string, IFormulationString>>)this).GetEnumerator();
+            => ((IEnumerable<KeyValuePair<string, IFormatString>>)this).GetEnumerator();
 
         /// <summary>
         /// Add reader to list.

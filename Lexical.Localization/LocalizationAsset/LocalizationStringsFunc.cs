@@ -20,22 +20,22 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns>resolved string or null</returns>
-        public readonly Func<ILine, IFormulationString> ResolverFunc;
+        public readonly Func<ILine, IFormatString> ResolverFunc;
 
-        public LocalizationStringsFunc(Func<ILine, IFormulationString> resolverFunc)
+        public LocalizationStringsFunc(Func<ILine, IFormatString> resolverFunc)
         {
             this.ResolverFunc = resolverFunc;
         }
 
-        public IFormulationString GetString(ILine key) => ResolverFunc(key);
+        public IFormatString GetString(ILine key) => ResolverFunc(key);
         public override string ToString() => $"{GetType().Name}()";
     }
 
     public static partial class LocalizationAssetExtensions_
     {
-        public static IAssetSource ToSource(this Func<ILine, IFormulationString> stringFunc)
+        public static IAssetSource ToSource(this Func<ILine, IFormatString> stringFunc)
             => new AssetInstanceSource(new LocalizationStringsFunc(stringFunc));
-        public static ILocalizationStringProvider ToAsset(this Func<ILine, IFormulationString> stringFunc)
+        public static ILocalizationStringProvider ToAsset(this Func<ILine, IFormatString> stringFunc)
             => new LocalizationStringsFunc(stringFunc);
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Lexical.Localization
         /// <param name="builder"></param>
         /// <param name="resolverFunc"></param>
         /// <returns>composition</returns>
-        public static IAssetComposition AddSourceFunc(this IAssetComposition composition, Func<ILine, IFormulationString> resolverFunc)
+        public static IAssetComposition AddSourceFunc(this IAssetComposition composition, Func<ILine, IFormatString> resolverFunc)
         {
             composition.Add(new LocalizationStringsFunc(resolverFunc));
             return composition;
@@ -57,7 +57,7 @@ namespace Lexical.Localization
         /// <param name="builder"></param>
         /// <param name="resolver"></param>
         /// <returns>builder</returns>
-        public static IAssetBuilder AddSourceFunc(this IAssetBuilder builder, Func<ILine, IFormulationString> resolver)
+        public static IAssetBuilder AddSourceFunc(this IAssetBuilder builder, Func<ILine, IFormatString> resolver)
         {
             builder.Sources.Add(new AssetInstanceSource(new LocalizationStringsFunc(resolver)));
             return builder;

@@ -146,7 +146,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// (optional) The <see cref="ILine"/> that is being evaluated.
         /// </summary>
-        public ILine Line;
+        //public ILine Line;
     }
 
     /// <summary></summary>

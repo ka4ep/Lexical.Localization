@@ -27,8 +27,8 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="lineFormat"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<ILine> lines, ILineFormat lineFormat)
-            => lines.Select(line => new KeyValuePair<string, IFormulationString>((lineFormat ?? DefaultPolicy).Print(line), line.GetValue()));
+        public static IEnumerable<KeyValuePair<string, IFormatString>> ToStringLines(this IEnumerable<ILine> lines, ILineFormat lineFormat)
+            => lines.Select(line => new KeyValuePair<string, IFormatString>((lineFormat ?? DefaultPolicy).Print(line), line.GetValue()));
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset key lines.
@@ -37,8 +37,8 @@ namespace Lexical.Localization
         /// <param name="lineFormat"></param>
         /// <param name="valueParser"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, ILineFormat lineFormat, IStringFormatParser valueParser)
-            => lines.Select(line => new KeyValuePair<string, IFormulationString>((lineFormat ?? DefaultPolicy).Print(line.Key), valueParser.Parse(line.Value)));
+        public static IEnumerable<KeyValuePair<string, IFormatString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, ILineFormat lineFormat, IStringFormatParser valueParser)
+            => lines.Select(line => new KeyValuePair<string, IFormatString>((lineFormat ?? DefaultPolicy).Print(line.Key), valueParser.Parse(line.Value)));
 
         /// <summary>
         /// Convert <paramref name="lines"/> to Key Tree of one level.
@@ -67,7 +67,7 @@ namespace Lexical.Localization
             foreach (var line in lines)
             {
                 ILineTree subtree = tree.GetOrCreate(line);
-                if ((line.GetValue().Status & LineStatus.FormulationFailedNull) != LineStatus.FormulationFailedNull) subtree.Values.Add(line.GetValue());
+                if ((line.GetValue().Status & LineStatus.FormatFailedNull) != LineStatus.FormatFailedNull) subtree.Values.Add(line.GetValue());
             }
             return tree;
         }
@@ -223,9 +223,9 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="keyComparer">(optional) <see cref="ILine"/> comparer</param>
         /// <returns></returns>
-        public static Dictionary<ILine, IFormulationString> ToDictionary(this IEnumerable<ILine> lines, IEqualityComparer<ILine> keyComparer = default)
+        public static Dictionary<ILine, IFormatString> ToDictionary(this IEnumerable<ILine> lines, IEqualityComparer<ILine> keyComparer = default)
         {
-            Dictionary<ILine, IFormulationString> result = new Dictionary<ILine, IFormulationString>(keyComparer ?? LineComparer.Default);
+            Dictionary<ILine, IFormatString> result = new Dictionary<ILine, IFormatString>(keyComparer ?? LineComparer.Default);
             foreach (var line in lines)
                 if (line != null) result[line] = line.GetValue();
             return result;

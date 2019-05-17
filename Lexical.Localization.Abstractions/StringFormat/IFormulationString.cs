@@ -9,33 +9,33 @@ using System;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Preparsed formulation string. 
+    /// Preparsed or lazy parsed format string. 
     /// 
-    /// For example "Welcome, {0}!" is a formulation string. 
+    /// For example "Welcome, {0}!" is a format string. 
     /// When it's in parsed format the argument "{0}" is extracted and the string can be processed more efficiently.
     /// 
-    /// <see cref="IFormulationString"/> is produced by <see cref="IStringFormatParser"/>.
+    /// <see cref="IFormatString"/> is produced by <see cref="IStringFormatParser"/>.
     /// </summary>
-    public interface IFormulationString
+    public interface IFormatString
     {
         /// <summary>
         /// Parse result. One of:
         /// <list type="table">
-        /// <item><see cref="LineStatus.FormulationErrorMalformed"/> if there is a problem in the stirng</item>
-        /// <item><see cref="LineStatus.FormulationOk"/> if formulation was parsed ok.</item>
+        /// <item><see cref="LineStatus.FormatErrorMalformed"/> if there is a problem in the stirng</item>
+        /// <item><see cref="LineStatus.FormatOk"/> if format was parsed ok.</item>
         /// </list>
         /// </summary>
         LineStatus Status { get; }
 
         /// <summary>
-        /// Formulation string as it appears, for example "You received {plural:0} coin(s).".
+        /// Format string as it appears, for example "You received {plural:0} coin(s).".
         /// </summary>
         string Text { get; }
 
         /// <summary>
-        /// Formulation string as sequence of text and argument parts.
+        /// Format string as sequence of text and argument parts.
         /// </summary>
-        IFormulationStringPart[] Parts { get; }
+        IFormatStringPart[] Parts { get; }
 
         /// <summary>
         /// Placeholders in order of occurance.
@@ -43,7 +43,7 @@ namespace Lexical.Localization
         IPlaceholder[] Placeholders { get; }
 
         /// <summary>
-        /// (optional) Formatters to apply to the formulation string.
+        /// (optional) Formatters to apply to the format string.
         /// Some asset files may enforce their own rules.
         /// </summary>
         IFormatProvider FormatProvider { get; }
@@ -52,7 +52,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Type of string part
     /// </summary>
-    public enum FormulationStringPartKind
+    public enum FormatStringPartKind
     {
         /// <summary>
         /// Text
@@ -66,22 +66,22 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// A part in formulation string.
+    /// A part in format string.
     /// </summary>
-    public interface IFormulationStringPart
+    public interface IFormatStringPart
     {
         /// <summary>
-        /// The 'parent' formulation string.
+        /// The 'parent' format string.
         /// </summary>
-        IFormulationString FormulationString { get; }
+        IFormatString FormatString { get; }
 
         /// <summary>
         /// Part type.
         /// </summary>
-        FormulationStringPartKind Kind { get; }
+        FormatStringPartKind Kind { get; }
 
         /// <summary>
-        /// Character index in the formulation string where argument starts.
+        /// Character index in the format string where argument starts.
         /// </summary>
         int Index { get; }
 
@@ -91,28 +91,28 @@ namespace Lexical.Localization
         int Length { get; }
 
         /// <summary>
-        /// The whole part as it appears in the formulation string.
+        /// The whole part as it appears in the format string.
         /// </summary>
         /// <returns></returns>
         string Text { get; }
 
         /// <summary>
-        /// The index in the <see cref="IFormulationString.Parts"/>.
+        /// The index in the <see cref="IFormatString.Parts"/>.
         /// </summary>
         int PartsIndex { get; }
     }
 
     /// <summary>
-    /// Argument placeholder in an <see cref="IFormulationString"/> in a formulation string.
+    /// Argument placeholder in an <see cref="IFormatString"/> in a format string.
     /// 
     /// For example "Hello, {0}", the {0} is placeholder.
     /// 
     /// The default CSharpFormat uses format "{[function:]0[,alignment][:format]}"
     /// </summary>
-    public interface IPlaceholder : IFormulationStringPart
+    public interface IPlaceholder : IFormatStringPart
     {
         /// <summary>
-        /// Index in <see cref="IFormulationString.Placeholders"/>
+        /// Index in <see cref="IFormatString.Placeholders"/>
         /// </summary>
         int PlaceholderIndex { get; }
 
@@ -120,12 +120,17 @@ namespace Lexical.Localization
         /// Expression that evaluates to a string.
         /// </summary>
         IExpression Expression { get; }
+
+        /// <summary>
+        /// Plural category, such as: cardinal, ordinal, optional (with default ruies)
+        /// </summary>
+        String PluralCategory { get; }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public static partial class IFormulationStringExtensions
+    public static partial class IFormatStringExtensions
     {
         /// <summary>
         /// Get default value (as " ?? value" expression at the end) , if has one.

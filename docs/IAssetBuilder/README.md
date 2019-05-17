@@ -21,7 +21,7 @@ IAsset asset = builder.Build();
 // Create string key
 ILine key = new LocalizationRoot().Key("hello").Culture("en");
 // Request string
-IFormulationString str = asset.GetString( key );
+IFormatString str = asset.GetString( key );
 // Print result
 Console.WriteLine(str);
 ```
@@ -67,7 +67,7 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     // Create string key
     ILine key = new LocalizationRoot().Key("hello").Culture("en");
     // Request string
-    IFormulationString str = asset.GetString(key);
+    IFormatString str = asset.GetString(key);
     // Print result
     Console.WriteLine(str);
 }
@@ -99,7 +99,7 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     // Create string key
     ILine key = new LocalizationRoot().Key("hello").Culture("en");
     // Request string
-    IFormulationString str = asset.GetString(key);
+    IFormatString str = asset.GetString(key);
     // Print result
     Console.WriteLine(str);
 }

@@ -10,7 +10,7 @@ using Lexical.Localization.Utils;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Extensions for IEnumerable&lt;KeyValuePair&lt;string, IFormulationString&gt;&gt;.
+    /// Extensions for IEnumerable&lt;KeyValuePair&lt;string, IFormatString&gt;&gt;.
     /// </summary>
     public static class StringLinesExtensions
     {
@@ -22,7 +22,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="lineFormat"><see cref="ILineParser"/> parses string to line.</param>
         /// <returns>lines with <see cref="ILine"/> keys</returns>
-        public static IEnumerable<ILine> ToLines(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, ILineFormat lineFormat)
+        public static IEnumerable<ILine> ToLines(this IEnumerable<KeyValuePair<string, IFormatString>> lines, ILineFormat lineFormat)
         {
             foreach (var line in lines)
             {
@@ -38,7 +38,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="lineFormat"><see cref="ILineParser"/> parses strings to lines.</param>
         /// <returns></returns>
-        public static ILineTree ToLineTree(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, ILineFormat lineFormat)
+        public static ILineTree ToLineTree(this IEnumerable<KeyValuePair<string, IFormatString>> lines, ILineFormat lineFormat)
             => LineTree.Create(lines.ToLines(lineFormat), null, lineFormat.GetParameterInfos());
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="lineFormat"><see cref="ILineParser"/> parses strings to lines.</param>
         /// <returns></returns>
-        public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, ILineFormat lineFormat)
+        public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, IFormatString>> lines, ILineFormat lineFormat)
             => new LocalizationAsset().Add(lines, lineFormat).Load();
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, ILineFormat policy)
+        public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<string, IFormatString>> lines, ILineFormat policy)
             => new StringLinesSource(lines, policy);
 
         /// <summary>
@@ -67,10 +67,10 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="prefix"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> AddKeyPrefix(this IEnumerable<KeyValuePair<string, IFormulationString>> lines, string prefix)
+        public static IEnumerable<KeyValuePair<string, IFormatString>> AddKeyPrefix(this IEnumerable<KeyValuePair<string, IFormatString>> lines, string prefix)
         {
             if (string.IsNullOrEmpty(prefix) || lines == null) return lines;
-            return lines.Select(line => new KeyValuePair<string, IFormulationString>(prefix + line.Key, line.Value));
+            return lines.Select(line => new KeyValuePair<string, IFormatString>(prefix + line.Key, line.Value));
         }
 
     }
@@ -79,7 +79,7 @@ namespace Lexical.Localization
 namespace Lexical.Localization.Internal
 {
     /// <summary>
-    /// Extensions for IEnumerable&lt;KeyValuePair&lt;string, IFormulationString&gt;&gt;.
+    /// Extensions for IEnumerable&lt;KeyValuePair&lt;string, IFormatString&gt;&gt;.
     /// </summary>
     public static class StringLinesExtensions
     { 

@@ -24,7 +24,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine af(this ILine line, IFormulationString text) => line.InlineCulture("af", text);
+        public static ILine af(this ILine line, IFormatString text) => line.InlineCulture("af", text);
         
         /// <summary>
         /// Add inlined Amharic language string.
@@ -40,7 +40,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine am(this ILine line, IFormulationString text) => line.InlineCulture("am", text);
+        public static ILine am(this ILine line, IFormatString text) => line.InlineCulture("am", text);
         
         /// <summary>
         /// Add inlined Arabic language string.
@@ -56,7 +56,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ar(this ILine line, IFormulationString text) => line.InlineCulture("ar", text);
+        public static ILine ar(this ILine line, IFormatString text) => line.InlineCulture("ar", text);
         
         /// <summary>
         /// Add inlined Mapudungun language string.
@@ -72,7 +72,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine arn(this ILine line, IFormulationString text) => line.InlineCulture("arn", text);
+        public static ILine arn(this ILine line, IFormatString text) => line.InlineCulture("arn", text);
         
         /// <summary>
         /// Add inlined Assamese language string.
@@ -88,7 +88,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine _as(this ILine line, IFormulationString text) => line.InlineCulture("as", text);
+        public static ILine _as(this ILine line, IFormatString text) => line.InlineCulture("as", text);
         
         /// <summary>
         /// Add inlined Azerbaijani language string.
@@ -104,7 +104,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine az(this ILine line, IFormulationString text) => line.InlineCulture("az", text);
+        public static ILine az(this ILine line, IFormatString text) => line.InlineCulture("az", text);
         
         /// <summary>
         /// Add inlined Bashkir language string.
@@ -120,7 +120,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ba(this ILine line, IFormulationString text) => line.InlineCulture("ba", text);
+        public static ILine ba(this ILine line, IFormatString text) => line.InlineCulture("ba", text);
         
         /// <summary>
         /// Add inlined Belarusian language string.
@@ -136,7 +136,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine be(this ILine line, IFormulationString text) => line.InlineCulture("be", text);
+        public static ILine be(this ILine line, IFormatString text) => line.InlineCulture("be", text);
         
         /// <summary>
         /// Add inlined Bulgarian language string.
@@ -152,7 +152,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine bg(this ILine line, IFormulationString text) => line.InlineCulture("bg", text);
+        public static ILine bg(this ILine line, IFormatString text) => line.InlineCulture("bg", text);
         
         /// <summary>
         /// Add inlined Edo language string.
@@ -168,7 +168,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine bin(this ILine line, IFormulationString text) => line.InlineCulture("bin", text);
+        public static ILine bin(this ILine line, IFormatString text) => line.InlineCulture("bin", text);
         
         /// <summary>
         /// Add inlined Bangla language string.
@@ -184,7 +184,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine bn(this ILine line, IFormulationString text) => line.InlineCulture("bn", text);
+        public static ILine bn(this ILine line, IFormatString text) => line.InlineCulture("bn", text);
         
         /// <summary>
         /// Add inlined Tibetan language string.
@@ -200,7 +200,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine bo(this ILine line, IFormulationString text) => line.InlineCulture("bo", text);
+        public static ILine bo(this ILine line, IFormatString text) => line.InlineCulture("bo", text);
         
         /// <summary>
         /// Add inlined Breton language string.
@@ -216,7 +216,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine br(this ILine line, IFormulationString text) => line.InlineCulture("br", text);
+        public static ILine br(this ILine line, IFormatString text) => line.InlineCulture("br", text);
         
         /// <summary>
         /// Add inlined Bosnian language string.
@@ -232,7 +232,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine bs(this ILine line, IFormulationString text) => line.InlineCulture("bs", text);
+        public static ILine bs(this ILine line, IFormatString text) => line.InlineCulture("bs", text);
         
         /// <summary>
         /// Add inlined Catalan language string.
@@ -248,7 +248,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ca(this ILine line, IFormulationString text) => line.InlineCulture("ca", text);
+        public static ILine ca(this ILine line, IFormatString text) => line.InlineCulture("ca", text);
         
         /// <summary>
         /// Add inlined Cherokee language string.
@@ -264,7 +264,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine chr(this ILine line, IFormulationString text) => line.InlineCulture("chr", text);
+        public static ILine chr(this ILine line, IFormatString text) => line.InlineCulture("chr", text);
         
         /// <summary>
         /// Add inlined Corsican language string.
@@ -280,7 +280,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine co(this ILine line, IFormulationString text) => line.InlineCulture("co", text);
+        public static ILine co(this ILine line, IFormatString text) => line.InlineCulture("co", text);
         
         /// <summary>
         /// Add inlined Czech language string.
@@ -296,7 +296,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine cs(this ILine line, IFormulationString text) => line.InlineCulture("cs", text);
+        public static ILine cs(this ILine line, IFormatString text) => line.InlineCulture("cs", text);
         
         /// <summary>
         /// Add inlined Welsh language string.
@@ -312,7 +312,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine cy(this ILine line, IFormulationString text) => line.InlineCulture("cy", text);
+        public static ILine cy(this ILine line, IFormatString text) => line.InlineCulture("cy", text);
         
         /// <summary>
         /// Add inlined Danish language string.
@@ -328,7 +328,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine da(this ILine line, IFormulationString text) => line.InlineCulture("da", text);
+        public static ILine da(this ILine line, IFormatString text) => line.InlineCulture("da", text);
         
         /// <summary>
         /// Add inlined German language string.
@@ -344,7 +344,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine de(this ILine line, IFormulationString text) => line.InlineCulture("de", text);
+        public static ILine de(this ILine line, IFormatString text) => line.InlineCulture("de", text);
         
         /// <summary>
         /// Add inlined Lower Sorbian language string.
@@ -360,7 +360,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine dsb(this ILine line, IFormulationString text) => line.InlineCulture("dsb", text);
+        public static ILine dsb(this ILine line, IFormatString text) => line.InlineCulture("dsb", text);
         
         /// <summary>
         /// Add inlined Divehi language string.
@@ -376,7 +376,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine dv(this ILine line, IFormulationString text) => line.InlineCulture("dv", text);
+        public static ILine dv(this ILine line, IFormatString text) => line.InlineCulture("dv", text);
         
         /// <summary>
         /// Add inlined Greek language string.
@@ -392,7 +392,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine el(this ILine line, IFormulationString text) => line.InlineCulture("el", text);
+        public static ILine el(this ILine line, IFormatString text) => line.InlineCulture("el", text);
         
         /// <summary>
         /// Add inlined English language string.
@@ -408,7 +408,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine en(this ILine line, IFormulationString text) => line.InlineCulture("en", text);
+        public static ILine en(this ILine line, IFormatString text) => line.InlineCulture("en", text);
         
         /// <summary>
         /// Add inlined Spanish language string.
@@ -424,7 +424,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine es(this ILine line, IFormulationString text) => line.InlineCulture("es", text);
+        public static ILine es(this ILine line, IFormatString text) => line.InlineCulture("es", text);
         
         /// <summary>
         /// Add inlined Estonian language string.
@@ -440,7 +440,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine et(this ILine line, IFormulationString text) => line.InlineCulture("et", text);
+        public static ILine et(this ILine line, IFormatString text) => line.InlineCulture("et", text);
         
         /// <summary>
         /// Add inlined Basque language string.
@@ -456,7 +456,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine eu(this ILine line, IFormulationString text) => line.InlineCulture("eu", text);
+        public static ILine eu(this ILine line, IFormatString text) => line.InlineCulture("eu", text);
         
         /// <summary>
         /// Add inlined Persian language string.
@@ -472,7 +472,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine fa(this ILine line, IFormulationString text) => line.InlineCulture("fa", text);
+        public static ILine fa(this ILine line, IFormatString text) => line.InlineCulture("fa", text);
         
         /// <summary>
         /// Add inlined Fulah language string.
@@ -488,7 +488,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ff(this ILine line, IFormulationString text) => line.InlineCulture("ff", text);
+        public static ILine ff(this ILine line, IFormatString text) => line.InlineCulture("ff", text);
         
         /// <summary>
         /// Add inlined Finnish language string.
@@ -504,7 +504,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine fi(this ILine line, IFormulationString text) => line.InlineCulture("fi", text);
+        public static ILine fi(this ILine line, IFormatString text) => line.InlineCulture("fi", text);
         
         /// <summary>
         /// Add inlined Filipino language string.
@@ -520,7 +520,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine fil(this ILine line, IFormulationString text) => line.InlineCulture("fil", text);
+        public static ILine fil(this ILine line, IFormatString text) => line.InlineCulture("fil", text);
         
         /// <summary>
         /// Add inlined Faroese language string.
@@ -536,7 +536,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine fo(this ILine line, IFormulationString text) => line.InlineCulture("fo", text);
+        public static ILine fo(this ILine line, IFormatString text) => line.InlineCulture("fo", text);
         
         /// <summary>
         /// Add inlined French language string.
@@ -552,7 +552,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine fr(this ILine line, IFormulationString text) => line.InlineCulture("fr", text);
+        public static ILine fr(this ILine line, IFormatString text) => line.InlineCulture("fr", text);
         
         /// <summary>
         /// Add inlined Western Frisian language string.
@@ -568,7 +568,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine fy(this ILine line, IFormulationString text) => line.InlineCulture("fy", text);
+        public static ILine fy(this ILine line, IFormatString text) => line.InlineCulture("fy", text);
         
         /// <summary>
         /// Add inlined Irish language string.
@@ -584,7 +584,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ga(this ILine line, IFormulationString text) => line.InlineCulture("ga", text);
+        public static ILine ga(this ILine line, IFormatString text) => line.InlineCulture("ga", text);
         
         /// <summary>
         /// Add inlined Scottish Gaelic language string.
@@ -600,7 +600,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine gd(this ILine line, IFormulationString text) => line.InlineCulture("gd", text);
+        public static ILine gd(this ILine line, IFormatString text) => line.InlineCulture("gd", text);
         
         /// <summary>
         /// Add inlined Galician language string.
@@ -616,7 +616,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine gl(this ILine line, IFormulationString text) => line.InlineCulture("gl", text);
+        public static ILine gl(this ILine line, IFormatString text) => line.InlineCulture("gl", text);
         
         /// <summary>
         /// Add inlined Guarani language string.
@@ -632,7 +632,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine gn(this ILine line, IFormulationString text) => line.InlineCulture("gn", text);
+        public static ILine gn(this ILine line, IFormatString text) => line.InlineCulture("gn", text);
         
         /// <summary>
         /// Add inlined Swiss German language string.
@@ -648,7 +648,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine gsw(this ILine line, IFormulationString text) => line.InlineCulture("gsw", text);
+        public static ILine gsw(this ILine line, IFormatString text) => line.InlineCulture("gsw", text);
         
         /// <summary>
         /// Add inlined Gujarati language string.
@@ -664,7 +664,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine gu(this ILine line, IFormulationString text) => line.InlineCulture("gu", text);
+        public static ILine gu(this ILine line, IFormatString text) => line.InlineCulture("gu", text);
         
         /// <summary>
         /// Add inlined Hausa language string.
@@ -680,7 +680,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ha(this ILine line, IFormulationString text) => line.InlineCulture("ha", text);
+        public static ILine ha(this ILine line, IFormatString text) => line.InlineCulture("ha", text);
         
         /// <summary>
         /// Add inlined Hawaiian language string.
@@ -696,7 +696,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine haw(this ILine line, IFormulationString text) => line.InlineCulture("haw", text);
+        public static ILine haw(this ILine line, IFormatString text) => line.InlineCulture("haw", text);
         
         /// <summary>
         /// Add inlined Hebrew language string.
@@ -712,7 +712,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine he(this ILine line, IFormulationString text) => line.InlineCulture("he", text);
+        public static ILine he(this ILine line, IFormatString text) => line.InlineCulture("he", text);
         
         /// <summary>
         /// Add inlined Hindi language string.
@@ -728,7 +728,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine hi(this ILine line, IFormulationString text) => line.InlineCulture("hi", text);
+        public static ILine hi(this ILine line, IFormatString text) => line.InlineCulture("hi", text);
         
         /// <summary>
         /// Add inlined Croatian language string.
@@ -744,7 +744,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine hr(this ILine line, IFormulationString text) => line.InlineCulture("hr", text);
+        public static ILine hr(this ILine line, IFormatString text) => line.InlineCulture("hr", text);
         
         /// <summary>
         /// Add inlined Upper Sorbian language string.
@@ -760,7 +760,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine hsb(this ILine line, IFormulationString text) => line.InlineCulture("hsb", text);
+        public static ILine hsb(this ILine line, IFormatString text) => line.InlineCulture("hsb", text);
         
         /// <summary>
         /// Add inlined Hungarian language string.
@@ -776,7 +776,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine hu(this ILine line, IFormulationString text) => line.InlineCulture("hu", text);
+        public static ILine hu(this ILine line, IFormatString text) => line.InlineCulture("hu", text);
         
         /// <summary>
         /// Add inlined Armenian language string.
@@ -792,7 +792,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine hy(this ILine line, IFormulationString text) => line.InlineCulture("hy", text);
+        public static ILine hy(this ILine line, IFormatString text) => line.InlineCulture("hy", text);
         
         /// <summary>
         /// Add inlined Ibibio language string.
@@ -808,7 +808,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ibb(this ILine line, IFormulationString text) => line.InlineCulture("ibb", text);
+        public static ILine ibb(this ILine line, IFormatString text) => line.InlineCulture("ibb", text);
         
         /// <summary>
         /// Add inlined Indonesian language string.
@@ -824,7 +824,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine id(this ILine line, IFormulationString text) => line.InlineCulture("id", text);
+        public static ILine id(this ILine line, IFormatString text) => line.InlineCulture("id", text);
         
         /// <summary>
         /// Add inlined Igbo language string.
@@ -840,7 +840,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ig(this ILine line, IFormulationString text) => line.InlineCulture("ig", text);
+        public static ILine ig(this ILine line, IFormatString text) => line.InlineCulture("ig", text);
         
         /// <summary>
         /// Add inlined Yi language string.
@@ -856,7 +856,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ii(this ILine line, IFormulationString text) => line.InlineCulture("ii", text);
+        public static ILine ii(this ILine line, IFormatString text) => line.InlineCulture("ii", text);
         
         /// <summary>
         /// Add inlined Icelandic language string.
@@ -872,7 +872,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine _is(this ILine line, IFormulationString text) => line.InlineCulture("is", text);
+        public static ILine _is(this ILine line, IFormatString text) => line.InlineCulture("is", text);
         
         /// <summary>
         /// Add inlined Italian language string.
@@ -888,7 +888,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine it(this ILine line, IFormulationString text) => line.InlineCulture("it", text);
+        public static ILine it(this ILine line, IFormatString text) => line.InlineCulture("it", text);
         
         /// <summary>
         /// Add inlined Inuktitut language string.
@@ -904,7 +904,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine iu(this ILine line, IFormulationString text) => line.InlineCulture("iu", text);
+        public static ILine iu(this ILine line, IFormatString text) => line.InlineCulture("iu", text);
         
         /// <summary>
         /// Add inlined Japanese language string.
@@ -920,7 +920,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ja(this ILine line, IFormulationString text) => line.InlineCulture("ja", text);
+        public static ILine ja(this ILine line, IFormatString text) => line.InlineCulture("ja", text);
         
         /// <summary>
         /// Add inlined Georgian language string.
@@ -936,7 +936,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ka(this ILine line, IFormulationString text) => line.InlineCulture("ka", text);
+        public static ILine ka(this ILine line, IFormatString text) => line.InlineCulture("ka", text);
         
         /// <summary>
         /// Add inlined Kazakh language string.
@@ -952,7 +952,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine kk(this ILine line, IFormulationString text) => line.InlineCulture("kk", text);
+        public static ILine kk(this ILine line, IFormatString text) => line.InlineCulture("kk", text);
         
         /// <summary>
         /// Add inlined Greenlandic language string.
@@ -968,7 +968,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine kl(this ILine line, IFormulationString text) => line.InlineCulture("kl", text);
+        public static ILine kl(this ILine line, IFormatString text) => line.InlineCulture("kl", text);
         
         /// <summary>
         /// Add inlined Khmer language string.
@@ -984,7 +984,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine km(this ILine line, IFormulationString text) => line.InlineCulture("km", text);
+        public static ILine km(this ILine line, IFormatString text) => line.InlineCulture("km", text);
         
         /// <summary>
         /// Add inlined Kannada language string.
@@ -1000,7 +1000,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine kn(this ILine line, IFormulationString text) => line.InlineCulture("kn", text);
+        public static ILine kn(this ILine line, IFormatString text) => line.InlineCulture("kn", text);
         
         /// <summary>
         /// Add inlined Korean language string.
@@ -1016,7 +1016,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ko(this ILine line, IFormulationString text) => line.InlineCulture("ko", text);
+        public static ILine ko(this ILine line, IFormatString text) => line.InlineCulture("ko", text);
         
         /// <summary>
         /// Add inlined Konkani language string.
@@ -1032,7 +1032,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine kok(this ILine line, IFormulationString text) => line.InlineCulture("kok", text);
+        public static ILine kok(this ILine line, IFormatString text) => line.InlineCulture("kok", text);
         
         /// <summary>
         /// Add inlined Kanuri language string.
@@ -1048,7 +1048,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine kr(this ILine line, IFormulationString text) => line.InlineCulture("kr", text);
+        public static ILine kr(this ILine line, IFormatString text) => line.InlineCulture("kr", text);
         
         /// <summary>
         /// Add inlined Kashmiri language string.
@@ -1064,7 +1064,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ks(this ILine line, IFormulationString text) => line.InlineCulture("ks", text);
+        public static ILine ks(this ILine line, IFormatString text) => line.InlineCulture("ks", text);
         
         /// <summary>
         /// Add inlined Central Kurdish language string.
@@ -1080,7 +1080,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ku(this ILine line, IFormulationString text) => line.InlineCulture("ku", text);
+        public static ILine ku(this ILine line, IFormatString text) => line.InlineCulture("ku", text);
         
         /// <summary>
         /// Add inlined Kyrgyz language string.
@@ -1096,7 +1096,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ky(this ILine line, IFormulationString text) => line.InlineCulture("ky", text);
+        public static ILine ky(this ILine line, IFormatString text) => line.InlineCulture("ky", text);
         
         /// <summary>
         /// Add inlined Latin language string.
@@ -1112,7 +1112,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine la(this ILine line, IFormulationString text) => line.InlineCulture("la", text);
+        public static ILine la(this ILine line, IFormatString text) => line.InlineCulture("la", text);
         
         /// <summary>
         /// Add inlined Luxembourgish language string.
@@ -1128,7 +1128,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine lb(this ILine line, IFormulationString text) => line.InlineCulture("lb", text);
+        public static ILine lb(this ILine line, IFormatString text) => line.InlineCulture("lb", text);
         
         /// <summary>
         /// Add inlined Lao language string.
@@ -1144,7 +1144,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine lo(this ILine line, IFormulationString text) => line.InlineCulture("lo", text);
+        public static ILine lo(this ILine line, IFormatString text) => line.InlineCulture("lo", text);
         
         /// <summary>
         /// Add inlined Lithuanian language string.
@@ -1160,7 +1160,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine lt(this ILine line, IFormulationString text) => line.InlineCulture("lt", text);
+        public static ILine lt(this ILine line, IFormatString text) => line.InlineCulture("lt", text);
         
         /// <summary>
         /// Add inlined Latvian language string.
@@ -1176,7 +1176,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine lv(this ILine line, IFormulationString text) => line.InlineCulture("lv", text);
+        public static ILine lv(this ILine line, IFormatString text) => line.InlineCulture("lv", text);
         
         /// <summary>
         /// Add inlined Maori language string.
@@ -1192,7 +1192,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine mi(this ILine line, IFormulationString text) => line.InlineCulture("mi", text);
+        public static ILine mi(this ILine line, IFormatString text) => line.InlineCulture("mi", text);
         
         /// <summary>
         /// Add inlined Macedonian language string.
@@ -1208,7 +1208,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine mk(this ILine line, IFormulationString text) => line.InlineCulture("mk", text);
+        public static ILine mk(this ILine line, IFormatString text) => line.InlineCulture("mk", text);
         
         /// <summary>
         /// Add inlined Malayalam language string.
@@ -1224,7 +1224,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ml(this ILine line, IFormulationString text) => line.InlineCulture("ml", text);
+        public static ILine ml(this ILine line, IFormatString text) => line.InlineCulture("ml", text);
         
         /// <summary>
         /// Add inlined Mongolian language string.
@@ -1240,7 +1240,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine mn(this ILine line, IFormulationString text) => line.InlineCulture("mn", text);
+        public static ILine mn(this ILine line, IFormatString text) => line.InlineCulture("mn", text);
         
         /// <summary>
         /// Add inlined Manipuri language string.
@@ -1256,7 +1256,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine mni(this ILine line, IFormulationString text) => line.InlineCulture("mni", text);
+        public static ILine mni(this ILine line, IFormatString text) => line.InlineCulture("mni", text);
         
         /// <summary>
         /// Add inlined Mohawk language string.
@@ -1272,7 +1272,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine moh(this ILine line, IFormulationString text) => line.InlineCulture("moh", text);
+        public static ILine moh(this ILine line, IFormatString text) => line.InlineCulture("moh", text);
         
         /// <summary>
         /// Add inlined Marathi language string.
@@ -1288,7 +1288,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine mr(this ILine line, IFormulationString text) => line.InlineCulture("mr", text);
+        public static ILine mr(this ILine line, IFormatString text) => line.InlineCulture("mr", text);
         
         /// <summary>
         /// Add inlined Malay language string.
@@ -1304,7 +1304,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ms(this ILine line, IFormulationString text) => line.InlineCulture("ms", text);
+        public static ILine ms(this ILine line, IFormatString text) => line.InlineCulture("ms", text);
         
         /// <summary>
         /// Add inlined Maltese language string.
@@ -1320,7 +1320,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine mt(this ILine line, IFormulationString text) => line.InlineCulture("mt", text);
+        public static ILine mt(this ILine line, IFormatString text) => line.InlineCulture("mt", text);
         
         /// <summary>
         /// Add inlined Burmese language string.
@@ -1336,7 +1336,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine my(this ILine line, IFormulationString text) => line.InlineCulture("my", text);
+        public static ILine my(this ILine line, IFormatString text) => line.InlineCulture("my", text);
         
         /// <summary>
         /// Add inlined Norwegian Bokmål language string.
@@ -1352,7 +1352,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine nb(this ILine line, IFormulationString text) => line.InlineCulture("nb", text);
+        public static ILine nb(this ILine line, IFormatString text) => line.InlineCulture("nb", text);
         
         /// <summary>
         /// Add inlined Nepali language string.
@@ -1368,7 +1368,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ne(this ILine line, IFormulationString text) => line.InlineCulture("ne", text);
+        public static ILine ne(this ILine line, IFormatString text) => line.InlineCulture("ne", text);
         
         /// <summary>
         /// Add inlined Dutch language string.
@@ -1384,7 +1384,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine nl(this ILine line, IFormulationString text) => line.InlineCulture("nl", text);
+        public static ILine nl(this ILine line, IFormatString text) => line.InlineCulture("nl", text);
         
         /// <summary>
         /// Add inlined Norwegian Nynorsk language string.
@@ -1400,7 +1400,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine nn(this ILine line, IFormulationString text) => line.InlineCulture("nn", text);
+        public static ILine nn(this ILine line, IFormatString text) => line.InlineCulture("nn", text);
         
         /// <summary>
         /// Add inlined Sesotho sa Leboa language string.
@@ -1416,7 +1416,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine nso(this ILine line, IFormulationString text) => line.InlineCulture("nso", text);
+        public static ILine nso(this ILine line, IFormatString text) => line.InlineCulture("nso", text);
         
         /// <summary>
         /// Add inlined Occitan language string.
@@ -1432,7 +1432,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine oc(this ILine line, IFormulationString text) => line.InlineCulture("oc", text);
+        public static ILine oc(this ILine line, IFormatString text) => line.InlineCulture("oc", text);
         
         /// <summary>
         /// Add inlined Oromo language string.
@@ -1448,7 +1448,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine om(this ILine line, IFormulationString text) => line.InlineCulture("om", text);
+        public static ILine om(this ILine line, IFormatString text) => line.InlineCulture("om", text);
         
         /// <summary>
         /// Add inlined Odia language string.
@@ -1464,7 +1464,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine or(this ILine line, IFormulationString text) => line.InlineCulture("or", text);
+        public static ILine or(this ILine line, IFormatString text) => line.InlineCulture("or", text);
         
         /// <summary>
         /// Add inlined Punjabi language string.
@@ -1480,7 +1480,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine pa(this ILine line, IFormulationString text) => line.InlineCulture("pa", text);
+        public static ILine pa(this ILine line, IFormatString text) => line.InlineCulture("pa", text);
         
         /// <summary>
         /// Add inlined Papiamento language string.
@@ -1496,7 +1496,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine pap(this ILine line, IFormulationString text) => line.InlineCulture("pap", text);
+        public static ILine pap(this ILine line, IFormatString text) => line.InlineCulture("pap", text);
         
         /// <summary>
         /// Add inlined Polish language string.
@@ -1512,7 +1512,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine pl(this ILine line, IFormulationString text) => line.InlineCulture("pl", text);
+        public static ILine pl(this ILine line, IFormatString text) => line.InlineCulture("pl", text);
         
         /// <summary>
         /// Add inlined Dari language string.
@@ -1528,7 +1528,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine prs(this ILine line, IFormulationString text) => line.InlineCulture("prs", text);
+        public static ILine prs(this ILine line, IFormatString text) => line.InlineCulture("prs", text);
         
         /// <summary>
         /// Add inlined Pashto language string.
@@ -1544,7 +1544,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ps(this ILine line, IFormulationString text) => line.InlineCulture("ps", text);
+        public static ILine ps(this ILine line, IFormatString text) => line.InlineCulture("ps", text);
         
         /// <summary>
         /// Add inlined Portuguese language string.
@@ -1560,7 +1560,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine pt(this ILine line, IFormulationString text) => line.InlineCulture("pt", text);
+        public static ILine pt(this ILine line, IFormatString text) => line.InlineCulture("pt", text);
         
         /// <summary>
         /// Add inlined K'iche' language string.
@@ -1576,7 +1576,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine quc(this ILine line, IFormulationString text) => line.InlineCulture("quc", text);
+        public static ILine quc(this ILine line, IFormatString text) => line.InlineCulture("quc", text);
         
         /// <summary>
         /// Add inlined Quechua language string.
@@ -1592,7 +1592,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine quz(this ILine line, IFormulationString text) => line.InlineCulture("quz", text);
+        public static ILine quz(this ILine line, IFormatString text) => line.InlineCulture("quz", text);
         
         /// <summary>
         /// Add inlined Romansh language string.
@@ -1608,7 +1608,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine rm(this ILine line, IFormulationString text) => line.InlineCulture("rm", text);
+        public static ILine rm(this ILine line, IFormatString text) => line.InlineCulture("rm", text);
         
         /// <summary>
         /// Add inlined Romanian language string.
@@ -1624,7 +1624,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ro(this ILine line, IFormulationString text) => line.InlineCulture("ro", text);
+        public static ILine ro(this ILine line, IFormatString text) => line.InlineCulture("ro", text);
         
         /// <summary>
         /// Add inlined Russian language string.
@@ -1640,7 +1640,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ru(this ILine line, IFormulationString text) => line.InlineCulture("ru", text);
+        public static ILine ru(this ILine line, IFormatString text) => line.InlineCulture("ru", text);
         
         /// <summary>
         /// Add inlined Kinyarwanda language string.
@@ -1656,7 +1656,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine rw(this ILine line, IFormulationString text) => line.InlineCulture("rw", text);
+        public static ILine rw(this ILine line, IFormatString text) => line.InlineCulture("rw", text);
         
         /// <summary>
         /// Add inlined Sanskrit language string.
@@ -1672,7 +1672,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine sa(this ILine line, IFormulationString text) => line.InlineCulture("sa", text);
+        public static ILine sa(this ILine line, IFormatString text) => line.InlineCulture("sa", text);
         
         /// <summary>
         /// Add inlined Sakha language string.
@@ -1688,7 +1688,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine sah(this ILine line, IFormulationString text) => line.InlineCulture("sah", text);
+        public static ILine sah(this ILine line, IFormatString text) => line.InlineCulture("sah", text);
         
         /// <summary>
         /// Add inlined Sindhi language string.
@@ -1704,7 +1704,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine sd(this ILine line, IFormulationString text) => line.InlineCulture("sd", text);
+        public static ILine sd(this ILine line, IFormatString text) => line.InlineCulture("sd", text);
         
         /// <summary>
         /// Add inlined Northern Sami language string.
@@ -1720,7 +1720,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine se(this ILine line, IFormulationString text) => line.InlineCulture("se", text);
+        public static ILine se(this ILine line, IFormatString text) => line.InlineCulture("se", text);
         
         /// <summary>
         /// Add inlined Sinhala language string.
@@ -1736,7 +1736,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine si(this ILine line, IFormulationString text) => line.InlineCulture("si", text);
+        public static ILine si(this ILine line, IFormatString text) => line.InlineCulture("si", text);
         
         /// <summary>
         /// Add inlined Slovak language string.
@@ -1752,7 +1752,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine sk(this ILine line, IFormulationString text) => line.InlineCulture("sk", text);
+        public static ILine sk(this ILine line, IFormatString text) => line.InlineCulture("sk", text);
         
         /// <summary>
         /// Add inlined Slovenian language string.
@@ -1768,7 +1768,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine sl(this ILine line, IFormulationString text) => line.InlineCulture("sl", text);
+        public static ILine sl(this ILine line, IFormatString text) => line.InlineCulture("sl", text);
         
         /// <summary>
         /// Add inlined Sami (Southern) language string.
@@ -1784,7 +1784,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine sma(this ILine line, IFormulationString text) => line.InlineCulture("sma", text);
+        public static ILine sma(this ILine line, IFormatString text) => line.InlineCulture("sma", text);
         
         /// <summary>
         /// Add inlined Sami (Lule) language string.
@@ -1800,7 +1800,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine smj(this ILine line, IFormulationString text) => line.InlineCulture("smj", text);
+        public static ILine smj(this ILine line, IFormatString text) => line.InlineCulture("smj", text);
         
         /// <summary>
         /// Add inlined Sami (Inari) language string.
@@ -1816,7 +1816,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine smn(this ILine line, IFormulationString text) => line.InlineCulture("smn", text);
+        public static ILine smn(this ILine line, IFormatString text) => line.InlineCulture("smn", text);
         
         /// <summary>
         /// Add inlined Sami (Skolt) language string.
@@ -1832,7 +1832,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine sms(this ILine line, IFormulationString text) => line.InlineCulture("sms", text);
+        public static ILine sms(this ILine line, IFormatString text) => line.InlineCulture("sms", text);
         
         /// <summary>
         /// Add inlined Somali language string.
@@ -1848,7 +1848,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine so(this ILine line, IFormulationString text) => line.InlineCulture("so", text);
+        public static ILine so(this ILine line, IFormatString text) => line.InlineCulture("so", text);
         
         /// <summary>
         /// Add inlined Albanian language string.
@@ -1864,7 +1864,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine sq(this ILine line, IFormulationString text) => line.InlineCulture("sq", text);
+        public static ILine sq(this ILine line, IFormatString text) => line.InlineCulture("sq", text);
         
         /// <summary>
         /// Add inlined Serbian language string.
@@ -1880,7 +1880,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine sr(this ILine line, IFormulationString text) => line.InlineCulture("sr", text);
+        public static ILine sr(this ILine line, IFormatString text) => line.InlineCulture("sr", text);
         
         /// <summary>
         /// Add inlined Sesotho language string.
@@ -1896,7 +1896,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine st(this ILine line, IFormulationString text) => line.InlineCulture("st", text);
+        public static ILine st(this ILine line, IFormatString text) => line.InlineCulture("st", text);
         
         /// <summary>
         /// Add inlined Swedish language string.
@@ -1912,7 +1912,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine sv(this ILine line, IFormulationString text) => line.InlineCulture("sv", text);
+        public static ILine sv(this ILine line, IFormatString text) => line.InlineCulture("sv", text);
         
         /// <summary>
         /// Add inlined Kiswahili language string.
@@ -1928,7 +1928,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine sw(this ILine line, IFormulationString text) => line.InlineCulture("sw", text);
+        public static ILine sw(this ILine line, IFormatString text) => line.InlineCulture("sw", text);
         
         /// <summary>
         /// Add inlined Syriac language string.
@@ -1944,7 +1944,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine syr(this ILine line, IFormulationString text) => line.InlineCulture("syr", text);
+        public static ILine syr(this ILine line, IFormatString text) => line.InlineCulture("syr", text);
         
         /// <summary>
         /// Add inlined Tamil language string.
@@ -1960,7 +1960,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ta(this ILine line, IFormulationString text) => line.InlineCulture("ta", text);
+        public static ILine ta(this ILine line, IFormatString text) => line.InlineCulture("ta", text);
         
         /// <summary>
         /// Add inlined Telugu language string.
@@ -1976,7 +1976,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine te(this ILine line, IFormulationString text) => line.InlineCulture("te", text);
+        public static ILine te(this ILine line, IFormatString text) => line.InlineCulture("te", text);
         
         /// <summary>
         /// Add inlined Tajik language string.
@@ -1992,7 +1992,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine tg(this ILine line, IFormulationString text) => line.InlineCulture("tg", text);
+        public static ILine tg(this ILine line, IFormatString text) => line.InlineCulture("tg", text);
         
         /// <summary>
         /// Add inlined Thai language string.
@@ -2008,7 +2008,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine th(this ILine line, IFormulationString text) => line.InlineCulture("th", text);
+        public static ILine th(this ILine line, IFormatString text) => line.InlineCulture("th", text);
         
         /// <summary>
         /// Add inlined Tigrinya language string.
@@ -2024,7 +2024,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ti(this ILine line, IFormulationString text) => line.InlineCulture("ti", text);
+        public static ILine ti(this ILine line, IFormatString text) => line.InlineCulture("ti", text);
         
         /// <summary>
         /// Add inlined Turkmen language string.
@@ -2040,7 +2040,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine tk(this ILine line, IFormulationString text) => line.InlineCulture("tk", text);
+        public static ILine tk(this ILine line, IFormatString text) => line.InlineCulture("tk", text);
         
         /// <summary>
         /// Add inlined Setswana language string.
@@ -2056,7 +2056,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine tn(this ILine line, IFormulationString text) => line.InlineCulture("tn", text);
+        public static ILine tn(this ILine line, IFormatString text) => line.InlineCulture("tn", text);
         
         /// <summary>
         /// Add inlined Turkish language string.
@@ -2072,7 +2072,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine tr(this ILine line, IFormulationString text) => line.InlineCulture("tr", text);
+        public static ILine tr(this ILine line, IFormatString text) => line.InlineCulture("tr", text);
         
         /// <summary>
         /// Add inlined Tsonga language string.
@@ -2088,7 +2088,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ts(this ILine line, IFormulationString text) => line.InlineCulture("ts", text);
+        public static ILine ts(this ILine line, IFormatString text) => line.InlineCulture("ts", text);
         
         /// <summary>
         /// Add inlined Tatar language string.
@@ -2104,7 +2104,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine tt(this ILine line, IFormulationString text) => line.InlineCulture("tt", text);
+        public static ILine tt(this ILine line, IFormatString text) => line.InlineCulture("tt", text);
         
         /// <summary>
         /// Add inlined Central Atlas Tamazight language string.
@@ -2120,7 +2120,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine tzm(this ILine line, IFormulationString text) => line.InlineCulture("tzm", text);
+        public static ILine tzm(this ILine line, IFormatString text) => line.InlineCulture("tzm", text);
         
         /// <summary>
         /// Add inlined Uyghur language string.
@@ -2136,7 +2136,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ug(this ILine line, IFormulationString text) => line.InlineCulture("ug", text);
+        public static ILine ug(this ILine line, IFormatString text) => line.InlineCulture("ug", text);
         
         /// <summary>
         /// Add inlined Ukrainian language string.
@@ -2152,7 +2152,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine uk(this ILine line, IFormulationString text) => line.InlineCulture("uk", text);
+        public static ILine uk(this ILine line, IFormatString text) => line.InlineCulture("uk", text);
         
         /// <summary>
         /// Add inlined Urdu language string.
@@ -2168,7 +2168,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ur(this ILine line, IFormulationString text) => line.InlineCulture("ur", text);
+        public static ILine ur(this ILine line, IFormatString text) => line.InlineCulture("ur", text);
         
         /// <summary>
         /// Add inlined Uzbek language string.
@@ -2184,7 +2184,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine uz(this ILine line, IFormulationString text) => line.InlineCulture("uz", text);
+        public static ILine uz(this ILine line, IFormatString text) => line.InlineCulture("uz", text);
         
         /// <summary>
         /// Add inlined Venda language string.
@@ -2200,7 +2200,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine ve(this ILine line, IFormulationString text) => line.InlineCulture("ve", text);
+        public static ILine ve(this ILine line, IFormatString text) => line.InlineCulture("ve", text);
         
         /// <summary>
         /// Add inlined Vietnamese language string.
@@ -2216,7 +2216,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine vi(this ILine line, IFormulationString text) => line.InlineCulture("vi", text);
+        public static ILine vi(this ILine line, IFormatString text) => line.InlineCulture("vi", text);
         
         /// <summary>
         /// Add inlined Wolof language string.
@@ -2232,7 +2232,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine wo(this ILine line, IFormulationString text) => line.InlineCulture("wo", text);
+        public static ILine wo(this ILine line, IFormatString text) => line.InlineCulture("wo", text);
         
         /// <summary>
         /// Add inlined isiXhosa language string.
@@ -2248,7 +2248,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine xh(this ILine line, IFormulationString text) => line.InlineCulture("xh", text);
+        public static ILine xh(this ILine line, IFormatString text) => line.InlineCulture("xh", text);
         
         /// <summary>
         /// Add inlined Yiddish language string.
@@ -2264,7 +2264,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine yi(this ILine line, IFormulationString text) => line.InlineCulture("yi", text);
+        public static ILine yi(this ILine line, IFormatString text) => line.InlineCulture("yi", text);
         
         /// <summary>
         /// Add inlined Yoruba language string.
@@ -2280,7 +2280,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine yo(this ILine line, IFormulationString text) => line.InlineCulture("yo", text);
+        public static ILine yo(this ILine line, IFormatString text) => line.InlineCulture("yo", text);
         
         /// <summary>
         /// Add inlined Chinese language string.
@@ -2296,7 +2296,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine zh(this ILine line, IFormulationString text) => line.InlineCulture("zh", text);
+        public static ILine zh(this ILine line, IFormatString text) => line.InlineCulture("zh", text);
         
         /// <summary>
         /// Add inlined isiZulu language string.
@@ -2312,7 +2312,7 @@ namespace Lexical.Localization.Inlines
         /// <param name="line">key to add string to</param>
         /// <param name="text">language string</param>
         /// <returns>new key</returns>
-        public static ILine zu(this ILine line, IFormulationString text) => line.InlineCulture("zu", text);
+        public static ILine zu(this ILine line, IFormatString text) => line.InlineCulture("zu", text);
         
 
     }

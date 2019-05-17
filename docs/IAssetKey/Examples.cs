@@ -44,7 +44,7 @@ namespace docs
                 ILine key = new LineRoot().Section("Section").Section("Section").Key("Key");
 
                 // Retrieve string with a reference
-                IFormulationString str = asset.GetString(key.Culture("en"));
+                IFormatString str = asset.GetString(key.Culture("en"));
 
                 // Retrieve binary resource with a reference
                 byte[] data = asset.GetResource(key.Culture("en"));

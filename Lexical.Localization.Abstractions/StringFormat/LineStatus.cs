@@ -18,7 +18,7 @@ namespace Lexical.Localization
         /// <summary>Request has not been resolved</summary>
         NoResult = 0xFFFFFFFFFFFFFFFFUL,
 
-        //// Resolve - Step that searches formulation string for ILine from IAsset or Inlines.
+        //// Resolve - Step that searches format string for ILine from IAsset or Inlines.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResolveOk = 0x00UL << Shift.Resolve,
         /// <summary>Resolved string from asset</summary>
@@ -71,19 +71,19 @@ namespace Lexical.Localization
         PluralityOk = 0x00UL << Shift.Plurality,
         /// <summary>No plurality categories was used</summary>
         PluralityOkNotUsed = 0x01UL << Shift.Plurality,
-        /// <summary>String contained "plurality/ordinal/range" argument formulation(s), and the plurality cases were found in the asset/inlines and used</summary>
+        /// <summary>String contained "plurality/ordinal/range" argument format(s), and the plurality cases were found in the asset/inlines and used</summary>
         PluralityOkMatched = 0x02UL << Shift.Plurality,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PluralityWarning = 0x20UL << Shift.Plurality,
-        /// <summary>String contained "plurality/ordinal/range" argument formulation(s), and plurality cases were found for some arguments, but not all</summary>
+        /// <summary>String contained "plurality/ordinal/range" argument format(s), and plurality cases were found for some arguments, but not all</summary>
         PluralityWarningPartiallyMatched = 0x21UL << Shift.Plurality,
-        /// <summary>String contained "plurality/ordinal/range" argument formulation(s), but the plurality cases were not found in the asset/inlines, fallbacked to default string</summary>
+        /// <summary>String contained "plurality/ordinal/range" argument format(s), but the plurality cases were not found in the asset/inlines, fallbacked to default string</summary>
         PluralityWarningNotMatched = 0x22UL << Shift.Plurality,
-        /// <summary>String contained "plurality/ordinal/range" argument formulation, but the provided value was not a number</summary>
+        /// <summary>String contained "plurality/ordinal/range" argument format, but the provided value was not a number</summary>
         PluralityWarningNotNumber = 0x23UL << Shift.Plurality,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PluralityError = 0x40UL << Shift.Plurality,
-        /// <summary>String contained "plurality/ordinal/range" argument formulation(s), but the plurality rules were not found in the key or in the asset</summary>
+        /// <summary>String contained "plurality/ordinal/range" argument format(s), but the plurality rules were not found in the key or in the asset</summary>
         PluralityErrorRulesNotFound = 0x41UL << Shift.Plurality,
         /// <summary>Argument is null, but expected a number</summary>
         PluralityErrorArgumentNull = 0x42UL << Shift.Plurality,
@@ -107,15 +107,15 @@ namespace Lexical.Localization
         ArgumentOk = 0x00UL << Shift.Argument,
         /// <summary>One of the argument was null, or custom formatter resulted into null.</summary>
         ArgumentOkNull = 0x02UL << Shift.Argument,
-        /// <summary>Request asked for the formulation string, without applying arguments to it.</summary>
-        ArgumentOkNotApplied = 0x03L << Shift.Formulation,
+        /// <summary>Request asked for the format string, without applying arguments to it.</summary>
+        ArgumentOkNotApplied = 0x03L << Shift.Format,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ArgumentWarning = 0x20UL << Shift.Argument,
         /// <summary>No IFormattable implementation or ICustomFormatter was found, or they returned null, ToString was applied</summary>
         ArgumentWarningToStringUsed = 0x21UL << Shift.Argument,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ArgumentError = 0x40UL << Shift.Argument,
-        /// <summary>The argument object did not match the type in formulation string</summary>
+        /// <summary>The argument object did not match the type in format string</summary>
         ArgumentErrorTypeMismatch = 0x48UL << Shift.Argument,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ArgumentFailed = 0x60UL << Shift.Argument,
@@ -126,39 +126,39 @@ namespace Lexical.Localization
         /// <summary>Mask for argument status</summary>
         ArgumentMask = 0x7FUL << Shift.Argument,
 
-        //// Formulation - Step that parses formulation string, inserts arguments, and builds into formulated string.
+        //// Format - Step that parses format string, inserts arguments, and builds into formulated string.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        FormulationOk = 0x00UL << Shift.Formulation,
+        FormatOk = 0x00UL << Shift.Format,
         /// <summary>There were no arguments to formulate</summary>
-        FormulationOkNoArguments = 0x02UL << Shift.Formulation,
-        /// <summary>Request asked for the formulation string, without applying arguments to it.</summary>
-        FormulationOkNotApplied = 0x03UL << Shift.Formulation,
+        FormatOkNoArguments = 0x02UL << Shift.Format,
+        /// <summary>Request asked for the format string, without applying arguments to it.</summary>
+        FormatOkNotApplied = 0x03UL << Shift.Format,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        FormulationWarning = 0x20UL << Shift.Formulation,
-        /// <summary>Formulation string contained arguments, but too many arguments were provided</summary>
-        FormulationWarningTooManyArguments = 0x21UL << Shift.Formulation,
+        FormatWarning = 0x20UL << Shift.Format,
+        /// <summary>Format string contained arguments, but too many arguments were provided</summary>
+        FormatWarningTooManyArguments = 0x21UL << Shift.Format,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        FormulationError = 0x40UL << Shift.Formulation,
-        /// <summary>Formulation string contained arguments, but arguments were not provided</summary>
-        FormulationErrorNoArguments = 0x42UL << Shift.Formulation,
-        /// <summary>Formulation string contained arguments, but too few arguments were provided. Using null values for missing arguments.</summary>
-        FormulationErrorTooFewArguments = 0x42UL << Shift.Formulation,
-        /// <summary>Formulation string was malformed. Returning the malformed string as value.</summary>
-        FormulationErrorMalformed = 0x4fUL << Shift.Formulation,
+        FormatError = 0x40UL << Shift.Format,
+        /// <summary>Format string contained arguments, but arguments were not provided</summary>
+        FormatErrorNoArguments = 0x42UL << Shift.Format,
+        /// <summary>Format string contained arguments, but too few arguments were provided. Using null values for missing arguments.</summary>
+        FormatErrorTooFewArguments = 0x42UL << Shift.Format,
+        /// <summary>Format string was malformed. Returning the malformed string as value.</summary>
+        FormatErrorMalformed = 0x4fUL << Shift.Format,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        FormulationFailed = 0x60UL << Shift.Formulation,
-        /// <summary>Formulation string is null</summary>
-        FormulationFailedNull = 0x601L << Shift.Formulation,
+        FormatFailed = 0x60UL << Shift.Format,
+        /// <summary>Format string is null</summary>
+        FormatFailedNull = 0x601L << Shift.Format,
         /// <summary>No <see cref="IStringFormatParser"/></summary>
-        FormulationFailedNoParser = 0x607L << Shift.Formulation,
-        /// <summary>Formulation parse failed</summary>
-        FormulationFailedParse = 0x609L << Shift.Formulation,
+        FormatFailedNoParser = 0x607L << Shift.Format,
+        /// <summary>Format parse failed</summary>
+        FormatFailedParse = 0x609L << Shift.Format,
         /// <summary>Result has not been processed</summary>
-        FormulationFailedNoResult = 0x7FUL << Shift.Formulation,
+        FormatFailedNoResult = 0x7FUL << Shift.Format,
         /// <summary>Mask for severity</summary>
-        FormulationSeverityMask = 0x60UL << Shift.Formulation,
+        FormatSeverityMask = 0x60UL << Shift.Format,
         /// <summary>Mask for argument status</summary>
-        FormulationMask = 0x7FUL << Shift.Formulation,
+        FormatMask = 0x7FUL << Shift.Format,
 
         //// Custom0 - ILineResolver implementation specific status flags. Can be used for any purpose by the resolver.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
@@ -206,7 +206,7 @@ namespace Lexical.Localization
         internal const int Culture = 7;
         internal const int Plurality = 14;
         internal const int Argument = 21;
-        internal const int Formulation = 28;
+        internal const int Format = 28;
         internal const int Custom0 = 35;    // ILineResolver implemtation can use for any custom purpose.
         internal const int Custom1 = 42;    // ILineResolver implemtation can use for any custom purpose.
         internal const int Reserved0 = 49;  // Reserved for future use
@@ -217,7 +217,7 @@ namespace Lexical.Localization
         internal const int CultureSeverity = Culture + 5;
         internal const int PluralitySeverity = Plurality + 5;
         internal const int ArgumentSeverity = Argument + 5;
-        internal const int FormulationSeverity = Formulation + 5;
+        internal const int FormatSeverity = Format + 5;
         internal const int Custom0Severity = Custom0 + 5;
         internal const int Custom1Severity = Custom1 + 5;
         internal const int Reserved0Severity = Reserved0 + 5;  // Reserved for future use
@@ -229,7 +229,7 @@ namespace Lexical.Localization
     public static class LineStatusExtensions
     {
         /// <summary>
-        /// Severity for the step that resolves <see cref="ILine"/> into formulation string.
+        /// Severity for the step that resolves <see cref="ILine"/> into format string.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
@@ -312,7 +312,7 @@ namespace Lexical.Localization
             => status & LineStatus.ArgumentMask;
 
         /// <summary>
-        /// Severity for the step that parses formulation string and applies arguments.
+        /// Severity for the step that parses format string and applies arguments.
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
@@ -322,15 +322,15 @@ namespace Lexical.Localization
         /// </list>
         /// </summary>
         /// <param name="status"></param>
-        public static int FormulationSeverity(this LineStatus status) 
-            => (int)((ulong)status >> Shift.FormulationSeverity) & 3;
+        public static int FormatSeverity(this LineStatus status) 
+            => (int)((ulong)status >> Shift.FormatSeverity) & 3;
 
         /// <summary>
-        /// Get formulation step status code.
+        /// Get format step status code.
         /// </summary>
         /// <param name="status"></param>
-        public static LineStatus Formulation(this LineStatus status)
-            => status & LineStatus.FormulationMask;
+        public static LineStatus Format(this LineStatus status)
+            => status & LineStatus.FormatMask;
 
         /// <summary>
         /// Severity for <see cref="IStringResolver"/> implementation specific "Custom0" status.
@@ -391,7 +391,7 @@ namespace Lexical.Localization
         /// <param name="status"></param>
         public static int Severity(this LineStatus status)
         {
-            int a = status.ResolveSeverity(), b = status.CultureSeverity(), c = status.PluralitySeverity(), d = status.ArgumentSeverity(), e = status.FormulationSeverity(), h = status.Custom0Severity(), i = status.Custom1Severity();
+            int a = status.ResolveSeverity(), b = status.CultureSeverity(), c = status.PluralitySeverity(), d = status.ArgumentSeverity(), e = status.FormatSeverity(), h = status.Custom0Severity(), i = status.Custom1Severity();
             int result = a;
             if (b > result) result = b;
             if (c > result) result = c;
@@ -471,7 +471,7 @@ namespace Lexical.Localization
             sb.Append("|");
             sb.Append(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.ArgumentMask));
             sb.Append("|");
-            sb.Append(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.FormulationMask));
+            sb.Append(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.FormatMask));
 
             LineStatus custom0 = status & LineStatus.Custom0Mask;
             if (custom0 != LineStatus.NoResult)
@@ -532,7 +532,7 @@ namespace Lexical.Localization
             tw.Write("|");
             tw.Write(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.ArgumentMask));
             tw.Write("|");
-            tw.Write(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.FormulationMask));
+            tw.Write(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.FormatMask));
 
             LineStatus custom0 = status & LineStatus.Custom0Mask;
             if (custom0 != LineStatus.NoResult)

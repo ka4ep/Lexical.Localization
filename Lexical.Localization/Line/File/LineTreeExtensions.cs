@@ -20,7 +20,7 @@ namespace Lexical.Localization
         /// <param name="LineTree"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormulationString>> ToStringLines(this ILineTree LineTree, ILineFormat policy)
+        public static IEnumerable<KeyValuePair<string, IFormatString>> ToStringLines(this ILineTree LineTree, ILineFormat policy)
             => LineTree.ToLines().ToStringLines(policy);
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Lexical.Localization
                 // Yield values
                 if (current.Item2 != null && current.Item1.HasValues)
                 {
-                    foreach (IFormulationString value in current.Item1.Values)
+                    foreach (IFormatString value in current.Item1.Values)
                         yield return current.Item2.Value(value);
                 }
 
@@ -126,12 +126,12 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool HasValue(this ILineTree tree, IFormulationString value)
+        public static bool HasValue(this ILineTree tree, IFormatString value)
         {
             if (value == null) return false;
             if (!tree.HasValues) return false;
-            foreach(IFormulationString linevalue in tree.Values)
-                if (FormulationStringComparer.Instance.Equals(value, linevalue)) return true;
+            foreach(IFormatString linevalue in tree.Values)
+                if (FormatStringComparer.Instance.Equals(value, linevalue)) return true;
             return false;
         }
 
@@ -186,7 +186,7 @@ namespace Lexical.Localization
         /// <param name="key">(optional) possible initial key to set.</param>
         /// <param name="value">(optional) possible initial value to add</param>
         /// <returns><paramref name="node"/></returns>
-        public static ILineTree Add(this ILineTree node, ILine key, IFormulationString value)
+        public static ILineTree Add(this ILineTree node, ILine key, IFormatString value)
         {
             ILineTree n = node;
             if (key != null) n = n.GetChild(key);
@@ -204,7 +204,7 @@ namespace Lexical.Localization
         /// <param name="key_parts">(optional) possible initial key to set.</param>
         /// <param name="value">(optional) possible initial value to add</param>
         /// <returns>the leaf node where the values was added</returns>
-        public static ILineTree AddRecursive(this ILineTree node, IEnumerable<ILine> key_parts, IFormulationString value)
+        public static ILineTree AddRecursive(this ILineTree node, IEnumerable<ILine> key_parts, IFormatString value)
         {
             // Drill into leaf
             ILineTree leaf = node;

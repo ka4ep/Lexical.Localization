@@ -56,7 +56,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="lineFormat">unused</param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormulationString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default)
+        public IEnumerable<KeyValuePair<string, IFormatString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default)
         {
             using (var reader = new System.Resources.ResourceReader(stream))
             {
@@ -75,8 +75,8 @@ namespace Lexical.Localization
                     }
                     if (key != null && value != null)
                     {
-                        IFormulationString formulationString = ValueParser.Parse(value);
-                        yield return new KeyValuePair<string, IFormulationString>(key, formulationString);
+                        IFormatString formatString = ValueParser.Parse(value);
+                        yield return new KeyValuePair<string, IFormatString>(key, formatString);
                     }
                 }
             }

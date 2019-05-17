@@ -19,7 +19,7 @@ Asset interfaces are not called directly but used instead by calling extension m
 // Create key
 ILine key = new LocalizationRoot().Key("hello").Culture("en");
 // Resolve string - Call to LocalizationAssetExtensions.GetString()
-IFormulationString str = asset.GetString(key);
+IFormatString str = asset.GetString(key);
 ```
 
 <details>

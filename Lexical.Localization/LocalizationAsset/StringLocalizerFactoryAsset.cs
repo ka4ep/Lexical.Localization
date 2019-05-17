@@ -100,7 +100,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IFormulationString GetString(ILine key)
+        public IFormatString GetString(ILine key)
             => GetHandlingAsset(key)?.GetString(key);
 
         /// <summary>

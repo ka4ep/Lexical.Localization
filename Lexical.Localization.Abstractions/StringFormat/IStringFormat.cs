@@ -22,48 +22,48 @@ namespace Lexical.Localization
     public interface IStringFormat
     {
         /// <summary>
-        /// Name of the formulation name, e.g. "csharp", "c", or "lexical"
+        /// Name of the format name, e.g. "csharp", "c", or "lexical"
         /// </summary>
         string Name { get; }
     }
 
     /// <summary>
-    /// Parses arguments from formulation strings. Handles escaping.
+    /// Parses arguments from format strings. Handles escaping.
     /// 
-    /// For example "You received {plural:0} coin(s)." is a formulation string
+    /// For example "You received {plural:0} coin(s)." is a format string
     /// that parsed into argument and non-argument sections.
     /// </summary>
     public interface IStringFormatParser : IStringFormat
     {
         /// <summary>
-        /// Parse formulation string into an <see cref="IFormulationString"/>.
+        /// Parse format string into an <see cref="IFormatString"/>.
         /// 
-        /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormulationErrorMalformed"/>.
-        /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormulationOk"/> or some other formulation state.
-        /// If <paramref name="formulationString"/> is null then stat is <see cref="LineStatus.FormulationFailedNull"/>.
+        /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormatErrorMalformed"/>.
+        /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormatOk"/> or some other format state.
+        /// If <paramref name="formatString"/> is null then stat is <see cref="LineStatus.FormatFailedNull"/>.
         /// </summary>
-        /// <param name="formulationString"></param>
-        /// <returns>formulation string</returns>
-        IFormulationString Parse(string formulationString);
+        /// <param name="formatString"></param>
+        /// <returns>format string</returns>
+        IFormatString Parse(string formatString);
     }
 
     /// <summary>
-    /// Prints <see cref="IFormulationString"/> into the format.
+    /// Prints <see cref="IFormatString"/> into the format.
     /// </summary>
     public interface IStringFormatPrinter : IStringFormat
     {
         /// <summary>
-        /// Print formulation string into string.
+        /// Print format string into string.
         /// </summary>
-        /// <param name="formulationString"></param>
-        /// <returns>formulation string</returns>
-        string Print(IFormulationString formulationString);
+        /// <param name="formatString"></param>
+        /// <returns>format string</returns>
+        string Print(IFormatString formatString);
     }
 
     /// <summary>
     /// A map of formats
     /// </summary>
-    public interface IStringFormats : IDictionary<string, IStringFormat>
+    public interface IStringFormatMap : IDictionary<string, IStringFormat>
     {
     }
 
@@ -86,55 +86,55 @@ namespace Lexical.Localization
     public static partial class ILocalizationStringFormatExtensions
     {
         /// <summary>
-        /// Parse formulation string into an <see cref="IFormulationString"/>.
+        /// Parse format string into an <see cref="IFormatString"/>.
         /// 
-        /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormulationErrorMalformed"/>.
-        /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormulationOk"/> or some other formulation state.
-        /// If <paramref name="formulationString"/> is null then stat is <see cref="LineStatus.FormulationFailedNull"/>.
-        /// If <paramref name="format"/> is not <see cref="IStringFormatParser"/>, then stat is <see cref="LineStatus.FormulationFailedNoParser"/>.
+        /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormatErrorMalformed"/>.
+        /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormatOk"/> or some other format state.
+        /// If <paramref name="formatString"/> is null then stat is <see cref="LineStatus.FormatFailedNull"/>.
+        /// If <paramref name="format"/> is not <see cref="IStringFormatParser"/>, then stat is <see cref="LineStatus.FormatFailedNoParser"/>.
         /// </summary>
         /// <param name="format"></param>
-        /// <param name="formulationString"></param>
-        /// <returns>formulation string</returns>
+        /// <param name="formatString"></param>
+        /// <returns>format string</returns>
         /// <exception cref="ArgumentException">If <paramref name="format"/> doesn't implement <see cref="IStringFormatParser"/></exception>
-        public static IFormulationString Parse(this IStringFormat format, string formulationString)
+        public static IFormatString Parse(this IStringFormat format, string formatString)
         {
-            if (formulationString == null) return new StatusFormulationString(formulationString, LineStatus.FormulationFailedNull);
-            if (format is IStringFormatParser parser) return parser.Parse(formulationString);
-            return new StatusFormulationString(formulationString, LineStatus.FormulationFailedNoParser);
+            if (formatString == null) return new StatusFormatString(formatString, LineStatus.FormatFailedNull);
+            if (format is IStringFormatParser parser) return parser.Parse(formatString);
+            return new StatusFormatString(formatString, LineStatus.FormatFailedNoParser);
         }
 
         /// <summary>
-        /// Print formulation string into string.
+        /// Print format string into string.
         /// </summary>
         /// <param name="format"></param>
-        /// <param name="formulationString"></param>
-        /// <returns>formulation string</returns>
-        public static string Print(this IStringFormat format, IFormulationString formulationString)
+        /// <param name="formatString"></param>
+        /// <returns>format string</returns>
+        public static string Print(this IStringFormat format, IFormatString formatString)
         {
-            if (format is IStringFormatPrinter printer) return printer.Print(formulationString);
+            if (format is IStringFormatPrinter printer) return printer.Print(formatString);
             throw new ArgumentException($"{format} doesn't implement {nameof(IStringFormatPrinter)}.");
         }
 
         /// <summary>
-        /// Parse formulation string into an <see cref="IFormulationString"/>.
+        /// Parse format string into an <see cref="IFormatString"/>.
         /// 
-        /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormulationErrorMalformed"/>.
-        /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormulationOk"/> or some other formulation state.
-        /// If <paramref name="formulationString"/> is null then stat is <see cref="LineStatus.FormulationFailedNull"/>.
+        /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormatErrorMalformed"/>.
+        /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormatOk"/> or some other format state.
+        /// If <paramref name="formatString"/> is null then stat is <see cref="LineStatus.FormatFailedNull"/>.
         /// </summary>
         /// <param name="formats"></param>
         /// <param name="formatName"></param>
-        /// <param name="formulationString"></param>
-        /// <returns>formulation string</returns>
+        /// <param name="formatString"></param>
+        /// <returns>format string</returns>
         /// <exception cref="ArgumentException">If <paramref name="formatName"/> doesn't implement <see cref="IStringFormatParser"/></exception>
-        public static IFormulationString Parse(this IReadOnlyDictionary<string, IStringFormat> formats, string formatName, string formulationString)
+        public static IFormatString Parse(this IReadOnlyDictionary<string, IStringFormat> formats, string formatName, string formatString)
         {
             IStringFormat format;
             if (!formats.TryGetValue(formatName, out format))
                 throw new ArgumentException(formatName);
 
-            if (formats is IStringFormatParser parser) return parser.Parse(formulationString);
+            if (formats is IStringFormatParser parser) return parser.Parse(formatString);
             throw new ArgumentException($"{formats} doesn't implement {nameof(IStringFormatParser)}.");
         }
 

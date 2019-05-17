@@ -63,7 +63,7 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
-        /// Formatter supplies formulation result.
+        /// Formatter supplies format result.
         /// </summary>
         /// <param name="value"></param>
         public void OnNext(LineString value)
@@ -129,7 +129,7 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
-        /// Formatter supplies formulation result.
+        /// Formatter supplies format result.
         /// </summary>
         /// <param name="value"></param>
         public void OnNext(LineString value)
@@ -195,7 +195,7 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
-        /// Formatter supplies formulation result.
+        /// Formatter supplies format result.
         /// </summary>
         /// <param name="value"></param>
         public void OnNext(LineString value)

@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Collection of localization formats.
     /// </summary>
-    public class StringFormats : ConcurrentDictionary<string, IStringFormat>, IStringFormats
+    public class StringFormats : ConcurrentDictionary<string, IStringFormat>, IStringFormatMap
     {
         private static StringFormats instance;
 
