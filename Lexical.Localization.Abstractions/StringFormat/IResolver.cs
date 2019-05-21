@@ -7,15 +7,15 @@
 namespace Lexical.Localization.StringFormat
 {
     /// <summary>
-    /// Resolves name to <see cref="IFunctions"/>.
+    /// Resolves name to <typeparamref name="T"/>.
     /// </summary>
-    public interface IFunctionsResolver
+    public interface IResolver<T>
     {
         /// <summary>
-        /// Resolve <paramref name="name"/> to <see cref="IFunctions"/>.
+        /// Resolve <paramref name="className"/> to <typeparamref name="T"/>.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns>functions or null</returns>
-        IFunctions Resolve(string name);
+        /// <param name="className"></param>
+        /// <returns><typeparamref name="T"/> or null</returns>
+        T Resolve(string className);
     }
 }

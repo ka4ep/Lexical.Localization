@@ -225,7 +225,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-            => this.ResolveFormulatedString().Value ?? this.DebugPrint();
+            => this.ResolveString().Value ?? this.DebugPrint();
 
         /// <summary>
         /// A library of interfaces and extension methods that DynamicMetaObject implementation seaches from when 
@@ -373,7 +373,7 @@ namespace Lexical.Localization
             {
                 ILine line = this;
                 if (name != null) line = line.Append<ILineNonCanonicalKey, string, string>("Key", name);                
-                LineString printedString = line.ResolveFormulatedString();
+                LineString printedString = line.ResolveString();
                 if (printedString.Value == null)
                     return new LocalizedString(name, line.Print(), true);
                 else
@@ -394,7 +394,7 @@ namespace Lexical.Localization
                 ILine line = this;
                 if (name != null) line = line.Append<ILineNonCanonicalKey, string, string>("Key", name);
                 if (arguments != null) line = line.Append<ILineFormatArgs, object[]>(arguments);
-                LineString printedString = line.ResolveFormulatedString();
+                LineString printedString = line.ResolveString();
                 if (printedString.Value == null)
                     return new LocalizedString(name, line.Print(), true);
                 else

@@ -61,7 +61,7 @@ namespace Lexical.Localization
         /// Get key-matching value from associated <see cref="IAsset"/>.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
-        /// <see cref="ResolveString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// <see cref="ResolveFormatString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>format string</returns>
@@ -79,7 +79,7 @@ namespace Lexical.Localization
         /// Try get key-matching value from associated <see cref="IAsset"/>.
         /// Ignores culture policy, ignores inlining, ignores formatting.
         /// 
-        /// <see cref="ResolveString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
+        /// <see cref="ResolveFormatString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="result"></param>

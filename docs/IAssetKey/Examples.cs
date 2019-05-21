@@ -114,13 +114,13 @@ namespace docs
                 { 
                 #region Snippet_6c
                     // Resolve to localized string "Error (Code=0x{0:X8})", but does not append arguments
-                    string str = key_formulated.ResolveString();
+                    string str = key_formulated.ResolveFormatString();
                 #endregion Snippet_6c
                 }
                 {
                     #region Snippet_6d
                     // Resolve to formulated string to "Error (Code=0xFEEDF00D)"
-                    string str = key_formulated.ResolveFormulatedString();
+                    string str = key_formulated.ResolveString();
                     #endregion Snippet_6d
                 }
             }

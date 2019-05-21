@@ -27,7 +27,7 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static PluralRulesResolver Instance => instance.Value;
+        public static PluralRulesResolver Default => instance.Value;
 
         /// <summary>
         /// Function that resolves type name into <see cref="Type"/>.
@@ -145,8 +145,8 @@ namespace Lexical.Localization.Plurality
         /// </list>
         /// 
         /// </summary>
-        /// <param name="rules"></param>
-        /// <returns>resolve result</returns>
+        /// <param name="rules">class name or rules (e.g. "[Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true")</param>
+        /// <returns>resolve result info</returns>
         public ResultLine GetRules(string rules)
             => cache.GetOrAdd(rules, resolveFunc);
 

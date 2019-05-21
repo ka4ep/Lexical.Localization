@@ -68,19 +68,6 @@ namespace Lexical.Localization.StringFormat
     }
 
     /// <summary>
-    /// Resolves name to <see cref="IStringFormat"/>.
-    /// </summary>
-    public interface IStringFormatResolver
-    {
-        /// <summary>
-        /// Resolve <paramref name="name"/> to <see cref="IStringFormat"/>.
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns>string format or null</returns>
-        IStringFormat Resolve(string name);
-    }
-
-    /// <summary>
     /// Extenions for <see cref="IStringFormat"/>.
     /// </summary>
     public static partial class ILocalizationStringFormatExtensions

@@ -12,12 +12,12 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves function class name to <see cref="IFunctions"/>.
     /// </summary>
-    public class FunctionsResolver : TypeResolver<IFunctions>, IFunctionsResolver
+    public class FunctionsResolver : TypeResolver<IFunctions>, IResolver<IFunctions>
     {
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static readonly Lazy<FunctionsResolver> instance = new Lazy<FunctionsResolver>();
+        static readonly Lazy<FunctionsResolver> instance = new Lazy<FunctionsResolver>();
 
         /// <summary>
         /// Default instance.

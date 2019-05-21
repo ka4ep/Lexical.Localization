@@ -23,7 +23,7 @@ namespace docs
                 // Create key
                 ILine key = new LineRoot(asset).Section("MyController").Key("Hello");
                 // Retrieve string
-                string str = key.Culture("en").ResolveFormulatedString();
+                string str = key.Culture("en").ResolveString();
                 #endregion Snippet_0a
 
                 #region Snippet_0b

@@ -33,27 +33,24 @@ namespace Lexical.Localization
             => line.Append<ILineStringResolver, IStringResolver>(resolver);
 
         /// <summary>
-        /// Get format string, but does not apply arguments.
+        /// Resolve <paramref name="key"/> into <see cref="IFormatString"/>, but without applying format arguments.
         /// 
-        /// Tries to resolve string with each <see cref="IStringResolver"/> until result other than <see cref="LineStatus.NoResult"/> is found.
-        /// 
-        /// If no applicable <see cref="IStringResolver"/> is found return a value with state <see cref="LineStatus.NoResult"/>.
+        /// If the <see cref="IFormatString"/> contains plural categories, then matches into the applicable plurality case.
         /// </summary>
         /// <param name="key"></param>
-        /// <returns></returns>
-        public static LineString ResolveString(this ILine key)
+        /// <returns>format string</returns>
+        public static IFormatString ResolveFormatString(this ILine key)
         {
-            LineString result = new LineString(key, null, LineStatus.NoResult);
             for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
                 IStringResolver _formatter;
                 if (k is ILineStringResolver formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
                 {
-                    LineString str = _formatter.ResolveString(key);
-                    if (str.Severity <= result.Severity) result = str;
+                    IFormatString str = _formatter.ResolveFormatString(key);
+                    if (str != null) return str;
                 }
             }
-            return result;
+            return StatusFormatString.Null;
         }
 
         /// <summary>
@@ -67,7 +64,7 @@ namespace Lexical.Localization
         /// <returns>If key has <see cref="ILineFormatArgs"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
         /// If key didn't have <see cref="ILineFormatArgs"/> part, then return the format string "Error (Code=0x{0:X8})".
         /// otherwise return null</returns>
-        public static LineString ResolveFormulatedString(this ILine key)
+        public static LineString ResolveString(this ILine key)
         {
             LineString result = new LineString(key, null, LineStatus.NoResult);
             for (ILine k = key; k != null; k = k.GetPreviousPart())
@@ -75,7 +72,7 @@ namespace Lexical.Localization
                 IStringResolver _formatter;
                 if (k is ILineStringResolver formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
                 {
-                    LineString str = _formatter.ResolveFormulatedString(key);
+                    LineString str = _formatter.ResolveString(key);
                     if (str.Severity <= result.Severity) result = str;
                 }
             }

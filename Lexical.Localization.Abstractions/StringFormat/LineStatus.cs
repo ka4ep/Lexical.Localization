@@ -84,15 +84,17 @@ namespace Lexical.Localization.StringFormat
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PluralityError = 0x40UL << Shift.Plurality,
         /// <summary>String contained "plurality/ordinal/range" argument format(s), but the plurality rules were not found in the key or in the asset</summary>
-        PluralityErrorRulesNotFound = 0x41UL << Shift.Plurality,
+        PluralityErrorRulesNotFound = 0x46UL << Shift.Plurality,
+        /// <summary>String contained "plurality/ordinal/range" argument format(s), but the plurality rules were not found in the key or in the asset</summary>
+        PluralityErrorRuleResolveError = 0x47UL << Shift.Plurality,
         /// <summary>Argument is null, but expected a number</summary>
-        PluralityErrorArgumentNull = 0x42UL << Shift.Plurality,
+        PluralityErrorArgumentNull = 0x48UL << Shift.Plurality,
         /// <summary>Argument is not a number</summary>
-        PluralityErrorArgumentNotNumber = 0x43UL << Shift.Plurality,
+        PluralityErrorArgumentNotNumber = 0x4BUL << Shift.Plurality,
         /// <summary>Argument text is null, but expected a string</summary>
-        PluralityErrorArgumentTextNull = 0x44UL << Shift.Plurality,
+        PluralityErrorArgumentTextNull = 0x4DUL << Shift.Plurality,
         /// <summary>Could not parse plurality information without CultureInfo or NumberFormatInfo</summary>
-        PluralityErrorArgumentNumberFormatNull = 0x45UL << Shift.Plurality,
+        PluralityErrorArgumentNumberFormatNull = 0x50UL << Shift.Plurality,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PluralityFailed = 0x60UL << Shift.Plurality,
         /// <summary>Result has not been processed</summary>
@@ -139,10 +141,16 @@ namespace Lexical.Localization.StringFormat
         FormatWarningTooManyArguments = 0x21UL << Shift.Format,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
         FormatError = 0x40UL << Shift.Format,
+        /// <summary>Failed to resolve class name to <see cref="IFormatProvider"/></summary>
+        FormatErrorFormatProviderResolveFailed = 0x43UL << Shift.Format,
+        /// <summary>Failed to resolve class name to <see cref="IFunctions"/></summary>
+        FormatErrorFunctionsResolveFailed = 0x44UL << Shift.Format,
+        /// <summary>Failed to resolve class name to <see cref="IStringFormat"/></summary>
+        FormatErrorStringFormatResolveFailed = 0x45UL << Shift.Format,
         /// <summary>Format string contained arguments, but arguments were not provided</summary>
-        FormatErrorNoArguments = 0x42UL << Shift.Format,
+        FormatErrorNoArguments = 0x46UL << Shift.Format,
         /// <summary>Format string contained arguments, but too few arguments were provided. Using null values for missing arguments.</summary>
-        FormatErrorTooFewArguments = 0x42UL << Shift.Format,
+        FormatErrorTooFewArguments = 0x48UL << Shift.Format,
         /// <summary>Format string was malformed. Returning the malformed string as value.</summary>
         FormatErrorMalformed = 0x4fUL << Shift.Format,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
@@ -582,6 +590,91 @@ namespace Lexical.Localization.StringFormat
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Upgrade <paramref name="status"/>'s culture status code, if <paramref name="cultureStatus"/> is higher than the one in <paramref name="status"/>.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="cultureStatus"></param>
+        public static void UpCulture(this ref LineStatus status, LineStatus cultureStatus)
+        {
+            if ((status & LineStatus.CultureMask) < (cultureStatus & LineStatus.CultureMask)) status = (status & ~LineStatus.CultureMask) | cultureStatus;
+        }
+
+        /// <summary>
+        /// Upgrade <paramref name="status"/>'s status code, if <paramref name="resolveStatus"/> is higher than the one in <paramref name="status"/>.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="resolveStatus"></param>
+        public static void UpResolve(this ref LineStatus status, LineStatus resolveStatus)
+        {
+            if ((status & LineStatus.ResolveMask) < (resolveStatus & LineStatus.ResolveMask)) status = (status & ~LineStatus.ResolveMask) | resolveStatus;
+        }
+
+        /// <summary>
+        /// Upgrade <paramref name="status"/>'s status code, if <paramref name="pluralityStatus"/> is higher than the one in <paramref name="status"/>.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="pluralityStatus"></param>
+        public static void UpPlurality(this ref LineStatus status, LineStatus pluralityStatus)
+        {
+            if ((status & LineStatus.PluralityMask) < (pluralityStatus & LineStatus.PluralityMask)) status = (status & ~LineStatus.PluralityMask) | pluralityStatus;
+        }
+
+        /// <summary>
+        /// Upgrade <paramref name="status"/>'s status code, if <paramref name="argumentStatus"/> is higher than the one in <paramref name="status"/>.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="argumentStatus"></param>
+        public static void UpArgument(this ref LineStatus status, LineStatus argumentStatus)
+        {
+            if ((status & LineStatus.PluralityMask) < (argumentStatus & LineStatus.PluralityMask)) status = (status & ~LineStatus.PluralityMask) | argumentStatus;
+        }
+
+        /// <summary>
+        /// Upgrade <paramref name="status"/>'s status code, if <paramref name="formatStatus"/> is higher than the one in <paramref name="status"/>.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="formatStatus"></param>
+        public static void UpFormat(this ref LineStatus status, LineStatus formatStatus)
+        {
+            if ((status & LineStatus.FormatMask) < (formatStatus & LineStatus.FormatMask)) status = (status & ~LineStatus.FormatMask) | formatStatus;
+        }
+
+        /// <summary>
+        /// Upgrade <paramref name="status"/>'s status code, if <paramref name="custom0Status"/> is higher than the one in <paramref name="status"/>.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="custom0Status"></param>
+        public static void UpCustom0(this ref LineStatus status, LineStatus custom0Status)
+        {
+            if ((status & LineStatus.Custom0Mask) < (custom0Status & LineStatus.Custom0Mask)) status = (status & ~LineStatus.Custom0Mask) | custom0Status;
+        }
+
+        /// <summary>
+        /// Upgrade <paramref name="status"/>'s status code, if <paramref name="custom1Status"/> is higher than the one in <paramref name="status"/>.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="custom1Status"></param>
+        public static void UpCustom1(this ref LineStatus status, LineStatus custom1Status)
+        {
+            if ((status & LineStatus.Custom1Mask) < (custom1Status & LineStatus.Custom1Mask)) status = (status & ~LineStatus.Custom1Mask) | custom1Status;
+        }
+
+        /// <summary>
+        /// Upgrade <paramref name="status"/>'s status code of each category that has higher status value.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="other"></param>
+        public static void Up(this ref LineStatus status, LineStatus other)
+        {
+            UpCulture(ref status, other);
+            UpResolve(ref status, other);
+            UpPlurality(ref status, other);
+            UpArgument(ref status, other);
+            UpFormat(ref status, other);
+            UpCustom0(ref status, other);
+            UpCustom1(ref status, other);
+        }
     }
 
 }
