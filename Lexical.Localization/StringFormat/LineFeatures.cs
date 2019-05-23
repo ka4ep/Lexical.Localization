@@ -7,6 +7,7 @@ using Lexical.Localization.Internal;
 using Lexical.Localization.Plurality;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lexical.Localization.StringFormat
 {
@@ -28,7 +29,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Overriding culture
         /// </summary>
-        public string Culture;
+        public CultureInfo Culture;
 
         /// <summary>
         /// Custom format providers for "Format" string function.
@@ -53,7 +54,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Effective plural rules
         /// </summary>
-        public StructList2<IPluralRules> PluralRules;
+        public IPluralRules PluralRules;
 
         /// <summary>
         /// Active string format
@@ -71,6 +72,16 @@ namespace Lexical.Localization.StringFormat
         public IFormatString Value;
 
         /// <summary>
+        /// Get Value or parsed ValueText. Call this after all features have been read.
+        /// </summary>
+        public IFormatString EffectiveValue => Value ?? (Value = (StringFormat ?? CSharpFormat.Instance).Parse(ValueText));
+
+        /// <summary>
+        /// Assets
+        /// </summary>
+        public StructList1<IAsset> Assets;
+
+        /// <summary>
         /// Status code from reading lines
         /// </summary>
         public LineStatus Status;
@@ -86,38 +97,40 @@ namespace Lexical.Localization.StringFormat
             {
                 if (l is ILineFormatArgs fa && fa != null) FormatArgs = fa.Args;
                 if (l is ILineCulturePolicy cp && cp != null) CulturePolicy = cp.CulturePolicy;
-                if (l is ILineCulture c && c.Culture != null) Culture = c.Culture.Name;
-                if (l is ILineFormatProvider fp && fp.FormatProvider != null) FormatProviders.Add(fp.FormatProvider);
-                if (l is ILineFunctions funcs && funcs.Functions != null) Functions.Add(funcs.Functions);
-                if (l is ILineInlines inlines) Inlines.Add(inlines);
-                if (l is ILineLogger ll && ll != null) Loggers.Add(ll.Logger);
-                if (l is ILinePluralRules pl && pl.PluralRules != null) PluralRules.Add(pl.PluralRules);
+                if (l is ILineCulture c && c.Culture != null) Culture = c.Culture;
+                if (l is ILineFormatProvider fp && fp.FormatProvider != null) FormatProviders.AddIfNew(fp.FormatProvider);
+                if (l is ILineFunctions funcs && funcs.Functions != null) Functions.AddIfNew(funcs.Functions);
+                if (l is ILineInlines inlines) Inlines.AddIfNew(inlines);
+                if (l is ILineLogger ll && ll != null) Loggers.AddIfNew(ll.Logger);
+                if (l is ILinePluralRules pl && pl.PluralRules != null) PluralRules = pl.PluralRules;
                 if (l is ILineStringFormat sf && sf.StringFormat != null) StringFormat = sf.StringFormat;
-                if (l is ILineValue lv && lv.Value != null) Value = lv.Value;
+                if (l is ILineValue lv && lv.Value != null) { Value = lv.Value; ValueText = null; }
+                if (l is ILineAsset la && la.Asset != null) Assets.AddIfNew(la.Asset);
 
                 if (l is ILineParameterEnumerable lineParameters)
                 {
                     foreach (ILineParameter lineParameter in lineParameters)
                     {
                         string name = lineParameter.ParameterName, value = lineParameter.ParameterValue;
-                        if (name == "Culture") Culture = value;
+
+                        if (name == "Culture") try { Culture = CultureInfo.GetCultureInfo(value); } catch (Exception) { }
 
                         else if (name == "FormatProvider" && !(l is ILineFormatProvider fp_ && fp_.FormatProvider != null /*to not add second time*/))
                         {
                             IFormatProvider _fp;
-                            if (FormatProviderResolver.Default.TryResolve(value, out _fp)) FormatProviders.Add(_fp); else Status.UpFormat(LineStatus.FormatErrorFormatProviderResolveFailed);
+                            if (FormatProviderResolver.Default.TryResolve(value, out _fp)) FormatProviders.AddIfNew(_fp); else Status.UpFormat(LineStatus.FormatErrorFormatProviderResolveFailed);
                         }
 
                         else if (name == "Functions" && !(l is ILineFunctions funcs_ && funcs_.Functions != null /*to not add second time*/))
                         {
                             IFunctions _funcs;
-                            if (FunctionsResolver.Default.TryResolve(value, out _funcs)) Functions.Add(_funcs); else Status.UpFormat(LineStatus.FormatErrorFunctionsResolveFailed);
+                            if (FunctionsResolver.Default.TryResolve(value, out _funcs)) Functions.AddIfNew(_funcs); else Status.UpFormat(LineStatus.FormatErrorFunctionsResolveFailed);
                         }
 
                         else if (name == "PluralRules" && !(l is ILinePluralRules pluralRules_ && pluralRules_.PluralRules != null /*to not add second time*/))
                         {
                             PluralRulesResolver.ResultLine _pluralRules = PluralRulesResolver.Default.GetRules(name);
-                            if (_pluralRules.Rules != null) PluralRules.Add(_pluralRules.Rules); else Status.UpPlurality(LineStatus.PluralityErrorRuleResolveError);
+                            if (_pluralRules.Rules != null) PluralRules = _pluralRules.Rules; else Status.UpPlurality(LineStatus.PluralityErrorRuleResolveError);
                         }
 
                         else if (name == "StringFormat" && !(l is ILineStringFormat stringFormat_ && stringFormat_.StringFormat != null /*to not add second time*/))
@@ -128,6 +141,7 @@ namespace Lexical.Localization.StringFormat
 
                         else if (name == "Value" && !(l is ILineValue vl_ && vl_.Value != null /*to not add second time*/))
                         {
+                            Value = null;
                             ValueText = value; // Parse later
                         }
                     }
@@ -136,24 +150,25 @@ namespace Lexical.Localization.StringFormat
                 if (l is ILineParameter parameter)
                 {
                     string name = parameter.ParameterName, value = parameter.ParameterValue;
-                    if (name == "Culture") Culture = value;
+
+                    if (name == "Culture") try { Culture = CultureInfo.GetCultureInfo(value); } catch (Exception) { }
 
                     else if (name == "FormatProvider" && !(l is ILineFormatProvider fp_ && fp_.FormatProvider != null /*to not add second time*/))
                     {
                         IFormatProvider _fp;
-                        if (FormatProviderResolver.Default.TryResolve(value, out _fp)) FormatProviders.Add(_fp); else Status.UpFormat(LineStatus.FormatErrorFormatProviderResolveFailed);
+                        if (FormatProviderResolver.Default.TryResolve(value, out _fp)) FormatProviders.AddIfNew(_fp); else Status.UpFormat(LineStatus.FormatErrorFormatProviderResolveFailed);
                     }
 
                     else if (name == "Functions" && !(l is ILineFunctions funcs_ && funcs_.Functions != null /*to not add second time*/))
                     {
                         IFunctions _funcs;
-                        if (FunctionsResolver.Default.TryResolve(value, out _funcs)) Functions.Add(_funcs); else Status.UpFormat(LineStatus.FormatErrorFunctionsResolveFailed);
+                        if (FunctionsResolver.Default.TryResolve(value, out _funcs)) Functions.AddIfNew(_funcs); else Status.UpFormat(LineStatus.FormatErrorFunctionsResolveFailed);
                     }
 
                     else if (name == "PluralRules" && !(l is ILinePluralRules pluralRules_ && pluralRules_.PluralRules != null /*to not add second time*/))
                     {
                         PluralRulesResolver.ResultLine _pluralRules = PluralRulesResolver.Default.GetRules(name);
-                        if (_pluralRules.Rules != null) PluralRules.Add(_pluralRules.Rules); else Status.UpPlurality(LineStatus.PluralityErrorRuleResolveError);
+                        if (_pluralRules.Rules != null) PluralRules = _pluralRules.Rules; else Status.UpPlurality(LineStatus.PluralityErrorRuleResolveError);
                     }
 
                     else if (name == "StringFormat" && !(l is ILineStringFormat stringFormat_ && stringFormat_.StringFormat != null /*to not add second time*/))
@@ -164,6 +179,7 @@ namespace Lexical.Localization.StringFormat
 
                     else if (name == "Value" && !(l is ILineValue vl_ && vl_.Value != null /*to not add second time*/))
                     {
+                        Value = null;
                         ValueText = value; // Parse later
                     }
                 }

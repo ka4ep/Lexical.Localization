@@ -7,6 +7,7 @@ using Lexical.Localization.Exp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lexical.Localization.StringFormat
 {
@@ -162,7 +163,31 @@ namespace Lexical.Localization.StringFormat
         }
         bool isInteger(object a) => a is int || a is uint || a is long || a is ulong;
         bool isFloat(object a) => a is float || a is double;
-        string toString(object a) => a == null ? "" : a is string str ? str : a.ToString();
+        string toString(object a) {
+            if (a == null) return "";
+            if (a is string str) return str;
+            CultureInfo culture = FunctionEvaluationCtx.Culture;
+
+            if (culture != null)
+            {
+                if (FunctionEvaluationCtx.FormatProvider != null)
+                {
+                    ICustomFormatter customFormatter = FunctionEvaluationCtx.FormatProvider.GetFormat(typeof(ICustomFormatter)) as ICustomFormatter;
+                    if (customFormatter != null)
+                    {
+                        string formatted = customFormatter.Format("", a, culture);
+                        if (formatted != null) return formatted;
+                    }
+                }
+                if (a is IFormattable formattable)
+                {
+                    string formatted = formattable.ToString("", culture);
+                    if (formatted != null) return formatted;
+                }
+            }
+
+            return a.ToString();
+        }
         double toFloat(object a) => a switch { float f => f, double d => d, _ => Double.Parse(toString(a)) };
         long toInteger(object a) => a switch { int i => i, long l => l, uint ui => ui, ulong ul => (long)ul, _ => long.Parse(toString(a)) };
         bool toBool(object a) => a switch { bool b => b, _ => bool.Parse(toString(a)) };

@@ -108,6 +108,25 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Adds an item to the StructList1`1, if the item isn't already in the list.
+        /// </summary>
+        /// <param name="item">The object to add to the StructList1`1.</param>
+        /// <exception cref="System.NotSupportedException">The StructList1`1 is read-only.</exception>
+        public void AddIfNew(T item)
+        {
+            if (!Contains(item)) Add(item);
+            switch (count)
+            {
+                case 0: _0 = item; count++; return;
+                default:
+                    if (rest == null) rest = new List<T>();
+                    rest.Add(item);
+                    count++;
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Removes the first occurrence of a specific object from the StructList1`1.
         /// </summary>
         /// <param name="item">The object to remove from the StructList1`1.</param>
@@ -170,6 +189,7 @@ namespace Lexical.Localization.Internal
         /// <returns>true if item is found in the StructList1`1; otherwise, false.</returns>
         public bool Contains(T item)
         {
+            if (count == 0) return false;
             IEqualityComparer<T> comparer = elementComparer ?? EqualityComparer<T>.Default;
             if (count >= 1 && comparer.Equals(_0, item)) return true;
             if (rest != null) return rest.Contains(item);
@@ -391,6 +411,26 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Adds an item to the StructList2`1, if the item isn't already in the list.
+        /// </summary>
+        /// <param name="item">The object to add to the StructList2`1.</param>
+        /// <exception cref="System.NotSupportedException">The StructList2`1 is read-only.</exception>
+        public void AddIfNew(T item)
+        {
+            if (!Contains(item)) Add(item);
+            switch (count)
+            {
+                case 0: _0 = item; count++; return;
+                case 1: _1 = item; count++; return;
+                default:
+                    if (rest == null) rest = new List<T>();
+                    rest.Add(item);
+                    count++;
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Removes the first occurrence of a specific object from the StructList2`1.
         /// </summary>
         /// <param name="item">The object to remove from the StructList2`1.</param>
@@ -456,6 +496,7 @@ namespace Lexical.Localization.Internal
         /// <returns>true if item is found in the StructList2`1; otherwise, false.</returns>
         public bool Contains(T item)
         {
+            if (count == 0) return false;
             IEqualityComparer<T> comparer = elementComparer ?? EqualityComparer<T>.Default;
             if (count >= 1 && comparer.Equals(_0, item)) return true;
             if (count >= 2 && comparer.Equals(_1, item)) return true;
@@ -689,6 +730,27 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Adds an item to the StructList3`1, if the item isn't already in the list.
+        /// </summary>
+        /// <param name="item">The object to add to the StructList3`1.</param>
+        /// <exception cref="System.NotSupportedException">The StructList3`1 is read-only.</exception>
+        public void AddIfNew(T item)
+        {
+            if (!Contains(item)) Add(item);
+            switch (count)
+            {
+                case 0: _0 = item; count++; return;
+                case 1: _1 = item; count++; return;
+                case 2: _2 = item; count++; return;
+                default:
+                    if (rest == null) rest = new List<T>();
+                    rest.Add(item);
+                    count++;
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Removes the first occurrence of a specific object from the StructList3`1.
         /// </summary>
         /// <param name="item">The object to remove from the StructList3`1.</param>
@@ -757,6 +819,7 @@ namespace Lexical.Localization.Internal
         /// <returns>true if item is found in the StructList3`1; otherwise, false.</returns>
         public bool Contains(T item)
         {
+            if (count == 0) return false;
             IEqualityComparer<T> comparer = elementComparer ?? EqualityComparer<T>.Default;
             if (count >= 1 && comparer.Equals(_0, item)) return true;
             if (count >= 2 && comparer.Equals(_1, item)) return true;
@@ -1002,6 +1065,28 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Adds an item to the StructList4`1, if the item isn't already in the list.
+        /// </summary>
+        /// <param name="item">The object to add to the StructList4`1.</param>
+        /// <exception cref="System.NotSupportedException">The StructList4`1 is read-only.</exception>
+        public void AddIfNew(T item)
+        {
+            if (!Contains(item)) Add(item);
+            switch (count)
+            {
+                case 0: _0 = item; count++; return;
+                case 1: _1 = item; count++; return;
+                case 2: _2 = item; count++; return;
+                case 3: _3 = item; count++; return;
+                default:
+                    if (rest == null) rest = new List<T>();
+                    rest.Add(item);
+                    count++;
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Removes the first occurrence of a specific object from the StructList4`1.
         /// </summary>
         /// <param name="item">The object to remove from the StructList4`1.</param>
@@ -1073,6 +1158,7 @@ namespace Lexical.Localization.Internal
         /// <returns>true if item is found in the StructList4`1; otherwise, false.</returns>
         public bool Contains(T item)
         {
+            if (count == 0) return false;
             IEqualityComparer<T> comparer = elementComparer ?? EqualityComparer<T>.Default;
             if (count >= 1 && comparer.Equals(_0, item)) return true;
             if (count >= 2 && comparer.Equals(_1, item)) return true;
@@ -1330,6 +1416,29 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Adds an item to the StructList5`1, if the item isn't already in the list.
+        /// </summary>
+        /// <param name="item">The object to add to the StructList5`1.</param>
+        /// <exception cref="System.NotSupportedException">The StructList5`1 is read-only.</exception>
+        public void AddIfNew(T item)
+        {
+            if (!Contains(item)) Add(item);
+            switch (count)
+            {
+                case 0: _0 = item; count++; return;
+                case 1: _1 = item; count++; return;
+                case 2: _2 = item; count++; return;
+                case 3: _3 = item; count++; return;
+                case 4: _4 = item; count++; return;
+                default:
+                    if (rest == null) rest = new List<T>();
+                    rest.Add(item);
+                    count++;
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Removes the first occurrence of a specific object from the StructList5`1.
         /// </summary>
         /// <param name="item">The object to remove from the StructList5`1.</param>
@@ -1404,6 +1513,7 @@ namespace Lexical.Localization.Internal
         /// <returns>true if item is found in the StructList5`1; otherwise, false.</returns>
         public bool Contains(T item)
         {
+            if (count == 0) return false;
             IEqualityComparer<T> comparer = elementComparer ?? EqualityComparer<T>.Default;
             if (count >= 1 && comparer.Equals(_0, item)) return true;
             if (count >= 2 && comparer.Equals(_1, item)) return true;
@@ -1681,6 +1791,32 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Adds an item to the StructList8`1, if the item isn't already in the list.
+        /// </summary>
+        /// <param name="item">The object to add to the StructList8`1.</param>
+        /// <exception cref="System.NotSupportedException">The StructList8`1 is read-only.</exception>
+        public void AddIfNew(T item)
+        {
+            if (!Contains(item)) Add(item);
+            switch (count)
+            {
+                case 0: _0 = item; count++; return;
+                case 1: _1 = item; count++; return;
+                case 2: _2 = item; count++; return;
+                case 3: _3 = item; count++; return;
+                case 4: _4 = item; count++; return;
+                case 5: _5 = item; count++; return;
+                case 6: _6 = item; count++; return;
+                case 7: _7 = item; count++; return;
+                default:
+                    if (rest == null) rest = new List<T>();
+                    rest.Add(item);
+                    count++;
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Removes the first occurrence of a specific object from the StructList8`1.
         /// </summary>
         /// <param name="item">The object to remove from the StructList8`1.</param>
@@ -1764,6 +1900,7 @@ namespace Lexical.Localization.Internal
         /// <returns>true if item is found in the StructList8`1; otherwise, false.</returns>
         public bool Contains(T item)
         {
+            if (count == 0) return false;
             IEqualityComparer<T> comparer = elementComparer ?? EqualityComparer<T>.Default;
             if (count >= 1 && comparer.Equals(_0, item)) return true;
             if (count >= 2 && comparer.Equals(_1, item)) return true;
@@ -2081,6 +2218,36 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Adds an item to the StructList12`1, if the item isn't already in the list.
+        /// </summary>
+        /// <param name="item">The object to add to the StructList12`1.</param>
+        /// <exception cref="System.NotSupportedException">The StructList12`1 is read-only.</exception>
+        public void AddIfNew(T item)
+        {
+            if (!Contains(item)) Add(item);
+            switch (count)
+            {
+                case 0: _0 = item; count++; return;
+                case 1: _1 = item; count++; return;
+                case 2: _2 = item; count++; return;
+                case 3: _3 = item; count++; return;
+                case 4: _4 = item; count++; return;
+                case 5: _5 = item; count++; return;
+                case 6: _6 = item; count++; return;
+                case 7: _7 = item; count++; return;
+                case 8: _8 = item; count++; return;
+                case 9: _9 = item; count++; return;
+                case 10: _10 = item; count++; return;
+                case 11: _11 = item; count++; return;
+                default:
+                    if (rest == null) rest = new List<T>();
+                    rest.Add(item);
+                    count++;
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Removes the first occurrence of a specific object from the StructList12`1.
         /// </summary>
         /// <param name="item">The object to remove from the StructList12`1.</param>
@@ -2176,6 +2343,7 @@ namespace Lexical.Localization.Internal
         /// <returns>true if item is found in the StructList12`1; otherwise, false.</returns>
         public bool Contains(T item)
         {
+            if (count == 0) return false;
             IEqualityComparer<T> comparer = elementComparer ?? EqualityComparer<T>.Default;
             if (count >= 1 && comparer.Equals(_0, item)) return true;
             if (count >= 2 && comparer.Equals(_1, item)) return true;
@@ -2541,6 +2709,40 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Adds an item to the StructList16`1, if the item isn't already in the list.
+        /// </summary>
+        /// <param name="item">The object to add to the StructList16`1.</param>
+        /// <exception cref="System.NotSupportedException">The StructList16`1 is read-only.</exception>
+        public void AddIfNew(T item)
+        {
+            if (!Contains(item)) Add(item);
+            switch (count)
+            {
+                case 0: _0 = item; count++; return;
+                case 1: _1 = item; count++; return;
+                case 2: _2 = item; count++; return;
+                case 3: _3 = item; count++; return;
+                case 4: _4 = item; count++; return;
+                case 5: _5 = item; count++; return;
+                case 6: _6 = item; count++; return;
+                case 7: _7 = item; count++; return;
+                case 8: _8 = item; count++; return;
+                case 9: _9 = item; count++; return;
+                case 10: _10 = item; count++; return;
+                case 11: _11 = item; count++; return;
+                case 12: _12 = item; count++; return;
+                case 13: _13 = item; count++; return;
+                case 14: _14 = item; count++; return;
+                case 15: _15 = item; count++; return;
+                default:
+                    if (rest == null) rest = new List<T>();
+                    rest.Add(item);
+                    count++;
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Removes the first occurrence of a specific object from the StructList16`1.
         /// </summary>
         /// <param name="item">The object to remove from the StructList16`1.</param>
@@ -2648,6 +2850,7 @@ namespace Lexical.Localization.Internal
         /// <returns>true if item is found in the StructList16`1; otherwise, false.</returns>
         public bool Contains(T item)
         {
+            if (count == 0) return false;
             IEqualityComparer<T> comparer = elementComparer ?? EqualityComparer<T>.Default;
             if (count >= 1 && comparer.Equals(_0, item)) return true;
             if (count >= 2 && comparer.Equals(_1, item)) return true;
@@ -3061,6 +3264,44 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Adds an item to the StructList20`1, if the item isn't already in the list.
+        /// </summary>
+        /// <param name="item">The object to add to the StructList20`1.</param>
+        /// <exception cref="System.NotSupportedException">The StructList20`1 is read-only.</exception>
+        public void AddIfNew(T item)
+        {
+            if (!Contains(item)) Add(item);
+            switch (count)
+            {
+                case 0: _0 = item; count++; return;
+                case 1: _1 = item; count++; return;
+                case 2: _2 = item; count++; return;
+                case 3: _3 = item; count++; return;
+                case 4: _4 = item; count++; return;
+                case 5: _5 = item; count++; return;
+                case 6: _6 = item; count++; return;
+                case 7: _7 = item; count++; return;
+                case 8: _8 = item; count++; return;
+                case 9: _9 = item; count++; return;
+                case 10: _10 = item; count++; return;
+                case 11: _11 = item; count++; return;
+                case 12: _12 = item; count++; return;
+                case 13: _13 = item; count++; return;
+                case 14: _14 = item; count++; return;
+                case 15: _15 = item; count++; return;
+                case 16: _16 = item; count++; return;
+                case 17: _17 = item; count++; return;
+                case 18: _18 = item; count++; return;
+                case 19: _19 = item; count++; return;
+                default:
+                    if (rest == null) rest = new List<T>();
+                    rest.Add(item);
+                    count++;
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Removes the first occurrence of a specific object from the StructList20`1.
         /// </summary>
         /// <param name="item">The object to remove from the StructList20`1.</param>
@@ -3180,6 +3421,7 @@ namespace Lexical.Localization.Internal
         /// <returns>true if item is found in the StructList20`1; otherwise, false.</returns>
         public bool Contains(T item)
         {
+            if (count == 0) return false;
             IEqualityComparer<T> comparer = elementComparer ?? EqualityComparer<T>.Default;
             if (count >= 1 && comparer.Equals(_0, item)) return true;
             if (count >= 2 && comparer.Equals(_1, item)) return true;
@@ -3641,6 +3883,48 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Adds an item to the StructList24`1, if the item isn't already in the list.
+        /// </summary>
+        /// <param name="item">The object to add to the StructList24`1.</param>
+        /// <exception cref="System.NotSupportedException">The StructList24`1 is read-only.</exception>
+        public void AddIfNew(T item)
+        {
+            if (!Contains(item)) Add(item);
+            switch (count)
+            {
+                case 0: _0 = item; count++; return;
+                case 1: _1 = item; count++; return;
+                case 2: _2 = item; count++; return;
+                case 3: _3 = item; count++; return;
+                case 4: _4 = item; count++; return;
+                case 5: _5 = item; count++; return;
+                case 6: _6 = item; count++; return;
+                case 7: _7 = item; count++; return;
+                case 8: _8 = item; count++; return;
+                case 9: _9 = item; count++; return;
+                case 10: _10 = item; count++; return;
+                case 11: _11 = item; count++; return;
+                case 12: _12 = item; count++; return;
+                case 13: _13 = item; count++; return;
+                case 14: _14 = item; count++; return;
+                case 15: _15 = item; count++; return;
+                case 16: _16 = item; count++; return;
+                case 17: _17 = item; count++; return;
+                case 18: _18 = item; count++; return;
+                case 19: _19 = item; count++; return;
+                case 20: _20 = item; count++; return;
+                case 21: _21 = item; count++; return;
+                case 22: _22 = item; count++; return;
+                case 23: _23 = item; count++; return;
+                default:
+                    if (rest == null) rest = new List<T>();
+                    rest.Add(item);
+                    count++;
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Removes the first occurrence of a specific object from the StructList24`1.
         /// </summary>
         /// <param name="item">The object to remove from the StructList24`1.</param>
@@ -3772,6 +4056,7 @@ namespace Lexical.Localization.Internal
         /// <returns>true if item is found in the StructList24`1; otherwise, false.</returns>
         public bool Contains(T item)
         {
+            if (count == 0) return false;
             IEqualityComparer<T> comparer = elementComparer ?? EqualityComparer<T>.Default;
             if (count >= 1 && comparer.Equals(_0, item)) return true;
             if (count >= 2 && comparer.Equals(_1, item)) return true;
@@ -4297,6 +4582,56 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Adds an item to the StructList32`1, if the item isn't already in the list.
+        /// </summary>
+        /// <param name="item">The object to add to the StructList32`1.</param>
+        /// <exception cref="System.NotSupportedException">The StructList32`1 is read-only.</exception>
+        public void AddIfNew(T item)
+        {
+            if (!Contains(item)) Add(item);
+            switch (count)
+            {
+                case 0: _0 = item; count++; return;
+                case 1: _1 = item; count++; return;
+                case 2: _2 = item; count++; return;
+                case 3: _3 = item; count++; return;
+                case 4: _4 = item; count++; return;
+                case 5: _5 = item; count++; return;
+                case 6: _6 = item; count++; return;
+                case 7: _7 = item; count++; return;
+                case 8: _8 = item; count++; return;
+                case 9: _9 = item; count++; return;
+                case 10: _10 = item; count++; return;
+                case 11: _11 = item; count++; return;
+                case 12: _12 = item; count++; return;
+                case 13: _13 = item; count++; return;
+                case 14: _14 = item; count++; return;
+                case 15: _15 = item; count++; return;
+                case 16: _16 = item; count++; return;
+                case 17: _17 = item; count++; return;
+                case 18: _18 = item; count++; return;
+                case 19: _19 = item; count++; return;
+                case 20: _20 = item; count++; return;
+                case 21: _21 = item; count++; return;
+                case 22: _22 = item; count++; return;
+                case 23: _23 = item; count++; return;
+                case 24: _24 = item; count++; return;
+                case 25: _25 = item; count++; return;
+                case 26: _26 = item; count++; return;
+                case 27: _27 = item; count++; return;
+                case 28: _28 = item; count++; return;
+                case 29: _29 = item; count++; return;
+                case 30: _30 = item; count++; return;
+                case 31: _31 = item; count++; return;
+                default:
+                    if (rest == null) rest = new List<T>();
+                    rest.Add(item);
+                    count++;
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Removes the first occurrence of a specific object from the StructList32`1.
         /// </summary>
         /// <param name="item">The object to remove from the StructList32`1.</param>
@@ -4452,6 +4787,7 @@ namespace Lexical.Localization.Internal
         /// <returns>true if item is found in the StructList32`1; otherwise, false.</returns>
         public bool Contains(T item)
         {
+            if (count == 0) return false;
             IEqualityComparer<T> comparer = elementComparer ?? EqualityComparer<T>.Default;
             if (count >= 1 && comparer.Equals(_0, item)) return true;
             if (count >= 2 && comparer.Equals(_1, item)) return true;

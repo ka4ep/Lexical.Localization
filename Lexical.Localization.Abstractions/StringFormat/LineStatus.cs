@@ -17,22 +17,24 @@ namespace Lexical.Localization.StringFormat
     {
         /// <summary>Request has not been resolved</summary>
         NoResult = 0xFFFFFFFFFFFFFFFFUL,
+        /// <summary>Unknown error</summary>
+        FailedUnknownReason = ResolveFailed|CultureFailed|PluralityFailed|ArgumentFailed|FormatFailed,
 
         //// Resolve - Step that searches format string for ILine from IAsset or Inlines.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResolveOk = 0x00UL << Shift.Resolve,
-        /// <summary>Resolved string from asset</summary>
-        ResolveOkFromAsset = 0x01UL << Shift.Resolve,
-        /// <summary>Resolved string from inlines</summary>
-        ResolveOkFromInline = 0x02UL << Shift.Resolve,
+        /// <summary>Resolved value from key</summary>
+        ResolveOkFromKey = 0x04UL << Shift.Resolve,
+        /// <summary>Resolved value from asset</summary>
+        ResolveOkFromAsset = 0x06UL << Shift.Resolve,
+        /// <summary>Resolved value from inlines</summary>
+        ResolveOkFromInline = 0x08UL << Shift.Resolve,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResolveWarning = 0x20UL << Shift.Resolve,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResolveError = 0x40UL << Shift.Resolve,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResolveFailed = 0x60UL << Shift.Resolve,
-        /// <summary>Asset was found, but could not resolve key from it or inline</summary>
-        ResolveFailedNotFound = 0x61UL << Shift.Resolve,
         /// <summary>Asset was not found and could not resolve key inline</summary>
         ResolveFailedNoAsset = 0x62UL << Shift.Resolve,
         /// <summary>Result has not been processed</summary>
@@ -47,8 +49,10 @@ namespace Lexical.Localization.StringFormat
         CultureOk = 0x00UL << Shift.Culture,
         /// <summary>Key contained no culture, and culture policy contained no culture</summary>
         CultureOkNotUsed = 0x01UL << Shift.Culture,
-        /// <summary>Key requested a culture, and it was found</summary>
-        CultureOkMatched = 0x02UL << Shift.Culture,
+        /// <summary>Key contained an explicit culture, and it matched to a line</summary>
+        CultureOkMatchedCulture = 0x04UL << Shift.Culture,
+        /// <summary>Key contained culture policy which provided a culture that matched to a line</summary>
+        CultureOkMatchedCulturePolicy = 0x08UL << Shift.Culture,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
         CultureWarning = 0x20UL << Shift.Culture,
         /// <summary>Key requested a specific culture, but a fallback culture was used</summary>
@@ -675,6 +679,25 @@ namespace Lexical.Localization.StringFormat
             UpCustom0(ref status, other);
             UpCustom1(ref status, other);
         }
+
+        /// <summary>
+        /// Create upgraded version of <paramref name="status"/>.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="other"></param>
+        /// <return></return>
+        public static LineStatus Up_(this LineStatus status, LineStatus other)
+        {
+            UpCulture(ref status, other);
+            UpResolve(ref status, other);
+            UpPlurality(ref status, other);
+            UpArgument(ref status, other);
+            UpFormat(ref status, other);
+            UpCustom0(ref status, other);
+            UpCustom1(ref status, other);
+            return status;
+        }
+
     }
 
 }

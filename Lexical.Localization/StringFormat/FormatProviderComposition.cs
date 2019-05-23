@@ -11,8 +11,22 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Composition of format providers
     /// </summary>
-    public class FormatProviderComposition : List<IFormatProvider>, IFormatProvider
+    public class FormatProviderComposition : IFormatProvider
     {
+        /// <summary>
+        /// Providers
+        /// </summary>
+        public readonly IFormatProvider[] Providers;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="providers"></param>
+        public FormatProviderComposition(IFormatProvider[] providers)
+        {
+            this.Providers = providers;
+        }
+
         /// <summary>
         /// Search format provider from all component format providers.
         /// </summary>
@@ -20,7 +34,7 @@ namespace Lexical.Localization.StringFormat
         /// <returns></returns>
         public object GetFormat(Type formatType)
         {
-            foreach (IFormatProvider fp in this)
+            foreach (IFormatProvider fp in Providers)
             {
                 object o = fp.GetFormat(formatType);
                 if (o != null) return o;

@@ -37,99 +37,199 @@ namespace Lexical.Localization.StringFormat
         }
 
         /// <summary>
-        /// Resolve <paramref name="line"/> into <see cref="LineString"/> with format arguments applied.
+        /// Resolve <paramref name="key"/> into <see cref="LineString"/> with format arguments applied.
         /// </summary>
-        /// <param name="line"></param>
+        /// <param name="key"></param>
         /// <returns></returns>
-        public LineString ResolveString(ILine line)
+        public LineString ResolveString(ILine key)
         {
             // Extract parameters from line
             LineFeatures features = new LineFeatures();
-            features.ScanFeatures(line);
 
+            try
+            {
 
+                features.ScanFeatures(key);
 
-            throw new NotImplementedException();
-        }
-
-        /*
-                /// <summary>
-                /// Resolve the format string. 
-                /// 
-                /// Uses the following algorithm:
-                ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="ILineExtensions.FindCulturePolicy(ILine)"/>.
-                ///   2. Try key as is.
-                ///   
-                ///      a. Search inlines with culture
-                ///      b. Search asset with culture
-                /// </summary>
-                /// <param name="key"></param>
-                /// <returns>format string (without formulating it) or null</returns>
-                public LineString ResolveString(ILine key)
+                //// Resolve
+                // Get default line
+                // If there is no explicitly assigned culture in the key, try cultures from culture policy
+                bool rootCultureTried = false;
+                IEnumerable<CultureInfo> cultures = null;
+                CultureInfo selected_culture = null;
+                ILine line = null;
+                // No explicit culture, use culture policy
+                if (features.Culture == null && features.CulturePolicy != null && (cultures = features.CulturePolicy?.Cultures) != null)
                 {
-                    // If there is no explicitly assigned culture in the key, try cultures from culture policy
-                    string explicitCulture = key.GetCultureName();
-                    IEnumerable<CultureInfo> cultures = null;
-                    bool rootCultureTried = false;
-                    if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
+                    foreach (CultureInfo culture in cultures) // <- TODO FIX causes heap allocation because enumerator is acquired from abstraction (IEnumerable)
                     {
-                        IFormatString languageString = null;
-                        // Get inlines
-                        IDictionary<ILine, IFormatString> inlines = key.FindInlines();
-                        foreach (CultureInfo culture in cultures)
+                        rootCultureTried |= culture.Name == "";
+                        // Append culture
+                        ILine key_with_culture = key.Culture(culture);
+
+                        // Try asset
+                        for (int i = 0; i < features.Assets.Count; i++)
                         {
-                            bool rootCulture = culture.Name == "";
-                            rootCultureTried |= rootCulture;
-                            // 
-                            ILine culture_key = rootCulture ? key : key.Culture(culture);
-                            // Try inlines
-                            if (languageString == null && inlines != null) inlines.TryGetValue(culture_key, out languageString);
-                            // Try key
-                            if (languageString == null) languageString = culture_key.TryGetString();
-                            // Return
-                            if (languageString != null) return new LineString(key, languageString.Text, 0UL);
+                            IAsset asset = features.Assets[i];
+                            if ((line = asset.GetString(key_with_culture)) != null)
+                            {
+                                selected_culture = culture;
+                                features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
+                                features.Status.UpCulture(LineStatus.CultureOkMatchedCulturePolicy);
+                                break;
+                            }
+                        }
+
+                        // Try inlines
+                        if (line == null && features.Inlines.Count > 0)
+                            for (int i = 0; i < features.Inlines.Count; i++)
+                                if (features.Inlines[i].TryGetValue(key_with_culture, out line))
+                                {
+                                    selected_culture = culture;
+                                    features.Status.UpResolve(LineStatus.ResolveOkFromInline);
+                                    features.Status.UpCulture(LineStatus.CultureOkMatchedCulturePolicy);
+                                    break;
+                                }
+
+                        if (line != null) break;
+                    }
+                }
+                // Use root culture
+                // Try key as is
+                if (!rootCultureTried && line == null && features.Culture != null)
+                {
+                    // Try asset
+                    for (int i = 0; i < features.Assets.Count; i++)
+                    {
+                        IAsset asset = features.Assets[i];
+                        if ((line = asset.GetString(key)) != null)
+                        {
+                            selected_culture = features.Culture ?? RootCulture;
+                            features.Status.UpResolve(LineStatus.ResolveOkFromAsset); 
+                            features.Status.UpCulture(LineStatus.CultureOkMatchedCulture);
+                            break;
                         }
                     }
 
-                    if (!rootCultureTried)
-                    {
-                        IFormatString languageString = null;
-                        // Get inlines
-                        IDictionary<ILine, IFormatString> inlines = key.FindInlines();
-                        // Try inlines with key
-                        if (languageString == null && inlines != null) inlines.TryGetValue(key, out languageString);
-                        // Try asset with key
-                        if (languageString == null) languageString = key.TryGetString();
-                        // Return
-                        if (languageString != null) return new LineString(key, languageString.Text, 0UL);
-                    }
-
-                    return new LineString(key, null, LineStatus.NoResult);
+                    // Try inlines
+                    if (line == null && features.Inlines.Count > 0)
+                        for (int i = 0; i < features.Inlines.Count; i++)
+                            if (features.Inlines[i].TryGetValue(key, out line))
+                            {
+                                selected_culture = features.Culture ?? RootCulture;
+                                features.Status.UpResolve(LineStatus.ResolveOkFromInline);
+                                features.Status.UpCulture(LineStatus.CultureOkMatchedCulture);
+                                break;
+                            }
+                }
+                // Use explicit culture and use the key as line
+                if (line == null && (features.Value != null || features.ValueText != null))
+                {
+                    selected_culture = features.Culture ?? RootCulture;
+                    line = key;
+                    features.Status.UpResolve(LineStatus.ResolveOkFromKey);
+                    features.Status.UpCulture(LineStatus.CultureOkNotUsed);
                 }
 
-                /// <summary>
-                /// Resolve language string. 
-                /// 
-                /// Uses the following algorithm:
-                ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="ILineExtensions.FindCulturePolicy(ILine)"/>.
-                ///   2. Try key as is.
-                ///   
-                ///      a. Search inlines with plurality and culture
-                ///      b. Search inlines with culture
-                ///      c. Search asset with plurality and culture
-                ///      d. Search asset with culture
-                ///   
-                ///   3. Then try to formulate the string with assigned arguments, e.g. "Error (Code=0xFEEDF00D)"
-                /// </summary>
-                /// <param name="key"></param>
-                /// <returns>If key has <see cref="ILineFormatArgsPart"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
-                /// If key didn't have <see cref="ILineFormatArgsPart"/> part, then return the format string "Error (Code=0x{0:X8})".
-                /// otherwise return null</returns>
+                if (line == null)
+                {
+                    features.Status.UpResolve(LineStatus.ResolveFailedNoResult);
+                }
+
+                // New line was detected, scan for more features
+                if (line != null)
+                {
+                    features.ScanFeatures(line);
+                }
+
+                // Get value
+                IFormatString value = features.EffectiveValue;
+
+                // Evaluate expressions in placeholders into strings
+                StructList12<IPluralNumber> placeholder_values = new StructList12<IPluralNumber>();
+                PlaceholderExpressionEvaluator placeholder_evaluator = new PlaceholderExpressionEvaluator();
+                placeholder_evaluator.Args = features.FormatArgs;
+                placeholder_evaluator.FunctionEvaluationCtx.Culture = selected_culture;
+                if (features.FormatProviders.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = features.FormatProviders[0]; else if (features.FormatProviders.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = new FormatProviderComposition(features.FormatProviders.ToArray());
+                if (features.Functions.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = features.Functions[0]; else if (features.Functions.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = new Functions(features.Functions);
+                for (int i = 0; i < value.Placeholders.Length; i++)
+                {
+                    IPlaceholder ph = value.Placeholders[i];
+                    object ph_value = placeholder_evaluator.Evaluate(ph.Expression);
+                    placeholder_values.Add(ph_value == null ? DecimalNumber.Empty : new DecimalNumber.Text(ph_value?.ToString(), selected_culture));
+                }
+
+                // Plural Rules
+                if (features.PluralRules != null)
+                {
+                    // Create permutations
+                    PluralCasePermutations permutations = new PluralCasePermutations(line);
+                    for (int i = 0; i < value.Placeholders.Length; i++)
+                    {
+                        // Get placeholder
+                        IPlaceholder ph = value.Placeholders[i];
+                        // No plural category in this placeholder
+                        if (ph.PluralCategory == null) continue;
+                        // Get evaluated numner
+                        IPluralNumber number = placeholder_values[i];
+                        // Query possible cases for the plural rules
+                        PluralRuleInfo query = new PluralRuleInfo(null, ph.PluralCategory, selected_culture.Name, null, -1);
+                        IPluralRule[] cases = features.PluralRules.Evaluate(query, number);
+                        if (cases == null) continue;
+                        permutations.AddPlaceholder(ph, cases);
+                    }
+
+                    // Find first value that matches permutations
+                    for (int i = 0; i < permutations.Count; i++)
+                    {
+                        ILine key_with_plurality = permutations[i];
+
+                        // Search from asset
+                        // Search from inlines
+                        // Search from key
+                    }
+                }
+
+                return new LineString(key, null, features.Status);
+            } catch (Exception e)
+            {
+                // Unexpected error 
+                LineStatus status = LineStatus.FailedUnknownReason;
+                status.Up(features.Status);
+                LineString result = new LineString(key, null, status);
+                if (features.Loggers.Count>0)
+                {
+                    for (int i=0; i<features.Loggers.Count; i++)
+                    {
+                        features.Loggers[i].OnError(e);
+                        features.Loggers[i].OnNext(result);
+                    }
+                }
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Log errors, if loggers are available
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="features"></param>
+        /// <returns>true</returns>
+        static bool LogError(Exception e, ref LineFeatures features)
+        {
+            if (features.Loggers.Count > 0)
+            {
+                for (int i = 0; i < features.Loggers.Count; i++)
+                {
+                    features.Loggers[i].OnError(e);
+                }
+            }
+            return true;
+        }
+
+        /*
                 public LineString ResolveString(ILine key)
                 {
-                    // Get args
-                    object[] format_args = key.FindFormatArgs();
-
                     // Plurality key when there is only one numeric argument. e.g. "Key:N:One"
                     ILine pluralityKey = null;
                     // Pluarlity key for all argument permutations (whether argument is provided or not)
@@ -311,87 +411,6 @@ namespace Lexical.Localization.StringFormat
                 }
 
                 /// <summary>
-                /// Gets plurality for number in <paramref name="o"/>. 
-                /// 
-                /// See: <see cref="Plurality"/>.
-                /// </summary>
-                /// <param name="o"></param>
-                /// <returns>null, "Zero", "One", "Plural"</returns>
-                protected static string GetPluralityKind(object o)
-                {
-                    // null
-                    if (o == null) return null;
-
-                    Type type = o.GetType();
-
-                    switch (Type.GetTypeCode(type))
-                    {
-                        case TypeCode.Byte:
-                            byte _byte = (byte)o;
-                            if (_byte == 0) return Plurality_.Zero;
-                            if (_byte == 1) return Plurality_.One;
-                            return Plurality_.Plural;
-                        case TypeCode.SByte:
-                            sbyte _sbyte = (sbyte)o;
-                            if (_sbyte == 0) return Plurality_.Zero;
-                            if (_sbyte == 1) return Plurality_.One;
-                            return Plurality_.Plural;
-                        case TypeCode.Decimal:
-                            decimal _decimal = (decimal)o;
-                            if (_decimal == 0) return Plurality_.Zero;
-                            if (_decimal == 1) return Plurality_.One;
-                            return Plurality_.Plural;
-                        case TypeCode.Int16:
-                            Int16 _int16 = (Int16)o;
-                            if (_int16 == 0) return Plurality_.Zero;
-                            if (_int16 == 1) return Plurality_.One;
-                            return Plurality_.Plural;
-                        case TypeCode.Int32:
-                            Int32 _int32 = (Int32)o;
-                            if (_int32 == 0) return Plurality_.Zero;
-                            if (_int32 == 1) return Plurality_.One;
-                            return Plurality_.Plural;
-                        case TypeCode.Int64:
-                            Int64 _int64 = (Int64)o;
-                            if (_int64 == 0L) return Plurality_.Zero;
-                            if (_int64 == 1L) return Plurality_.One;
-                            return Plurality_.Plural;
-                        case TypeCode.Single:
-                            Single _single = (Single)o;
-                            if (_single == 0.0f) return Plurality_.Zero;
-                            if (_single == 1.0f) return Plurality_.One;
-                            return Plurality_.Plural;
-                        case TypeCode.Double:
-                            double _double = (double)o;
-                            if (_double == 0.0) return Plurality_.Zero;
-                            if (_double == 1.0) return Plurality_.One;
-                            return Plurality_.Plural;
-                        case TypeCode.UInt16:
-                            UInt16 _uint16 = (UInt16)o;
-                            if (_uint16 == 0) return Plurality_.Zero;
-                            if (_uint16 == 1) return Plurality_.One;
-                            return Plurality_.Plural;
-                        case TypeCode.UInt32:
-                            UInt32 _uint32 = (UInt32)o;
-                            if (_uint32 == 0) return Plurality_.Zero;
-                            if (_uint32 == 1) return Plurality_.One;
-                            return Plurality_.Plural;
-                        case TypeCode.UInt64:
-                            UInt64 _uint64 = (UInt32)o;
-                            if (_uint64 == 0UL) return Plurality_.Zero;
-                            if (_uint64 == 1UL) return Plurality_.One;
-                            return Plurality_.Plural;
-                        case TypeCode.Object:
-                            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)) return GetPluralityKind(Nullable.GetUnderlyingType(type));
-                            return null;
-                    }
-                    return null;
-                }
-
-                private static string GetPluralityKind<T>()
-                    => GetPluralityKind(typeof(T));
-
-                /// <summary>
                 /// Create plurality key permutations. 
                 /// 
                 /// If argument count exceeds <paramref name="maxArgumentCount"/> then returns single arguments only:
@@ -469,7 +488,64 @@ namespace Lexical.Localization.StringFormat
                         yield return key.N(argumentIndex, argInfos[argumentIndex].Item2);
                     }
                 }
+
+                /// <summary>
+                /// Resolve the format string. 
+                /// 
+                /// Uses the following algorithm:
+                ///   1. Either explicitly assigned culture or <see cref="ICulturePolicy"/> from <see cref="ILineExtensions.FindCulturePolicy(ILine)"/>.
+                ///   2. Try key as is.
+                ///   
+                ///      a. Search inlines with culture
+                ///      b. Search asset with culture
+                /// </summary>
+                /// <param name="key"></param>
+                /// <returns>format string (without formulating it) or null</returns>
+                public LineString ResolveString(ILine key)
+                {
+                    // If there is no explicitly assigned culture in the key, try cultures from culture policy
+                    string explicitCulture = key.GetCultureName();
+                    IEnumerable<CultureInfo> cultures = null;
+                    bool rootCultureTried = false;
+                    if (explicitCulture == null && (cultures = key.FindCulturePolicy()?.Cultures) != null)
+                    {
+                        IFormatString languageString = null;
+                        // Get inlines
+                        IDictionary<ILine, IFormatString> inlines = key.FindInlines();
+                        foreach (CultureInfo culture in cultures)
+                        {
+                            bool rootCulture = culture.Name == "";
+                            rootCultureTried |= rootCulture;
+                            // 
+                            ILine culture_key = rootCulture ? key : key.Culture(culture);
+                            // Try inlines
+                            if (languageString == null && inlines != null) inlines.TryGetValue(culture_key, out languageString);
+                            // Try key
+                            if (languageString == null) languageString = culture_key.TryGetString();
+                            // Return
+                            if (languageString != null) return new LineString(key, languageString.Text, 0UL);
+                        }
+                    }
+
+                    if (!rootCultureTried)
+                    {
+                        IFormatString languageString = null;
+                        // Get inlines
+                        IDictionary<ILine, IFormatString> inlines = key.FindInlines();
+                        // Try inlines with key
+                        if (languageString == null && inlines != null) inlines.TryGetValue(key, out languageString);
+                        // Try asset with key
+                        if (languageString == null) languageString = key.TryGetString();
+                        // Return
+                        if (languageString != null) return new LineString(key, languageString.Text, 0UL);
+                    }
+
+                    return new LineString(key, null, LineStatus.NoResult);
+                }
+
                 */
-    }    
+
+        static CultureInfo RootCulture = CultureInfo.GetCultureInfo("");
+    }
 
 }

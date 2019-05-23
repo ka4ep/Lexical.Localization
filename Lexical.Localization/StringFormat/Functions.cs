@@ -19,6 +19,24 @@ namespace Lexical.Localization.StringFormat
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="srcs"></param>
+        public Functions(IEnumerable<IFunctions> srcs) : base()
+        {
+            foreach (var funcSrc in srcs)
+            {
+                if (funcSrc is IFunctionsEnumerable enumr)
+                {
+                    foreach (IFunction f in enumr)
+                    {
+                        this[f.Name] = f;
+                    }
+                }
+            }
+        }
+
         IEnumerator<IFunction> IEnumerable<IFunction>.GetEnumerator()
             => Values.GetEnumerator();
 

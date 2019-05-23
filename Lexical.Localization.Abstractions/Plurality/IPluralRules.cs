@@ -82,6 +82,27 @@ namespace Lexical.Localization.Plurality
         static string[] empty = new string[0];
 
         /// <summary>
+        /// Query a collection of rules.
+        /// </summary>
+        /// <param name="rules"></param>
+        /// <param name="filterCriteria">filter criteria</param>
+        /// <returns>enumerable of rules, or null if could not run query with the <paramref name="filterCriteria"/></returns>
+        public static IPluralRulesEnumerable Query(this IPluralRules rules, PluralRuleInfo filterCriteria)
+            => rules is IPluralRulesQueryable queryable ? queryable.Query(filterCriteria) : null;
+
+        /// <summary>
+        /// Evaluates number against subset of rules.
+        /// 
+        /// First results are optional, last one is mandatory.
+        /// </summary>
+        /// <param name="rules"></param>
+        /// <param name="subset">RuleSet, Culture and Category must have non-null value. "" is valid. Case must be null and optional must be -1.</param>
+        /// <param name="number">(optional) numeric and text representation of numberic value</param>
+        /// <returns>Matching cases, first ones are optional, the last one is always mandatory (and only mandatory). Or null if evaluate failed.</returns>
+        public static IPluralRule[] Evaluate(this IPluralRules rules, PluralRuleInfo subset, IPluralNumber number)
+            => rules is IPluralRulesEvaluatable eval ? eval.Evaluate(subset, number) : null;
+
+        /// <summary>
         /// Get all rulesets in a collection of rules
         /// </summary>
         /// <param name="rules"></param>

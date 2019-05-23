@@ -4,7 +4,6 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace Lexical.Localization.StringFormat
