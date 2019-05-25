@@ -20,8 +20,19 @@ namespace Lexical.Localization
         ILocalizationStringProvider,
         IAssetResourceProvider
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public readonly ResourceManager ResourceManager;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public readonly ILineFormat namePolicy;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public readonly IStringFormatParser ValueParser;
 
         /// <summary>
@@ -113,14 +124,20 @@ namespace Lexical.Localization
             this.ValueParser = parser ?? CSharpFormat.Instance;
         }
 
-        public IFormatString GetString(ILine key)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public ILine GetString(ILine key)
         {
             string id = namePolicy.Print(key);
             CultureInfo culture = key.GetCultureInfo();
             try
             {
                 string value = culture == null ? ResourceManager.GetString(id) : ResourceManager.GetString(id, culture);
-                return ValueParser.Parse(value);
+                IFormatString str = ValueParser.Parse(value);
+                return key.Value(str);
             }
             catch (Exception e)
             {
@@ -129,6 +146,11 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public byte[] GetResource(ILine key)
         {
             string id = namePolicy.Print(key);
@@ -144,6 +166,11 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public Stream OpenStream(ILine key)
         {
             string id = namePolicy.Print(key);
@@ -160,6 +187,10 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}()";
     }

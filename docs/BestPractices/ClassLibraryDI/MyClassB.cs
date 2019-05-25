@@ -4,16 +4,16 @@ namespace TutorialLibrary2
 {
     public class MyClassB
     {
-        ILineKey<MyClass> localizer;
+        ILine<MyClass> localizer;
 
-        public MyClassB(ILineKey<MyClass> localizer)
+        public MyClassB(ILine<MyClass> localizer)
         {
             this.localizer = localizer;
         }
 
         public string Do()
         {
-            return localizer.Key("OK").Inline("Operation Successful").ToString();
+            return localizer.Key("OK").Value("Operation Successful").ToString();
         }
     }
 }

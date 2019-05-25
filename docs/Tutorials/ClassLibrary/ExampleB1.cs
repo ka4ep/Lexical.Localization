@@ -11,14 +11,14 @@ namespace TutorialLibrary
             this.localization = root.Type(GetType());
         }
 
-        public MyController2(ILineKey<MyController2> localization)
+        public MyController2(ILine<MyController2> localization)
         {
             this.localization = localization;
         }
 
         public string Do()
         {
-            return localization.Key("OK").Inline("Operation Successful").ToString();
+            return localization.Key("OK").Value("Operation Successful").ToString();
         }
     }
 }

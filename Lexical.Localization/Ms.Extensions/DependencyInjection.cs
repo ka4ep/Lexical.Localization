@@ -15,16 +15,17 @@ namespace Lexical.Localization
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Localization;
     using Lexical.Localization.Internal;
+    using Lexical.Localization.StringFormat;
 
     public static partial class MsLocalizationExtensions
     {
         /// <summary>
         /// Adds the following Lexical.Localization services:
         ///    <see cref="ILineRoot"/>
-        ///    <see cref="ILineKey{T}"/>
+        ///    <see cref="ILine{T}"/>
         ///    <see cref="IAssetBuilder"/>
         ///    
-        /// If <paramref name="addCulturePolicyService"/> is true a <see cref="CultureResolver"/> is added,
+        /// If <paramref name="addCulturePolicyService"/> is true a <see cref="ICultureResolver"/> is added,
         /// otherwise <see cref="ICulturePolicy"/> must be added to the service collection.
         /// 
         /// Further services are needed:
@@ -96,7 +97,7 @@ namespace Lexical.Localization
             }
 
             // ILineResolver
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton<IStringResolver>( StringResolver.Instance ));
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton<IStringResolver>( StringResolver.Default ));
 
             // UnicodePluralityRules as 
             //serviceCollection.TryAdd(ServiceDescriptor.Singleton<IPluralRules>(UnicodeCLDR.Instance));

@@ -18,7 +18,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="e1"></param>
         /// <param name="e2"></param>
         /// <returns></returns>
-        public bool Equals(IExpression e1, IExpression e2)
+        public static bool Equals(IExpression e1, IExpression e2)
         {
             if (e1 == e2) return true;
             if (e1 == null && e2 == null) return true;

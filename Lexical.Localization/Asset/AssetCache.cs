@@ -303,7 +303,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Cached result of individual GetString() fetches
             /// </summary>
-            public Dictionary<ILine, IFormatString> strings;
+            public Dictionary<ILine, ILine> strings;
 
             /// <summary>
             /// GetKeyLines(null) was read and it was null.
@@ -337,7 +337,7 @@ namespace Lexical.Localization
 
             public Cache(LineComparer comparer)
             {
-                this.strings = new Dictionary<ILine, IFormatString>(comparer);
+                this.strings = new Dictionary<ILine, ILine>(comparer);
             }
         }
 
@@ -372,12 +372,12 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IFormatString GetString(ILine key)
+        public ILine GetString(ILine key)
         {
             Cache _cache = this.cache;
 
             // Try to read previously cached value
-            IFormatString value = null;
+            ILine value = null;
             _cache.m_lock.EnterReadLock();
             try
             {
@@ -448,7 +448,7 @@ namespace Lexical.Localization
             {
                 _cache.keysLinesPartial = (List<ILine>)lines;
                 foreach (var line in lines)
-                    _cache.strings[line] = line.GetValue();
+                    _cache.strings[line] = line;
             }
             finally
             {
@@ -501,7 +501,7 @@ namespace Lexical.Localization
             {
                 _cache.keysLinesAll = (List<ILine>)lines;
                 foreach (var line in lines)
-                    _cache.strings[line] = line.GetValue();
+                    _cache.strings[line] = line;
             }
             finally
             {

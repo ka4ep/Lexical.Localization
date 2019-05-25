@@ -101,8 +101,12 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IFormatString GetString(ILine key)
-            => GetHandlingAsset(key)?.GetString(key);
+        public ILine GetString(ILine key)
+        {
+            var asset = GetHandlingAsset(key);
+            if (asset == null) return null;
+            return asset.GetString(key);
+        }
 
         /// <summary>
         /// Clear caches

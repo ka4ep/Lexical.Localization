@@ -50,27 +50,34 @@ namespace Lexical.Localization.StringFormat
         /// Add format provider to format provider slot. Replace with composition if contains already previous provider.
         /// </summary>
         /// <param name="slot"></param>
-        /// <param name="formatProvider"></param>
+        /// <param name="formatProviders"></param>
         /// <returns></returns>
-        public static void Add(ref IFormatProvider slot, IFormatProvider formatProvider)
+        public static void Add(ref IFormatProvider slot, params IFormatProvider[] formatProviders)
         {
-            if (formatProvider == null || slot == formatProvider) return;
+            if (formatProviders == null || formatProviders.Length == 0) return;
+
             // Set provider
-            if (slot == null) slot = formatProvider;
+            if (slot == null)
+            {
+                if (formatProviders.Length == 1) slot = formatProviders[0];
+                else slot = new FormatProviderComposition(formatProviders);
+            }
+
             // Append to previous composition
             else if (slot is FormatProviderComposition composition)
             {
-                if (!composition.Contains(formatProvider)) composition.Add(formatProvider);
+                IFormatProvider[] arr = new IFormatProvider[composition.Providers.Length + formatProviders.Length];
+                composition.Providers.CopyTo(arr, 0);
+                formatProviders.CopyTo(arr, composition.Providers.Length);
+                slot = new FormatProviderComposition(arr);
             }
             // Replace value with composition
             else
             {
-                // Replace 
-                IFormatProvider old = slot;
-                FormatProviderComposition c = new FormatProviderComposition();
-                c.Add(old);
-                c.Add(formatProvider);
-                slot = c;
+                IFormatProvider[] arr = new IFormatProvider[1 + formatProviders.Length];
+                arr[0] = slot;
+                formatProviders.CopyTo(arr, 1);
+                slot = new FormatProviderComposition(arr);
             }
         }
     }

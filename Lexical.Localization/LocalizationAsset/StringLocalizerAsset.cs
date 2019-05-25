@@ -281,7 +281,7 @@ namespace Lexical.Localization
             LocalizedString str = stringLocalizer[id];
 
             if (str.ResourceNotFound) return null;
-            return ValueParser.Parse(str.Value);
+            return key.Value(ValueParser.Parse(str.Value));
         }
 
         /// <summary>

@@ -3,6 +3,7 @@
 // Date:           9.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.StringFormat;
 using System;
 
 namespace Lexical.Localization
@@ -25,7 +26,6 @@ namespace Lexical.Localization
         /// 
         /// Format provider is requested for following interfaces:
         /// <list type="bullet">
-        /// <item><see cref="IArgumentFormatter"/></item>
         /// <item><see cref="ICustomFormatter"/></item>
         /// </list>        
         /// </summary>
