@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lexical.Localization.StringFormat;
+using System;
 using System.Collections.Generic;
 using System.IO;
 

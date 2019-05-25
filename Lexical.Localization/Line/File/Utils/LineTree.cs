@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using Lexical.Localization;
 using Lexical.Localization.Internal;
+using Lexical.Localization.StringFormat;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

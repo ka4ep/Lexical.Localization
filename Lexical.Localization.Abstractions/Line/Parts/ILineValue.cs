@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <param name="resolver"></param>
         /// <returns>value</returns>
-        public static IFormatString GetValue(this ILine line, IStringFormatResolver resolver = null)
+        public static IFormatString GetValue(this ILine line, IResolver<IStringFormat> resolver = null)
         {
             for (ILine part = line; part != null; part = part.GetPreviousPart())
             {

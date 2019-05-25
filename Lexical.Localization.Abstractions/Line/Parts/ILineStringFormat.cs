@@ -52,7 +52,7 @@ namespace Lexical.Localization
         /// <param name="resolver">(optional) type resolver that resolves "IStringFormat" parameter into type. Returns null, if could not resolve, exception if resolve fails</param>
         /// <returns>type info or null</returns>
         /// <exception cref="Exception">from <paramref name="resolver"/></exception>
-        public static IStringFormat FindStringFormat(this ILine line, IStringFormatResolver resolver = null)
+        public static IStringFormat FindStringFormat(this ILine line, IResolver<IStringFormat> resolver = null)
         {
             IStringFormat type = null;
             for (ILine l = line; l != null; l = l.GetPreviousPart())

@@ -3,6 +3,7 @@
 // Date:           3.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.StringFormat;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -216,6 +217,53 @@ namespace Lexical.Localization
     /// <summary></summary>
     public static partial class LineExtensions
     {
+        /// <summary>
+        /// Add inlined language string.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="subKey">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
+        /// <param name="valueText">(optional) value to add, if null removes previously existing the inline</param>
+        /// <returns>new line with inlines or <paramref name="line"/></returns>
+        /// <exception cref="LineException">If key can't be inlined.</exception>
+        public static ILine Inline(this ILine line, ILine subKey, string valueText)
+        {
+            ILineInlines inlines;
+            line = line.GetOrCreateInlines(out inlines);
+            ILine subline = line.Concat(subKey);
+            if (valueText == null)
+            {
+                inlines.Remove(subline);
+            }
+            else
+            {
+                IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Instance;
+                IFormatString format = stringFormat.Parse(valueText);
+                ILine value = subline.Value(format);
+                inlines[subline] = value;
+            }
+            return line;
+        }
+
+        /// <summary>
+        /// Inline <paramref name="valueText"/> to <paramref name="culture"/>.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="culture">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
+        /// <param name="valueText">value to add</param>
+        /// <returns>new line with inlines or <paramref name="line"/></returns>
+        /// <exception cref="LineException">If key can't be inlined.</exception>
+        public static ILine InlineCulture(this ILine line, string culture, string valueText)
+        {
+            ILineInlines inlines;
+            line = line.GetOrCreateInlines(out inlines);
+            ILine subline = line.Culture(culture);
+            IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Instance;
+            IFormatString format = stringFormat.Parse(valueText);
+            ILine value = subline.Value(format);
+            inlines[subline] = value;
+            return line;
+        }
+
         /// <summary>
         /// Add inlined language string.
         /// </summary>

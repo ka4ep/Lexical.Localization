@@ -95,12 +95,12 @@ namespace Lexical.Localization
         /// Create new root with default settings
         /// </summary>
         /// <returns></returns>
-        public static LineRoot CreateDefault() => new LineRoot(new AssetComposition(), new CulturePolicy(), StringResolver.Instance, null, null);
+        public static LineRoot CreateDefault() => new LineRoot(new AssetComposition(), new CulturePolicy(), StringResolver.Default, null, null);
 
         /// <summary>
         /// Construct new root.
         /// </summary>
-        public LineRoot() : this(LineAppender.Default, null, null, null, StringResolver.Instance, CSharpFormat.Instance, null, null, null) { }
+        public LineRoot() : this(LineAppender.Default, null, null, null, StringResolver.Default, CSharpFormat.Instance, null, null, null) { }
 
         /// <summary>
         /// Construct new root
@@ -113,7 +113,7 @@ namespace Lexical.Localization
         /// <param name="logger"></param>
         /// <param name="functions"></param>
         public LineRoot(IAsset asset, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IStringFormat stringFormat = null, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) : 
-            this(LineAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
+            this(LineAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Default, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
         {
         }
 
@@ -214,7 +214,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Construct mutable root.
             /// </summary>
-            public Mutable() : base(StringLocalizerAppender.Default, null, null, null, StringResolver.Instance, CSharpFormat.Instance, null, null, null) { }
+            public Mutable() : base(StringLocalizerAppender.Default, null, null, null, StringResolver.Default, CSharpFormat.Instance, null, null, null) { }
 
             /// <summary>
             /// Construct new root
@@ -228,7 +228,7 @@ namespace Lexical.Localization
             /// <param name="logger"></param>
             /// <param name="functions"></param>
             public Mutable(ILineFactory appender = default, IAsset asset = null, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IStringFormat stringFormat = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
-                this(appender ?? LineAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
+                this(appender ?? LineAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Default, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
             {
             }
 
@@ -376,12 +376,12 @@ namespace Lexical.Localization
         /// Create new root with default settings
         /// </summary>
         /// <returns></returns>
-        public static StringLocalizerRoot CreateDefault() => new StringLocalizerRoot(new AssetComposition(), new CulturePolicy(), StringResolver.Instance, null, null, null);
+        public static StringLocalizerRoot CreateDefault() => new StringLocalizerRoot(new AssetComposition(), new CulturePolicy(), StringResolver.Default, null, null, null);
 
         /// <summary>
         /// Construct new root.
         /// </summary>
-        public StringLocalizerRoot() : this(StringLocalizerAppender.Default, null, null, null, StringResolver.Instance, CSharpFormat.Instance, null, null, null) { }
+        public StringLocalizerRoot() : this(StringLocalizerAppender.Default, null, null, null, StringResolver.Default, CSharpFormat.Instance, null, null, null) { }
 
         /// <summary>
         /// Construct new root
@@ -394,7 +394,7 @@ namespace Lexical.Localization
         /// <param name="logger"></param>
         /// <param name="functions"></param>
         public StringLocalizerRoot(IAsset asset, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IStringFormat stringFormat = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
-            this(StringLocalizerAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
+            this(StringLocalizerAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Default, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
         {
         }
 
@@ -489,7 +489,7 @@ namespace Lexical.Localization
             /// <summary>
             /// Construct mutable root.
             /// </summary>
-            public Mutable() : base(StringLocalizerAppender.Default, null, null, null, StringResolver.Instance, CSharpFormat.Instance, null, null, null) { }
+            public Mutable() : base(StringLocalizerAppender.Default, null, null, null, StringResolver.Default, CSharpFormat.Instance, null, null, null) { }
 
             /// <summary>
             /// Construct new root
@@ -503,7 +503,7 @@ namespace Lexical.Localization
             /// <param name="logger"></param>
             /// <param name="functions"></param>
             public Mutable(ILineFactory appender = default, IAsset asset = null, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IStringFormat stringFormat = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
-                this(appender ?? StringLocalizerAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Instance, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
+                this(appender ?? StringLocalizerAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Default, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
             {
             }
 

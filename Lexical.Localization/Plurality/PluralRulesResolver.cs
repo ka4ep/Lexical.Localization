@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.StringFormat;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Lexical.Localization.Plurality
     /// Resolver that creates "PluralRules" parameter value by
     /// instantiating as class (assembly qualitifed type name), or by parsing as expression string.
     /// </summary>
-    public class PluralRulesResolver : IPluralRulesEvaluatable, IPluralRulesQueryable
+    public class PluralRulesResolver : IPluralRulesEvaluatable, IPluralRulesQueryable, IResolver<IPluralRules>
     {
         /// <summary>
         /// Default instance.
@@ -229,6 +230,28 @@ namespace Lexical.Localization.Plurality
                 return queryable.Query(filterCriteria.ChangeRuleSet(null));
             }
             return null;
+        }
+
+        /// <summary>
+        /// Resolve rules
+        /// </summary>
+        /// <param name="rulesOrClassName"></param>
+        /// <returns></returns>
+        public IPluralRules Resolve(string rulesOrClassName)
+            => GetRules(rulesOrClassName).Rules;
+
+        /// <summary>
+        /// Try resolve
+        /// </summary>
+        /// <param name="rulesOrClassName"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public bool TryResolve(string rulesOrClassName, out IPluralRules result)
+        {
+            ResultLine line = GetRules(rulesOrClassName);
+            if (line.Rules != null) { result = line.Rules; return true; }
+            result = null;
+            return false;
         }
 
         /// <summary>

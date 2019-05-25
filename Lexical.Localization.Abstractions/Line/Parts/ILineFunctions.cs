@@ -52,7 +52,7 @@ namespace Lexical.Localization
         /// <param name="resolver">(optional) type resolver that resolves "IFunctions" parameter into type. Returns null, if could not resolve, exception if resolve fails</param>
         /// <returns>type info or null</returns>
         /// <exception cref="Exception">from <paramref name="resolver"/></exception>
-        public static IFunctions FindFunctions(this ILine line, IFunctionsResolver resolver = null)
+        public static IFunctions FindFunctions(this ILine line, IResolver<IFunctions> resolver = null)
         {
             IFunctions type = null;
             for (ILine l = line; l != null; l = l.GetPreviousPart())

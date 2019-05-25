@@ -4,6 +4,8 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 
+using System;
+
 namespace Lexical.Localization.StringFormat
 {
     /// <summary>
@@ -17,5 +19,14 @@ namespace Lexical.Localization.StringFormat
         /// <param name="className"></param>
         /// <returns><typeparamref name="T"/> or null</returns>
         T Resolve(string className);
+
+        /// <summary>
+        /// Try resolve into value.
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <param name="result"></param>
+        /// <returns>true if was resolved with result</returns>
+        /// <exception cref="ObjectDisposedException">resolver is disposed</exception>
+        bool TryResolve(string typeName, out T result);
     }
 }

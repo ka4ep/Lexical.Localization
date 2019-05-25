@@ -10,6 +10,7 @@ using System.Globalization;
 
 namespace Lexical.Localization
 {
+    using Lexical.Localization.StringFormat;
     using Microsoft.Extensions.Localization;
 
     /// <summary>

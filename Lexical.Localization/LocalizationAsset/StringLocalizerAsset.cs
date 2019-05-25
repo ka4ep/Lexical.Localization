@@ -11,6 +11,7 @@ using System.Linq;
 
 namespace Lexical.Localization
 {
+    using Lexical.Localization.StringFormat;
     using Microsoft.Extensions.Localization;
 
     /// <summary>
@@ -170,7 +171,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IFormatString GetString(ILine key)
+        public ILine GetString(ILine key)
         {
             CultureInfo key_culture = key.GetCultureInfo();
             if (key_culture != null)

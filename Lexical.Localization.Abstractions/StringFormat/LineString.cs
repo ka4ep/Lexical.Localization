@@ -77,7 +77,7 @@ namespace Lexical.Localization.StringFormat
         public int PluralitySeverity => Status.PluralitySeverity();
 
         /// <summary>
-        /// Severity for the step that converts arguments into strings
+        /// Severity for the step that converts placeholder expressions into strings
         /// 
         /// <list type="table">
         /// <item>0 OK, value</item>
@@ -86,7 +86,7 @@ namespace Lexical.Localization.StringFormat
         /// <item>3 Failed, no value</item>
         /// </list>
         /// </summary>
-        public int ArgumentSeverity => Status.ArgumentSeverity();
+        public int PlaceholderSeverity => Status.PlaceholderSeverity();
 
         /// <summary>
         /// Severity for the step that parses format string and applies arguments.
