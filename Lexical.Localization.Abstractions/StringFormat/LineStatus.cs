@@ -151,6 +151,8 @@ namespace Lexical.Localization.StringFormat
         FormatOkNoPlaceholders = 0x02UL << Shift.Format,
         /// <summary>Request asked for the format string, without applying arguments to it.</summary>
         FormatOkNotApplied = 0x03UL << Shift.Format,
+        /// <summary>Created string</summary>
+        FormatOkString = 0x10UL << Shift.Format,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
         FormatWarning = 0x20UL << Shift.Format,
         /// <summary>Format string contained arguments, but too many arguments were provided</summary>

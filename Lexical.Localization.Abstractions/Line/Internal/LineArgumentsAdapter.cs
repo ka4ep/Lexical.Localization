@@ -80,6 +80,7 @@ namespace Lexical.Localization.Line.Internal
                 Type[] intfs = argumentType.GetInterfaces();
                 foreach (Type intf in intfs)
                 {
+                    if (!intf.IsGenericType) continue;
                     Type intfGeneric = intf.GetGenericTypeDefinition();
                     if (intfGeneric == null) continue;
                     Type[] typeArgs = intf.GetGenericArguments();

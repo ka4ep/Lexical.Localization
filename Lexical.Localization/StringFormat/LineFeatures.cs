@@ -111,7 +111,7 @@ namespace Lexical.Localization.StringFormat
                 if (l is ILineFormatProvider fp && fp.FormatProvider != null) FormatProviders.AddIfNew(fp.FormatProvider);
                 if (l is ILineFunctions funcs && funcs.Functions != null) Functions.AddIfNew(funcs.Functions);
                 if (l is ILineInlines inlines) Inlines.AddIfNew(inlines);
-                if (l is ILineLogger ll && ll != null) Loggers.AddIfNew(ll.Logger);
+                if (l is ILineLogger ll && ll.Logger != null) Loggers.AddIfNew(ll.Logger);
                 if (l is ILinePluralRules pl && pl.PluralRules != null) PluralRules = pl.PluralRules;
                 if (l is ILineStringFormat sf && sf.StringFormat != null) StringFormat = sf.StringFormat;
                 if (l is ILineValue lv && lv.Value != null) { Value = lv.Value; ValueText = null; }

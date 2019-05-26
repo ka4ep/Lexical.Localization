@@ -183,9 +183,9 @@ namespace Lexical.Localization
                 line.GetParameterParts<StructList12<ILineParameter>>(ref list);
                 for (int i = list.Count-1; i >=0; i--)
                 {
-                    if (i < list.Count-1) sb.Append(':');
                     var parameter = list[i];
-                    if (parameter.ParameterName != "Value") continue;
+                    if (parameter.ParameterName == "Value") continue;
+                    if (i < list.Count-1) sb.Append(':');
                     sb.Append(parameter.ParameterName);
                     sb.Append(':');
                     sb.Append(parameter.ParameterValue);
@@ -193,8 +193,9 @@ namespace Lexical.Localization
                 string value = this.GetParameter("Value");
                 if (value != null)
                 {
-                    sb.Append(" = ");
+                    sb.Append(" = \"");
                     sb.Append(value);
+                    sb.Append('\"');
                 }
             }
 
@@ -226,7 +227,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-            => this.ResolveString().Value ?? this.DebugPrint();
+            => this.ResolveString().Value;
 
         /// <summary>
         /// A library of interfaces and extension methods that DynamicMetaObject implementation seaches from when 

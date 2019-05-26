@@ -203,36 +203,35 @@ namespace Lexical.Localization.StringFormat
             {
                 StringBuilder sb = new StringBuilder();
 
+                // Append status
+                Status.AppendFlags(sb);
+
                 // Append key
                 if (Line != null)
                 {
+                    sb.Append(" ");
                     StructList12<ILineParameter> list = new StructList12<ILineParameter>();
                     Line.GetParameterParts<StructList12<ILineParameter>>(ref list);
-                    for (int i = 0; i < list.Count; i++)
+                    for(int i = list.Count - 1; i >= 0; i--)
                     {
-                        if (i > 0) sb.Append(':');
                         var parameter = list[i];
                         if (parameter.ParameterName == "Value") continue;
+                        if (i < list.Count - 1) sb.Append(':');
                         sb.Append(parameter.ParameterName);
                         sb.Append(':');
                         sb.Append(parameter.ParameterValue);
                     }
-                    sb.Append(" = ");
                 }
 
                 // Append result
                 if (Value != null)
                 {
-                    sb.Append(" \"");
+                    sb.Append(" = \"");
                     sb.Append(Value);
                     sb.Append("\"");
                 }
 
-                // Append status
-                sb.Append(" (");
-                Status.AppendFlags(sb);
-                sb.Append(")");
-
+                // Compile string
                 return sb.ToString();
             }
         }

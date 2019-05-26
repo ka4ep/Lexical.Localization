@@ -34,8 +34,12 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         public StringResolver()
         {
-            this.Resolvers = ResolverSet.Instance;
-            this.ResolveSequence = DefaultResolveSequence;
+            this.Resolvers = new ResolverSet(null,
+                Lexical.Localization.StringFormat.StringFormatResolver.Default,
+                Lexical.Localization.StringFormat.FunctionsResolver.Default,
+                Lexical.Localization.StringFormat.FormatProviderResolver.Default,
+                Lexical.Localization.Plurality.PluralRulesResolver.Default);
+            this.ResolveSequence = new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
         }
 
         /// <summary>
@@ -46,7 +50,7 @@ namespace Lexical.Localization.StringFormat
         public StringResolver(ResolverSet resolvers, ResolveSource[] resolveSequence = default)
         {
             this.Resolvers = resolvers ?? throw new ArgumentNullException(nameof(resolvers));
-            this.ResolveSequence = resolveSequence ?? DefaultResolveSequence;
+            this.ResolveSequence = resolveSequence ?? new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
         }
 
         /// <summary>
@@ -212,28 +216,29 @@ namespace Lexical.Localization.StringFormat
 
             // Put string together
             string text = null;
-            if (value != null && value.Placeholders != null)
+            if (value != null && value.Parts != null)
             {
                 // Calculate length
                 int length = 0;
-                for (int i=0; i<value.Placeholders.Length; i++)
+                for (int i=0; i<value.Parts.Length; i++)
                 {
-                    IPlaceholder ph = value.Placeholders[i];
-                    length += ph.Kind switch { FormatStringPartKind.Text => ph.Length, FormatStringPartKind.Placeholder => placeholder_values[i].Length, _=>0 };
+                    IFormatStringPart part = value.Parts[i];
+                    length += part.Kind switch { FormatStringPartKind.Text => part.Length, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex].Length, _=>0 };
                 }
 
                 // Copy characters
                 char[] arr = new char[length];
                 int ix = 0;
-                for (int i = 0; i < value.Placeholders.Length; i++)
+                for (int i = 0; i < value.Parts.Length; i++)
                 {
-                    IPlaceholder ph = value.Placeholders[i];
-                    string str = ph.Kind switch { FormatStringPartKind.Text => ph.Text, FormatStringPartKind.Placeholder => placeholder_values[i], _ => null };
+                    IFormatStringPart part = value.Parts[i];
+                    string str = part.Kind switch { FormatStringPartKind.Text => part.Text, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex], _ => null };
                     if (str != null) { str.CopyTo(0, arr, ix, str.Length); ix += str.Length; }
                 }
 
                 // String
                 text = new string(arr);
+                features.Status.UpFormat(LineStatus.FormatOkString);
             }
 
             // Create result 
@@ -263,10 +268,6 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         public readonly ResolveSource[] ResolveSequence;
 
-        /// <summary>
-        /// Default resolve sequence
-        /// </summary>
-        public static ResolveSource[] DefaultResolveSequence = new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
 
         /// <summary>
         /// Resolve keys into a line. Searches from asset, inlines and key itself.
@@ -348,7 +349,7 @@ namespace Lexical.Localization.StringFormat
                     features.Status.UpCulture(LineStatus.CultureErrorCultureNoMatch);
                 }
 
-                // Try with the cultures from the culture policy
+                // Try with cultures from the culture policy
                 IEnumerable<CultureInfo> cultures = features.CulturePolicy.Cultures;
                 if (cultures != null)
                 {
@@ -405,6 +406,14 @@ namespace Lexical.Localization.StringFormat
                                                 features.Status.UpResolve(LineStatus.ResolveErrorInlinesException);
                                                 features.Log(e);
                                             }
+                                        }
+                                        break;
+
+                                    case ResolveSource.Key:
+                                        if ((features.Value != null || features.ValueText != null) && ((c.Name == "" && features.Culture == null) || c.Equals(features.Culture)))
+                                        {
+                                            if (culture == null) culture = c;
+                                            return key;
                                         }
                                         break;
                                 }

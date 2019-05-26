@@ -60,7 +60,7 @@ namespace Lexical.Localization.Internal
             // Is disposed?
             if (_logger == null) return;
             if (3 >= this.severity)
-                _logger.Write($"{error.GetType().Name}: {error.Message}");
+                _logger.WriteLine($"{error.GetType().Name}: {error.Message}");
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Lexical.Localization.Internal
             int severity = value.Severity;
             // Write status
             if (severity >= this.severity)
-                _logger.Write(value.DebugInfo);
+                _logger.WriteLine(value.DebugInfo);
         }
     }
 

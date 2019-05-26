@@ -114,7 +114,7 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.NotSupportedException">The StructList1`1 is read-only.</exception>
         public void AddIfNew(T item)
         {
-            if (!Contains(item)) Add(item);
+            if (Contains(item)) return;
             switch (count)
             {
                 case 0: _0 = item; count++; return;
@@ -417,7 +417,7 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.NotSupportedException">The StructList2`1 is read-only.</exception>
         public void AddIfNew(T item)
         {
-            if (!Contains(item)) Add(item);
+            if (Contains(item)) return;
             switch (count)
             {
                 case 0: _0 = item; count++; return;
@@ -736,7 +736,7 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.NotSupportedException">The StructList3`1 is read-only.</exception>
         public void AddIfNew(T item)
         {
-            if (!Contains(item)) Add(item);
+            if (Contains(item)) return;
             switch (count)
             {
                 case 0: _0 = item; count++; return;
@@ -1071,7 +1071,7 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.NotSupportedException">The StructList4`1 is read-only.</exception>
         public void AddIfNew(T item)
         {
-            if (!Contains(item)) Add(item);
+            if (Contains(item)) return;
             switch (count)
             {
                 case 0: _0 = item; count++; return;
@@ -1422,7 +1422,7 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.NotSupportedException">The StructList5`1 is read-only.</exception>
         public void AddIfNew(T item)
         {
-            if (!Contains(item)) Add(item);
+            if (Contains(item)) return;
             switch (count)
             {
                 case 0: _0 = item; count++; return;
@@ -1797,7 +1797,7 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.NotSupportedException">The StructList8`1 is read-only.</exception>
         public void AddIfNew(T item)
         {
-            if (!Contains(item)) Add(item);
+            if (Contains(item)) return;
             switch (count)
             {
                 case 0: _0 = item; count++; return;
@@ -2224,7 +2224,7 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.NotSupportedException">The StructList12`1 is read-only.</exception>
         public void AddIfNew(T item)
         {
-            if (!Contains(item)) Add(item);
+            if (Contains(item)) return;
             switch (count)
             {
                 case 0: _0 = item; count++; return;
@@ -2715,7 +2715,7 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.NotSupportedException">The StructList16`1 is read-only.</exception>
         public void AddIfNew(T item)
         {
-            if (!Contains(item)) Add(item);
+            if (Contains(item)) return;
             switch (count)
             {
                 case 0: _0 = item; count++; return;
@@ -3270,7 +3270,7 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.NotSupportedException">The StructList20`1 is read-only.</exception>
         public void AddIfNew(T item)
         {
-            if (!Contains(item)) Add(item);
+            if (Contains(item)) return;
             switch (count)
             {
                 case 0: _0 = item; count++; return;
@@ -3889,7 +3889,7 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.NotSupportedException">The StructList24`1 is read-only.</exception>
         public void AddIfNew(T item)
         {
-            if (!Contains(item)) Add(item);
+            if (Contains(item)) return;
             switch (count)
             {
                 case 0: _0 = item; count++; return;
@@ -4588,7 +4588,7 @@ namespace Lexical.Localization.Internal
         /// <exception cref="System.NotSupportedException">The StructList32`1 is read-only.</exception>
         public void AddIfNew(T item)
         {
-            if (!Contains(item)) Add(item);
+            if (Contains(item)) return;
             switch (count)
             {
                 case 0: _0 = item; count++; return;
