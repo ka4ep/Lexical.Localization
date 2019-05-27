@@ -3,6 +3,7 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -19,7 +20,7 @@ namespace Lexical.Localization
         /// 
         /// For example: "en-UK", "en", "".
         /// </summary>
-        IEnumerable<CultureInfo> Cultures { get; }
+        CultureInfo[] Cultures { get; }
     }
     #endregion ICulturePolicy
 
@@ -30,11 +31,11 @@ namespace Lexical.Localization
     public interface ICulturePolicyAssignable : ICulturePolicy
     {
         /// <summary>
-        /// Set new enumerable of cultures. The first element is active culture, others fallback cultures.
+        /// Set source of cultures. The first element is active culture, others fallback cultures.
         /// </summary>
-        /// <param name="cultureEnumerable"></param>
+        /// <param name="cultureSource"></param>
         /// <returns></returns>
-        ICulturePolicyAssignable SetCultures(IEnumerable<CultureInfo> cultureEnumerable);
+        ICulturePolicyAssignable SetSource(ICulturePolicy cultureSource);
     }
     #endregion ICulturePolicyAssignable
 }

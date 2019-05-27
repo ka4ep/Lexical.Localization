@@ -3,9 +3,8 @@
 // Date:           14.12.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -29,10 +28,13 @@ namespace Lexical.Localization
         /// <summary>
         /// Assign culture and default fallback cultures.
         /// </summary>
+        /// <param name="culturePolicy"></param>
         /// <param name="cultureName"></param>
         /// <returns></returns>
-        public static ICulturePolicyAssignable SetCultureWithFallbackCultures(this ICulturePolicyAssignable culturePolicy, string cultureName)
-            => culturePolicy.SetCultures( new CultureFallbackEnumerable(CultureInfo.GetCultureInfo(cultureName)).ToArray() );
+        public static ICulturePolicyAssignable SetCultureWithFallbackCultures(this ICulturePolicy culturePolicy, string cultureName)
+            => culturePolicy is ICulturePolicyAssignable assignable ?
+               assignable.SetSource(new CulturePolicyWithFallbacks(CultureInfo.GetCultureInfo(cultureName))) :
+               throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
 
         /// <summary>
         /// Assign cultures as an array of culture names.
@@ -41,7 +43,9 @@ namespace Lexical.Localization
         /// <param name="cultureNames"></param>
         /// <returns></returns>
         public static ICulturePolicyAssignable SetCultures(this ICulturePolicyAssignable culturePolicy, params string[] cultureNames)
-            => culturePolicy.SetCultures(cultureNames.Select(_ => CultureInfo.GetCultureInfo(_)).ToArray());
+            => culturePolicy is ICulturePolicyAssignable assignable ?
+               assignable.SetSource(new CulturePolicyArray(cultureNames.Select(_ => CultureInfo.GetCultureInfo(_)).ToArray())) :
+               throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
 
         /// <summary>
         /// Assign cultures as an array of culture names.
@@ -49,15 +53,17 @@ namespace Lexical.Localization
         /// <param name="culturePolicy"></param>
         /// <param name="cultureInfos"></param>
         /// <returns></returns>
-        public static ICulturePolicyAssignable SetCultures(this ICulturePolicyAssignable culturePolicy, params CultureInfo[] cultureInfos)
-            => culturePolicy.SetCultures(cultureInfos);
+        public static ICulturePolicyAssignable SetCultures(this ICulturePolicy culturePolicy, params CultureInfo[] cultureInfos)
+            => culturePolicy is ICulturePolicyAssignable assignable ?
+               assignable.SetSource(new CulturePolicyArray(cultureInfos)) :
+               throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
 
         /// <summary>
         /// Takes an array snapshot of the underlying source ienumerable and replaces that.
         /// </summary>
         /// <param name="culturePolicy">policy</param>
         /// <returns>this</returns>
-        public static ICulturePolicyAssignable ToSnapshot(this ICulturePolicyAssignable culturePolicy)
+        public static ICulturePolicyAssignable ToSnapshot(this ICulturePolicy culturePolicy)
             => culturePolicy.SetCultures(culturePolicy.Cultures.ToArray());
 
         /// <summary>
@@ -66,8 +72,10 @@ namespace Lexical.Localization
         /// <param name="culturePolicy"></param>
         /// <param name="source"></param>
         /// <returns>this</returns>
-        public static ICulturePolicyAssignable SetSource(this ICulturePolicyAssignable culturePolicy, ICulturePolicy source)
-            => culturePolicy.SetCultures(new CulturePolicySourceEnumerable(source));
+        public static ICulturePolicyAssignable SetSource(this ICulturePolicy culturePolicy, ICulturePolicy source)
+            => culturePolicy is ICulturePolicyAssignable assignable ?
+               assignable.SetSource(source) :
+               throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
 
         /// <summary>
         /// Set to acquire culture policies from a delegate that returns another culture policy <paramref name="sourceFunc"/>.
@@ -75,17 +83,21 @@ namespace Lexical.Localization
         /// <param name="culturePolicy"></param>
         /// <param name="sourceFunc"></param>
         /// <returns>this</returns>
-        public static ICulturePolicyAssignable SetSourceFunc(this ICulturePolicyAssignable culturePolicy, Func<ICulturePolicy> sourceFunc)
-            => culturePolicy.SetCultures(new CulturePolicySourceFuncEnumerable(sourceFunc));
+        public static ICulturePolicyAssignable SetSourceFunc(this ICulturePolicy culturePolicy, Func<ICulturePolicy> sourceFunc)
+            => culturePolicy is ICulturePolicyAssignable assignable ?
+               assignable.SetSource(new CulturePolicyFunc(sourceFunc)) :
+               throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
 
         /// <summary>
         /// Set to acquire cultures from an array of delegates.
         /// </summary>
         /// <param name="culturePolicy"></param>
-        /// <param name="funcs"></param>
+        /// <param name="func"></param>
         /// <returns>this</returns>
-        public static ICulturePolicyAssignable SetFunc(this ICulturePolicyAssignable culturePolicy, params Func<CultureInfo>[] funcs)
-            => culturePolicy.SetCultures(new CulturePolicyFuncs(funcs));
+        public static ICulturePolicyAssignable SetFunc(this ICulturePolicy culturePolicy, Func<CultureInfo[]> func)
+            => culturePolicy is ICulturePolicyAssignable assignable ?
+               assignable.SetSource(new CulturePolicyArrayFunc(func)) :
+               throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
 
         /// <summary>
         /// Function that returns <code>CultureInfo.CurrentCulture</code>.
@@ -112,8 +124,8 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="culturePolicy"></param>
         /// <returns></returns>
-        public static ICulturePolicyAssignable SetToCurrentCulture(this ICulturePolicyAssignable culturePolicy)
-            => culturePolicy.SetCultures(new CultureFallbackEnumerableFunc(FuncCurrentCulture));
+        public static ICulturePolicyAssignable SetToCurrentCulture(this ICulturePolicy culturePolicy)
+            => culturePolicy is ICulturePolicyAssignable assignable ? assignable.SetSource(new CulturePolicyFuncWithFallbacks(FuncCurrentCulture)) : throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
 
         /// <summary>
         /// Set to return CultureInfo.CurrentUICulture, and then fallback cultures.
@@ -121,7 +133,7 @@ namespace Lexical.Localization
         /// <param name="culturePolicy"></param>
         /// <returns></returns>
         public static ICulturePolicyAssignable SetToCurrentUICulture(this ICulturePolicyAssignable culturePolicy)
-            => culturePolicy.SetCultures(new CultureFallbackEnumerableFunc(FuncCurrentUICulture));
+            => culturePolicy is ICulturePolicyAssignable assignable ? assignable.SetSource(new CulturePolicyFuncWithFallbacks(FuncCurrentUICulture)) : throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
 
         /// <summary>
         /// Set to return <code>Thread.CurrentThread.CurrentCulture</code>, and its respective fallback cultures.
@@ -129,7 +141,7 @@ namespace Lexical.Localization
         /// <param name="culturePolicy"></param>
         /// <returns></returns>
         public static ICulturePolicyAssignable SetToCurrentThreadCulture(this ICulturePolicyAssignable culturePolicy)
-            => culturePolicy.SetCultures(new CultureFallbackEnumerableFunc(FuncCurrentThreadCulture));
+            => culturePolicy is ICulturePolicyAssignable assignable ? assignable.SetSource(new CulturePolicyFuncWithFallbacks(FuncCurrentThreadCulture)) : throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
 
         /// <summary>
         /// Set to return <code>Thread.CurrentThread.CurrentUICulture</code>, and its respective fallback cultures.
@@ -137,136 +149,179 @@ namespace Lexical.Localization
         /// <param name="culturePolicy"></param>
         /// <returns></returns>
         public static ICulturePolicyAssignable SetToCurrentThreadUICulture(this ICulturePolicyAssignable culturePolicy)
-            => culturePolicy.SetCultures(new CultureFallbackEnumerableFunc(FuncCurrentThreadUICulture));
+            => culturePolicy is ICulturePolicyAssignable assignable ? assignable.SetSource(new CulturePolicyFuncWithFallbacks(FuncCurrentThreadUICulture)) : throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
     }
 
-    class CulturePolicySourceEnumerable : IEnumerable<CultureInfo>
+    /// <summary>
+    /// Culture policy that reads from another source
+    /// </summary>
+    public class CulturePolicySource : ICulturePolicy
     {
+        static CultureInfo[] empty = new CultureInfo[0];
+
+        /// <summary>
+        /// Cultures
+        /// </summary>
+        public CultureInfo[] Cultures => source?.Cultures ?? empty;
+
         ICulturePolicy source;
-        public CulturePolicySourceEnumerable(ICulturePolicy source)
+
+        /// <summary>
+        /// Create policy
+        /// </summary>
+        /// <param name="source"></param>
+        public CulturePolicySource(ICulturePolicy source)
         {
             this.source = source;
         }
-        public IEnumerator<CultureInfo> GetEnumerator() => source.Cultures.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => source.Cultures.GetEnumerator();
     }
 
-    class CulturePolicySourceFuncEnumerable : IEnumerable<CultureInfo>
+
+    /// <summary>
+    /// Culture policy that reads active policy from function.
+    /// </summary>
+    public class CulturePolicyFunc : ICulturePolicy
     {
+        static CultureInfo[] empty = new CultureInfo[0];
+
+        /// <summary>
+        /// Cultures
+        /// </summary>
+        public CultureInfo[] Cultures => sourceFunc == null ? empty : (sourceFunc()?.Cultures) ?? empty;
+
+        /// <summary>
+        /// Function
+        /// </summary>
         Func<ICulturePolicy> sourceFunc;
-        public CulturePolicySourceFuncEnumerable(Func<ICulturePolicy> sourceFunc)
+
+        /// <summary>
+        /// create
+        /// </summary>
+        /// <param name="sourceFunc"></param>
+        public CulturePolicyFunc(Func<ICulturePolicy> sourceFunc)
         {
             this.sourceFunc = sourceFunc;
         }
-        public IEnumerator<CultureInfo> GetEnumerator() => sourceFunc().Cultures.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => sourceFunc().Cultures.GetEnumerator();
     }
 
-    class CulturePolicyFuncs : IEnumerable<CultureInfo>
+    /// <summary>
+    /// Culture policy that reads active policy from array function.
+    /// </summary>
+    public class CulturePolicyArrayFunc : ICulturePolicy
     {
-        Func<CultureInfo>[] funcs;
+        static CultureInfo[] empty = new CultureInfo[0];
 
-        public CulturePolicyFuncs(Func<CultureInfo>[] funcs)
+        /// <summary>
+        /// Cultures
+        /// </summary>
+        public CultureInfo[] Cultures => funcs == null ? empty : funcs() ?? empty;
+
+        Func<CultureInfo[]> funcs;
+
+        /// <summary>
+        /// Create policy
+        /// </summary>
+        /// <param name="funcs"></param>
+        public CulturePolicyArrayFunc(Func<CultureInfo[]> funcs)
         {
             this.funcs = funcs;
         }
-
-        public IEnumerator<CultureInfo> GetEnumerator()
-        {
-            foreach(var func in funcs)
-            {
-                CultureInfo ci = func();
-                if (ci != null) yield return ci;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            foreach (var func in funcs)
-            {
-                CultureInfo ci = func();
-                if (ci != null) yield return ci;
-            }
-        }
     }
 
-    class CultureFallbackEnumerable : IEnumerable<CultureInfo>
+    /// <summary>
+    /// Culture policy that reads active policy from array function.
+    /// </summary>
+    public class CulturePolicyArray : ICulturePolicy
     {
-        CultureInfo cultureInfo;
+        /// <summary>
+        /// empty
+        /// </summary>
+        static CultureInfo[] empty = new CultureInfo[0];
 
-        public CultureFallbackEnumerable(CultureInfo cultureInfo)
+        /// <summary>
+        /// Cultures
+        /// </summary>
+        public CultureInfo[] Cultures { get; internal set; }
+
+        /// <summary>
+        /// Create policy
+        /// </summary>
+        /// <param name="cultures"></param>
+        public CulturePolicyArray(CultureInfo[] cultures)
         {
-            this.cultureInfo = cultureInfo;
-        }
-
-        public IEnumerator<CultureInfo> GetEnumerator()
-        {
-            CultureInfo culture = cultureInfo;
-            while (culture != null)
-            {
-                // yield this
-                yield return culture;
-
-                // Go to next culture
-                var nextCulture = culture.Parent;
-                if (nextCulture == culture) yield break;
-                culture = nextCulture;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            CultureInfo culture = cultureInfo;
-            while (culture != null)
-            {
-                // yield this
-                yield return culture;
-
-                // Go to next culture
-                var nextCulture = culture.Parent;
-                if (nextCulture == culture) yield break;
-                culture = nextCulture;
-            }
+            this.Cultures = cultures;
         }
     }
 
-    class CultureFallbackEnumerableFunc : IEnumerable<CultureInfo>
+    /// <summary>
+    /// Culture policy that returns static array of culture info and its fallback cultures.
+    /// </summary>
+    public class CulturePolicyWithFallbacks : ICulturePolicy
+    {
+        /// <summary>
+        /// Cultures
+        /// </summary>
+        public CultureInfo[] Cultures { get; internal set; }
+
+        /// <summary>
+        /// Create with cultures info
+        /// </summary>
+        /// <param name="cultureInfo"></param>
+        public CulturePolicyWithFallbacks(CultureInfo cultureInfo)
+        {
+            Cultures = MakeArray(cultureInfo);
+        }
+
+        static CultureInfo[] MakeArray(CultureInfo culture)
+        {
+            StructList8<CultureInfo> result = new StructList8<CultureInfo>();
+            for (CultureInfo ci = culture; ci != null; ci = ci.Parent)
+                if (result.Contains(ci)) break; else result.Add(ci);
+            return result.ToArray();
+        }
+    }
+
+    /// <summary>
+    /// Culture policy that reads culture from a function, and then returns the culture plus its fallback cultures.
+    /// </summary>
+    public class CulturePolicyFuncWithFallbacks : ICulturePolicy
     {
         Func<CultureInfo> func;
+        CultureInfo[] array;
 
-        public CultureFallbackEnumerableFunc(Func<CultureInfo> func)
+        /// <summary>
+        /// Create with function
+        /// </summary>
+        /// <param name="func"></param>
+        public CulturePolicyFuncWithFallbacks(Func<CultureInfo> func)
         {
             this.func = func;
         }
 
-        public IEnumerator<CultureInfo> GetEnumerator()
-        {
-            CultureInfo culture = func == null ? null : func();
-            while (culture != null)
-            {
-                // yield this
-                yield return culture;
+        static CultureInfo[] empty = new CultureInfo[0];
 
-                // Go to next culture
-                var nextCulture = culture.Parent;
-                if (nextCulture == culture) yield break;
-                culture = nextCulture;
+        /// <summary>
+        /// Cultures
+        /// </summary>
+        public CultureInfo[] Cultures
+        {
+            get
+            {
+                if (func == null) return empty;
+                CultureInfo _ci = func();
+                if (_ci == null) return empty;
+                var _arr = array;
+                if (_arr != null && _arr[0] == _ci) return _arr ?? empty;
+                return array = _arr = MakeArray(_ci);
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        static CultureInfo[] MakeArray(CultureInfo culture)
         {
-            CultureInfo culture = func == null ? null : func();
-            while (culture != null)
-            {
-                // yield this
-                yield return culture;
-
-                // Go to next culture
-                var nextCulture = culture.Parent;
-                if (nextCulture == culture) yield break;
-                culture = nextCulture;
-            }
+            StructList8<CultureInfo> result = new StructList8<CultureInfo>();
+            for (CultureInfo ci = culture; ci != null; ci = ci.Parent)
+                if (result.Contains(ci)) break; else result.Add(ci);
+            return result.ToArray();
         }
     }
 

@@ -16,9 +16,24 @@ namespace Lexical.Localization
     /// </summary>
     public class ResourceManagerStringLocalizerAssetSource : IAssetSource
     {
+        /// <summary>
+        /// ResourceManager to use Type
+        /// </summary>
         public readonly Type type;
+
+        /// <summary>
+        /// ResourceManager to use location and basename
+        /// </summary>
         public readonly String location, basename;
+
+        /// <summary>
+        /// Resource manager to search from resource path
+        /// </summary>
         public readonly string resourcePath;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public readonly ILoggerFactory loggerFactory;
 
         /// <summary>
@@ -26,6 +41,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="resourcePath">(optional) hint, for embedded resouce path</param>
         /// <param name="type"></param>
+        /// <param name="loggerFactory"></param>
         /// <returns></returns>
         public static IAssetSource Type(string resourcePath, Type type, ILoggerFactory loggerFactory)
             => new ResourceManagerStringLocalizerAssetSource(resourcePath, null, null, type, loggerFactory);
@@ -36,6 +52,7 @@ namespace Lexical.Localization
         /// <param name="location">assembly name</param>
         /// <param name="resourcePath">(optional) hint, for embedded resource path</param>
         /// <param name="basename">.resx filename</param>
+        /// <param name="loggerFactory"></param>
         /// <returns></returns>
         public static IAssetSource Location(string location, string resourcePath, string basename, ILoggerFactory loggerFactory)
             => new ResourceManagerStringLocalizerAssetSource(resourcePath, location, basename, null, loggerFactory);
@@ -48,12 +65,21 @@ namespace Lexical.Localization
             this.resourcePath = resourcePath;
         }
 
+        /// <summary>
+        /// Add resource manager to asset.
+        /// </summary>
+        /// <param name="list"></param>
         public void Build(IList<IAsset> list)
         {
             if (type != null) list.Add(ResourceManagerStringLocalizerAsset.Create(resourcePath, type, loggerFactory));
             else list.Add(ResourceManagerStringLocalizerAsset.Create(location, resourcePath, basename, loggerFactory));
         }
 
+        /// <summary>
+        /// No action
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <returns></returns>
         public IAsset PostBuild(IAsset asset)
             => asset;
     }
@@ -63,20 +89,41 @@ namespace Lexical.Localization
     /// </summary>
     public class ResourceManagerStringLocalizerFactoryAssetSource : IAssetSource
     {
+        /// <summary>
+        /// Path to resource
+        /// </summary>
         public readonly string resourcePath;
+
+        /// <summary>
+        /// Logger factory
+        /// </summary>
         public readonly ILoggerFactory loggerFactory;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="resourcePath"></param>
+        /// <param name="loggerFactory"></param>
         public ResourceManagerStringLocalizerFactoryAssetSource(string resourcePath, ILoggerFactory loggerFactory)
         {
             this.resourcePath = resourcePath;
             this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="list"></param>
         public void Build(IList<IAsset> list)
         {
             list.Add( ResourceManagerStringLocalizerAsset.CreateFactory(resourcePath, loggerFactory) );
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <returns></returns>
         public IAsset PostBuild(IAsset asset)
             => asset;
     }
