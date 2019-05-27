@@ -6,7 +6,7 @@
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Signals that the class implements IStringLocalizer without refering to it.
+    /// Signals that the class implements Microsoft.Extensions.Localization.IStringLocalizer without hard reference to the assembly.
     /// </summary>
     public interface IStringLocalizerLine : ILine
     {

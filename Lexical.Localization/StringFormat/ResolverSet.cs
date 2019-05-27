@@ -60,7 +60,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Create string resolver 
         /// </summary>
-        /// <param name="stringResolver>
+        /// <param name="stringResolver"></param>
         /// <param name="stringFormatResolver"></param>
         /// <param name="functionsResolver"></param>
         /// <param name="formatProviderResolver"></param>

@@ -141,51 +141,41 @@ namespace Lexical.Localization.StringFormat
                     }
 
                     // Find first value that matches permutations
-                    if (permutations.Count > 1)
+                    features.CulturePolicy = null;
+                    features.Value = null;
+                    features.ValueText = null;
+                    for (int i = 0; i < permutations.Count - 1; i++)
                     {
-                        features.CulturePolicy = null;
-                        features.Value = null;
-                        features.ValueText = null;
-                        for (int i = 0; i < permutations.Count - 1; i++)
+                        // Create key with plurality cases
+                        ILine key_with_plurality = permutations[i];
+                        // Search line with the key
+                        ILine line_for_plurality_arguments = ResolveKeyToLine(key_with_plurality, ref features, ref culture);
+                        // Got no match
+                        if (line_for_plurality_arguments == null) continue;
+                        // Parse value
+                        IFormatString value_for_plurality = line_for_plurality_arguments.GetValue(Resolvers.StringFormatResolver);
+                        // Add status from parsing the value
+                        features.Status.UpFormat(value_for_plurality.Status);
+                        // Value has error
+                        if (value_for_plurality.Parts == null || value_for_plurality.Status.Failed())
                         {
-                            // Create key with plurality cases
-                            ILine key_with_plurality = permutations[i];
-                            // Search line with the key
-                            ILine line_for_plurality_arguments = ResolveKeyToLine(key_with_plurality, ref features, ref culture);
-                            // Got no match
-                            if (line_for_plurality_arguments == null) continue;
-
-                            // Parse value
-                            IFormatString value_for_plurality = line_for_plurality_arguments.GetValue(Resolvers.StringFormatResolver);
-
-                            // Add status from parsing the value
-                            features.Status.UpFormat(value_for_plurality.Status);
-
-                            // Value has error
-                            if (value_for_plurality.Parts == null || value_for_plurality.Status.Failed())
-                            {
-                                LineString str = new LineString(key, null, features.Status);
-                                features.Log(str);
-                                return str;
-                            }
-
-                            // Return with match
-                            features.Status.UpPlurality(LineStatus.PluralityOkMatched);
-
-                            // Evaluate placeholders again
-                            if (!EqualPlaceholders(value, value_for_plurality))
-                            {
-                                placeholder_values.Clear();
-                                EvaluatePlaceholderValues(value_for_plurality.Placeholders, ref features, ref placeholder_values, culture);
-                            }
-
-                            features.Status.UpFormat(value_for_plurality.Status);
-                            value = value_for_plurality;
-                            line = line_for_plurality_arguments;
-                            break;
+                            LineString str = new LineString(key, null, features.Status);
+                            features.Log(str);
+                            return str;
                         }
+                        // Return with match
+                        features.Status.UpPlurality(LineStatus.PluralityOkMatched);
+                        // Evaluate placeholders again
+                        if (!EqualPlaceholders(value, value_for_plurality)) { placeholder_values.Clear(); EvaluatePlaceholderValues(value_for_plurality.Placeholders, ref features, ref placeholder_values, culture); }
+                        // Update status codes
+                        features.Status.UpFormat(value_for_plurality.Status);
+                        // Return values
+                        value = value_for_plurality;
+                        line = line_for_plurality_arguments;
+                        break;
                     }
-                } else
+                }
+                else
                 {
                     // Plural rules were not found
                     features.Status.Up(LineStatus.PluralityErrorRulesNotFound);
