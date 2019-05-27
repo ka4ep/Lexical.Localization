@@ -114,38 +114,10 @@ namespace Lexical.Localization.StringFormat
 
             // Evaluate expressions in placeholders into strings
             StructList12<string> placeholder_values = new StructList12<string>();
-            PlaceholderExpressionEvaluator placeholder_evaluator = new PlaceholderExpressionEvaluator();
-            bool has_pluralrules = false;
-            placeholder_evaluator.Args = features.FormatArgs;
-            placeholder_evaluator.FunctionEvaluationCtx.Culture = culture;
-            if (features.FormatProviders.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = features.FormatProviders[0]; else if (features.FormatProviders.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = new FormatProviderComposition(features.FormatProviders.ToArray());
-            if (features.Functions.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = features.Functions[0]; else if (features.Functions.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = new Functions(features.Functions);
-            for (int i = 0; i < value.Placeholders.Length; i++)
-            {
-                try
-                {
-                    // Get placeholder
-                    IPlaceholder ph = value.Placeholders[i];
-                    // Mark if uses plurality feature
-                    has_pluralrules |= ph.PluralCategory != null;
-                    // Evaluate value
-                    object ph_value = placeholder_evaluator.Evaluate(ph.Expression);
-                    // Add to array
-                    placeholder_values.Add(ph_value?.ToString());
-                }
-                catch (Exception e)
-                {
-                    // Log exceptions
-                    features.Log(e);
-                    // Mark error
-                    features.Status.UpPlaceholder(LineStatus.PlaceholderErrorExpressionEvaluationException);
-                    // Put empty value
-                    placeholder_values.Add(null);
-                }
-            }
+            EvaluatePlaceholderValues(value.Placeholders, ref features, ref placeholder_values, culture);
 
             // Plural Rules
-            if (has_pluralrules)
+            if (value.HasPluralRules())
             {
                 if (features.PluralRules != null)
                 {
@@ -199,8 +171,16 @@ namespace Lexical.Localization.StringFormat
 
                             // Return with match
                             features.Status.UpPlurality(LineStatus.PluralityOkMatched);
+
+                            // Evaluate placeholders again
+                            if (!EqualPlaceholders(value, value_for_plurality))
+                            {
+                                placeholder_values.Clear();
+                                EvaluatePlaceholderValues(value_for_plurality.Placeholders, ref features, ref placeholder_values, culture);
+                            }
+
+                            features.Status.UpFormat(value_for_plurality.Status);
                             value = value_for_plurality;
-                            // ^ TODO Part values don't match after this, would need parts to be evaluated again
                             line = line_for_plurality_arguments;
                             break;
                         }
@@ -219,26 +199,35 @@ namespace Lexical.Localization.StringFormat
             string text = null;
             if (value != null && value.Parts != null)
             {
-                // Calculate length
-                int length = 0;
-                for (int i=0; i<value.Parts.Length; i++)
+                // Only one part
+                if (value.Parts.Length == 1)
                 {
-                    IFormatStringPart part = value.Parts[i];
-                    length += part.Kind switch { FormatStringPartKind.Text => part.Length, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex].Length, _=>0 };
-                }
-
-                // Copy characters
-                char[] arr = new char[length];
-                int ix = 0;
-                for (int i = 0; i < value.Parts.Length; i++)
+                    if (value.Parts[0].Kind == FormatStringPartKind.Text) text = value.Parts[0].Text;
+                    else if (value.Parts[0].Kind == FormatStringPartKind.Placeholder) text = placeholder_values[0];
+                } else
+                // Compile parts
                 {
-                    IFormatStringPart part = value.Parts[i];
-                    string str = part.Kind switch { FormatStringPartKind.Text => part.Text, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex], _ => null };
-                    if (str != null) { str.CopyTo(0, arr, ix, str.Length); ix += str.Length; }
-                }
+                    // Calculate length
+                    int length = 0;
+                    for (int i = 0; i < value.Parts.Length; i++)
+                    {
+                        IFormatStringPart part = value.Parts[i];
+                        length += part.Kind switch { FormatStringPartKind.Text => part.Length, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex].Length, _ => 0 };
+                    }
 
-                // String
-                text = new string(arr);
+                    // Copy characters
+                    char[] arr = new char[length];
+                    int ix = 0;
+                    for (int i = 0; i < value.Parts.Length; i++)
+                    {
+                        IFormatStringPart part = value.Parts[i];
+                        string str = part.Kind switch { FormatStringPartKind.Text => part.Text, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex], _ => null };
+                        if (str != null) { str.CopyTo(0, arr, ix, str.Length); ix += str.Length; }
+                    }
+
+                    // String
+                    text = new string(arr);
+                }
                 features.Status.UpFormat(LineStatus.FormatOkString);
             }
 
@@ -461,6 +450,64 @@ namespace Lexical.Localization.StringFormat
         }
 
         static CultureInfo RootCulture = CultureInfo.GetCultureInfo("");
+
+        /// <summary>
+        /// Compares whether two strings have equal placeholders.
+        /// </summary>
+        /// <param name="str1"></param>
+        /// <param name="str2"></param>
+        /// <returns></returns>
+        static bool EqualPlaceholders(IFormatString str1, IFormatString str2)
+        {
+            if (str1 == null && str2 == null) return true;
+            if (str1 == null || str2 == null) return false;
+            if (str1.Placeholders.Length != str2.Placeholders.Length) return false;
+            int c = str1.Placeholders.Length;
+            for (int i=0; i<c; i++)
+            {
+                IPlaceholder ph1 = str1.Placeholders[i], ph2 = str2.Placeholders[i];
+                if (!PlaceholderExpressionEquals.Equals(ph1.Expression, ph2.Expression)) return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Evaluate placeholders into string values.
+        /// </summary>
+        /// <param name="placeholders"></param>
+        /// <param name="features">contextual data</param>
+        /// <param name="placeholder_values">collection where strings are placed, one for each placeholder</param>
+        /// <param name="culture">the culture in which to evaluate</param>
+        void EvaluatePlaceholderValues(IPlaceholder[] placeholders, ref LineFeatures features, ref StructList12<string> placeholder_values, CultureInfo culture)
+        {
+            PlaceholderExpressionEvaluator placeholder_evaluator = new PlaceholderExpressionEvaluator();
+            placeholder_evaluator.Args = features.FormatArgs;
+            placeholder_evaluator.FunctionEvaluationCtx.Culture = culture;
+            if (features.FormatProviders.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = features.FormatProviders[0]; else if (features.FormatProviders.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = new FormatProviderComposition(features.FormatProviders.ToArray());
+            if (features.Functions.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = features.Functions[0]; else if (features.Functions.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = new Functions(features.Functions);
+            for (int i = 0; i < placeholders.Length; i++)
+            {
+                try
+                {
+                    // Get placeholder
+                    IPlaceholder ph = placeholders[i];
+                    // Evaluate value
+                    object ph_value = placeholder_evaluator.Evaluate(ph.Expression);
+                    // Add to array
+                    placeholder_values.Add(ph_value?.ToString());
+                }
+                catch (Exception e)
+                {
+                    // Log exceptions
+                    features.Log(e);
+                    // Mark error
+                    features.Status.UpPlaceholder(LineStatus.PlaceholderErrorExpressionEvaluationException);
+                    // Put empty value
+                    placeholder_values.Add(null);
+                }
+            }
+        }
+
     }
 
 }

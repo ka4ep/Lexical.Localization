@@ -140,6 +140,19 @@ namespace Lexical.Localization.StringFormat
         public static object DefaultValue(this IPlaceholder placeholder)
             => placeholder.Expression is IBinaryOpExpression bop && bop.Op == BinaryOp.Coalesce ? bop.Right is IConstantExpression ce ? ce.Value : null : null;
 
+
+        /// <summary>
+        /// Tests if placeholders have pluralrules category
+        /// </summary>
+        /// <param name="formatString"></param>
+        /// <returns>true if has one</returns>
+        public static bool HasPluralRules(this IFormatString formatString)
+        {
+            foreach (IPlaceholder ph in formatString.Placeholders)
+                if (ph.PluralCategory != null) return true;
+            return false;
+        }
+
     }
 
 }
