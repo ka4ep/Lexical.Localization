@@ -200,7 +200,7 @@ namespace Lexical.Localization.StringFormat
                             // Return with match
                             features.Status.UpPlurality(LineStatus.PluralityOkMatched);
                             value = value_for_plurality;
-                            // ^ TODO Part values don't match after this, unless parts are evaluated again
+                            // ^ TODO Part values don't match after this, would need parts to be evaluated again
                             line = line_for_plurality_arguments;
                             break;
                         }
@@ -354,7 +354,7 @@ namespace Lexical.Localization.StringFormat
                 }
 
                 // Try with cultures from the culture policy
-                IEnumerable<CultureInfo> cultures = features.CulturePolicy?.Cultures;
+                CultureInfo[] cultures = features.CulturePolicy?.Cultures;
                 if (cultures != null)
                 {
                     try { 
