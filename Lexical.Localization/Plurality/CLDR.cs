@@ -83,7 +83,7 @@ namespace Lexical.Localization.Unicode
         /// <summary>
         /// Rule set
         /// </summary>
-        public readonly string RuleSet = "Unicode.CLDR35";
+        public readonly string RuleSet = typeof(CLDR35).FullName;
 
         /// <summary>
         /// 
@@ -640,8 +640,13 @@ namespace Lexical.Localization.Unicode
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class CLDR
+    public class CLDR : PluralRulesEvaluatable, IPluralRules
     {
+        /// <summary>
+        /// Create abstract CLDR ruleset.
+        /// </summary>
+        public CLDR() : base() { ruleSource = this; }
+
         /// <summary>ast, ca, de, en, et, fi, fy, gl, ia, io, it, ji, nl, pt-PT, sc, scn, sv, sw, ur, yi</summary>
         protected string[] c_a34e8318 = new[] { "ast", "ca", "de", "en", "et", "fi", "fy", "gl", "ia", "io", "it", "ji", "nl", "pt-PT", "sc", "scn", "sv", "sw", "ur", "yi" };
         /// <summary>ar, ars</summary>

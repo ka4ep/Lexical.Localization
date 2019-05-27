@@ -156,7 +156,14 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Source of rules.
         /// </summary>
-        protected readonly object ruleSource;
+        protected object ruleSource;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected PluralRulesEvaluatable()
+        {
+        }
 
         /// <summary>
         /// Create rules

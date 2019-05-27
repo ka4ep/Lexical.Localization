@@ -146,10 +146,10 @@ namespace Lexical.Localization
             string result = null;
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                if (l is ILineParameter lineParameter && lineParameter.ParameterName == parameterName && lineParameter.ParameterValue != null) result = lineParameter.ParameterValue;
                 if (l is ILineParameterEnumerable lineParameters)
                     foreach (var parameter in lineParameters)
                         if (parameter.ParameterName == parameterName && parameter.ParameterValue != null) { result = parameter.ParameterValue; break; }
+                if (l is ILineParameter lineParameter && lineParameter.ParameterName == parameterName && lineParameter.ParameterValue != null) result = lineParameter.ParameterValue;
             }
             return result;
         }

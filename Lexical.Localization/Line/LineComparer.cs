@@ -242,8 +242,8 @@ namespace Lexical.Localization
                     // hash in canonical comparer 
                     foreach (var comparer in canonicalComparers)
                     {
+                        // Use canonical comparer (the order of canonical comparisons should not be hashed in)
                         result ^= comparer.GetHashCode(key);
-                        result *= FNVHashPrime;
                     }
                 }
             }

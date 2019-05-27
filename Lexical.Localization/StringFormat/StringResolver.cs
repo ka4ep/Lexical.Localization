@@ -162,7 +162,7 @@ namespace Lexical.Localization.StringFormat
                         // Placeholder as number
                         IPluralNumber number = ph_value == null ? DecimalNumber.Empty : new DecimalNumber.Text(ph_value?.ToString(), culture);
                         // Query possible cases for the plural rules
-                        PluralRuleInfo query = new PluralRuleInfo(null, ph.PluralCategory, culture?.Name, null, -1);
+                        PluralRuleInfo query = new PluralRuleInfo(null, ph.PluralCategory, culture?.Name, null, -1);                        
                         IPluralRule[] cases = features.PluralRules.Evaluate(query, number);
                         if (cases == null) continue;
                         permutations.AddPlaceholder(ph, cases);
@@ -200,6 +200,7 @@ namespace Lexical.Localization.StringFormat
                             // Return with match
                             features.Status.UpPlurality(LineStatus.PluralityOkMatched);
                             value = value_for_plurality;
+                            // ^ TODO Part values don't match after this, unless parts are evaluated again
                             line = line_for_plurality_arguments;
                             break;
                         }
@@ -285,7 +286,7 @@ namespace Lexical.Localization.StringFormat
                 // Tmp variable
                 ILine line = null;
 
-                // Try with the explicit culture in the key.
+                // Key has explicit culture
                 if (culture != null)
                 {
                     foreach (var stage in ResolveSequence)
@@ -337,9 +338,12 @@ namespace Lexical.Localization.StringFormat
                                 break;
 
                             case ResolveSource.Key:
-                                if (features.Value != null || features.ValueText!=null)
+                                // Key has explicit culture and value, use the value
+                                if (features.Value != null || features.ValueText != null)
                                 {
                                     if (culture == null) culture = RootCulture;
+                                    features.Status.UpResolve(LineStatus.ResolveOkFromKey);
+                                    features.Status.UpCulture(LineStatus.CultureOkMatchedCulture);
                                     return key;
                                 }
                                 break;
@@ -350,7 +354,7 @@ namespace Lexical.Localization.StringFormat
                 }
 
                 // Try with cultures from the culture policy
-                IEnumerable<CultureInfo> cultures = features.CulturePolicy.Cultures;
+                IEnumerable<CultureInfo> cultures = features.CulturePolicy?.Cultures;
                 if (cultures != null)
                 {
                     try { 
@@ -373,7 +377,7 @@ namespace Lexical.Localization.StringFormat
                                                 {
                                                     culture = c;
                                                     features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
-                                                    features.Status.UpCulture(LineStatus.CultureOkMatchedCulturePolicy);
+                                                    features.Status.UpCulture(c.Name == "" ? LineStatus.CultureWarningNoMatch : LineStatus.CultureOkMatchedCulturePolicy);
                                                     features.ScanFeatures(line);
                                                     return line;
                                                 }
@@ -396,7 +400,7 @@ namespace Lexical.Localization.StringFormat
                                                 {
                                                     culture = c;
                                                     features.Status.UpResolve(LineStatus.ResolveOkFromInline);
-                                                    features.Status.UpCulture(LineStatus.CultureOkMatchedCulturePolicy);
+                                                    features.Status.UpCulture(c.Name == "" ? LineStatus.CultureWarningNoMatch : LineStatus.CultureOkMatchedCulturePolicy);
                                                     features.ScanFeatures(line);
                                                     return line;
                                                 }
@@ -410,10 +414,22 @@ namespace Lexical.Localization.StringFormat
                                         break;
 
                                     case ResolveSource.Key:
-                                        if ((features.Value != null || features.ValueText != null) && ((c.Name == "" && features.Culture == null) || c.Equals(features.Culture)))
+                                        if (features.Value != null || features.ValueText != null)
                                         {
-                                            if (culture == null) culture = c;
-                                            return key;
+                                            if (c.Name == "" && features.Culture == null)
+                                            {
+                                                if (culture == null) culture = c;
+                                                features.Status.UpResolve(LineStatus.ResolveOkFromKey);
+                                                features.Status.UpCulture(LineStatus.CultureWarningNoMatch);
+                                                return key;
+                                            }
+                                            else if (c.Equals(features.Culture))
+                                            {
+                                                if (culture == null) culture = c;
+                                                features.Status.UpResolve(LineStatus.ResolveOkFromKey);
+                                                features.Status.UpCulture(LineStatus.CultureOkMatchedCulture);
+                                                return key;
+                                            }
                                         }
                                         break;
                                 }

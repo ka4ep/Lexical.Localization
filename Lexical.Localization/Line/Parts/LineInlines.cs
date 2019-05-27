@@ -276,7 +276,7 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = LineFormat.Parameters.Parse(subKeyText, line);
+            ILine subline = LineFormat.Parameters.Parse(subKeyText, line?.GetPreviousPart());
             if (valueText == null)
             {
                 inlines.Remove(subline);

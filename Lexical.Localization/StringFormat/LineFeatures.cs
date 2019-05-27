@@ -103,6 +103,7 @@ namespace Lexical.Localization.StringFormat
         /// <exception cref="LineException">If resolve fails.</exception>
         public void ScanFeatures(ILine line)
         {
+            bool valueSet = false;
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
                 if (l is ILineFormatArgs fa && fa != null) FormatArgs = fa.Args;
@@ -114,7 +115,7 @@ namespace Lexical.Localization.StringFormat
                 if (l is ILineLogger ll && ll.Logger != null) Loggers.AddIfNew(ll.Logger);
                 if (l is ILinePluralRules pl && pl.PluralRules != null) PluralRules = pl.PluralRules;
                 if (l is ILineStringFormat sf && sf.StringFormat != null) StringFormat = sf.StringFormat;
-                if (l is ILineValue lv && lv.Value != null) { Value = lv.Value; ValueText = null; }
+                if (!valueSet && l is ILineValue lv && lv.Value != null) { Value = lv.Value; ValueText = null; valueSet = true; }
                 if (l is ILineAsset la && la.Asset != null) Assets.AddIfNew(la.Asset);
 
                 if (l is ILineParameterEnumerable lineParameters)
@@ -149,8 +150,9 @@ namespace Lexical.Localization.StringFormat
                             if (Resolvers.StringFormatResolver.TryResolve(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
                         }
 
-                        else if (name == "Value" && !(l is ILineValue vl_ && vl_.Value != null /*to not add second time*/))
+                        else if (!valueSet && name == "Value")
                         {
+                            valueSet = true;
                             Value = null;
                             ValueText = value; // Parse later
                         }
@@ -187,8 +189,9 @@ namespace Lexical.Localization.StringFormat
                         if (Resolvers.StringFormatResolver.TryResolve(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
                     }
 
-                    else if (name == "Value" && !(l is ILineValue vl_ && vl_.Value != null /*to not add second time*/))
+                    else if (!valueSet && name == "Value")
                     {
+                        valueSet = true;
                         Value = null;
                         ValueText = value; // Parse later
                     }

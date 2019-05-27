@@ -139,7 +139,7 @@ namespace Lexical.Localization
             if (defaultHashcodeCalculated) return defaultHashcode;
 
             // Get previous key's default hashcode
-            if (this is ILineCanonicalKey == false && this is ILineNonCanonicalKey == false && this.GetPreviousPart() is ILineDefaultHashCode prevDefaultHashcode)
+            if (this is ILineParameter == false && this.GetPreviousPart() is ILineDefaultHashCode prevDefaultHashcode)
             {
                 defaultHashcode = prevDefaultHashcode.GetDefaultHashCode();
             }
@@ -190,11 +190,11 @@ namespace Lexical.Localization
                     sb.Append(':');
                     sb.Append(parameter.ParameterValue);
                 }
-                string value = this.GetParameter("Value");
-                if (value != null)
+                IFormatString value = line.GetValue(StringFormatResolver.Default);
+                if (value != null && value.Text != null)
                 {
                     sb.Append(" = \"");
-                    sb.Append(value);
+                    sb.Append(value.Text);
                     sb.Append('\"');
                 }
             }

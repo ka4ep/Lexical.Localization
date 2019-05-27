@@ -211,7 +211,7 @@ namespace Lexical.Localization
                     }
                     for (int i = tmp.Count - 1; i >= 0; i--) list.Add(tmp[i]);
                 }
-                else if (l is ILineParameter lineParameter && l.IsCanonicalKey(parameterInfos))
+                if (l is ILineParameter lineParameter && l.IsCanonicalKey(parameterInfos))
                 {
                     if (lineParameter.IsCanonicalKey(parameterInfos) && lineParameter.ParameterName != null && lineParameter.ParameterValue != null)
                         list.Add(lineParameter);
@@ -241,7 +241,7 @@ namespace Lexical.Localization
                     }
                     for (int i = tmp.Count - 1; i >= 0; i--) list.Add(tmp[i]);
                 }
-                else if (l is ILineParameter lineParameter && l.IsCanonicalKey(parameterInfos))
+                if (l is ILineParameter lineParameter && l.IsCanonicalKey(parameterInfos))
                 {
                     string name = lineParameter.ParameterName, value = lineParameter.ParameterValue;
                     if (lineParameter.IsCanonicalKey(parameterInfos) && name != null && value != null)
@@ -271,7 +271,7 @@ namespace Lexical.Localization
                         {
                             int ix = -1;
                             for (int i = 0; i < result.Count; i++) if (result[i].Key == name) { ix = i; break; }
-                            if (ix < 0)
+                            if (ix >= 0)
                             {
                                 result[ix] = new KeyValuePair<string, string>(name, value);
                                 break;
@@ -280,14 +280,14 @@ namespace Lexical.Localization
                         }
                     }
                 }
-                else if (l is ILineParameter lineParameter && l.IsCanonicalKey(parameterInfos))
+                if (l is ILineParameter lineParameter && l.IsNonCanonicalKey(parameterInfos))
                 {
                     string name = lineParameter.ParameterName, value = lineParameter.ParameterValue;
                     if (lineParameter.IsNonCanonicalKey(parameterInfos) && name != null && value != null)
                     {
                         int ix = -1;
                         for (int i = 0; i < result.Count; i++) if (result[i].Key == name) { ix = i; break; }
-                        if (ix < 0)
+                        if (ix >= 0)
                         {
                             result[ix] = new KeyValuePair<string, string>(name, value);
                             break;
