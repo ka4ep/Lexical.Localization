@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Runtime.Serialization;
 
@@ -234,7 +235,7 @@ namespace Lexical.Localization
     /// Create type key
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class StringLocalizerType<T> : StringLocalizerType, ILineType, ILine<T>
+    public class StringLocalizerType<T> : StringLocalizerType, ILineType, ILine<T>, IStringLocalizer<T>
     {
         /// <summary>
         /// Create type key

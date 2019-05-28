@@ -356,8 +356,9 @@ namespace Lexical.Localization
                                 part = appender.Create(part, args_);
                     if (l is ILineArguments arg)
                         if (arg is ILineArguments<ILineCulture, CultureInfo> == false && arg.GetParameterName() != "Culture")
-                            part = part.Append(arg);
+                            part = appender.Create(part, arg);
                 }
+                return (IStringLocalizer)part.Append<ILineCulture, CultureInfo>(newCulture);
             }
 
             // Append culture

@@ -110,14 +110,14 @@ namespace Lexical.Localization
         /// </list>
         /// </summary>
         /// <param name="reader">initial reader</param>
-        /// <param name="keyPolicy"></param>
+        /// <param name="lineFormat"></param>
         /// <param name="comparer">(optional) comparer to use</param>
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
-        public LocalizationAsset(IEnumerable reader, ILineFormat keyPolicy, IEqualityComparer<ILine> comparer = default, Func<Exception, bool> errorHandler = null) : base()
+        public LocalizationAsset(IEnumerable reader, ILineFormat lineFormat = default, IEqualityComparer<ILine> comparer = default, Func<Exception, bool> errorHandler = null) : base()
         {
             this.comparer = comparer ?? LineComparer.Default;
             this.errorHandler = errorHandler;
-            Add(reader ?? throw new ArgumentNullException(nameof(reader)), keyPolicy);
+            Add(reader ?? throw new ArgumentNullException(nameof(reader)), lineFormat);
             Load();
         }
 
@@ -268,13 +268,13 @@ namespace Lexical.Localization
         {
             ILine result = null;
             if (KeyLines.TryGetValue(key, out result)) return result;
-            foreach(var line in StringLinesByLineFormat)
+            foreach(var stringLines in StringLinesByLineFormat)
             {
                 // Convert line's key to string
-                string id = line.Key.Print(key);
+                string id = stringLines.Key.Print(key);
                 // Search with string
                 ILine value;
-                if (line.Value.TryGetValue(id, out value)) return value;
+                if (stringLines.Value.TryGetValue(id, out value)) return value;
             }
 
             return null;
@@ -411,18 +411,18 @@ namespace Lexical.Localization
         /// </list>
         /// </summary>
         /// <param name="reader"></param>
-        /// <param name="namePolicy">(optional) name policy that reads the content. Required if reader implements string reader</param>
+        /// <param name="lineFormat">(optional) line format that converts lines to strings. Required if reader implements string lines</param>
         /// <param name="errorHandler">(optional) overrides default handler.</param>
         /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="LocalizationAsset"/></param>
         /// <returns></returns>
-        public LocalizationAsset Add(IEnumerable reader, ILineFormat namePolicy = null, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
+        public LocalizationAsset Add(IEnumerable reader, ILineFormat lineFormat = null, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
         {
             // Reader argument not null
             if (reader == null) throw new ArgumentNullException(nameof(reader));
 
             // Create collection
             var _errorHandler = errorHandler ?? this.errorHandler;
-            Collection collection = new Collection(reader, namePolicy, _errorHandler, this, disposeReader);
+            Collection collection = new Collection(reader, lineFormat, _errorHandler, this, disposeReader);
             // Start observing file changes
             collection.SubscribeObserving();
             // Add to collection

@@ -22,9 +22,9 @@ namespace docs
 
             #region Snippet_2
             // Create localization source
-            var source = new Dictionary<string, string> { { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" } };
+            var lines = new List<ILine> { LineAppender.Default.Culture("en").Type("ConsoleApp1.MyController").Key("Hello").Value("Hello World!") };
             // Create asset source
-            IAssetSource assetSource = new LocalizationAsset(source, LineFormat.Parameters).ToSource();
+            IAssetSource assetSource = new LocalizationAsset(lines).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
             #endregion Snippet_2

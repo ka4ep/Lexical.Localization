@@ -162,9 +162,9 @@ namespace Lexical.Localization
             {
                 StructList12<(ILineParameter, int)> list = new StructList12<(ILineParameter, int)>();
                 key.GetParameterPartsWithOccurance<StructList12<(ILineParameter, int)>>(ref list);
-                for (int i = 0; i < list.Count; i++)
+                for (int i = list.Count-1; i >= 0; i--)
                 {
-                    if (i > 0) sb.Append(':');
+                    if (i < list.Count-1) sb.Append(':');
                     (ILineParameter parameter, int occ) = list[i];
                     if (!Qualify(parameter, occ)) continue;
                     sb.Append(EscapeLiteral(parameter.ParameterName));
@@ -177,9 +177,9 @@ namespace Lexical.Localization
             {
                 StructList12<ILineParameter> list = new StructList12<ILineParameter>();
                 key.GetParameterParts<StructList12<ILineParameter>>(ref list);
-                for (int i = 0; i < list.Count; i++)
+                for (int i = list.Count - 1; i >= 0; i--)
                 {
-                    if (i > 0) sb.Append(':');
+                    if (i < list.Count - 1) sb.Append(':');
                     var parameter = list[i];
                     sb.Append(EscapeLiteral(parameter.ParameterName));
                     sb.Append(':');

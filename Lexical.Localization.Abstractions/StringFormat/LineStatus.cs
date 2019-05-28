@@ -41,8 +41,10 @@ namespace Lexical.Localization.StringFormat
         ResolveErrorInlinesException = 0x46UL << Shift.Resolve,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResolveFailed = 0x60UL << Shift.Resolve,
+        /// <summary><see cref="IStringResolver"/> was not detected</summary>
+        ResolveFailedNoStringResolver = 0x62UL << Shift.Resolve,
         /// <summary>Could not find a line with a value</summary>
-        ResolveFailedNoValue = 0x62UL << Shift.Resolve,
+        ResolveFailedNoValue = 0x64UL << Shift.Resolve,
         /// <summary>Result has not been processed</summary>
         ResolveFailedNoResult = 0x7FUL << Shift.Resolve,
         /// <summary>Mask for severity</summary>

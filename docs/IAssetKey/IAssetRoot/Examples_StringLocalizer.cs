@@ -60,9 +60,8 @@ namespace docs
             {
                 #region Snippet_5a            
                 // Create IStringLocalizer and assign culture
-                IStringLocalizer stringLocalizer = 
-                    root.Culture("en").Type<MyController>() 
-                    as IStringLocalizer<MyController>;
+                IStringLocalizer stringLocalizer =
+                    root.Culture("en").Type<MyController>().AsStringLocalizer();
                 #endregion Snippet_5a
             }
             {
