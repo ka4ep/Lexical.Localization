@@ -8,11 +8,11 @@ Root is the place where asset (the localization provider) is tied to key (locali
 // Create localization source
 var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
 // Create asset
-IAsset asset = new LocalizationAsset(source, LineFormat.Instance);
+IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
-ILineRoot root = new LocalizationRoot(asset, culturePolicy);
+ILineRoot root = new LineRoot(asset, culturePolicy);
 ```
 
 Further keys are constructed from root. 
@@ -36,9 +36,9 @@ These keys cannot be used as providers, only as references.
 
 ```csharp
 // Create reference
-ILine key = new LocalizationKey._Section(null, "Section").Key("Key");
+ILine key = LineAppender.Default.Section("Section").Key("Key");
 // Retreieve with reference
-IFormatString str = asset.GetString(key);
+IFormatString str = asset.GetString(key).GetValue();
 ```
 
 # String Localizer
@@ -51,7 +51,7 @@ StringLocalizerRoot is constructed with an asset and a culture policy, just as L
 // Create localization source
 var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
 // Create asset
-IAsset asset = new LocalizationAsset(source, LineFormat.Instance);
+IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
@@ -122,7 +122,7 @@ Lexical.Localization introduces a global static root **LocalizationRoot.Global**
 
 ```csharp
 // Create key from global root
-ILine key = LocalizationRoot.Global.Type("MyController").Key("Hello");
+ILine key = LineRoot.Global.Type("MyController").Key("Hello");
 ```
 
 Assets are added to the global root with **LocalizationRoot.Builder**.
@@ -131,16 +131,16 @@ Assets are added to the global root with **LocalizationRoot.Builder**.
 // Create localization source
 var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
 // Create asset
-IAsset asset = new LocalizationAsset(source, LineFormat.Instance);
+IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
 // Assets are added to global static builder. It must be (re-)built after adding.
-LocalizationRoot.Builder.AddAsset(asset).Build();
+LineRoot.Builder.AddAsset(asset).Build();
 ```
 
 If assets are initialized in concurrent environment then please lock with **LocalizationRoot.Builder**.
 
 ```csharp
 // If ran in multi-threaded initialization, lock to LocalizationRoot.Builder.
-lock (LocalizationRoot.Builder) LocalizationRoot.Builder.AddAsset(asset).Build();
+lock (LineRoot.Builder) LineRoot.Builder.AddAsset(asset).Build();
 ```
 
 **StringLocalizerRoot** is the same root as *LocalizationRoot*, but has extra feature of implementing IStringLocalizer and IStringLocalizerFactory.
@@ -155,15 +155,15 @@ They share the same assets, and the root instances are interchangeable. Assets c
 
 ```csharp
 // LocalizationRoot and StringLocalizerRoot are interchangeable. They share the same asset(s).
-LocalizationRoot.Builder.AddAsset(asset).Build();
-IStringLocalizer stringLocalizer = StringLocalizerRoot.Global.Type<MyController>();
+LineRoot.Builder.AddAsset(asset).Build();
+IStringLocalizer<MyController> stringLocalizer = StringLocalizerRoot.Global.Type<MyController>().AsStringLocalizer<MyController>();
 ```
 
 **LocalizationRoot.GlobalDynamic** returns dynamic instance for the static root.
 
 ```csharp
 // Dynamic instance is acquired with LocalizationRoot.GlobalDynamic
-dynamic key_ = LocalizationRoot.GlobalDynamic.Section("Section").Key("Key");
+dynamic key_ = LineRoot.GlobalDynamic.Section("Section").Key("Key");
 ```
 
 # Links

@@ -8,7 +8,7 @@ Asset cache needs to be populated with [IAssetCacheParts](https://github.com/tag
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } };
-IAsset asset = new LocalizationAsset(source, LineFormat.Instance);
+IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
 
 // Create cache
 IAssetCache asset_cached = new AssetCache(asset);
@@ -20,7 +20,7 @@ asset_cached.Add(new AssetCachePartStrings(asset_cached.Source, asset_cached.Opt
 asset_cached.Add(new AssetCachePartCultures(asset_cached.Source, asset_cached.Options));
 
 // Assign the cached asset
-LocalizationRoot.Global.Asset = asset_cached;
+LineRoot.Global.Asset = asset_cached;
 ```
 
 <br/>
@@ -51,11 +51,20 @@ IAssetCache asset_cached = asset.CreateCache();
 /// </summary>
 public interface IAssetCache : IAssetComposition
 {
+    /// <summary>
+    /// Source asset.
+    /// </summary>
     IAsset Source { get; }
 
+    /// <summary>
+    /// Cache options.
+    /// </summary>
     AssetCacheOptions Options { get; }
 }
 
+/// <summary>
+/// Part that addresses a feature (an interface) to cache.
+/// </summary>
 public interface IAssetCachePart : IAsset
 {
 }
@@ -68,7 +77,7 @@ public interface IAssetCachePart : IAsset
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } };
-IAsset asset = new LocalizationAsset(source, LineFormat.Instance);
+IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
 
 // Create cache
 IAssetCache asset_cached = asset.CreateCache();
@@ -81,7 +90,7 @@ asset_cached.Options.SetMaxResourceSize(1024 * 1024);
 asset_cached.Options.SetMaxResourceTotalSize(1024 * 1024 * 1024);
 
 // Assign the asset with cache decoration
-LocalizationRoot.Global.Asset = asset_cached;
+LineRoot.Global.Asset = asset_cached;
 ```
 
 <br/>
@@ -106,15 +115,15 @@ Table of Asset cache option's keys
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } };
-IAsset asset = new LocalizationAsset(source, LineFormat.Instance);
+IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
 
 // Cache it
 asset = asset.CreateCache();
 
 // Issue a request which will be cached.
-ILine key = new LocalizationRoot().Key("hello");
-IFormatString str = asset.GetString( key.Culture("en") );
-Console.WriteLine(str);
+ILine key = new LineRoot().Key("hello");
+IFormatString value = asset.GetString( key.Culture("en") ).GetValue();
+Console.WriteLine(value);
 
 // Clear cache
 asset.Reload();

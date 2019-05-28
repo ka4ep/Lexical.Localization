@@ -52,8 +52,6 @@ namespace Lexical.Localization.Internal
         /// </summary>
         public static Func<Assembly, string, bool, Type> DefaultTypeResolver = (Assembly a, string typename, bool throwOnError) =>
         {
-            // Transform "Unicode.CLDR35", "Unicode.CLDR35,Lexical.Localization" -> "Lexical.Localization.Unicode.CLDR35"
-            if ((a == null || a.GetName().Name == "Lexical.Localization") && typename.StartsWith("Unicode.CLDR")) typename = "Lexical.Localization." + typename;
             // Assembly name was specified and it was resolved into Assembly, now try to load the Type from there
             if (a != null) return a.GetType(typename);
             // There was no assembly name specified in the type name

@@ -15,7 +15,7 @@ using Microsoft.Extensions.FileProviders;
 
 namespace TutorialLibrary2
 {
-    public class AssetSources : List<IAssetSource>, IAssetSources
+    public class AssetSources : List<IAssetSource>, ILibraryAssetSources
     {
         /// <summary>
         /// Localization source reference to embedded resource.
@@ -26,7 +26,7 @@ namespace TutorialLibrary2
         /// <summary>
         /// (Optional) External file localization source.
         /// </summary>
-        public readonly LocalizationFileProviderSource ExternalLocalizationSource;
+        public readonly LineFileProviderSource ExternalLocalizationSource;
 
         public AssetSources() : base()
         {
@@ -40,7 +40,7 @@ namespace TutorialLibrary2
             if (fileProvider != null)
             {
                 ExternalLocalizationSource = 
-                    LocalizationXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary2.xml", throwIfNotFound: false);
+                    LineXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary2.xml", throwIfNotFound: false);
                 Add(ExternalLocalizationSource);
             }
         }
@@ -112,7 +112,7 @@ namespace TutorialLibrary2
 
         public string Do()
         {
-            return localizer.Key("OK").Inline("Operation Successful").ToString();
+            return localizer.Key("OK").Value("Operation Successful").ToString();
         }
     }
 }
@@ -132,10 +132,10 @@ StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy
 
 // Install TutorialLibrary's IAssetSources
 Assembly library = typeof(MyClass).Assembly;
-builder.AddAssetSources(library).Build();
+builder.AddLibraryAssetSources(library).Build();
 
 // Create class
-IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>();
+IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>() as IStringLocalizer<MyClass>;
 MyClass myClass = new MyClass(classLocalizer);
 
 // Use the culture that was provided with the class library (AssetSources)
@@ -166,10 +166,10 @@ namespace TutorialProject2
 
             // Install TutorialLibrary's IAssetSources
             Assembly library = typeof(MyClass).Assembly;
-            builder.AddAssetSources(library).Build();
+            builder.AddLibraryAssetSources(library).Build();
 
             // Create class
-            IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>();
+            IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>() as IStringLocalizer<MyClass>;
             MyClass myClass = new MyClass(classLocalizer);
 
             // Use the culture that was provided with the class library (AssetSources)
@@ -190,7 +190,7 @@ The application can supply additional localization sources with **<i>IAssetBuild
 
 ```csharp
 // Install additional localization that was not available in the TutorialLibrary.
-IAssetSource assetSource = LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary2-fi.xml");
+IAssetSource assetSource = LineXmlReader.Instance.FileAssetSource("TutorialLibrary2-fi.xml");
 builder.AddSource(assetSource).Build();
 ```
 # [Full Code](#tab/full-2)
@@ -215,11 +215,11 @@ namespace TutorialProject2
 
             // Install TutorialLibrary's IAssetSources
             Assembly library = typeof(MyClass).Assembly;
-            builder.AddAssetSources(library).Build();
+            builder.AddLibraryAssetSources(library).Build();
 
             #region Snippet
             // Install additional localization that was not available in the TutorialLibrary.
-            IAssetSource assetSource = LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary2-fi.xml");
+            IAssetSource assetSource = LineXmlReader.Instance.FileAssetSource("TutorialLibrary2-fi.xml");
             builder.AddSource(assetSource).Build();
             #endregion Snippet
 
@@ -280,10 +280,10 @@ services.AddLexicalLocalization(
 
 // Install TutorialLibrary's IAssetSources.
 Assembly library = typeof(MyClass).Assembly;
-services.AddAssetSources(library);
+services.AddLibraryAssetSources(library);
 
 // Install additional localization that was not available in the TutorialLibrary.
-services.AddSingleton<IAssetSource>(LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary2-fi.xml"));
+services.AddSingleton<IAssetSource>(LineXmlReader.Instance.FileAssetSource("TutorialLibrary2-fi.xml"));
 
 // Service MyClass
 services.AddTransient<MyClass, MyClass>();
@@ -336,10 +336,10 @@ namespace TutorialProject2
 
             // Install TutorialLibrary's IAssetSources.
             Assembly library = typeof(MyClass).Assembly;
-            services.AddAssetSources(library);
+            services.AddLibraryAssetSources(library);
 
             // Install additional localization that was not available in the TutorialLibrary.
-            services.AddSingleton<IAssetSource>(LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary2-fi.xml"));
+            services.AddSingleton<IAssetSource>(LineXmlReader.Instance.FileAssetSource("TutorialLibrary2-fi.xml"));
 
             // Service MyClass
             services.AddTransient<MyClass, MyClass>();

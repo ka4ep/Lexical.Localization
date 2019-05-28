@@ -16,7 +16,7 @@ using Microsoft.Extensions.FileProviders;
 
 namespace TutorialLibrary3
 {
-    public class AssetSources : List<IAssetSource>, IAssetSources
+    public class AssetSources : List<IAssetSource>, ILibraryAssetSources
     {
         /// <summary>
         /// Localization source reference to embedded resource.
@@ -27,7 +27,7 @@ namespace TutorialLibrary3
         /// <summary>
         /// (Optional) External file localization source.
         /// </summary>
-        public readonly LocalizationFileProviderSource ExternalLocalizationSource;
+        public readonly LineFileProviderSource ExternalLocalizationSource;
 
         public AssetSources() : base()
         {
@@ -41,7 +41,7 @@ namespace TutorialLibrary3
             if (fileProvider != null)
             {
                 ExternalLocalizationSource = 
-                    LocalizationXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
+                    LineXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
                 Add(ExternalLocalizationSource);
             }
         }
@@ -80,7 +80,7 @@ namespace TutorialLibrary3
 {
     internal class Localization : StringLocalizerRoot.LinkedTo, ILineRoot
     {
-        private static readonly Localization instance = new Localization(LocalizationRoot.Global);
+        private static readonly Localization instance = new Localization(LineRoot.Global);
 
         /// <summary>
         /// Singleton instance to localization root for this class library.
@@ -90,9 +90,9 @@ namespace TutorialLibrary3
         /// <summary>
         /// Add asset sources here. Then call <see cref="IAssetBuilder.Build"/> to make effective.
         /// </summary>
-        public new static IAssetBuilder Builder => LocalizationRoot.Builder;
+        public new static IAssetBuilder Builder => LineRoot.Builder;
 
-        Localization(ILineRoot linkedTo) : base(linkedTo)
+        Localization(ILineRoot linkedTo) : base(null, linkedTo)
         {
             // Add library's internal assets here
             Builder.AddSources(new AssetSources());
@@ -108,6 +108,7 @@ namespace TutorialLibrary3
 For inversion of control, the class library can use IStringLocalizer abstractions. The non-dependency injection instance is acquired from *Localization* if *localizer* is null.
 
 ```csharp
+using Lexical.Localization;
 using Microsoft.Extensions.Localization;
 
 namespace TutorialLibrary3
@@ -118,7 +119,7 @@ namespace TutorialLibrary3
 
         public MyClass(IStringLocalizer<MyClass> localizer = default)
         {
-            this.localizer = localizer ?? Localization.Root.Type<MyClass>();
+            this.localizer = localizer ?? (Localization.Root.Type<MyClass>() as IStringLocalizer<MyClass>);
         }
 
         public string Do()
@@ -148,7 +149,7 @@ namespace TutorialLibrary3
 
         public string Do()
         {
-            return localizer.Key("OK").Inline("Operation Successful").ToString();
+            return localizer.Key("OK").Value("Operation Successful").ToString();
         }
     }
 }
@@ -171,7 +172,7 @@ IStringLocalizerFactory localizer = new StringLocalizerRoot(asset, new CulturePo
 
 // Install TutorialLibrary's IAssetSources
 Assembly library = typeof(MyClass).Assembly;
-builder.AddAssetSources(library).Build();
+builder.AddLibraryAssetSources(library).Build();
 
 // Create class with localizer
 IStringLocalizer<MyClass> classLocalizer = localizer.Create(typeof(MyClass)) as IStringLocalizer<MyClass>;
@@ -209,7 +210,7 @@ namespace TutorialProject3
 
             // Install TutorialLibrary's IAssetSources
             Assembly library = typeof(MyClass).Assembly;
-            builder.AddAssetSources(library).Build();
+            builder.AddLibraryAssetSources(library).Build();
 
             // Create class with localizer
             IStringLocalizer<MyClass> classLocalizer = localizer.Create(typeof(MyClass)) as IStringLocalizer<MyClass>;
@@ -240,7 +241,7 @@ CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
 Console.WriteLine(myClass1.Do());
 
 // Install additional localization that was not available in the TutorialLibrary.
-IAssetSource assetSource = LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml");
+IAssetSource assetSource = LineXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml");
 // Add to global localizer instance for the non-DI case
 StringLocalizerRoot.Builder.AddSource(assetSource).Build();
 // Add to local localizer instance for the DI case.
@@ -277,7 +278,7 @@ namespace TutorialProject3
             IStringLocalizerFactory localizer = new StringLocalizerRoot(asset, new CulturePolicy());
             // Install TutorialLibrary's IAssetSources
             Assembly library = typeof(MyClass).Assembly;
-            builder.AddAssetSources(library).Build();
+            builder.AddLibraryAssetSources(library).Build();
             #region Snippet
 
             // Create class without localizer
@@ -288,7 +289,7 @@ namespace TutorialProject3
             Console.WriteLine(myClass1.Do());
 
             // Install additional localization that was not available in the TutorialLibrary.
-            IAssetSource assetSource = LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml");
+            IAssetSource assetSource = LineXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml");
             // Add to global localizer instance for the non-DI case
             StringLocalizerRoot.Builder.AddSource(assetSource).Build();
             // Add to local localizer instance for the DI case.
@@ -346,10 +347,10 @@ services.AddLexicalLocalization(
 
 // Install TutorialLibrary's IAssetSources.
 Assembly library = typeof(MyClass).Assembly;
-services.AddAssetSources(library);
+services.AddLibraryAssetSources(library);
 
 // Install additional localization that was not available in the TutorialLibrary.
-services.AddSingleton<IAssetSource>(LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml"));
+services.AddSingleton<IAssetSource>(LineXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml"));
 
 // Service MyClass
 services.AddTransient<MyClass, MyClass>();
@@ -397,10 +398,10 @@ namespace TutorialProject3
 
             // Install TutorialLibrary's IAssetSources.
             Assembly library = typeof(MyClass).Assembly;
-            services.AddAssetSources(library);
+            services.AddLibraryAssetSources(library);
 
             // Install additional localization that was not available in the TutorialLibrary.
-            services.AddSingleton<IAssetSource>(LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml"));
+            services.AddSingleton<IAssetSource>(LineXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml"));
 
             // Service MyClass
             services.AddTransient<MyClass, MyClass>();

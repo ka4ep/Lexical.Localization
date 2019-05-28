@@ -19,11 +19,11 @@ IAssetBuilder builder = new AssetBuilder(assetSource_0, assetSource_1);
 IAsset asset = builder.Build();
 
 // Create string key
-ILine key = new LocalizationRoot().Key("hello").Culture("en");
-// Request string
-IFormatString str = asset.GetString( key );
+ILine key = new LineRoot().Key("hello").Culture("en");
+// Request value
+IFormatString value = asset.GetString( key ).GetValue();
 // Print result
-Console.WriteLine(str);
+Console.WriteLine(value);
 ```
 
 There are extension methods for convenience.
@@ -65,11 +65,11 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     IAsset asset = serviceScope.GetService<IAsset>();
 
     // Create string key
-    ILine key = new LocalizationRoot().Key("hello").Culture("en");
+    ILine key = new LineRoot().Key("hello").Culture("en");
     // Request string
-    IFormatString str = asset.GetString(key);
+    IFormatString value = asset.GetString(key).GetValue();
     // Print result
-    Console.WriteLine(str);
+    Console.WriteLine(value);
 }
 ```
 
@@ -97,11 +97,11 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     IAsset asset = serviceScope.GetService<IAsset>();
 
     // Create string key
-    ILine key = new LocalizationRoot().Key("hello").Culture("en");
+    ILine key = new LineRoot().Key("hello").Culture("en");
     // Request string
-    IFormatString str = asset.GetString(key);
+    IFormatString value = asset.GetString(key).GetValue();
     // Print result
-    Console.WriteLine(str);
+    Console.WriteLine(value);
 }
 ```
 

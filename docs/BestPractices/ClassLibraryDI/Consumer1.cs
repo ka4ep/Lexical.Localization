@@ -22,7 +22,7 @@ namespace TutorialProject2
             builder.AddLibraryAssetSources(library).Build();
 
             // Create class
-            IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>() as IStringLocalizer<MyClass>;
+            IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>().AsStringLocalizer<MyClass>();
             MyClass myClass = new MyClass(classLocalizer);
 
             // Use the culture that was provided with the class library (AssetSources)

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Lexical.Localization.Exp;
 using Lexical.Localization.Plurality;
 
-namespace Lexical.Localization.Unicode
+namespace Lexical.Localization
 {
     /// <summary>
     /// Unicode CLDR v35 Plurality Rules generic expressions.
@@ -83,7 +83,7 @@ namespace Lexical.Localization.Unicode
         /// <summary>
         /// Rule set
         /// </summary>
-        public readonly string RuleSet = typeof(CLDR35).FullName;
+        public readonly string RuleSet = "Lexical.Localization.CLDR35";
 
         /// <summary>
         /// 

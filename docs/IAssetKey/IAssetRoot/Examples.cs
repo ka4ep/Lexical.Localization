@@ -75,7 +75,7 @@ namespace docs
                 #region Snippet_2e
                 // LocalizationRoot and StringLocalizerRoot are interchangeable. They share the same asset(s).
                 LineRoot.Builder.AddAsset(asset).Build();
-                IStringLocalizer stringLocalizer = StringLocalizerRoot.Global.Type<MyController>().AsStringLocalizer();
+                IStringLocalizer<MyController> stringLocalizer = StringLocalizerRoot.Global.Type<MyController>().AsStringLocalizer<MyController>();
                 #endregion Snippet_2e
 
                 #region Snippet_2f

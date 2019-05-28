@@ -141,7 +141,7 @@ namespace Lexical.Localization.Plurality
         /// 
         /// <paramref name="rules"/> is either:
         /// <list type="bullet">
-        ///     <item>Assign assembly qualified type name of <see cref="IPluralRules"/>, e.g. "Unicode.CLDR35"</item>
+        ///     <item>Assign assembly qualified type name of <see cref="IPluralRules"/>, e.g. "Lexical.Localization.CLDR35"</item>
         ///     <item>Plural rules expression (starts with '['), e.g. "[Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true"</item>
         /// </list>
         /// 
@@ -153,8 +153,6 @@ namespace Lexical.Localization.Plurality
 
         /// <summary>
         /// Resolve rules class into <see cref="IPluralRulesEnumerable"/>. Does not use cache. Please use <see cref="GetRules(string)"/> instead as it caches result.
-        /// 
-        /// Converts "Unicode.CLDR*" -> "Lexical.Localization.UnicodeCLDR*,Lexical.Localization"
         /// </summary>
         /// <param name="typeName"></param>
         /// <returns>rules enumerable</returns>

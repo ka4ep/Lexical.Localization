@@ -18,6 +18,14 @@ namespace Lexical.Localization
             => line is IStringLocalizer sl ? sl : new StringLocalizerPart(line.FindAppender(), line);
 
         /// <summary>
+        /// Cast to string localizer.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        public static IStringLocalizer<T> AsStringLocalizer<T>(this ILine line)
+            => line is IStringLocalizer<T> sl ? sl : new StringLocalizerPart<T>(line.FindAppender(), line);
+
+        /// <summary>
         /// Cast to string localizer factory.
         /// </summary>
         /// <param name="line"></param>

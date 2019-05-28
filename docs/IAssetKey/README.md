@@ -9,14 +9,14 @@ The constructed result is, however, a linked list from tail to root,
 as each link has a directed reference only towards its parent.
 
 ```csharp
-ILine key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
+ILine key = new LineRoot().Section("Section").Section("Section").Key("Key");
 ```
 ![linked list](linkedlist.svg)
 <p/>
 Nodes can also be constructed to span a tree structure.
 
 ```csharp
-ILineRoot root = new LocalizationRoot();
+ILineRoot root = new LineRoot();
 ILine section1 = root.Section("Section1");
 ILine section2 = section1.Section("Section2");
 ILine section1_1 = section1.Section("Section1.1");
@@ -32,10 +32,10 @@ Key can be used as a *reference*.
 
 ```csharp
 // Create localization reference
-ILine key = new LocalizationRoot().Section("Section").Section("Section").Key("Key");
+ILine key = new LineRoot().Section("Section").Section("Section").Key("Key");
 
 // Retrieve string with a reference
-IFormatString str = asset.GetString(key.Culture("en"));
+IFormatString value = asset.GetString(key.Culture("en")).GetValue();
 
 // Retrieve binary resource with a reference
 byte[] data = asset.GetResource(key.Culture("en"));
@@ -53,7 +53,7 @@ IAsset asset = new LocalizationAsset(src, LineParameterPrinter.Colon_Colon_Colon
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
-ILineRoot root = new LocalizationRoot(asset, culturePolicy);
+ILineRoot root = new LineRoot(asset, culturePolicy);
 // Set Current Culture
 CultureInfo.CurrentCulture = new CultureInfo("en");
 // Create key specific provider
@@ -70,10 +70,10 @@ Canonical parts typically add to the identity of the key.
 
 ```csharp
 // Add canonical parts
-ILine key = new LocalizationRoot().Section("Section1").Section("Section2").Key("Key");
+ILine key = new LineRoot().Section("Section1").Section("Section2").Key("Key");
 
 // "Section1:Section2:Key"
-string id = LineParameterPrinter.Colon_Colon_Colon.BuildName(key);
+string id = LineParameterPrinter.Colon_Colon_Colon.Print(key);
 ```
 
 For parts that are *non-canonical* the position doesn't matter.
@@ -81,13 +81,13 @@ Non-canonical parts are typically hints, such as **.SetCulture(*string*)**.
 
 ```csharp
 // Add canonical parts, and non-canonical culture
-ILine key1 = new LocalizationRoot().Section("Section").Key("Key").Culture("en");
-ILine key2 = new LocalizationRoot().Culture("en").Section("Section").Key("Key");
+ILine key1 = new LineRoot().Section("Section").Key("Key").Culture("en");
+ILine key2 = new LineRoot().Culture("en").Section("Section").Key("Key");
 
 // "en:Section1:Section2:Key"
-string id1 = LineParameterPrinter.Colon_Colon_Colon.BuildName(key1);
+string id1 = LineParameterPrinter.Colon_Colon_Colon.Print(key1);
 // "en:Section1:Section2:Key"
-string id2 = LineParameterPrinter.Colon_Colon_Colon.BuildName(key2);
+string id2 = LineParameterPrinter.Colon_Colon_Colon.Print(key2);
 ```
 
 ## Key Parts
@@ -110,7 +110,7 @@ Type section is a key that narrows down the scope of localization to a specific 
 
 ```csharp
 // Assign key to localization of type "MyController"
-ILine key = new LocalizationRoot().Type(typeof(MyController));
+ILine key = new LineRoot().Type(typeof(MyController));
 // Search "MyController:Success"
 string str = key.Key("Success").ToString();
 ```
@@ -119,7 +119,7 @@ There is another way with the generic method **.Type&lt;T&gt;()**.
 
 ```csharp
 // Assign key to localization of type "MyController"
-ILine<MyController> key = new LocalizationRoot().Type<MyController>();
+ILine<MyController> key = new LineRoot().Type<MyController>();
 ```
 
 ## Culture Key
@@ -127,7 +127,7 @@ Key can be forced to ignore culture policy, possibly due to lack of policy assig
 
 ```csharp
 // Create root that matches only to english strings
-ILine root_en = new LocalizationRoot().Culture("en");
+ILine root_en = new LineRoot().Culture("en");
 // Create key
 ILine key = root_en.Section("Section").Key("Key");
 ```
@@ -155,14 +155,14 @@ The parametrized key can be resolved to formatted string with **.ToString()** or
 
 ```csharp
 // Resolve to formulated string to "Error (Code=0xFEEDF00D)"
-string str = key_formulated.ResolveFormulatedString();
+LineString str = key_formulated.ResolveString();
 ```
 
 But, if needed an unformulated string can be resolved with **.ResolveString()**.
 
 ```csharp
 // Resolve to localized string "Error (Code=0x{0:X8})", but does not append arguments
-string str = key_formulated.ResolveString();
+IFormatString str = key_formulated.ResolveFormatString();
 ```
 
 ## Inlining
@@ -175,9 +175,9 @@ Default language strings can be written right into the code with
 
 ```csharp
 // Create root
-ILineRoot root = new LocalizationRoot();
+ILineRoot root = new LineRoot();
 // Create key and add default value
-ILine key = root.Section("Section").Key("Success").Inline("Success");
+ILine key = root.Section("Section").Key("Success").Value("Success");
 // Resolve string from inlined key "Success"
 string str = key.ToString();
 ```
@@ -187,7 +187,7 @@ Inlining can be provided for specific cultures with <b>.Inline(<i>string</i>, <i
 ```csharp
 // Create key and add default strings
 ILine key = root.Section("Section").Key("Success")
-    .Inline("Success")                                 // Add inlining to the root culture ""
+    .Value("Success")                                  // Add inlining to the root culture ""
     .Inline("Culture:en", "Success")                   // Add inlining to culture "en"
     .Inline("Culture:fi", "Onnistui")                  // Add inlining to culture "fi"
     .Inline("Culture:sv", "Det funkar");               // Add inlining to culture "sv"
@@ -200,7 +200,7 @@ There are shorter extension methods for every language in namespace **Lexical.Lo
 ```csharp
 // Create key and add default strings
 ILine key = root.Section("Section").Key("Success")
-    .Inline("Success")                                 // Add inlining to the root culture ""
+    .Value("Success")                                  // Add inlining to the root culture ""
     .en("Success")                                     // Add inlining to culture "en"
     .fi("Onnistui")                                    // Add inlining to culture "fi"
     .sv("Det funkar");                                 // Add inlining to culture "sv"
@@ -211,8 +211,8 @@ Caveat however, that inlining to specific cultures with <b>.Inline(<i>string</i>
 ```csharp
 class MyController__
 {
-    static ILine localization = LocalizationRoot.Global.Type<MyControllerB>();
-    static ILine Success = localization.Key("Success").Inline("Success").sv("Det funkar").fi("Onnistui");
+    static ILine localization = LineRoot.Global.Type<MyControllerB>();
+    static ILine Success = localization.Key("Success").Value("Success").sv("Det funkar").fi("Onnistui");
 
     public string Do()
     {
@@ -226,7 +226,7 @@ Asset keys from LocalizationRoot and StringLocalizationRoot are dynamically usab
 
 ```csharp
 // Dynamic assignment
-dynamic root = new LocalizationRoot();
+dynamic root = new LineRoot();
 // Provides to string on typecast
 string str = root.Section("Section").Key("Hello");
 ```
@@ -263,7 +263,7 @@ If class is designed to use static instance and without dependency injection, lo
 ```csharp
 class MyControllerB
 {
-    static ILine localization = LocalizationRoot.Global.Type<MyControllerB>();
+    static ILine localization = LineRoot.Global.Type<MyControllerB>();
 
     public void Do()
     {

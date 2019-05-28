@@ -9,7 +9,7 @@ namespace TutorialLibrary3
 
         public MyClass(IStringLocalizer<MyClass> localizer = default)
         {
-            this.localizer = localizer ?? (Localization.Root.Type<MyClass>() as IStringLocalizer<MyClass>);
+            this.localizer = localizer ?? (Localization.Root.Type<MyClass>().AsStringLocalizer<MyClass>());
         }
 
         public string Do()

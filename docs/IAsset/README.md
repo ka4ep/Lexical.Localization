@@ -17,9 +17,9 @@ Asset interfaces are not called directly but used instead by calling extension m
 
 ```csharp
 // Create key
-ILine key = new LocalizationRoot().Key("hello").Culture("en");
+ILine key = new LineRoot().Key("hello").Culture("en");
 // Resolve string - Call to LocalizationAssetExtensions.GetString()
-IFormatString str = asset.GetString(key);
+IFormatString str = asset.GetString(key).GetValue();
 ```
 
 <details>

@@ -14,7 +14,7 @@ using Lexical.Localization;
 
 namespace TutorialLibrary1
 {
-    public class AssetSources : List<IAssetSource>, IAssetSources
+    public class AssetSources : List<IAssetSource>, ILibraryAssetSources
     {
         /// <summary>
         /// Localization source reference to embedded resource.
@@ -59,7 +59,7 @@ using Lexical.Localization;
 
 namespace TutorialLibrary1
 {
-    public class AssetSourcesB : List<IAssetSource>, IAssetSources
+    public class AssetSourcesB : List<IAssetSource>, ILibraryAssetSources
     {
         /// <summary>
         /// Localization source reference to embedded resource.
@@ -70,7 +70,7 @@ namespace TutorialLibrary1
         /// <summary>
         /// (Optional) External file localization source.
         /// </summary>
-        public readonly LocalizationFileSource ExternalLocalizationSource = 
+        public readonly LineFileSource ExternalLocalizationSource = 
             LineReaderMap.Instance.FileAssetSource("Localization.xml", throwIfNotFound: false);
 
         public AssetSourcesB() : base()
@@ -94,9 +94,9 @@ using Lexical.Localization;
 
 namespace TutorialLibrary1
 {
-    internal class Localization : LocalizationRoot.LinkedTo
+    internal class Localization : LineRoot.LinkedTo
     {
-        private static readonly Localization instance = new Localization(LocalizationRoot.Global);
+        private static readonly Localization instance = new Localization(LineRoot.Global);
 
         /// <summary>
         /// Singleton instance to localization root for this class library.
@@ -106,9 +106,9 @@ namespace TutorialLibrary1
         /// <summary>
         /// Add asset sources here. Then call <see cref="IAssetBuilder.Build"/> to make effective.
         /// </summary>
-        public new static IAssetBuilder Builder => LocalizationRoot.Builder;
+        public new static IAssetBuilder Builder => LineRoot.Builder;
 
-        Localization(ILineRoot linkedTo) : base(linkedTo, null, null, null, null, null)
+        Localization(ILineRoot linkedTo) : base(null, linkedTo, null, null, null, null, null)
         {
             // Add library's internal assets here
             Builder.AddSources(new AssetSources());
@@ -134,7 +134,7 @@ namespace TutorialLibrary1
 
         public string Do()
         {
-            return localizer.Key("OK").Inline("Operation Successful").ToString();
+            return localizer.Key("OK").Value("Operation Successful").ToString();
         }
     }
 }
@@ -191,8 +191,8 @@ Application that deploys the class library can supply additional localizations b
 
 ```csharp
 // Install additional localization that was not available in the TutorialLibrary
-IAssetSource source = LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
-LocalizationRoot.Builder.AddSource(source).Build();
+IAssetSource source = LineXmlReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
+LineRoot.Builder.AddSource(source).Build();
 
 MyClass myClass = new MyClass();
 
@@ -220,8 +220,8 @@ namespace TutorialProject1
         {
             #region Snippet
             // Install additional localization that was not available in the TutorialLibrary
-            IAssetSource source = LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
-            LocalizationRoot.Builder.AddSource(source).Build();
+            IAssetSource source = LineXmlReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
+            LineRoot.Builder.AddSource(source).Build();
 
             MyClass myClass = new MyClass();
 
