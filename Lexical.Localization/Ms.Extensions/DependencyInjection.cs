@@ -25,7 +25,7 @@ namespace Lexical.Localization
         ///    <see cref="ILine{T}"/>
         ///    <see cref="IAssetBuilder"/>
         ///    
-        /// If <paramref name="addCulturePolicyService"/> is true a <see cref="ICultureResolver"/> is added,
+        /// If <paramref name="addCulturePolicyService"/> is true a <see cref="ICulturePolicy"/> is added,
         /// otherwise <see cref="ICulturePolicy"/> must be added to the service collection.
         /// 
         /// Further services are needed:
@@ -60,6 +60,7 @@ namespace Lexical.Localization
             bool addLogger = true
             )
         {
+            // ILineRoot
             if (useGlobalInstance)
             {
                 // Use StringLocalizerRoot as ILineRoot
@@ -78,7 +79,10 @@ namespace Lexical.Localization
                 serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineRoot, StringLocalizerRoot>());
             }
 
-            // ILineAssetAssigned
+            // ILineFactory
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineFactory>(StringLocalizerAppender.Default));
+
+            // ILineAsset
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineAsset>(s => s.GetService<ILineRoot>() as ILineAsset));
 
             // ICulturePolicy

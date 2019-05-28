@@ -253,6 +253,15 @@ namespace Lexical.Localization
         public StringLocalizerType(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
+
+        /// <summary>
+        /// Constructor for Dependency injection
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="prevKey"></param>
+        public StringLocalizerType(ILineFactory appender, ILineRoot prevKey) : base(appender, prevKey, typeof(T))
+        {
+        }
     }
 
     public partial class StringLocalizerAppender : ILineFactory<ILineType, Type>

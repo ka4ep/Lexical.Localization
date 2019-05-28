@@ -17,7 +17,7 @@ namespace docs
                 addStringLocalizerService: false,
                 addCulturePolicyService: true,
                 useGlobalInstance: false,
-                addCache: true);
+                addCache: false);
             #endregion Snippet_1
 
             #region Snippet_2
