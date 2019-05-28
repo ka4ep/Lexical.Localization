@@ -74,5 +74,33 @@ namespace Lexical.Localization.StringFormat
             this.PluralRulesResolver = pluralRulesResolver;
         }
 
+        /// <summary>
+        /// Resolves parameters and keys into instances.
+        /// 
+        /// <list type="bullet">
+        ///     <item>Parameter "Culture" is resolved to <see cref="ILineCulture"/></item>
+        ///     <item>Parameter "Value" is resolved to <see cref="ILineValue"/></item>
+        ///     <item>Parameter "StringFormat" is resolved to <see cref="ILineStringFormat"/></item>
+        ///     <item>Parameter "Functions" is resolved to <see cref="ILineFunctions"/></item>
+        ///     <item>Parameter "PluralRules" is resolved to <see cref="ILinePluralRules"/></item>
+        ///     <item>Parameter "FormatProvider" is resolved to <see cref="ILineFormatProvider"/></item>
+        /// </list>
+        /// 
+        /// Parts that don't need resolving may be need to be cloned. 
+        /// If the line appender of <paramref name="line"/> fails cloning, then the operation 
+        /// fails and returns false.
+        /// 
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="modifiedLine"></param>
+        /// <returns>true if operation was successful, <paramref name="modifiedLine"/> contains new line. If operation failed, <paramref name="modifiedLine"/> contains the reference to <paramref name="line"/>.</returns>
+        public bool TryResolveParameters(ILine line, out ILine modifiedLine)
+        {
+            // TODO IMPLEMENT
+            modifiedLine = line;
+            return false;
+        }
+
+
     }
 }

@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// <summary>
         /// <see cref="ILine"/> comparer for <see cref="keyLines"/>.
         /// </summary>
-        IEqualityComparer<ILine> comparer;
+        protected IEqualityComparer<ILine> comparer;
 
         /// <summary>
         /// Handler that processes file load errors, and file monitoring errors.
@@ -83,22 +83,40 @@ namespace Lexical.Localization
         /// If <see cref="errorHandler"/> returns false, or there is no handler, then exception is thrown and asset loading fails.
         /// If <see cref="errorHandler"/> returns true, then exception is caught and empty list is used.
         /// </summary>
-        Func<Exception, bool> errorHandler;
+        protected Func<Exception, bool> errorHandler;
+
+        /// <summary>
+        /// Set of resolvers that are used for resolving string based parameter into instances.
+        /// </summary>
+        internal protected ResolverSet resolvers;
+
+        /// <summary>
+        /// Create localization asset with default properties.
+        /// </summary>
+        public LocalizationAsset() : base()
+        {
+            this.resolvers = ResolverSet.Instance;
+            this.comparer = LineComparer.Default;
+            this.errorHandler = null;
+            Load();
+        }
 
         /// <summary>
         /// Create language string resolver that uses a dictionary as a source.
         /// </summary>
+        /// <param name="resolvers">(optional) resolvers, that are used for converting parameters and keys into resolved line parts</param>
         /// <param name="comparer">(optional) comparer to use</param>
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
-        public LocalizationAsset(IEqualityComparer<ILine> comparer = default, Func<Exception, bool> errorHandler = null) : base()
+        public LocalizationAsset(IEqualityComparer<ILine> comparer, Func<Exception, bool> errorHandler = null, ResolverSet resolvers = null) : base()
         {
+            this.resolvers = resolvers;
             this.comparer = comparer ?? LineComparer.Default;
             this.errorHandler = errorHandler;
             Load();
         }
 
         /// <summary>
-        /// Create language string resolver that uses a dictionary as a source.
+        /// Convenience constructor that adds one lines source <paramref name="reader"/>. 
         /// 
         /// <paramref name="reader"/> must implement one of:
         /// <list type="bullet">
@@ -115,6 +133,7 @@ namespace Lexical.Localization
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
         public LocalizationAsset(IEnumerable reader, ILineFormat lineFormat = default, IEqualityComparer<ILine> comparer = default, Func<Exception, bool> errorHandler = null) : base()
         {
+            this.resolvers = ResolverSet.Instance;
             this.comparer = comparer ?? LineComparer.Default;
             this.errorHandler = errorHandler;
             Add(reader ?? throw new ArgumentNullException(nameof(reader)), lineFormat);
@@ -122,7 +141,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Create language string resolver that uses a dictionary as a source.
+        /// Convenience constructor that adds one lines source <paramref name="reader"/>. 
         /// 
         /// <paramref name="reader"/> must implement one of:
         /// <list type="bullet">
@@ -800,6 +819,17 @@ namespace Lexical.Localization
                     else throw new ArgumentException($"Cannot read {reader.GetType().FullName}: {reader}");
 
                     lineCount = lines.Count;
+
+                    // Resolve parameters into more optimized format
+                    if (parent.resolvers != null)
+                    {
+                        for (int i = 0; i < lineCount; i++)
+                        {
+                            ILine l;
+                            if (parent.resolvers.TryResolveParameters(lines[i], out l)) lines[i] = l;
+                        }
+                    }
+
                     return keyLines = lines.ToArray();
                 }
                 catch (Exception e) when (errorHandler != null && errorHandler(e))

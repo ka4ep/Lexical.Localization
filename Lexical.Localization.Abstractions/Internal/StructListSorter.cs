@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Lexical.Localization.Internal
 {
     /// <summary>
-    /// Inplace sorter intended specifically for struct based lists, but works on any <see cref="IList{T}"/>.
+    /// Inplace sorter that is intended specifically for struct based lists, but works on any <see cref="IList{T}"/>.
     /// </summary>
     /// <typeparam name="List"></typeparam>
     /// <typeparam name="Element"></typeparam>

@@ -16,7 +16,7 @@ namespace docs
                 addStringLocalizerService: false,
                 addCulturePolicyService: true,
                 useGlobalInstance: false,
-                addCache: true);
+                addCache: false);
 
             // Create localization source
             var lines = new List<ILine> { LineAppender.Default.Culture("en").Type("ConsoleApp1.MyController").Key("Hello").Value("Hello World!") };
