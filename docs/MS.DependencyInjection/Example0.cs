@@ -40,7 +40,7 @@ namespace docs
                 ILineRoot root = serviceProvider.GetService<ILineRoot>();
 
                 // Service can provide type key
-                ILine typeKey = serviceProvider.GetService<ILineKey<ConsoleApp1.MyController>>();
+                ILine typeKey = serviceProvider.GetService<ILine<ConsoleApp1.MyController>>();
 
                 // Get "Hello World!"
                 string str = typeKey.Key("Hello").Culture("en").ToString();

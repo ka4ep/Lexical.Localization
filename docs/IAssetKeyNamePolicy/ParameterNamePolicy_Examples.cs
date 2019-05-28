@@ -63,7 +63,7 @@ namespace docs
             {
                 #region Snippet_6
                 ILine key = LineRoot.Global.Type("MyController").Key("Success").Culture("en");
-                string str = LineFormat.Parameters.PrintKey(key);
+                string str = LineFormat.Parameters.Print(key);
                 #endregion Snippet_6
             }
 

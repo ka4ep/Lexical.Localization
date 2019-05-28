@@ -16,7 +16,9 @@ namespace docs
                 #region Snippet_0a
                 // Create IStringLocalizerFactory
                 LoggerFactory loggerFactory = new LoggerFactory();
+#pragma warning disable CS0618 // Type or member is obsolete
                 loggerFactory.AddConsole(LogLevel.Trace);
+#pragma warning restore CS0618 // Type or member is obsolete
                 IOptions<LocalizationOptions> options = Options.Create(new LocalizationOptions { ResourcesPath = "" });
                 IStringLocalizerFactory stringLocalizerFactory = new ResourceManagerStringLocalizerFactory(options, loggerFactory);
 
@@ -29,7 +31,7 @@ namespace docs
                 // There are .resx files in "Resources/ConsoleApp1.MyController" with keys "Success" and "Error"
                 ILine key = root
                     .Assembly(Assembly.GetExecutingAssembly())
-                    .Resource("ConsoleApp1.MyController")
+                    .BaseName("ConsoleApp1.MyController")
                     //.Type(typeof(ConsoleApp1.MyController1))
                     .Key("Success")
                     .Culture("sv");

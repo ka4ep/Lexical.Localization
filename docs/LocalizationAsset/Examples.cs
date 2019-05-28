@@ -32,10 +32,10 @@ namespace docs
             {
                 #region Snippet_1b
                 // Create localization source
-                var source = new Dictionary<ILine, string> {
-                    { LineFormat.Parameters.Parse("Type:MyController:Key:hello", Key.Root),            "Hello World!" },
-                    { LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello", Key.Root), "Hello World!" },
-                    { LineFormat.Parameters.Parse("Culture:de:Type:MyController:Key:hello", Key.Root), "Hallo Welt!"  }
+                var source = new List<ILine> {
+                    { LineFormat.Parameters.Parse("Type:MyController:Key:hello").Value("Hello World!") },
+                    { LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello").Value("Hello World!") },
+                    { LineFormat.Parameters.Parse("Culture:de:Type:MyController:Key:hello").Value("Hallo Welt!")  }
                 };
                 // Create asset with string source
                 IAsset asset = new LocalizationAsset().Add(source).Load();
@@ -79,14 +79,14 @@ namespace docs
                 IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
                 #region Snippet_3a
                 // Extract all keys
-                foreach (ILine _key in asset.GetLines(null).Select(line=>line.Key))
+                foreach (ILine _key in asset.GetLines(null))
                     Console.WriteLine(_key);
                 #endregion Snippet_3a
 
                 #region Snippet_3b
                 // Keys can be filtered
                 ILine filterKey = LineRoot.Global.Culture("de");
-                foreach (ILine _key in asset.GetLines(filterKey).Select(line => line.Key))
+                foreach (ILine _key in asset.GetLines(filterKey))
                     Console.WriteLine(_key);
                 #endregion Snippet_3b
 

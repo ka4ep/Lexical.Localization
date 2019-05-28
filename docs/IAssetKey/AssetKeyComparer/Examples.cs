@@ -1,8 +1,5 @@
 ﻿using Lexical.Localization;
-using Lexical.Localization.Utils;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 
 namespace docs
 {
@@ -24,7 +21,7 @@ namespace docs
             {
                 #region Snippet_2
                 ILine key1 = new LineRoot().Type("MyClass").Key("OK");
-                ILine key2 = Key.Create("Type", "MyClass").Append("Key", "OK");
+                ILine key2 = LineAppender.Default.Type("MyClass").Key("OK");
                 ILine key3 = LineRoot.Global.Type("MyClass").Key("OK");
                 ILine key4 = StringLocalizerRoot.Global.Type("MyClass").Key("OK");
 

@@ -295,7 +295,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public IEnumerable<ILineArguments> Parse(string str)
+        public IEnumerable<ILineArguments> ParseArgs(string str)
         {
             MatchCollection matches = ParsePattern.Matches(str);
             if (HasParameterRules)
@@ -390,7 +390,7 @@ namespace Lexical.Localization
         /// <param name="str"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public bool TryParse(string str, out IEnumerable<ILineArguments> args)
+        public bool TryParseArgs(string str, out IEnumerable<ILineArguments> args)
         {
             MatchCollection matches = ParsePattern.Matches(str);
             if (HasParameterRules)

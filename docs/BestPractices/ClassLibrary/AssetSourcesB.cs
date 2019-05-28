@@ -3,13 +3,13 @@ using Lexical.Localization;
 
 namespace TutorialLibrary1
 {
-    public class LibraryAssetSourcesB : List<IAssetSource>, ILibraryAssetSources
+    public class AssetSourcesB : List<IAssetSource>, ILibraryAssetSources
     {
         /// <summary>
         /// Localization source reference to embedded resource.
         /// </summary>
         public readonly LineEmbeddedSource LocalizationSource = 
-            LineReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
+            LineReaderMap.Instance.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
 
         /// <summary>
         /// (Optional) External file localization source.
@@ -17,7 +17,7 @@ namespace TutorialLibrary1
         public readonly LineFileSource ExternalLocalizationSource = 
             LineReaderMap.Instance.FileAssetSource("Localization.xml", throwIfNotFound: false);
 
-        public LibraryAssetSourcesB() : base()
+        public AssetSourcesB() : base()
         {
             // Add internal localization source
             Add(LocalizationSource);

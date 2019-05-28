@@ -41,6 +41,24 @@ namespace Lexical.Localization
             => part.Append<ILineHint, string, string>("Value", value);
 
         /// <summary>
+        /// Create <see cref="ILineValue"/> part.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILineValue Value(this ILineFactory lineFactory, IFormatString value)
+            => lineFactory.Create<ILineValue, IFormatString>(null, value);
+
+        /// <summary>
+        /// Create "Value" parameter.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILine Value(this ILineFactory lineFactory, string value)
+            => lineFactory.Create<ILineHint, string, string>(null, "Value", value);
+
+        /// <summary>
         /// Get the <see cref="IFormatString"/> of a <see cref="ILineValue"/>.
         /// 
         /// If parameter "Value" exists and <paramref name="resolver"/> is provided then value is resolved using

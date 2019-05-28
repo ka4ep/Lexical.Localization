@@ -100,6 +100,17 @@ namespace Lexical.Localization
                throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
 
         /// <summary>
+        /// Set to acquire cultures from an array of delegates.
+        /// </summary>
+        /// <param name="culturePolicy"></param>
+        /// <param name="func"></param>
+        /// <returns>this</returns>
+        public static ICulturePolicyAssignable SetFunc(this ICulturePolicy culturePolicy, Func<CultureInfo> func)
+            => culturePolicy is ICulturePolicyAssignable assignable ?
+               assignable.SetSource(new CulturePolicyFuncWithFallbacks(func)) :
+               throw new ArgumentException($"Is not {nameof(ICulturePolicyAssignable)}", nameof(culturePolicy));
+
+        /// <summary>
         /// Function that returns <code>CultureInfo.CurrentCulture</code>.
         /// </summary>
         public static Func<CultureInfo> FuncCurrentCulture = () => CultureInfo.CurrentCulture;

@@ -1,4 +1,5 @@
 ﻿using Lexical.Localization;
+using Lexical.Localization.StringFormat;
 using System;
 using System.Collections.Generic;
 
@@ -26,9 +27,9 @@ namespace docs
             // Create string key
             ILine key = new LineRoot().Key("hello").Culture("en");
             // Request string
-            IFormatString str = asset.GetString(key);
+            IFormatString value = asset.GetString(key).GetValue();
             // Print result
-            Console.WriteLine(str);
+            Console.WriteLine(value);
         }
     }
 

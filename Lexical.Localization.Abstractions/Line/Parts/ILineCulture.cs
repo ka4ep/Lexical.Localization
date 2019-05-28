@@ -26,22 +26,42 @@ namespace Lexical.Localization
         /// <summary>
         /// Append <see cref="CultureInfo"/>.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="culture"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key cannot be appended</exception>
-        public static ILine Culture(this ILine key, CultureInfo culture)
-            => key.Append<ILineCulture, CultureInfo>(culture);
+        public static ILine Culture(this ILine line, CultureInfo culture)
+            => line.Append<ILineCulture, CultureInfo>(culture);
 
         /// <summary>
         /// Append culture key "Culture:xx".
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="cultureName"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
-        public static ILine Culture(this ILine key, string cultureName)
-            => key.Append<ILineNonCanonicalKey, string, string>("Culture", cultureName);
+        public static ILine Culture(this ILine line, string cultureName)
+            => line.Append<ILineNonCanonicalKey, string, string>("Culture", cultureName);
+
+        /// <summary>
+        /// Create <see cref="CultureInfo"/>.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="culture"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key cannot be appended</exception>
+        public static ILine Culture(this ILineFactory lineFactory, CultureInfo culture)
+            => lineFactory.Create<ILineCulture, CultureInfo>(null, culture);
+
+        /// <summary>
+        /// Create culture key "Culture:xx".
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="cultureName"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key doesn't implement ICultureAssignableLocalizationKey</exception>
+        public static ILine Culture(this ILineFactory lineFactory, string cultureName)
+            => lineFactory.Create<ILineNonCanonicalKey, string, string>(null, "Culture", cultureName);
 
         /// <summary>
         /// Try append <see cref="CultureInfo"/>.

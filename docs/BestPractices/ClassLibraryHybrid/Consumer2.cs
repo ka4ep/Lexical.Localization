@@ -15,7 +15,7 @@ namespace TutorialProject3
             IAssetBuilder builder = new AssetBuilder.OneBuildInstance();
             IAsset asset = builder.Build();
             IStringLocalizerFactory localizer = new StringLocalizerRoot(asset, new CulturePolicy());
-            // Install TutorialLibrary's ILibraryAssetSources
+            // Install TutorialLibrary's IAssetSources
             Assembly library = typeof(MyClass).Assembly;
             builder.AddLibraryAssetSources(library).Build();
             #region Snippet
@@ -23,7 +23,7 @@ namespace TutorialProject3
             // Create class without localizer
             MyClass myClass1 = new MyClass(default);
 
-            // Use the culture that was provided by with the class library (LibraryAssetSources)
+            // Use the culture that was provided by with the class library (AssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass1.Do());
 

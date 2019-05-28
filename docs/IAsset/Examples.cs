@@ -1,4 +1,5 @@
 ﻿using Lexical.Localization;
+using Lexical.Localization.StringFormat;
 using System.Collections.Generic;
 
 namespace docs
@@ -19,7 +20,7 @@ namespace docs
                 // Create key
                 ILine key = new LineRoot().Key("hello").Culture("en");
                 // Resolve string - Call to LocalizationAssetExtensions.GetString()
-                IFormatString str = asset.GetString(key);
+                IFormatString str = asset.GetString(key).GetValue();
                 #endregion Snippet_2
 
             }

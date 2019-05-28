@@ -101,6 +101,41 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Create parameter part.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="parameterName">parameter name</param>
+        /// <param name="parameterValue">(optional) parameter value</param>
+        /// <returns>new parameter part</returns>
+        /// <exception cref="LineException">If part could not be appended</exception>
+        /// <returns>new part</returns>
+        public static ILine Parameter(this ILineFactory lineFactory, string parameterName, string parameterValue)
+            => lineFactory.Create<ILineParameter, string, string>(null, parameterName, parameterValue);
+
+        /// <summary>
+        /// Create new parameter part as <see cref="ILineParameter"/>, as <see cref="ILineCanonicalKey"/>, or as <see cref="ILineNonCanonicalKey"/> depending
+        /// on parameter name and policy in <paramref name="parameterInfos"/>.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="parameterName">parameter name</param>
+        /// <param name="parameterValue">parameter value</param>
+        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
+        /// <returns>new parameter part</returns>
+        /// <exception cref="LineException">If part could not be appended</exception>
+        /// <returns>new part</returns>
+        public static ILine Parameter(this ILineFactory lineFactory, string parameterName, string parameterValue, IParameterInfos parameterInfos)
+        {
+            IParameterInfo info = null;
+            if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out info))
+            {
+                if (info.InterfaceType == typeof(ILineHint)) return lineFactory.Create<ILineHint, string, string>(null, parameterName, parameterValue);
+                if (info.InterfaceType == typeof(ILineCanonicalKey)) return lineFactory.Create<ILineCanonicalKey, string, string>(null, parameterName, parameterValue);
+                if (info.InterfaceType == typeof(ILineNonCanonicalKey)) return lineFactory.Create<ILineNonCanonicalKey, string, string>(null, parameterName, parameterValue);
+            }
+            return lineFactory.Create<ILineParameter, string, string>(null, parameterName, parameterValue);
+        }
+
+        /// <summary>
         /// Append enumeration of parameters.
         /// </summary>
         /// <param name="part"></param>

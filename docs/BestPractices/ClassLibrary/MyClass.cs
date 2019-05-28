@@ -4,11 +4,11 @@ namespace TutorialLibrary1
 {
     public class MyClass
     {
-        static ILine localizer = LibraryLocalization.Root.Type<MyClass>();
+        static ILine localizer = Localization.Root.Type<MyClass>();
 
         public string Do()
         {
-            return localizer.Key("OK").Inline("Operation Successful").ToString();
+            return localizer.Key("OK").Value("Operation Successful").ToString();
         }
     }
 }

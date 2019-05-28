@@ -41,7 +41,7 @@ namespace Lexical.Localization
             string ILineArguments<ILineNonCanonicalKey, string, string>.Argument1 => ParameterValue;
 
             /// <summary>
-            /// 
+            /// Create non-canonical key.
             /// </summary>
             /// <param name="appender"></param>
             /// <param name="previousPart"></param>
@@ -70,7 +70,7 @@ namespace Lexical.Localization
             string ILineArguments<ILineCanonicalKey, string, string>.Argument1 => ParameterValue;
 
             /// <summary>
-            /// 
+            /// Create canonical key.
             /// </summary>
             /// <param name="appender"></param>
             /// <param name="previousPart"></param>

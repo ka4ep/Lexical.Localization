@@ -19,7 +19,7 @@ namespace TutorialProject
             ILineRoot root = LineRoot.Global;
 
             // Create key
-            ILine key = root.Type<Program>().Key("Hello").Inline("Hello World!");
+            ILine key = root.Type<Program>().Key("Hello").Value("Hello World!");
 
             // Print with current culture
             Console.WriteLine(key);

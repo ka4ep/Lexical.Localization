@@ -35,6 +35,16 @@ namespace Lexical.Localization
             => line.Append<ILineLogger, IObserver<LineString>>(logger);
 
         /// <summary>
+        /// Append observer that monitors resolving of localization strings.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="logger"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">Append logger</exception>
+        public static ILineLogger Logger(this ILineFactory lineFactory, IObserver<LineString> logger)
+            => lineFactory.Create<ILineLogger, IObserver<LineString>>(null, logger);
+
+        /// <summary>
         /// Try to add a <paramref name="logger"/> to <paramref name="line"/>.
         /// </summary>
         /// <param name="line"></param>

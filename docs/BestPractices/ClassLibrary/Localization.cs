@@ -1,25 +1,25 @@
 ﻿using Lexical.Localization;
 
-namespace TutorialLibrary3
+namespace TutorialLibrary1
 {
-    internal class LibraryLocalization : StringLocalizerRoot.LinkedTo, ILineRoot
+    internal class Localization : LineRoot.LinkedTo
     {
-        private static readonly LibraryLocalization instance = new LibraryLocalization(LineRoot.Global);
+        private static readonly Localization instance = new Localization(LineRoot.Global);
 
         /// <summary>
         /// Singleton instance to localization root for this class library.
         /// </summary>
-        public static LibraryLocalization Root => instance;
+        public static Localization Root => instance;
 
         /// <summary>
         /// Add asset sources here. Then call <see cref="IAssetBuilder.Build"/> to make effective.
         /// </summary>
         public new static IAssetBuilder Builder => LineRoot.Builder;
 
-        LibraryLocalization(ILineRoot linkedTo) : base(null, linkedTo)
+        Localization(ILineRoot linkedTo) : base(null, linkedTo, null, null, null, null, null)
         {
             // Add library's internal assets here
-            Builder.AddSources(new LibraryAssetSources());
+            Builder.AddSources(new AssetSources());
             // Apply changes
             Builder.Build();
         }

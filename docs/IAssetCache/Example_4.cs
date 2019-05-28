@@ -1,4 +1,5 @@
 ﻿using Lexical.Localization;
+using Lexical.Localization.StringFormat;
 using System;
 using System.Collections.Generic;
 
@@ -18,8 +19,8 @@ namespace docs
 
             // Issue a request which will be cached.
             ILine key = new LineRoot().Key("hello");
-            IFormatString str = asset.GetString( key.Culture("en") );
-            Console.WriteLine(str);
+            IFormatString value = asset.GetString( key.Culture("en") ).GetValue();
+            Console.WriteLine(value);
 
             // Clear cache
             asset.Reload();

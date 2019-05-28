@@ -63,6 +63,39 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Create inlined language string.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="subkey">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
+        /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
+        /// <returns>new line with inlines or <paramref name="lineFactory"/></returns>
+        /// <exception cref="LineException">If key can't be inlined.</exception>
+        public static ILine Inline(this ILineFactory lineFactory, ILine subkey, IFormatString value)
+        {
+            ILineInlines inlines = lineFactory.Create<ILineInlines>(null);
+            if (value != null) subkey = subkey.Value(value);
+            if (subkey != null) inlines[subkey] = subkey;
+            return inlines;
+        }
+
+        /// <summary>
+        /// Inline <paramref name="value"/> to <paramref name="culture"/>.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="culture">subkey in parametrized format, e.g. "Culture:en", or "Culture:en:N:One"</param>
+        /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
+        /// <returns>new line with inlines or <paramref name="lineFactory"/></returns>
+        /// <exception cref="LineException">If key can't be inlined.</exception>
+        public static ILine InlineCulture(this ILineFactory lineFactory, string culture, IFormatString value)
+        {
+            ILineInlines inlines = lineFactory.Create<ILineInlines>(null);
+            ILine subkey = lineFactory.Create<ILineNonCanonicalKey, string, string>(null, "Culture", culture);
+            if (value != null) subkey = subkey.Value(value);
+            if (subkey != null) inlines[subkey] = subkey;
+            return inlines;
+        }
+
+        /// <summary>
         /// Finds in <see cref="ILineInlines"/>.
         /// </summary>
         /// <param name="line"></param>

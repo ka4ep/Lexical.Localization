@@ -55,12 +55,12 @@ namespace Lexical.Localization
         /// 
         /// Section is a key that points to a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="location"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key could not be appended</exception>
-        public static ILineCanonicalKey Section(this ILine key, string location)
-            => key.Append<ILineCanonicalKey, string, string>("Section", location);
+        public static ILineCanonicalKey Section(this ILine line, string location)
+            => line.Append<ILineCanonicalKey, string, string>("Section", location);
 
         /// <summary>
         /// Append "Location" key.
@@ -68,12 +68,13 @@ namespace Lexical.Localization
         /// Location is a key that points to folder where asset is to be loaded.
         /// For example adding "Icons" location section, would mean that when key is matched to file assets, only "Icons" folder is used.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="location"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key could not be appended</exception>
-        public static ILineCanonicalKey Location(this ILine key, string location)
-            => key.Append<ILineCanonicalKey, string, string>("Location", location);
+        public static ILineCanonicalKey Location(this ILine line, string location)
+            => line.Append<ILineCanonicalKey, string, string>("Location", location);
+
 
         /// <summary>
         /// Append "BaseName" key.
@@ -81,12 +82,60 @@ namespace Lexical.Localization
         /// BaseName means a part of a path to assembly's embedded resource.
         /// For instance, resource hint matches in name pattern "[Assembly.][BaseName.]{Type.}{Section.}{Key}".
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="resource"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key could not be appended</exception>
-        public static ILineCanonicalKey BaseName(this ILine key, string resource)
-            => key.Append<ILineCanonicalKey, string, string>("BaseName", resource);
+        public static ILineCanonicalKey BaseName(this ILine line, string resource)
+            => line.Append<ILineCanonicalKey, string, string>("BaseName", resource);
+
+        /// <summary>
+        /// Append "Key" non-canonical key.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException"></exception>
+        public static ILine Key(this ILineFactory lineFactory, string key)
+            => lineFactory.Create<ILineCanonicalKey, string, string>(null, "Key", key);
+
+        /// <summary>
+        /// Create "Section" key.
+        /// 
+        /// Section is a key that points to a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="location"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key could not be appended</exception>
+        public static ILineCanonicalKey Section(this ILineFactory lineFactory, string location)
+            => lineFactory.Create<ILineCanonicalKey, string, string>(null, "Section", location);
+
+        /// <summary>
+        /// Create "Location" key.
+        /// 
+        /// Location is a key that points to folder where asset is to be loaded.
+        /// For example adding "Icons" location section, would mean that when key is matched to file assets, only "Icons" folder is used.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="location"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key could not be appended</exception>
+        public static ILineCanonicalKey Location(this ILineFactory lineFactory, string location)
+            => lineFactory.Create<ILineCanonicalKey, string, string>(null, "Location", location);
+
+        /// <summary>
+        /// Create "BaseName" key.
+        /// 
+        /// BaseName means a part of a path to assembly's embedded resource.
+        /// For instance, resource hint matches in name pattern "[Assembly.][BaseName.]{Type.}{Section.}{Key}".
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="resource"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key could not be appended</exception>
+        public static ILineCanonicalKey BaseName(this ILineFactory lineFactory, string resource)
+            => lineFactory.Create<ILineCanonicalKey, string, string>(null, "BaseName", resource);
 
         /// <summary>
         /// Tests if <paramref name="linePart"/> is canonical key.

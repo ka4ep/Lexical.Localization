@@ -64,13 +64,13 @@ namespace docs
                     // Create a custom policy 
                     ILineFormat myPolicy = new LineParameterPrinter()
                         // Enable non-canonical "Culture" parameter with "/" separator
-                        .Rule("Culture", true, postfixSeparator: "/", order: ParameterInfos.Default["Culture"].Order)
+                        .Rule("Culture", true, postfixSeparator: "/", order: ParameterInfos.Default.GetValue("Culture").Order)
                         // Disable other non-canonical parts
                         .NonCanonicalRule(false)
                         // Enable canonical all parts with "/" separator
                         .CanonicalRule(true, prefixSeparator: "/")
                         // Set "Key" parameter's prefix to "/"
-                        .Rule("Key", true, prefixSeparator: "/", order: ParameterInfos.Default["Key"].Order);
+                        .Rule("Key", true, prefixSeparator: "/", order: ParameterInfos.Default.GetValue("Key").Order);
 
                     // "en/Patches/MyController/Errors/InvalidState"
                     string str = myPolicy.Print(key);

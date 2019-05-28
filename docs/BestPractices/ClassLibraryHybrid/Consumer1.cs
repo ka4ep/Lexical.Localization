@@ -20,7 +20,7 @@ namespace TutorialProject3
             IAsset asset = builder.Build();
             IStringLocalizerFactory localizer = new StringLocalizerRoot(asset, new CulturePolicy());
 
-            // Install TutorialLibrary's ILibraryAssetSources
+            // Install TutorialLibrary's IAssetSources
             Assembly library = typeof(MyClass).Assembly;
             builder.AddLibraryAssetSources(library).Build();
 

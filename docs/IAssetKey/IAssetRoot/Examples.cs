@@ -1,4 +1,5 @@
 ﻿using Lexical.Localization;
+using Lexical.Localization.StringFormat;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 
@@ -40,9 +41,9 @@ namespace docs
                 IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
                 #region Snippet_5x
                 // Create reference
-                ILine key = new LocalizationKey._Section(null, null, "Section").Key("Key");
+                ILine key = LineAppender.Default.Section("Section").Key("Key");
                 // Retreieve with reference
-                IFormatString str = asset.GetString(key);
+                IFormatString str = asset.GetString(key).GetValue();
                 #endregion Snippet_5x
             }
 
@@ -74,7 +75,7 @@ namespace docs
                 #region Snippet_2e
                 // LocalizationRoot and StringLocalizerRoot are interchangeable. They share the same asset(s).
                 LineRoot.Builder.AddAsset(asset).Build();
-                IStringLocalizer stringLocalizer = StringLocalizerRoot.Global.Type<MyController>();
+                IStringLocalizer stringLocalizer = StringLocalizerRoot.Global.Type<MyController>().AsStringLocalizer();
                 #endregion Snippet_2e
 
                 #region Snippet_2f

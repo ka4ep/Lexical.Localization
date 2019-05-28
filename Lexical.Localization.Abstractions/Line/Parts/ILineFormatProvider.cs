@@ -29,11 +29,26 @@ namespace Lexical.Localization
         /// <item><see cref="ICustomFormatter"/></item>
         /// </list>        
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="formatProvider"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If <see cref="ILineFormatProvider"/> could not be appended</exception>
-        public static ILineFormatProvider FormatProvider(this ILine key, IFormatProvider formatProvider)
-            => key.Append<ILineFormatProvider, IFormatProvider>(formatProvider);
+        public static ILineFormatProvider FormatProvider(this ILine line, IFormatProvider formatProvider)
+            => line.Append<ILineFormatProvider, IFormatProvider>(formatProvider);
+
+        /// <summary>
+        /// Append format provider key.
+        /// 
+        /// Format provider is requested for following interfaces:
+        /// <list type="bullet">
+        /// <item><see cref="ICustomFormatter"/></item>
+        /// </list>        
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="formatProvider"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If <see cref="ILineFormatProvider"/> could not be appended</exception>
+        public static ILineFormatProvider FormatProvider(this ILineFactory lineFactory, IFormatProvider formatProvider)
+            => lineFactory.Create<ILineFormatProvider, IFormatProvider>(null, formatProvider);
     }
 }

@@ -3,7 +3,7 @@ This article describes recommended practice for writing localization for a class
 
 ## Localization Sources
 The class library may want to provide builtin localizations. 
-The recommended practice is to create a public class **LibraryAssetSources** which implements **ILibraryAssetSources** as a signal 
+The recommended practice is to create a public class **AssetSources** which implements **IAssetSources** as a signal 
 to indicate that this class provides localizations for this class library.
 
 Internal localization files are typically embedded resources.
@@ -14,15 +14,15 @@ using Lexical.Localization;
 
 namespace TutorialLibrary1
 {
-    public class LibraryAssetSources : List<IAssetSource>, ILibraryAssetSources
+    public class AssetSources : List<IAssetSource>, IAssetSources
     {
         /// <summary>
         /// Localization source reference to embedded resource.
         /// </summary>
         public readonly LineEmbeddedSource LocalizationSource = 
-            LineReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
+            LineReaderMap.Instance.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
 
-        public LibraryAssetSources() : base()
+        public AssetSources() : base()
         {
             // Asset sources are added here
             Add(LocalizationSource);
@@ -59,13 +59,13 @@ using Lexical.Localization;
 
 namespace TutorialLibrary1
 {
-    public class LibraryAssetSourcesB : List<IAssetSource>, ILibraryAssetSources
+    public class AssetSourcesB : List<IAssetSource>, IAssetSources
     {
         /// <summary>
         /// Localization source reference to embedded resource.
         /// </summary>
         public readonly LineEmbeddedSource LocalizationSource = 
-            LineReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
+            LineReaderMap.Instance.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
 
         /// <summary>
         /// (Optional) External file localization source.
@@ -73,7 +73,7 @@ namespace TutorialLibrary1
         public readonly LocalizationFileSource ExternalLocalizationSource = 
             LineReaderMap.Instance.FileAssetSource("Localization.xml", throwIfNotFound: false);
 
-        public LibraryAssetSourcesB() : base()
+        public AssetSourcesB() : base()
         {
             // Add internal localization source
             Add(LocalizationSource);
@@ -86,7 +86,7 @@ namespace TutorialLibrary1
 ```
 
 ## Localization Root
-There should be another class called **LibraryLocalization** that is used as the *ILineRoot* for the classes that use localization.
+There should be another class called **Localization** that is used as the *ILineRoot* for the classes that use localization.
 This root can be linked to the global static root and shares its assets. 
 
 ```csharp
@@ -94,24 +94,24 @@ using Lexical.Localization;
 
 namespace TutorialLibrary1
 {
-    internal class LibraryLocalization : LocalizationRoot.LinkedTo
+    internal class Localization : LocalizationRoot.LinkedTo
     {
-        private static readonly LibraryLocalization instance = new LibraryLocalization(LocalizationRoot.Global);
+        private static readonly Localization instance = new Localization(LocalizationRoot.Global);
 
         /// <summary>
         /// Singleton instance to localization root for this class library.
         /// </summary>
-        public static LibraryLocalization Root => instance;
+        public static Localization Root => instance;
 
         /// <summary>
         /// Add asset sources here. Then call <see cref="IAssetBuilder.Build"/> to make effective.
         /// </summary>
         public new static IAssetBuilder Builder => LocalizationRoot.Builder;
 
-        LibraryLocalization(ILineRoot linkedTo) : base(linkedTo, null, null, null, null, null)
+        Localization(ILineRoot linkedTo) : base(linkedTo, null, null, null, null, null)
         {
             // Add library's internal assets here
-            Builder.AddSources(new LibraryAssetSources());
+            Builder.AddSources(new AssetSources());
             // Apply changes
             Builder.Build();
         }
@@ -130,7 +130,7 @@ namespace TutorialLibrary1
 {
     public class MyClass
     {
-        static ILine localizer = LibraryLocalization.Root.Type<MyClass>();
+        static ILine localizer = Localization.Root.Type<MyClass>();
 
         public string Do()
         {
@@ -151,7 +151,7 @@ MyClass myClass = new MyClass();
 // Use default string
 Console.WriteLine(myClass.Do());
 
-// Use the culture that was provided with the class library (LibraryAssetSources)
+// Use the culture that was provided with the class library (AssetSources)
 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
 Console.WriteLine(myClass.Do());
 ```
@@ -174,7 +174,7 @@ namespace TutorialProject1
             // Use default string
             Console.WriteLine(myClass.Do());
 
-            // Use the culture that was provided with the class library (LibraryAssetSources)
+            // Use the culture that was provided with the class library (AssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass.Do());
             #endregion Snippet
@@ -196,7 +196,7 @@ LocalizationRoot.Builder.AddSource(source).Build();
 
 MyClass myClass = new MyClass();
 
-// Use the culture that was provided with the class library (LibraryAssetSources)
+// Use the culture that was provided with the class library (AssetSources)
 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
 Console.WriteLine(myClass.Do());
 
@@ -225,7 +225,7 @@ namespace TutorialProject1
 
             MyClass myClass = new MyClass();
 
-            // Use the culture that was provided with the class library (LibraryAssetSources)
+            // Use the culture that was provided with the class library (AssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass.Do());
 

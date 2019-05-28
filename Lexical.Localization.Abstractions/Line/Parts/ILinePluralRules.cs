@@ -48,6 +48,28 @@ namespace Lexical.Localization
             => key.Parameter("PluralRules", ruleSet);
 
         /// <summary>
+        /// Assign a specific instance of rules. 
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="rules"></param>
+        /// <returns>new key with rules</returns>
+        public static ILinePluralRules PluralRules(this ILineFactory lineFactory, IPluralRules rules)
+            => lineFactory.Create<ILinePluralRules, IPluralRules>(null, rules);
+
+        /// <summary>
+        /// Assign plurality rules as 
+        /// <list type="bullet">
+        /// <item>Assign assembly qualified type name of <see cref="IPluralRules"/>, e.g. "Unicode.CLDR35"</item>
+        /// <item>Plural rules expression (starts with '['), e.g. "[Category=cardinal,Case=One,Optional=1]n=0[Category=cardinal,Case=One]n=1[Category=cardinal,Case=Other]true"</item>
+        /// </list>
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="ruleSet"></param>
+        /// <returns>new key with rules</returns>
+        public static ILine PluralRules(this ILineFactory lineFactory, string ruleSet)
+            => lineFactory.Parameter("PluralRules", ruleSet);
+
+        /// <summary>
         /// Assign plurality case to argument <paramref name="argumentIndex"/>.
         /// 
         /// Appends a parameter "Nx:case", e.g. "N1:many".

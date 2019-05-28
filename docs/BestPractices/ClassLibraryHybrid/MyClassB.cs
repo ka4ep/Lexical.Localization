@@ -8,7 +8,7 @@ namespace TutorialLibrary3
 
         public MyClassB(ILine<MyClass> localizer = default)
         {
-            this.localizer = localizer ?? LibraryLocalization.Root.Type<MyClass>();
+            this.localizer = localizer ?? Localization.Root.Type<MyClass>();
         }
 
         public string Do()

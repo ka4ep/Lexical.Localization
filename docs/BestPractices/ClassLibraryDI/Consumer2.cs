@@ -15,7 +15,7 @@ namespace TutorialProject2
             IAsset asset = builder.Build();
             StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
 
-            // Install TutorialLibrary's ILibraryAssetSources
+            // Install TutorialLibrary's IAssetSources
             Assembly library = typeof(MyClass).Assembly;
             builder.AddLibraryAssetSources(library).Build();
 
@@ -26,10 +26,10 @@ namespace TutorialProject2
             #endregion Snippet
 
             // Create class
-            ILineKey<MyClass> classLocalizer = localizer.Type<MyClass>();
+            ILine<MyClass> classLocalizer = localizer.Type<MyClass>();
             MyClassB myClass = new MyClassB(classLocalizer);
 
-            // Use the culture that was provided with the class library (LibraryAssetSources)
+            // Use the culture that was provided with the class library (AssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass.Do());
 

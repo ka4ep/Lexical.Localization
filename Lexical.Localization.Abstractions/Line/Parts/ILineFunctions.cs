@@ -42,6 +42,26 @@ namespace Lexical.Localization
             => key.Append<ILineHint, string, string>("Functions", functions);
 
         /// <summary>
+        /// Create string format functions.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="functions"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If could not be appended</exception>
+        public static ILineFunctions Functions(this ILineFactory lineFactory, IFunctions functions)
+            => lineFactory.Create<ILineFunctions, IFunctions>(null, functions);
+
+        /// <summary>
+        /// Create string format functions.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="functions"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If could not be appended</exception>
+        public static ILineHint Functions(this ILineFactory lineFactory, string functions)
+            => lineFactory.Create<ILineHint, string, string>(null, "Functions", functions);
+
+        /// <summary>
         /// Search linked list and finds the effective (left-most) <see cref="ILineFunctions"/> key.
         /// 
         /// Returns parameter "Functions" value as <see cref="IFunctions"/>, if <paramref name="resolver"/> is provided.

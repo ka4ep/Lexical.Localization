@@ -3,6 +3,7 @@ using System.Globalization;
 using Lexical.Localization;
 #region Snippet_7b1
 using Lexical.Localization.Inlines;
+using Lexical.Localization.StringFormat;
 #endregion Snippet_7b1
 
 namespace docs
@@ -44,7 +45,7 @@ namespace docs
                 ILine key = new LineRoot().Section("Section").Section("Section").Key("Key");
 
                 // Retrieve string with a reference
-                IFormatString str = asset.GetString(key.Culture("en"));
+                IFormatString value = asset.GetString(key.Culture("en")).GetValue();
 
                 // Retrieve binary resource with a reference
                 byte[] data = asset.GetResource(key.Culture("en"));
@@ -111,16 +112,16 @@ namespace docs
                 // Formulate key
                 ILine key_formulated = key.Format(0xFeedF00d);
                 #endregion Snippet_6b
-                { 
-                #region Snippet_6c
+                {
+                    #region Snippet_6c
                     // Resolve to localized string "Error (Code=0x{0:X8})", but does not append arguments
-                    string str = key_formulated.ResolveFormatString();
+                    IFormatString str = key_formulated.ResolveFormatString();
                 #endregion Snippet_6c
                 }
                 {
                     #region Snippet_6d
                     // Resolve to formulated string to "Error (Code=0xFEEDF00D)"
-                    string str = key_formulated.ResolveString();
+                    LineString str = key_formulated.ResolveString();
                     #endregion Snippet_6d
                 }
             }
@@ -131,7 +132,7 @@ namespace docs
                 // Create root
                 ILineRoot root = new LineRoot();
                 // Create key and add default value
-                ILine key = root.Section("Section").Key("Success").Inline("Success");
+                ILine key = root.Section("Section").Key("Success").Value("Success");
                 // Resolve string from inlined key "Success"
                 string str = key.ToString();
                 #endregion Snippet_7a
@@ -143,7 +144,7 @@ namespace docs
                 #region Snippet_7b
                 // Create key and add default strings
                 ILine key = root.Section("Section").Key("Success")
-                    .Inline("Success")                                 // Add inlining to the root culture ""
+                    .Value("Success")                                  // Add inlining to the root culture ""
                     .Inline("Culture:en", "Success")                   // Add inlining to culture "en"
                     .Inline("Culture:fi", "Onnistui")                  // Add inlining to culture "fi"
                     .Inline("Culture:sv", "Det funkar");               // Add inlining to culture "sv"
@@ -158,7 +159,7 @@ namespace docs
                 #region Snippet_7c
                 // Create key and add default strings
                 ILine key = root.Section("Section").Key("Success")
-                    .Inline("Success")                                 // Add inlining to the root culture ""
+                    .Value("Success")                                  // Add inlining to the root culture ""
                     .en("Success")                                     // Add inlining to culture "en"
                     .fi("Onnistui")                                    // Add inlining to culture "fi"
                     .sv("Det funkar");                                 // Add inlining to culture "sv"
@@ -238,7 +239,7 @@ namespace docs
         class MyController__
         {
             static ILine localization = LineRoot.Global.Type<MyControllerB>();
-            static ILine Success = localization.Key("Success").Inline("Success").sv("Det funkar").fi("Onnistui");
+            static ILine Success = localization.Key("Success").Value("Success").sv("Det funkar").fi("Onnistui");
 
             public string Do()
             {

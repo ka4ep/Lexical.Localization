@@ -45,6 +45,26 @@ namespace Lexical.Localization
             => line.GetAppender().Create<ILineNonCanonicalKey, string, string>(line, "Assembly", assembly);
 
         /// <summary>
+        /// Append <see cref="ILineAssembly"/> section.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="assembly"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key could not be appended</exception>
+        public static ILineAssembly Assembly(this ILineFactory lineFactory, Assembly assembly)
+            => lineFactory.Create<ILineAssembly, Assembly>(null, assembly);
+
+        /// <summary>
+        /// Add "Assembly" <see cref="ILineNonCanonicalKey"/> key.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="assembly"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key could not be appended</exception>
+        public static ILineKey Assembly(this ILineFactory lineFactory, string assembly)
+            => lineFactory.Create<ILineNonCanonicalKey, string, string>(null, "Assembly", assembly);
+
+        /// <summary>
         /// Get the effective (closest to root) non-null <see cref="ILineAssembly"/> key or <see cref="ILineParameter"/> key with "Assembly".
         /// </summary>
         /// <param name="tail"></param>

@@ -32,6 +32,15 @@ namespace Lexical.Localization
             => line.Append<ILineCulturePolicy, ICulturePolicy>(culturePolicy);
 
         /// <summary>
+        /// Append culture policy
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="culturePolicy"></param>
+        /// <returns></returns>
+        public static ILineCulturePolicy CulturePolicy(this ILineFactory lineFactory, ICulturePolicy culturePolicy)
+            => lineFactory.Create<ILineCulturePolicy, ICulturePolicy>(null, culturePolicy);
+
+        /// <summary>
         /// Walks linked list and searches for culture policy setting.
         /// </summary>
         /// <param name="line"></param>

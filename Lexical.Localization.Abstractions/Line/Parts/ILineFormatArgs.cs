@@ -35,6 +35,16 @@ namespace Lexical.Localization
             => line.Append<ILineFormatArgs, Object[]>(args);
 
         /// <summary>
+        /// Append format arguments. Format arguments 
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException">If key can't be formatted</exception>
+        public static ILineFormatArgs Format(this ILineFactory lineFactory, params object[] args)
+            => lineFactory.Create<ILineFormatArgs, Object[]>(null, args);
+
+        /// <summary>
         /// Walks linked list and searches for culture policy.
         /// </summary>
         /// <param name="line"></param>

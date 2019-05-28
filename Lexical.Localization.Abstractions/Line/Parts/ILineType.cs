@@ -35,32 +35,62 @@ namespace Lexical.Localization
         /// <summary>
         /// Add "Type" as <see cref="ILineNonCanonicalKey"/> key.
         /// </summary>
-        /// <param name="part"></param>
+        /// <param name="line"></param>
         /// <param name="typeName"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement <see cref="ILineNonCanonicalKey"/></exception>
-        public static ILineNonCanonicalKey Type(this ILine part, string typeName)
-            => part.Append<ILineNonCanonicalKey, string, string>("Type", typeName);
+        public static ILineNonCanonicalKey Type(this ILine line, string typeName)
+            => line.Append<ILineNonCanonicalKey, string, string>("Type", typeName);
 
         /// <summary>
         /// Add <see cref="ILineType"/> key.
         /// </summary>
-        /// <param name="part"></param>
+        /// <param name="line"></param>
         /// <param name="type"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If key doesn't implement <see cref="ILineType"/></exception>
-        public static ILineType Type(this ILine part, Type type)
-            => part.Append<ILineType, Type>(type);
+        public static ILineType Type(this ILine line, Type type)
+            => line.Append<ILineType, Type>(type);
 
         /// <summary>
         /// Add <see cref="ILine{T}"/> key.
         /// </summary>
-        /// <param name="part"></param>
+        /// <param name="line"></param>
         /// <returns>new key</returns>
         /// <typeparam name="T"></typeparam>
         /// <exception cref="LineException">If key cannot be appended</exception>
-        public static ILine<T> Type<T>(this ILine part)
-            => (ILine<T>)part.Append<ILineType, Type>(typeof(T));
+        public static ILine<T> Type<T>(this ILine line)
+            => (ILine<T>)line.Append<ILineType, Type>(typeof(T));
+
+        /// <summary>
+        /// Create "Type" as <see cref="ILineNonCanonicalKey"/> key.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="typeName"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key doesn't implement <see cref="ILineNonCanonicalKey"/></exception>
+        public static ILineNonCanonicalKey Type(this ILineFactory lineFactory, string typeName)
+            => lineFactory.Create<ILineNonCanonicalKey, string, string>(null, "Type", typeName);
+
+        /// <summary>
+        /// Create <see cref="ILineType"/> key.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="type"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If key doesn't implement <see cref="ILineType"/></exception>
+        public static ILineType Type(this ILineFactory lineFactory, Type type)
+            => lineFactory.Create<ILineType, Type>(null, type);
+
+        /// <summary>
+        /// Create <see cref="ILine{T}"/> key.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <returns>new key</returns>
+        /// <typeparam name="T"></typeparam>
+        /// <exception cref="LineException">If key cannot be appended</exception>
+        public static ILine<T> Type<T>(this ILineFactory lineFactory)
+            => (ILine<T>)lineFactory.Create<ILineType, Type>(null, typeof(T));
 
         /// <summary>
         /// Get the effective (closest to root) non-null <see cref="ILineType"/> key or <see cref="ILineParameter"/> key with "Type".

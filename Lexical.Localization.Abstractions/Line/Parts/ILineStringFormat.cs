@@ -24,22 +24,42 @@ namespace Lexical.Localization
         /// <summary>
         /// Append string format.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="stringFormat"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If could not be appended</exception>
-        public static ILineStringFormat StringFormat(this ILine key, IStringFormat stringFormat)
-            => key.Append<ILineStringFormat, IStringFormat>(stringFormat);
+        public static ILineStringFormat StringFormat(this ILine line, IStringFormat stringFormat)
+            => line.Append<ILineStringFormat, IStringFormat>(stringFormat);
 
         /// <summary>
         /// Append string format.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <param name="stringFormat"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If could not be appended</exception>
-        public static ILineHint StringFormat(this ILine key, string stringFormat)
-            => key.Append<ILineHint, string, string>("StringFormat", stringFormat);
+        public static ILineHint StringFormat(this ILine line, string stringFormat)
+            => line.Append<ILineHint, string, string>("StringFormat", stringFormat);
+
+        /// <summary>
+        /// Append string format.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="stringFormat"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If could not be appended</exception>
+        public static ILineStringFormat StringFormat(this ILineFactory lineFactory, IStringFormat stringFormat)
+            => lineFactory.Create<ILineStringFormat, IStringFormat>(null, stringFormat);
+
+        /// <summary>
+        /// Append string format.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="stringFormat"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If could not be appended</exception>
+        public static ILineHint StringFormat(this ILineFactory lineFactory, string stringFormat)
+            => lineFactory.Create<ILineHint, string, string>(null, "StringFormat", stringFormat);
 
         /// <summary>
         /// Search linked list and finds the effective (left-most) <see cref="ILineStringFormat"/> key.

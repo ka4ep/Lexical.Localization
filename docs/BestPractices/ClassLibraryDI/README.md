@@ -3,7 +3,7 @@ This article describes recommended practice for writing a localized class librar
 
 ## Localization Sources
 The class library may want to provide builtin localizations. 
-The recommended practice is to create a public class **LibraryAssetSources** which implements **ILibraryAssetSources** as a signal 
+The recommended practice is to create a public class **AssetSources** which implements **IAssetSources** as a signal 
 to indicate that this class provides localizations for this class library.
 
 Internal localization files are typically embedded resources.
@@ -15,26 +15,26 @@ using Microsoft.Extensions.FileProviders;
 
 namespace TutorialLibrary2
 {
-    public class LibraryAssetSources : List<IAssetSource>, ILibraryAssetSources
+    public class AssetSources : List<IAssetSource>, IAssetSources
     {
         /// <summary>
         /// Localization source reference to embedded resource.
         /// </summary>
         public readonly LineEmbeddedSource LocalizationSource = 
-            LineReaderMap.Instance.EmbeddedAssetSource(typeof(LibraryAssetSources).Assembly, "docs.TutorialLibrary2-de.xml");
+            LineReaderMap.Instance.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary2-de.xml");
 
         /// <summary>
         /// (Optional) External file localization source.
         /// </summary>
         public readonly LocalizationFileProviderSource ExternalLocalizationSource;
 
-        public LibraryAssetSources() : base()
+        public AssetSources() : base()
         {
             // Add internal localization source
             Add(LocalizationSource);
         }
 
-        public LibraryAssetSources(IFileProvider fileProvider) : this()
+        public AssetSources(IFileProvider fileProvider) : this()
         {
             // Use file provider from dependency injection and search for an optional external localization source
             if (fileProvider != null)
@@ -121,7 +121,7 @@ namespace TutorialLibrary2
 
 # Application
 Application that deploys the localizer must include the internal localizations with 
-**<i>IAssetBuilder</i>.AddLibraryAssetSources(*Assembly*)** which searches the **ILibraryAssetSources** from the library.
+**<i>IAssetBuilder</i>.AddAssetSources(*Assembly*)** which searches the **IAssetSources** from the library.
 # [Snippet](#tab/snippet-1)
 
 ```csharp
@@ -130,15 +130,15 @@ IAssetBuilder builder = new AssetBuilder.OneBuildInstance();
 IAsset asset = builder.Build();
 StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
 
-// Install TutorialLibrary's ILibraryAssetSources
+// Install TutorialLibrary's IAssetSources
 Assembly library = typeof(MyClass).Assembly;
-builder.AddLibraryAssetSources(library).Build();
+builder.AddAssetSources(library).Build();
 
 // Create class
 IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>();
 MyClass myClass = new MyClass(classLocalizer);
 
-// Use the culture that was provided with the class library (LibraryAssetSources)
+// Use the culture that was provided with the class library (AssetSources)
 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
 Console.WriteLine(myClass.Do());
 ```
@@ -164,15 +164,15 @@ namespace TutorialProject2
             IAsset asset = builder.Build();
             StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
 
-            // Install TutorialLibrary's ILibraryAssetSources
+            // Install TutorialLibrary's IAssetSources
             Assembly library = typeof(MyClass).Assembly;
-            builder.AddLibraryAssetSources(library).Build();
+            builder.AddAssetSources(library).Build();
 
             // Create class
             IStringLocalizer<MyClass> classLocalizer = localizer.Type<MyClass>();
             MyClass myClass = new MyClass(classLocalizer);
 
-            // Use the culture that was provided with the class library (LibraryAssetSources)
+            // Use the culture that was provided with the class library (AssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass.Do());
             #endregion Snippet
@@ -213,9 +213,9 @@ namespace TutorialProject2
             IAsset asset = builder.Build();
             StringLocalizerRoot localizer = new StringLocalizerRoot(asset, new CulturePolicy());
 
-            // Install TutorialLibrary's ILibraryAssetSources
+            // Install TutorialLibrary's IAssetSources
             Assembly library = typeof(MyClass).Assembly;
-            builder.AddLibraryAssetSources(library).Build();
+            builder.AddAssetSources(library).Build();
 
             #region Snippet
             // Install additional localization that was not available in the TutorialLibrary.
@@ -227,7 +227,7 @@ namespace TutorialProject2
             ILine<MyClass> classLocalizer = localizer.Type<MyClass>();
             MyClassB myClass = new MyClassB(classLocalizer);
 
-            // Use the culture that was provided with the class library (LibraryAssetSources)
+            // Use the culture that was provided with the class library (AssetSources)
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
             Console.WriteLine(myClass.Do());
 
@@ -278,9 +278,9 @@ services.AddLexicalLocalization(
     useGlobalInstance: false,
     addCache: false);
 
-// Install TutorialLibrary's ILibraryAssetSources.
+// Install TutorialLibrary's IAssetSources.
 Assembly library = typeof(MyClass).Assembly;
-services.AddLibraryAssetSources(library);
+services.AddAssetSources(library);
 
 // Install additional localization that was not available in the TutorialLibrary.
 services.AddSingleton<IAssetSource>(LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary2-fi.xml"));
@@ -294,7 +294,7 @@ using (var provider = services.BuildServiceProvider())
     // Create class
     MyClass myClass = provider.GetService<MyClass>();
 
-    // Use the culture that was provided by with the class library (LibraryAssetSources)
+    // Use the culture that was provided by with the class library (AssetSources)
     CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
     Console.WriteLine(myClass.Do());
 
@@ -334,9 +334,9 @@ namespace TutorialProject2
                 useGlobalInstance: false,
                 addCache: false);
 
-            // Install TutorialLibrary's ILibraryAssetSources.
+            // Install TutorialLibrary's IAssetSources.
             Assembly library = typeof(MyClass).Assembly;
-            services.AddLibraryAssetSources(library);
+            services.AddAssetSources(library);
 
             // Install additional localization that was not available in the TutorialLibrary.
             services.AddSingleton<IAssetSource>(LocalizationXmlReader.Instance.FileAssetSource("TutorialLibrary2-fi.xml"));
@@ -350,7 +350,7 @@ namespace TutorialProject2
                 // Create class
                 MyClass myClass = provider.GetService<MyClass>();
 
-                // Use the culture that was provided by with the class library (LibraryAssetSources)
+                // Use the culture that was provided by with the class library (AssetSources)
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
                 Console.WriteLine(myClass.Do());
 

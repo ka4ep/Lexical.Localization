@@ -57,7 +57,7 @@ namespace Lexical.Localization
         /// <param name="str">key as string</param>
         /// <returns>Arguments that can be used for constructing or appending to a line</returns>
         /// <exception cref="LineException">If parse failed</exception>
-        IEnumerable<ILineArguments> Parse(string str);
+        IEnumerable<ILineArguments> ParseArgs(string str);
 
         /// <summary>
         /// Parse string into key.
@@ -65,7 +65,7 @@ namespace Lexical.Localization
         /// <param name="str"></param>
         /// <param name="args">Arguments that can be used for constructing or appending to a line</param>
         /// <returns>true if parse was successful</returns>
-        bool TryParse(string str, out IEnumerable<ILineArguments> args);
+        bool TryParseArgs(string str, out IEnumerable<ILineArguments> args);
     }
 
     /// <summary>
@@ -149,7 +149,7 @@ namespace Lexical.Localization
             if (lineFormat is ILineParser parser)
             {
                 if (appender == null) appender = prevPart.GetAppender();
-                foreach (ILineArguments arg in parser.Parse(str))
+                foreach (ILineArguments arg in parser.ParseArgs(str))
                     prevPart = appender.Create(prevPart, arg);
                 return prevPart;
             }
@@ -177,10 +177,10 @@ namespace Lexical.Localization
             if (appender == null && !prevPart.TryGetAppender(out appender)) { result = null; return false; }
             // Try parse
             IEnumerable<ILineArguments> args;
-            if (lineFormat is ILineParser parser && parser.TryParse(str, out args))
+            if (lineFormat is ILineParser parser && parser.TryParseArgs(str, out args))
             {
                 // Append arguments
-                foreach (ILineArguments arg in parser.Parse(str))
+                foreach (ILineArguments arg in parser.ParseArgs(str))
                     if (!appender.TryCreate(prevPart, arg, out prevPart)) { result = null; return false; }
                 result = prevPart;
                 return true;

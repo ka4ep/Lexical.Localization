@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Lexical.Localization.StringFormat;
 
 namespace docs
 {
@@ -374,8 +375,7 @@ namespace docs
             TextReader text, 
             ILineFormat namePolicy = null)
         {
-            ILine key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
-            yield return new ILine(key, CSharpFormat.Instance.Parse("Hello World!"));
+            yield return LineAppender.Default.Section("MyClass").Key("HelloWorld").Culture("en").Value("Hello World!");
         }
     }
     #endregion Snippet_30

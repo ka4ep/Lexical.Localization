@@ -93,6 +93,19 @@ namespace Lexical.Localization.Utils
             info = null; return false;
         }
 
+        /// <summary>
+        /// Try to read parameters
+        /// </summary>
+        /// <param name="infos"></param>
+        /// <param name="parameterName"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        public static IParameterInfo GetValue(this IParameterInfos infos, string parameterName)
+        {
+            IParameterInfo info;
+            if (infos is IParameterInfosMap readable && readable.TryGetValue(parameterName, out info)) return info;
+            throw new KeyNotFoundException(parameterName);
+        }
 
         /// <summary>
         /// Add <paramref name="info"/> entry to <paramref name="infos"/>.

@@ -33,6 +33,16 @@ namespace Lexical.Localization
             => line.Append<ILineStringResolver, IStringResolver>(resolver);
 
         /// <summary>
+        /// Create localization resolver.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="resolver"></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If part append fails</exception>
+        public static ILineStringResolver Resolver(this ILineFactory lineFactory, IStringResolver resolver)
+            => lineFactory.Create<ILineStringResolver, IStringResolver>(null, resolver);
+
+        /// <summary>
         /// Resolve <paramref name="key"/> into <see cref="IFormatString"/>, but without applying format arguments.
         /// 
         /// If the <see cref="IFormatString"/> contains plural categories, then matches into the applicable plurality case.

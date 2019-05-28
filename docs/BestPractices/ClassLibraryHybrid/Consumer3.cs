@@ -21,7 +21,7 @@ namespace TutorialProject3
                 useGlobalInstance: false,
                 addCache: false);
 
-            // Install TutorialLibrary's ILibraryAssetSources.
+            // Install TutorialLibrary's IAssetSources.
             Assembly library = typeof(MyClass).Assembly;
             services.AddLibraryAssetSources(library);
 
@@ -37,7 +37,7 @@ namespace TutorialProject3
                 // Create class
                 MyClass myClass = provider.GetService<MyClass>();
 
-                // Use the culture that was provided by with the class library (LibraryAssetSources)
+                // Use the culture that was provided by with the class library (AssetSources)
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
                 Console.WriteLine(myClass.Do());
 

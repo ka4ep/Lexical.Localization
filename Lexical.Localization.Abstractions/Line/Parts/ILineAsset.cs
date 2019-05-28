@@ -31,6 +31,15 @@ namespace Lexical.Localization
             => line.Append<ILineAsset, IAsset>(asset);
 
         /// <summary>
+        /// Append localizatoin asset.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="asset"></param>
+        /// <returns>part with asset</returns>
+        public static ILineAsset Asset(this ILineFactory lineFactory, IAsset asset)
+            => lineFactory.Create<ILineAsset, IAsset>(null, asset);
+
+        /// <summary>
         /// Get IAsset. 
         /// </summary>
         /// <param name="line"></param>
