@@ -59,10 +59,123 @@ namespace Lexical.Localization.StringFormat
         /// If the <see cref="IFormatString"/> contains plural categories, then matches into the applicable plurality case.
         /// </summary>
         /// <param name="key"></param>
+        /// <returns>format string</returns>
         public IFormatString ResolveFormatString(ILine key)
         {
+            // Extract parameters from line
+            LineFeatures features = new LineFeatures { Resolvers = Resolvers };
 
-            throw new NotImplementedException();
+            // Scan features
+            try
+            {
+                features.ScanFeatures(key);
+            }
+            catch (Exception e)
+            {
+                features.Log(e);
+                features.Status.Up(LineStatus.FailedUnknownReason);
+                return new StatusFormatString(null, features.Status);
+            }
+
+            // Resolve key to line
+            CultureInfo culture = features.Culture;
+            ILine line = ResolveKeyToLine(key, ref features, ref culture);
+
+            // No line or value
+            if (line == null || !features.HasValue)
+            {
+                features.Status.UpResolve(LineStatus.ResolveFailedNoValue);
+                LineString str = new LineString(key, null, features.Status);
+                features.Log(str);
+                return new StatusFormatString(null, features.Status);
+            }
+
+            // Parse value
+            IFormatString value = features.EffectiveValue;
+            features.Status.UpFormat(value.Status);
+
+            // Value has error
+            if (value.Parts == null || value.Status.Failed())
+            {
+                LineString str = new LineString(key, null, features.Status);
+                features.Log(str);
+                return new StatusFormatString(null, features.Status);
+            }
+
+            // Plural Rules
+            if (value.HasPluralRules())
+            {
+                if (features.PluralRules != null)
+                {
+                    // Evaluate expressions in placeholders into strings
+                    StructList12<string> placeholder_values = new StructList12<string>();
+                    EvaluatePlaceholderValues(value.Placeholders, ref features, ref placeholder_values, culture);
+
+                    // Create permutation configuration
+                    PluralCasePermutations permutations = new PluralCasePermutations(line);
+                    for (int i = 0; i < value.Placeholders.Length; i++)
+                    {
+                        // Get placeholder
+                        IPlaceholder ph = value.Placeholders[i];
+                        // No plural category in this placeholder
+                        if (ph.PluralCategory == null) continue;
+                        // Placeholder value after evaluation
+                        string ph_value = placeholder_values[i];
+                        // Placeholder as number
+                        IPluralNumber number = ph_value == null ? DecimalNumber.Empty : new DecimalNumber.Text(ph_value?.ToString(), culture);
+                        // Query possible cases for the plural rules
+                        PluralRuleInfo query = new PluralRuleInfo(null, ph.PluralCategory, culture?.Name, null, -1);
+                        IPluralRule[] cases = features.PluralRules.Evaluate(query, number);
+                        if (cases == null) continue;
+                        permutations.AddPlaceholder(ph, cases);
+                    }
+
+                    // Find first value that matches permutations
+                    features.CulturePolicy = null;
+                    features.Value = null;
+                    features.ValueText = null;
+                    for (int i = 0; i < permutations.Count - 1; i++)
+                    {
+                        // Create key with plurality cases
+                        ILine key_with_plurality = permutations[i];
+                        // Search line with the key
+                        ILine line_for_plurality_arguments = ResolveKeyToLine(key_with_plurality, ref features, ref culture);
+                        // Got no match
+                        if (line_for_plurality_arguments == null) continue;
+                        // Parse value
+                        IFormatString value_for_plurality = line_for_plurality_arguments.GetValue(Resolvers.StringFormatResolver);
+                        // Add status from parsing the value
+                        features.Status.UpFormat(value_for_plurality.Status);
+                        // Value has error
+                        if (value_for_plurality.Parts == null || value_for_plurality.Status.Failed())
+                        {
+                            LineString str = new LineString(key, null, features.Status);
+                            features.Log(str);
+                            return new StatusFormatString(null, features.Status);
+                        }
+                        // Return with match
+                        features.Status.UpPlurality(LineStatus.PluralityOkMatched);
+                        // Update status codes
+                        features.Status.UpFormat(value_for_plurality.Status);
+                        // Return values
+                        value = value_for_plurality;
+                        line = line_for_plurality_arguments;
+                        break;
+                    }
+                }
+                else
+                {
+                    // Plural rules were not found
+                    features.Status.Up(LineStatus.PluralityErrorRulesNotFound);
+                }
+            }
+            else
+            {
+                // Plurality feature was not used.
+                features.Status.UpPlurality(LineStatus.PluralityOkNotUsed);
+            }
+
+            return value;
         }
 
         /// <summary>

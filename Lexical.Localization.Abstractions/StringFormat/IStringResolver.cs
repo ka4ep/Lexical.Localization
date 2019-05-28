@@ -16,6 +16,7 @@ namespace Lexical.Localization.StringFormat
         /// If the <see cref="IFormatString"/> contains plural categories, then matches into the applicable plurality case.
         /// </summary>
         /// <param name="key"></param>
+        /// <returns>format string</returns>
         IFormatString ResolveFormatString(ILine key);
 
         /// <summary>
