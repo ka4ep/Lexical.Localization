@@ -18,7 +18,7 @@ namespace Lexical.Localization.Plurality
     /// Resolver that creates "PluralRules" parameter value by
     /// instantiating as class (assembly qualitifed type name), or by parsing as expression string.
     /// </summary>
-    public class PluralRulesResolver : IPluralRulesEvaluatable, IPluralRulesQueryable, IResolver<IPluralRules>
+    public class PluralRulesResolver : IPluralRulesEvaluatable, IPluralRulesQueryable, IParameterResolver<IPluralRules>
     {
         /// <summary>
         /// Default instance.
@@ -29,6 +29,11 @@ namespace Lexical.Localization.Plurality
         /// Default instance.
         /// </summary>
         public static PluralRulesResolver Default => instance.Value;
+
+        /// <summary>
+        /// Parameter Name
+        /// </summary>
+        public string ParameterName => "PluralRules";
 
         /// <summary>
         /// Function that resolves type name into <see cref="Type"/>.

@@ -27,14 +27,14 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Group of resolvers
         /// </summary>
-        public readonly ResolverSet Resolvers;
+        public readonly Resolvers Resolvers;
 
         /// <summary>
         /// Create string resolver 
         /// </summary>
         public StringResolver()
         {
-            this.Resolvers = new ResolverSet(null,
+            this.Resolvers = new Resolvers(
                 Lexical.Localization.StringFormat.StringFormatResolver.Default,
                 Lexical.Localization.StringFormat.FunctionsResolver.Default,
                 Lexical.Localization.StringFormat.FormatProviderResolver.Default,
@@ -47,7 +47,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="resolvers"></param>
         /// <param name="resolveSequence"></param>
-        public StringResolver(ResolverSet resolvers, ResolveSource[] resolveSequence = default)
+        public StringResolver(Resolvers resolvers, ResolveSource[] resolveSequence = default)
         {
             this.Resolvers = resolvers ?? throw new ArgumentNullException(nameof(resolvers));
             this.ResolveSequence = resolveSequence ?? new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };

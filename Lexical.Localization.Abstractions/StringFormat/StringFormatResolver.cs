@@ -12,7 +12,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves string format class name to string format.
     /// </summary>
-    public class StringFormatResolver : TypeResolver<IStringFormat>, IResolver<IStringFormat>
+    public class StringFormatResolver : TypeResolver<IStringFormat>, IParameterResolver<IStringFormat>
     {
         /// <summary>
         /// Default instance.
@@ -23,6 +23,11 @@ namespace Lexical.Localization.StringFormat
         /// Default instance.
         /// </summary>
         public static StringFormatResolver Default => instance.Value;
+
+        /// <summary>
+        /// Parameter Name
+        /// </summary>
+        public string ParameterName => "StringFormat";
 
         /// <summary>
         /// Create type resolver with default settings.

@@ -66,7 +66,7 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Evaluates number against subset of rules.
         /// 
-        /// First results are optional, last one is mandatory.
+        /// First array elements are optional rules, and the last array element is mandatory rule.
         /// </summary>
         /// <param name="subset">RuleSet, Culture and Category must have non-null value. "" is valid. Case must be null and optional must be -1.</param>
         /// <param name="number">(optional) numeric and text representation of numberic value</param>

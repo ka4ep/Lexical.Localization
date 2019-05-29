@@ -12,7 +12,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves function class name to <see cref="IFunctions"/>.
     /// </summary>
-    public class FunctionsResolver : TypeResolver<IFunctions>, IResolver<IFunctions>
+    public class FunctionsResolver : TypeResolver<IFunctions>, IParameterResolver<IFunctions>
     {
         /// <summary>
         /// Default instance.
@@ -23,6 +23,11 @@ namespace Lexical.Localization.StringFormat
         /// Default instance.
         /// </summary>
         public static FunctionsResolver Default => instance.Value;
+
+        /// <summary>
+        /// Parameter Name
+        /// </summary>
+        public string ParameterName => "Functions";
 
         /// <summary>
         /// Create type resolver with default settings.

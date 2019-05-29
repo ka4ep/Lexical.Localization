@@ -3,19 +3,18 @@
 // Date:           18.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
+using Lexical.Localization.StringFormat;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Lexical.Localization
 {
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.DependencyInjection.Extensions;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Localization;
-    using Lexical.Localization.Internal;
-    using Lexical.Localization.StringFormat;
 
     public static partial class MsLocalizationExtensions
     {
@@ -52,7 +51,7 @@ namespace Lexical.Localization
         /// <param name="addLogger">Add adapter for <see cref="ILogger"/></param>
         /// <returns></returns>
         public static IServiceCollection AddLexicalLocalization(
-            this IServiceCollection serviceCollection, 
+            this IServiceCollection serviceCollection,
             bool addStringLocalizerService = true,
             bool addCulturePolicyService = true,
             bool useGlobalInstance = false,
@@ -65,7 +64,7 @@ namespace Lexical.Localization
             {
                 // Use StringLocalizerRoot as ILineRoot
                 serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineRoot>(
-                    s=>
+                    s =>
                     {
                         IAsset asset = s.GetService<IAsset>(); // DO NOT REMOVE
                         ICulturePolicy culturePolicy = s.GetService<ICulturePolicy>();
@@ -90,7 +89,7 @@ namespace Lexical.Localization
             {
                 if (useGlobalInstance)
                 {
-                    serviceCollection.TryAdd(ServiceDescriptor.Singleton<ICulturePolicy>( StringLocalizerRoot.Global.CulturePolicy ));
+                    serviceCollection.TryAdd(ServiceDescriptor.Singleton<ICulturePolicy>(StringLocalizerRoot.Global.CulturePolicy));
                 }
                 else
                 {
@@ -101,7 +100,7 @@ namespace Lexical.Localization
             }
 
             // ILineResolver
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton<IStringResolver>( StringResolver.Default ));
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton<IStringResolver>(StringResolver.Default));
 
             // UnicodePluralityRules as 
             //serviceCollection.TryAdd(ServiceDescriptor.Singleton<IPluralRules>(UnicodeCLDR.Instance));
@@ -112,16 +111,17 @@ namespace Lexical.Localization
             // IAssetBuilder
             if (useGlobalInstance)
             {
-                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetBuilder>(s=>
+                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetBuilder>(s =>
                 {
                     IEnumerable<IAssetSource> assetSources = s.GetServices<IAssetSource>();
                     IAssetBuilder builder = StringLocalizerRoot.Builder;
-                    builder.AddSources( assetSources );
+                    builder.AddSources(assetSources);
                     return builder;
                 }));
-            } else
+            }
+            else
             {
-                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetBuilder>(s=>
+                serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAssetBuilder>(s =>
                 {
                     // Get IAssetSource services
                     IEnumerable<IAssetSource> assetSources = s.GetServices<IAssetSource>();
@@ -147,7 +147,7 @@ namespace Lexical.Localization
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<IAsset>(s => s.GetService<IAssetBuilder>().Build()));
 
             // ILine<>
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(ILine<>), typeof(StringLocalizerType<>)));             
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(ILine<>), typeof(StringLocalizerType<>)));
 
             // IStringLocalizer<>
             // IStringLocalizerFactory

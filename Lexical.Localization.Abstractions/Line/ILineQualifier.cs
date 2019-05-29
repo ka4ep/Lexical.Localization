@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Measures qualities of <see cref="ILine"/> and <see cref="ILineParameter"/>.
+    /// Measures qualities of <see cref="ILine"/>s and <see cref="ILineParameter"/>.
     /// </summary>
     public interface ILineQualifier
     {

@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using Lexical.Localization.Internal;
 using Lexical.Localization.StringFormat;
-using Microsoft.Extensions.Logging;
 
 namespace Lexical.Localization
 {
@@ -76,20 +75,5 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static ILineLogger DiagnosticsTrace(this ILine line, int severity = 1)
             => line.Logger(new LineDiagnosticsTrace(severity));
-    }
-
-    /// <summary>
-    /// Extension methods for adding loggers to <see cref="ILine"/>.
-    /// </summary>
-    public static partial class ILineLoggerMsExtensions
-    {
-        /// <summary>
-        /// Append <paramref name="logger"/> to <paramref name="line"/>.
-        /// </summary>
-        /// <param name="line"></param>
-        /// <param name="logger"></param>
-        /// <returns>disposable subscription handle, or null if <paramref name="line"/> cannot be observed</returns>
-        public static ILineLogger ILogger(this ILine line, ILogger logger)
-            => line.Logger(new LineILogger(logger));
     }
 }

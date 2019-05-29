@@ -60,7 +60,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Zero argument count line factory.
+    /// Zero argument line factory.
     /// </summary>
     /// <typeparam name="Intf">the interface type of the line part that can be appended </typeparam>
     public interface ILineFactory<Intf> : ILineFactory where Intf : ILine
@@ -77,7 +77,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// One argument count line part factory.
+    /// One argument line part factory.
     /// </summary>
     /// <typeparam name="Intf">the part type</typeparam>
     /// <typeparam name="A0"></typeparam>
@@ -96,7 +96,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Two argument count line part factory.
+    /// Two argument line part factory.
     /// </summary>
     /// <typeparam name="Intf">the part type</typeparam>
     /// <typeparam name="A0"></typeparam>
@@ -117,7 +117,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Two argument count line part factory.
+    /// Three argument line part factory.
     /// </summary>
     /// <typeparam name="Intf">the part type</typeparam>
     /// <typeparam name="A0"></typeparam>
@@ -563,7 +563,7 @@ namespace Lexical.Localization
             bool ContainsParameter(string parameterName, string parameterValue)
             {
                 if (parameters == null) parameters = left.GetParameterAsKeyValues();
-                for(int i=0; i<parameters.Length; i++)
+                for (int i = 0; i < parameters.Length; i++)
                 {
                     var p = parameters[i];
                     if (p.Key == parameterName && p.Value == parameterValue) return true;

@@ -14,18 +14,15 @@ namespace Lexical.Localization
     /// <summary>
     /// Line part that represents a parameter key-value pair.
     /// 
-    /// Implementing classes may implement one of sub-interfaces to detemine compare policy:
+    /// Implementing classes may implement one of sub-interfaces to detemine hash-equals compare policy:
     /// <list type="bullet">
     ///     <item><see cref="ILineHint"/>not used with comparison.</item>
-    ///     <item><see cref="ILineCanonicalKey"/>hash-equals comparable</item>
-    ///     <item><see cref="ILineNonCanonicalKey"/>hash-equals comparable</item>
+    ///     <item><see cref="ILineCanonicalKey"/>hash-equals comparable, order significant</item>
+    ///     <item><see cref="ILineNonCanonicalKey"/>hash-equals comparable, only left-most compared</item>
     /// </list>
     /// 
-    /// If the class doesn't implement any of the sub-interfaces, comparer may consider the parameter as hash-equals comparable, if the 
-    /// <see cref="ILineParameter.ParameterName"/> is known key, such as "Culture".
-    /// 
-    /// If the parameter class implements <see cref="ILineNonCanonicalKey"/> or <see cref="ILineCanonicalKey"/> then
-    /// the parameter will be considered as hash-equals comparable regardless of the ParameterName.
+    /// If the class doesn't implement any of the sub-interfaces, comparer may consider the parameter hash-equals comparable, if the 
+    /// <see cref="ILineParameter.ParameterName"/> is known to the comparer, such as "Culture" to the default comparer.
     /// </summary>
     public interface ILineParameter : ILine
     {

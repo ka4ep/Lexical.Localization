@@ -19,7 +19,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// A group of resolvers
         /// </summary>
-        public ResolverSet Resolvers;
+        public Resolvers Resolvers;
 
         /// <summary>
         /// Format arguments

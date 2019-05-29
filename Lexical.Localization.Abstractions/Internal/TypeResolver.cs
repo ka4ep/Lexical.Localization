@@ -181,6 +181,7 @@ namespace Lexical.Localization.Internal
             if (_cache == null || Interlocked.Read(ref disposed) != 0L) throw new ObjectDisposedException(GetType().FullName);
             ResultLine line = _cache.GetOrAdd(typeName, resolveFunc);
             if (line.Error != null) throw new LocalizationException(line.Error.Message, line.Error);
+            if (line.Value == null) throw new LocalizationException($"Could not resolve Type {typeName}");
             return line.Value;
         }
 

@@ -51,7 +51,7 @@ namespace Lexical.Localization.Plurality
         /// 
         /// E.g. "zero", "one", "few", "many", "other"
         /// 
-        /// If null, then info is used for querying.
+        /// If null, then info is used for querying with case constraint.
         /// </summary>
         public readonly string Case;
 

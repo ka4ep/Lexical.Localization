@@ -12,7 +12,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves function class name to <see cref="IFormatProvider"/>.
     /// </summary>
-    public class FormatProviderResolver : TypeResolver<IFormatProvider>, IResolver<IFormatProvider>
+    public class FormatProviderResolver : TypeResolver<IFormatProvider>, IParameterResolver<IFormatProvider>
     {
         /// <summary>
         /// Default instance.
@@ -23,6 +23,11 @@ namespace Lexical.Localization.StringFormat
         /// Default instance.
         /// </summary>
         public static FormatProviderResolver Default => instance.Value;
+
+        /// <summary>
+        /// Parameter Name
+        /// </summary>
+        public string ParameterName => "FormatProvider";
 
         /// <summary>
         /// Create type resolver with default settings.
