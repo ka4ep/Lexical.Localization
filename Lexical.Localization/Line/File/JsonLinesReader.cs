@@ -17,14 +17,14 @@ namespace Lexical.Localization
     /// <summary>
     /// Class that reads ".json" localization files.
     /// </summary>
-    public class LineJsonReader : ILineFileFormat, ILineTreeTextReader
+    public class JsonLinesReader : ILineFileFormat, ILineTreeTextReader
     {
-        private readonly static LineJsonReader instance = new LineJsonReader();
+        private readonly static JsonLinesReader instance = new JsonLinesReader();
 
         /// <summary>
         /// Default intance of .json reader
         /// </summary>
-        public static LineJsonReader Instance => instance;
+        public static JsonLinesReader Instance => instance;
 
         /// <summary>
         /// Polity to read keys.
@@ -49,7 +49,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new .json reader.
         /// </summary>
-        public LineJsonReader() : this("json", CSharpFormat.Instance)
+        public JsonLinesReader() : this("json", CSharpFormat.Instance)
         {
         }
 
@@ -58,7 +58,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="ext"></param>
         /// <param name="valueParser"></param>
-        public LineJsonReader(string ext, IStringFormat valueParser)
+        public JsonLinesReader(string ext, IStringFormat valueParser)
         {
             this.Extension = ext;
             this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));

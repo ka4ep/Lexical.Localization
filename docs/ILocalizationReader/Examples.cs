@@ -21,16 +21,16 @@ namespace docs
             }
             {
                 #region Snippet_0b
-                ILineFileFormat format = LineIniReader.Instance;
+                ILineFileFormat format = IniLinesReader.Instance;
                 #endregion Snippet_0b
                 ILineFileFormat format2a = LineReaderMap.Instance["json"];
-                ILineFileFormat format2b = LineJsonReader.Instance;
+                ILineFileFormat format2b = JsonLinesReader.Instance;
                 ILineFileFormat format3a = LineReaderMap.Instance["xml"];
-                ILineFileFormat format3b = LineXmlReader.Instance;
+                ILineFileFormat format3b = XmlLinesReader.Instance;
                 ILineFileFormat format4a = LineReaderMap.Instance["resx"];
-                ILineFileFormat format4b = LineResxReader.Instance;
+                ILineFileFormat format4b = ResxLinesReader.Instance;
                 ILineFileFormat format5a = LineReaderMap.Instance["resources"];
-                ILineFileFormat format5b = LineResourcesReader.Instance;
+                ILineFileFormat format5b = ResourcesLineReader.Instance;
             }
 
             {
@@ -157,7 +157,7 @@ namespace docs
                 #region Snippet_5a
                 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
                 {
-                    IEnumerable<ILine> key_lines = LineIniReader.Instance.ReadLines(s);
+                    IEnumerable<ILine> key_lines = IniLinesReader.Instance.ReadLines(s);
                 }
                 #endregion Snippet_5a
             }
@@ -165,7 +165,7 @@ namespace docs
                 #region Snippet_5b
                 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
                 {
-                    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LineIniReader.Instance.ReadStringLines(
+                    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = IniLinesReader.Instance.ReadStringLines(
                         stream: s,
                         namePolicy: LineFormat.Parameters);
                 }
@@ -175,7 +175,7 @@ namespace docs
                 #region Snippet_5c
                 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
                 {
-                    ILineTree tree = LineIniReader.Instance.ReadLineTree(s);
+                    ILineTree tree = IniLinesReader.Instance.ReadLineTree(s);
                 }
                 #endregion Snippet_5c
             }
@@ -186,7 +186,7 @@ namespace docs
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
                 using (TextReader tr = new StringReader(text))
                 {
-                    IEnumerable<ILine> key_lines = LineIniReader.Instance.ReadLines(tr);
+                    IEnumerable<ILine> key_lines = IniLinesReader.Instance.ReadLines(tr);
                 }
                 #endregion Snippet_6a
             }
@@ -195,7 +195,7 @@ namespace docs
                 #region Snippet_6b
                 using (TextReader tr = new StringReader(text))
                 {
-                    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LineIniReader.Instance.ReadStringLines(
+                    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = IniLinesReader.Instance.ReadStringLines(
                         srcText: tr,
                         namePolicy: LineFormat.Parameters);
                 }
@@ -206,7 +206,7 @@ namespace docs
                 #region Snippet_6c
                 using (TextReader tr = new StringReader(text))
                 {
-                    ILineTree tree = LineIniReader.Instance.ReadLineTree(tr);
+                    ILineTree tree = IniLinesReader.Instance.ReadLineTree(tr);
                 }
                 #endregion Snippet_6c
             }
@@ -215,7 +215,7 @@ namespace docs
                 #region Snippet_7a
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
                 IEnumerable<ILine> key_lines = 
-                    LineIniReader.Instance.ReadString(
+                    IniLinesReader.Instance.ReadString(
                         srcText: text);
                 #endregion Snippet_7a
             }
@@ -223,7 +223,7 @@ namespace docs
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
                 #region Snippet_7b
                 IEnumerable<KeyValuePair<string, IFormatString>> string_lines = 
-                    LineIniReader.Instance.ReadStringAsStringLines(
+                    IniLinesReader.Instance.ReadStringAsStringLines(
                         srcText: text,
                         namePolicy: LineFormat.Parameters);
                 #endregion Snippet_7b
@@ -232,14 +232,14 @@ namespace docs
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
                 #region Snippet_7c
                 ILineTree tree = 
-                    LineIniReader.Instance.ReadStringAsLineTree(
+                    IniLinesReader.Instance.ReadStringAsLineTree(
                         srcText: text);
                 #endregion Snippet_7c
             }
 
             {
                 #region Snippet_10a
-                IAsset asset = LineIniReader.Instance.FileAsset(
+                IAsset asset = IniLinesReader.Instance.FileAsset(
                     filename: "localization.ini",
                     throwIfNotFound: true);
                 #endregion Snippet_10a
@@ -247,7 +247,7 @@ namespace docs
             {
                 #region Snippet_10b
                 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
-                IAsset asset = LineIniReader.Instance.EmbeddedAsset(
+                IAsset asset = IniLinesReader.Instance.EmbeddedAsset(
                     assembly: asm,
                     resourceName: "docs.localization.ini",
                     throwIfNotFound: true);
@@ -256,7 +256,7 @@ namespace docs
             {
                 #region Snippet_10c
                 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-                IAsset asset = LineIniReader.Instance.FileProviderAsset(
+                IAsset asset = IniLinesReader.Instance.FileProviderAsset(
                     fileProvider: fileProvider,
                     filepath: "localization.ini",
                     throwIfNotFound: true);
@@ -273,7 +273,7 @@ namespace docs
             {
                 #region Snippet_11a
                 IAssetSource assetSource = 
-                    LineIniReader.Instance.FileAssetSource(
+                    IniLinesReader.Instance.FileAssetSource(
                         filename: "localization.ini",
                         throwIfNotFound: true);
                 IAssetBuilder assetBuilder = new AssetBuilder().AddSource(assetSource);
@@ -284,7 +284,7 @@ namespace docs
                 #region Snippet_11b
                 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
                 IAssetSource assetSource = 
-                    LineIniReader.Instance.EmbeddedAssetSource(
+                    IniLinesReader.Instance.EmbeddedAssetSource(
                         assembly: asm,
                         resourceName: "docs.localization.ini",
                         throwIfNotFound: true);
@@ -294,7 +294,7 @@ namespace docs
                 #region Snippet_11c
                 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
                 IAssetSource assetSource = 
-                    LineIniReader.Instance.FileProviderAssetSource(
+                    IniLinesReader.Instance.FileProviderAssetSource(
                         fileProvider: fileProvider,
                         filepath: "localization.ini",
                         throwIfNotFound: true);

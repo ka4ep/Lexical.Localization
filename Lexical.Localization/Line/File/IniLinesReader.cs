@@ -21,14 +21,14 @@ namespace Lexical.Localization
     /// And second level is key-value pairs 'parameterName:parameterValue:.. = value'.
     /// Characters \:= and white-spaces are escaped.
     /// </summary>
-    public class LineIniReader : ILineFileFormat, ILineTreeTextReader
+    public class IniLinesReader : ILineFileFormat, ILineTreeTextReader
     {
-        private readonly static LineIniReader instance = new LineIniReader();
+        private readonly static IniLinesReader instance = new IniLinesReader();
 
         /// <summary>
         /// Default instance of .ini localization reader.
         /// </summary>
-        public static LineIniReader Instance => instance;
+        public static IniLinesReader Instance => instance;
 
         /// <summary>
         /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.
@@ -58,14 +58,14 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new ini file reader.
         /// </summary>
-        public LineIniReader() : this("ini", CSharpFormat.Instance) { }
+        public IniLinesReader() : this("ini", CSharpFormat.Instance) { }
 
         /// <summary>
         /// Create new ini file reader.
         /// </summary>
         /// <param name="ext"></param>
         /// <param name="valueParser"></param>
-        public LineIniReader(string ext, IStringFormat valueParser)
+        public IniLinesReader(string ext, IStringFormat valueParser /*, IResolver resolver*/)
         {
             this.Extension = ext;
             this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));

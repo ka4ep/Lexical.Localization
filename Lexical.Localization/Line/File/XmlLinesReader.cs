@@ -19,7 +19,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Class that reads .xml localization files.
     /// </summary>
-    public class LineXmlReader : ILineFileFormat, ILineTreeStreamReader, ILineTreeTextReader
+    public class XmlLinesReader : ILineFileFormat, ILineTreeStreamReader, ILineTreeTextReader
     {
         /// <summary>
         /// Namespace
@@ -41,12 +41,12 @@ namespace Lexical.Localization
         /// </summary>
         public const string URN_ = "urn:lexical.fi:";
 
-        private readonly static LineXmlReader instance = new LineXmlReader();
+        private readonly static XmlLinesReader instance = new XmlLinesReader();
 
         /// <summary>
         /// Default xml reader instance
         /// </summary>
-        public static LineXmlReader Instance => instance;
+        public static XmlLinesReader Instance => instance;
 
         /// <summary>
         /// File extension, default ".xml"
@@ -66,7 +66,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new xml reader
         /// </summary>
-        public LineXmlReader() : this("xml", CSharpFormat.Instance, default) { }
+        public XmlLinesReader() : this("xml", CSharpFormat.Instance, default) { }
 
         /// <summary>
         /// Create new xml reader
@@ -74,7 +74,7 @@ namespace Lexical.Localization
         /// <param name="extension"></param>
         /// <param name="valueParser"></param>
         /// <param name="xmlReaderSettings"></param>
-        public LineXmlReader(string extension, IStringFormat valueParser, XmlReaderSettings xmlReaderSettings = default)
+        public XmlLinesReader(string extension, IStringFormat valueParser, XmlReaderSettings xmlReaderSettings = default)
         {
             this.Extension = extension;
             this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));

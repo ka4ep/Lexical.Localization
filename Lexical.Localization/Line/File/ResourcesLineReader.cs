@@ -16,14 +16,14 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that reads Microsoft's binary ".resources" files as key,value lines.
     /// </summary>
-    public class LineResourcesReader : ILineFileFormat, ILineStringStreamReader
+    public class ResourcesLineReader : ILineFileFormat, ILineStringStreamReader
     {
-        private readonly static LineResourcesReader instance = new LineResourcesReader();
+        private readonly static ResourcesLineReader instance = new ResourcesLineReader();
 
         /// <summary>
         /// Default instance
         /// </summary>
-        public static LineResourcesReader Instance => instance;
+        public static ResourcesLineReader Instance => instance;
 
         /// <summary>
         /// File extension
@@ -38,14 +38,14 @@ namespace Lexical.Localization
         /// <summary>
         /// Create reader
         /// </summary>
-        public LineResourcesReader() : this("resources", CSharpFormat.Instance) { }
+        public ResourcesLineReader() : this("resources", CSharpFormat.Instance) { }
 
         /// <summary>
         /// Create reader
         /// </summary>
         /// <param name="ext"></param>
         /// <param name="valueParser"></param>
-        public LineResourcesReader(string ext, IStringFormat valueParser)
+        public ResourcesLineReader(string ext, IStringFormat valueParser)
         {
             this.Extension = ext;
             this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
