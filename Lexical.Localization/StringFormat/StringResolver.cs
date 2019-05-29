@@ -25,20 +25,16 @@ namespace Lexical.Localization.StringFormat
         public static StringResolver Default => instance;
 
         /// <summary>
-        /// Group of resolvers
+        /// Resolvers
         /// </summary>
-        public readonly Resolvers Resolvers;
+        public readonly IResolver Resolvers;
 
         /// <summary>
         /// Create string resolver 
         /// </summary>
         public StringResolver()
         {
-            this.Resolvers = new Resolvers(
-                Lexical.Localization.StringFormat.StringFormatResolver.Default,
-                Lexical.Localization.StringFormat.FunctionsResolver.Default,
-                Lexical.Localization.StringFormat.FormatProviderResolver.Default,
-                Lexical.Localization.Plurality.PluralRulesResolver.Default);
+            this.Resolvers = ResolverSet.Instance;
             this.ResolveSequence = new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
         }
 
@@ -47,7 +43,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="resolvers"></param>
         /// <param name="resolveSequence"></param>
-        public StringResolver(Resolvers resolvers, ResolveSource[] resolveSequence = default)
+        public StringResolver(IResolver resolvers, ResolveSource[] resolveSequence = default)
         {
             this.Resolvers = resolvers ?? throw new ArgumentNullException(nameof(resolvers));
             this.ResolveSequence = resolveSequence ?? new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
@@ -143,7 +139,7 @@ namespace Lexical.Localization.StringFormat
                         // Got no match
                         if (line_for_plurality_arguments == null) continue;
                         // Parse value
-                        IFormatString value_for_plurality = line_for_plurality_arguments.GetValue(Resolvers.StringFormatResolver);
+                        IFormatString value_for_plurality = line_for_plurality_arguments.GetValue(Resolvers);
                         // Add status from parsing the value
                         features.Status.UpFormat(value_for_plurality.Status);
                         // Value has error
@@ -266,7 +262,7 @@ namespace Lexical.Localization.StringFormat
                         // Got no match
                         if (line_for_plurality_arguments == null) continue;
                         // Parse value
-                        IFormatString value_for_plurality = line_for_plurality_arguments.GetValue(Resolvers.StringFormatResolver);
+                        IFormatString value_for_plurality = line_for_plurality_arguments.GetValue(Resolvers);
                         // Add status from parsing the value
                         features.Status.UpFormat(value_for_plurality.Status);
                         // Value has error

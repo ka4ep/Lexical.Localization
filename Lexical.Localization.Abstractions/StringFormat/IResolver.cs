@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lexical.Localization.StringFormat
 {
@@ -44,12 +45,13 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves identifiers to types.
     /// </summary>
-    public interface IResolverGeneric : IResolver
+    public interface IGenericResolver : IResolver
     {
         /// <summary>
         /// Resolve <paramref name="identifier"/> to <typeparamref name="T"/>.
         /// </summary>
         /// <param name="identifier"></param>
+        /// <typeparam name="T"></typeparam>
         /// <returns><typeparamref name="T"/> or null</returns>
         /// <exception cref="ObjectDisposedException">resolver is disposed</exception>
         /// <exception cref="LocalizationException">If resolve fails.</exception>
@@ -58,6 +60,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Try resolve into value.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="identifier"></param>
         /// <param name="result"></param>
         /// <returns>true if was resolved with result</returns>
@@ -66,14 +69,26 @@ namespace Lexical.Localization.StringFormat
     }
 
     /// <summary>
-    /// This interface signals that the resolver can resolve specific parameter name into <typeparamref name="T"/>.
+    /// This interface signals that the resolver can resolve parameters into line arguments, which can be instantiated to line parts.
     /// </summary>
-    public interface IParameterResolver<T> : IResolver<T>
+    public interface IParameterResolver : IResolver
     {
         /// <summary>
-        /// Name of parameter that can be resolved into an instance.
+        /// The parameters this resolver is capable of resolving.
         /// </summary>
-        String ParameterName { get; }
+        string[] ParameterNames { get; }
+
+        /// <summary>
+        /// Try to resolve parameter into line arguments. 
+        /// 
+        /// For example parameter "Culture" is resolved to <see cref="ILineArguments"/> that produces <see cref="ILineCulture"/> with <see cref="CultureInfo"/>.
+        /// </summary>
+        /// <param name="previous">(optional) previous parts</param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        /// <param name="resolvedLineArguments"></param>
+        /// <returns></returns>
+        bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments);
     }
 
     /// <summary>
@@ -107,13 +122,13 @@ namespace Lexical.Localization.StringFormat
                     return result;
                 }
             }
-            if (resolver is IResolverGeneric generic_) return generic_.Resolve<T>(identifier);
+            if (resolver is IGenericResolver generic_) return generic_.Resolve<T>(identifier);
 
             throw new LocalizationException($"Doesn't implement {nameof(IResolver)}<{nameof(T)}>");
 
             bool TryGeneric(out T r)
             {
-                if (resolver is IResolverGeneric generic) { r = generic.Resolve<T>(identifier); return true; }
+                if (resolver is IGenericResolver generic) { r = generic.Resolve<T>(identifier); return true; }
                 r = default;
                 return false;
             }
@@ -130,57 +145,27 @@ namespace Lexical.Localization.StringFormat
         public static bool TryResolve<T>(this IResolver resolver, string identifier, out T result)
         {
             if (resolver is IResolver<T> _resolver && _resolver.TryResolve(identifier, out result)) return true;
-            if (resolver is IResolverGeneric generic && generic.TryResolve<T>(identifier, out result)) return true;
+            if (resolver is IGenericResolver generic && generic.TryResolve<T>(identifier, out result)) return true;
             result = default; return false;
         }
 
-
         /// <summary>
-        /// Resolves parameters and keys into instances.
+        /// Try to resolve parameter into line arguments. 
         /// 
-        /// <list type="bullet">
-        ///     <item>Parameter "Culture" is resolved to <see cref="ILineCulture"/></item>
-        ///     <item>Parameter "Value" is resolved to <see cref="ILineValue"/></item>
-        ///     <item>Parameter "StringFormat" is resolved to <see cref="ILineStringFormat"/></item>
-        ///     <item>Parameter "Functions" is resolved to <see cref="ILineFunctions"/></item>
-        ///     <item>Parameter "PluralRules" is resolved to <see cref="ILinePluralRules"/></item>
-        ///     <item>Parameter "FormatProvider" is resolved to <see cref="ILineFormatProvider"/></item>
-        /// </list>
-        /// 
-        /// Parts that don't need resolving may be need to be cloned. 
-        /// If the line appender of <paramref name="line"/> fails cloning, then the operation 
-        /// fails and returns false.
-        /// 
+        /// For example parameter "Culture" is resolved to <see cref="ILineArguments"/> that produces <see cref="ILineCulture"/> with <see cref="CultureInfo"/>.
         /// </summary>
         /// <param name="resolver"></param>
+        /// <param name="previous">(optional) previous parts</param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="resolvedLine"></param>
-        /// <returns>true if operation was successful, <paramref name="resolvedLine"/> contains new line. If operation failed, <paramref name="resolvedLine"/> contains the reference to <paramref name="line"/>.</returns>
-        public static bool TryResolveParameters(this IResolver resolver, string parameterName, string parameterValue, ILine prevParts, out ILine resolvedLine)
-        {/*
-            // 1. Scan line to A) test if resolving is needed, B) if clone is possible
-            bool resolvingNeeded;
-            ILineFactory appender;
-
-            for (ILine l = line; l != null; l = l.GetPreviousPart())
-            {
-                if (l is ILineParameterEnumerable lineParameters)
-                    foreach (ILineParameter lineParameter in lineParameters)
-                    {
-
-                    }
-                if (l is ILineParameter parameter)
-                {
-
-                }
-            }
-            */
-            // TODO IMPLEMENT
-            resolvedLine = null;
+        /// <param name="resolvedLineArguments"></param>
+        /// <returns></returns>
+        public static bool TryResolveParameter(this IResolver resolver, ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments)
+        {
+            if (resolver is IParameterResolver parameterResolver) return parameterResolver.TryResolveParameter(previous, parameterName, parameterValue, out resolvedLineArguments);
+            resolvedLineArguments = default;
             return false;
         }
-
 
     }
 

@@ -72,7 +72,7 @@ namespace Lexical.Localization
         /// <param name="resolver">(optional) type resolver that resolves "IFunctions" parameter into type. Returns null, if could not resolve, exception if resolve fails</param>
         /// <returns>type info or null</returns>
         /// <exception cref="Exception">from <paramref name="resolver"/></exception>
-        public static IFunctions FindFunctions(this ILine line, IResolver<IFunctions> resolver = null)
+        public static IFunctions FindFunctions(this ILine line, IResolver resolver = null)
         {
             IFunctions type = null;
             for (ILine l = line; l != null; l = l.GetPreviousPart())
@@ -85,7 +85,7 @@ namespace Lexical.Localization
                     {
                         if (parameter.ParameterName == "Functions" && parameter.ParameterValue != null)
                         {
-                            tt = resolver.Resolve(parameter.ParameterValue);
+                            tt = resolver.Resolve<IFunctions>(parameter.ParameterValue);
                             if (tt != null) break;
                         }
                     }
@@ -93,7 +93,7 @@ namespace Lexical.Localization
                 }
                 if (resolver != null && l is ILineParameter lineParameter && lineParameter.ParameterName == "Functions" && lineParameter.ParameterValue != null)
                 {
-                    IFunctions t = resolver.Resolve(lineParameter.ParameterValue);
+                    IFunctions t = resolver.Resolve<IFunctions>(lineParameter.ParameterValue);
                     if (t != null) type = t;
                 }
             }

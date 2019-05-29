@@ -12,7 +12,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves function class name to <see cref="IFormatProvider"/>.
     /// </summary>
-    public class FormatProviderResolver : TypeResolver<IFormatProvider>, IParameterResolver<IFormatProvider>
+    public class FormatProviderResolver : ParameterResolver<IFormatProvider>, IResolver<IFormatProvider>
     {
         /// <summary>
         /// Default instance.
@@ -25,17 +25,12 @@ namespace Lexical.Localization.StringFormat
         public static FormatProviderResolver Default => instance.Value;
 
         /// <summary>
-        /// Parameter Name
-        /// </summary>
-        public string ParameterName => "FormatProvider";
-
-        /// <summary>
         /// Create type resolver with default settings.
         /// 
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public FormatProviderResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver)
+        public FormatProviderResolver() : base("FormatProvider", DefaultAssemblyResolver, DefaultTypeResolver)
         {
         }
 
@@ -44,7 +39,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="assemblyLoader">(optional) function that reads assembly from file.</param>
         /// <param name="typeResolver">(optional) Function that resolves type name into <see cref="Type"/>.</param>
-        public FormatProviderResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base(assemblyLoader, typeResolver)
+        public FormatProviderResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base("FormatProvider", assemblyLoader, typeResolver)
         {
         }
 
@@ -63,5 +58,6 @@ namespace Lexical.Localization.StringFormat
                 base.Dispose();
             }
         }
+
     }
 }

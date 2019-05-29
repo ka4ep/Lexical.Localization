@@ -15,8 +15,8 @@ using System.Reflection;
 
 namespace Lexical.Localization
 {
-
-    public static partial class MsLocalizationExtensions
+    /// <summary></summary>
+    public static partial class MsDependencyInjectionExtensions
     {
         /// <summary>
         /// Adds the following Lexical.Localization services:

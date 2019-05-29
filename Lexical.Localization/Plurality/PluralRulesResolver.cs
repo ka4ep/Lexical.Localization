@@ -18,7 +18,7 @@ namespace Lexical.Localization.Plurality
     /// Resolver that creates "PluralRules" parameter value by
     /// instantiating as class (assembly qualitifed type name), or by parsing as expression string.
     /// </summary>
-    public class PluralRulesResolver : IPluralRulesEvaluatable, IPluralRulesQueryable, IParameterResolver<IPluralRules>
+    public class PluralRulesResolver : IPluralRulesEvaluatable, IPluralRulesQueryable, IResolver<IPluralRules>, IParameterResolver
     {
         /// <summary>
         /// Default instance.
@@ -31,9 +31,14 @@ namespace Lexical.Localization.Plurality
         public static PluralRulesResolver Default => instance.Value;
 
         /// <summary>
+        /// Parameter names supported by this resolver.
+        /// </summary>
+        static string[] parameterNames = new string[] { "PluralRules" };
+
+        /// <summary>
         /// Parameter Name
         /// </summary>
-        public string ParameterName => "PluralRules";
+        public string[] ParameterNames => parameterNames;
 
         /// <summary>
         /// Function that resolves type name into <see cref="Type"/>.
@@ -271,6 +276,30 @@ namespace Lexical.Localization.Plurality
             /// Result
             /// </summary>
             public IPluralRulesEnumerable Rules;
+        }
+
+        /// <summary>
+        /// Resolve "Culture" parameter into arguments.
+        /// </summary>
+        /// <param name="previous">(optional)</param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        /// <param name="resolvedLineArguments"></param>
+        /// <returns></returns>
+        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments)
+        {
+            if (parameterValue != null && parameterValue != "" && parameterName == "PluralRules")
+            {
+                IPluralRules value;
+                if (TryResolve(parameterValue, out value))
+                {
+                    resolvedLineArguments = new LineArguments<ILinePluralRules, IPluralRules>(value);
+                    return true;
+                }
+            }
+
+            resolvedLineArguments = default;
+            return false;
         }
 
     }

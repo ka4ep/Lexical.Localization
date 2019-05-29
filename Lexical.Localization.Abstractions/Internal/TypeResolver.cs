@@ -3,6 +3,7 @@
 // Date:           10.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.StringFormat;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -97,7 +98,7 @@ namespace Lexical.Localization.Internal
     /// Caches the instances.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class TypeResolver<T> : TypeResolver, IDisposable
+    public class TypeResolver<T> : TypeResolver, IDisposable, IResolver<T>
     {
         /// <summary>
         /// 0 - not disposed
@@ -231,6 +232,69 @@ namespace Lexical.Localization.Internal
             /// </summary>
             public T Value;
         }
-
     }
+
+    /// <summary>
+    /// Resolves class name to instance of the class. Also resolves parameter values into instances of class.
+    /// Caches the instances.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public class ParameterResolver<T> : TypeResolver<T>, IParameterResolver
+    {
+        /// <summary>
+        /// The parameter this resolver is capable of resolving.
+        /// </summary>
+        public string ParameterName { get; protected set; }
+
+        /// <summary>
+        /// The parameter this resolver is capable of resolving.
+        /// </summary>
+        public string[] ParameterNames { get; protected set; }
+
+        /// <summary>
+        /// Create type resolver with default settings.
+        /// 
+        /// Parses expressions and instantiates types that are found in the app domain.
+        /// Does not load external dll files.
+        /// </summary>
+        /// <param name="parameterName"></param>
+        public ParameterResolver(string parameterName) : this(parameterName, DefaultAssemblyResolver, DefaultTypeResolver)
+        {
+        }
+
+        /// <summary>
+        /// Create type resolver.
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="assemblyLoader">(optional) function that reads assembly from file.</param>
+        /// <param name="typeResolver">(optional) Function that resolves type name into <see cref="Type"/>.</param>
+        public ParameterResolver(string parameterName, Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base(assemblyLoader, typeResolver)
+        {
+            if (parameterName == null) throw new ArgumentNullException(parameterName);
+            this.ParameterNames = new string[] { parameterName };
+            this.ParameterName = parameterName;
+        }
+
+        /// <summary>
+        /// Resolve "FormatProvider" parameter into arguments.
+        /// </summary>
+        /// <param name="previous"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        /// <param name="resolvedLineArguments"></param>
+        /// <returns></returns>
+        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments)
+        {
+            T value;
+            if (parameterValue != null && parameterValue != "" && parameterName == ParameterName && TryResolve(parameterValue, out value))
+            {
+                resolvedLineArguments = new LineArguments<ILineCulture, T>(value);
+                return true;
+            }
+
+            resolvedLineArguments = default;
+            return false;
+        }
+    }
+
 }

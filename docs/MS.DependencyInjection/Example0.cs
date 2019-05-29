@@ -22,7 +22,7 @@ namespace docs
 
             #region Snippet_2
             // Create localization source
-            var lines = new List<ILine> { LineAppender.Default.Culture("en").Type("ConsoleApp1.MyController").Key("Hello").Value("Hello World!") };
+            var lines = new List<ILine> { LineAppender.Resolving.Culture("en").Type("ConsoleApp1.MyController").Key("Hello").Value("Hello World!") };
             // Create asset source
             IAssetSource assetSource = new LocalizationAsset(lines).ToSource();
             // Add asset source

@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.Runtime.Serialization;
+using Lexical.Localization.StringFormat;
 
 namespace Lexical.Localization
 {
@@ -100,11 +101,21 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="key"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineNonCanonicalKey key)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineNonCanonicalKey result)
         {
-            key = new LineKey.NonCanonical(appender, previous, parameterName, parameterValue);
+            // Try resolve
+            ILineArguments args;
+            ILine resolved;
+            if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineNonCanonicalKey castedResolved)
+            {
+                // Return as parameter and as resolved instance
+                result = castedResolved;
+                return true;
+            }
+
+            result = new LineKey.NonCanonical(appender, previous, parameterName, parameterValue);
             return true;
         }
 
@@ -115,11 +126,21 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="key"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineCanonicalKey key)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineCanonicalKey result)
         {
-            key = new LineKey.Canonical(this, previous, parameterName, parameterValue);
+            // Try resolve
+            ILineArguments args;
+            ILine resolved;
+            if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineCanonicalKey castedResolved)
+            {
+                // Return as parameter and as resolved instance
+                result = castedResolved;
+                return true;
+            }
+
+            result = new LineKey.Canonical(this, previous, parameterName, parameterValue);
             return true;
         }
     }
@@ -217,11 +238,21 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="key"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineNonCanonicalKey key)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineNonCanonicalKey result)
         {
-            key = new _StringLocalizerKey.NonCanonical(appender, previous, parameterName, parameterValue);
+            // Try resolve
+            ILineArguments args;
+            ILine resolved;
+            if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineNonCanonicalKey castedResolved)
+            {
+                // Return as parameter and as resolved instance
+                result = castedResolved;
+                return true;
+            }
+
+            result = new _StringLocalizerKey.NonCanonical(appender, previous, parameterName, parameterValue);
             return true;
         }
 
@@ -232,11 +263,21 @@ namespace Lexical.Localization
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="key"></param>
+        /// <param name="result"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineCanonicalKey key)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineCanonicalKey result)
         {
-            key = new _StringLocalizerKey.Canonical(this, previous, parameterName, parameterValue);
+            // Try resolve
+            ILineArguments args;
+            ILine resolved;
+            if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineCanonicalKey castedResolved)
+            {
+                // Return as parameter and as resolved instance
+                result = castedResolved;
+                return true;
+            }
+
+            result = new _StringLocalizerKey.Canonical(this, previous, parameterName, parameterValue);
             return true;
         }
     }

@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.Runtime.Serialization;
+using Lexical.Localization.StringFormat;
 
 namespace Lexical.Localization
 {
@@ -103,6 +104,17 @@ namespace Lexical.Localization
         /// <returns></returns>
         public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineParameter result)
         {
+            // Try resolve
+            ILineArguments args;
+            ILine resolved;
+            if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineParameter castedResolved)
+            {
+                // Return as parameter and as resolved instance
+                result = castedResolved;
+                return true;
+            }
+
+            // Return as parameter
             result = new LineParameter(appender, previous, parameterName, parameterValue);
             return true;
         }
@@ -203,6 +215,17 @@ namespace Lexical.Localization
         /// <returns></returns>
         public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineParameter result)
         {
+            // Try resolve
+            ILineArguments args;
+            ILine resolved;
+            if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineParameter castedResolved)
+            {
+                // Return as parameter and as resolved instance
+                result = castedResolved;
+                return true;
+            }
+
+            // Return as parameter
             result = new StringLocalizerParameter(appender, previous, parameterName, parameterValue);
             return true;
         }

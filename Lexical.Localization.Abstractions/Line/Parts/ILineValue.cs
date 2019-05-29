@@ -65,9 +65,9 @@ namespace Lexical.Localization
         /// the default string format or the format that can be found.
         /// </summary>
         /// <param name="line"></param>
-        /// <param name="resolver"></param>
+        /// <param name="resolver">(optional) type resolver that resolves "IStringFormat" parameter into type. Returns null, if could not resolve, exception if resolve fails</param>
         /// <returns>value</returns>
-        public static IFormatString GetValue(this ILine line, IResolver<IStringFormat> resolver = null)
+        public static IFormatString GetValue(this ILine line, IResolver resolver = null)
         {
             for (ILine part = line; part != null; part = part.GetPreviousPart())
             {

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Localization;
 
 namespace Lexical.Localization
 {
+    /// <summary></summary>
     public static partial class MsLocalizationExtensions
     {
         /// <summary>

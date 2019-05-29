@@ -12,7 +12,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves function class name to <see cref="IFunctions"/>.
     /// </summary>
-    public class FunctionsResolver : TypeResolver<IFunctions>, IParameterResolver<IFunctions>
+    public class FunctionsResolver : ParameterResolver<IFunctions>
     {
         /// <summary>
         /// Default instance.
@@ -25,17 +25,12 @@ namespace Lexical.Localization.StringFormat
         public static FunctionsResolver Default => instance.Value;
 
         /// <summary>
-        /// Parameter Name
-        /// </summary>
-        public string ParameterName => "Functions";
-
-        /// <summary>
         /// Create type resolver with default settings.
         /// 
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public FunctionsResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver)
+        public FunctionsResolver() : base("Functions", DefaultAssemblyResolver, DefaultTypeResolver)
         {
         }
 
@@ -44,7 +39,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="assemblyLoader">(optional) function that reads assembly from file.</param>
         /// <param name="typeResolver">(optional) Function that resolves type name into <see cref="Type"/>.</param>
-        public FunctionsResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base(assemblyLoader, typeResolver)
+        public FunctionsResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base("Functions", assemblyLoader, typeResolver)
         {
         }
 

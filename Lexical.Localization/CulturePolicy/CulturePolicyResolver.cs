@@ -1,33 +1,29 @@
 ﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           10.5.2019
+// Date:           29.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.StringFormat;
 using System;
 using System.Reflection;
 
-namespace Lexical.Localization.StringFormat
+namespace Lexical.Localization
 {
     /// <summary>
-    /// Resolves string format class name to string format.
+    /// Resolves function class name to <see cref="ICulturePolicy"/>.
     /// </summary>
-    public class StringFormatResolver : TypeResolver<IStringFormat>, IParameterResolver<IStringFormat>
+    public class CulturePolicyResolver : ParameterResolver<ICulturePolicy>, IResolver<ICulturePolicy>
     {
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static readonly Lazy<StringFormatResolver> instance = new Lazy<StringFormatResolver>();
+        static readonly Lazy<CulturePolicyResolver> instance = new Lazy<CulturePolicyResolver>();
 
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static StringFormatResolver Default => instance.Value;
-
-        /// <summary>
-        /// Parameter Name
-        /// </summary>
-        public string ParameterName => "StringFormat";
+        public static CulturePolicyResolver Default => instance.Value;
 
         /// <summary>
         /// Create type resolver with default settings.
@@ -35,7 +31,7 @@ namespace Lexical.Localization.StringFormat
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public StringFormatResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver)
+        public CulturePolicyResolver() : base("CulturePolicy", DefaultAssemblyResolver, DefaultTypeResolver)
         {
         }
 
@@ -44,7 +40,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="assemblyLoader">(optional) function that reads assembly from file.</param>
         /// <param name="typeResolver">(optional) Function that resolves type name into <see cref="Type"/>.</param>
-        public StringFormatResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base(assemblyLoader, typeResolver)
+        public CulturePolicyResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base("CulturePolicy", assemblyLoader, typeResolver)
         {
         }
 
@@ -57,11 +53,13 @@ namespace Lexical.Localization.StringFormat
             {
                 // Don't dispose the global static instance, but clear its cache.
                 cache.Clear();
-            } else
+            }
+            else
             {
                 // Continue disposing
                 base.Dispose();
             }
         }
+
     }
 }

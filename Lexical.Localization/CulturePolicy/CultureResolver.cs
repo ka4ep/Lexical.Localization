@@ -3,6 +3,7 @@
 // Date:           29.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using Lexical.Localization.StringFormat;
 using System;
 using System.Globalization;
@@ -12,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Resolves culture name to <see cref="CultureInfo"/>.
     /// </summary>
-    public class CultureResolver : IParameterResolver<CultureInfo>
+    public class CultureResolver : IResolver<CultureInfo>, IParameterResolver
     {
         /// <summary>
         /// Default instance.
@@ -25,9 +26,14 @@ namespace Lexical.Localization
         public static CultureResolver Default => instance;
 
         /// <summary>
+        /// Parameter names supported by this resolver.
+        /// </summary>
+        static string[] parameterNames = new string[] { "Culture" };
+
+        /// <summary>
         /// Parameter Name
         /// </summary>
-        public string ParameterName => "Culture";
+        public string[] ParameterNames => parameterNames;
 
         /// <summary>
         /// 
@@ -64,6 +70,30 @@ namespace Lexical.Localization
                 result = null;
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Resolve "Culture" parameter into arguments.
+        /// </summary>
+        /// <param name="previous">(optional)</param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        /// <param name="resolvedLineArguments"></param>
+        /// <returns></returns>
+        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments)
+        {
+            if (parameterValue != null && parameterValue != "" && parameterName == "Culture")
+            {
+                CultureInfo cultureInfo;
+                if (TryResolve(parameterValue, out cultureInfo))
+                {
+                    resolvedLineArguments = new LineArguments<ILineCulture, CultureInfo>(cultureInfo);
+                    return true;
+                }
+            }
+
+            resolvedLineArguments = default;
+            return false;
         }
     }
 }
