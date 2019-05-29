@@ -322,20 +322,40 @@ namespace Lexical.Localization
             /// <summary>
             /// Pattern of this part.
             /// </summary>
-            public Regex Regex => regex ?? ILinePatternExtensions.GetDefaultPattern(ParameterName);
+            public Regex Regex => regex ?? LinePattern.GetDefaultPattern(ParameterName);
 
             /// <summary>
             /// Tests if text is match.
             /// </summary>
             /// <param name="text"></param>
             /// <returns></returns>
-            public bool IsMatch(string text) => Regex == ILinePatternExtensions.GetDefaultPattern(null) ? true : Regex.IsMatch(text);
+            public bool IsMatch(string text) => Regex == LinePattern.GetDefaultPattern(null) ? true : Regex.IsMatch(text);
 
             /// <summary>
             /// Print part
             /// </summary>
             /// <returns></returns>
             public override string ToString() => PatternText;
+        }
+
+
+        /// <summary>
+        /// Default patterns to use for each parameter.
+        /// </summary>
+        static readonly Regex default_reluctant_pattern = new Regex(".*?", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+        /// <summary>
+        /// Get default pattern for a ParameterName.
+        /// </summary>
+        /// <param name="parameter">parameter name</param>
+        /// <returns>capture pattern to use</returns>
+        public static Regex GetDefaultPattern(string parameter)
+        {
+            if (parameter == null || parameter == "") return default_reluctant_pattern;
+
+            IParameterInfo parameterInfo;
+            if (Lexical.Localization.Utils.ParameterInfos.Default.TryGetValue(parameter, out parameterInfo) && parameterInfo.Pattern != null) return parameterInfo.Pattern;
+            return default_reluctant_pattern;
         }
 
         /// <summary>

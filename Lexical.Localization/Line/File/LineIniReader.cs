@@ -69,7 +69,7 @@ namespace Lexical.Localization
         {
             this.Extension = ext;
             this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
-    }
+        }
 
         /// <summary>
         /// Json text into a tree.

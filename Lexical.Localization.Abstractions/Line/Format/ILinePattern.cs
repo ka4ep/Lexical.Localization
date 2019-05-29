@@ -438,24 +438,6 @@ namespace Lexical.Localization
             return true;
         }
 
-        /// <summary>
-        /// Default patterns to use for each parameter.
-        /// </summary>
-        static readonly Regex default_reluctant_pattern = new Regex(".*?", RegexOptions.CultureInvariant | RegexOptions.Compiled);
-
-        /// <summary>
-        /// Get default pattern for a ParameterName.
-        /// </summary>
-        /// <param name="parameter">parameter name</param>
-        /// <returns>capture pattern to use</returns>
-        public static Regex GetDefaultPattern(string parameter)
-        {
-            if (parameter == null || parameter == "") return default_reluctant_pattern;
-
-            IParameterInfo parameterInfo;
-            if (ParameterInfos.Default.TryGetValue(parameter, out parameterInfo) && parameterInfo.Pattern != null) return parameterInfo.Pattern;
-            return default_reluctant_pattern;
-        }
 
         /// <summary>
         /// Match against string or filename.

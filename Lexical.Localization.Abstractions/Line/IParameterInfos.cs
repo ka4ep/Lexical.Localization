@@ -157,4 +157,57 @@ namespace Lexical.Localization.Utils
             => infos is IEnumerable<IParameterInfo> enumr ? enumr.Where(pi => pi.InterfaceType == typeof(ILineCanonicalKey) || pi.InterfaceType == typeof(ILineNonCanonicalKey)) : throw new InvalidOperationException($"not {nameof(IParameterInfosEnumerable)}");
 
     }
+
+    /// <summary>
+    /// Parameter info.
+    /// </summary>
+    public class ParameterInfo : IParameterInfo
+    {
+        /// <summary>
+        /// The parameter name
+        /// </summary>
+        public string ParameterName { get; private set; }
+
+        /// <summary>
+        /// Describes how the parameter is to be compared.
+        /// <list type="bullet">
+        ///     <item><see cref="ILineHint"/>not used with comparison.</item>
+        ///     <item><see cref="ILineCanonicalKey"/>hash-equals comparable</item>
+        ///     <item><see cref="ILineNonCanonicalKey"/>hash-equals comparable</item>
+        /// </list>
+        /// </summary>
+        public Type InterfaceType { get; }
+
+        /// <summary>
+        /// Suggested sorting order. Smaller number is sorted to left, higher to right when formulating a string.
+        /// </summary>
+        public int Order { get; private set; }
+
+        /// <summary>
+        /// Default capture pattern for ILinePattern.
+        /// </summary>
+        public Regex Pattern { get; private set; }
+
+        /// <summary>
+        /// Create basic parameter info
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="interfaceType">Describes how the parameter is to be compared.
+        /// <list type="bullet">
+        ///     <item><see cref="ILineHint"/>not used with comparison.</item>
+        ///     <item><see cref="ILineCanonicalKey"/>hash-equals comparable</item>
+        ///     <item><see cref="ILineNonCanonicalKey"/>hash-equals comparable</item>
+        /// </list>
+        /// </param>
+        /// <param name="sortingOrder"></param>
+        /// <param name="pattern"></param>
+        public ParameterInfo(string parameterName, Type interfaceType, int sortingOrder, Regex pattern)
+        {
+            ParameterName = parameterName;
+            Order = sortingOrder;
+            Pattern = pattern;
+            InterfaceType = interfaceType;
+        }
+    }
+
 }
