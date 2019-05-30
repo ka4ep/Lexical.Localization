@@ -68,11 +68,40 @@ namespace Lexical.Localization
             foreach (var line in lines)
             {
                 ILineTree subtree = tree.GetOrCreate(line);
-                if ((line.GetValue().Status & LineStatus.FormatFailedNull) != LineStatus.FormatFailedNull) subtree.Values.Add(line.GetValue());
+
+                ILine valueClone;
+                if (line.TryCloneValue(out valueClone)) subtree.Values.Add(valueClone);
             }
             return tree;
         }
-        
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        internal static bool TryCloneValue(this ILine line, out ILine value)
+        {
+            ILine valuePart;
+            if (line == null || !line.TryGetValuePart(out valuePart)) { value = default; return false; }
+
+            // Clone value
+            ILine valueClone = null;
+            if (valuePart is ILineValue lineValue) { value = new LineValue(null, null, lineValue.Value); return true; }
+            if (valueClone == null && valuePart is ILineParameterEnumerable lineParameters)
+            {
+                foreach (ILineParameter lineParameter in lineParameters)
+                    if (lineParameter.ParameterName == "Value" && lineParameter.ParameterValue != null)
+                    { value = new LineHint(null, null, "Value", lineParameter.ParameterValue); return true; }
+            }
+            if (valueClone == null && valuePart is ILineParameter parameter && parameter.ParameterName == "Value" && parameter.ParameterValue != null)
+            { value = new LineHint(null, null, "Value", parameter.ParameterValue); return true; }
+
+            value = default;
+            return false;
+        }
+
         /// <summary>
         /// Default grouping rule.
         /// </summary>

@@ -51,24 +51,17 @@ namespace Lexical.Localization
         public string Extension { get; protected set; }
 
         /// <summary>
-        /// Value string parser.
-        /// </summary>
-        public IStringFormatParser ValueParser { get; protected set; }
-
-        /// <summary>
         /// Create new ini file reader.
         /// </summary>
-        public IniLinesReader() : this("ini", CSharpFormat.Instance) { }
+        public IniLinesReader() : this("ini") { }
 
         /// <summary>
         /// Create new ini file reader.
         /// </summary>
         /// <param name="ext"></param>
-        /// <param name="valueParser"></param>
-        public IniLinesReader(string ext, IStringFormat valueParser /*, IResolver resolver*/)
+        public IniLinesReader(string ext)
         {
             this.Extension = ext;
-            this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
         }
 
         /// <summary>
@@ -124,9 +117,8 @@ namespace Lexical.Localization
                             if (value != null)
                             {
                                 int ix = current.Values.Count;
-                                IFormatString formatString = ValueParser.Parse(value);
-                                current.Values.Add(formatString);
-                                if (correspondence != null) correspondence.Values[new LineTreeValue(current, formatString, ix)] = token;
+                                ILine valueLine = new LineHint(null, null, "Value", value);
+                                if (correspondence != null) correspondence.Values[new LineTreeValue(current, valueLine, ix)] = token;
                             }
                         }
                         break;

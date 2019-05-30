@@ -22,14 +22,15 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <returns></returns>
         public static IEnumerable<KeyValuePair<string, IFormatString>> ToStringLines(this ILineTree LineTree, ILineFormat policy)
-            => LineTree.ToLines().ToStringLines(policy);
+            => LineTree.ToLines(LineAppender.Default).ToStringLines(policy);
 
         /// <summary>
         /// Flatten <paramref name="node"/> to key lines.
         /// </summary>
         /// <param name="node"></param>
+        /// <param name="lineAppender">(optional) overriding appender</param>
         /// <returns></returns>
-        public static IEnumerable<ILine> ToLines(this ILineTree node)
+        public static IEnumerable<ILine> ToLines(this ILineTree node, ILineFactory lineAppender = default)
         {
             Queue<(ILineTree, ILine)> queue = new Queue<(ILineTree, ILine)>();
             queue.Enqueue((node, node.Key));
@@ -41,8 +42,8 @@ namespace Lexical.Localization
                 // Yield values
                 if (current.Item2 != null && current.Item1.HasValues)
                 {
-                    foreach (IFormatString value in current.Item1.Values)
-                        yield return current.Item2.Value(value);
+                    foreach (ILine value in current.Item1.Values)
+                        yield return current.Item2.Concat(value);
                 }
 
                 // Enqueue children
@@ -50,8 +51,16 @@ namespace Lexical.Localization
                 {
                     foreach (ILineTree child in current.Item1.Children)
                     {
-                        ILine childKey = current.Item2 == null ? child.Key : current.Item2.Concat(child.Key);
-                        queue.Enqueue((child, childKey));
+                        if (lineAppender != null)
+                        {
+                            ILine childKey = lineAppender.Concat(lineAppender.Clone(current.Item2), child.Key);
+                            queue.Enqueue((child, childKey));
+                        }
+                        else
+                        {
+                            ILine childKey = current.Item2 == null ? child.Key : current.Item2.Concat(child.Key);
+                            queue.Enqueue((child, childKey));
+                        }
                     }
                 }
             }
@@ -131,8 +140,35 @@ namespace Lexical.Localization
         {
             if (value == null) return false;
             if (!tree.HasValues) return false;
-            foreach(IFormatString linevalue in tree.Values)
-                if (FormatStringComparer.Instance.Equals(value, linevalue)) return true;
+            string str;
+            foreach (ILine linevalue in tree.Values)
+            {
+                if (linevalue is ILineValue part && part.Value != null)
+                {
+                    if (FormatStringComparer.Instance.Equals(part.Value, value)) return true;
+                }
+                else if (linevalue.TryGetValueText(out str) && str == value.Text) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Tests if <paramref name="tree"/> has a <paramref name="value"/>.
+        /// 
+        /// If <paramref name="value"/> is null, then returns always false.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool HasValue(this ILineTree tree, string value)
+        {
+            if (value == null) return false;
+            if (!tree.HasValues) return false;
+            string str;
+            foreach (ILine linevalue in tree.Values)
+            {
+                if (linevalue.TryGetValueText(out str) && str == value) return true;
+            }
             return false;
         }
 
@@ -147,9 +183,9 @@ namespace Lexical.Localization
         public static ILineTree GetOrCreate(this ILineTree node, ILine key)
         {
             if (node == null) return null;
-
+            
             // No parameters
-            if (key.GetParameterCount() == 0) return node;
+            if (key.GetNonValueParameterCount() == 0) return node;
 
             // Get existing child
             ILineTree child = node.GetChild(key);
@@ -157,8 +193,26 @@ namespace Lexical.Localization
 
             // Create child
             child = node.CreateChild();
-            child.Key = key;
+            child.Key = key.CloneKey();
             return child;
+        }
+
+        /// <summary>
+        /// Get the number of parameters.
+        /// </summary>
+        /// <param name="line">(optional) line to count parameter count</param>
+        /// <returns>number of parameters</returns>
+        static int GetNonValueParameterCount(this ILine line)
+        {
+            int result = 0;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineParameter lineParameter && lineParameter.ParameterName != null && lineParameter.ParameterValue != null && lineParameter.ParameterName != "Value") result++;
+                if (l is ILineParameterEnumerable lineParameters)
+                    foreach (var parameter in lineParameters)
+                        if (parameter.ParameterName != null && parameter.ParameterValue != null && parameter.ParameterName != "Value") result++;
+            }
+            return result;
         }
 
         /// <summary>
@@ -170,7 +224,6 @@ namespace Lexical.Localization
         public static ILineTree Create(this ILineTree node, ILine key)
         {
             if (node == null) return null;
-
             // Create child
             ILineTree child = node.CreateChild();
             child.Key = key;
@@ -191,7 +244,7 @@ namespace Lexical.Localization
         {
             ILineTree n = node;
             if (key != null) n = n.GetChild(key);
-            if (value != null) n.Values.Add(value);
+            if (value != null) n.Values.Add(new LineValue(null, null, value));
             return node;
         }
 
@@ -213,7 +266,7 @@ namespace Lexical.Localization
                 leaf = leaf.GetOrCreate(key);
 
             // Add value
-            if (value != null && !leaf.Values.Contains(value)) leaf.Values.Add(value);
+            if (value != null && !leaf.HasValue(value)) leaf.Values.Add( new LineValue(null, null, value) );
 
             // Return leaf
             return leaf;

@@ -7,7 +7,6 @@ using Lexical.Localization.Internal;
 using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lexical.Localization
 {
@@ -31,7 +30,7 @@ namespace Lexical.Localization
         /// Example "en:ConsoleApp1:MyController:Success".
         /// </summary>
         public static ILinePrinter Default => instance;
-        private static readonly LineParameterPrinter instance = 
+        private static readonly LineParameterPrinter instance =
             new LineParameterPrinter()
                 .Ignore("Value")
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":"); // Add known parameters for sorting correcly
@@ -67,7 +66,7 @@ namespace Lexical.Localization
         /// Example "en:ConsoleApp1:MyController.Success".
         /// </summary>
         public static ILinePrinter Colon_Colon_Dot => colon_colon_dot;
-        private static readonly LineParameterPrinter colon_colon_dot = 
+        private static readonly LineParameterPrinter colon_colon_dot =
             new LineParameterPrinter()
                 .Ignore("Value")
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
@@ -80,7 +79,7 @@ namespace Lexical.Localization
         /// Example "en.ConsoleApp1.MyController.Success"
         /// </summary>
         public static ILinePrinter Dot_Dot_Dot => dot_dot_dot;
-        private static readonly LineParameterPrinter dot_dot_dot = 
+        private static readonly LineParameterPrinter dot_dot_dot =
             new LineParameterPrinter()
             .Ignore("Value")
             .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
@@ -92,7 +91,7 @@ namespace Lexical.Localization
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
         public static ILinePrinter None_Dot_Dot => none_dot_dot;
-        private static readonly LineParameterPrinter none_dot_dot = 
+        private static readonly LineParameterPrinter none_dot_dot =
             new LineParameterPrinter()
                 .Ignore("Value")
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ".") // Add known parameters for sorting correctly
@@ -113,7 +112,7 @@ namespace Lexical.Localization
                 .DefaultRule(true, prefixSeparator: ".");
 
         Dictionary<string, _Rule> parameters = new Dictionary<string, _Rule>();
-        
+
         /// <summary>
         /// Get indexed parameter.
         /// </summary>
@@ -203,7 +202,8 @@ namespace Lexical.Localization
             {
                 rule.PrefixSeparator = prefixSeparator;
                 rule.PostfixSeparator = postfixSeparator;
-            } else
+            }
+            else
             {
                 parameters[parameterName] = new _Rule(parameterName, true, prefixSeparator, postfixSeparator, 0);
             }
@@ -291,7 +291,7 @@ namespace Lexical.Localization
                     occuranceIndex--;
 
                     // Add to list
-                    parts.Add(new Part { ParameterName = parameterName, ParameterValue = parameterValue, Policy = desc, Order = desc.Order+occuranceIndex });
+                    parts.Add(new Part { ParameterName = parameterName, ParameterValue = parameterValue, Policy = desc, Order = desc.Order + occuranceIndex });
                 }
             }
 
@@ -300,15 +300,15 @@ namespace Lexical.Localization
 
             // Calculate char count
             int len = 0;
-            for(int i=0; i<parts.Count; i++)
+            for (int i = 0; i < parts.Count; i++)
             {
                 len += parts[i].ParameterValue.Length;
                 // Count in separator
-                if (i>0)
+                if (i > 0)
                 {
                     string separator = parts[i - 1].Policy.PostfixSeparator;
                     if (separator != null) len += separator.Length;
-                    else 
+                    else
                     {
                         separator = parts[i].Policy.PrefixSeparator;
                         if (separator != null) len += separator.Length;

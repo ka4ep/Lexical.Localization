@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.StringFormat;
 using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
@@ -53,6 +54,11 @@ namespace Lexical.Localization
         /// Comparer that is oblivious to "Culture" parameter.
         /// </summary>
         public static LineComparer IgnoreCulture => ignoreCulture;
+
+        /// <summary>
+        /// Compares line's effective values for hash-equality.
+        /// </summary>
+        public static IEqualityComparer<ILine> Value => LineValueComparer.Instance;
 
         /// <summary>
         /// List of canonical comparers that compare <see cref="ILineCanonicalKey"/> parts.
@@ -435,6 +441,48 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns>hash-code</returns>
         int GetDefaultHashCode();
+    }
+
+    /// <summary>
+    /// Compares effective value for equality and calculate comparable hash-code.
+    /// 
+    /// The last part that defines "Value" or <see cref="ILineValue"/> is considered effective.
+    /// </summary>
+    public class LineValueComparer : IEqualityComparer<ILine>
+    {
+        private static LineValueComparer instance = new LineValueComparer();
+
+        /// <summary>
+        /// Get parameter comparer.
+        /// </summary>
+        public static LineValueComparer Instance => instance;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public bool Equals(ILine x, ILine y)
+        {
+            string x_value = null, y_value = null;
+            if (x.TryGetValueText(out x_value) != y.TryGetValueText(out y_value)) return false;
+            // XXX Ignores StringFormat -- not really essential
+            return x_value == y_value;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        public int GetHashCode(ILine line)
+        {
+            string text;
+            if (line.TryGetValueText(out text)) return text.GetHashCode();
+            // XXX Ignores StringFormat -- not really essential
+            return 0;
+        }
     }
 
 }

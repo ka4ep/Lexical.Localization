@@ -92,6 +92,54 @@ namespace Lexical.Localization
             return new StatusFormatString(null, LineStatus.FormatFailedNull);
         }
 
+        /// <summary>
+        /// Finds a part that implements <see cref="ILineValue"/> or is a parameter "Value.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="result"></param>
+        /// <returns>true if part was found</returns>
+        public static bool TryGetValuePart(this ILine line, out ILine result)
+        {
+            for (ILine part = line; part != null; part = part.GetPreviousPart())
+            {
+                if (part is ILineValue valuePart && valuePart.Value != null) { result = part; return true; }
+                if (part is ILineParameterEnumerable lineParameters)
+                {
+                    foreach (ILineParameter parameter in lineParameters)
+                    {
+                        if (parameter.ParameterName == "Value" && parameter.ParameterValue != null) { result = part; return true; }
+                    }
+                }
+                if (part is ILineParameter lineParameter && lineParameter.ParameterName == "Value" && lineParameter.ParameterValue != null) { result = part; return true; }
+            }
+            result = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Finds a part that implements <see cref="ILineValue"/> or is a parameter "Value".
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="result"></param>
+        /// <returns>true if part was found</returns>
+        public static bool TryGetValueText(this ILine line, out string result)
+        {
+            for (ILine part = line; part != null; part = part.GetPreviousPart())
+            {
+                if (part is ILineValue valuePart && valuePart.Value != null) { result = valuePart.Value.Text; return true; }
+                if (part is ILineParameterEnumerable lineParameters)
+                {
+                    foreach (ILineParameter parameter in lineParameters)
+                    {
+                        if (parameter.ParameterName == "Value" && parameter.ParameterValue != null) { result = parameter.ParameterValue; return true; }
+                    }
+                }
+                if (part is ILineParameter lineParameter && lineParameter.ParameterName == "Value" && lineParameter.ParameterValue != null) { result = lineParameter.ParameterValue; return true; }
+            }
+            result = default;
+            return false;
+        }
+
     }
 
 }

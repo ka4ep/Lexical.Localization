@@ -108,7 +108,7 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Value
         /// </summary>
-        public readonly IFormatString value;
+        public readonly ILine value;
 
         /// <summary>
         /// Value index in the <see cref="tree"/>.
@@ -121,7 +121,7 @@ namespace Lexical.Localization.Internal
         /// <param name="tree"></param>
         /// <param name="value"></param>
         /// <param name="valueIndex"></param>
-        public LineTreeValue(ILineTree tree, IFormatString value, int valueIndex)
+        public LineTreeValue(ILineTree tree, ILine value, int valueIndex)
         {
             this.tree = tree ?? throw new ArgumentNullException(nameof(tree));
             this.value = value;
@@ -134,7 +134,7 @@ namespace Lexical.Localization.Internal
         /// <param name="obj"></param>
         /// <returns></returns>
         public override bool Equals(object obj)
-            => obj is LineTreeValue other ? tree == other.tree && FormatStringComparer.Instance.Equals(value, other.value) && valueIndex == other.valueIndex : false;
+            => obj is LineTreeValue other ? tree == other.tree && LineComparer.Value.Equals(value, other.value) && valueIndex == other.valueIndex : false;
 
         /// <summary>
         /// Compare for equality
@@ -142,7 +142,7 @@ namespace Lexical.Localization.Internal
         /// <param name="other"></param>
         /// <returns></returns>
         public bool Equals(LineTreeValue other)
-            => tree == other.tree && FormatStringComparer.Instance.Equals(value, other.value) && valueIndex == other.valueIndex;
+            => tree == other.tree && LineComparer.Value.Equals(value, other.value) && valueIndex == other.valueIndex;
 
         /// <summary>
         /// Calculate hash-code
@@ -153,12 +153,17 @@ namespace Lexical.Localization.Internal
             int hash = -2128831035;
             hash ^= tree.GetHashCode();
             hash *= 0x1000193;
-            hash ^= FormatStringComparer.Instance.GetHashCode(value);
+            hash ^= LineComparer.Value.GetHashCode(value);
             hash *= 0x1000193;
             hash ^= valueIndex;
             hash *= 0x1000193;
             return hash;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{tree}[{valueIndex}]={value}";
     }
@@ -175,7 +180,7 @@ namespace Lexical.Localization.Internal
         /// <param name="y"></param>
         /// <returns></returns>
         public bool Equals(LineTreeValue x, LineTreeValue y)
-            => x.tree == y.tree && FormatStringComparer.Instance.Equals(x.value, y.value) && x.valueIndex == y.valueIndex;
+            => x.tree == y.tree && LineComparer.Value.Equals(x.value, y.value) && x.valueIndex == y.valueIndex;
 
         /// <summary>
         /// Calculate hash-code

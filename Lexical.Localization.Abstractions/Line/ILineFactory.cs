@@ -468,10 +468,12 @@ namespace Lexical.Localization
             => collection.Add(new Delegate3<Line, A0, A1, A2>(func), policy);
 
         /// <summary>
-        /// Concatenate <paramref name="right"/> to <paramref name="left"/>.
+        /// Concatenate <paramref name="right"/> to <paramref name="line"/>.
+        /// 
+        /// This method can also be used for cloning if <paramref name="line"/> is null.
         /// </summary>
         /// <param name="factory"></param>
-        /// <param name="left"></param>
+        /// <param name="left">(optional)</param>
         /// <param name="right"></param>
         /// <returns></returns>
         /// <exception cref="LineException">on append error</exception>
@@ -493,6 +495,30 @@ namespace Lexical.Localization
             return result;
         }
 
+        /// <summary>
+        /// Clone <paramref name="line"/>.
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException">on append error</exception>
+        public static ILine Clone(this ILineFactory factory, ILine line)
+        {
+            ILine result = null;
+            StructList16<ILine> args = new StructList16<ILine>();
+            for (ILine l = line; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+            for (int i = args.Count - 1; i >= 0; i--)
+            {
+                ILine l = args[i];
+                if (l is ILineArgumentsEnumerable enumr)
+                    foreach (ILineArguments args_ in enumr)
+                        result = factory.Create(result, args_);
+
+                if (l is ILineArguments arg)
+                    result = result.Append(arg);
+            }
+            return result;
+        }
 
         /// <summary>
         /// Append <paramref name="right"/> to <paramref name="left"/>.

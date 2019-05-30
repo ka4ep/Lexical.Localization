@@ -133,9 +133,9 @@ namespace Lexical.Localization
                             if (value != null)
                             {
                                 int ix = current.Values.Count;
-                                IFormatString formatString = ValueParser.Parse(value);
-                                current.Values.Add(formatString);
-                                if (updateCorrespondence) correspondenceContext.Values[new LineTreeValue(current, formatString, ix)] = (JValue) tokenReader.CurrentToken;
+                                ILine lineValue = new LineHint(null, null, "Value", value);
+                                current.Values.Add(lineValue);
+                                if (updateCorrespondence) correspondenceContext.Values[new LineTreeValue(current, lineValue, ix)] = (JValue) tokenReader.CurrentToken;
                             }
                         }
                         break;

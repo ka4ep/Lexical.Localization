@@ -26,9 +26,9 @@ namespace Lexical.Localization
         ILine Key { get; set; }
 
         /// <summary>
-        /// Associated values.
+        /// Values. 
         /// </summary>
-        IList<IFormatString> Values { get; }
+        IList<ILine> Values { get; }
 
         /// <summary>
         /// Test if has child nodes.
