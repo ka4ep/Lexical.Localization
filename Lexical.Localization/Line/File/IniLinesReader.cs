@@ -8,6 +8,7 @@ using Lexical.Localization.StringFormat;
 using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace Lexical.Localization
@@ -23,12 +24,47 @@ namespace Lexical.Localization
     /// </summary>
     public class IniLinesReader : ILineFileFormat, ILineTreeTextReader
     {
-        private readonly static IniLinesReader instance = new IniLinesReader();
+        private readonly static IniLinesReader non_resolving = new IniLinesReader("ini", LineAppender.Default);
+        private readonly static IniLinesReader resolving = new IniLinesReader("ini", LineAppender.Resolving);
 
         /// <summary>
-        /// Default instance of .ini localization reader.
+        /// .ini file lines reader that does not resolve parameters into instantances.
+        /// 
+        /// Used when handling localization files as texts, not for localization
         /// </summary>
-        public static IniLinesReader Instance => instance;
+        public static IniLinesReader NonResolving => non_resolving;
+
+        /// <summary>
+        /// .ini file lines reader that resolves parameters into instantances.
+        /// 
+        /// <list type="bullet">
+        ///     <item>Parameter "Culture" is created as <see cref="ILineCulture"/></item>
+        ///     <item>Parameter "Value" is created as to <see cref="ILineValue"/></item>
+        ///     <item>Parameter "StringFormat" is created as to <see cref="ILineStringFormat"/></item>
+        ///     <item>Parameter "Functions" is created as to <see cref="ILineFunctions"/></item>
+        ///     <item>Parameter "PluralRules" is created as to <see cref="ILinePluralRules"/></item>
+        ///     <item>Parameter "FormatProvider" is created as to <see cref="ILineFormatProvider"/></item>
+        /// </list>
+        /// 
+        /// Used when reading localization files for localization purposes.
+        /// </summary>
+        public static IniLinesReader Default => resolving;
+
+        /// <summary>
+        /// .ini file lines reader that resolves parameters into instantances.
+        /// 
+        /// <list type="bullet">
+        ///     <item>Parameter "Culture" is created as <see cref="ILineCulture"/></item>
+        ///     <item>Parameter "Value" is created as to <see cref="ILineValue"/></item>
+        ///     <item>Parameter "StringFormat" is created as to <see cref="ILineStringFormat"/></item>
+        ///     <item>Parameter "Functions" is created as to <see cref="ILineFunctions"/></item>
+        ///     <item>Parameter "PluralRules" is created as to <see cref="ILinePluralRules"/></item>
+        ///     <item>Parameter "FormatProvider" is created as to <see cref="ILineFormatProvider"/></item>
+        /// </list>
+        /// 
+        /// Used when reading localization files for localization purposes.
+        /// </summary>
+        public static IniLinesReader Resolving => resolving;
 
         /// <summary>
         /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.
@@ -51,17 +87,24 @@ namespace Lexical.Localization
         public string Extension { get; protected set; }
 
         /// <summary>
+        /// Line factory that instantiates lines.
+        /// </summary>
+        public ILineFactory LineFactory { get; protected set; }
+
+        /// <summary>
         /// Create new ini file reader.
         /// </summary>
-        public IniLinesReader() : this("ini") { }
+        public IniLinesReader() : this("ini", LineAppender.Default) { }
 
         /// <summary>
         /// Create new ini file reader.
         /// </summary>
         /// <param name="ext"></param>
-        public IniLinesReader(string ext)
+        /// <param name="lineFactory"></param>
+        public IniLinesReader(string ext, ILineFactory lineFactory)
         {
-            this.Extension = ext;
+            this.Extension = ext ?? throw new ArgumentNullException(nameof(ext));
+            this.LineFactory = lineFactory ?? throw new ArgumentNullException(nameof(LineFactory));
         }
 
         /// <summary>

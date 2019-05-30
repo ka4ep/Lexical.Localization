@@ -18,7 +18,7 @@ namespace Lexical.Localization
     /// Parameter policy that uses the following format "Key:Value:...". 
     /// Parses to <see cref="ILineParameter"/> parts.
     /// </summary>
-    public class LineFormat : LineParameterQualifierComposition, ILinePrinter, ILineParser, ILineAppendParser, ILineFormatParameterInfos
+    public class LineFormat : ILinePrinter, ILineParser, ILineAppendParser//, ILineFormatParameterInfos
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
 
@@ -28,7 +28,7 @@ namespace Lexical.Localization
         /// Uses <see cref="ParameterInfos.Default"/> to instantiate known keys and hints as they are.
         /// Unknown parameters are instantated as <see cref="ILineParameter"/> and left for the caller to interpret.
         /// </summary>
-        static LineFormat parameters = new LineFormat("\\:", false, "\\:", false, Utils.ParameterInfos.Default).Rule("Value", -1, "").SetReadonly() as LineFormat;
+        static readonly LineFormat parameters = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Default, new LineParameterQualifierComposition().Rule("Value", -1, ""), Utils.ParameterInfos.Default);
 
         /// <summary>
         /// Format that prints and parses all parameters.
@@ -36,7 +36,7 @@ namespace Lexical.Localization
         /// Uses <see cref="ParameterInfos.Default"/> to instantiate known keys and hints as they are.
         /// Unknown parameters are instantated as <see cref="ILineParameter"/> and left for the caller to interpret.
         /// </summary>
-        static LineFormat parametersInclValue = new LineFormat("\\:", false, "\\:", false, Utils.ParameterInfos.Default).SetReadonly() as LineFormat;
+        static readonly LineFormat parametersInclValue = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Default, null, Utils.ParameterInfos.Default);
 
         /// <summary>
         /// Format that prints and parses parameters 
@@ -87,14 +87,28 @@ namespace Lexical.Localization
         protected IParameterInfos parameterInfos;
 
         /// <summary>
+        /// Qualifier that validates parameters.
+        /// </summary>
+        public ILineQualifier Qualifier { get; protected set; }
+
+        /// <summary>
+        /// Line appender that creates line parts from parsed strings.
+        /// 
+        /// Appender implementation may also resolve parameter into instance, for example "Culture" into <see cref="CultureInfo"/>.
+        /// </summary>
+        public ILineFactory LineAppender { get; protected set; }
+
+        /// <summary>
         /// Create new string serializer
         /// </summary>
         /// <param name="escapeCharacters">list of characters that are to be escaped</param>
         /// <param name="escapeControlCharacters">Escape characters 0x00 - 0x1f</param>
         /// <param name="unescapeCharacters">list of characters that are to be unescaped</param>
         /// <param name="unescapeControlCharacters">Unescape tnab0f</param>
+        /// <param name="lineAppender">line appender</param>
+        /// <param name="qualifier">(optional) parameter qualifier</param>
         /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
-        public LineFormat(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters, IParameterInfos parameterInfos = null)
+        public LineFormat(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters, ILineFactory lineAppender, ILineQualifier qualifier, IParameterInfos parameterInfos = null)
         {
             // Regex.Escape doen't work for brackets []
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
@@ -117,6 +131,8 @@ namespace Lexical.Localization
                 , opts);
             unescapeChar = UnescapeChar;
 
+            this.LineAppender = lineAppender ?? throw new ArgumentNullException(nameof(lineAppender));
+            this.Qualifier = qualifier;
             this.parameterInfos = parameterInfos;
         }
 
@@ -158,7 +174,7 @@ namespace Lexical.Localization
         /// <returns><paramref name="sb"/></returns>
         public StringBuilder Print(ILine key, StringBuilder sb)
         {
-            if (HasParameterRules)
+            if (Qualifier != null)
             {
                 StructList12<(ILineParameter, int)> list = new StructList12<(ILineParameter, int)>();
                 key.GetParameterPartsWithOccurance<StructList12<(ILineParameter, int)>>(ref list);
@@ -166,7 +182,7 @@ namespace Lexical.Localization
                 {
                     if (i < list.Count-1) sb.Append(':');
                     (ILineParameter parameter, int occ) = list[i];
-                    if (!Qualify(parameter, occ)) continue;
+                    if (!Qualifier.Qualify(parameter, occ)) continue;
                     sb.Append(EscapeLiteral(parameter.ParameterName));
                     sb.Append(':');
                     sb.Append(EscapeLiteral(parameter.ParameterValue));
@@ -206,13 +222,13 @@ namespace Lexical.Localization
         public string PrintParameters(IEnumerable<KeyValuePair<string, string>> keyParameters)
         {
             StringBuilder sb = new StringBuilder();
-            if (HasParameterRules)
+            if (Qualifier != null)
             {
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
                 foreach (var parameter in keyParameters)
                 {
                     int occ = AddOccurance(ref list, parameter.Key);
-                    if (!Qualify(new ParameterArgument(parameter.Key, parameter.Value), occ)) continue;
+                    if (!Qualifier.Qualify(new ParameterArgument(parameter.Key, parameter.Value), occ)) continue;
                     if (sb.Length > 0) sb.Append(':');
                     sb.Append(EscapeLiteral(parameter.Key));
                     sb.Append(':');
@@ -244,7 +260,7 @@ namespace Lexical.Localization
         {
             if (appender == null) appender = prevPart.GetAppender();
             MatchCollection matches = ParsePattern.Matches(str);
-            if (HasParameterRules)
+            if (Qualifier != null)
             {
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
                 foreach (Match m in matches)
@@ -256,7 +272,7 @@ namespace Lexical.Localization
                     string parameterValue = UnescapeLiteral(k_value.Value);
                     int occ = AddOccurance(ref list, parameterName);
                     ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
-                    if (!Qualify(arg as ILineParameter, occ)) continue;
+                    if (!Qualifier.Qualify(arg as ILineParameter, occ)) continue;
                     prevPart = appender.Create(prevPart, arg);
                 }
             }
@@ -277,7 +293,7 @@ namespace Lexical.Localization
         }
 
         ILineArguments CreateLineArgument(string parameterName, string parameterValue)
-        {
+        {            
             IParameterInfo parameterInfo;
             if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out parameterInfo))
             {
@@ -298,7 +314,7 @@ namespace Lexical.Localization
         public IEnumerable<ILineArguments> ParseArgs(string str)
         {
             MatchCollection matches = ParsePattern.Matches(str);
-            if (HasParameterRules)
+            if (Qualifier != null)
             {
                 StructList8<ILineArguments> result = new StructList8<ILineArguments>();
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
@@ -312,7 +328,7 @@ namespace Lexical.Localization
                     string parameterValue = UnescapeLiteral(k_value.Value);
                     ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
                     int occ = AddOccurance(ref list, parameterName);
-                    if (!Qualify(arg as ILineParameter, occ)) continue;
+                    if (!Qualifier.Qualify(arg as ILineParameter, occ)) continue;
                     result.Add(arg);
                 }
                 return result.ToArray();
@@ -347,7 +363,7 @@ namespace Lexical.Localization
         {
             if (appender == null && !prevPart.TryGetAppender(out appender)) { result = null; return false; }
             MatchCollection matches = ParsePattern.Matches(keyString);
-            if (HasParameterRules)
+            if (Qualifier != null)
             {
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
                 foreach (Match m in matches)
@@ -359,7 +375,7 @@ namespace Lexical.Localization
                     string parameterValue = UnescapeLiteral(k_value.Value);
                     ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
                     int occ = AddOccurance(ref list, parameterName);
-                    if (!Qualify(arg as ILineParameter, occ)) continue;
+                    if (!Qualifier.Qualify(arg as ILineParameter, occ)) continue;
                     ILine tmp;
                     if (appender.TryCreate(prevPart, arg, out tmp)) prevPart = tmp; else { result = null; return false; }
                 }
@@ -393,7 +409,7 @@ namespace Lexical.Localization
         public bool TryParseArgs(string str, out IEnumerable<ILineArguments> args)
         {
             MatchCollection matches = ParsePattern.Matches(str);
-            if (HasParameterRules)
+            if (Qualifier != null)
             {
                 StructList8<ILineArguments> result = new StructList8<ILineArguments>();
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
@@ -407,7 +423,7 @@ namespace Lexical.Localization
                     string parameterValue = UnescapeLiteral(k_value.Value);
                     ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
                     int occ = AddOccurance(ref list, parameterName);
-                    if (!Qualify(arg as ILineParameter, occ)) continue;
+                    if (!Qualifier.Qualify(arg as ILineParameter, occ)) continue;
                     result.Add(arg);
                 }
                 args = result.ToArray();
@@ -441,7 +457,7 @@ namespace Lexical.Localization
         public IEnumerable<KeyValuePair<string, string>> ParseParameters(string keyString)
         {
             MatchCollection matches = ParsePattern.Matches(keyString);
-            if (HasParameterRules)
+            if (Qualifier != null)
             {
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
                 foreach (Match m in matches)
@@ -452,7 +468,7 @@ namespace Lexical.Localization
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
                     int occ = AddOccurance(ref list, parameterName);
-                    if (!Qualify((ILineParameter)CreateLineArgument(parameterName, parameterValue), occ)) continue;
+                    if (!Qualifier.Qualify((ILineParameter)CreateLineArgument(parameterName, parameterValue), occ)) continue;
                     yield return new KeyValuePair<string, string>(parameterName, parameterValue);
                 }
             }
@@ -480,7 +496,7 @@ namespace Lexical.Localization
         {
             if (keyString == null) return false;
             MatchCollection matches = ParsePattern.Matches(keyString);
-            if (HasParameterRules)
+            if (Qualifier != null)
             {
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
                 foreach (Match m in matches)
@@ -491,7 +507,7 @@ namespace Lexical.Localization
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
                     int occ = AddOccurance(ref list, parameterName);
-                    if (!Qualify((ILineParameter)CreateLineArgument(parameterName, parameterValue), occ)) continue;
+                    if (!Qualifier.Qualify((ILineParameter)CreateLineArgument(parameterName, parameterValue), occ)) continue;
                     result.Add(new KeyValuePair<string, string>(parameterName, parameterValue));
                 }
             }
