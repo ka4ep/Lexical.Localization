@@ -17,7 +17,7 @@ namespace Lexical.Localization.Utils
     /// </summary>
     public class ParameterInfos : Dictionary<string, IParameterInfo>, IParameterInfosEnumerable, IParameterInfosMap, IParameterInfosWritable, 
         IParameterResolver, 
-        ILineFactory<ILineParameter, string, string>, ILineFactory<ILineHint, string, string>, ILineFactory<ILineNonCanonicalKey, string, string>, ILineFactory<ILineCanonicalKey, string, string>
+        ILineFactory<ILineParameter, string, string>, ILineFactory<ILineHint, string, string>, ILineFactory<ILineNonCanonicalKey, string, string>, ILineFactory<ILineCanonicalKey, string, string>, ILineFactoryParameterInfos, ILineFactoryResolver
     {
         private static ParameterInfos instance = new ParameterInfos()
             .Add("Culture", interfaceType: typeof(ILineNonCanonicalKey), sortingOrder: -6000, pattern: new Regex(@"^([a-z]{2,5})(-([A-Za-z]{2,7}))?$", RegexOptions.CultureInvariant | RegexOptions.Compiled))
@@ -55,7 +55,7 @@ namespace Lexical.Localization.Utils
         /// <summary>
         /// Default instance that contains info about well-known parameters.
         /// </summary>
-        public static IParameterInfos Default => instance;
+        public static ParameterInfos Default => instance;
 
         string[] parameterNames;
 
@@ -63,6 +63,16 @@ namespace Lexical.Localization.Utils
         /// Get supported parameter names
         /// </summary>
         public string[] ParameterNames => parameterNames ?? (parameterNames = Values.Where(pi=>pi.InterfaceType!=null).Select(pi=>pi.ParameterName).ToArray());
+
+        /// <summary>
+        /// Associated parameter infos (this)
+        /// </summary>
+        IParameterInfos ILineFactoryParameterInfos.ParameterInfos { get => this; set => throw new InvalidOperationException(); }
+
+        /// <summary>
+        /// Associated resolver (this)
+        /// </summary>
+        IResolver ILineFactoryResolver.Resolver { get => this; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Try to resolve parameter into arguments.

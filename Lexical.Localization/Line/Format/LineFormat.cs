@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.StringFormat;
 using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
@@ -16,45 +17,45 @@ namespace Lexical.Localization
 {
     /// <summary>
     /// Parameter policy that uses the following format "Key:Value:...". 
-    /// Parses to <see cref="ILineParameter"/> parts.
     /// </summary>
-    public class LineFormat : ILinePrinter, ILineParser, ILineAppendParser//, ILineFormatParameterInfos
+    public class LineFormat : ILinePrinter, ILineParser, ILineAppendParser, ILineFormatFactory
     {
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
 
         /// <summary>
-        /// Format that prints and parses parameters except "Value" parameter.
-        /// 
-        /// Uses <see cref="ParameterInfos.Default"/> to instantiate known keys and hints as they are.
-        /// Unknown parameters are instantated as <see cref="ILineParameter"/> and left for the caller to interpret.
+        /// Parameter qualifier that excludes parameter "Value".
         /// </summary>
-        static readonly LineFormat parameters = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Default, new LineParameterQualifierComposition().Rule("Value", -1, ""), Utils.ParameterInfos.Default);
+        static readonly ILineQualifier ExcludeValue = new LineQualifierRule.IsEqualTo("Value", -1, ""); // new LineParameterQualifierComposition().Rule("Value", -1, "");
 
         /// <summary>
-        /// Format that prints and parses all parameters.
-        /// 
-        /// Uses <see cref="ParameterInfos.Default"/> to instantiate known keys and hints as they are.
-        /// Unknown parameters are instantated as <see cref="ILineParameter"/> and left for the caller to interpret.
+        /// Format that prints and parses strings as parameter lines. Excludes "Value" parameter.
         /// </summary>
-        static readonly LineFormat parametersInclValue = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Default, null, Utils.ParameterInfos.Default);
+        static readonly LineFormat parameters = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.NonResolving, ExcludeValue);
 
         /// <summary>
-        /// Format that prints and parses parameters 
+        /// Format that prints and parses strings as lines. Parameters are resolved to default instance types. For example "Culture" to CultureInfo. Excludes "Value" parameter.
+        /// </summary>
+        static readonly LineFormat key = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Resolving, ExcludeValue);
+
+        /// <summary>
+        /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "Value" to <see cref="IFormatString"/>.
+        /// </summary>
+        static readonly LineFormat line = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Resolving, null);
+
+        /// <summary>
+        /// Format that prints and parses strings as parameter lines. Excludes "Value" parameter.
         /// </summary>
         public static LineFormat Parameters => parameters;
 
         /// <summary>
-        /// Format that prints and parses all parameters.
-        /// 
-        /// Uses <see cref="ParameterInfos.Default"/> to instantiate known keys and hints as they are.
-        /// Unknown parameters are instantated as <see cref="ILineParameter"/> and left for the caller to interpret.
+        /// Format that prints and parses strings as lines. Parameters are resolved to default instance types. For example "Culture" to CultureInfo. Excludes "Value" parameter.
         /// </summary>
-        public static LineFormat ParametersInclValue => parametersInclValue;
+        public static LineFormat Key => key;
 
         /// <summary>
-        /// Parameter infos.
+        /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "Value" to <see cref="IFormatString"/>.
         /// </summary>
-        public IParameterInfos ParameterInfos { get => parameterInfos; set => new InvalidOperationException("read-only"); }
+        public static LineFormat Line => line;
 
         /// <summary>
         /// Pattern that parses "ParameterName:ParameterValue" texts.
@@ -82,21 +83,26 @@ namespace Lexical.Localization
         protected MatchEvaluator unescapeChar;
 
         /// <summary>
-        /// (optional) Parameter infos for determining if parameter is key.
-        /// </summary>
-        protected IParameterInfos parameterInfos;
-
-        /// <summary>
         /// Qualifier that validates parameters.
         /// </summary>
-        public ILineQualifier Qualifier { get; protected set; }
+        public virtual ILineQualifier Qualifier { get => qualifier; set => new InvalidOperationException("immutable"); }
 
         /// <summary>
         /// Line appender that creates line parts from parsed strings.
         /// 
         /// Appender implementation may also resolve parameter into instance, for example "Culture" into <see cref="CultureInfo"/>.
         /// </summary>
-        public ILineFactory LineAppender { get; protected set; }
+        public virtual ILineFactory LineFactory { get => lineFactory; set => throw new InvalidOperationException("immutable"); }
+
+        /// <summary>
+        /// (optional) Qualifier that validates parameters.
+        /// </summary>
+        protected ILineQualifier qualifier;
+
+        /// <summary>
+        /// Line appender
+        /// </summary>
+        protected ILineFactory lineFactory;
 
         /// <summary>
         /// Create new string serializer
@@ -105,10 +111,9 @@ namespace Lexical.Localization
         /// <param name="escapeControlCharacters">Escape characters 0x00 - 0x1f</param>
         /// <param name="unescapeCharacters">list of characters that are to be unescaped</param>
         /// <param name="unescapeControlCharacters">Unescape tnab0f</param>
-        /// <param name="lineAppender">line appender</param>
+        /// <param name="lineAppender">line appender that can append <see cref="ILineParameter"/> and <see cref="ILineValue"/></param>
         /// <param name="qualifier">(optional) parameter qualifier</param>
-        /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
-        public LineFormat(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters, ILineFactory lineAppender, ILineQualifier qualifier, IParameterInfos parameterInfos = null)
+        public LineFormat(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters, ILineFactory lineAppender, ILineQualifier qualifier)
         {
             // Regex.Escape doen't work for brackets []
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);
@@ -131,9 +136,8 @@ namespace Lexical.Localization
                 , opts);
             unescapeChar = UnescapeChar;
 
-            this.LineAppender = lineAppender ?? throw new ArgumentNullException(nameof(lineAppender));
-            this.Qualifier = qualifier;
-            this.parameterInfos = parameterInfos;
+            this.lineFactory = lineAppender ?? throw new ArgumentNullException(nameof(lineAppender));
+            this.qualifier = qualifier;
         }
 
         /// <summary>
@@ -258,8 +262,11 @@ namespace Lexical.Localization
         /// <exception cref="LineException">The parameter is not of the correct format.</exception>
         public virtual ILine Parse(string str, ILine prevPart = default, ILineFactory appender = default)
         {
+            if (appender == null) appender = lineFactory;
             if (appender == null) appender = prevPart.GetAppender();
             MatchCollection matches = ParsePattern.Matches(str);
+
+            // With qualifier
             if (Qualifier != null)
             {
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
@@ -270,13 +277,14 @@ namespace Lexical.Localization
                     if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
+                    ILineParameter parameter = lineFactory.Create<ILineParameter, string, string>(prevPart, parameterName, parameterValue);
                     int occ = AddOccurance(ref list, parameterName);
-                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
-                    if (!Qualifier.Qualify(arg as ILineParameter, occ)) continue;
-                    prevPart = appender.Create(prevPart, arg);
+                    if (!Qualifier.Qualify(parameter, occ)) continue;
+                    prevPart = parameter;
                 }
             }
             else
+            // No qualifier
             {
                 foreach (Match m in matches)
                 {
@@ -285,26 +293,12 @@ namespace Lexical.Localization
                     if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
-                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
-                    prevPart = appender.Create(prevPart, arg);
+                    prevPart = lineFactory.Create<ILineParameter, string, string>(prevPart, parameterName, parameterValue);
                 }
             }
             return prevPart;
         }
 
-        ILineArguments CreateLineArgument(string parameterName, string parameterValue)
-        {            
-            IParameterInfo parameterInfo;
-            if (parameterInfos != null && parameterInfos.TryGetValue(parameterName, out parameterInfo))
-            {
-                if (parameterInfo.InterfaceType == typeof(ILineParameter)) return new ParameterArgument(parameterName, parameterValue);
-                if (parameterInfo.InterfaceType == typeof(ILineHint)) return new HintArgument(parameterName, parameterValue);
-                if (parameterInfo.InterfaceType == typeof(ILineCanonicalKey)) return new KeyCanonicalArgument(parameterName, parameterValue);
-                if (parameterInfo.InterfaceType == typeof(ILineNonCanonicalKey)) return new KeyNonCanonicalArgument(parameterName, parameterValue);
-                return (ILineArguments)typeof(Argument<>).MakeGenericType(parameterInfo.InterfaceType).GetConstructors()[0].Invoke(new object[] { parameterName, parameterValue });
-            }
-            return new ParameterArgument(parameterName, parameterValue);
-        }
 
         /// <summary>
         /// Parse to parameter arguments.
@@ -326,10 +320,10 @@ namespace Lexical.Localization
                     if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
-                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
+                    ILineParameter parameter = lineFactory.Create<ILineParameter, string, string>(null, parameterName, parameterValue);
                     int occ = AddOccurance(ref list, parameterName);
-                    if (!Qualifier.Qualify(arg as ILineParameter, occ)) continue;
-                    result.Add(arg);
+                    if (!Qualifier.Qualify(parameter, occ)) continue;
+                    result.Add(ToArgument(parameter));
                 }
                 return result.ToArray();
             }
@@ -345,7 +339,7 @@ namespace Lexical.Localization
                     if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
-                    result[i] = CreateLineArgument(parameterName, parameterValue);
+                    result[i] = ToArgument(lineFactory.Create<ILineParameter, string, string>(null, parameterName, parameterValue));
                 }
                 return result;
             }
@@ -361,6 +355,7 @@ namespace Lexical.Localization
         /// <returns>true if parse was successful</returns>
         public virtual bool TryParse(string keyString, out ILine result, ILine prevPart = default, ILineFactory appender = default)
         {
+            if (appender == null) appender = lineFactory;
             if (appender == null && !prevPart.TryGetAppender(out appender)) { result = null; return false; }
             MatchCollection matches = ParsePattern.Matches(keyString);
             if (Qualifier != null)
@@ -373,11 +368,11 @@ namespace Lexical.Localization
                     if (!k_key.Success || !k_value.Success) { result = null; return false; }
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
-                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
+                    ILineParameter parameter;
+                    if (!LineFactory.TryCreate<ILineParameter, string, string>(prevPart, parameterName, parameterValue, out parameter)) { result = null; return false; }
                     int occ = AddOccurance(ref list, parameterName);
-                    if (!Qualifier.Qualify(arg as ILineParameter, occ)) continue;
-                    ILine tmp;
-                    if (appender.TryCreate(prevPart, arg, out tmp)) prevPart = tmp; else { result = null; return false; }
+                    if (!Qualifier.Qualify(parameter, occ)) continue;
+                    prevPart = parameter;
                 }
                 result = prevPart;
                 return true;
@@ -391,9 +386,9 @@ namespace Lexical.Localization
                     if (!k_key.Success || !k_value.Success) { result = null; return false; }
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
-                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
-                    ILine tmp;
-                    if (appender.TryCreate(prevPart, arg, out tmp)) prevPart = tmp; else { result = null; return false; }
+                    ILineParameter parameter;
+                    if (!LineFactory.TryCreate<ILineParameter, string, string>(prevPart, parameterName, parameterValue, out parameter)) { result = null; return false; }
+                    prevPart = parameter;
                 }
                 result = prevPart;
                 return true;
@@ -413,6 +408,7 @@ namespace Lexical.Localization
             {
                 StructList8<ILineArguments> result = new StructList8<ILineArguments>();
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
+                ILineParameter tmp = null;
                 for (int i = 0; i < matches.Count; i++)
                 {
                     Match m = matches[i];
@@ -421,10 +417,10 @@ namespace Lexical.Localization
                     if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
-                    ILineArguments arg = CreateLineArgument(parameterName, parameterValue);
+                    if (!lineFactory.TryCreate<ILineParameter, string, string>(tmp, parameterName, parameterValue, out tmp)) { args = null; return false; }
                     int occ = AddOccurance(ref list, parameterName);
-                    if (!Qualifier.Qualify(arg as ILineParameter, occ)) continue;
-                    result.Add(arg);
+                    if (!Qualifier.Qualify(tmp, occ)) continue;
+                    result.Add(ToArgument(tmp));
                 }
                 args = result.ToArray();
                 return true;
@@ -433,6 +429,7 @@ namespace Lexical.Localization
             {
                 int count = matches.Count;
                 ILineArguments[] result = new ILineArguments[count];
+                ILineParameter tmp = null;
                 for (int i = 0; i < count; i++)
                 {
                     Match m = matches[i];
@@ -441,7 +438,8 @@ namespace Lexical.Localization
                     if (!k_key.Success || !k_value.Success) throw new LineException(null, str);
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
-                    result[i] = CreateLineArgument(parameterName, parameterValue);
+                    if (!lineFactory.TryCreate<ILineParameter, string, string>(tmp, parameterName, parameterValue, out tmp)) { args = null; return false; }
+                    result[i] = ToArgument(tmp);
                 }
                 args = result;
                 return true;
@@ -460,6 +458,7 @@ namespace Lexical.Localization
             if (Qualifier != null)
             {
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
+                ILineParameter tmp = null;
                 foreach (Match m in matches)
                 {
                     if (!m.Success) throw new LineException(null, keyString);
@@ -468,7 +467,7 @@ namespace Lexical.Localization
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
                     int occ = AddOccurance(ref list, parameterName);
-                    if (!Qualifier.Qualify((ILineParameter)CreateLineArgument(parameterName, parameterValue), occ)) continue;
+                    if (lineFactory.TryCreate<ILineParameter, string, string>(tmp, parameterName, parameterValue, out tmp) && !Qualifier.Qualify(tmp, occ)) continue;
                     yield return new KeyValuePair<string, string>(parameterName, parameterValue);
                 }
             }
@@ -499,6 +498,7 @@ namespace Lexical.Localization
             if (Qualifier != null)
             {
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
+                ILineParameter tmp = null;
                 foreach (Match m in matches)
                 {
                     if (!m.Success) { result = null; return false; }
@@ -507,7 +507,7 @@ namespace Lexical.Localization
                     string parameterName = UnescapeLiteral(k_key.Value);
                     string parameterValue = UnescapeLiteral(k_value.Value);
                     int occ = AddOccurance(ref list, parameterName);
-                    if (!Qualifier.Qualify((ILineParameter)CreateLineArgument(parameterName, parameterValue), occ)) continue;
+                    if (lineFactory.TryCreate<ILineParameter, string, string>(tmp, parameterName, parameterValue, out tmp) && !Qualifier.Qualify(tmp, occ)) continue;
                     result.Add(new KeyValuePair<string, string>(parameterName, parameterValue));
                 }
             }
@@ -607,6 +607,15 @@ namespace Lexical.Localization
             }
             paramOccurances.Add((parameterName, 0));
             return 0;
+        }
+
+        ILineArguments ToArgument(ILineParameter parameter)
+        {
+            if (parameter is ILineArguments args) return args;
+            if (parameter is ILineHint hint) return new HintArgument(parameter.ParameterName, parameter.ParameterValue);
+            if (parameter is ILineCanonicalKey canonicalKey) return new KeyCanonicalArgument(parameter.ParameterName, parameter.ParameterValue);
+            if (parameter is ILineNonCanonicalKey nonCanonicalKey) return new KeyNonCanonicalArgument(parameter.ParameterName, parameter.ParameterValue);
+            return null;
         }
 
         class Argument<T> : ILineArguments<T, string, string>, ILineParameter

@@ -190,13 +190,13 @@ namespace Lexical.Localization
                                 // Has been added before
                                 if ((parameter.ParameterName == null) || !parameter.IsCanonicalKey(parameterInfos)) continue;
                                 // Append to level's key
-                                levelKey = LineAppender.Default.Concat(parameter, levelKey);
+                                levelKey = LineAppender.NonResolving.Concat(parameter, levelKey);
                                 // Mark handled
                                 parameters[ix] = unused;
                             }
                         }
                         // Append to level's key
-                        levelKey = LineAppender.Default.Concat(next_parameter, levelKey);
+                        levelKey = LineAppender.NonResolving.Concat(next_parameter, levelKey);
                         // Mark handled
                         parameters[next_parameter_ix] = unused;
                         // Yield level
@@ -209,7 +209,7 @@ namespace Lexical.Localization
                 {
                     // Copy
                     ILineParameter parameter = parameters[ix];
-                    if (parameter.ParameterName != null) levelKey = LineAppender.Default.Concat(parameter, levelKey);
+                    if (parameter.ParameterName != null) levelKey = LineAppender.NonResolving.Concat(parameter, levelKey);
                 }
 
                 // yield levelKey

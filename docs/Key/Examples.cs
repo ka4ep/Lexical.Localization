@@ -16,7 +16,7 @@ namespace docs
         {
             {
                 #region Snippet_1
-                ILine key = LineAppender.Default.Culture("en").Type("MyController").Key("Success");
+                ILine key = LineAppender.NonResolving.Culture("en").Type("MyController").Key("Success");
                 #endregion Snippet_1
             }
 

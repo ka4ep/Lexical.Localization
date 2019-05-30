@@ -19,37 +19,56 @@ namespace Lexical.Localization
     /// </summary>
     public class JsonLinesReader : ILineFileFormat, ILineTreeTextReader
     {
-        private readonly static JsonLinesReader instance = new JsonLinesReader();
+        private readonly static JsonLinesReader non_resolving = new JsonLinesReader("json", LineAppender.NonResolving);
+        private readonly static JsonLinesReader resolving = new JsonLinesReader("json", LineAppender.Resolving);
 
         /// <summary>
-        /// Default intance of .json reader
+        /// .json file lines reader that does not resolve parameters into instantances.
+        /// 
+        /// Used when handling localization files as texts, not for localization
         /// </summary>
-        public static JsonLinesReader Instance => instance;
+        public static JsonLinesReader NonResolving => non_resolving;
 
         /// <summary>
-        /// Polity to read keys.
+        /// .json file lines reader that resolves parameters into instantances.
+        /// 
+        /// <list type="bullet">
+        ///     <item>Parameter "Culture" is created as <see cref="ILineCulture"/></item>
+        ///     <item>Parameter "Value" is created as to <see cref="ILineValue"/></item>
+        ///     <item>Parameter "StringFormat" is created as to <see cref="ILineStringFormat"/></item>
+        ///     <item>Parameter "Functions" is created as to <see cref="ILineFunctions"/></item>
+        ///     <item>Parameter "PluralRules" is created as to <see cref="ILinePluralRules"/></item>
+        ///     <item>Parameter "FormatProvider" is created as to <see cref="ILineFormatProvider"/></item>
+        /// </list>
+        /// 
+        /// Used when reading localization files for localization purposes.
         /// </summary>
-        protected LineFormat lineFormat = new LineFormat(" :\\", false, " :\\", false, ParameterInfos.Default);
+        public static JsonLinesReader Resolving => resolving;
 
         /// <summary>
-        /// File extension, default "json"
+        /// Parameter parser.
+        /// </summary>
+        protected LineFormat lineFormat;
+
+        /// <summary>
+        /// The file extension without dot "ini".
         /// </summary>
         public string Extension { get; protected set; }
 
         /// <summary>
-        /// Value string parser.
+        /// Line factory that instantiates lines.
         /// </summary>
-        public IStringFormatParser ValueParser { get; protected set; }
+        public ILineFactory LineFactory { get; protected set; }
 
         /// <summary>
-        /// (optional) Parameter infos for determining if parameter is key.
+        /// Resolver that was extracted from LineFactory.
         /// </summary>
-        protected IParameterInfos parameterInfos;
+        protected IResolver resolver;
 
         /// <summary>
         /// Create new .json reader.
         /// </summary>
-        public JsonLinesReader() : this("json", CSharpFormat.Instance)
+        public JsonLinesReader() : this("json", LineAppender.Resolving)
         {
         }
 
@@ -57,11 +76,13 @@ namespace Lexical.Localization
         /// Create new .json reader.
         /// </summary>
         /// <param name="ext"></param>
-        /// <param name="valueParser"></param>
-        public JsonLinesReader(string ext, IStringFormat valueParser)
+        /// <param name="lineFactory"></param>
+        public JsonLinesReader(string ext, ILineFactory lineFactory)
         {
-            this.Extension = ext;
-            this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
+            this.Extension = ext ?? throw new ArgumentNullException(nameof(ext));
+            this.lineFormat = new LineFormat(" :\\", false, " :\\", false, lineFactory, null) ?? throw new ArgumentNullException(nameof(lineFactory));
+            this.LineFactory = lineFactory;
+            lineFactory.TryGetResolver(out resolver);
         }
 
         /// <summary>
@@ -90,7 +111,9 @@ namespace Lexical.Localization
         /// <returns></returns>
         public ILineTree ReadJsonIntoTree(JsonReader json, ILineTree node, ILineFormat lineFormat, JsonCorrespondence correspondenceContext)
         {
-            LineFormat _lineFormat = this.lineFormat.GetParameterInfos() == lineFormat.GetParameterInfos() ? this.lineFormat : new LineFormat(" :\\", false, " :\\", false, lineFormat.GetParameterInfos());
+            ILineFactory tmp;
+            ILineFormat _lineFormat = lineFormat.TryGetLineFactory(out tmp) && tmp != LineFactory ? new LineFormat(" :\\", false, " :\\", false, tmp, null) : this.lineFormat;
+
             ILineTree current = node;
             Stack<ILineTree> stack = new Stack<ILineTree>();
             JTokenReader tokenReader = json as JTokenReader;
@@ -133,9 +156,22 @@ namespace Lexical.Localization
                             if (value != null)
                             {
                                 int ix = current.Values.Count;
-                                ILine lineValue = new LineHint(null, null, "Value", value);
-                                current.Values.Add(lineValue);
-                                if (updateCorrespondence) correspondenceContext.Values[new LineTreeValue(current, lineValue, ix)] = (JValue) tokenReader.CurrentToken;
+                                IStringFormat stringFormat;
+                                if (current.TryGetStringFormat(resolver, out stringFormat))
+                                {
+                                    // Append FormatString
+                                    IFormatString valueString = stringFormat.Parse(value);
+                                    ILineValue lineValue = LineFactory.Create<ILineValue, IFormatString>(null, valueString);
+                                    current.Values.Add(lineValue);
+                                    if (updateCorrespondence) correspondenceContext.Values[new LineTreeValue(current, lineValue, ix)] = (JValue)tokenReader.CurrentToken;
+                                }
+                                else
+                                {
+                                    // Append Hint
+                                    ILineHint lineValue = LineFactory.Create<ILineHint, string, string>(null, "Value", value);
+                                    current.Values.Add(lineValue);
+                                    if (updateCorrespondence) correspondenceContext.Values[new LineTreeValue(current, lineValue, ix)] = (JValue)tokenReader.CurrentToken;
+                                }
                             }
                         }
                         break;

@@ -4,21 +4,23 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.StringFormat;
+using Lexical.Localization.Utils;
+using System;
 
 namespace Lexical.Localization
 {
     /// <summary>
     /// Default part appender.
     /// </summary>
-    public partial class LineAppender
+    public partial class LineAppender : ILineFactoryResolver, ILineFactoryParameterInfos
     {
-        private readonly static ILineFactory non_resolving = new LineAppender(null);
-        private readonly static ILineFactory resolving = new LineAppender(ResolverSet.Instance);
+        private readonly static ILineFactory non_resolving = new LineAppender(null, Lexical.Localization.Utils.ParameterInfos.Default);
+        private readonly static ILineFactory resolving = new LineAppender(ResolverSet.Instance, Lexical.Localization.Utils.ParameterInfos.Default);
 
         /// <summary>
         /// Default appender. Does not resolve parameters to respective instance.
         /// </summary>
-        public static ILineFactory Default => non_resolving;
+        public static ILineFactory NonResolving => non_resolving;
 
         /// <summary>
         /// Appender that resolves parameters to respective instances with default resolver.
@@ -37,24 +39,42 @@ namespace Lexical.Localization
         /// <summary>
         /// (optional) Type and parameter resolver
         /// </summary>
-        public readonly IResolver Resolver;
+        public IResolver Resolver { get => resolver; set => throw new InvalidOperationException("Immutable"); }
+
+        /// <summary>
+        /// (optional) Used for instantiating Hint, non-canonical key or canonical key, when parameter is requested.
+        /// </summary>
+        public IParameterInfos ParameterInfos { get => parameterInfos; set => throw new InvalidOperationException("Immutable"); }
+
+        /// <summary>
+        /// (optional) Type and parameter resolver
+        /// </summary>
+        protected IResolver resolver;
+
+        /// <summary>
+        /// (optional) Used for instantiating Hint, non-canonical key or canonical key, when parameter is requested.
+        /// </summary>
+        protected IParameterInfos parameterInfos;
 
         /// <summary>
         /// Create new part factory with default factories.
         /// </summary>
-        public LineAppender(IResolver resolver = null)
+        /// <param name="resolver"></param>
+        /// <param name="parameterInfos"></param>
+        public LineAppender(IResolver resolver = null, IParameterInfos parameterInfos = null)
         {
-            this.Resolver = resolver;
+            this.resolver = resolver;
+            this.parameterInfos = parameterInfos;
         }
     }
 
     /// <summary>
     /// Default part appender.
     /// </summary>
-    public partial class StringLocalizerAppender
+    public partial class StringLocalizerAppender : ILineFactoryResolver, ILineFactoryParameterInfos
     {
-        private readonly static ILineFactory non_resolving = new StringLocalizerAppender(null);
-        private readonly static ILineFactory resolving = new StringLocalizerAppender(ResolverSet.Instance);
+        private readonly static ILineFactory non_resolving = new StringLocalizerAppender(null, Lexical.Localization.Utils.ParameterInfos.Default);
+        private readonly static ILineFactory resolving = new StringLocalizerAppender(ResolverSet.Instance, Lexical.Localization.Utils.ParameterInfos.Default);
 
         /// <summary>
         /// Default appender. Does not resolve parameters to respective instance.
@@ -78,14 +98,32 @@ namespace Lexical.Localization
         /// <summary>
         /// (optional) Type and parameter resolver
         /// </summary>
-        public readonly IResolver Resolver;
+        public IResolver Resolver { get => resolver; set => throw new InvalidOperationException("Immutable"); }
+
+        /// <summary>
+        /// (optional) Used for instantiating Hint, non-canonical key or canonical key, when parameter is requested.
+        /// </summary>
+        public IParameterInfos ParameterInfos { get => parameterInfos; set => throw new InvalidOperationException("Immutable"); }
+
+        /// <summary>
+        /// (optional) Type and parameter resolver
+        /// </summary>
+        protected IResolver resolver;
+
+        /// <summary>
+        /// (optional) Used for instantiating Hint, non-canonical key or canonical key, when parameter is requested.
+        /// </summary>
+        protected IParameterInfos parameterInfos;
 
         /// <summary>
         /// Create new part factory with default factories.
         /// </summary>
-        public StringLocalizerAppender(IResolver resolver = null)
+        /// <param name="resolver"></param>
+        /// <param name="parameterInfos"></param>
+        public StringLocalizerAppender(IResolver resolver = null, IParameterInfos parameterInfos = null)
         {
-            this.Resolver = resolver;
+            this.resolver = resolver;
+            this.parameterInfos = parameterInfos;
         }
 
     }

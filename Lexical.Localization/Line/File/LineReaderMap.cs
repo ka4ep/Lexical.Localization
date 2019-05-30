@@ -14,11 +14,11 @@ namespace Lexical.Localization
     {
         static IReadOnlyDictionary<string, ILineFileFormat> instance = 
             new LineFileFormatMap(
-                XmlLinesReader.Instance, 
+                XmlLinesReader.Resolving, 
                 ResxLinesReader.Instance, 
                 ResourcesLineReader.Instance, 
-                JsonLinesReader.Instance, 
-                IniLinesReader.Instance);
+                JsonLinesReader.Resolving, 
+                IniLinesReader.Resolving);
 
         /// <summary>
         /// Global singleton instance.

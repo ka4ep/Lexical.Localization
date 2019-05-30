@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.Serialization;
 using Lexical.Localization.StringFormat;
+using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
@@ -63,7 +64,7 @@ namespace Lexical.Localization
         /// <param name="parameterValue"></param>
         public LineParameterBase(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart)
         {
-            ParameterName = parameterName ?? throw new ArgumentNullException(nameof(parameterName));
+            ParameterName = parameterName;
             ParameterValue = parameterValue;
         }
 
@@ -112,6 +113,14 @@ namespace Lexical.Localization
                 // Return as parameter and as resolved instance
                 result = castedResolved;
                 return true;
+            }
+
+            IParameterInfo pi;
+            if (ParameterInfos.TryGetValue(parameterName, out pi))
+            {
+                if (pi.InterfaceType == typeof(ILineHint)) { result = new LineHint(appender, previous, parameterName, parameterValue); return true; }
+                if (pi.InterfaceType == typeof(ILineCanonicalKey)) { result = new LineKey.Canonical(appender, previous, parameterName, parameterValue); return true; }
+                if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) { result = new LineKey.NonCanonical(appender, previous, parameterName, parameterValue); return true; }
             }
 
             // Return as parameter
@@ -223,6 +232,14 @@ namespace Lexical.Localization
                 // Return as parameter and as resolved instance
                 result = castedResolved;
                 return true;
+            }
+
+            IParameterInfo pi;
+            if (ParameterInfos.TryGetValue(parameterName, out pi))
+            {
+                if (pi.InterfaceType == typeof(ILineHint)) { result = new StringLocalizerHint(appender, previous, parameterName, parameterValue); return true; }
+                if (pi.InterfaceType == typeof(ILineCanonicalKey)) { result = new _StringLocalizerKey.Canonical(appender, previous, parameterName, parameterValue); return true; }
+                if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) { result = new _StringLocalizerKey.NonCanonical(appender, previous, parameterName, parameterValue); return true; }
             }
 
             // Return as parameter

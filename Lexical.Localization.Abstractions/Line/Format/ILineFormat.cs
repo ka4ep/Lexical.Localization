@@ -97,14 +97,14 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// 
+    /// Line format that has assignable appender.
     /// </summary>
-    public interface ILineFormatParameterInfos : ILineFormat
+    public interface ILineFormatFactory : ILineFormat
     {
         /// <summary>
-        /// Get line format's parameter infos.
+        /// Associated appender.
         /// </summary>
-        IParameterInfos ParameterInfos { get; set; }
+        ILineFactory LineFactory { get; set; }
     }
     #endregion ILineParser
 
@@ -189,27 +189,42 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Get associated line appender.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="lineFormat"></param>
+        /// <returns></returns>
+        public static bool TryGetLineFactory(this ILineFormat lineFormat, out ILineFactory lineFactory)
+        {
+            if (lineFormat is ILineFormatFactory lineFormat1 && lineFormat1.LineFactory != null) { lineFactory = lineFormat1.LineFactory; return true; }
+            lineFactory = default;
+            return false;
+        }
+
+        /// <summary>
         /// Get parameter infos.
         /// </summary>
         /// <param name="lineFormat"></param>
         /// <returns>infos or null</returns>
         public static IParameterInfos GetParameterInfos(this ILineFormat lineFormat)
-            => lineFormat is ILineFormatParameterInfos i ? i.ParameterInfos : null;
+        {
+            ILineFactory lineFactory;
+            IParameterInfos parameterInfos;
+            if (lineFormat.TryGetLineFactory(out lineFactory) && lineFactory.TryGetParameterInfos(out parameterInfos)) return parameterInfos;
+            return null;
+        }
 
         /// <summary>
         /// Try get parameter infos.
         /// </summary>
         /// <param name="lineFormat"></param>
-        /// <param name="infos"></param>
+        /// <param name="parameterInfos"></param>
         /// <returns>true if returned infos</returns>
-        public static bool TryGetParameterInfos(this ILineFormat lineFormat, out IParameterInfos infos)
+        public static bool TryGetParameterInfos(this ILineFormat lineFormat, out IParameterInfos parameterInfos)
         {
-            if (lineFormat is ILineFormatParameterInfos i && i.ParameterInfos != null)
-            {
-                infos = i.ParameterInfos;
-                return true;
-            }
-            infos = null;
+            ILineFactory lineFactory;
+            if (lineFormat.TryGetLineFactory(out lineFactory) && lineFactory.TryGetParameterInfos(out parameterInfos)) return true;
+            parameterInfos = default;
             return false;
         }
 
@@ -222,7 +237,9 @@ namespace Lexical.Localization
         public static IParameterInfo GetParameterInfo(this ILineFormat lineFormat, string parameterName)
         {
             IParameterInfo info;
-            if (lineFormat is ILineFormatParameterInfos i && i.ParameterInfos != null && i.ParameterInfos.TryGetValue(parameterName, out info)) return info;
+            ILineFactory lineFactory;
+            IParameterInfos parameterInfos;
+            if (lineFormat.TryGetLineFactory(out lineFactory) && lineFactory.TryGetParameterInfos(out parameterInfos) && parameterInfos.TryGetValue(parameterName, out info)) return info;
             return null;
         }
 
@@ -231,13 +248,16 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lineFormat"></param>
         /// <param name="parameterName"></param>
-        /// <param name="info"></param>
+        /// <param name="parameterInfo"></param>
         /// <returns>true if returned info</returns>
-        public static bool TryGetParameterInfo(this ILineFormat lineFormat, string parameterName, out IParameterInfo info)
+        public static bool TryGetParameterInfo(this ILineFormat lineFormat, string parameterName, out IParameterInfo parameterInfo)
         {
-            if (lineFormat is ILineFormatParameterInfos i && i.ParameterInfos != null) return i.ParameterInfos.TryGetValue(parameterName, out info);
-            info = null;
+            ILineFactory lineFactory;
+            IParameterInfos parameterInfos;
+            if (lineFormat.TryGetLineFactory(out lineFactory) && lineFactory.TryGetParameterInfos(out parameterInfos) && parameterInfos.TryGetValue(parameterName, out parameterInfo)) return true;
+            parameterInfo = null;
             return false;
         }
+
     }
 }

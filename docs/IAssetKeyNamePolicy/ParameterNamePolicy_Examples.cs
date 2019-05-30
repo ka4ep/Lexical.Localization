@@ -16,7 +16,7 @@ namespace docs
             {
                 #region Snippet_0
                 string str = @"Culture:en:Type:MyController:Key:Ok";
-                ILine key = LineFormat.Parameters.Parse(str, null, LineAppender.Default);
+                ILine key = LineFormat.Parameters.Parse(str, null, LineAppender.NonResolving);
                 #endregion Snippet_0
             }
             {
@@ -30,13 +30,13 @@ namespace docs
             {
                 #region Snippet_1
                 string str = @"Key:Success\:Plural";
-                ILine key = LineFormat.Parameters.Parse(str, null, LineAppender.Default);
+                ILine key = LineFormat.Parameters.Parse(str, null, LineAppender.NonResolving);
                 #endregion Snippet_1
             }
 
             {
                 #region Snippet_2
-                ILine key = LineAppender.Default.Type("MyController").Key("Success").Culture("en");
+                ILine key = LineAppender.NonResolving.Type("MyController").Key("Success").Culture("en");
                 string str = LineFormat.Parameters.Print(key);
                 #endregion Snippet_2
             }
@@ -46,7 +46,7 @@ namespace docs
             }
             {
                 #region Snippet_4
-                ILine key = LineAppender.Default.Type("MyController").Key("Success").Culture("en");
+                ILine key = LineAppender.NonResolving.Type("MyController").Key("Success").Culture("en");
                 IEnumerable<KeyValuePair<string, string>> parameters = key.GetParameters();
                 string str = LineFormat.Parameters.PrintParameters(parameters);
                 #endregion Snippet_4
@@ -62,7 +62,7 @@ namespace docs
 
             {
                 #region Snippet_6
-                ILine key = LineAppender.Default.Type("MyController").Key("Success").Culture("en");
+                ILine key = LineAppender.NonResolving.Type("MyController").Key("Success").Culture("en");
                 string str = LineFormat.Parameters.Print(key);
                 #endregion Snippet_6
             }

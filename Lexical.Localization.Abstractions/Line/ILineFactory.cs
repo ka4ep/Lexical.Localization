@@ -5,6 +5,8 @@
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
 using Lexical.Localization.Line.Internal;
+using Lexical.Localization.StringFormat;
+using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -194,6 +196,28 @@ namespace Lexical.Localization
         /// <returns>true if part was created</returns>
         /// <exception cref="LineException">If append failed due to unexpected reason</exception>
         bool TryCreate(ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line);
+    }
+
+    /// <summary>
+    /// Line factory that has an assigned resolver.
+    /// </summary>
+    public interface ILineFactoryResolver : ILineFactory
+    {
+        /// <summary>
+        /// (optional) Type and parameter resolver
+        /// </summary>
+        IResolver Resolver { get; set; }
+    }
+
+    /// <summary>
+    /// Line factory that has parameter infos assigned
+    /// </summary>
+    public interface ILineFactoryParameterInfos : ILineFactory
+    {
+        /// <summary>
+        /// (optional) Associated parameter infos.
+        /// </summary>
+        IParameterInfos ParameterInfos { get; set; }
     }
 
     /// <summary></summary>
@@ -490,7 +514,7 @@ namespace Lexical.Localization
                         result = factory.Create(result, args_);
 
                 if (l is ILineArguments arg)
-                    result = result.Append(arg);
+                    result = factory.Create(result, arg);
             }
             return result;
         }
@@ -515,7 +539,7 @@ namespace Lexical.Localization
                         result = factory.Create(result, args_);
 
                 if (l is ILineArguments arg)
-                    result = result.Append(arg);
+                    result = factory.Create(result, arg);
             }
             return result;
         }
@@ -598,6 +622,31 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Get associated resolver.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="resolver"></param>
+        /// <returns></returns>
+        public static bool TryGetResolver(this ILineFactory lineFactory, out IResolver resolver)
+        {
+            if (lineFactory is ILineFactoryResolver lineFactory1 && lineFactory1.Resolver != null) { resolver = lineFactory1.Resolver; return true; }
+            resolver = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Get parameter infos
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="parameterInfos"></param>
+        /// <returns></returns>
+        public static bool TryGetParameterInfos(this ILineFactory lineFactory, out IParameterInfos parameterInfos)
+        {
+            if (lineFactory is ILineFactoryParameterInfos lineFactory1 && lineFactory1.ParameterInfos != null) { parameterInfos = lineFactory1.ParameterInfos; return true; }
+            parameterInfos = default;
+            return false;
+        }
 
     }
 

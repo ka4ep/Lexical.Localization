@@ -56,7 +56,7 @@ namespace Lexical.Localization
     ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
     /// 
     /// </summary>
-    public class LinePattern : ILinePattern, ILineParser, ILineAppendParser, ILinePrinter, ILineFormatParameterInfos
+    public class LinePattern : ILinePattern, ILineParser, ILineAppendParser, ILinePrinter
     {
         static Regex regex = new Regex(
             @"(?<text>[^\[\{\}\]]+)|" +
@@ -177,7 +177,7 @@ namespace Lexical.Localization
                 // Matched as text
                 if (g_text.Success)
                 {
-                    list.Add(new Part { Text = g_text.Value, Index = ix++, CaptureIndex = -1 });
+                    list.Add(new Part { Pattern = this, Text = g_text.Value, Index = ix++, CaptureIndex = -1 });
                     continue;
                 }
 
@@ -202,6 +202,7 @@ namespace Lexical.Localization
 
                 Part part = new Part
                 {
+                    Pattern = this,
                     PatternText = patternText, regex = part_pattern == null ? null : new Regex(part_pattern, RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture),
                     PrefixSeparator = prefix, PostfixSeparator = postfix, Identifier = occuranceIndex == 0 ? parameterName : identifier,
                     ParameterName = parameterName, Required = !optional, Index = ix++, CaptureIndex = matchIx++,                   
@@ -216,6 +217,7 @@ namespace Lexical.Localization
                     {
                         Part p = new Part()
                         {
+                            Pattern = this,
                             PatternText = "", regex = null,
                             PrefixSeparator = prefix, PostfixSeparator = postfix,
                             ParameterName = parameterName, Required = false,
@@ -264,6 +266,11 @@ namespace Lexical.Localization
         /// </summary>
         public class Part : ILinePatternPart
         {
+            /// <summary>
+            /// Pattern
+            /// </summary>
+            public LinePattern Pattern;
+
             /// <summary>
             /// Text that represents this part in pattern.
             /// </summary>
@@ -322,14 +329,14 @@ namespace Lexical.Localization
             /// <summary>
             /// Pattern of this part.
             /// </summary>
-            public Regex Regex => regex ?? LinePattern.GetDefaultPattern(ParameterName);
+            public Regex Regex => regex ?? Pattern?.GetDefaultPattern(ParameterName);
 
             /// <summary>
             /// Tests if text is match.
             /// </summary>
             /// <param name="text"></param>
             /// <returns></returns>
-            public bool IsMatch(string text) => Regex == LinePattern.GetDefaultPattern(null) ? true : Regex.IsMatch(text);
+            public bool IsMatch(string text) => Regex == default_reluctant_pattern ? true : Regex.IsMatch(text);
 
             /// <summary>
             /// Print part
@@ -349,12 +356,12 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="parameter">parameter name</param>
         /// <returns>capture pattern to use</returns>
-        public static Regex GetDefaultPattern(string parameter)
+        public Regex GetDefaultPattern(string parameter)
         {
             if (parameter == null || parameter == "") return default_reluctant_pattern;
 
             IParameterInfo parameterInfo;
-            if (Lexical.Localization.Utils.ParameterInfos.Default.TryGetValue(parameter, out parameterInfo) && parameterInfo.Pattern != null) return parameterInfo.Pattern;
+            if ((parameterInfos ?? Lexical.Localization.Utils.ParameterInfos.Default).TryGetValue(parameter, out parameterInfo) && parameterInfo.Pattern != null) return parameterInfo.Pattern;
             return default_reluctant_pattern;
         }
 
@@ -605,7 +612,7 @@ namespace Lexical.Localization
             {
                 string value = match[part.CaptureIndex];
                 if (value == null) continue;
-                result = LineAppender.Default.Create<ILineParameter, string, string>(result, part.ParameterName, value);
+                result = LineAppender.NonResolving.Create<ILineParameter, string, string>(result, part.ParameterName, value);
             }
             return result;
         }

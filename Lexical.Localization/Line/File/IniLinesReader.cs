@@ -24,7 +24,7 @@ namespace Lexical.Localization
     /// </summary>
     public class IniLinesReader : ILineFileFormat, ILineTreeTextReader
     {
-        private readonly static IniLinesReader non_resolving = new IniLinesReader("ini", LineAppender.Default);
+        private readonly static IniLinesReader non_resolving = new IniLinesReader("ini", LineAppender.NonResolving);
         private readonly static IniLinesReader resolving = new IniLinesReader("ini", LineAppender.Resolving);
 
         /// <summary>
@@ -48,33 +48,17 @@ namespace Lexical.Localization
         /// 
         /// Used when reading localization files for localization purposes.
         /// </summary>
-        public static IniLinesReader Default => resolving;
-
-        /// <summary>
-        /// .ini file lines reader that resolves parameters into instantances.
-        /// 
-        /// <list type="bullet">
-        ///     <item>Parameter "Culture" is created as <see cref="ILineCulture"/></item>
-        ///     <item>Parameter "Value" is created as to <see cref="ILineValue"/></item>
-        ///     <item>Parameter "StringFormat" is created as to <see cref="ILineStringFormat"/></item>
-        ///     <item>Parameter "Functions" is created as to <see cref="ILineFunctions"/></item>
-        ///     <item>Parameter "PluralRules" is created as to <see cref="ILinePluralRules"/></item>
-        ///     <item>Parameter "FormatProvider" is created as to <see cref="ILineFormatProvider"/></item>
-        /// </list>
-        /// 
-        /// Used when reading localization files for localization purposes.
-        /// </summary>
         public static IniLinesReader Resolving => resolving;
 
         /// <summary>
         /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.
         /// </summary>
-        protected LineFormat escaper_section = new LineFormat("\\:[]", true, "\\:[]", true, ParameterInfos.Default);
+        protected LineFormat escaper_section;
 
         /// <summary>
         /// Escaper for key parts of .ini files. Escapes '\', ':', '=' characters and white-spaces.
         /// </summary>
-        protected LineFormat escaper_key = new LineFormat("\\:= ", true, "\\:= ", true, ParameterInfos.Default);
+        protected LineFormat escaper_key;
 
         /// <summary>
         /// Escaper for value parts of .ini files. Escapes '\', '{', '}' characters and white-spaces.
@@ -92,9 +76,14 @@ namespace Lexical.Localization
         public ILineFactory LineFactory { get; protected set; }
 
         /// <summary>
+        /// Resolver that was extracted from LineFactory.
+        /// </summary>
+        protected IResolver resolver;
+
+        /// <summary>
         /// Create new ini file reader.
         /// </summary>
-        public IniLinesReader() : this("ini", LineAppender.Default) { }
+        public IniLinesReader() : this("ini", LineAppender.NonResolving) { }
 
         /// <summary>
         /// Create new ini file reader.
@@ -105,6 +94,10 @@ namespace Lexical.Localization
         {
             this.Extension = ext ?? throw new ArgumentNullException(nameof(ext));
             this.LineFactory = lineFactory ?? throw new ArgumentNullException(nameof(LineFactory));
+            this.escaper_section = new LineFormat("\\:[]", true, "\\:[]", true, lineFactory, null);
+            this.escaper_key = new LineFormat("\\:= ", true, "\\:= ", true, lineFactory, null);
+            this.LineFactory = lineFactory;
+            lineFactory.TryGetResolver(out resolver);
         }
 
         /// <summary>
@@ -131,8 +124,9 @@ namespace Lexical.Localization
         /// <returns><paramref name="root"/></returns>
         public ILineTree ReadIniIntoTree(IEnumerable<IniToken> ini, ILineTree root, ILineFormat lineFormat, IniCorrespondence correspondence)
         {
-            ILineFormat _escaper_section = escaper_section.GetParameterInfos() == lineFormat.GetParameterInfos() ? escaper_section : new LineFormat("\\:[]", true, "\\:[]", true, lineFormat.GetParameterInfos());
-            ILineFormat _escaper_key = escaper_key.GetParameterInfos() == lineFormat.GetParameterInfos() ? escaper_key : new LineFormat("\\:= ", true, "\\:= ", true, lineFormat.GetParameterInfos());
+            ILineFactory tmp;
+            ILineFormat _escaper_section = lineFormat.TryGetLineFactory(out tmp) && tmp != LineFactory ? new LineFormat("\\:[]", true, "\\:[]", true, tmp, null) : this.escaper_section;
+            ILineFormat _escaper_key = lineFormat.TryGetLineFactory(out tmp) && tmp != LineFactory ? new LineFormat("\\:= ", true, "\\:= ", true, tmp, null) : this.escaper_key;
 
             ILineTree section = null;
             foreach (IniToken token in ini)
@@ -157,11 +151,27 @@ namespace Lexical.Localization
                         {
                             ILineTree current = key_ == null ? null : (section ?? root).GetOrCreate(key_);
                             string value = escaper_value.UnescapeLiteral(token.ValueText);
+
                             if (value != null)
                             {
+                                IStringFormat stringFormat;
+                                ILine lineValue;
+                                if (current.TryGetStringFormat(resolver, out stringFormat))
+                                {
+                                    // Append FormatString
+                                    IFormatString valueString = stringFormat.Parse(value);
+                                    lineValue = LineFactory.Create<ILineValue, IFormatString>(null, valueString);
+
+                                }
+                                else
+                                {
+                                    // Append Hint
+                                    lineValue = LineFactory.Create<ILineHint, string, string>(null, "Value", value);
+                                }
+
                                 int ix = current.Values.Count;
-                                ILine valueLine = new LineHint(null, null, "Value", value);
-                                if (correspondence != null) correspondence.Values[new LineTreeValue(current, valueLine, ix)] = token;
+                                current.Values.Add(lineValue);
+                                if (correspondence != null) correspondence.Values[new LineTreeValue(current, lineValue, ix)] = token;
                             }
                         }
                         break;

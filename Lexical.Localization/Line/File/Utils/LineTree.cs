@@ -43,7 +43,7 @@ namespace Lexical.Localization.Utils
         /// <returns>tree root ""</returns>
         public static LineTree Create(IEnumerable<ILine> lines, ILinePattern groupingPolicy, IParameterInfos parameterInfos)
         {
-            LineTree root = new LineTree(new LinePart(LineAppender.Default, null));
+            LineTree root = new LineTree(new LinePart(LineAppender.NonResolving, null));
             root.AddRange(lines, groupingPolicy, parameterInfos);
             return root;
         }
@@ -156,7 +156,7 @@ namespace Lexical.Localization.Utils
         /// </summary>
         public LineTree()
         {
-            this.Key = new LinePart(LineAppender.Default, null);
+            this.Key = new LinePart(LineAppender.NonResolving, null);
         }
 
         /// <summary>

@@ -48,7 +48,7 @@ namespace docs
                 IStringLocalizer stringLocalizer = null;
                 #region Snippet_0c
                 // Adapt IStringLocalizer to IAsset
-                asset = new StringLocalizerAsset(stringLocalizer);
+                //asset = new StringLocalizerAsset(stringLocalizer);
                 #endregion Snippet_0c
 
             }

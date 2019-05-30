@@ -41,12 +41,31 @@ namespace Lexical.Localization
         /// </summary>
         public const string URN_ = "urn:lexical.fi:";
 
-        private readonly static XmlLinesReader instance = new XmlLinesReader();
+        private readonly static XmlLinesReader non_resolving = new XmlLinesReader("xml", LineAppender.NonResolving);
+        private readonly static XmlLinesReader resolving = new XmlLinesReader("xml", LineAppender.Resolving);
 
         /// <summary>
-        /// Default xml reader instance
+        /// .json file lines reader that does not resolve parameters into instantances.
+        /// 
+        /// Used when handling localization files as texts, not for localization
         /// </summary>
-        public static XmlLinesReader Instance => instance;
+        public static XmlLinesReader NonResolving => non_resolving;
+
+        /// <summary>
+        /// .json file lines reader that resolves parameters into instantances.
+        /// 
+        /// <list type="bullet">
+        ///     <item>Parameter "Culture" is created as <see cref="ILineCulture"/></item>
+        ///     <item>Parameter "Value" is created as to <see cref="ILineValue"/></item>
+        ///     <item>Parameter "StringFormat" is created as to <see cref="ILineStringFormat"/></item>
+        ///     <item>Parameter "Functions" is created as to <see cref="ILineFunctions"/></item>
+        ///     <item>Parameter "PluralRules" is created as to <see cref="ILinePluralRules"/></item>
+        ///     <item>Parameter "FormatProvider" is created as to <see cref="ILineFormatProvider"/></item>
+        /// </list>
+        /// 
+        /// Used when reading localization files for localization purposes.
+        /// </summary>
+        public static XmlLinesReader Resolving => resolving;
 
         /// <summary>
         /// File extension, default ".xml"
@@ -54,9 +73,14 @@ namespace Lexical.Localization
         public string Extension { get; protected set; }
 
         /// <summary>
-        /// Value string parser.
+        /// Line factory that instantiates lines.
         /// </summary>
-        public IStringFormatParser ValueParser { get; protected set; }
+        public ILineFactory LineFactory { get; protected set; }
+
+        /// <summary>
+        /// Resolver that was extracted from LineFactory.
+        /// </summary>
+        protected IResolver resolver;
 
         /// <summary>
         /// Xml reader settings
@@ -66,19 +90,20 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new xml reader
         /// </summary>
-        public XmlLinesReader() : this("xml", CSharpFormat.Instance, default) { }
+        public XmlLinesReader() : this("xml", LineAppender.Resolving, default) { }
 
         /// <summary>
         /// Create new xml reader
         /// </summary>
         /// <param name="extension"></param>
-        /// <param name="valueParser"></param>
+        /// <param name="lineFactory"></param>
         /// <param name="xmlReaderSettings"></param>
-        public XmlLinesReader(string extension, IStringFormat valueParser, XmlReaderSettings xmlReaderSettings = default)
+        public XmlLinesReader(string extension, ILineFactory lineFactory, XmlReaderSettings xmlReaderSettings = default)
         {
             this.Extension = extension;
-            this.ValueParser = valueParser as IStringFormatParser ?? throw new ArgumentNullException(nameof(valueParser));
             this.xmlReaderSettings = xmlReaderSettings ?? CreateXmlReaderSettings();
+            this.LineFactory = lineFactory ?? throw new ArgumentNullException(nameof(lineFactory));
+            lineFactory.TryGetResolver(out resolver);
         }
 
         /// <summary>
@@ -88,7 +113,11 @@ namespace Lexical.Localization
         /// <param name="lineFormat">uses parameter info</param>
         /// <returns></returns>
         public ILineTree ReadLineTree(XElement element, ILineFormat lineFormat = default)
-            => ReadElement(element, new LineTree(), null, lineFormat.GetParameterInfos());
+        {
+            ILineFactory _lineFactory;
+            if (!lineFormat.TryGetLineFactory(out _lineFactory)) _lineFactory = LineFactory;
+            return ReadElement(element, new LineTree(), null, _lineFactory);
+        }
 
         /// <summary>
         /// Read key tree from <paramref name="stream"/>.
@@ -158,9 +187,8 @@ namespace Lexical.Localization
         /// <param name="element"></param>
         /// <param name="parent"></param>
         /// <param name="correspondenceContext">(optional) Correspondence to write element-tree mappings</param>
-        /// <param name="parameterInfos"></param>
         /// <returns>parent</returns>
-        public ILineTree ReadElement(XElement element, ILineTree parent, XmlCorrespondence correspondenceContext, IParameterInfos parameterInfos)
+        public ILineTree ReadElement(XElement element, ILineTree parent, XmlCorrespondence correspondenceContext)
         {
             ILine key = ReadKey(element, parameterInfos);
 
@@ -237,9 +265,8 @@ namespace Lexical.Localization
         /// Read key from <paramref name="element"/>.
         /// </summary>
         /// <param name="element"></param>
-        /// <param name="parameterInfos"></param>
         /// <returns>key or null</returns>
-        public ILine ReadKey(XElement element, IParameterInfos parameterInfos)
+        public ILine ReadKey(XElement element)
         {
             ILine result;
             // <line type="MyClass" type="something" key="something">
@@ -252,7 +279,7 @@ namespace Lexical.Localization
             {
                 string parameterName = element.Name.NamespaceName.Substring(URN_.Length);
                 string parameterValue = element.Name.LocalName;
-                result = Append(parameterInfos, null, parameterName, parameterValue);
+                result = Append(null, parameterName, parameterValue);
             }
             else return null;
 
@@ -270,7 +297,7 @@ namespace Lexical.Localization
                         Group g_name = m.Groups["name"];
                         if (m.Success && g_name.Success) parameterName = g_name.Value;
                         // Append parameter
-                        result = Append(parameterInfos, result, parameterName, parameterValue);
+                        result = Append(result, parameterName, parameterValue);
                     }
                 }
             }
@@ -278,16 +305,24 @@ namespace Lexical.Localization
             return result;
         }
 
-        ILine Append(IParameterInfos parameterInfos, ILine prev, string parameterName, string parameterValue)
+        ILine Append(ILineTree node, ILine prev, string parameterName, string parameterValue)
         {
-            IParameterInfo info;
-            if (parameterInfos.TryGetValue(parameterName, out info) && info != null)
+            if (parameterName == "Value")
             {
-                if (info.InterfaceType == typeof(ILineHint)) return new LineHint(null, prev, parameterName, parameterValue);
-                if (info.InterfaceType == typeof(ILineCanonicalKey)) return new LineKey.Canonical(null, prev, parameterName, parameterValue);
-                if (info.InterfaceType == typeof(ILineNonCanonicalKey)) return new LineKey.NonCanonical(null, prev, parameterName, parameterValue);
+                IStringFormat stringFormat;
+                if (node.TryGetStringFormat(resolver, out stringFormat))
+                {
+                    IFormatString valueString = stringFormat.Parse(parameterValue);
+                    return LineFactory.Create<ILineValue, IFormatString>(prev, valueString);
+                }
+                else
+                {
+                    return LineFactory.Create<ILineHint, string, string>(prev, "Value", parameterValue);
+                }
+            } else
+            {
+                return LineFactory.Create<ILineParameter, string, string>(prev, parameterName, parameterValue);
             }
-            return new LineParameter(null, prev, parameterName, parameterValue);
         }
 
         /// <summary>

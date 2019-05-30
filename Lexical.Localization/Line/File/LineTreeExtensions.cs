@@ -22,7 +22,7 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <returns></returns>
         public static IEnumerable<KeyValuePair<string, IFormatString>> ToStringLines(this ILineTree LineTree, ILineFormat policy)
-            => LineTree.ToLines(LineAppender.Default).ToStringLines(policy);
+            => LineTree.ToLines(LineAppender.NonResolving).ToStringLines(policy);
 
         /// <summary>
         /// Flatten <paramref name="node"/> to key lines.
@@ -149,6 +149,31 @@ namespace Lexical.Localization
                 }
                 else if (linevalue.TryGetValueText(out str) && str == value.Text) return true;
             }
+            return false;
+        }
+
+        /// <summary>
+        /// Try to find <see cref="IStringFormat"/>.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="resolver">(optional) string format resolver</param>
+        /// <param name="stringFormat"></param>
+        /// <returns>true if string format was found</returns>
+        public static bool TryGetStringFormat(this ILineTree node, IResolver resolver, out IStringFormat stringFormat)
+        {
+            for(ILineTree t = node; t!=null; t=t.Parent)
+            {
+                for(ILine l = t.Key; l!=null; l=l.GetPreviousPart())
+                {
+                    if (l is ILineStringFormat lineStringFormat && lineStringFormat.StringFormat != null) { stringFormat = lineStringFormat.StringFormat; return true; }
+                    if (l is ILineParameterEnumerable lineParameters)
+                        foreach (ILineParameter lineParameter in lineParameters)
+                            if (lineParameter.ParameterName == "StringFormat" && lineParameter.ParameterValue != null && resolver.TryResolve<IStringFormat>(lineParameter.ParameterValue, out stringFormat)) return true;
+                    if (l is ILineParameter parameter)
+                        if (parameter.ParameterName == "StringFormat" && parameter.ParameterValue != null && resolver.TryResolve<IStringFormat>(parameter.ParameterValue, out stringFormat)) return true;
+                }
+            }
+            stringFormat = default;
             return false;
         }
 

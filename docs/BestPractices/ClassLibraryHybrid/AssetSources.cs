@@ -29,7 +29,7 @@ namespace TutorialLibrary3
             if (fileProvider != null)
             {
                 ExternalLocalizationSource = 
-                    XmlLinesReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
+                    XmlLinesReader.Resolving.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
                 Add(ExternalLocalizationSource);
             }
         }

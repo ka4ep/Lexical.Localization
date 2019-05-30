@@ -392,7 +392,7 @@ namespace Lexical.Localization
             value = Source.GetString(key);
 
             // Write to cache, be that null or not
-            ILine cacheKey = key.CloneKey(LineAppender.Default);
+            ILine cacheKey = key.CloneKey(LineAppender.NonResolving);
             _cache.m_lock.EnterWriteLock();
             try
             {
@@ -437,7 +437,7 @@ namespace Lexical.Localization
             }
 
             // Clone keys
-            if (Options.GetCloneKeys()) lines = lines.Select(line => line.CloneKey(LineAppender.Default));
+            if (Options.GetCloneKeys()) lines = lines.Select(line => line.CloneKey(LineAppender.NonResolving));
 
             // Take snapshot
             lines = new List<ILine>(lines);
@@ -490,7 +490,7 @@ namespace Lexical.Localization
             }
 
             // Clone keys
-            if (Options.GetCloneKeys()) lines = lines.Select(line => line.CloneKey(LineAppender.Default));
+            if (Options.GetCloneKeys()) lines = lines.Select(line => line.CloneKey(LineAppender.NonResolving));
 
             // Take snapshot
             lines = new List<ILine>(lines);
@@ -759,7 +759,7 @@ namespace Lexical.Localization
             // Write to cache, be that null or not
             if (value != null && value.Length <= Options.GetMaxResourceSize())
             {
-                ILine cacheKey = key.CloneKey(LineAppender.Default);
+                ILine cacheKey = key.CloneKey(LineAppender.NonResolving);
                 _cache.m_lock.EnterWriteLock();
                 try
                 {
@@ -802,7 +802,7 @@ namespace Lexical.Localization
             // Store into cache?
             if (Options.GetCacheStreams())
             {
-                ILine cacheKey = Options.GetCloneKeys() ? key.CloneKey(LineAppender.Default) : key;
+                ILine cacheKey = Options.GetCloneKeys() ? key.CloneKey(LineAppender.NonResolving) : key;
 
                 // Cache null value
                 if (stream == null)
@@ -926,7 +926,7 @@ namespace Lexical.Localization
             }
 
             // Clone keys
-            if (Options.GetCloneKeys()) lines = lines.Select(line => line.CloneKey(LineAppender.Default));
+            if (Options.GetCloneKeys()) lines = lines.Select(line => line.CloneKey(LineAppender.NonResolving));
 
             // Take snapshot
             lines = new List<ILine>(lines);
@@ -977,7 +977,7 @@ namespace Lexical.Localization
             }
 
             // Clone keys
-            if (Options.GetCloneKeys()) lines = lines.Select(line => line.CloneKey(LineAppender.Default));
+            if (Options.GetCloneKeys()) lines = lines.Select(line => line.CloneKey(LineAppender.NonResolving));
 
             // Take snapshot
             lines = new List<ILine>(lines);

@@ -100,7 +100,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Construct new root.
         /// </summary>
-        public LineRoot() : this(LineAppender.Default, null, null, null, StringResolver.Default, CSharpFormat.Instance, null, null, null) { }
+        public LineRoot() : this(LineAppender.NonResolving, null, null, null, StringResolver.Default, CSharpFormat.Instance, null, null, null) { }
 
         /// <summary>
         /// Construct new root
@@ -113,7 +113,7 @@ namespace Lexical.Localization
         /// <param name="logger"></param>
         /// <param name="functions"></param>
         public LineRoot(IAsset asset, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IStringFormat stringFormat = null, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) : 
-            this(LineAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Default, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
+            this(LineAppender.NonResolving, null, asset, culturePolicy, resolver ?? StringResolver.Default, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
         {
         }
 
@@ -228,7 +228,7 @@ namespace Lexical.Localization
             /// <param name="logger"></param>
             /// <param name="functions"></param>
             public Mutable(ILineFactory appender = default, IAsset asset = null, ICulturePolicy culturePolicy = null, IStringResolver resolver = default, IStringFormat stringFormat = default, IFormatProvider formatProvider = null, IObserver<LineString> logger = null, IFunctions functions = null) :
-                this(appender ?? LineAppender.Default, null, asset, culturePolicy, resolver ?? StringResolver.Default, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
+                this(appender ?? LineAppender.NonResolving, null, asset, culturePolicy, resolver ?? StringResolver.Default, stringFormat ?? CSharpFormat.Instance, formatProvider, logger, functions)
             {
             }
 
