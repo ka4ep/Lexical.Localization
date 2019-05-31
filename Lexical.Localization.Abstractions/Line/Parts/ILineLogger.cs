@@ -57,7 +57,7 @@ namespace Lexical.Localization
         ///     </list>
         /// </param>
         /// <returns>disposable subscription handle, or null if <paramref name="line"/> cannot be observed</returns>
-        public static ILineLogger Logger(this ILine line, TextWriter logger, int severity = 1)
+        public static ILineLogger Logger(this ILine line, TextWriter logger, LineStatusSeverity severity = LineStatusSeverity.Warning)
             => line.Logger(new LineTextLogger(logger, severity));
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Lexical.Localization
         ///     </list>
         /// </param>
         /// <returns></returns>
-        public static ILineLogger DiagnosticsTrace(this ILine line, int severity = 1)
+        public static ILineLogger DiagnosticsTrace(this ILine line, LineStatusSeverity severity = LineStatusSeverity.Warning)
             => line.Logger(new LineDiagnosticsTrace(severity));
     }
 }

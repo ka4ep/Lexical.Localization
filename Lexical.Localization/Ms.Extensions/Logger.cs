@@ -74,11 +74,11 @@ namespace Lexical.Localization
             // Is disposed?
             if (_logger == null) return;
             // Get severity
-            int severity = value.Severity;
+            LineStatusSeverity severity = value.Severity;
             // Write status
-            if (_logger.IsEnabled(LogLevel.Trace) && severity == 0) { _logger.LogError(value.DebugInfo); return; }
-            if (_logger.IsEnabled(LogLevel.Warning) && severity == 1) { _logger.LogWarning(value.DebugInfo); return; }
-            if (_logger.IsEnabled(LogLevel.Error) && severity >= 2) { _logger.LogError(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Trace) && severity == LineStatusSeverity.Ok) { _logger.LogError(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Warning) && severity == LineStatusSeverity.Warning) { _logger.LogWarning(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Error) && severity >= LineStatusSeverity.Error) { _logger.LogError(value.DebugInfo); return; }
         }
     }
 }

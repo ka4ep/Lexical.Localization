@@ -227,6 +227,21 @@ namespace Lexical.Localization.StringFormat
     }
 
     /// <summary>
+    /// Line status severity
+    /// </summary>
+    public enum LineStatusSeverity : int
+    {
+        /// <summary>Line resolved successfully</summary>
+        Ok = 0,
+        /// <summary>Line resolved, but there was a minor issue</summary>
+        Warning = 1,
+        /// <summary>Error occured during resolving. A fallback string was returned. </summary>
+        Error = 2,
+        /// <summary>Resolve failed completely. No string was returned.</summary>
+        Failed = 3
+    }
+
+    /// <summary>
     /// Contains bit-shifts for each status category.
     /// </summary>
     internal static class Shift
@@ -269,8 +284,8 @@ namespace Lexical.Localization.StringFormat
         /// </list>
         /// </summary>
         /// <param name="status"></param>
-        public static int ResolveSeverity(this LineStatus status) 
-            => (int)((ulong)status >> Shift.ResolveSeverity) & 3;
+        public static LineStatusSeverity ResolveSeverity(this LineStatus status) 
+            => (LineStatusSeverity)(((ulong)status >> Shift.ResolveSeverity) & 3);
 
         /// <summary>
         /// Get resolve step status code.
@@ -290,8 +305,8 @@ namespace Lexical.Localization.StringFormat
         /// </list>
         /// </summary>
         /// <param name="status"></param>
-        public static int CultureSeverity(this LineStatus status) 
-            => (int)((ulong)status >> Shift.CultureSeverity) & 3;
+        public static LineStatusSeverity CultureSeverity(this LineStatus status)
+            => (LineStatusSeverity)(((ulong)status >> Shift.CultureSeverity) & 3);
 
         /// <summary>
         /// Get culture step status code.
@@ -310,8 +325,8 @@ namespace Lexical.Localization.StringFormat
         /// <item>3 Failed, no value</item>
         /// </list>
         /// </summary>
-        public static int PluralitySeverity(this LineStatus status) 
-            => (int)((ulong)status >> Shift.PluralitySeverity) & 3;
+        public static LineStatusSeverity PluralitySeverity(this LineStatus status)
+            => (LineStatusSeverity)(((ulong)status >> Shift.PluralitySeverity) & 3);
 
         /// <summary>
         /// Get plurality step status code.
@@ -331,8 +346,8 @@ namespace Lexical.Localization.StringFormat
         /// </list>
         /// </summary>
         /// <param name="status"></param>
-        public static int PlaceholderSeverity(this LineStatus status) 
-            => (int)((ulong)status >> Shift.PlaceholderSeverity) & 3;
+        public static LineStatusSeverity PlaceholderSeverity(this LineStatus status)
+            => (LineStatusSeverity)(((ulong)status >> Shift.PlaceholderSeverity) & 3);
 
         /// <summary>
         /// Get argument status code.
@@ -352,8 +367,8 @@ namespace Lexical.Localization.StringFormat
         /// </list>
         /// </summary>
         /// <param name="status"></param>
-        public static int FormatSeverity(this LineStatus status) 
-            => (int)((ulong)status >> Shift.FormatSeverity) & 3;
+        public static LineStatusSeverity FormatSeverity(this LineStatus status)
+            => (LineStatusSeverity)(((ulong)status >> Shift.FormatSeverity) & 3);
 
         /// <summary>
         /// Get format step status code.
@@ -375,8 +390,8 @@ namespace Lexical.Localization.StringFormat
         /// </list>
         /// </summary>
         /// <param name="status"></param>
-        public static int Custom0Severity(this LineStatus status)
-            => (int)((ulong)status >> Shift.Custom0Severity) & 3;
+        public static LineStatusSeverity Custom0Severity(this LineStatus status)
+            => (LineStatusSeverity)(((ulong)status >> Shift.Custom0Severity) & 3);
 
         /// <summary>
         /// Get custom0 status code.
@@ -398,8 +413,8 @@ namespace Lexical.Localization.StringFormat
         /// </list>
         /// </summary>
         /// <param name="status"></param>
-        public static int Custom1Severity(this LineStatus status) 
-            => (int)((ulong)status >> Shift.Custom1Severity) & 3;
+        public static LineStatusSeverity Custom1Severity(this LineStatus status)
+            => (LineStatusSeverity)(((ulong)status >> Shift.Custom1Severity) & 3);
 
         /// <summary>
         /// Get custom1 status code.
@@ -419,10 +434,10 @@ namespace Lexical.Localization.StringFormat
         /// </list>
         /// </summary>
         /// <param name="status"></param>
-        public static int Severity(this LineStatus status)
+        public static LineStatusSeverity Severity(this LineStatus status)
         {
-            int a = status.ResolveSeverity(), b = status.CultureSeverity(), c = status.PluralitySeverity(), d = status.PlaceholderSeverity(), e = status.FormatSeverity(), h = status.Custom0Severity(), i = status.Custom1Severity();
-            int result = a;
+            LineStatusSeverity a = status.ResolveSeverity(), b = status.CultureSeverity(), c = status.PluralitySeverity(), d = status.PlaceholderSeverity(), e = status.FormatSeverity(), h = status.Custom0Severity(), i = status.Custom1Severity();
+            LineStatusSeverity result = a;
             if (b > result) result = b;
             if (c > result) result = c;
             if (d > result) result = d;
@@ -457,7 +472,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="status"></param>
         public static bool Warning(this LineStatus status) 
-            => status.Severity() == 1;
+            => status.Severity() == LineStatusSeverity.Warning;
 
         /// <summary>
         /// Result has error state out of four severity states (Ok, Warning, Error, Failed).
@@ -466,7 +481,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="status"></param>
         public static bool Error(this LineStatus status) 
-            => status.Severity() == 2;
+            => status.Severity() == LineStatusSeverity.Error;
 
         /// <summary>
         /// Result has failed state out of four severity states (Ok, Warning, Error, Failed).
@@ -475,7 +490,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="status"></param>
         public static bool Failed(this LineStatus status) 
-            => status.Severity() == 3;
+            => status.Severity() == LineStatusSeverity.Failed;
 
         /// <summary>
         /// Write flags as string into <paramref name="sb"/>.

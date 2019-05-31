@@ -27,14 +27,14 @@ namespace Lexical.Localization.Internal
         ///     <item>3 - Failed</item>
         /// </list>
         /// </summary>
-        int severity;
+        LineStatusSeverity severity;
 
         /// <summary>
         /// Create logger
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="severity"></param>
-        public LineTextLogger(TextWriter logger, int severity)
+        public LineTextLogger(TextWriter logger, LineStatusSeverity severity)
         {
             this.logger = logger;
             this.severity = severity;
@@ -58,7 +58,7 @@ namespace Lexical.Localization.Internal
             var _logger = logger;
             // Is disposed?
             if (_logger == null) return;
-            if (3 >= this.severity)
+            if (LineStatusSeverity.Error >= this.severity)
                 _logger.WriteLine($"{error.GetType().Name}: {error.Message}");
         }
 
@@ -73,7 +73,7 @@ namespace Lexical.Localization.Internal
             // Is disposed?
             if (_logger == null) return;
             // Get severity
-            int severity = value.Severity;
+            LineStatusSeverity severity = value.Severity;
             // Write status
             if (severity >= this.severity)
                 _logger.WriteLine(value.DebugInfo);
@@ -95,7 +95,7 @@ namespace Lexical.Localization.Internal
         ///     <item>3 - Failed</item>
         /// </list>
         /// </summary>
-        int severity;
+        LineStatusSeverity severity;
 
         /// <summary>
         /// disposed
@@ -106,7 +106,7 @@ namespace Lexical.Localization.Internal
         /// Create logger
         /// </summary>
         /// <param name="severity"></param>
-        public LineDiagnosticsTrace(int severity)
+        public LineDiagnosticsTrace(LineStatusSeverity severity)
         {
             this.severity = severity;
         }
@@ -136,20 +136,20 @@ namespace Lexical.Localization.Internal
         {
             if (disposed) return;
             // Get severity
-            int severity = value.Severity;
+            LineStatusSeverity severity = value.Severity;
             // Threshold
             if (severity < this.severity) return;
             // Write status
             switch (severity)
             {
-                case 0:
+                case LineStatusSeverity.Ok:
                     Trace.TraceInformation(value.DebugInfo);
                     return;
-                case 1:
+                case LineStatusSeverity.Warning:
                     Trace.TraceWarning(value.DebugInfo);
                     return;
-                case 2:
-                case 3:
+                case LineStatusSeverity.Error:
+                case LineStatusSeverity.Failed:
                     Trace.TraceError(value.DebugInfo);
                     return;
             }

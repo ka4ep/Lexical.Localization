@@ -50,7 +50,7 @@ namespace Lexical.Localization.StringFormat
         /// <item>3 Failed, no value</item>
         /// </list>
         /// </summary>
-        public int ResolveSeverity => Status.ResolveSeverity();
+        public LineStatusSeverity ResolveSeverity => Status.ResolveSeverity();
 
         /// <summary>
         /// Severity for the step that matches culture.
@@ -62,7 +62,7 @@ namespace Lexical.Localization.StringFormat
         /// <item>3 Failed, no value</item>
         /// </list>
         /// </summary>
-        public int CultureSeverity => Status.CultureSeverity();
+        public LineStatusSeverity CultureSeverity => Status.CultureSeverity();
 
         /// <summary>
         /// Severity for the step applies Plurality_.
@@ -74,7 +74,7 @@ namespace Lexical.Localization.StringFormat
         /// <item>3 Failed, no value</item>
         /// </list>
         /// </summary>
-        public int PluralitySeverity => Status.PluralitySeverity();
+        public LineStatusSeverity PluralitySeverity => Status.PluralitySeverity();
 
         /// <summary>
         /// Severity for the step that converts placeholder expressions into strings
@@ -86,7 +86,7 @@ namespace Lexical.Localization.StringFormat
         /// <item>3 Failed, no value</item>
         /// </list>
         /// </summary>
-        public int PlaceholderSeverity => Status.PlaceholderSeverity();
+        public LineStatusSeverity PlaceholderSeverity => Status.PlaceholderSeverity();
 
         /// <summary>
         /// Severity for the step that parses format string and applies arguments.
@@ -98,7 +98,7 @@ namespace Lexical.Localization.StringFormat
         /// <item>3 Failed, no value</item>
         /// </list>
         /// </summary>
-        public int FormatSeverity => Status.FormatSeverity();
+        public LineStatusSeverity FormatSeverity => Status.FormatSeverity();
 
         /// <summary>
         /// Severity for implementation specific "Custom0" status.
@@ -112,7 +112,7 @@ namespace Lexical.Localization.StringFormat
         /// <item>3 Failed, no value</item>
         /// </list>
         /// </summary>
-        public int Custom0Severity => Status.Custom0Severity();
+        public LineStatusSeverity Custom0Severity => Status.Custom0Severity();
 
         /// <summary>
         /// Severity for implementation specific "Custom1" status.
@@ -126,7 +126,7 @@ namespace Lexical.Localization.StringFormat
         /// <item>3 Failed, no value</item>
         /// </list>
         /// </summary>
-        public int Custom1Severity => Status.Custom1Severity();
+        public LineStatusSeverity Custom1Severity => Status.Custom1Severity();
 
         /// <summary>
         /// Highest severity value out of each category.
@@ -138,7 +138,7 @@ namespace Lexical.Localization.StringFormat
         /// <item>3 Failed, no value</item>
         /// </list>
         /// </summary>
-        public int Severity => Status.Severity();
+        public LineStatusSeverity Severity => Status.Severity();
 
         /// <summary>
         /// Tests if there is no result.
