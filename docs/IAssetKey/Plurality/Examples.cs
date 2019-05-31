@@ -102,7 +102,7 @@ namespace docs
                 #endregion Snippet_3
             }
             {
-                // Plurality permutations for argument 1
+                // Plurality permutations for two arguments
                 #region Snippet_4
                 IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample2.xml");
                 ILine key = new LineRoot(asset).Key("CatsDogs");
@@ -138,8 +138,20 @@ namespace docs
                 #endregion Snippet_6
             }
             {
+                // Plural expression in localization file
+                // [Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true
                 #region Snippet_7
+                IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample5.xml");
+                ILine key = new LineRoot(asset).Key("CatsDogs");
+
+                for (int cats = 0; cats <= 2; cats++)
+                    for (int dogs = 0; dogs <= 2; dogs++)
+                        Console.WriteLine(key.Format(cats, dogs));
                 #endregion Snippet_7
+            }
+            {
+                #region Snippet_8
+                #endregion Snippet_8
             }
         }
     }

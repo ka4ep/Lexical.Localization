@@ -30,12 +30,26 @@ namespace Lexical.Localization.StringFormat
         public readonly IResolver Resolvers;
 
         /// <summary>
+        /// Maximum plural arguments. If argument count is exceeded returns error with <see cref="LineStatus.PluralityErrorMaxPluralArgumentsExceeded"/>.
+        /// 
+        /// The higher the number, the more potential permutation overhead can occur.
+        /// For example "Hello {cardinal:0}, {cardinal:1}, {cardinal:2}" has 3 plural arguments. 
+        /// </summary>
+        public virtual int MaxPluralArguments { get => maxPluralArguments; set => throw new InvalidOperationException("Immutable"); }
+
+        /// <summary>
+        /// Maximum plural arguments.
+        /// </summary>
+        protected int maxPluralArguments;
+
+        /// <summary>
         /// Create string resolver 
         /// </summary>
         public StringResolver()
         {
             this.Resolvers = StringFormat.Resolvers.Default;
             this.ResolveSequence = new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
+            this.maxPluralArguments = 3;
         }
 
         /// <summary>
@@ -43,10 +57,12 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="resolvers"></param>
         /// <param name="resolveSequence"></param>
-        public StringResolver(IResolver resolvers, ResolveSource[] resolveSequence = default)
+        /// <param name="maxPluralArguments">maximum plural arguments. The higher the number, the more permutation overhead can occur</param>
+        public StringResolver(IResolver resolvers, ResolveSource[] resolveSequence = default, int maxPluralArguments = 3)
         {
             this.Resolvers = resolvers ?? throw new ArgumentNullException(nameof(resolvers));
             this.ResolveSequence = resolveSequence ?? new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
+            this.maxPluralArguments = maxPluralArguments;
         }
 
         /// <summary>
@@ -196,159 +212,179 @@ namespace Lexical.Localization.StringFormat
                 return new LineString(key, null, features.Status);
             }
 
-            // Resolve key to line
-            CultureInfo culture = features.Culture;
-            ILine line = ResolveKeyToLine(key, ref features, ref culture);
-
-            // No line or value
-            if (line == null || !features.HasValue)
+            try
             {
-                features.Status.UpResolve(LineStatus.ResolveFailedNoValue);
-                LineString str = new LineString(key, null, features.Status);
-                features.Log(str);
-                return str;
-            }
+                // Resolve key to line
+                CultureInfo culture = features.Culture;
+                ILine line = ResolveKeyToLine(key, ref features, ref culture);
 
-            // Parse value
-            IFormatString value = features.EffectiveValue;
-            features.Status.UpFormat(value.Status);
-
-            // Value has error
-            if (value.Parts==null||value.Status.Failed())
-            {
-                LineString str = new LineString(key, null, features.Status);
-                features.Log(str);
-                return str;
-            }
-
-            // Evaluate expressions in placeholders into strings
-            StructList12<string> placeholder_values = new StructList12<string>();
-            EvaluatePlaceholderValues(value.Placeholders, ref features, ref placeholder_values, culture);
-
-            // Plural Rules
-            if (value.HasPluralRules())
-            {
-                if (features.PluralRules != null)
+                // No line or value
+                if (line == null || !features.HasValue)
                 {
-                    // Create permutation configuration
-                    PluralCasePermutations permutations = new PluralCasePermutations(line);
-                    for (int i = 0; i < value.Placeholders.Length; i++)
-                    {
-                        // Get placeholder
-                        IPlaceholder ph = value.Placeholders[i];
-                        // No plural category in this placeholder
-                        if (ph.PluralCategory == null) continue;
-                        // Placeholder value after evaluation
-                        string ph_value = placeholder_values[i];
-                        // Placeholder as number
-                        IPluralNumber number = ph_value == null ? DecimalNumber.Empty : new DecimalNumber.Text(ph_value?.ToString(), culture);
-                        // Query possible cases for the plural rules
-                        PluralRuleInfo query = new PluralRuleInfo(null, ph.PluralCategory, culture?.Name??"", null, -1);                        
-                        IPluralRule[] cases = features.PluralRules.Evaluate(query, number);
-                        if (cases == null) continue;
-                        permutations.AddPlaceholder(ph, cases);
-                    }
+                    features.Status.UpResolve(LineStatus.ResolveFailedNoValue);
+                    LineString str = new LineString(key, null, features.Status);
+                    features.Log(str);
+                    return str;
+                }
 
-                    // Find first value that matches permutations
-                    features.CulturePolicy = null;
-                    features.Value = null;
-                    features.ValueText = null;
-                    for (int i = 0; i < permutations.Count - 1; i++)
+                // Parse value
+                IFormatString value = features.EffectiveValue;
+                features.Status.UpFormat(value.Status);
+
+                // Value has error
+                if (value.Parts == null || value.Status.Failed())
+                {
+                    LineString str = new LineString(key, null, features.Status);
+                    features.Log(str);
+                    return str;
+                }
+
+                // Evaluate expressions in placeholders into strings
+                StructList12<string> placeholder_values = new StructList12<string>();
+                EvaluatePlaceholderValues(value.Placeholders, ref features, ref placeholder_values, culture);
+
+                // Plural Rules
+                if (value.HasPluralRules())
+                {
+                    if (features.PluralRules != null)
                     {
-                        // Create key with plurality cases
-                        ILine key_with_plurality = permutations[i];
-                        // Search line with the key
-                        ILine line_for_plurality_arguments = ResolveKeyToLine(key_with_plurality, ref features, ref culture);
-                        // Got no match
-                        if (line_for_plurality_arguments == null) continue;
-                        // Scan value
-                        try
+                        // Create permutation configuration
+                        PluralCasePermutations permutations = new PluralCasePermutations(line);
+                        for (int i = 0; i < value.Placeholders.Length; i++)
                         {
-                            features.ScanValueFeature(line_for_plurality_arguments);
+                            // Get placeholder
+                            IPlaceholder ph = value.Placeholders[i];
+                            // No plural category in this placeholder
+                            if (ph.PluralCategory == null) continue;
+                            // Placeholder value after evaluation
+                            string ph_value = placeholder_values[i];
+                            // Placeholder as number
+                            IPluralNumber number = ph_value == null ? DecimalNumber.Empty : new DecimalNumber.Text(ph_value?.ToString(), culture);
+                            // Query possible cases for the plural rules
+                            PluralRuleInfo query = new PluralRuleInfo(null, ph.PluralCategory, culture?.Name ?? "", null, -1);
+                            IPluralRule[] cases = features.PluralRules.Evaluate(query, number);
+                            if (cases == null) continue;
+                            permutations.AddPlaceholder(ph, cases);
                         }
-                        catch (Exception e)
+
+                        if (permutations.ArgumentCount <= MaxPluralArguments)
                         {
-                            features.Log(e);
-                            features.Status.Up(LineStatus.FailedUnknownReason);
-                            return new LineString(key, null, features.Status);
+                            // Find first value that matches permutations
+                            features.CulturePolicy = null;
+                            features.Value = null;
+                            features.ValueText = null;
+                            for (int i = 0; i < permutations.Count - 1; i++)
+                            {
+                                // Create key with plurality cases
+                                ILine key_with_plurality = permutations[i];
+                                // Search line with the key
+                                ILine line_for_plurality_arguments = ResolveKeyToLine(key_with_plurality, ref features, ref culture);
+                                // Got no match
+                                if (line_for_plurality_arguments == null) continue;
+                                // Scan value
+                                try
+                                {
+                                    features.ScanValueFeature(line_for_plurality_arguments);
+                                }
+                                catch (Exception e)
+                                {
+                                    features.Log(e);
+                                    features.Status.Up(LineStatus.FailedUnknownReason);
+                                    return new LineString(key, null, features.Status);
+                                }
+                                // Parse value
+                                IFormatString value_for_plurality = features.EffectiveValue;
+                                // Add status from parsing the value
+                                features.Status.UpFormat(value_for_plurality.Status);
+                                // Value has error
+                                if (value_for_plurality.Parts == null || value_for_plurality.Status.Failed())
+                                {
+                                    LineString str = new LineString(key, null, features.Status);
+                                    features.Log(str);
+                                    return str;
+                                }
+                                // Return with match
+                                features.Status.UpPlurality(LineStatus.PluralityOkMatched);
+                                // Evaluate placeholders again
+                                if (!EqualPlaceholders(value, value_for_plurality)) { placeholder_values.Clear(); EvaluatePlaceholderValues(value_for_plurality.Placeholders, ref features, ref placeholder_values, culture); }
+                                // Update status codes
+                                features.Status.UpFormat(value_for_plurality.Status);
+                                // Return values
+                                value = value_for_plurality;
+                                line = line_for_plurality_arguments;
+                                break;
+                            }
                         }
-                        // Parse value
-                        IFormatString value_for_plurality = features.EffectiveValue;
-                        // Add status from parsing the value
-                        features.Status.UpFormat(value_for_plurality.Status);
-                        // Value has error
-                        if (value_for_plurality.Parts == null || value_for_plurality.Status.Failed())
-                        {
-                            LineString str = new LineString(key, null, features.Status);
-                            features.Log(str);
-                            return str;
+                        else
+                        { 
+                            features.Status.UpPlaceholder(LineStatus.PluralityErrorMaxPluralArgumentsExceeded);
                         }
-                        // Return with match
-                        features.Status.UpPlurality(LineStatus.PluralityOkMatched);
-                        // Evaluate placeholders again
-                        if (!EqualPlaceholders(value, value_for_plurality)) { placeholder_values.Clear(); EvaluatePlaceholderValues(value_for_plurality.Placeholders, ref features, ref placeholder_values, culture); }
-                        // Update status codes
-                        features.Status.UpFormat(value_for_plurality.Status);
-                        // Return values
-                        value = value_for_plurality;
-                        line = line_for_plurality_arguments;
-                        break;
+                    }
+                    else
+                    {
+                        // Plural rules were not found
+                        features.Status.Up(LineStatus.PluralityErrorRulesNotFound);
                     }
                 }
                 else
                 {
-                    // Plural rules were not found
-                    features.Status.Up(LineStatus.PluralityErrorRulesNotFound);
+                    // Plurality feature was not used.
+                    features.Status.UpPlurality(LineStatus.PluralityOkNotUsed);
                 }
-            } else {
-                // Plurality feature was not used.
-                features.Status.UpPlurality(LineStatus.PluralityOkNotUsed);
-            }
 
-            // Put string together
-            string text = null;
-            if (value != null && value.Parts != null)
+                // Put string together
+                string text = null;
+                if (value != null && value.Parts != null)
+                {
+                    // Only one part
+                    if (value.Parts.Length == 1)
+                    {
+                        if (value.Parts[0].Kind == FormatStringPartKind.Text) text = value.Parts[0].Text;
+                        else if (value.Parts[0].Kind == FormatStringPartKind.Placeholder) text = placeholder_values[0];
+                    }
+                    else
+                    // Compile parts
+                    {
+                        // Calculate length
+                        int length = 0;
+                        for (int i = 0; i < value.Parts.Length; i++)
+                        {
+                            IFormatStringPart part = value.Parts[i];
+                            length += part.Kind switch { FormatStringPartKind.Text => part.Length, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex].Length, _ => 0 };
+                        }
+
+                        // Copy characters
+                        char[] arr = new char[length];
+                        int ix = 0;
+                        for (int i = 0; i < value.Parts.Length; i++)
+                        {
+                            IFormatStringPart part = value.Parts[i];
+                            string str = part.Kind switch { FormatStringPartKind.Text => part.Text, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex], _ => null };
+                            if (str != null) { str.CopyTo(0, arr, ix, str.Length); ix += str.Length; }
+                        }
+
+                        // String
+                        text = new string(arr);
+                    }
+                    features.Status.UpFormat(LineStatus.FormatOkString);
+                }
+
+                // Create result 
+                LineString result = new LineString(key, text, features.Status);
+
+                // Log
+                features.Log(result);
+
+                // Return
+                return result;
+            } catch (Exception e)
             {
-                // Only one part
-                if (value.Parts.Length == 1)
-                {
-                    if (value.Parts[0].Kind == FormatStringPartKind.Text) text = value.Parts[0].Text;
-                    else if (value.Parts[0].Kind == FormatStringPartKind.Placeholder) text = placeholder_values[0];
-                } else
-                // Compile parts
-                {
-                    // Calculate length
-                    int length = 0;
-                    for (int i = 0; i < value.Parts.Length; i++)
-                    {
-                        IFormatStringPart part = value.Parts[i];
-                        length += part.Kind switch { FormatStringPartKind.Text => part.Length, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex].Length, _ => 0 };
-                    }
-
-                    // Copy characters
-                    char[] arr = new char[length];
-                    int ix = 0;
-                    for (int i = 0; i < value.Parts.Length; i++)
-                    {
-                        IFormatStringPart part = value.Parts[i];
-                        string str = part.Kind switch { FormatStringPartKind.Text => part.Text, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex], _ => null };
-                        if (str != null) { str.CopyTo(0, arr, ix, str.Length); ix += str.Length; }
-                    }
-
-                    // String
-                    text = new string(arr);
-                }
-                features.Status.UpFormat(LineStatus.FormatOkString);
+                // Capture unexpected error
+                features.Log(e);
+                LineString lineString = new LineString(key, null, LineStatus.FailedUnknownReason);
+                features.Log(lineString);
+                return lineString;
             }
-
-            // Create result 
-            LineString result = new LineString(key, text, features.Status);
-
-            // Log
-            features.Log(result);
-
-            // Return
-            return result;
         }
 
         /// <summary>
@@ -519,7 +555,7 @@ namespace Lexical.Localization.StringFormat
                                             {
                                                 if (culture == null) culture = c;
                                                 features.Status.UpResolve(LineStatus.ResolveOkFromKey);
-                                                features.Status.UpCulture(LineStatus.CultureOkNoCultureDefaultLine);
+                                                features.Status.UpCulture(LineStatus.CultureOkMatchedDefaultLine);
                                                 return key;
                                             }
                                             else if (c.Equals(features.Culture))
@@ -560,7 +596,7 @@ namespace Lexical.Localization.StringFormat
                                         if ((line = asset.GetString(key)) != null)
                                         {
                                             features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
-                                            features.Status.UpCulture(LineStatus.CultureOkNoCultureDefaultLine);
+                                            features.Status.UpCulture(LineStatus.CultureOkMatchedDefaultLine);
                                             features.ScanFeatures(line);
                                             return line;
                                         }
@@ -582,7 +618,7 @@ namespace Lexical.Localization.StringFormat
                                         if (features.Inlines[i].TryGetValue(key, out line))
                                         {
                                             features.Status.UpResolve(LineStatus.ResolveOkFromInline);
-                                            features.Status.UpCulture(LineStatus.CultureOkNoCultureDefaultLine);
+                                            features.Status.UpCulture(LineStatus.CultureOkMatchedDefaultLine);
                                             features.ScanFeatures(line);
                                             return line;
                                         }
@@ -601,7 +637,7 @@ namespace Lexical.Localization.StringFormat
                                 {
                                     if (culture == null) culture = RootCulture;
                                     features.Status.UpResolve(LineStatus.ResolveOkFromKey);
-                                    features.Status.UpCulture(LineStatus.CultureOkNoCultureDefaultLine);
+                                    features.Status.UpCulture(LineStatus.CultureOkMatchedDefaultLine);
                                     return key;
                                 }
                                 break;

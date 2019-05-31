@@ -56,7 +56,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         CultureOk = 0x01UL << Shift.Culture,
         /// <summary>Key contained no culture, and it matched to default line</summary>
-        CultureOkNoCultureDefaultLine = 0x04UL << Shift.Culture,
+        CultureOkMatchedDefaultLine = 0x04UL << Shift.Culture,
         /// <summary>Key contained an explicit culture, and it matched to a line</summary>
         CultureOkMatchedCulture = 0x08UL << Shift.Culture,
         /// <summary>Key contained culture policy which provided a culture that matched to a line</summary>
@@ -111,6 +111,8 @@ namespace Lexical.Localization.StringFormat
         PluralityErrorPlaceholderTextNull = 0x4DUL << Shift.Plurality,
         /// <summary>Could not parse plurality information without CultureInfo or NumberFormatInfo</summary>
         PluralityErrorPlaceholderNumberFormatNull = 0x50UL << Shift.Plurality,
+        /// <summary>Maximum plural arguments exceeded</summary>
+        PluralityErrorMaxPluralArgumentsExceeded = 0x57UL << Shift.Plurality,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PluralityFailed = 0x60UL << Shift.Plurality,
         /// <summary>Result has not been processed</summary>

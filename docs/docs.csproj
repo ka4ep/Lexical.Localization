@@ -127,6 +127,9 @@
     <None Update="localization.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="PluralityExample5.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TutorialLibrary2-fi.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

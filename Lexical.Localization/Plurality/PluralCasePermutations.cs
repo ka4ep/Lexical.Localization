@@ -3,6 +3,7 @@
 // Date:           22.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Exp;
 using Lexical.Localization.Internal;
 using Lexical.Localization.StringFormat;
 
@@ -26,9 +27,9 @@ namespace Lexical.Localization.Plurality
     public struct PluralCasePermutations
     {
         /// <summary>
-        /// Information about placeholders
+        /// Information about arguments
         /// </summary>
-        StructList8<Entry> placeholders;
+        StructList8<Entry> arguments;
 
         /// <summary>
         /// Base key to append "N" parts to.
@@ -36,9 +37,14 @@ namespace Lexical.Localization.Plurality
         ILine key;
 
         /// <summary>
-        /// Number of entries.
+        /// Number of permutations.
         /// </summary>
         public int Count;
+
+        /// <summary>
+        /// Number of arguments.
+        /// </summary>
+        public int ArgumentCount => arguments.Count;
 
         /// <summary>
         /// Create plural key permutation enumerable
@@ -57,7 +63,13 @@ namespace Lexical.Localization.Plurality
         /// <param name="cases"></param>
         public void AddPlaceholder(IPlaceholder placeholder, IPluralRule[] cases)
         {
-            placeholders.Add(new Entry { Placeholder = placeholder, Cases = cases });
+            IExpression e = placeholder?.Expression;
+            if (e == null || cases == null || cases.Length == 0) return;
+
+            // TODO: Scan ArgumentIndexes, capture cases, unify cases.
+
+
+            arguments.Add(new Entry { Placeholder = placeholder, Cases = cases });
             this.Count *= (1 + cases.Length);
         }
 
@@ -79,9 +91,9 @@ namespace Lexical.Localization.Plurality
                 //  4. no cases
                 // Update contract above.
 
-                for (int ph = 0; ph < placeholders.Count; ph++)
+                for (int ph = 0; ph < arguments.Count; ph++)
                 {
-                    var e = placeholders[ph];
+                    var e = arguments[ph];
                     int len = e.Cases.Length + 1;
                     int ph_ix = index % len;
                     index /= len;
