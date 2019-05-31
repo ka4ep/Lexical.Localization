@@ -63,7 +63,7 @@ namespace Lexical.Localization
                 StructList12<(ILineParameter, int)> list = new StructList12<(ILineParameter, int)>();
                 key.GetParameterPartsWithOccurance(ref list);
                 foreach ((ILineParameter parameter, int occuranceIndexx) in list)
-                    if (!base.Qualify(parameter, occuranceIndexx)) return false;
+                    if (!base.QualifyParameter(parameter, occuranceIndexx)) return false;
             }
 
             // Everything qualified
@@ -99,7 +99,7 @@ namespace Lexical.Localization
                     list.Clear();
                     key.GetParameterPartsWithOccurance(ref list);
                     foreach ((ILineParameter parameter, int occuranceIndexx) in list)
-                        if (!base.Qualify(parameter, occuranceIndexx)) continue;
+                        if (!base.QualifyParameter(parameter, occuranceIndexx)) continue;
 
                 }
                 yield return key;

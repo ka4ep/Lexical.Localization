@@ -52,7 +52,7 @@ namespace Lexical.Localization
         /// <param name="parameter">parameter part of a compared key (note ParameterName="" for empty), or null if value did not occur</param>
         /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc</param>
         /// <returns>true if line is qualified, false if disqualified</returns>
-        bool Qualify(ILineParameter parameter, int occuranceIndex);
+        bool QualifyParameter(ILineParameter parameter, int occuranceIndex);
     }
 
     /// <summary>
@@ -150,15 +150,15 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Test rule with <paramref name="parameter"/>.
+        /// Qualify parameter <paramref name="parameter"/>.
         /// </summary>
         /// <param name="qualifier"></param>
         /// <param name="parameter">parameter part of a compared key (note ParameterName="" for empty), or null if value did not occur</param>
         /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc</param>
         /// <returns>true if line is qualified, false if disqualified</returns>
         /// <exception cref="InvalidOperationException">If qualifier is not applicable</exception>
-        public static bool Qualify(this ILineQualifier qualifier, ILineParameter parameter, int occuranceIndex)
-            => qualifier is ILineParameterQualifierEvaluatable eval ? eval.Qualify(parameter, occuranceIndex) : throw new InvalidOperationException($"{qualifier} doesn't implement {nameof(ILineParameterQualifierEvaluatable)}");
+        public static bool QualifyParameter(this ILineQualifier qualifier, ILineParameter parameter, int occuranceIndex)
+            => qualifier is ILineParameterQualifierEvaluatable eval ? eval.QualifyParameter(parameter, occuranceIndex) : throw new InvalidOperationException($"{qualifier} doesn't implement {nameof(ILineParameterQualifierEvaluatable)}");
 
         /// <summary>
         /// Set line qualifier as read-only.

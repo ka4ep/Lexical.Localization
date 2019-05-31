@@ -92,7 +92,7 @@ namespace Lexical.Localization.Plurality
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public PluralRulesResolver() : this(TypeResolver.DefaultAssemblyResolver, TypeResolver.DefaultTypeResolver, DefaultRuleExpressionParser, DefaultRulesFactory)
+        public PluralRulesResolver() : this(BaseTypeResolver.DefaultAssemblyResolver, BaseTypeResolver.DefaultTypeResolver, DefaultRuleExpressionParser, DefaultRulesFactory)
         {
         }
 

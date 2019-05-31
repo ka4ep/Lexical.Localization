@@ -14,9 +14,87 @@ using System.Threading;
 namespace Lexical.Localization.Internal
 {
     /// <summary>
+    /// Resolves parameter "Type" to <see cref="Type"/>.
+    /// </summary>
+    public class TypeResolver : ParameterResolver<Type>
+    {
+        /// <summary>
+        /// Default instance.
+        /// </summary>
+        static readonly Lazy<TypeResolver> instance = new Lazy<TypeResolver>();
+
+        /// <summary>
+        /// Default instance.
+        /// </summary>
+        public static TypeResolver Default => instance.Value;
+
+        /// <summary>
+        /// Create type resolver with default settings.
+        /// 
+        /// Parses expressions and instantiates types that are found in the app domain.
+        /// Does not load external dll files.
+        /// </summary>
+        public TypeResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver)
+        {
+        }
+
+        /// <summary>
+        /// Create type resolver.
+        /// </summary>
+        /// <param name="assemblyLoader">(optional) function that reads assembly from file.</param>
+        /// <param name="typeResolver">(optional) Function that resolves type name into <see cref="Type"/>.</param>
+        public TypeResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base("Type", assemblyLoader, typeResolver)
+        {
+            this.resolveFunc = (string typeName) =>
+            {
+                try
+                {
+                    // Empty 
+                    if (String.IsNullOrEmpty(typeName)) return new ResultLine { Value = default, Error = null };
+                    // Assert assemblyResolver is not null
+                    if (assemblyResolver == null) throw new InvalidOperationException($"{nameof(assemblyResolver)} is null");
+                    // Assert typeResolver is not null
+                    if (typeResolver == null) throw new InvalidOperationException($"{nameof(typeResolver)} is null");
+                    // Try get type
+                    Type type = Type.GetType(typeName, assemblyResolver, typeResolver, true);
+                    if (type != null)
+                    {
+                        return new ResultLine { Value = type };
+                    }
+                    else
+                    {
+                        return new ResultLine { Error = null, Value = default };
+                    }
+                }
+                catch (Exception e)
+                {
+                    return new ResultLine { Error = e };
+                }
+            };
+        }
+
+        /// <summary>
+        /// Dispose or clear resolver.
+        /// </summary>
+        public override void Dispose()
+        {
+            if (this == Default)
+            {
+                // Don't dispose the global static instance, but clear its cache.
+                cache.Clear();
+            }
+            else
+            {
+                // Continue disposing
+                base.Dispose();
+            }
+        }
+    }
+
+    /// <summary>
     /// Base class for type resolver classes.
     /// </summary>
-    public class TypeResolver
+    public class BaseTypeResolver
     {
         /// <summary>
         /// Assembly resolver that looks into AppDomain, but will not load external file.
@@ -37,7 +115,7 @@ namespace Lexical.Localization.Internal
             {
             }
 
-            string dir = typeof(TypeResolver<>).Assembly.Location;
+            string dir = typeof(BaseTypeResolver<>).Assembly.Location;
             if (dir != null)
             {
                 string dllName = asmName.Name + ".dll";
@@ -76,7 +154,7 @@ namespace Lexical.Localization.Internal
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public TypeResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver)
+        public BaseTypeResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver)
         {
         }
 
@@ -85,7 +163,7 @@ namespace Lexical.Localization.Internal
         /// </summary>
         /// <param name="assemblyLoader">(optional) function that reads assembly from file.</param>
         /// <param name="typeResolver">(optional) Function that resolves type name into <see cref="Type"/>.</param>
-        public TypeResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver)
+        public BaseTypeResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver)
         {
             this.assemblyResolver = assemblyLoader;
             this.typeResolver = typeResolver;
@@ -98,7 +176,7 @@ namespace Lexical.Localization.Internal
     /// Caches the instances.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class TypeResolver<T> : TypeResolver, IDisposable, IResolver<T>
+    public class BaseTypeResolver<T> : BaseTypeResolver, IDisposable, IResolver<T>
     {
         /// <summary>
         /// 0 - not disposed
@@ -123,7 +201,7 @@ namespace Lexical.Localization.Internal
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public TypeResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver)
+        public BaseTypeResolver() : this(DefaultAssemblyResolver, DefaultTypeResolver)
         {
         }
 
@@ -132,7 +210,7 @@ namespace Lexical.Localization.Internal
         /// </summary>
         /// <param name="assemblyLoader">(optional) function that reads assembly from file.</param>
         /// <param name="typeResolver">(optional) Function that resolves type name into <see cref="Type"/>.</param>
-        public TypeResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base(assemblyLoader, typeResolver)
+        public BaseTypeResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base(assemblyLoader, typeResolver)
         {
             this.resolveFunc = (string typeName) =>
             {
@@ -239,7 +317,7 @@ namespace Lexical.Localization.Internal
     /// Caches the instances.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class ParameterResolver<T> : TypeResolver<T>, IParameterResolver
+    public class ParameterResolver<T> : BaseTypeResolver<T>, IParameterResolver
     {
         /// <summary>
         /// The parameter this resolver is capable of resolving.
@@ -296,5 +374,6 @@ namespace Lexical.Localization.Internal
             return false;
         }
     }
+
 
 }

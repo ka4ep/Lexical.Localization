@@ -135,12 +135,12 @@ namespace Lexical.Localization
         /// <param name="parameter"></param>
         /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc</param>
         /// <returns>true if line is qualified, false if disqualified</returns>
-        public virtual bool Qualify(ILineParameter parameter, int occuranceIndex)
+        public virtual bool QualifyParameter(ILineParameter parameter, int occuranceIndex)
         {
             if (parameterRules != null)
             {
                 foreach (var r in parameterRules)
-                    if (!r.Qualify(parameter, occuranceIndex)) return false;
+                    if (!r.QualifyParameter(parameter, occuranceIndex)) return false;
             }
 
             if (nameParameterRules != null)
@@ -148,7 +148,7 @@ namespace Lexical.Localization
                 List<ILineParameterQualifierNameConstraint> list = nameParameterRules.TryGetList(parameter.ParameterName);
                 if (list != null)
                     foreach (var r in list)
-                        if (!r.Qualify(parameter, occuranceIndex)) return false;
+                        if (!r.QualifyParameter(parameter, occuranceIndex)) return false;
             }
 
             if (occuranceParameterRules != null)
@@ -156,7 +156,7 @@ namespace Lexical.Localization
                 List<ILineParameterQualifierOccuranceConstraint> list = occuranceParameterRules.TryGetList(occuranceIndex);
                 if (list != null)
                     foreach (var r in list)
-                        if (!r.Qualify(parameter, occuranceIndex)) return false;
+                        if (!r.QualifyParameter(parameter, occuranceIndex)) return false;
             }
 
             if (nameParameterRules != null && occuranceParameterRules != null)
@@ -164,7 +164,7 @@ namespace Lexical.Localization
                 List<ILineParameterQualifierEvaluatable> list = nameOccuranceParameterRules.TryGetList(new KeyValuePair<string, int>(parameter.ParameterName, occuranceIndex));
                 if (list != null)
                     foreach (var r in list)
-                        if (!r.Qualify(parameter, occuranceIndex)) return false;
+                        if (!r.QualifyParameter(parameter, occuranceIndex)) return false;
             }
 
             return true;

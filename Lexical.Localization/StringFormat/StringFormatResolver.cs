@@ -12,7 +12,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves string format class name to string format.
     /// </summary>
-    public class StringFormatResolver : TypeResolver<IStringFormat>, IParameterResolver
+    public class StringFormatResolver : BaseTypeResolver<IStringFormat>, IParameterResolver
     {
         /// <summary>
         /// Default instance.

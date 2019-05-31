@@ -1,0 +1,498 @@
+﻿// --------------------------------------------------------
+// Copyright:      Toni Kalajainen
+// Date:           31.5.2019
+// Url:            http://lexical.fi
+// --------------------------------------------------------
+using Lexical.Localization.Internal;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+
+namespace Lexical.Localization
+{
+    /// <summary>
+    /// Base implementation for line formats. 
+    /// </summary>
+    public abstract class LineFormatBase : ILinePrinter, ILineParser, ILineAppendParser, ILineFormatFactory
+    {
+        /// <summary>
+        /// Parameter qualifier that excludes parameter "Value".
+        /// </summary>
+        protected static readonly ILineQualifier ExcludeValue = new LineQualifierRule.IsEqualTo("Value", -1, ""); // new LineParameterQualifierComposition().Rule("Value", -1, "");
+
+        /// <summary>
+        /// Qualifier that validates parameters.
+        /// </summary>
+        public virtual ILineQualifier ParameterQualifier { get => parameterQualifier; set => new InvalidOperationException("immutable"); }
+
+        /// <summary>
+        /// Line appender that creates line parts from parsed strings.
+        /// 
+        /// Appender implementation may also resolve parameter into instance, for example "Culture" into <see cref="CultureInfo"/>.
+        /// </summary>
+        public virtual ILineFactory LineFactory { get => lineFactory; set => throw new InvalidOperationException("immutable"); }
+
+        /// <summary>
+        /// (optional) Qualifier that validates parameters.
+        /// </summary>
+        protected ILineQualifier parameterQualifier;
+
+        /// <summary>
+        /// Line appender
+        /// </summary>
+        protected ILineFactory lineFactory;
+
+        /// <summary>
+        /// Create new string serializer
+        /// </summary>
+        /// <param name="lineAppender">line appender that can append <see cref="ILineParameter"/> and <see cref="ILineValue"/></param>
+        /// <param name="parameterQualifier">(optional) parameter qualifier</param>
+        public LineFormatBase(ILineFactory lineAppender, ILineQualifier parameterQualifier)
+        {
+            this.lineFactory = lineAppender ?? throw new ArgumentNullException(nameof(lineAppender));
+            this.parameterQualifier = parameterQualifier;
+        }
+
+        /// <summary>
+        /// Print parameters into <paramref name="sb"/>.
+        /// </summary>
+        /// <param name="parameters">parameters in order of from tail to root</param>
+        /// <param name="sb"></param>
+        public abstract void Print(StructList12<ILineParameter> parameters, StringBuilder sb);
+
+        /// <summary>
+        /// Print parameters into string.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public virtual string Print(ILine key)
+        {
+            StringBuilder sb = new StringBuilder();
+            StructList12<ILineParameter> parameters = new StructList12<ILineParameter>();
+            key.GetParameterParts<StructList12<ILineParameter>>(ref parameters);
+            Print(parameters, sb);
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Print <paramref name="key"/> into <paramref name="sb"/>.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="sb"></param>
+        /// <returns><paramref name="sb"/></returns>
+        public StringBuilder Print(ILine key, StringBuilder sb)
+        {
+            StructList12<ILineParameter> parameters = new StructList12<ILineParameter>();
+            key.GetParameterParts<StructList12<ILineParameter>>(ref parameters);
+            Print(parameters, sb);
+            return sb;
+        }
+
+        /// <summary>
+        /// Print parameters into string.
+        /// </summary>
+        /// <param name="keyParameters"></param>
+        /// <returns></returns>
+        public virtual string PrintParameters(IEnumerable<KeyValuePair<string, string>> keyParameters)
+        {
+            StringBuilder sb = new StringBuilder();
+            PrintParameters(keyParameters, sb);
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Print parameters into <paramref name="sb"/>.
+        /// </summary>
+        /// <param name="keyParameters"></param>
+        /// <param name="sb"></param>
+        public virtual void PrintParameters(IEnumerable<KeyValuePair<string, string>> keyParameters, StringBuilder sb)
+        {
+            StructList12<ILineParameter> parameters = new StructList12<ILineParameter>();
+            StructList8<(string, int)> occurances = new StructList8<(string, int)>();
+            if (ParameterQualifier != null)
+            {
+                foreach (var parameter in keyParameters)
+                {
+                    int occ = AddOccurance(ref occurances, parameter.Key);
+                    ILineParameter lineParameter = new ParameterArgument(parameter.Key, parameter.Value);
+                    if (!ParameterQualifier.QualifyParameter(lineParameter, occ)) continue;
+                    parameters.Add(lineParameter);
+                }
+            }
+            else
+            {
+                foreach (var parameter in keyParameters)
+                {
+                    ILineParameter lineParameter = new ParameterArgument(parameter.Key, parameter.Value);
+                    parameters.Add(lineParameter);
+                }
+            }
+            Print(parameters, sb);
+        }
+
+        /// <summary>
+        /// Parse string into key values. Throws exception on unexpected syntax.
+        /// 
+        /// The implementation mustn't do parameter qualification. The caller will.
+        /// </summary>
+        /// <param name="str">(optional) string to parse</param>
+        /// <param name="parameters">list where to put parameters. Order is from root to tail.</param>
+        /// <exception cref="LineException">The parameter is not of the correct format.</exception>
+        public abstract void Parse(string str, ref StructList12<KeyValuePair<string, string>> parameters);
+
+        /// <summary>
+        /// Try parse string into key values. Returns false on unexpected syntax.
+        /// 
+        /// The implementation mustn't do parameter qualification. The caller will.
+        /// </summary>
+        /// <param name="str">(optional) string to parse</param>
+        /// <param name="parameters">list to where to put parameters. Order is from root to tail.</param>
+        /// <returns>true if parse was successful</returns>
+        public abstract bool TryParse(string str, ref StructList12<KeyValuePair<string, string>> parameters);
+
+        /// <summary>
+        /// Parse string into ILine.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="prevPart">(optional) previous part to append to</param>
+        /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
+        /// <returns>result key, or null if it contained no parameters and <paramref name="prevPart"/> was null.</returns>
+        /// <exception cref="LineException">The parameter is not of the correct format.</exception>
+        public virtual ILine Parse(string str, ILine prevPart = default, ILineFactory appender = default)
+        {
+            if (appender == null) appender = lineFactory;
+            if (appender == null) appender = prevPart.GetAppender();
+
+            StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
+            Parse(str, ref parameters);
+
+            // With qualifier
+            if (ParameterQualifier != null)
+            {
+                StructList8<(string, int)> occuranceList = new StructList8<(string, int)>();
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    ILineParameter lineParameter = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    int occ = AddOccurance(ref occuranceList, parameter.Key);
+                    if (!ParameterQualifier.QualifyParameter(lineParameter, occ)) continue;
+                    prevPart = lineParameter;
+                }
+            }
+            else
+            // No qualifier
+            {
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    prevPart = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                }
+            }
+            return prevPart;
+        }
+
+        /// <summary>
+        /// Parse to parameter into arguments.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public virtual IEnumerable<ILineArguments> ParseArgs(string str)
+        {
+            StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
+            Parse(str, ref parameters);
+
+            if (ParameterQualifier != null)
+            {
+                StructList12<ILineArguments> result = new StructList12<ILineArguments>();
+                StructList8<(string, int)> list = new StructList8<(string, int)>();
+                ILine prev = null;
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
+                    int occ = AddOccurance(ref list, parameter.Key);
+                    if (!ParameterQualifier.QualifyParameter(lineParameter, occ)) continue;
+                    result.Add(ToArgument(lineParameter));
+                    prev = lineParameter;
+                }
+                return result.ToArray();
+            }
+            else
+            {
+                ILineArguments[] result = new ILineArguments[parameters.Count];
+                ILine prev = null;
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
+                    result[i] = ToArgument(lineParameter);
+                    prev = lineParameter;
+                }
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Try parse string into ILine.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="result">result key, or null if it contained no parameters and <paramref name="prevPart"/> was null.</param>
+        /// <param name="prevPart">(optional) previous part to append to</param>
+        /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
+        /// <returns>true if parse was successful</returns>
+        public virtual bool TryParse(string str, out ILine result, ILine prevPart = default, ILineFactory appender = default)
+        {
+            if (appender == null) appender = lineFactory;
+            if (appender == null && !prevPart.TryGetAppender(out appender)) { result = null; return false; }
+
+            StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
+            if (!TryParse(str, ref parameters)) { result = default; return false; }
+
+            // With qualifier
+            if (ParameterQualifier != null)
+            {
+                StructList8<(string, int)> occuranceList = new StructList8<(string, int)>();
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    ILineParameter lineParameter = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    int occ = AddOccurance(ref occuranceList, parameter.Key);
+                    if (!ParameterQualifier.QualifyParameter(lineParameter, occ)) continue;
+                    prevPart = lineParameter;
+                }
+            }
+            else
+            // No qualifier
+            {
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    prevPart = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                }
+            }
+
+            result = prevPart;
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public virtual bool TryParseArgs(string str, out IEnumerable<ILineArguments> args)
+        {
+            StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
+            if (!TryParse(str, ref parameters)) { args = default; return false; }
+
+            if (ParameterQualifier != null)
+            {
+                StructList12<ILineArguments> result = new StructList12<ILineArguments>();
+                StructList8<(string, int)> list = new StructList8<(string, int)>();
+                ILine prev = null;
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
+                    int occ = AddOccurance(ref list, parameter.Key);
+                    if (!ParameterQualifier.QualifyParameter(lineParameter, occ)) continue;
+                    result.Add(ToArgument(lineParameter));
+                    prev = lineParameter;
+                }
+                args = result.ToArray();
+                return true;
+            }
+            else
+            {
+                ILineArguments[] result = new ILineArguments[parameters.Count];
+                ILine prev = null;
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
+                    result[i] = ToArgument(lineParameter);
+                    prev = lineParameter;
+                }
+                args = result;
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Parse string "parameterName:parameterValue:..." into parameter key value pairs.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns>parameters</returns>
+        /// <exception cref="LineException">The parameter is not of the correct format.</exception>
+        public virtual IEnumerable<KeyValuePair<string, string>> ParseParameters(string str)
+        {
+            StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
+            Parse(str, ref parameters);
+
+            if (ParameterQualifier != null)
+            {
+                StructList8<(string, int)> occuranceList = new StructList8<(string, int)>();
+                ILine prevPart = null;
+                int i = 0;
+                while (i < parameters.Count)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    int occ = AddOccurance(ref occuranceList, parameter.Key);
+                    if (ParameterQualifier.QualifyParameter(lineParameter, occ)) { i++; prevPart = lineParameter; } else parameters.RemoveAt(i);
+                }
+            }
+
+            return parameters.ToArray();
+        }
+
+        /// <summary>
+        /// Parse string "parameterName:parameterValue:..." into parameter key value pairs.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="result">result to write result to</param>
+        /// <returns>true if successful, if false then parse failed and <paramref name="result"/>is in undetermined state</returns>
+        public virtual bool TryParseParameters(string str, ICollection<KeyValuePair<string, string>> result)
+        {
+            if (str == null) return false;
+
+            StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
+            if (!TryParse(str, ref parameters)) return false;
+
+            if (ParameterQualifier != null)
+            {
+                StructList8<(string, int)> occuranceList = new StructList8<(string, int)>();
+                ILine prevPart = null;
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    int occ = AddOccurance(ref occuranceList, parameter.Key);
+                    if (ParameterQualifier.QualifyParameter(lineParameter, occ)) { result.Add(parameter); prevPart = lineParameter; } else parameters.RemoveAt(i);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    result.Add(parameters[i]);
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Uses a list to boost performance of occurance calculation.
+        /// </summary>
+        /// <param name="paramOccurances">catalog of parameter occurances</param>
+        /// <param name="parameterName"></param>
+        /// <returns>occurance of <paramref name="parameterName"/></returns>
+        protected static int AddOccurance(ref StructList8<(string, int)> paramOccurances, string parameterName)
+        {
+            for (int i = 0; i < paramOccurances.Count; i++)
+            {
+                (string name, int occ) = paramOccurances[i];
+                if (name == parameterName)
+                {
+                    paramOccurances[i] = (name, occ + 1);
+                    return occ + 1;
+                }
+            }
+            paramOccurances.Add((parameterName, 0));
+            return 0;
+        }
+
+        /// <summary>
+        /// Ensure <paramref name="parameter"/> implements <see cref="ILineArguments"/>, if not, then create one.
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        protected ILineArguments ToArgument(ILineParameter parameter)
+        {
+            if (parameter is ILineArguments args) return args;
+            if (parameter is ILineHint hint) return new HintArgument(parameter.ParameterName, parameter.ParameterValue);
+            if (parameter is ILineCanonicalKey canonicalKey) return new KeyCanonicalArgument(parameter.ParameterName, parameter.ParameterValue);
+            if (parameter is ILineNonCanonicalKey nonCanonicalKey) return new KeyNonCanonicalArgument(parameter.ParameterName, parameter.ParameterValue);
+            return null;
+        }
+
+        /// <summary></summary>
+        protected class Argument<T> : ILineArguments<T, string, string>, ILineParameter
+        {
+            /// <summary></summary>
+            public string Argument0 => ParameterName;
+            /// <summary></summary>
+            public string Argument1 => ParameterValue;
+            /// <summary></summary>
+            public string ParameterName { get; set; }
+            /// <summary></summary>
+            public string ParameterValue { get; set; }
+            /// <summary></summary>
+            public Argument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
+        }
+
+        /// <summary></summary>
+        protected class ParameterArgument : ILineArguments<ILineParameter, string, string>, ILineParameter
+        {
+            /// <summary></summary>
+            public string Argument0 => ParameterName;
+            /// <summary></summary>
+            public string Argument1 => ParameterValue;
+            /// <summary></summary>
+            public string ParameterName { get; set; }
+            /// <summary></summary>
+            public string ParameterValue { get; set; }
+            /// <summary></summary>
+            public ParameterArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
+        }
+
+        /// <summary></summary>
+        protected class HintArgument : ILineArguments<ILineHint, string, string>, ILineHint
+        {
+            /// <summary></summary>
+            public string Argument0 => ParameterName;
+            /// <summary></summary>
+            public string Argument1 => ParameterValue;
+            /// <summary></summary>
+            public string ParameterName { get; set; }
+            /// <summary></summary>
+            public string ParameterValue { get; set; }
+            /// <summary></summary>
+            public HintArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
+        }
+
+        /// <summary></summary>
+        protected class KeyCanonicalArgument : ILineArguments<ILineCanonicalKey, string, string>, ILineCanonicalKey
+        {
+            /// <summary></summary>
+            public string Argument0 => ParameterName;
+            /// <summary></summary>
+            public string Argument1 => ParameterValue;
+            /// <summary></summary>
+            public string ParameterName { get; set; }
+            /// <summary></summary>
+            public string ParameterValue { get; set; }
+            /// <summary></summary>
+            public KeyCanonicalArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
+        }
+
+        /// <summary></summary>
+        protected class KeyNonCanonicalArgument : ILineArguments<ILineNonCanonicalKey, string, string>, ILineNonCanonicalKey
+        {
+            /// <summary></summary>
+            public string Argument0 => ParameterName;
+            /// <summary></summary>
+            public string Argument1 => ParameterValue;
+            /// <summary></summary>
+            public string ParameterName { get; set; }
+            /// <summary></summary>
+            public string ParameterValue { get; set; }
+            /// <summary></summary>
+            public KeyNonCanonicalArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
+        }
+
+    }
+
+}

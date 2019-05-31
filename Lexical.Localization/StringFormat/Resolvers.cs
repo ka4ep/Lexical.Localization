@@ -3,8 +3,6 @@
 // Date:           25.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Internal;
-using Lexical.Localization.Plurality;
 using System;
 
 namespace Lexical.Localization.StringFormat
@@ -12,7 +10,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Set of resolvers that <see cref="StringResolver"/> uses.
     /// </summary>
-    public class ResolverSet : ResolverComposition
+    public class Resolvers : ResolverComposition
     {
         private static IResolver instance = new ResolverComposition()
             .Add(Lexical.Localization.StringFormat.StringFormatResolver.Default)
@@ -21,6 +19,7 @@ namespace Lexical.Localization.StringFormat
             .Add(Lexical.Localization.Plurality.PluralRulesResolver.Default)
             .Add(Lexical.Localization.CultureResolver.Default)
             .Add(Lexical.Localization.CulturePolicyResolver.Default)
+            //.Add(Lexical.Localization.Internal.TypeResolver.Default)  // <-- No practical reasons to resolve "Type" parameters. String keys do better.
             .ReadOnly();
 
         /// <summary>

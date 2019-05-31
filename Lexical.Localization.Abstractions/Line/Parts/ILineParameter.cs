@@ -261,8 +261,7 @@ namespace Lexical.Localization
         /// Get all parameters as parameterName,parameterValue as array with value from tail to root.
         /// </summary>
         /// <param name="line">(optional) line to read parameters of</param>
-        /// <param name="list"></param>
-        /// <returns>array of parameters</returns>
+        /// <param name="list">list to add parts in order of from tail to root</param>
         public static void GetParameterParts<LIST>(this ILine line, ref LIST list) where LIST : IList<ILineParameter>
         {
             for (ILine l = line; l != null; l = l.GetPreviousPart())
@@ -280,6 +279,40 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Get all parameters as parameterName,parameterValue as array with value from tail to root.
+        /// 
+        /// If <paramref name="parameterQualifier"/> is provided, then filters out individual parameters.
+        /// </summary>
+        /// <param name="line">(optional) line to read parameters of</param>
+        /// <param name="list">list to add parts in order of from tail to root</param>
+        /// <param name="parameterQualifier">(optional) parameter qualifier that validates each parameter</param>
+        /// <returns>array of parameters</returns>
+        public static void GetParameterParts<LIST>(this ILine line, ref LIST list, ILineQualifier parameterQualifier) where LIST : IList<ILineParameter>
+        {
+            // Read parameter parts
+            line.GetParameterParts<LIST>(ref list);
+
+            // Filter parameters
+            if (parameterQualifier != null)
+            {
+                // Iterate from root to tail (list is inversed)                
+                for (int i=list.Count-1; i>=0; i--)
+                {
+                    ILineParameter parameter = list[i];
+                    string parameterName = parameter.ParameterName;
+
+                    // Count occurance so far
+                    // O(n*(n-1)), but there are typically about 4 parts.
+                    int occ = 0;
+                    for (int j = i + 1; j < list.Count - 1; j++) if (list[j].ParameterName == parameterName) occ++;
+
+                    // Qualify parameter, and remove if unqualified
+                    if (!parameterQualifier.QualifyParameter(parameter, occ)) list.RemoveAt(i);
+                }
+            }
+        }
+
+        /// <summary>
         /// Break <paramref name="line"/> into parameters and write with occurance index to <paramref name="list"/>.
         /// 0 is the first occurance for tha parameter name, 1 the second, etc.
         /// </summary>
@@ -287,14 +320,19 @@ namespace Lexical.Localization
         /// <param name="list">(Parameter, occuranceIndex) of parameters in order of from tail to root</param>
         public static void GetParameterPartsWithOccurance<LIST>(this ILine line, ref LIST list) where LIST : IList<(ILineParameter, int)>
         {
+            StructList4<ILineParameter> tmp = new StructList4<ILineParameter>();
             for (ILine part = line; part != null; part = part.GetPreviousPart())
             {
                 if (part is ILineParameterEnumerable lineParameters)
                 {
                     // Enumerate to invert order
-                    StructList4<ILineParameter> tmp = new StructList4<ILineParameter>();
+                    tmp.Clear();
                     foreach (ILineParameter _parameter in lineParameters)
-                        if (!String.IsNullOrEmpty(_parameter.ParameterName) && _parameter.ParameterValue != null) tmp.Add(_parameter);
+                    {
+                        if (String.IsNullOrEmpty(_parameter.ParameterName) || _parameter.ParameterValue == null) continue;
+                        tmp.Add(_parameter);
+                    }
+
                     // Add to list
                     for(int i=tmp.Count-1; i>=0; i--)
                     {

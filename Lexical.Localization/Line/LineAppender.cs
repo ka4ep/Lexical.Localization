@@ -15,7 +15,7 @@ namespace Lexical.Localization
     public partial class LineAppender : ILineFactoryResolver, ILineFactoryParameterInfos
     {
         private readonly static ILineFactory non_resolving = new LineAppender(null, Lexical.Localization.Utils.ParameterInfos.Default);
-        private readonly static ILineFactory resolving = new LineAppender(ResolverSet.Default, Lexical.Localization.Utils.ParameterInfos.Default);
+        private readonly static ILineFactory resolving = new LineAppender(Resolvers.Default, Lexical.Localization.Utils.ParameterInfos.Default);
 
         /// <summary>
         /// Default appender. Does not resolve parameters to instances.
@@ -74,7 +74,7 @@ namespace Lexical.Localization
     public partial class StringLocalizerAppender : ILineFactoryResolver, ILineFactoryParameterInfos
     {
         private readonly static ILineFactory non_resolving = new StringLocalizerAppender(null, Lexical.Localization.Utils.ParameterInfos.Default);
-        private readonly static ILineFactory resolving = new StringLocalizerAppender(ResolverSet.Default, Lexical.Localization.Utils.ParameterInfos.Default);
+        private readonly static ILineFactory resolving = new StringLocalizerAppender(Resolvers.Default, Lexical.Localization.Utils.ParameterInfos.Default);
 
         /// <summary>
         /// Default appender. Does not resolve parameters to respective instance.

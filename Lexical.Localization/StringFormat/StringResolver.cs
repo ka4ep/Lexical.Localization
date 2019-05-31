@@ -34,7 +34,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         public StringResolver()
         {
-            this.Resolvers = ResolverSet.Default;
+            this.Resolvers = StringFormat.Resolvers.Default;
             this.ResolveSequence = new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
         }
 
