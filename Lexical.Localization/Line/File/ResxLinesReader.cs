@@ -25,7 +25,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Default instance
         /// </summary>
-        public static ResxLinesReader Instance => instance;
+        public static ResxLinesReader Default => instance;
 
         /// <summary>
         /// File extension, "resx" for default.
@@ -40,7 +40,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new .resx reader instance with default values.
         /// </summary>
-        public ResxLinesReader() : this("resx", CSharpFormat.Instance) { }
+        public ResxLinesReader() : this("resx", CSharpFormat.Default) { }
 
         /// <summary>
         /// Create new .resx reader.

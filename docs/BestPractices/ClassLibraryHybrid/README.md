@@ -22,7 +22,7 @@ namespace TutorialLibrary3
         /// Localization source reference to embedded resource.
         /// </summary>
         public readonly LineEmbeddedSource LocalizationSource = 
-            LineReaderMap.Instance.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary3-de.xml");
+            LineReaderMap.Default.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary3-de.xml");
 
         /// <summary>
         /// (Optional) External file localization source.
@@ -41,7 +41,7 @@ namespace TutorialLibrary3
             if (fileProvider != null)
             {
                 ExternalLocalizationSource = 
-                    LineXmlReader.Instance.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
+                    XmlLinesReader.Default.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
                 Add(ExternalLocalizationSource);
             }
         }
@@ -119,7 +119,7 @@ namespace TutorialLibrary3
 
         public MyClass(IStringLocalizer<MyClass> localizer = default)
         {
-            this.localizer = localizer ?? (Localization.Root.Type<MyClass>() as IStringLocalizer<MyClass>);
+            this.localizer = localizer ?? (Localization.Root.Type<MyClass>().AsStringLocalizer<MyClass>());
         }
 
         public string Do()
@@ -241,7 +241,7 @@ CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de");
 Console.WriteLine(myClass1.Do());
 
 // Install additional localization that was not available in the TutorialLibrary.
-IAssetSource assetSource = LineXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml");
+IAssetSource assetSource = XmlLinesReader.Default.FileAssetSource("TutorialLibrary3-fi.xml");
 // Add to global localizer instance for the non-DI case
 StringLocalizerRoot.Builder.AddSource(assetSource).Build();
 // Add to local localizer instance for the DI case.
@@ -289,7 +289,7 @@ namespace TutorialProject3
             Console.WriteLine(myClass1.Do());
 
             // Install additional localization that was not available in the TutorialLibrary.
-            IAssetSource assetSource = LineXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml");
+            IAssetSource assetSource = XmlLinesReader.Default.FileAssetSource("TutorialLibrary3-fi.xml");
             // Add to global localizer instance for the non-DI case
             StringLocalizerRoot.Builder.AddSource(assetSource).Build();
             // Add to local localizer instance for the DI case.
@@ -350,7 +350,7 @@ Assembly library = typeof(MyClass).Assembly;
 services.AddLibraryAssetSources(library);
 
 // Install additional localization that was not available in the TutorialLibrary.
-services.AddSingleton<IAssetSource>(LineXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml"));
+services.AddSingleton<IAssetSource>(XmlLinesReader.Default.FileAssetSource("TutorialLibrary3-fi.xml"));
 
 // Service MyClass
 services.AddTransient<MyClass, MyClass>();
@@ -401,7 +401,7 @@ namespace TutorialProject3
             services.AddLibraryAssetSources(library);
 
             // Install additional localization that was not available in the TutorialLibrary.
-            services.AddSingleton<IAssetSource>(LineXmlReader.Instance.FileAssetSource("TutorialLibrary3-fi.xml"));
+            services.AddSingleton<IAssetSource>(XmlLinesReader.Default.FileAssetSource("TutorialLibrary3-fi.xml"));
 
             // Service MyClass
             services.AddTransient<MyClass, MyClass>();

@@ -10,7 +10,7 @@ namespace TutorialLibrary3
         /// Localization source reference to embedded resource.
         /// </summary>
         public readonly LineEmbeddedSource LocalizationSource = 
-            LineReaderMap.Instance.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary3-de.xml");
+            LineReaderMap.Default.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary3-de.xml");
 
         /// <summary>
         /// (Optional) External file localization source.
@@ -29,7 +29,7 @@ namespace TutorialLibrary3
             if (fileProvider != null)
             {
                 ExternalLocalizationSource = 
-                    XmlLinesReader.Resolving.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
+                    XmlLinesReader.Default.FileProviderAssetSource(fileProvider, "Resources/TutorialLibrary3.xml", throwIfNotFound: false);
                 Add(ExternalLocalizationSource);
             }
         }

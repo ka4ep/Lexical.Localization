@@ -152,7 +152,7 @@ namespace Lexical.Localization.Plurality
         {
             if (!hashcodeCalculated)
             {
-                hashcode = PluralNumberComparer.Instance.GetHashCode(this);
+                hashcode = PluralNumberComparer.Default.GetHashCode(this);
                 hashcodeCalculated = true;
             }
             return hashcode;
@@ -161,7 +161,7 @@ namespace Lexical.Localization.Plurality
         /// <inheritdoc />
         public override bool Equals(object obj)
         {
-            if (obj is IPluralNumber number) return PluralNumberComparer.Instance.Equals(this, number);
+            if (obj is IPluralNumber number) return PluralNumberComparer.Default.Equals(this, number);
             return false;
         }
 

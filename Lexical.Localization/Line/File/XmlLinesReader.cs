@@ -21,28 +21,9 @@ namespace Lexical.Localization
     /// </summary>
     public class XmlLinesReader : ILineFileFormat, ILineTreeStreamReader, ILineTreeTextReader
     {
-        /// <summary>
-        /// Namespace
-        /// </summary>
-        public static readonly XNamespace NsDefault = "urn:lexical.fi";
-
-        /// <summary>
-        /// XName for Line element
-        /// </summary>
-        public static readonly XName NameLine = NsDefault + "Line";
-
-        /// <summary>
-        /// XName for document root
-        /// </summary>
-        public static readonly XName NameRoot = NsDefault + "Localization";
-
-        /// <summary>
-        /// URN 
-        /// </summary>
-        public const string URN_ = "urn:lexical.fi:";
 
         private readonly static XmlLinesReader non_resolving = new XmlLinesReader("xml", LineAppender.NonResolving);
-        private readonly static XmlLinesReader resolving = new XmlLinesReader("xml", LineAppender.Resolving);
+        private readonly static XmlLinesReader resolving = new XmlLinesReader("xml", LineAppender.Default);
 
         /// <summary>
         /// .json file lines reader that does not resolve parameters into instantances.
@@ -65,7 +46,27 @@ namespace Lexical.Localization
         /// 
         /// Used when reading localization files for localization purposes.
         /// </summary>
-        public static XmlLinesReader Resolving => resolving;
+        public static XmlLinesReader Default => resolving;
+
+        /// <summary>
+        /// Namespace
+        /// </summary>
+        public static readonly XNamespace NsDefault = "urn:lexical.fi";
+
+        /// <summary>
+        /// XName for Line element
+        /// </summary>
+        public static readonly XName NameLine = NsDefault + "Line";
+
+        /// <summary>
+        /// XName for document root
+        /// </summary>
+        public static readonly XName NameRoot = NsDefault + "Localization";
+
+        /// <summary>
+        /// URN 
+        /// </summary>
+        public const string URN_ = "urn:lexical.fi:";
 
         /// <summary>
         /// File extension, default ".xml"
@@ -90,7 +91,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new xml reader
         /// </summary>
-        public XmlLinesReader() : this("xml", LineAppender.Resolving, default) { }
+        public XmlLinesReader() : this("xml", LineAppender.Default, default) { }
 
         /// <summary>
         /// Create new xml reader

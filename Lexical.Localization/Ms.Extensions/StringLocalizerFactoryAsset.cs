@@ -57,7 +57,7 @@ namespace Lexical.Localization
                 return new StringLocalizerAsset.Type(stringLocalizerFactory.Create(type), type, null);
             };
             createByLocationFunc = location => new StringLocalizerAsset.Location(stringLocalizerFactory.Create(location.a, location.b), location.a, location.b, null);
-            this.ValueParser = ValueParser ?? CSharpFormat.Instance;
+            this.ValueParser = ValueParser ?? CSharpFormat.Default;
         }
 
         /// <summary>

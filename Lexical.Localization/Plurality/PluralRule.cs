@@ -92,7 +92,7 @@ namespace Lexical.Localization.Plurality
             /// <param name="number"></param>
             /// <returns></returns>
             public override bool Evaluate(IPluralNumber number)
-                => PluralNumberComparer.Instance.Equals(number, _one);
+                => PluralNumberComparer.Default.Equals(number, _one);
 
             /// <summary>
             /// Print string

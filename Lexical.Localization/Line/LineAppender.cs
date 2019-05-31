@@ -15,15 +15,15 @@ namespace Lexical.Localization
     public partial class LineAppender : ILineFactoryResolver, ILineFactoryParameterInfos
     {
         private readonly static ILineFactory non_resolving = new LineAppender(null, Lexical.Localization.Utils.ParameterInfos.Default);
-        private readonly static ILineFactory resolving = new LineAppender(ResolverSet.Instance, Lexical.Localization.Utils.ParameterInfos.Default);
+        private readonly static ILineFactory resolving = new LineAppender(ResolverSet.Default, Lexical.Localization.Utils.ParameterInfos.Default);
 
         /// <summary>
-        /// Default appender. Does not resolve parameters to respective instance.
+        /// Default appender. Does not resolve parameters to instances.
         /// </summary>
         public static ILineFactory NonResolving => non_resolving;
 
         /// <summary>
-        /// Appender that resolves parameters to respective instances with default resolver.
+        /// Appender that resolves parameters to respective instances with default resolvers.
         /// 
         /// <list type="bullet">
         ///     <item>Parameter "Culture" is created as <see cref="ILineCulture"/></item>
@@ -34,7 +34,7 @@ namespace Lexical.Localization
         ///     <item>Parameter "FormatProvider" is created as to <see cref="ILineFormatProvider"/></item>
         /// </list>
         /// </summary>
-        public static ILineFactory Resolving => resolving;
+        public static ILineFactory Default => resolving;
 
         /// <summary>
         /// (optional) Type and parameter resolver
@@ -74,12 +74,12 @@ namespace Lexical.Localization
     public partial class StringLocalizerAppender : ILineFactoryResolver, ILineFactoryParameterInfos
     {
         private readonly static ILineFactory non_resolving = new StringLocalizerAppender(null, Lexical.Localization.Utils.ParameterInfos.Default);
-        private readonly static ILineFactory resolving = new StringLocalizerAppender(ResolverSet.Instance, Lexical.Localization.Utils.ParameterInfos.Default);
+        private readonly static ILineFactory resolving = new StringLocalizerAppender(ResolverSet.Default, Lexical.Localization.Utils.ParameterInfos.Default);
 
         /// <summary>
         /// Default appender. Does not resolve parameters to respective instance.
         /// </summary>
-        public static ILineFactory Default => non_resolving;
+        public static ILineFactory NonResolving => non_resolving;
 
         /// <summary>
         /// Appender that resolves parameters to respective instances with default resolver.
@@ -93,7 +93,7 @@ namespace Lexical.Localization
         ///     <item>Parameter "FormatProvider" is created as to <see cref="ILineFormatProvider"/></item>
         /// </list>
         /// </summary>
-        public static ILineFactory Resolving => resolving;
+        public static ILineFactory Default => resolving;
 
         /// <summary>
         /// (optional) Type and parameter resolver

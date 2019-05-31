@@ -83,7 +83,7 @@ namespace Lexical.Localization.StringFormat
             {
                 if (parameterName == "Value")
                 {
-                    IStringFormat stringFormat = previous.FindStringFormat() ?? CSharpFormat.Instance;
+                    IStringFormat stringFormat = previous.FindStringFormat() ?? CSharpFormat.Default;
                     IFormatString value = stringFormat.Parse(parameterValue);
                     resolvedLineArguments = new LineArguments<ILineValue, IFormatString>(value);
                     return true;

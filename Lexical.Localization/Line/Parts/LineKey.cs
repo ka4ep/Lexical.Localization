@@ -32,63 +32,63 @@ namespace Lexical.Localization
         /// <param name="info"></param>
         /// <param name="context"></param>
         public LineKey(SerializationInfo info, StreamingContext context) : base(info, context) { }
+    }
+
+    /// <summary>
+    /// Non-canonically compared key
+    /// </summary>
+    public class LineNonCanonicalKey : LineKey, ILineNonCanonicalKey, ILineArguments<ILineNonCanonicalKey, string, string>
+    {
+        string ILineArguments<ILineNonCanonicalKey, string, string>.Argument0 => ParameterName;
+        string ILineArguments<ILineNonCanonicalKey, string, string>.Argument1 => ParameterValue;
 
         /// <summary>
-        /// Non-canonically compared key
+        /// Create non-canonical key.
         /// </summary>
-        public class NonCanonical : LineKey, ILineNonCanonicalKey, ILineArguments<ILineNonCanonicalKey, string, string>
+        /// <param name="appender"></param>
+        /// <param name="previousPart"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        public LineNonCanonicalKey(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
         {
-            string ILineArguments<ILineNonCanonicalKey, string, string>.Argument0 => ParameterName;
-            string ILineArguments<ILineNonCanonicalKey, string, string>.Argument1 => ParameterValue;
-
-            /// <summary>
-            /// Create non-canonical key.
-            /// </summary>
-            /// <param name="appender"></param>
-            /// <param name="previousPart"></param>
-            /// <param name="parameterName"></param>
-            /// <param name="parameterValue"></param>
-            public NonCanonical(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
-            {
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="info"></param>
-            /// <param name="context"></param>
-            public NonCanonical(SerializationInfo info, StreamingContext context) : base(info, context)
-            {
-            }
         }
 
         /// <summary>
-        /// Canonically compared key
+        /// 
         /// </summary>
-        public class Canonical : LineKey, ILineCanonicalKey, ILineArguments<ILineCanonicalKey, string, string>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public LineNonCanonicalKey(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            string ILineArguments<ILineCanonicalKey, string, string>.Argument0 => ParameterName;
-            string ILineArguments<ILineCanonicalKey, string, string>.Argument1 => ParameterValue;
+        }
+    }
 
-            /// <summary>
-            /// Create canonical key.
-            /// </summary>
-            /// <param name="appender"></param>
-            /// <param name="previousPart"></param>
-            /// <param name="parameterName"></param>
-            /// <param name="parameterValue"></param>
-            public Canonical(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
-            {
-            }
+    /// <summary>
+    /// Canonically compared key
+    /// </summary>
+    public class LineCanonicalKey : LineKey, ILineCanonicalKey, ILineArguments<ILineCanonicalKey, string, string>
+    {
+        string ILineArguments<ILineCanonicalKey, string, string>.Argument0 => ParameterName;
+        string ILineArguments<ILineCanonicalKey, string, string>.Argument1 => ParameterValue;
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="info"></param>
-            /// <param name="context"></param>
-            public Canonical(SerializationInfo info, StreamingContext context) : base(info, context)
-            {
-            }
+        /// <summary>
+        /// Create canonical key.
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="previousPart"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        public LineCanonicalKey(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public LineCanonicalKey(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
     }
 
@@ -115,7 +115,7 @@ namespace Lexical.Localization
                 return true;
             }
 
-            result = new LineKey.NonCanonical(appender, previous, parameterName, parameterValue);
+            result = new LineNonCanonicalKey(appender, previous, parameterName, parameterValue);
             return true;
         }
 
@@ -140,7 +140,7 @@ namespace Lexical.Localization
                 return true;
             }
 
-            result = new LineKey.Canonical(this, previous, parameterName, parameterValue);
+            result = new LineCanonicalKey(this, previous, parameterName, parameterValue);
             return true;
         }
     }
@@ -169,63 +169,63 @@ namespace Lexical.Localization
         /// <param name="info"></param>
         /// <param name="context"></param>
         public _StringLocalizerKey(SerializationInfo info, StreamingContext context) : base(info, context) { }
+     }
+
+    /// <summary>
+    /// Non-canonically compared key
+    /// </summary>
+    public class StringLocalizerNonCanonicalKey : _StringLocalizerKey, ILineNonCanonicalKey, ILineArguments<ILineNonCanonicalKey, string, string>
+    {
+        string ILineArguments<ILineNonCanonicalKey, string, string>.Argument0 => ParameterName;
+        string ILineArguments<ILineNonCanonicalKey, string, string>.Argument1 => ParameterValue;
 
         /// <summary>
-        /// Non-canonically compared key
+        /// 
         /// </summary>
-        public class NonCanonical : _StringLocalizerKey, ILineNonCanonicalKey, ILineArguments<ILineNonCanonicalKey, string, string>
+        /// <param name="appender"></param>
+        /// <param name="previousPart"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        public StringLocalizerNonCanonicalKey(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
         {
-            string ILineArguments<ILineNonCanonicalKey, string, string>.Argument0 => ParameterName;
-            string ILineArguments<ILineNonCanonicalKey, string, string>.Argument1 => ParameterValue;
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="appender"></param>
-            /// <param name="previousPart"></param>
-            /// <param name="parameterName"></param>
-            /// <param name="parameterValue"></param>
-            public NonCanonical(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
-            {
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="info"></param>
-            /// <param name="context"></param>
-            public NonCanonical(SerializationInfo info, StreamingContext context) : base(info, context)
-            {
-            }
         }
 
         /// <summary>
-        /// Canonically compared key
+        /// 
         /// </summary>
-        public class Canonical : _StringLocalizerKey, ILineCanonicalKey, ILineArguments<ILineCanonicalKey, string, string>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public StringLocalizerNonCanonicalKey(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            string ILineArguments<ILineCanonicalKey, string, string>.Argument0 => ParameterName;
-            string ILineArguments<ILineCanonicalKey, string, string>.Argument1 => ParameterValue;
+        }
+    }
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="appender"></param>
-            /// <param name="previousPart"></param>
-            /// <param name="parameterName"></param>
-            /// <param name="parameterValue"></param>
-            public Canonical(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
-            {
-            }
+    /// <summary>
+    /// Canonically compared key
+    /// </summary>
+    public class StringLocalizerCanonicalKey : _StringLocalizerKey, ILineCanonicalKey, ILineArguments<ILineCanonicalKey, string, string>
+    {
+        string ILineArguments<ILineCanonicalKey, string, string>.Argument0 => ParameterName;
+        string ILineArguments<ILineCanonicalKey, string, string>.Argument1 => ParameterValue;
 
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="info"></param>
-            /// <param name="context"></param>
-            public Canonical(SerializationInfo info, StreamingContext context) : base(info, context)
-            {
-            }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="appender"></param>
+        /// <param name="previousPart"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        public StringLocalizerCanonicalKey(ILineFactory appender, ILine previousPart, string parameterName, string parameterValue) : base(appender, previousPart, parameterName, parameterValue)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public StringLocalizerCanonicalKey(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
     }
 
@@ -252,7 +252,7 @@ namespace Lexical.Localization
                 return true;
             }
 
-            result = new _StringLocalizerKey.NonCanonical(appender, previous, parameterName, parameterValue);
+            result = new StringLocalizerNonCanonicalKey(appender, previous, parameterName, parameterValue);
             return true;
         }
 
@@ -277,10 +277,9 @@ namespace Lexical.Localization
                 return true;
             }
 
-            result = new _StringLocalizerKey.Canonical(this, previous, parameterName, parameterValue);
+            result = new StringLocalizerCanonicalKey(this, previous, parameterName, parameterValue);
             return true;
         }
     }
-
 
 }

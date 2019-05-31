@@ -55,7 +55,7 @@ namespace Lexical.Localization
     /// </summary>
     public partial class StringLocalizerRoot
     {
-        private static readonly StringLocalizerRoot instance = new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.Default, LineRoot.Global);
+        private static readonly StringLocalizerRoot instance = new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.NonResolving, LineRoot.Global);
         private static readonly dynamic dynamic;
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Lexical.Localization
 
         static StringLocalizerRoot()
         {
-            instance = new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.Default, LineRoot.Global);
+            instance = new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.NonResolving, LineRoot.Global);
             dynamic = instance;
         }
     }

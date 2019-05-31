@@ -236,7 +236,7 @@ namespace Lexical.Localization
             }
             else
             {
-                IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Instance;
+                IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Default;
                 IFormatString format = stringFormat.Parse(valueText);
                 ILine value = subline.Value(format);
                 inlines[subline] = value;
@@ -257,7 +257,7 @@ namespace Lexical.Localization
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
             ILine subline = line.Culture(culture);
-            IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Instance;
+            IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Default;
             IFormatString format = stringFormat.Parse(valueText);
             ILine value = subline.Value(format);
             inlines[subline] = value;
@@ -283,7 +283,7 @@ namespace Lexical.Localization
             }
             else
             {
-                IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Instance;
+                IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Default;
                 IFormatString format = stringFormat.Parse(valueText);
                 ILine value = subline.Value(format);
                 inlines[subline] = value;

@@ -19,8 +19,8 @@ namespace Lexical.Localization.StringFormat
         static StringFormats()
         {
             instance = new StringFormats();
-            instance["charp"] = CSharpFormat.Instance;
-            instance[CSharpFormat.Instance.Name] = CSharpFormat.Instance;
+            instance["charp"] = CSharpFormat.Default;
+            instance[CSharpFormat.Default.Name] = CSharpFormat.Default;
         }
 
         /// <summary>

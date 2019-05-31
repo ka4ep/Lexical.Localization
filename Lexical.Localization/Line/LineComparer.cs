@@ -22,9 +22,9 @@ namespace Lexical.Localization
     /// </summary>
     public class LineComparer : IEqualityComparer<ILine>
     {
-        private static LineComparer instance = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Instance).AddComparer(NonCanonicalComparer.Instance).SetReadonly();
-        private static LineComparer ignoreCulture = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Instance).AddComparer(NonCanonicalComparer.IgnoreCulture).SetReadonly();
-        private static LineComparer parameters = new LineComparer(null).AddParameterComparer(ParameterComparer.Instance).SetReadonly();
+        private static LineComparer instance = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Default).AddComparer(NonCanonicalComparer.AllParameters).SetReadonly();
+        private static LineComparer ignoreCulture = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Default).AddComparer(NonCanonicalComparer.IgnoreCulture).SetReadonly();
+        private static LineComparer parameters = new LineComparer(null).AddParameterComparer(ParameterComparer.Default).SetReadonly();
 
         /// <summary>
         /// Makes comparisons on interface level. 
@@ -58,7 +58,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Compares line's effective values for hash-equality.
         /// </summary>
-        public static IEqualityComparer<ILine> Value => LineValueComparer.Instance;
+        public static IEqualityComparer<ILine> Value => LineValueComparer.Default;
 
         /// <summary>
         /// List of canonical comparers that compare <see cref="ILineCanonicalKey"/> parts.
@@ -285,7 +285,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Get parameter comparer.
         /// </summary>
-        public static ParameterComparer Instance => instance;
+        public static ParameterComparer Default => instance;
 
         /// <summary>
         /// Compare two keys for paramter name and value. 
@@ -338,7 +338,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Default instance that compares every non-canonical parameter.
         /// </summary>
-        public static NonCanonicalComparer Instance => all;
+        public static NonCanonicalComparer AllParameters => all;
 
         /// <summary>
         /// Instance that excludes "Culture" key from comparison.
@@ -455,7 +455,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Get parameter comparer.
         /// </summary>
-        public static LineValueComparer Instance => instance;
+        public static LineValueComparer Default => instance;
 
         /// <summary>
         /// 

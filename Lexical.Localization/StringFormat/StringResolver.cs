@@ -34,7 +34,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         public StringResolver()
         {
-            this.Resolvers = ResolverSet.Instance;
+            this.Resolvers = ResolverSet.Default;
             this.ResolveSequence = new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
         }
 
@@ -583,7 +583,7 @@ namespace Lexical.Localization.StringFormat
             placeholder_evaluator.Args = features.FormatArgs;
             placeholder_evaluator.FunctionEvaluationCtx.Culture = culture;
             if (features.FormatProviders.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = features.FormatProviders[0]; else if (features.FormatProviders.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = new FormatProviderComposition(features.FormatProviders.ToArray());
-            if (features.Functions.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = features.Functions[0]; else if (features.Functions.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = new Functions(features.Functions);
+            if (features.Functions.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = features.Functions[0]; else if (features.Functions.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = new FunctionsMap(features.Functions);
             for (int i = 0; i < placeholders.Length; i++)
             {
                 try

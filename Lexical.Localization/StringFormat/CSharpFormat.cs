@@ -74,8 +74,8 @@ namespace Lexical.Localization.StringFormat
         /// <returns>preparsed</returns>
         public IFormatString Parse(string formatString)
         {
-            if (formatString == null) return Null.Instance;
-            if (formatString == "") return Empty.Instance;
+            if (formatString == null) return Null.Default;
+            if (formatString == "") return Empty.Default;
             if (FormatProvider != null) return new FormatStringWithFormatProvider(formatString, FormatProvider);
             return new FormatString(formatString);
         }
@@ -189,7 +189,7 @@ namespace Lexical.Localization.StringFormat
                 var placeholdersArray = new IPlaceholder[argumentCount];
                 int j = 0;
                 for (int i = 0; i < parts.Count; i++) if (parts[i] is Placeholder argPart) placeholdersArray[j++] = argPart;
-                Array.Sort(placeholdersArray, FormatStringPartComparer.Instance);
+                Array.Sort(placeholdersArray, FormatStringPartComparer.Default);
                 for (int i = 0; i < placeholdersArray.Length; i++) ((Placeholder)placeholdersArray[i]).PlaceholderIndex = i;
 
                 // Write status.
@@ -205,7 +205,7 @@ namespace Lexical.Localization.StringFormat
             /// </summary>
             /// <returns></returns>
             public override int GetHashCode()
-                => FormatStringComparer.Instance.GetHashCode(this);
+                => FormatStringComparer.Default.GetHashCode(this);
 
             /// <summary>
             /// Compare for equality
@@ -213,7 +213,7 @@ namespace Lexical.Localization.StringFormat
             /// <param name="obj"></param>
             /// <returns></returns>
             public override bool Equals(object obj)
-                => obj is IFormatString other ? FormatStringComparer.Instance.Equals(this, other) : false;
+                => obj is IFormatString other ? FormatStringComparer.Default.Equals(this, other) : false;
 
             /// <summary>
             /// Format string.
@@ -260,7 +260,7 @@ namespace Lexical.Localization.StringFormat
             /// <summary>
             /// Default instance.
             /// </summary>
-            public static IFormatString Instance => instance;
+            public static IFormatString Default => instance;
             /// <summary />
             public LineStatus Status => LineStatus.FormatFailedNull;
             /// <summary />
@@ -275,7 +275,7 @@ namespace Lexical.Localization.StringFormat
             /// <summary>
             /// Cached hashcode
             /// </summary>
-            int hashcode => FormatStringComparer.Instance.GetHashCode(this);
+            int hashcode => FormatStringComparer.Default.GetHashCode(this);
 
             /// <summary>
             /// Calculate hashcode
@@ -290,7 +290,7 @@ namespace Lexical.Localization.StringFormat
             /// <param name="obj"></param>
             /// <returns></returns>
             public override bool Equals(object obj)
-                => obj is IFormatString other ? FormatStringComparer.Instance.Equals(this, other) : false;
+                => obj is IFormatString other ? FormatStringComparer.Default.Equals(this, other) : false;
 
         }
 
@@ -305,7 +305,7 @@ namespace Lexical.Localization.StringFormat
             /// <summary>
             /// Default instance.
             /// </summary>
-            public static IFormatString Instance => instance;
+            public static IFormatString Default => instance;
             /// <summary />
             public LineStatus Status => LineStatus.FormatFailedNull;
             /// <summary />
@@ -320,7 +320,7 @@ namespace Lexical.Localization.StringFormat
             /// <summary>
             /// Cached hashcode
             /// </summary>
-            int hashcode => FormatStringComparer.Instance.GetHashCode(this);
+            int hashcode => FormatStringComparer.Default.GetHashCode(this);
 
             /// <summary>
             /// Calculate hashcode
@@ -335,7 +335,7 @@ namespace Lexical.Localization.StringFormat
             /// <param name="obj"></param>
             /// <returns></returns>
             public override bool Equals(object obj)
-                => obj is IFormatString other ? FormatStringComparer.Instance.Equals(this, other) : false;
+                => obj is IFormatString other ? FormatStringComparer.Default.Equals(this, other) : false;
         }
 
         /// <summary>
@@ -400,7 +400,7 @@ namespace Lexical.Localization.StringFormat
             /// </summary>
             /// <returns></returns>
             public override int GetHashCode()
-                => FormatStringPartComparer.Instance.GetHashCode(this);
+                => FormatStringPartComparer.Default.GetHashCode(this);
 
             /// <summary>
             /// Compare for equality
@@ -408,7 +408,7 @@ namespace Lexical.Localization.StringFormat
             /// <param name="obj"></param>
             /// <returns></returns>
             public override bool Equals(object obj)
-                => FormatStringPartComparer.Instance.Equals(obj);
+                => FormatStringPartComparer.Default.Equals(obj);
 
             /// <summary>
             /// The text part as it appears in the format string.
@@ -492,7 +492,7 @@ namespace Lexical.Localization.StringFormat
             /// </summary>
             /// <returns></returns>
             public override int GetHashCode()
-                => FormatStringPartComparer.Instance.GetHashCode(this);
+                => FormatStringPartComparer.Default.GetHashCode(this);
 
             /// <summary>
             /// Compare for equality
@@ -500,7 +500,7 @@ namespace Lexical.Localization.StringFormat
             /// <param name="obj"></param>
             /// <returns></returns>
             public override bool Equals(object obj)
-                => FormatStringPartComparer.Instance.Equals(obj);
+                => FormatStringPartComparer.Default.Equals(obj);
 
             /// <summary>
             /// Print argument format as it is in the format string. Example "{0:x2}".

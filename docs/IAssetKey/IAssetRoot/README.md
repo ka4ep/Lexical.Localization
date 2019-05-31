@@ -36,7 +36,7 @@ These keys cannot be used as providers, only as references.
 
 ```csharp
 // Create reference
-ILine key = LineAppender.Default.Section("Section").Key("Key");
+ILine key = LineAppender.NonResolving.Section("Section").Key("Key");
 // Retreieve with reference
 IFormatString str = asset.GetString(key).GetValue();
 ```
@@ -101,9 +101,8 @@ Culture can be locked in with **.Culture(*string*)**.
 
 ```csharp
 // Create IStringLocalizer and assign culture
-IStringLocalizer stringLocalizer = 
-    root.Culture("en").Type<MyController>() 
-    as IStringLocalizer<MyController>;
+IStringLocalizer stringLocalizer =
+    root.Culture("en").Type<MyController>().AsStringLocalizer();
 ```
 And also after type casting to IStringLocalizer with **.WithCulture(*CultureInfo*)**.
 

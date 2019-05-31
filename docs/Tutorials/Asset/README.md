@@ -50,7 +50,7 @@ namespace TutorialProject
         public static void Main(string[] args)
         {
             // Create a loader
-            IAsset asset = LocalizationIniReader.Instance.FileAsset("HelloWorld.ini");
+            IAsset asset = LocalizationIniReader.Default.FileAsset("HelloWorld.ini");
 
             // Add asset to global singleton instance
             LocalizationRoot.Builder.AddAsset(asset);

@@ -25,7 +25,7 @@ namespace Lexical.Localization
     public class IniLinesReader : ILineFileFormat, ILineTreeTextReader
     {
         private readonly static IniLinesReader non_resolving = new IniLinesReader("ini", LineAppender.NonResolving);
-        private readonly static IniLinesReader resolving = new IniLinesReader("ini", LineAppender.Resolving);
+        private readonly static IniLinesReader resolving = new IniLinesReader("ini", LineAppender.Default);
 
         /// <summary>
         /// .ini file lines reader that does not resolve parameters into instantances.
@@ -48,7 +48,7 @@ namespace Lexical.Localization
         /// 
         /// Used when reading localization files for localization purposes.
         /// </summary>
-        public static IniLinesReader Resolving => resolving;
+        public static IniLinesReader Default => resolving;
 
         /// <summary>
         /// Escaper for "[section]" parts of .ini files. Escapes '\', ':', '[' and ']' characters and white-spaces.

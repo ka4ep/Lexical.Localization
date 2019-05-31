@@ -41,8 +41,8 @@ namespace Lexical.Localization
         /// </summary>
         static IEqualityComparer<ILine> keyAndArgsComparer =
             new LineComparer(ParameterInfos.Default)
-                .AddCanonicalComparer(ParameterComparer.Instance)
-                .AddComparer(NonCanonicalComparer.Instance)
+                .AddCanonicalComparer(ParameterComparer.Default)
+                .AddComparer(NonCanonicalComparer.AllParameters)
                 .AddComparer(new LineFormatArgsComparer())
                 .SetReadonly();
 

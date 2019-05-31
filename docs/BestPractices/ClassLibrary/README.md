@@ -20,7 +20,7 @@ namespace TutorialLibrary1
         /// Localization source reference to embedded resource.
         /// </summary>
         public readonly LineEmbeddedSource LocalizationSource = 
-            LineReaderMap.Instance.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
+            LineReaderMap.Default.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
 
         public AssetSources() : base()
         {
@@ -65,13 +65,13 @@ namespace TutorialLibrary1
         /// Localization source reference to embedded resource.
         /// </summary>
         public readonly LineEmbeddedSource LocalizationSource = 
-            LineReaderMap.Instance.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
+            LineReaderMap.Default.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
 
         /// <summary>
         /// (Optional) External file localization source.
         /// </summary>
         public readonly LineFileSource ExternalLocalizationSource = 
-            LineReaderMap.Instance.FileAssetSource("Localization.xml", throwIfNotFound: false);
+            LineReaderMap.Default.FileAssetSource("Localization.xml", throwIfNotFound: false);
 
         public AssetSourcesB() : base()
         {
@@ -191,7 +191,7 @@ Application that deploys the class library can supply additional localizations b
 
 ```csharp
 // Install additional localization that was not available in the TutorialLibrary
-IAssetSource source = LineXmlReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
+IAssetSource source = XmlLinesReader.Default.FileAssetSource("TutorialLibrary1-fi.xml");
 LineRoot.Builder.AddSource(source).Build();
 
 MyClass myClass = new MyClass();
@@ -220,7 +220,7 @@ namespace TutorialProject1
         {
             #region Snippet
             // Install additional localization that was not available in the TutorialLibrary
-            IAssetSource source = LineXmlReader.Instance.FileAssetSource("TutorialLibrary1-fi.xml");
+            IAssetSource source = XmlLinesReader.Default.FileAssetSource("TutorialLibrary1-fi.xml");
             LineRoot.Builder.AddSource(source).Build();
 
             MyClass myClass = new MyClass();

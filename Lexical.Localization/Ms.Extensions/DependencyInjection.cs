@@ -79,7 +79,7 @@ namespace Lexical.Localization
             }
 
             // ILineFactory
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineFactory>(StringLocalizerAppender.Default));
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineFactory>(StringLocalizerAppender.NonResolving));
 
             // ILineAsset
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<ILineAsset>(s => s.GetService<ILineRoot>() as ILineAsset));
@@ -101,9 +101,6 @@ namespace Lexical.Localization
 
             // ILineResolver
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<IStringResolver>(StringResolver.Default));
-
-            // UnicodePluralityRules as 
-            //serviceCollection.TryAdd(ServiceDescriptor.Singleton<IPluralRules>(UnicodeCLDR.Instance));
 
             // ILogger<ILocalizationKey>
             if (addLogger) serviceCollection.AddLoggerAdapter();
@@ -162,7 +159,7 @@ namespace Lexical.Localization
                     // Use the StringLocalizerKey or StringLocalizerRoot implementation from th service.
                     if (localizationRoot is IStringLocalizerFactory casted) return casted;
                     // Create new root that implements IStringLocalizerFactory and acquires asset and policy with delegate
-                    return new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.Default, localizationRoot);
+                    return new StringLocalizerRoot.LinkedTo(StringLocalizerAppender.NonResolving, localizationRoot);
                 }));
             }
 

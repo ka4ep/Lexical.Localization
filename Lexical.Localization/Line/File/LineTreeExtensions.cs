@@ -145,7 +145,7 @@ namespace Lexical.Localization
             {
                 if (linevalue is ILineValue part && part.Value != null)
                 {
-                    if (FormatStringComparer.Instance.Equals(part.Value, value)) return true;
+                    if (FormatStringComparer.Default.Equals(part.Value, value)) return true;
                 }
                 else if (linevalue.TryGetValueText(out str) && str == value.Text) return true;
             }

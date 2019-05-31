@@ -20,7 +20,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Table of functions.
     /// </summary>
-    public interface IFunctionsTable : IFunctions, IDictionary<string, IFunction>
+    public interface IFunctionsMap : IFunctions, IDictionary<string, IFunction>
     {
     }
 

@@ -89,14 +89,14 @@ Keys are converted to strings.
 
 ```csharp
 ILine key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
-string str = LineFormat.Instance.BuildName(key);
+string str = LineFormat.Default.BuildName(key);
 ```
 
 And strings parsed to keys.
 
 ```csharp
 string str = @"Culture:en:Type:MyController:Key:Ok";
-ILine key = LineFormat.Instance.Parse(str);
+ILine key = LineFormat.Default.Parse(str);
 ```
 
 A specific *root* can be used from which the constructed key is appended from.
@@ -104,7 +104,7 @@ A specific *root* can be used from which the constructed key is appended from.
 ```csharp
 string str = @"Culture:en:Type:MyController:Key:Ok";
 ILine root = new StringLocalizerRoot();
-ILine key = LineFormat.Instance.Parse(str, root);
+ILine key = LineFormat.Default.Parse(str, root);
 ```
 
 Policy uses the following escape rules.
@@ -123,7 +123,7 @@ Example of escaped key "Success\\:Plural".
 
 ```csharp
 string str = @"Key:Success\:Plural";
-ILine key = LineFormat.Instance.Parse(str);
+ILine key = LineFormat.Default.Parse(str);
 ```
 
 # LinePattern

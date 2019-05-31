@@ -119,8 +119,8 @@ namespace Lexical.Localization
             if (ParameterInfos.TryGetValue(parameterName, out pi))
             {
                 if (pi.InterfaceType == typeof(ILineHint)) { result = new LineHint(appender, previous, parameterName, parameterValue); return true; }
-                if (pi.InterfaceType == typeof(ILineCanonicalKey)) { result = new LineKey.Canonical(appender, previous, parameterName, parameterValue); return true; }
-                if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) { result = new LineKey.NonCanonical(appender, previous, parameterName, parameterValue); return true; }
+                if (pi.InterfaceType == typeof(ILineCanonicalKey)) { result = new LineCanonicalKey(appender, previous, parameterName, parameterValue); return true; }
+                if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) { result = new LineNonCanonicalKey(appender, previous, parameterName, parameterValue); return true; }
             }
 
             // Return as parameter

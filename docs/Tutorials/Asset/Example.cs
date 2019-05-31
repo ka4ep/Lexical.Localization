@@ -9,7 +9,7 @@ namespace TutorialProject
         public static void Main(string[] args)
         {
             // Create a loader
-            IAsset asset = IniLinesReader.Resolving.FileAsset("HelloWorld.ini");
+            IAsset asset = IniLinesReader.Default.FileAsset("HelloWorld.ini");
 
             // Add asset to global singleton instance
             LineRoot.Builder.AddAsset(asset);

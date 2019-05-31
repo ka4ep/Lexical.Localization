@@ -12,20 +12,20 @@ There are following file formats that are supported with the default class libra
 **ILineFileFormat** instance can be acquired from **LineReaderMap** dictionary.
 
 ```csharp
-ILineFileFormat format = LineReaderMap.Instance["ini"];
+ILineFileFormat format = LineReaderMap.Default["ini"];
 ```
 
 And from singleton instances.
 
 ```csharp
-ILineFileFormat format = LocalizationIniReader.Instance;
+ILineFileFormat format = LocalizationIniReader.Default;
 ```
 
 # Read IAsset
 File can be read right away into an *IAsset* with **.FileAsset()** extension method.
 
 ```csharp
-IAsset asset = LocalizationIniReader.Instance.FileAsset(
+IAsset asset = LocalizationIniReader.Default.FileAsset(
     filename: "localization.ini",
     throwIfNotFound: true);
 ```
@@ -34,7 +34,7 @@ From embedded resource with **.EmbeddedAsset()** method.
 
 ```csharp
 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
-IAsset asset = LocalizationIniReader.Instance.EmbeddedAsset(
+IAsset asset = LocalizationIniReader.Default.EmbeddedAsset(
     assembly: asm,
     resourceName: "docs.localization.ini",
     throwIfNotFound: true);
@@ -44,7 +44,7 @@ And from a file provider with **.FileProviderAsset()**.
 
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-IAsset asset = LocalizationIniReader.Instance.FileProviderAsset(
+IAsset asset = LocalizationIniReader.Default.FileProviderAsset(
     fileProvider: fileProvider,
     filepath: "localization.ini",
     throwIfNotFound: true);
@@ -53,7 +53,7 @@ IAsset asset = LocalizationIniReader.Instance.FileProviderAsset(
 The same extension methods are also available in the **LineReaderMap**, which selects the reader class by file extension.
 
 ```csharp
-IAsset asset = LineReaderMap.Instance.FileAsset(
+IAsset asset = LineReaderMap.Default.FileAsset(
     filename: "localization.ini",
     throwIfNotFound: true);
 ```
@@ -64,7 +64,7 @@ It is not read right away, but when the asset is built.
 
 ```csharp
 IAssetSource assetSource = 
-    LocalizationIniReader.Instance.FileAssetSource(
+    LocalizationIniReader.Default.FileAssetSource(
         filename: "localization.ini",
         throwIfNotFound: true);
 IAssetBuilder assetBuilder = new AssetBuilder().AddSource(assetSource);
@@ -76,7 +76,7 @@ Reference to embedded resource source with **.EmbeddedAssetSource()**.
 ```csharp
 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
 IAssetSource assetSource = 
-    LocalizationIniReader.Instance.EmbeddedAssetSource(
+    LocalizationIniReader.Default.EmbeddedAssetSource(
         assembly: asm,
         resourceName: "docs.localization.ini",
         throwIfNotFound: true);
@@ -87,7 +87,7 @@ And file provider with **.FileProviderAssetSource()**.
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
 IAssetSource assetSource = 
-    LocalizationIniReader.Instance.FileProviderAssetSource(
+    LocalizationIniReader.Default.FileProviderAssetSource(
         fileProvider: fileProvider,
         filepath: "localization.ini",
         throwIfNotFound: true);
@@ -96,7 +96,7 @@ IAssetSource assetSource =
 The same extension methods are also available in the **LineReaderMap**, which selects the reader class by file extension.
 
 ```csharp
-IAssetSource assetSource = LineReaderMap.Instance.FileAssetSource(
+IAssetSource assetSource = LineReaderMap.Default.FileAssetSource(
     filename: "localization.ini", 
     throwIfNotFound: true);
 ```
@@ -110,22 +110,22 @@ Different file formats have different intrinsic formats.
 Localization file can be read right away into key lines with **.ReadKeyLines()**.
 
 ```csharp
-IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines = LineReaderMap.Instance.ReadKeyLines(
+IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines = LineReaderMap.Default.ReadKeyLines(
     filename: "localization.ini", 
     throwIfNotFound: true);
 ```
 Into string lines with **.ReadStringLines()**.
 
 ```csharp
-IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LineReaderMap.Instance.ReadStringLines(
+IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LineReaderMap.Default.ReadStringLines(
     filename: "localization.ini", 
-    namePolicy: LineFormat.Instance,
+    namePolicy: LineFormat.Default,
     throwIfNotFound: true);
 ```
 And into a tree **.ReadLineTree()**.
 
 ```csharp
-ILineTree tree = LineReaderMap.Instance.ReadLineTree(
+ILineTree tree = LineReaderMap.Default.ReadLineTree(
     filename: "localization.ini", 
     throwIfNotFound: true);
 ```
@@ -136,7 +136,7 @@ File reader reads the refered file when **.GetEnumerator()** is called, and will
 
 ```csharp
 IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines_reader = 
-    LineReaderMap.Instance.FileReaderAsKeyLines(
+    LineReaderMap.Default.FileReaderAsKeyLines(
         filename: "localization.ini", 
         throwIfNotFound: true);
 ```
@@ -144,16 +144,16 @@ IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines_reader =
 
 ```csharp
 IEnumerable<KeyValuePair<string, IFormatString>> string_lines_reader = 
-    LineReaderMap.Instance.FileReaderAsStringLines(
+    LineReaderMap.Default.FileReaderAsStringLines(
         filename: "localization.ini",
-        namePolicy: LineFormat.Instance,
+        namePolicy: LineFormat.Default,
         throwIfNotFound: true);
 ```
 And **.FileReaderAsLineTree()** a tree reader.
 
 ```csharp
 IEnumerable<ILineTree> tree_reader = 
-    LineReaderMap.Instance.FileReaderAsLineTree(
+    LineReaderMap.Default.FileReaderAsLineTree(
         filename: "localization.ini", 
         throwIfNotFound: true);
 ```
@@ -164,7 +164,7 @@ Embedded resource reader is created with **.EmbeddedReaderAsKeyLines()**.
 ```csharp
 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
 IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines_reader = 
-    LineReaderMap.Instance.EmbeddedReaderAsKeyLines(
+    LineReaderMap.Default.EmbeddedReaderAsKeyLines(
         assembly: asm, 
         resourceName: "docs.localization.ini", 
         throwIfNotFound: true);
@@ -173,17 +173,17 @@ IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines_reader =
 
 ```csharp
 IEnumerable<KeyValuePair<string, IFormatString>> string_lines_reader = 
-    LineReaderMap.Instance.EmbeddedReaderAsStringLines(
+    LineReaderMap.Default.EmbeddedReaderAsStringLines(
         assembly: asm, 
         resourceName: "docs.localization.ini", 
-        namePolicy: LineFormat.Instance,
+        namePolicy: LineFormat.Default,
         throwIfNotFound: true);
 ```
 And **.EmbeddedReaderAsLineTree()** reader of trees
 
 ```csharp
 IEnumerable<ILineTree> tree_reader = 
-    LineReaderMap.Instance.EmbeddedReaderAsLineTree(
+    LineReaderMap.Default.EmbeddedReaderAsLineTree(
         assembly: asm, 
         resourceName: "docs.localization.ini", 
         throwIfNotFound: true);
@@ -195,7 +195,7 @@ File provider reader is created with **.FileProviderReaderAsKeyLines()**.
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
 IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines_reader = 
-    LineReaderMap.Instance.FileProviderReaderAsKeyLines(
+    LineReaderMap.Default.FileProviderReaderAsKeyLines(
         fileProvider: fileProvider, 
         filepath: "localization.ini", 
         throwIfNotFound: true);
@@ -205,7 +205,7 @@ IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines_reader =
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
 IEnumerable<KeyValuePair<string, IFormatString>> string_lines_reader = 
-    LineReaderMap.Instance.FileProviderReaderAsStringLines(
+    LineReaderMap.Default.FileProviderReaderAsStringLines(
         fileProvider: fileProvider, 
         filepath: "localization.ini", 
         throwIfNotFound: true);
@@ -215,7 +215,7 @@ And **.FileProviderReaderAsLineTree()** tree reader.
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
 IEnumerable<ILineTree> tree_reader = 
-    LineReaderMap.Instance.FileProviderReaderAsLineTree(
+    LineReaderMap.Default.FileProviderReaderAsLineTree(
         fileProvider: fileProvider, 
         filepath: "localization.ini", 
         throwIfNotFound: true);
@@ -227,7 +227,7 @@ Content can be read from **Stream** into key lines.
 ```csharp
 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
 {
-    IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(s);
+    IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines = LocalizationIniReader.Default.ReadKeyLines(s);
 }
 ```
 Into string lines.
@@ -235,9 +235,9 @@ Into string lines.
 ```csharp
 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
 {
-    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
+    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LocalizationIniReader.Default.ReadStringLines(
         stream: s,
-        namePolicy: LineFormat.Instance);
+        namePolicy: LineFormat.Default);
 }
 ```
 And into a tree.
@@ -245,7 +245,7 @@ And into a tree.
 ```csharp
 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
 {
-    ILineTree tree = LocalizationIniReader.Instance.ReadLineTree(s);
+    ILineTree tree = LocalizationIniReader.Default.ReadLineTree(s);
 }
 ```
 
@@ -256,7 +256,7 @@ Content can be read from **TextReader** into key lines.
 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
 using (TextReader tr = new StringReader(text))
 {
-    IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines = LocalizationIniReader.Instance.ReadKeyLines(tr);
+    IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines = LocalizationIniReader.Default.ReadKeyLines(tr);
 }
 ```
 Into string lines.
@@ -264,9 +264,9 @@ Into string lines.
 ```csharp
 using (TextReader tr = new StringReader(text))
 {
-    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LocalizationIniReader.Instance.ReadStringLines(
+    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LocalizationIniReader.Default.ReadStringLines(
         srcText: tr,
-        namePolicy: LineFormat.Instance);
+        namePolicy: LineFormat.Default);
 }
 ```
 And into tree.
@@ -274,7 +274,7 @@ And into tree.
 ```csharp
 using (TextReader tr = new StringReader(text))
 {
-    ILineTree tree = LocalizationIniReader.Instance.ReadLineTree(tr);
+    ILineTree tree = LocalizationIniReader.Default.ReadLineTree(tr);
 }
 ```
 
@@ -284,22 +284,22 @@ And from **String** into key lines.
 ```csharp
 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
 IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines = 
-    LocalizationIniReader.Instance.ReadStringAsKeyLines(
+    LocalizationIniReader.Default.ReadStringAsKeyLines(
         srcText: text);
 ```
 Into string lines.
 
 ```csharp
 IEnumerable<KeyValuePair<string, IFormatString>> string_lines = 
-    LocalizationIniReader.Instance.ReadStringAsStringLines(
+    LocalizationIniReader.Default.ReadStringAsStringLines(
         srcText: text,
-        namePolicy: LineFormat.Instance);
+        namePolicy: LineFormat.Default);
 ```
 And into a tree.
 
 ```csharp
 ILineTree tree = 
-    LocalizationIniReader.Instance.ReadStringAsLineTree(
+    LocalizationIniReader.Default.ReadStringAsLineTree(
         srcText: text);
 ```
 
@@ -427,7 +427,7 @@ class ExtFileFormatReader : ILineTextReader
         ILineFormat namePolicy = null)
     {
         ILine key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
-        yield return new KeyValuePair<ILine, IFormatString>(key, CSharpFormat.Instance.Parse("Hello World!"));
+        yield return new KeyValuePair<ILine, IFormatString>(key, CSharpFormat.Default.Parse("Hello World!"));
     }
 }
 ```
@@ -439,10 +439,10 @@ Reader can be added to **LineReaderMap**.
 ILineReader format = new ExtFileFormatReader();
 
 // Clone formats
-LineFileFormatMap formats = LineReaderMap.Instance.Clone();
+LineFileFormatMap formats = LineReaderMap.Default.Clone();
 // Add to clone
 formats.Add(format);
 
 // Or if in deploying application project, format can be added to the global singleton
-(LineReaderMap.Instance as IDictionary<string, ILineFileFormat>).Add(format);
+(LineReaderMap.Default as IDictionary<string, ILineFileFormat>).Add(format);
 ```

@@ -23,7 +23,7 @@ The parameter name for pluralization of argument "{0}" is **N**, and cases are "
 
 
 ```csharp
-IAsset asset = LineXmlReader.Instance.FileAsset("PluralityExample0b.xml");
+IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample0b.xml");
 ILine key = new LineRoot(asset).Key("Cats");
 
 for (int cats = 0; cats<=2; cats++)
@@ -64,7 +64,7 @@ Translator adds localized strings for different cultures.
 The decision whether to use pluralization is left for the translator. The file is read into the application. 
 
 ```csharp
-IAsset asset = LineXmlReader.Instance.FileAsset("PluralityExample0a.xml");
+IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample0a.xml");
 ILineRoot root = new LineRoot(asset);
 ILine key = root.Key("Cats").Value("{0} cat(s)");
 
@@ -173,7 +173,7 @@ If language string has two numeric arguments, then plurality keys can be added t
 ```
 
 ```csharp
-IAsset asset = LineXmlReader.Instance.FileAsset("PluralityExample2.xml");
+IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample2.xml");
 ILine key = new LineRoot(asset).Key("CatsDogs");
 
 for (int cats = 0; cats <= 2; cats++)
@@ -230,7 +230,7 @@ If translator wants to supply plurality for two numeric arguments, then all perm
 ```
 
 ```csharp
-IAsset asset = LineXmlReader.Instance.FileAsset("PluralityExample2-en.xml");
+IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample2-en.xml");
 ILineRoot root = new LineRoot(asset);
 ILine key = root.Key("CatsDogs").Value("{0} cat(s) and {1} dog(s)");
 
@@ -279,7 +279,7 @@ If there are more than two numeric arguments, pluralization can be provided for 
 ```
 
 ```csharp
-IAsset asset = LineXmlReader.Instance.FileAsset("PluralityExample4.xml");
+IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample4.xml");
 ILine key = new LineRoot(asset).Key("CatsDogsPoniesHorses");
 
 for (int cats = 0; cats <= 2; cats++)

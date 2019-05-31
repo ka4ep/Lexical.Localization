@@ -22,7 +22,7 @@ namespace Lexical.Localization.Line.Internal
         /// <summary>
         /// Singleton Instance
         /// </summary>
-        public static LineFactoryByArgumentAdapter Instance => instance;
+        public static LineFactoryByArgumentAdapter Default => instance;
 
         /// <summary>
         /// Cache of factories by implementing class type.

@@ -81,30 +81,30 @@ namespace Lexical.Localization.StringFormat
             if (call.Args.Length==0)
             {
                 if (FunctionEvaluationCtx.Functions.TryEvaluate(call.Name, ref FunctionEvaluationCtx, out result)) return result;
-                if (DefaultFunctions.Instance.TryEvaluate(call.Name, ref FunctionEvaluationCtx, out result)) return result;
+                if (Functions.Default.TryEvaluate(call.Name, ref FunctionEvaluationCtx, out result)) return result;
             } else if (call.Args.Length == 1)
             {
                 object arg0 = Evaluate(call.Args[0]);
                 if (FunctionEvaluationCtx.Functions.TryEvaluate(call.Name, ref FunctionEvaluationCtx, arg0, out result)) return result;
-                if (DefaultFunctions.Instance.TryEvaluate(call.Name, ref FunctionEvaluationCtx, arg0, out result)) return result;
+                if (Functions.Default.TryEvaluate(call.Name, ref FunctionEvaluationCtx, arg0, out result)) return result;
             } else if (call.Args.Length == 2)
             {
                 object arg0 = Evaluate(call.Args[0]), arg1 = Evaluate(call.Args[1]);
                 if (FunctionEvaluationCtx.Functions.TryEvaluate(call.Name, ref FunctionEvaluationCtx, arg0, arg1, out result)) return result;
-                if (DefaultFunctions.Instance.TryEvaluate(call.Name, ref FunctionEvaluationCtx, arg0, arg1, out result)) return result;
+                if (Functions.Default.TryEvaluate(call.Name, ref FunctionEvaluationCtx, arg0, arg1, out result)) return result;
             }
             else if (call.Args.Length == 3)
             {
                 object arg0 = Evaluate(call.Args[0]), arg1 = Evaluate(call.Args[1]), arg2 = Evaluate(call.Args[2]);
                 if (FunctionEvaluationCtx.Functions.TryEvaluate(call.Name, ref FunctionEvaluationCtx, arg0, arg1, arg2, out result)) return result;
-                if (DefaultFunctions.Instance.TryEvaluate(call.Name, ref FunctionEvaluationCtx, arg0, arg1, arg2, out result)) return result;
+                if (Functions.Default.TryEvaluate(call.Name, ref FunctionEvaluationCtx, arg0, arg1, arg2, out result)) return result;
             } else
             {
                 object[] args = new object[call.Args.Length];
                 for (int i = 0; i < call.Args.Length; i++)
                     args[i] = Evaluate(call.Args[i]);
                 if (FunctionEvaluationCtx.Functions.TryEvaluate(call.Name, ref FunctionEvaluationCtx, args, out result)) return result;
-                if (DefaultFunctions.Instance.TryEvaluate(call.Name, ref FunctionEvaluationCtx, args, out result)) return result;
+                if (Functions.Default.TryEvaluate(call.Name, ref FunctionEvaluationCtx, args, out result)) return result;
             }
             throw new InvalidOperationException();
         }

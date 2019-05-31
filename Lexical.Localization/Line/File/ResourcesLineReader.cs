@@ -23,7 +23,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Default instance
         /// </summary>
-        public static ResourcesLineReader Instance => instance;
+        public static ResourcesLineReader Default => instance;
 
         /// <summary>
         /// File extension
@@ -38,7 +38,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create reader
         /// </summary>
-        public ResourcesLineReader() : this("resources", CSharpFormat.Instance) { }
+        public ResourcesLineReader() : this("resources", CSharpFormat.Default) { }
 
         /// <summary>
         /// Create reader

@@ -185,7 +185,7 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static PluralNumberComparer Instance => instance;
+        public static PluralNumberComparer Default => instance;
 
         /// <summary>
         /// Compare for equality

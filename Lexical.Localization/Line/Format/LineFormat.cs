@@ -33,27 +33,45 @@ namespace Lexical.Localization
         static readonly LineFormat parameters = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.NonResolving, ExcludeValue);
 
         /// <summary>
+        /// Format that prints and parses strings as parameter lines. 
+        /// </summary>
+        static readonly LineFormat parametersInclValue = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.NonResolving, null);
+
+        /// <summary>
         /// Format that prints and parses strings as lines. Parameters are resolved to default instance types. For example "Culture" to CultureInfo. Excludes "Value" parameter.
         /// </summary>
-        static readonly LineFormat key = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Resolving, ExcludeValue);
+        static readonly LineFormat key = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Default, ExcludeValue);
 
         /// <summary>
         /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "Value" to <see cref="IFormatString"/>.
         /// </summary>
-        static readonly LineFormat line = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Resolving, null);
+        static readonly LineFormat line = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Default, null);
 
         /// <summary>
         /// Format that prints and parses strings as parameter lines. Excludes "Value" parameter.
+        /// 
+        /// For example "Culture:en:Key:x:Value:z" is parsed into LineKeyNonCanonical("Culture", "en").LineKeyNonCanonical("Key", "x")
         /// </summary>
         public static LineFormat Parameters => parameters;
 
         /// <summary>
+        /// Format that prints and parses strings as parameter lines. 
+        /// 
+        /// For example "Culture:en:Key:x:Value:z" is parsed into LineKeyNonCanonical("Culture", "en").LineKeyNonCanonical("Key", "x").LineHint("Value", "z")
+        /// </summary>
+        public static LineFormat ParametersInclValue => parametersInclValue;
+
+        /// <summary>
         /// Format that prints and parses strings as lines. Parameters are resolved to default instance types. For example "Culture" to CultureInfo. Excludes "Value" parameter.
+        /// 
+        /// For example "Culture:en:Key:x:Value:z" is parsed into LineCulture("en").LineKeyNonCanonical("Key", "x")
         /// </summary>
         public static LineFormat Key => key;
 
         /// <summary>
         /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "Value" to <see cref="IFormatString"/>.
+        /// 
+        /// For example "Culture:en:Key:x:Value:z" is parsed into LineCulture("en").LineKeyNonCanonical("Key", "x").LineValue("z")
         /// </summary>
         public static LineFormat Line => line;
 

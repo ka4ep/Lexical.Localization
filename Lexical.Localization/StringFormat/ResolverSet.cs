@@ -26,6 +26,6 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Default instance
         /// </summary>
-        public static IResolver Instance => instance;
+        public static IResolver Default => instance;
     }
 }

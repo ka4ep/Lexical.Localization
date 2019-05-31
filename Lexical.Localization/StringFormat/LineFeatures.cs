@@ -79,7 +79,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Get Value or parsed ValueText. Call this after all features have been read.
         /// </summary>
-        public IFormatString EffectiveValue => Value ?? (Value = (StringFormat ?? CSharpFormat.Instance).Parse(ValueText));
+        public IFormatString EffectiveValue => Value ?? (Value = (StringFormat ?? CSharpFormat.Default).Parse(ValueText));
 
         /// <summary>
         /// Test if has value.

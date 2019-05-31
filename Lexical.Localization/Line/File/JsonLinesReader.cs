@@ -20,7 +20,7 @@ namespace Lexical.Localization
     public class JsonLinesReader : ILineFileFormat, ILineTreeTextReader
     {
         private readonly static JsonLinesReader non_resolving = new JsonLinesReader("json", LineAppender.NonResolving);
-        private readonly static JsonLinesReader resolving = new JsonLinesReader("json", LineAppender.Resolving);
+        private readonly static JsonLinesReader resolving = new JsonLinesReader("json", LineAppender.Default);
 
         /// <summary>
         /// .json file lines reader that does not resolve parameters into instantances.
@@ -43,7 +43,7 @@ namespace Lexical.Localization
         /// 
         /// Used when reading localization files for localization purposes.
         /// </summary>
-        public static JsonLinesReader Resolving => resolving;
+        public static JsonLinesReader Default => resolving;
 
         /// <summary>
         /// Parameter parser.
@@ -68,7 +68,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new .json reader.
         /// </summary>
-        public JsonLinesReader() : this("json", LineAppender.Resolving)
+        public JsonLinesReader() : this("json", LineAppender.Default)
         {
         }
 

@@ -115,8 +115,8 @@ namespace Lexical.Localization.Utils
             if (TryGetValue(parameterName, out pi) && pi.InterfaceType != null)
             {
                 if (pi.InterfaceType == typeof(ILineParameter)) { line = new LineParameter(this, previous, parameterName, parameterValue); return true; }
-                else if (pi.InterfaceType == typeof(ILineCanonicalKey)) { line = new LineKey.Canonical(this, previous, parameterName, parameterValue); return true; }
-                else if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) { line = new LineKey.NonCanonical(this, previous, parameterName, parameterValue); return true; }
+                else if (pi.InterfaceType == typeof(ILineCanonicalKey)) { line = new LineCanonicalKey(this, previous, parameterName, parameterValue); return true; }
+                else if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) { line = new LineNonCanonicalKey(this, previous, parameterName, parameterValue); return true; }
                 else if (pi.InterfaceType == typeof(ILineHint)) { line = new LineHint(this, previous, parameterName, parameterValue); return true; }
             }
             line = default;
@@ -157,7 +157,7 @@ namespace Lexical.Localization.Utils
             IParameterInfo pi;
             if (TryGetValue(parameterName, out pi) && pi.InterfaceType != null)
             {
-                if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) { line = new LineKey.NonCanonical(this, previous, parameterName, parameterValue); return true; }
+                if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) { line = new LineNonCanonicalKey(this, previous, parameterName, parameterValue); return true; }
             }
             line = default;
             return false;
@@ -177,7 +177,7 @@ namespace Lexical.Localization.Utils
             IParameterInfo pi;
             if (TryGetValue(parameterName, out pi) && pi.InterfaceType != null)
             {
-                if (pi.InterfaceType == typeof(ILineCanonicalKey)) { line = new LineKey.Canonical(this, previous, parameterName, parameterValue); return true; }
+                if (pi.InterfaceType == typeof(ILineCanonicalKey)) { line = new LineCanonicalKey(this, previous, parameterName, parameterValue); return true; }
             }
             line = default;
             return false;

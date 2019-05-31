@@ -796,7 +796,7 @@ namespace Lexical.Localization
                     // Read as key-lines
                     else if (reader is IEnumerable<KeyValuePair<ILine, string>> keyLinesReader_)
                     {
-                        lines.AddRange(keyLinesReader_.Select(line=>line.Key.Value(CSharpFormat.Instance.Parse(line.Value))));
+                        lines.AddRange(keyLinesReader_.Select(line=>line.Key.Value(CSharpFormat.Default.Parse(line.Value))));
                     }
                     else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_)
                     {
@@ -805,7 +805,7 @@ namespace Lexical.Localization
                         if (_stringLines != null && namePolicy is ILineParser parser)
                             lines.AddRange(_stringLines.ToLines(parser));
                         else
-                            lines.AddRange(stringLinesReader_.ToLines(namePolicy, CSharpFormat.Instance));
+                            lines.AddRange(stringLinesReader_.ToLines(namePolicy, CSharpFormat.Default));
                     }
                     else throw new ArgumentException($"Cannot read {reader.GetType().FullName}: {reader}");
 
@@ -862,7 +862,7 @@ namespace Lexical.Localization
                     }
                     else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_)
                     {
-                        lines.AddRange(stringLinesReader_.Select(line => new KeyValuePair<string, IFormatString>(line.Key, CSharpFormat.Instance.Parse(line.Value))));
+                        lines.AddRange(stringLinesReader_.Select(line => new KeyValuePair<string, IFormatString>(line.Key, CSharpFormat.Default.Parse(line.Value))));
                     }
                     else if (reader is IEnumerable<KeyValuePair<ILine, string>> keyLinesReader_)
                     {
@@ -871,7 +871,7 @@ namespace Lexical.Localization
                         if (_keyLines != null && namePolicy is ILinePrinter provider)
                             lines.AddRange(_keyLines.ToStringLines(provider));
                         else
-                            lines.AddRange(keyLinesReader_.ToStringLines(namePolicy, CSharpFormat.Instance));
+                            lines.AddRange(keyLinesReader_.ToStringLines(namePolicy, CSharpFormat.Default));
                     }
                     else throw new ArgumentException($"Cannot read {reader.GetType().FullName}: {reader}");
 

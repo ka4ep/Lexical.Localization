@@ -9,13 +9,13 @@ namespace TutorialLibrary1
         /// Localization source reference to embedded resource.
         /// </summary>
         public readonly LineEmbeddedSource LocalizationSource = 
-            LineReaderMap.Instance.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
+            LineReaderMap.Default.EmbeddedAssetSource(typeof(AssetSources).Assembly, "docs.TutorialLibrary1-de.xml");
 
         /// <summary>
         /// (Optional) External file localization source.
         /// </summary>
         public readonly LineFileSource ExternalLocalizationSource = 
-            LineReaderMap.Instance.FileAssetSource("Localization.xml", throwIfNotFound: false);
+            LineReaderMap.Default.FileAssetSource("Localization.xml", throwIfNotFound: false);
 
         public AssetSourcesB() : base()
         {

@@ -13,12 +13,12 @@ namespace Lexical.Localization.StringFormat
     /// </summary>
     public class FormatStringComparer : IEqualityComparer<IFormatString>, IComparer<IFormatString>
     {
-        private static FormatStringComparer instance = new FormatStringComparer(FormatStringPartComparer.Instance, FormatStringPartComparer.Instance);
+        private static FormatStringComparer instance = new FormatStringComparer(FormatStringPartComparer.Default, FormatStringPartComparer.Default);
 
         /// <summary>
         /// Default instance
         /// </summary>
-        public static FormatStringComparer Instance => instance;
+        public static FormatStringComparer Default => instance;
 
         IEqualityComparer<IFormatStringPart> partComparer;
         IComparer<IFormatStringPart> partComparer2;
@@ -112,7 +112,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Default instance
         /// </summary>
-        public static FormatStringPartComparer Instance => instance;
+        public static FormatStringPartComparer Default => instance;
 
         /// <summary>
         /// Compare format string parts for sorting order

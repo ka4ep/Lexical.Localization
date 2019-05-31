@@ -88,7 +88,7 @@ namespace Lexical.Localization
         /// <exception cref="ArgumentException">thrown if fileformat was not found</exception>
         public static IAssetBuilder AddLocalizationFile(this IAssetBuilder assetBuilder, string filename, ILineFormat namePolicy = default, ILineFileFormat fileFormat = null)
         {
-            if (fileFormat == null) fileFormat = LineReaderMap.Instance.GetFormatByFilename(filename);
+            if (fileFormat == null) fileFormat = LineReaderMap.Default.GetFormatByFilename(filename);
             assetBuilder.AddSource( fileFormat.FileAssetSource(filename, namePolicy) );
             return assetBuilder;
         }
@@ -104,7 +104,7 @@ namespace Lexical.Localization
         /// <exception cref="ArgumentException">thrown if fileformat was not found</exception>
         public static IAssetBuilder AddEmbeddedLocalizationFile(this IAssetBuilder assetBuilder, Assembly assembly, string resourceName, ILineFormat namePolicy = default, ILineFileFormat fileFormat = null)
         {
-            if (fileFormat == null) fileFormat = LineReaderMap.Instance.GetFormatByFilename(resourceName);
+            if (fileFormat == null) fileFormat = LineReaderMap.Default.GetFormatByFilename(resourceName);
             assetBuilder.AddSource( fileFormat.EmbeddedAssetSource(assembly, resourceName, namePolicy) );
             return assetBuilder;
         }

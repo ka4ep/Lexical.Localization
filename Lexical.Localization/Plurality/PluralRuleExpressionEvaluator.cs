@@ -114,7 +114,7 @@ namespace Lexical.Localization.Plurality
             }
 
             // Evaluate into number ranges
-            PluralNumberComparer comparer = PluralNumberComparer.Instance;
+            PluralNumberComparer comparer = PluralNumberComparer.Default;
             if (leftExp is IRangeExpression lr)
             {
                 IPluralNumber min = EvaluateAsNumber(lr.MinValue), max = EvaluateAsNumber(lr.MaxValue), number = EvaluateAsNumber(rightExp);
@@ -201,7 +201,7 @@ namespace Lexical.Localization.Plurality
             }
 
             // Evaluate into number ranges
-            PluralNumberComparer comparer = PluralNumberComparer.Instance;
+            PluralNumberComparer comparer = PluralNumberComparer.Default;
             if (leftExp is IRangeExpression lr)
             {
                 // Evaluate number.
@@ -266,7 +266,7 @@ namespace Lexical.Localization.Plurality
             }
 
             // Evaluate into number ranges
-            PluralNumberComparer comparer = PluralNumberComparer.Instance;
+            PluralNumberComparer comparer = PluralNumberComparer.Default;
             if (leftExp is IRangeExpression lr)
             {
                 // Evaluate number.

@@ -236,7 +236,7 @@ namespace Lexical.Localization
             ILine result = null;
             if (factory.TryCreate(previous, arguments, out result)) return result;
             ILineFactoryByArgument argumentAdapter;
-            if (LineFactoryByArgumentAdapter.Instance.TryGet(arguments.GetType(), out argumentAdapter) && argumentAdapter.TryCreate(factory, previous, arguments, out result)) return result;
+            if (LineFactoryByArgumentAdapter.Default.TryGet(arguments.GetType(), out argumentAdapter) && argumentAdapter.TryCreate(factory, previous, arguments, out result)) return result;
             throw new LineException(arguments, "Could not be appended");
         }
 
@@ -254,7 +254,7 @@ namespace Lexical.Localization
             if (factory == null) throw new LineException(previous, "Appender is not found.");
             if (factory is ILineFactoryByArgument argFactory && argFactory.TryCreate(factory, previous, arguments, out line)) return true;
             ILineFactoryByArgument argumentAdapter;
-            if (LineFactoryByArgumentAdapter.Instance.TryGet(arguments.GetType(), out argumentAdapter) && argumentAdapter.TryCreate(factory, previous, arguments, out line)) return true;
+            if (LineFactoryByArgumentAdapter.Default.TryGet(arguments.GetType(), out argumentAdapter) && argumentAdapter.TryCreate(factory, previous, arguments, out line)) return true;
             line = default;
             return false;
         }
