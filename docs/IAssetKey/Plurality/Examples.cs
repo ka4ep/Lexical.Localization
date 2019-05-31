@@ -33,10 +33,11 @@ namespace docs
                 #region Snippet_0b
                 ILineRoot root = new LineRoot();
                 ILine key = root.Key("Cats")
-                        .Value("{0} cat(s)")  // Default string
-                        .Inline("N:Zero", "no cats")
-                        .Inline("N:One", "a cat")
-                        .Inline("N:Plural", "{0} cats");
+                        .PluralRules(CLDR35.Instance)
+                        .Value("{cardinal:0} cat(s)")  // Default string
+                        .Inline("N:zero", "no cats")
+                        .Inline("N:one", "a cat")
+                        .Inline("N:other", "{0} cats");
                 #endregion Snippet_0b
                 for (int cats = 0; cats <= 2; cats++)
                     Console.WriteLine(key.Format(cats));
@@ -46,19 +47,23 @@ namespace docs
                 #region Snippet_0c
                 ILineRoot root = new LineRoot();
                 ILine key = root.Key("Cats")
+                        .PluralRules(CLDR35.Instance)
                         .Value("{0} cat(s)")   // Default string
-                        .Inline("Culture:en:N:Zero", "no cats")
-                        .Inline("Culture:en:N:One", "a cat")
-                        .Inline("Culture:en:N:Plural", "{0} cats")
-                        .Inline("Culture:fi:N:Zero", "ei kissoja")
-                        .Inline("Culture:fi:N:One", "yksi kissa")
-                        .Inline("Culture:fi:N:Plural", "{0} kissaa");
+                        .Inline("Culture:en", "{cardinal:0} cat(s)")
+                        .Inline("Culture:en:N:zero", "no cats")
+                        .Inline("Culture:en:N:one", "a cat")
+                        .Inline("Culture:en:N:other", "{0} cats")
+                        .Inline("Culture:fi", "{cardinal:0} kissa(a)")
+                        .Inline("Culture:fi:N:zero", "ei kissoja")
+                        .Inline("Culture:fi:N:one", "yksi kissa")
+                        .Inline("Culture:fi:N:other", "{0} kissaa");
                 #endregion Snippet_0c
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(key.Format(cats));
+                    Console.WriteLine(key.Culture("en").Format(cats));
             }
 
             {
+                // CLDR35 has rules for "" culture
                 #region Snippet_1a
                 IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample0b.xml");
                 ILine key = new LineRoot(asset).Key("Cats");
@@ -73,10 +78,11 @@ namespace docs
                 // Plurality permutations for argument 0
                 #region Snippet_2
                 ILine key = LineRoot.Global.Key("CatsDogs")
-                        .Value("{0} cat(s) and {1} dog(s)")
-                        .Inline("N:Zero", "no cats and {1} dog(s)")
-                        .Inline("N:One", "a cat and {1} dog(s)")
-                        .Inline("N:Plural", "{0} cats and {1} dog(s)");
+                        .PluralRules(CLDR35.Instance)
+                        .Value("{cardinal:0} cat(s) and {1} dog(s)")
+                        .Inline("N:zero", "no cats and {1} dog(s)")
+                        .Inline("N:one", "a cat and {1} dog(s)")
+                        .Inline("N:other", "{0} cats and {1} dog(s)");
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)

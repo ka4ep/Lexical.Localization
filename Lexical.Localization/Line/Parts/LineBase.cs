@@ -375,7 +375,7 @@ namespace Lexical.Localization
             get
             {
                 ILine line = this;
-                if (name != null) line = line.Append<ILineNonCanonicalKey, string, string>("Key", name);                
+                if (name != null) line = line.Key(name);                
                 LineString printedString = line.ResolveString();
                 if (printedString.Value == null)
                     return new LocalizedString(name, line.Print(), true);
@@ -395,7 +395,7 @@ namespace Lexical.Localization
             get
             {
                 ILine line = this;
-                if (name != null) line = line.Append<ILineNonCanonicalKey, string, string>("Key", name);
+                if (name != null) line = line.Key(name);
                 if (arguments != null) line = line.Append<ILineFormatArgs, object[]>(arguments);
                 LineString printedString = line.ResolveString();
                 if (printedString.Value == null)

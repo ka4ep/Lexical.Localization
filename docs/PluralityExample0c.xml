@@ -2,12 +2,13 @@
 <Localization xmlns:Culture="urn:lexical.fi:Culture"
               xmlns:Key="urn:lexical.fi:Key"
               xmlns:N="urn:lexical.fi:N"
-              xmlns="urn:lexical.fi">
+              xmlns="urn:lexical.fi"
+              PluralRules="Lexical.Localization.CLDR35">
 
   <!-- Example: One plurality case for one numeric argument {0} -->
   <Key:Cats>
-    {0} cats
-    <N:One>a cat</N:One>
+    {cardinal:0} cats
+    <N:one>a cat</N:one>
   </Key:Cats>
 
 </Localization>

@@ -505,7 +505,11 @@ namespace Lexical.Localization
         {
             ILine result = left;
             StructList16<ILine> args = new StructList16<ILine>();
-            for (ILine l = right; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+            for (ILine l = right; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+            }
+
             for (int i = args.Count - 1; i >= 0; i--)
             {
                 ILine l = args[i];

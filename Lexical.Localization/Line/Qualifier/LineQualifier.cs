@@ -27,7 +27,7 @@ namespace Lexical.Localization
         public override void Add(ILineQualifier qualifier)
         {
             if (qualifier == null) throw new ArgumentNullException(nameof(qualifier));
-            if (qualifier is ILineParameterQualifierEvaluatable eval) { base.Add(qualifier); return; }
+            if (qualifier is ILineParameterQualifier parameterQualifier) { base.Add(parameterQualifier); return; }
             if (qualifiers == null) qualifiers = new List<ILineQualifier>();
             qualifiers.Add(qualifier);
         }

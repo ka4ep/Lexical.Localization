@@ -243,7 +243,7 @@ namespace Lexical.Localization.StringFormat
                         // Placeholder as number
                         IPluralNumber number = ph_value == null ? DecimalNumber.Empty : new DecimalNumber.Text(ph_value?.ToString(), culture);
                         // Query possible cases for the plural rules
-                        PluralRuleInfo query = new PluralRuleInfo(null, ph.PluralCategory, culture?.Name, null, -1);                        
+                        PluralRuleInfo query = new PluralRuleInfo(null, ph.PluralCategory, culture?.Name??"", null, -1);                        
                         IPluralRule[] cases = features.PluralRules.Evaluate(query, number);
                         if (cases == null) continue;
                         permutations.AddPlaceholder(ph, cases);
@@ -261,8 +261,19 @@ namespace Lexical.Localization.StringFormat
                         ILine line_for_plurality_arguments = ResolveKeyToLine(key_with_plurality, ref features, ref culture);
                         // Got no match
                         if (line_for_plurality_arguments == null) continue;
+                        // Scan value
+                        try
+                        {
+                            features.ScanValueFeature(line_for_plurality_arguments);
+                        }
+                        catch (Exception e)
+                        {
+                            features.Log(e);
+                            features.Status.Up(LineStatus.FailedUnknownReason);
+                            return new LineString(key, null, features.Status);
+                        }
                         // Parse value
-                        IFormatString value_for_plurality = line_for_plurality_arguments.GetValue(Resolvers);
+                        IFormatString value_for_plurality = features.EffectiveValue;
                         // Add status from parsing the value
                         features.Status.UpFormat(value_for_plurality.Status);
                         // Value has error
@@ -508,7 +519,7 @@ namespace Lexical.Localization.StringFormat
                                             {
                                                 if (culture == null) culture = c;
                                                 features.Status.UpResolve(LineStatus.ResolveOkFromKey);
-                                                features.Status.UpCulture(LineStatus.CultureWarningNoMatch);
+                                                features.Status.UpCulture(LineStatus.CultureOkNoCultureDefaultLine);
                                                 return key;
                                             }
                                             else if (c.Equals(features.Culture))
@@ -531,6 +542,73 @@ namespace Lexical.Localization.StringFormat
                         features.Status.UpResolve(LineStatus.CultureErrorCulturePolicyException);
                         features.Log(e);
                     }
+                }
+
+                // Key has no explicit culture - try this _after_ culture policy
+                if (culture == null)
+                {
+                    foreach (var stage in ResolveSequence)
+                        switch (stage)
+                        {
+                            // Try asset
+                            case ResolveSource.Asset:
+                                for (int i = 0; i < features.Assets.Count; i++)
+                                {
+                                    try
+                                    {
+                                        IAsset asset = features.Assets[i];
+                                        if ((line = asset.GetString(key)) != null)
+                                        {
+                                            features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
+                                            features.Status.UpCulture(LineStatus.CultureOkNoCultureDefaultLine);
+                                            features.ScanFeatures(line);
+                                            return line;
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        features.Status.UpResolve(LineStatus.ResolveErrorAssetException);
+                                        features.Log(e);
+                                    }
+                                }
+                                break;
+
+                            // Try inlines
+                            case ResolveSource.Inlines:
+                                for (int i = 0; i < features.Inlines.Count; i++)
+                                {
+                                    try
+                                    {
+                                        if (features.Inlines[i].TryGetValue(key, out line))
+                                        {
+                                            features.Status.UpResolve(LineStatus.ResolveOkFromInline);
+                                            features.Status.UpCulture(LineStatus.CultureOkNoCultureDefaultLine);
+                                            features.ScanFeatures(line);
+                                            return line;
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        features.Status.UpResolve(LineStatus.ResolveErrorInlinesException);
+                                        features.Log(e);
+                                    }
+                                }
+                                break;
+
+                            case ResolveSource.Key:
+                                // Key has explicit culture and value, use the value
+                                if (features.Value != null || features.ValueText != null)
+                                {
+                                    if (culture == null) culture = RootCulture;
+                                    features.Status.UpResolve(LineStatus.ResolveOkFromKey);
+                                    features.Status.UpCulture(LineStatus.CultureOkNoCultureDefaultLine);
+                                    return key;
+                                }
+                                break;
+                        }
+
+                    // No matching value was found for the requested key and the explicit culture in the key.
+                    features.Status.UpCulture(LineStatus.CultureErrorCultureNoMatch);
                 }
 
                 // No match

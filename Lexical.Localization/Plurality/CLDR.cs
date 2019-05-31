@@ -65,12 +65,12 @@ namespace Lexical.Localization
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class CLDR35 : CLDR, IEnumerable<IPluralRule>, IPluralRulesQueryable, IPluralRulesEnumerable
+    public class CLDR35 : CLDR, IPluralRulesQueryable, IPluralRulesEnumerable
     {
         /// <summary>
         /// Lazy loader.
         /// </summary>
-        private static readonly Lazy<CLDR35> instance = new Lazy<CLDR35>();
+        private static readonly Lazy<IPluralRules> instance = new Lazy<IPluralRules>(() => new PluralRulesEvaluatable((IPluralRules)new CLDR35()));
 
         /// <summary>
         /// Unicode CLDR.
@@ -78,7 +78,7 @@ namespace Lexical.Localization
         /// Reads embedded CLDR plural data files.
         /// Data files are licensed under <see href="https://unicode.org/repos/cldr/tags/release-35/unicode-license.txt"/>.
         /// </summary>
-        public static CLDR35 Instance => instance.Value;
+        public static IPluralRules Instance => instance.Value;
 
         /// <summary>
         /// Rule set
@@ -640,12 +640,12 @@ namespace Lexical.Localization
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class CLDR : PluralRulesEvaluatable, IPluralRules
+    public class CLDR : IPluralRules
     {
         /// <summary>
         /// Create abstract CLDR ruleset.
         /// </summary>
-        public CLDR() : base() { ruleSource = this; }
+        public CLDR() { }
 
         /// <summary>ast, ca, de, en, et, fi, fy, gl, ia, io, it, ji, nl, pt-PT, sc, scn, sv, sw, ur, yi</summary>
         protected string[] c_a34e8318 = new[] { "ast", "ca", "de", "en", "et", "fi", "fy", "gl", "ia", "io", "it", "ji", "nl", "pt-PT", "sc", "scn", "sv", "sw", "ur", "yi" };

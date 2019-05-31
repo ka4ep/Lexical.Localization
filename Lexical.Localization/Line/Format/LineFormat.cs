@@ -193,7 +193,7 @@ namespace Lexical.Localization
                 string parameterValue = UnescapeLiteral(k_value.Value);
                 parameters.Add(new KeyValuePair<string, string>(parameterName, parameterValue));
             }
-            return false;
+            return true;
         }
 
         /// <summary>

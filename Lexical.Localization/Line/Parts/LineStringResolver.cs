@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// Line part that carries <see cref="ILineStringResolver"/>. 
     /// </summary>
     [Serializable]
-    public class LineStringResolverPart : LineBase, ILineStringResolver, ILineArguments<IStringResolver>
+    public class LineStringResolver : LineBase, ILineStringResolver, ILineArguments<IStringResolver>
     {
         /// <summary>
         /// Localization resolver.
@@ -36,7 +36,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="LineResolver"></param>
-        public LineStringResolverPart(ILineFactory appender, ILine prevKey, IStringResolver LineResolver) : base(appender, prevKey)
+        public LineStringResolver(ILineFactory appender, ILine prevKey, IStringResolver LineResolver) : base(appender, prevKey)
         {
             this.resolver = LineResolver;
         }
@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public LineStringResolverPart(SerializationInfo info, StreamingContext context) : base(info, context)
+        public LineStringResolver(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.resolver = info.GetValue("LineResolver", typeof(IStringResolver)) as IStringResolver;
         }
@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public virtual bool TryCreate(ILineFactory appender, ILine previous, IStringResolver LineResolver, out ILineStringResolver line)
         {
-            line = new LineStringResolverPart(appender, previous, LineResolver);
+            line = new LineStringResolver(appender, previous, LineResolver);
             return true;
         }
     }

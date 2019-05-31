@@ -3,15 +3,16 @@
               xmlns:Key="urn:lexical.fi:Key"
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1" 
               xmlns:N2="urn:lexical.fi:N2" xmlns:N3="urn:lexical.fi:N3"
-              xmlns="urn:lexical.fi">
+              xmlns="urn:lexical.fi"
+              PluralRules="Lexical.Localization.CLDR35">
 
   <!-- Example: Plurality for one numeric argument {2} -->
   <Key:CatsDogsPoniesHorses>
-    {0} cat(s), {1} dog(s), {2} poni(es) and {3} horse(s)
-    
-    <N2:Zero>{0} cat(s), {1} dog(s), no ponies and {3} horse(s)</N2:Zero>
-    <N2:One>{0} cat(s), {1} dog(s), a pony and {3} horse(s)</N2:One>
-    <N2:Plural>{0} cat(s), {1} dog(s), {2} ponies and {3} horse(s)</N2:Plural>
+    {0} cat(s), {1} dog(s), {cardinal:2} poni(es) and {3} horse(s)
+
+    <N2:zero>{0} cat(s), {1} dog(s), no ponies and {3} horse(s)</N2:zero>
+    <N2:one>{0} cat(s), {1} dog(s), a pony and {3} horse(s)</N2:one>
+    <N2:other>{0} cat(s), {1} dog(s), {2} ponies and {3} horse(s)</N2:other>
     
   </Key:CatsDogsPoniesHorses>
 

@@ -11,9 +11,9 @@ namespace docs
         {
             #region Snippet_1
             // Create localization source
-            var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
+            var source = new List<ILine> { LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello").Value("Hello World!") };
             // Create asset
-            IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
+            IAsset asset = new LocalizationAsset(source);
             // Create culture policy
             ICulturePolicy culturePolicy = new CulturePolicy();
             // Create root
@@ -23,7 +23,7 @@ namespace docs
             {
                 #region Snippet_2
                 // Assign as IStringLocalizer, use "MyController" as root.
-                IStringLocalizer stringLocalizer = root.Section("MyController") as IStringLocalizer;
+                IStringLocalizer stringLocalizer = root.Section("MyController").AsStringLocalizer();
                 #endregion Snippet_2
             }
 
@@ -42,8 +42,7 @@ namespace docs
                 #region Snippet_4a
                 // Assign to IStringLocalizer for the class MyController
                 IStringLocalizer<MyController> stringLocalizer = 
-                    root.Type(typeof(MyController)) 
-                    as IStringLocalizer<MyController>;
+                    root.Type(typeof(MyController)).AsStringLocalizer<MyController>();
                 #endregion Snippet_4a
             }
             {
@@ -52,8 +51,7 @@ namespace docs
                 IStringLocalizerFactory stringLocalizerFactory = root as IStringLocalizerFactory;
                 // Create IStringLocalizer for the class MyController
                 IStringLocalizer<MyController> stringLocalizer = 
-                    stringLocalizerFactory.Create(typeof(MyController)) 
-                    as IStringLocalizer<MyController>;
+                    stringLocalizerFactory.Create(typeof(MyController)) as IStringLocalizer<MyController>;
                 #endregion Snippet_4b
             }
 

@@ -132,9 +132,9 @@ namespace Lexical.Localization.Internal
         public static Func<Assembly, string, bool, Type> DefaultTypeResolver = (Assembly a, string typename, bool throwOnError) =>
         {
             // Assembly name was specified and it was resolved into Assembly, now try to load the Type from there
-            if (a != null) return a.GetType(typename);
+            if (a != null) return a.GetType(typename, false, false);
             // There was no assembly name specified in the type name
-            else return Type.GetType(typename);
+            else return /*Type.GetType(typename, false, false);*/ typeof(BaseTypeResolver).Assembly.GetType(typename, false, false);
         };
 
 

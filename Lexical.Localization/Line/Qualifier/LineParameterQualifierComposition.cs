@@ -159,7 +159,7 @@ namespace Lexical.Localization
                         if (!r.QualifyParameter(parameter, occuranceIndex)) return false;
             }
 
-            if (nameParameterRules != null && occuranceParameterRules != null)
+            if (nameOccuranceParameterRules != null)
             {
                 List<ILineParameterQualifierEvaluatable> list = nameOccuranceParameterRules.TryGetList(new KeyValuePair<string, int>(parameter.ParameterName, occuranceIndex));
                 if (list != null)

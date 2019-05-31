@@ -288,7 +288,7 @@ namespace Lexical.Localization
         {
             ILine result = null;
             // <line type="MyClass" type="something" key="something">
-            if (element.Name == NameLine)
+            if (element.Name == NameLine || element.Name == NameRoot)
             {
                 result = null;
             }
@@ -310,6 +310,7 @@ namespace Lexical.Localization
                     {
                         string parameterName = attribute.Name.LocalName;
                         string parameterValue = attribute.Value;
+                        if (parameterName.StartsWith("xml")) continue;
 
                         Match m = occuranceIndexParser.Match(parameterName);
                         Group g_name = m.Groups["name"];

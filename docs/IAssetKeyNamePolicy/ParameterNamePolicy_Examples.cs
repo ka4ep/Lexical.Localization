@@ -73,6 +73,28 @@ namespace docs
                 ILine key = LineFormat.Parameters.Parse(str, LineRoot.Global);
                 #endregion Snippet_7
             }
+
+            {
+                #region Snippet_8a
+                //    line = [LineCulture]:[LineType]:[LineKeyCanonical]:[LineKeyCanonical]:[Linevalue]
+                ILine line = LineFormat.Line.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:Value:Hello");
+                #endregion Snippet_8a
+
+                #region Snippet_8b
+                //    key = [LineKeyNonCanonical]:[LineKeyNonCanonical]:[LineKeyCanonical]
+                ILine key = LineFormat.Key.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:Value:Hello");
+                #endregion Snippet_8b
+
+                #region Snippet_8c
+                //    parameters = [LineKeyNonCanonical]:[LineKeyNonCanonical]:[LineKeyCanonical]
+                ILine parameters = LineFormat.Parameters.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:Value:Hello");
+                #endregion Snippet_8c
+
+                #region Snippet_8d
+                //    parametersWithValue = [LineKeyNonCanonical]:[LineKeyNonCanonical]:[LineKeyCanonical]:[LineHint]
+                ILine parametersWithValue = LineFormat.ParametersInclValue.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:Value:Hello");
+                #endregion Snippet_8d
+            }
         }
     }
 }

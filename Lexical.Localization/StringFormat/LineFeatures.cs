@@ -201,6 +201,61 @@ namespace Lexical.Localization.StringFormat
         }
 
         /// <summary>
+        /// Scan value feature from a line
+        /// </summary>
+        /// <param name="line"></param>
+        /// <exception cref="LineException">If resolve fails.</exception>
+        public void ScanValueFeature(ILine line)
+        {
+            bool valueSet = false;
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineStringFormat sf && sf.StringFormat != null) StringFormat = sf.StringFormat;
+                if (!valueSet && l is ILineValue lv && lv.Value != null) { Value = lv.Value; ValueText = null; valueSet = true; }
+
+                if (l is ILineParameterEnumerable lineParameters)
+                {
+                    foreach (ILineParameter lineParameter in lineParameters)
+                    {
+                        string name = lineParameter.ParameterName, value = lineParameter.ParameterValue;
+
+                        if (name == "StringFormat" && !(l is ILineStringFormat stringFormat_ && stringFormat_.StringFormat != null /*to not add second time*/))
+                        {
+                            IStringFormat _stringFormat;
+                            if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
+                        }
+
+                        else if (!valueSet && name == "Value")
+                        {
+                            valueSet = true;
+                            Value = null;
+                            ValueText = value; // Parse later
+                        }
+                    }
+                }
+
+                if (l is ILineParameter parameter)
+                {
+                    string name = parameter.ParameterName, value = parameter.ParameterValue;
+
+                    if (name == "StringFormat" && !(l is ILineStringFormat stringFormat_ && stringFormat_.StringFormat != null /*to not add second time*/))
+                    {
+                        IStringFormat _stringFormat;
+                        if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
+                    }
+
+                    else if (!valueSet && name == "Value")
+                    {
+                        valueSet = true;
+                        Value = null;
+                        ValueText = value; // Parse later
+                    }
+
+                }
+            }
+        }
+
+        /// <summary>
         /// Log error <paramref name="e"/>, if loggers are configured.
         /// </summary>
         /// <param name="e"></param>

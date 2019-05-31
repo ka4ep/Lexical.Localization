@@ -2,24 +2,26 @@
 <Localization xmlns:Culture="urn:lexical.fi:Culture"
               xmlns:Key="urn:lexical.fi:Key"
               xmlns:N="urn:lexical.fi:N"
-              xmlns="urn:lexical.fi">
+              xmlns="urn:lexical.fi"
+              PluralRules="Lexical.Localization.CLDR35">
 
   <!-- Default string from Inline scanned by Lexical.Localization.Tool -->
   <Key:Cats>{0} cat(s)</Key:Cats>
 
   <!-- Translator added strings for "en" -->
   <Key:Cats Culture="en">
-    {0} cat(s)
-    <N:Zero>no cats</N:Zero>
-    <N:One>a cat</N:One>
-    <N:Plural>{0} cats</N:Plural>
+    {cardinal:0} cat(s)
+    <N:zero>no cats</N:zero>
+    <N:one>a cat</N:one>
+    <N:other>{0} cats</N:other>
   </Key:Cats>
   
   <!-- Translator added strings for "fi" -->
   <Key:Cats Culture="fi">
-    <N:Zero>ei kissoja</N:Zero>
-    <N:One>yksi kissa</N:One>
-    <N:Plural>{0} kissaa</N:Plural>
+    {cardinal:0} kissa(a)
+    <N:zero>ei kissoja</N:zero>
+    <N:one>yksi kissa</N:one>
+    <N:other>{0} kissaa</N:other>
   </Key:Cats>
 
 </Localization>

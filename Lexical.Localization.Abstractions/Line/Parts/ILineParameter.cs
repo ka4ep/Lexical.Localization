@@ -343,7 +343,7 @@ namespace Lexical.Localization
                         // Fix occurance
                         int occIx = 0;
                         for (int j=c; j>=0; j--)
-                            if (list[j].Item1.ParameterName == name) list[j] = (list[j].Item1, ++occIx);
+                            if (list[j].Item1.ParameterName == name) list[j] = (list[j].Item1, occIx++);
                     }
                 }
 
@@ -356,7 +356,7 @@ namespace Lexical.Localization
                     // Fix occurance
                     int occIx = 0;
                     for (int j = c; j >= 0; j--)
-                        if (list[j].Item1.ParameterName == name) list[j] = (list[j].Item1, ++occIx);
+                        if (list[j].Item1.ParameterName == name) list[j] = (list[j].Item1, occIx++);
                 }
             }
         }

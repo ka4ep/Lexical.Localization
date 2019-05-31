@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// "Culture" key that carries <see cref="CultureInfo"/>. 
     /// </summary>
     [Serializable]
-    public class LineCulture : LineKey, ILineCulture, ILineNonCanonicalKey
+    public class LineCulture : LineKey, ILineCulture, ILineNonCanonicalKey, ILineArguments<ILineCulture, CultureInfo>
     {
         /// <summary>
         /// CultureInfo, null if non-standard culture.
@@ -25,6 +25,11 @@ namespace Lexical.Localization
         /// Culture property
         /// </summary>
         public CultureInfo Culture { get => culture; set => throw new InvalidOperationException(); }
+
+        /// <summary>
+        /// Culture property
+        /// </summary>
+        CultureInfo ILineArguments<ILineCulture, CultureInfo>.Argument0 => culture;
 
         /// <summary>
         /// Create new culture key.
@@ -80,7 +85,7 @@ namespace Lexical.Localization
     /// "Culture" key that carries <see cref="CultureInfo"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerCulture : _StringLocalizerKey, ILineCulture, ILineNonCanonicalKey
+    public class StringLocalizerCulture : _StringLocalizerKey, ILineCulture, ILineNonCanonicalKey, ILineArguments<ILineCulture, CultureInfo>
     {
         /// <summary>
         /// CultureInfo, null if non-standard culture.
@@ -91,6 +96,11 @@ namespace Lexical.Localization
         /// Culture property
         /// </summary>
         public CultureInfo Culture { get => culture; set => throw new InvalidOperationException(); }
+
+        /// <summary>
+        /// Culture property
+        /// </summary>
+        CultureInfo ILineArguments<ILineCulture, CultureInfo>.Argument0 => culture;
 
         /// <summary>
         /// Create new culture key.

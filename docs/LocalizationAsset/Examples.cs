@@ -79,15 +79,22 @@ namespace docs
                 IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
                 #region Snippet_3a
                 // Extract all keys
-                foreach (ILine _key in asset.GetLines(null))
+                foreach (var _key in asset.GetStringLines(null))
                     Console.WriteLine(_key);
                 #endregion Snippet_3a
-
+            }
+            { 
                 #region Snippet_3b
+                var source = new List<ILine> {
+                    LineAppender.Default.Type("MyController").Key("hello").Value("Hello World!"),
+                    LineAppender.Default.Type("MyController").Key("hello").Culture("en").Value("Hello World!"),
+                    LineAppender.Default.Type("MyController").Key("hello").Culture("de").Value("Hallo Welt!")
+                };
                 // Keys can be filtered
-                ILine filterKey = LineRoot.Global.Culture("de");
-                foreach (ILine _key in asset.GetLines(filterKey))
-                    Console.WriteLine(_key);
+                ILine filterKey = LineAppender.Default.Culture("de");
+                IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
+                foreach (var _key in asset.GetLines(filterKey))
+                    Console.WriteLine(_key.Print(LineFormat.ParametersInclValue));
                 #endregion Snippet_3b
 
             }

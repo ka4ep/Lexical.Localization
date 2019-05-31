@@ -2,14 +2,15 @@
 <Localization xmlns:Culture="urn:lexical.fi:Culture"
               xmlns:Key="urn:lexical.fi:Key"
               xmlns:N="urn:lexical.fi:N"
-              xmlns="urn:lexical.fi">
+              xmlns="urn:lexical.fi"
+              PluralRules="Lexical.Localization.CLDR35">
 
   <!-- Example: Plurality for one numeric argument {0} -->
   <Key:Cats>
-    {0} cat(s)
-    <N:Zero>no cats</N:Zero>
-    <N:One>a cat</N:One>
-    <N:Plural>{0} cats</N:Plural>
+    {cardinal:0} cat(s)
+    <N:zero>no cats</N:zero>
+    <N:one>a cat</N:one>
+    <N:other>{0} cats</N:other>
   </Key:Cats>
 
 </Localization>

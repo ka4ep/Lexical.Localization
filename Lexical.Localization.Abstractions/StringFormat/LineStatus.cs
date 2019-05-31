@@ -55,10 +55,12 @@ namespace Lexical.Localization.StringFormat
         //// Culture - Step that matches active culture, culture policy to strings available in asset
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         CultureOk = 0x01UL << Shift.Culture,
+        /// <summary>Key contained no culture, and it matched to default line</summary>
+        CultureOkNoCultureDefaultLine = 0x04UL << Shift.Culture,
         /// <summary>Key contained an explicit culture, and it matched to a line</summary>
-        CultureOkMatchedCulture = 0x04UL << Shift.Culture,
+        CultureOkMatchedCulture = 0x08UL << Shift.Culture,
         /// <summary>Key contained culture policy which provided a culture that matched to a line</summary>
-        CultureOkMatchedCulturePolicy = 0x08UL << Shift.Culture,
+        CultureOkMatchedCulturePolicy = 0x0CUL << Shift.Culture,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
         CultureWarning = 0x20UL << Shift.Culture,
         /// <summary>Culture did not match, fallback culture was used</summary>

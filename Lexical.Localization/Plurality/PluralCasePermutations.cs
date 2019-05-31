@@ -72,14 +72,21 @@ namespace Lexical.Localization.Plurality
             {
                 ILine result = key;
 
+                // TODO Change this algorithm so that: 
+                //  1. offers all optional cases
+                //  2. all permutations of optional and mandatory
+                //  3. the one mandatory case
+                //  4. no cases
+                // Update contract above.
+
                 for (int ph = 0; ph < placeholders.Count; ph++)
                 {
                     var e = placeholders[ph];
                     int len = e.Cases.Length + 1;
-                    int ph_ix = index % (len + 1);
-                    index /= (len + 1);
+                    int ph_ix = index % len;
+                    index /= len;
 
-                    if (ph_ix < len)
+                    if (ph_ix < e.Cases.Length)
                     {
                         string caseName = e.Cases[ph_ix].Info.Case;
                         int n_ix = e.Placeholder.PlaceholderIndex;

@@ -19,7 +19,7 @@ namespace Lexical.Localization.StringFormat
             .Add(Lexical.Localization.Plurality.PluralRulesResolver.Default)
             .Add(Lexical.Localization.CultureResolver.Default)
             .Add(Lexical.Localization.CulturePolicyResolver.Default)
-            //.Add(Lexical.Localization.Internal.TypeResolver.Default)  // <-- No practical reasons to resolve "Type" parameters. String keys do better.
+            //.Add(Lexical.Localization.StringFormat.TypeResolver.Default)  // <-- No practical reasons to resolve "Type" parameters. String keys do better.
             .ReadOnly();
 
         /// <summary>

@@ -22,6 +22,7 @@ namespace Lexical.Localization
     /// Parameters with same sort order, are printed out in order of occurance in the key, from left (root) to right (tail).
     /// For example: root.Section("1").Section("2") is printed out as "1.2".
     /// </summary>
+    [Obsolete("doesn't work well")]
     public class LineParameterPrinter : ILinePrinter, ICloneable
     {
         /// <summary>
