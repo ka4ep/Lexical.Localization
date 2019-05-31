@@ -68,9 +68,13 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new .json reader.
         /// </summary>
-        public JsonLinesReader() : this("json", LineAppender.Default)
-        {
-        }
+        public JsonLinesReader() : this("json", LineAppender.Default) { }
+
+        /// <summary>
+        /// Create new .json reader.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        public JsonLinesReader(ILineFactory lineFactory) : this("json", lineFactory) { }
 
         /// <summary>
         /// Create new .json reader.

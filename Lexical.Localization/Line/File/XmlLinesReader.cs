@@ -96,6 +96,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new xml reader
         /// </summary>
+        /// <param name="lineFactory"></param>
+        public XmlLinesReader(ILineFactory lineFactory) : this("xml", lineFactory, default) { }
+
+        /// <summary>
+        /// Create new xml reader
+        /// </summary>
         /// <param name="extension"></param>
         /// <param name="lineFactory"></param>
         /// <param name="xmlReaderSettings"></param>
@@ -127,7 +133,11 @@ namespace Lexical.Localization
         /// <param name="lineFormat">uses parameter info</param>
         /// <returns></returns>
         public ILineTree ReadLineTree(Stream stream, ILineFormat lineFormat = default)
-            => ReadElement(Load(stream).Root, new LineTree(), null, lineFormat.GetParameterInfos());
+        {
+            ILineFactory _lineFactory;
+            if (!lineFormat.TryGetLineFactory(out _lineFactory)) _lineFactory = LineFactory;
+            return ReadElement(Load(stream).Root, new LineTree(), null, _lineFactory);
+        }
 
         /// <summary>
         /// Read key tree from <paramref name="text"/>.
@@ -136,7 +146,11 @@ namespace Lexical.Localization
         /// <param name="lineFormat">uses parameter info</param>
         /// <returns></returns>
         public ILineTree ReadLineTree(TextReader text, ILineFormat lineFormat = default)
-            => ReadElement(Load(text).Root, new LineTree(), null, lineFormat.GetParameterInfos());
+        {
+            ILineFactory _lineFactory;
+            if (!lineFormat.TryGetLineFactory(out _lineFactory)) _lineFactory = LineFactory;
+            return ReadElement(Load(text).Root, new LineTree(), null, _lineFactory);
+        }
 
         /// <summary>
         /// Create default reader settings.
@@ -188,10 +202,11 @@ namespace Lexical.Localization
         /// <param name="element"></param>
         /// <param name="parent"></param>
         /// <param name="correspondenceContext">(optional) Correspondence to write element-tree mappings</param>
+        /// <param name="_lineFactory">line factory to use.</param>
         /// <returns>parent</returns>
-        public ILineTree ReadElement(XElement element, ILineTree parent, XmlCorrespondence correspondenceContext)
+        public ILineTree ReadElement(XElement element, ILineTree parent, XmlCorrespondence correspondenceContext, ILineFactory _lineFactory)
         {
-            ILine key = ReadKey(element, parameterInfos);
+            ILine key = ReadKey(element, parent, _lineFactory);
 
             if (key != null)
             {
@@ -220,7 +235,7 @@ namespace Lexical.Localization
                 if (element.HasElements)
                 {
                     foreach (XElement e in element.Elements())
-                        ReadElement(e, node, correspondenceContext, parameterInfos);
+                        ReadElement(e, node, correspondenceContext, _lineFactory);
                 }
             }
             else
@@ -228,7 +243,7 @@ namespace Lexical.Localization
                 if (element.HasElements)
                 {
                     foreach (XElement e in element.Elements())
-                        ReadElement(e, parent, correspondenceContext, parameterInfos);
+                        ReadElement(e, parent, correspondenceContext, _lineFactory);
                 }
             }
 
@@ -266,10 +281,12 @@ namespace Lexical.Localization
         /// Read key from <paramref name="element"/>.
         /// </summary>
         /// <param name="element"></param>
+        /// <param name="parent"></param>
+        /// <param name="_lineFactory"></param>
         /// <returns>key or null</returns>
-        public ILine ReadKey(XElement element)
+        public ILine ReadKey(XElement element, ILineTree parent, ILineFactory _lineFactory)
         {
-            ILine result;
+            ILine result = null;
             // <line type="MyClass" type="something" key="something">
             if (element.Name == NameLine)
             {
@@ -280,7 +297,7 @@ namespace Lexical.Localization
             {
                 string parameterName = element.Name.NamespaceName.Substring(URN_.Length);
                 string parameterValue = element.Name.LocalName;
-                result = Append(null, parameterName, parameterValue);
+                result = Append(parent, _lineFactory, result, parameterName, parameterValue);
             }
             else return null;
 
@@ -298,7 +315,7 @@ namespace Lexical.Localization
                         Group g_name = m.Groups["name"];
                         if (m.Success && g_name.Success) parameterName = g_name.Value;
                         // Append parameter
-                        result = Append(result, parameterName, parameterValue);
+                        result = Append(parent, _lineFactory, result, parameterName, parameterValue);
                     }
                 }
             }
@@ -306,12 +323,21 @@ namespace Lexical.Localization
             return result;
         }
 
-        ILine Append(ILineTree node, ILine prev, string parameterName, string parameterValue)
+        /// <summary>
+        /// Append value to <paramref name="prev"/>>
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="_lineFactory"></param>
+        /// <param name="prev">(optional)</param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        /// <returns></returns>
+        ILine Append(ILineTree parent, ILineFactory _lineFactory, ILine prev, string parameterName, string parameterValue)
         {
             if (parameterName == "Value")
             {
                 IStringFormat stringFormat;
-                if (node.TryGetStringFormat(resolver, out stringFormat))
+                if (parent.TryGetStringFormat(resolver, out stringFormat))
                 {
                     IFormatString valueString = stringFormat.Parse(parameterValue);
                     return LineFactory.Create<ILineValue, IFormatString>(prev, valueString);
@@ -333,37 +359,14 @@ namespace Lexical.Localization
 
 
         /// <summary>
-        /// List all children of <paramref name="parent"/> with a readable <see cref="ILine"/>.
+        /// List all children of <paramref name="element"/> with a readable <see cref="ILine"/>.
         /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="parameterInfos"></param>
+        /// <param name="element"></param>
+        /// <param name="node"></param>
+        /// <param name="_lineFactory"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<ILine, XElement>> ListChildrenWithKeys(XElement parent, IParameterInfos parameterInfos)
-            => parent.Elements().Select(e => new KeyValuePair<ILine, XElement>(ReadKey(e, parameterInfos), e)).Where(line => line.Key != null);
-
-        /*
-        public class TrimmerXmlReader : XmlTextReader
-        {
-            public TrimmerXmlReader(Stream input) : base(input) { }
-            public TrimmerXmlReader(TextReader input) : base(input) { }
-            public TrimmerXmlReader(string url) : base(url) { }
-            public TrimmerXmlReader(Stream input, XmlNameTable nt) : base(input, nt) { }
-            public TrimmerXmlReader(TextReader input, XmlNameTable nt) : base(input, nt) { }
-            public TrimmerXmlReader(string url, Stream input) : base(url, input) { }
-            public TrimmerXmlReader(string url, TextReader input) : base(url, input) { }
-            public TrimmerXmlReader(string url, XmlNameTable nt) : base(url, nt) { }
-            public TrimmerXmlReader(Stream xmlFragment, XmlNodeType fragType, XmlParserContext context) : base(xmlFragment, fragType, context) { }
-            public TrimmerXmlReader(string url, Stream input, XmlNameTable nt) : base(url, input, nt) { }
-            public TrimmerXmlReader(string url, TextReader input, XmlNameTable nt) : base(url, input, nt) { }
-            public TrimmerXmlReader(string xmlFragment, XmlNodeType fragType, XmlParserContext context) : base(xmlFragment, fragType, context) { }
-            protected TrimmerXmlReader() { }
-            protected TrimmerXmlReader(XmlNameTable nt) : base(nt) { }
-            public override bool Read()
-            {
-                bool ok = base.Read();
-                return ok;
-            }
-        }*/
+        public IEnumerable<KeyValuePair<ILine, XElement>> ListChildrenWithKeys(XElement element, ILineTree node, ILineFactory _lineFactory)
+            => element.Elements().Select(e => new KeyValuePair<ILine, XElement>(ReadKey(e, node, _lineFactory), e)).Where(line => line.Key != null);
 
     }
 

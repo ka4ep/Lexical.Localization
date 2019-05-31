@@ -238,8 +238,8 @@ namespace Lexical.Localization
             if (ParameterInfos.TryGetValue(parameterName, out pi))
             {
                 if (pi.InterfaceType == typeof(ILineHint)) { result = new StringLocalizerHint(appender, previous, parameterName, parameterValue); return true; }
-                if (pi.InterfaceType == typeof(ILineCanonicalKey)) { result = new _StringLocalizerKey.Canonical(appender, previous, parameterName, parameterValue); return true; }
-                if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) { result = new _StringLocalizerKey.NonCanonical(appender, previous, parameterName, parameterValue); return true; }
+                if (pi.InterfaceType == typeof(ILineCanonicalKey)) { result = new StringLocalizerCanonicalKey(appender, previous, parameterName, parameterValue); return true; }
+                if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) { result = new StringLocalizerNonCanonicalKey(appender, previous, parameterName, parameterValue); return true; }
             }
 
             // Return as parameter

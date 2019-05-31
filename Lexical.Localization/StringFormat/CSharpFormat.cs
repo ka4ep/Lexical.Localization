@@ -39,7 +39,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static IStringFormatParser Instance => instance;
+        public static IStringFormatParser Default => instance;
 
         /// <summary>
         /// Name of this string format.

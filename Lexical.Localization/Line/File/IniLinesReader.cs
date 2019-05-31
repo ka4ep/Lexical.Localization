@@ -88,6 +88,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new ini file reader.
         /// </summary>
+        /// <param name="lineFactory"></param>
+        public IniLinesReader(ILineFactory lineFactory) : this("ini", lineFactory) { }
+
+        /// <summary>
+        /// Create new ini file reader.
+        /// </summary>
         /// <param name="ext"></param>
         /// <param name="lineFactory"></param>
         public IniLinesReader(string ext, ILineFactory lineFactory)
