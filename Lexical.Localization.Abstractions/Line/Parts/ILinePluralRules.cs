@@ -187,7 +187,7 @@ namespace Lexical.Localization
         public static bool TryParsePluralityParameter(string parameterName, out int argumentIndex)
         {
             // Assert arguments
-            if (String.IsNullOrEmpty(parameterName) || parameterName[0] != 'N') { argumentIndex = -1; return false; }
+            if (string.IsNullOrEmpty(parameterName) || parameterName[0] != 'N') { argumentIndex = -1; return false; }
             // 'N'
             if (parameterName.Length == 1) { argumentIndex = 0; return true; }
             // "Nxxx"

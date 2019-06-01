@@ -24,6 +24,17 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         public string Name => "string";
 
+        IString _null, _empty;
+
+        /// <summary>
+        /// Create plain string format.
+        /// </summary>
+        public NoFormat()
+        {
+            _null = new NullString(this);
+            _empty = new EmptyString(this);
+        }
+
         /// <summary>
         /// Print
         /// </summary>

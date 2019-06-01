@@ -13,7 +13,7 @@ namespace docs
                 #region Snippet_0a
                 IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample0a.xml");
                 ILineRoot root = new LineRoot(asset);
-                ILine key = root.Key("Cats").Value("{0} cat(s)");
+                ILine key = root.Key("Cats").String("{0} cat(s)");
 
                 // Print with the default string (without culture policy)
                 for (int cats = 0; cats <= 2; cats++)
@@ -34,7 +34,7 @@ namespace docs
                 ILineRoot root = new LineRoot();
                 ILine key = root.Key("Cats")
                         .PluralRules(CLDR35.Instance)
-                        .Value("{cardinal:0} cat(s)")  // Default string
+                        .String("{cardinal:0} cat(s)")  // Default string
                         .Inline("N:zero", "no cats")
                         .Inline("N:one", "a cat")
                         .Inline("N:other", "{0} cats");
@@ -48,7 +48,7 @@ namespace docs
                 ILineRoot root = new LineRoot();
                 ILine key = root.Key("Cats")
                         .PluralRules(CLDR35.Instance)
-                        .Value("{0} cat(s)")   // Default string
+                        .String("{0} cat(s)")   // Default string
                         .Inline("Culture:en", "{cardinal:0} cat(s)")
                         .Inline("Culture:en:N:zero", "no cats")
                         .Inline("Culture:en:N:one", "a cat")
@@ -79,7 +79,7 @@ namespace docs
                 #region Snippet_2
                 ILine key = LineRoot.Global.Key("CatsDogs")
                         .PluralRules(CLDR35.Instance)
-                        .Value("{cardinal:0} cat(s) and {1} dog(s)")
+                        .String("{cardinal:0} cat(s) and {1} dog(s)")
                         .Inline("N:zero", "no cats and {1} dog(s)")
                         .Inline("N:one", "a cat and {1} dog(s)")
                         .Inline("N:other", "{0} cats and {1} dog(s)");
@@ -117,7 +117,7 @@ namespace docs
                 #region Snippet_5
                 IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample2-en.xml");
                 ILineRoot root = new LineRoot(asset);
-                ILine key = root.Key("CatsDogs").Value("{0} cat(s) and {1} dog(s)");
+                ILine key = root.Key("CatsDogs").String("{0} cat(s) and {1} dog(s)");
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)

@@ -40,7 +40,7 @@ namespace Lexical.Localization
             }
             else
             {
-                inlines[subline] = subline.Value(value);
+                inlines[subline] = subline.String(value);
             }
             return line;
         }
@@ -58,7 +58,7 @@ namespace Lexical.Localization
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
             ILine subline = line.Culture(culture);
-            inlines[subline] = subline.Value(value);
+            inlines[subline] = subline.String(value);
             return line;
         }
 
@@ -73,7 +73,7 @@ namespace Lexical.Localization
         public static ILine Inline(this ILineFactory lineFactory, ILine subkey, IString value)
         {
             ILineInlines inlines = lineFactory.Create<ILineInlines>(null);
-            if (value != null) subkey = subkey.Value(value);
+            if (value != null) subkey = subkey.String(value);
             if (subkey != null) inlines[subkey] = subkey;
             return inlines;
         }
@@ -90,7 +90,7 @@ namespace Lexical.Localization
         {
             ILineInlines inlines = lineFactory.Create<ILineInlines>(null);
             ILine subkey = lineFactory.Create<ILineNonCanonicalKey, string, string>(null, "Culture", culture);
-            if (value != null) subkey = subkey.Value(value);
+            if (value != null) subkey = subkey.String(value);
             if (subkey != null) inlines[subkey] = subkey;
             return inlines;
         }

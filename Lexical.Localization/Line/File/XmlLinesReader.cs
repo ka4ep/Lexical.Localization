@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// 
         /// <list type="bullet">
         ///     <item>Parameter "Culture" is created as <see cref="ILineCulture"/></item>
-        ///     <item>Parameter "Value" is created as to <see cref="ILineValue"/></item>
+        ///     <item>Parameter "String" is created as to <see cref="ILineString"/></item>
         ///     <item>Parameter "StringFormat" is created as to <see cref="ILineStringFormat"/></item>
         ///     <item>Parameter "Functions" is created as to <see cref="ILineFunctions"/></item>
         ///     <item>Parameter "PluralRules" is created as to <see cref="ILinePluralRules"/></item>
@@ -223,7 +223,7 @@ namespace Lexical.Localization
                         string trimmedXmlValue = Trim(text?.Value);
                         if (!string.IsNullOrEmpty(trimmedXmlValue))
                         {
-                            ILine lineValue = new LineHint(null, null, "Value", trimmedXmlValue);
+                            ILine lineValue = new LineHint(null, null, "String", trimmedXmlValue);
                             node.Values.Add(lineValue);
 
                             if (correspondenceContext != null)
@@ -335,17 +335,17 @@ namespace Lexical.Localization
         /// <returns></returns>
         ILine Append(ILineTree parent, ILineFactory _lineFactory, ILine prev, string parameterName, string parameterValue)
         {
-            if (parameterName == "Value")
+            if (parameterName == "String")
             {
                 IStringFormat stringFormat;
                 if (parent.TryGetStringFormat(resolver, out stringFormat))
                 {
                     IString valueString = stringFormat.Parse(parameterValue);
-                    return LineFactory.Create<ILineValue, IString>(prev, valueString);
+                    return LineFactory.Create<ILineString, IString>(prev, valueString);
                 }
                 else
                 {
-                    return LineFactory.Create<ILineHint, string, string>(prev, "Value", parameterValue);
+                    return LineFactory.Create<ILineHint, string, string>(prev, "String", parameterValue);
                 }
             } else
             {

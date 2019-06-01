@@ -329,7 +329,7 @@ namespace Lexical.Localization
                     tmp.Clear();
                     foreach (ILineParameter _parameter in lineParameters)
                     {
-                        if (String.IsNullOrEmpty(_parameter.ParameterName) || _parameter.ParameterValue == null) continue;
+                        if (string.IsNullOrEmpty(_parameter.ParameterName) || _parameter.ParameterValue == null) continue;
                         tmp.Add(_parameter);
                     }
 

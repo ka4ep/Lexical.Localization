@@ -33,9 +33,9 @@ namespace docs
                 #region Snippet_1b
                 // Create localization source
                 var source = new List<ILine> {
-                    { LineFormat.Parameters.Parse("Type:MyController:Key:hello").Value("Hello World!") },
-                    { LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello").Value("Hello World!") },
-                    { LineFormat.Parameters.Parse("Culture:de:Type:MyController:Key:hello").Value("Hallo Welt!")  }
+                    { LineFormat.Parameters.Parse("Type:MyController:Key:hello").String("Hello World!") },
+                    { LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello").String("Hello World!") },
+                    { LineFormat.Parameters.Parse("Culture:de:Type:MyController:Key:hello").String("Hallo Welt!")  }
                 };
                 // Create asset with string source
                 IAsset asset = new LocalizationAsset().Add(source).Load();
@@ -86,9 +86,9 @@ namespace docs
             { 
                 #region Snippet_3b
                 var source = new List<ILine> {
-                    LineAppender.Default.Type("MyController").Key("hello").Value("Hello World!"),
-                    LineAppender.Default.Type("MyController").Key("hello").Culture("en").Value("Hello World!"),
-                    LineAppender.Default.Type("MyController").Key("hello").Culture("de").Value("Hallo Welt!")
+                    LineAppender.Default.Type("MyController").Key("hello").String("Hello World!"),
+                    LineAppender.Default.Type("MyController").Key("hello").Culture("en").String("Hello World!"),
+                    LineAppender.Default.Type("MyController").Key("hello").Culture("de").String("Hallo Welt!")
                 };
                 // Keys can be filtered
                 ILine filterKey = LineAppender.Default.Culture("de");

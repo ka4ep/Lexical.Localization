@@ -22,7 +22,7 @@ namespace Lexical.Localization
         static RegexOptions opts = RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture;
 
         /// <summary>
-        /// Format that prints and parses strings as parameter lines. Excludes "Value" parameter.
+        /// Format that prints and parses strings as parameter lines. Excludes "String" parameter.
         /// </summary>
         static readonly LineFormat parameters = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.NonResolving, ExcludeValue);
 
@@ -32,17 +32,17 @@ namespace Lexical.Localization
         static readonly LineFormat parametersInclValue = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.NonResolving, null);
 
         /// <summary>
-        /// Format that prints and parses strings as lines. Parameters are resolved to default instance types. For example "Culture" to CultureInfo. Excludes "Value" parameter.
+        /// Format that prints and parses strings as lines. Parameters are resolved to default instance types. For example "Culture" to CultureInfo. Excludes "String" parameter.
         /// </summary>
         static readonly LineFormat key = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Default, ExcludeValue);
 
         /// <summary>
-        /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "Value" to <see cref="IString"/>.
+        /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "String" to <see cref="IString"/>.
         /// </summary>
         static readonly LineFormat line = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Default, null);
 
         /// <summary>
-        /// Format that prints and parses strings as parameter lines. Excludes "Value" parameter.
+        /// Format that prints and parses strings as parameter lines. Excludes "String" parameter.
         /// 
         /// For example "Culture:en:Key:x:Value:z" is parsed into LineKeyNonCanonical("Culture", "en").LineKeyNonCanonical("Key", "x")
         /// </summary>
@@ -51,19 +51,19 @@ namespace Lexical.Localization
         /// <summary>
         /// Format that prints and parses strings as parameter lines. 
         /// 
-        /// For example "Culture:en:Key:x:Value:z" is parsed into LineKeyNonCanonical("Culture", "en").LineKeyNonCanonical("Key", "x").LineHint("Value", "z")
+        /// For example "Culture:en:Key:x:Value:z" is parsed into LineKeyNonCanonical("Culture", "en").LineKeyNonCanonical("Key", "x").LineHint("String", "z")
         /// </summary>
         public static LineFormat ParametersInclValue => parametersInclValue;
 
         /// <summary>
-        /// Format that prints and parses strings as lines. Parameters are resolved to default instance types. For example "Culture" to CultureInfo. Excludes "Value" parameter.
+        /// Format that prints and parses strings as lines. Parameters are resolved to default instance types. For example "Culture" to CultureInfo. Excludes "String" parameter.
         /// 
         /// For example "Culture:en:Key:x:Value:z" is parsed into LineCulture("en").LineKeyNonCanonical("Key", "x")
         /// </summary>
         public static LineFormat Key => key;
 
         /// <summary>
-        /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "Value" to <see cref="IString"/>.
+        /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "String" to <see cref="IString"/>.
         /// 
         /// For example "Culture:en:Key:x:Value:z" is parsed into LineCulture("en").LineKeyNonCanonical("Key", "x").LineValue("z")
         /// </summary>
@@ -101,7 +101,7 @@ namespace Lexical.Localization
         /// <param name="escapeControlCharacters">Escape characters 0x00 - 0x1f</param>
         /// <param name="unescapeCharacters">list of characters that are to be unescaped</param>
         /// <param name="unescapeControlCharacters">Unescape tnab0f</param>
-        /// <param name="lineAppender">line appender that can append <see cref="ILineParameter"/> and <see cref="ILineValue"/></param>
+        /// <param name="lineAppender">line appender that can append <see cref="ILineParameter"/> and <see cref="ILineString"/></param>
         /// <param name="parameterQualifier">(optional) parameter qualifier</param>
         public LineFormat(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters, ILineFactory lineAppender, ILineQualifier parameterQualifier) : base(lineAppender, parameterQualifier)
         {

@@ -13,7 +13,7 @@ namespace TutorialLibrary2
 
         public string Do()
         {
-            return localizer.Key("OK").Value("Operation Successful").ToString();
+            return localizer.Key("OK").String("Operation Successful").ToString();
         }
     }
 }

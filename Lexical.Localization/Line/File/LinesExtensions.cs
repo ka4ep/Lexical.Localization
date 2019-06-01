@@ -29,7 +29,7 @@ namespace Lexical.Localization
         /// <param name="lineFormat"></param>
         /// <returns></returns>
         public static IEnumerable<KeyValuePair<string, IString>> ToStringLines(this IEnumerable<ILine> lines, ILineFormat lineFormat)
-            => lines.Select(line => new KeyValuePair<string, IString>((lineFormat ?? DefaultPolicy).Print(line), line.GetValue()));
+            => lines.Select(line => new KeyValuePair<string, IString>((lineFormat ?? DefaultPolicy).Print(line), line.GetString()));
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset key lines.
@@ -84,19 +84,19 @@ namespace Lexical.Localization
         internal static bool TryCloneValue(this ILine line, out ILine value)
         {
             ILine valuePart;
-            if (line == null || !line.TryGetValuePart(out valuePart)) { value = default; return false; }
+            if (line == null || !line.TryGetStringPart(out valuePart)) { value = default; return false; }
 
             // Clone value
             ILine valueClone = null;
-            if (valuePart is ILineValue lineValue) { value = new LineValue(null, null, lineValue.Value); return true; }
+            if (valuePart is ILineString lineValue) { value = new LineString(null, null, lineValue.String); return true; }
             if (valueClone == null && valuePart is ILineParameterEnumerable lineParameters)
             {
                 foreach (ILineParameter lineParameter in lineParameters)
-                    if (lineParameter.ParameterName == "Value" && lineParameter.ParameterValue != null)
-                    { value = new LineHint(null, null, "Value", lineParameter.ParameterValue); return true; }
+                    if (lineParameter.ParameterName == "String" && lineParameter.ParameterValue != null)
+                    { value = new LineHint(null, null, "String", lineParameter.ParameterValue); return true; }
             }
-            if (valueClone == null && valuePart is ILineParameter parameter && parameter.ParameterName == "Value" && parameter.ParameterValue != null)
-            { value = new LineHint(null, null, "Value", parameter.ParameterValue); return true; }
+            if (valueClone == null && valuePart is ILineParameter parameter && parameter.ParameterName == "String" && parameter.ParameterValue != null)
+            { value = new LineHint(null, null, "String", parameter.ParameterValue); return true; }
 
             value = default;
             return false;
@@ -216,7 +216,7 @@ namespace Lexical.Localization
                 if (levelKey != null) { key_levels.Add(levelKey); levelKey = null; }
 
                 // Yield line
-                tree.AddRecursive(key_levels, line.GetValue());
+                tree.AddRecursive(key_levels, line.GetString());
                 key_levels.Clear();
                 parameters.Clear();
             }
@@ -257,7 +257,7 @@ namespace Lexical.Localization
         {
             Dictionary<ILine, IString> result = new Dictionary<ILine, IString>(keyComparer ?? LineComparer.Default);
             foreach (var line in lines)
-                if (line != null) result[line] = line.GetValue();
+                if (line != null) result[line] = line.GetString();
             return result;
         }
     }

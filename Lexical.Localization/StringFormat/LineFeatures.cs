@@ -115,7 +115,7 @@ namespace Lexical.Localization.StringFormat
                 if (l is ILineLogger ll && ll.Logger != null) Loggers.AddIfNew(ll.Logger);
                 if (l is ILinePluralRules pl && pl.PluralRules != null) PluralRules = pl.PluralRules;
                 if (l is ILineStringFormat sf && sf.StringFormat != null) StringFormat = sf.StringFormat;
-                if (!valueSet && l is ILineValue lv && lv.Value != null) { Value = lv.Value; ValueText = null; valueSet = true; }
+                if (!valueSet && l is ILineString lv && lv.String != null) { Value = lv.String; ValueText = null; valueSet = true; }
                 if (l is ILineAsset la && la.Asset != null) Assets.AddIfNew(la.Asset);
 
                 if (l is ILineParameterEnumerable lineParameters)
@@ -150,7 +150,7 @@ namespace Lexical.Localization.StringFormat
                             if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
                         }
 
-                        else if (!valueSet && name == "Value")
+                        else if (!valueSet && name == "String")
                         {
                             valueSet = true;
                             Value = null;
@@ -189,7 +189,7 @@ namespace Lexical.Localization.StringFormat
                         if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
                     }
 
-                    else if (!valueSet && name == "Value")
+                    else if (!valueSet && name == "String")
                     {
                         valueSet = true;
                         Value = null;
@@ -211,7 +211,7 @@ namespace Lexical.Localization.StringFormat
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
                 if (l is ILineStringFormat sf && sf.StringFormat != null) StringFormat = sf.StringFormat;
-                if (!valueSet && l is ILineValue lv && lv.Value != null) { Value = lv.Value; ValueText = null; valueSet = true; }
+                if (!valueSet && l is ILineString lv && lv.String != null) { Value = lv.String; ValueText = null; valueSet = true; }
 
                 if (l is ILineParameterEnumerable lineParameters)
                 {
@@ -225,7 +225,7 @@ namespace Lexical.Localization.StringFormat
                             if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
                         }
 
-                        else if (!valueSet && name == "Value")
+                        else if (!valueSet && name == "String")
                         {
                             valueSet = true;
                             Value = null;
@@ -244,7 +244,7 @@ namespace Lexical.Localization.StringFormat
                         if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
                     }
 
-                    else if (!valueSet && name == "Value")
+                    else if (!valueSet && name == "String")
                     {
                         valueSet = true;
                         Value = null;

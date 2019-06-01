@@ -238,7 +238,7 @@ namespace Lexical.Localization
             {
                 IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Default;
                 IString format = stringFormat.Parse(valueText);
-                ILine value = subline.Value(format);
+                ILine value = subline.String(format);
                 inlines[subline] = value;
             }
             return line;
@@ -259,7 +259,7 @@ namespace Lexical.Localization
             ILine subline = line.Culture(culture);
             IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Default;
             IString format = stringFormat.Parse(valueText);
-            ILine value = subline.Value(format);
+            ILine value = subline.String(format);
             inlines[subline] = value;
             return line;
         }
@@ -285,7 +285,7 @@ namespace Lexical.Localization
             {
                 IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Default;
                 IString format = stringFormat.Parse(valueText);
-                ILine value = subline.Value(format);
+                ILine value = subline.String(format);
                 inlines[subline] = value;
             }
             return line;
@@ -310,7 +310,7 @@ namespace Lexical.Localization
             }
             else
             {
-                inlines[subline] = subline.Value(value);
+                inlines[subline] = subline.String(value);
             }
             return line;
         }

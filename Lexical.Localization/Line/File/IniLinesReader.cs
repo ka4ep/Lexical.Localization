@@ -39,7 +39,7 @@ namespace Lexical.Localization
         /// 
         /// <list type="bullet">
         ///     <item>Parameter "Culture" is created as <see cref="ILineCulture"/></item>
-        ///     <item>Parameter "Value" is created as to <see cref="ILineValue"/></item>
+        ///     <item>Parameter "String" is created as to <see cref="ILineString"/></item>
         ///     <item>Parameter "StringFormat" is created as to <see cref="ILineStringFormat"/></item>
         ///     <item>Parameter "Functions" is created as to <see cref="ILineFunctions"/></item>
         ///     <item>Parameter "PluralRules" is created as to <see cref="ILinePluralRules"/></item>
@@ -166,13 +166,13 @@ namespace Lexical.Localization
                                 {
                                     // Append FormatString
                                     IString valueString = stringFormat.Parse(value);
-                                    lineValue = LineFactory.Create<ILineValue, IString>(null, valueString);
+                                    lineValue = LineFactory.Create<ILineString, IString>(null, valueString);
 
                                 }
                                 else
                                 {
                                     // Append Hint
-                                    lineValue = LineFactory.Create<ILineHint, string, string>(null, "Value", value);
+                                    lineValue = LineFactory.Create<ILineHint, string, string>(null, "String", value);
                                 }
 
                                 int ix = current.Values.Count;

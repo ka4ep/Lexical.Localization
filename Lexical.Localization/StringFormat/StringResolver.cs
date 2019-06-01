@@ -155,7 +155,7 @@ namespace Lexical.Localization.StringFormat
                         // Got no match
                         if (line_for_plurality_arguments == null) continue;
                         // Parse value
-                        IString value_for_plurality = line_for_plurality_arguments.GetValue(Resolvers);
+                        IString value_for_plurality = line_for_plurality_arguments.GetString(Resolvers);
                         // Add status from parsing the value
                         features.Status.UpFormat(value_for_plurality.Status);
                         // Value has error

@@ -143,11 +143,11 @@ namespace Lexical.Localization
             string str;
             foreach (ILine linevalue in tree.Values)
             {
-                if (linevalue is ILineValue part && part.Value != null)
+                if (linevalue is ILineString part && part.String != null)
                 {
-                    if (FormatStringComparer.Default.Equals(part.Value, value)) return true;
+                    if (FormatStringComparer.Default.Equals(part.String, value)) return true;
                 }
-                else if (linevalue.TryGetValueText(out str) && str == value.Text) return true;
+                else if (linevalue.TryGetStringText(out str) && str == value.Text) return true;
             }
             return false;
         }
@@ -192,7 +192,7 @@ namespace Lexical.Localization
             string str;
             foreach (ILine linevalue in tree.Values)
             {
-                if (linevalue.TryGetValueText(out str) && str == value) return true;
+                if (linevalue.TryGetStringText(out str) && str == value) return true;
             }
             return false;
         }
@@ -232,10 +232,10 @@ namespace Lexical.Localization
             int result = 0;
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                if (l is ILineParameter lineParameter && lineParameter.ParameterName != null && lineParameter.ParameterValue != null && lineParameter.ParameterName != "Value") result++;
+                if (l is ILineParameter lineParameter && lineParameter.ParameterName != null && lineParameter.ParameterValue != null && lineParameter.ParameterName != "String") result++;
                 if (l is ILineParameterEnumerable lineParameters)
                     foreach (var parameter in lineParameters)
-                        if (parameter.ParameterName != null && parameter.ParameterValue != null && parameter.ParameterName != "Value") result++;
+                        if (parameter.ParameterName != null && parameter.ParameterValue != null && parameter.ParameterName != "String") result++;
             }
             return result;
         }
@@ -269,7 +269,7 @@ namespace Lexical.Localization
         {
             ILineTree n = node;
             if (key != null) n = n.GetChild(key);
-            if (value != null) n.Values.Add(new LineValue(null, null, value));
+            if (value != null) n.Values.Add(new LineString(null, null, value));
             return node;
         }
 
@@ -291,7 +291,7 @@ namespace Lexical.Localization
                 leaf = leaf.GetOrCreate(key);
 
             // Add value
-            if (value != null && !leaf.HasValue(value)) leaf.Values.Add( new LineValue(null, null, value) );
+            if (value != null && !leaf.HasValue(value)) leaf.Values.Add( new LineString(null, null, value) );
 
             // Return leaf
             return leaf;

@@ -81,7 +81,7 @@ namespace Lexical.Localization
             if (asset == null) throw new LineException(key, "String resolver was not found.");
             ILine line = asset.GetString(key);
             if (line == null) throw new LineException(key, "String was not found.");
-            return line.GetValue();
+            return line.GetString();
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Lexical.Localization
             if (asset == null) { result = null; return false; }
             ILine line = asset.GetString(key);
             if (line == null) { result = null; return false; }
-            IString str = line.GetValue();
+            IString str = line.GetString();
             result = str;
             return str.Text != null;
         }

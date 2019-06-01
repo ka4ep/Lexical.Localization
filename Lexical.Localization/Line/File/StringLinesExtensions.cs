@@ -29,7 +29,7 @@ namespace Lexical.Localization
             {
                 ILine l;
                 if (lineFormat.TryParse(line.Key, out l))
-                    yield return line.Value == null ? l : l = l.Value(line.Value);
+                    yield return line.Value == null ? l : l = l.String(line.Value);
             }
         }
 
@@ -99,7 +99,7 @@ namespace Lexical.Localization.Internal
             {
                 ILine l;
                 if (lineFormat.TryParse(line.Key, out l))
-                    yield return line.Value == null ? l : l.Value(valueParser.Parse(line.Value));
+                    yield return line.Value == null ? l : l.String(valueParser.Parse(line.Value));
             }
         }
     }

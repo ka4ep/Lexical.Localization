@@ -34,7 +34,7 @@ namespace Lexical.Localization
         /// 
         /// <list type="bullet">
         ///     <item>Parameter "Culture" is created as <see cref="ILineCulture"/></item>
-        ///     <item>Parameter "Value" is created as to <see cref="ILineValue"/></item>
+        ///     <item>Parameter "String" is created as to <see cref="ILineString"/></item>
         ///     <item>Parameter "StringFormat" is created as to <see cref="ILineStringFormat"/></item>
         ///     <item>Parameter "Functions" is created as to <see cref="ILineFunctions"/></item>
         ///     <item>Parameter "PluralRules" is created as to <see cref="ILinePluralRules"/></item>
@@ -165,14 +165,14 @@ namespace Lexical.Localization
                                 {
                                     // Append FormatString
                                     IString valueString = stringFormat.Parse(value);
-                                    ILineValue lineValue = LineFactory.Create<ILineValue, IString>(null, valueString);
+                                    ILineString lineValue = LineFactory.Create<ILineString, IString>(null, valueString);
                                     current.Values.Add(lineValue);
                                     if (updateCorrespondence) correspondenceContext.Values[new LineTreeValue(current, lineValue, ix)] = (JValue)tokenReader.CurrentToken;
                                 }
                                 else
                                 {
                                     // Append Hint
-                                    ILineHint lineValue = LineFactory.Create<ILineHint, string, string>(null, "Value", value);
+                                    ILineHint lineValue = LineFactory.Create<ILineHint, string, string>(null, "String", value);
                                     current.Values.Add(lineValue);
                                     if (updateCorrespondence) correspondenceContext.Values[new LineTreeValue(current, lineValue, ix)] = (JValue)tokenReader.CurrentToken;
                                 }

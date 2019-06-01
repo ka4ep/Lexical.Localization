@@ -446,7 +446,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Compares effective value for equality and calculate comparable hash-code.
     /// 
-    /// The last part that defines "Value" or <see cref="ILineValue"/> is considered effective.
+    /// The last part that defines "String" or <see cref="ILineString"/> is considered effective.
     /// </summary>
     public class LineValueComparer : IEqualityComparer<ILine>
     {
@@ -466,7 +466,7 @@ namespace Lexical.Localization
         public bool Equals(ILine x, ILine y)
         {
             string x_value = null, y_value = null;
-            if (x.TryGetValueText(out x_value) != y.TryGetValueText(out y_value)) return false;
+            if (x.TryGetStringText(out x_value) != y.TryGetStringText(out y_value)) return false;
             // XXX Ignores StringFormat -- not really essential
             return x_value == y_value;
         }
@@ -479,7 +479,7 @@ namespace Lexical.Localization
         public int GetHashCode(ILine line)
         {
             string text;
-            if (line.TryGetValueText(out text)) return text.GetHashCode();
+            if (line.TryGetStringText(out text)) return text.GetHashCode();
             // XXX Ignores StringFormat -- not really essential
             return 0;
         }

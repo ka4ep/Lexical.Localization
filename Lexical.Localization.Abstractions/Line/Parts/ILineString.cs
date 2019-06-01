@@ -11,79 +11,79 @@ namespace Lexical.Localization
     /// <summary>
     /// Localization string value.
     /// </summary>
-    public interface ILineValue : ILine
+    public interface ILineString : ILine
     {
         /// <summary>
         /// Localization string value.
         /// </summary>
-        IString Value { get; set; }
+        IString String { get; set; }
     }
     
     /// <summary></summary>
     public static partial class ILineExtensions
     {
         /// <summary>
-        /// Append <see cref="ILineValue"/> part.
+        /// Append <see cref="ILineString"/> part.
         /// </summary>
         /// <param name="part"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILineValue Value(this ILine part, IString value)
-            => part.Append<ILineValue, IString>(value);
+        public static ILineString String(this ILine part, IString value)
+            => part.Append<ILineString, IString>(value);
 
         /// <summary>
-        /// Append "Value" parameter.
+        /// Append "String" parameter.
         /// </summary>
         /// <param name="part"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILine Value(this ILine part, string value)
-            => part.Append<ILineHint, string, string>("Value", value);
+        public static ILine String(this ILine part, string value)
+            => part.Append<ILineHint, string, string>("String", value);
 
         /// <summary>
-        /// Create <see cref="ILineValue"/> part.
+        /// Create <see cref="ILineString"/> part.
         /// </summary>
         /// <param name="lineFactory"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILineValue Value(this ILineFactory lineFactory, IString value)
-            => lineFactory.Create<ILineValue, IString>(null, value);
+        public static ILineString String(this ILineFactory lineFactory, IString value)
+            => lineFactory.Create<ILineString, IString>(null, value);
 
         /// <summary>
-        /// Create "Value" parameter.
+        /// Create "String" parameter.
         /// </summary>
         /// <param name="lineFactory"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILine Value(this ILineFactory lineFactory, string value)
-            => lineFactory.Create<ILineHint, string, string>(null, "Value", value);
+        public static ILine String(this ILineFactory lineFactory, string value)
+            => lineFactory.Create<ILineHint, string, string>(null, "String", value);
 
         /// <summary>
-        /// Get the <see cref="IString"/> of a <see cref="ILineValue"/>.
+        /// Get the <see cref="IString"/> of a <see cref="ILineString"/>.
         /// 
-        /// If parameter "Value" exists and <paramref name="resolver"/> is provided then value is resolved using
+        /// If parameter "String" exists and <paramref name="resolver"/> is provided then value is resolved using
         /// the default string format or the format that can be found.
         /// </summary>
         /// <param name="line"></param>
         /// <param name="resolver">(optional) type resolver that resolves "IStringFormat" parameter into type. Returns null, if could not resolve, exception if resolve fails</param>
         /// <returns>value</returns>
-        public static IString GetValue(this ILine line, IResolver resolver = null)
+        public static IString GetString(this ILine line, IResolver resolver = null)
         {
             for (ILine part = line; part != null; part = part.GetPreviousPart())
             {
-                if (part is ILineValue valuePart && valuePart.Value != null) return valuePart.Value;
+                if (part is ILineString valuePart && valuePart.String != null) return valuePart.String;
                 if (resolver != null && part is ILineParameterEnumerable lineParameters)
                 {
                     foreach(ILineParameter parameter in lineParameters)
                     {
-                        if (parameter.ParameterName == "Value" && parameter.ParameterValue != null)
+                        if (parameter.ParameterName == "String" && parameter.ParameterValue != null)
                         {
                             IStringFormat stringFormat = line.FindStringFormat(resolver);
                             return stringFormat.Parse(parameter.ParameterValue);
                         }
                     }
                 }
-                if (resolver != null && part is ILineParameter lineParameter && lineParameter.ParameterName == "Value" && lineParameter.ParameterValue != null)
+                if (resolver != null && part is ILineParameter lineParameter && lineParameter.ParameterName == "String" && lineParameter.ParameterValue != null)
                 {
                     IStringFormat stringFormat = line.FindStringFormat(resolver);
                     return stringFormat.Parse(lineParameter.ParameterValue);
@@ -93,48 +93,48 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Finds a part that implements <see cref="ILineValue"/> or is a parameter "Value.
+        /// Finds a part that implements <see cref="ILineString"/> or is a parameter "Value.
         /// </summary>
         /// <param name="line"></param>
         /// <param name="result"></param>
         /// <returns>true if part was found</returns>
-        public static bool TryGetValuePart(this ILine line, out ILine result)
+        public static bool TryGetStringPart(this ILine line, out ILine result)
         {
             for (ILine part = line; part != null; part = part.GetPreviousPart())
             {
-                if (part is ILineValue valuePart && valuePart.Value != null) { result = part; return true; }
+                if (part is ILineString valuePart && valuePart.String != null) { result = part; return true; }
                 if (part is ILineParameterEnumerable lineParameters)
                 {
                     foreach (ILineParameter parameter in lineParameters)
                     {
-                        if (parameter.ParameterName == "Value" && parameter.ParameterValue != null) { result = part; return true; }
+                        if (parameter.ParameterName == "String" && parameter.ParameterValue != null) { result = part; return true; }
                     }
                 }
-                if (part is ILineParameter lineParameter && lineParameter.ParameterName == "Value" && lineParameter.ParameterValue != null) { result = part; return true; }
+                if (part is ILineParameter lineParameter && lineParameter.ParameterName == "String" && lineParameter.ParameterValue != null) { result = part; return true; }
             }
             result = default;
             return false;
         }
 
         /// <summary>
-        /// Finds a part that implements <see cref="ILineValue"/> or is a parameter "Value".
+        /// Finds a part that implements <see cref="ILineString"/> or is a parameter "String".
         /// </summary>
         /// <param name="line"></param>
         /// <param name="result"></param>
         /// <returns>true if part was found</returns>
-        public static bool TryGetValueText(this ILine line, out string result)
+        public static bool TryGetStringText(this ILine line, out string result)
         {
             for (ILine part = line; part != null; part = part.GetPreviousPart())
             {
-                if (part is ILineValue valuePart && valuePart.Value != null) { result = valuePart.Value.Text; return true; }
+                if (part is ILineString valuePart && valuePart.String != null) { result = valuePart.String.Text; return true; }
                 if (part is ILineParameterEnumerable lineParameters)
                 {
                     foreach (ILineParameter parameter in lineParameters)
                     {
-                        if (parameter.ParameterName == "Value" && parameter.ParameterValue != null) { result = parameter.ParameterValue; return true; }
+                        if (parameter.ParameterName == "String" && parameter.ParameterValue != null) { result = parameter.ParameterValue; return true; }
                     }
                 }
-                if (part is ILineParameter lineParameter && lineParameter.ParameterName == "Value" && lineParameter.ParameterValue != null) { result = lineParameter.ParameterValue; return true; }
+                if (part is ILineParameter lineParameter && lineParameter.ParameterName == "String" && lineParameter.ParameterValue != null) { result = lineParameter.ParameterValue; return true; }
             }
             result = default;
             return false;

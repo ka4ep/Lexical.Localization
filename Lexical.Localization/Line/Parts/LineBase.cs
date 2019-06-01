@@ -184,13 +184,13 @@ namespace Lexical.Localization
                 for (int i = list.Count-1; i >=0; i--)
                 {
                     var parameter = list[i];
-                    if (parameter.ParameterName == "Value") continue;
+                    if (parameter.ParameterName == "String") continue;
                     if (i < list.Count-1) sb.Append(':');
                     sb.Append(parameter.ParameterName);
                     sb.Append(':');
                     sb.Append(parameter.ParameterValue);
                 }
-                IString value = line.GetValue(StringFormatResolver.Default);
+                IString value = line.GetString(StringFormatResolver.Default);
                 if (value != null && value.Text != null)
                 {
                     sb.Append(" = \"");
@@ -263,7 +263,7 @@ namespace Lexical.Localization
                     .AddInterface(typeof(ILineFormatProvider))
                     .AddInterface(typeof(ILineStringResolver))
                     .AddInterface(typeof(ILineLogger))
-                    .AddInterface(typeof(ILineValue))
+                    .AddInterface(typeof(ILineString))
                     .AddInterface(typeof(ILinePluralRules))
                     .AddInterface(typeof(ILineRoot))
                     .AddInterface(typeof(ILineType))
@@ -375,8 +375,8 @@ namespace Lexical.Localization
             get
             {
                 ILine line = this;
-                if (name != null) line = line.Key(name);                
-                LineString printedString = line.ResolveString();
+                if (name != null) line = line.Key(name);
+                StringFormat.LineString printedString = line.ResolveString();
                 if (printedString.Value == null)
                     return new LocalizedString(name, line.Print(), true);
                 else
@@ -397,7 +397,7 @@ namespace Lexical.Localization
                 ILine line = this;
                 if (name != null) line = line.Key(name);
                 if (arguments != null) line = line.Append<ILineFormatArgs, object[]>(arguments);
-                LineString printedString = line.ResolveString();
+                StringFormat.LineString printedString = line.ResolveString();
                 if (printedString.Value == null)
                     return new LocalizedString(name, line.Print(), true);
                 else

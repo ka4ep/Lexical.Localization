@@ -27,7 +27,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Parameter names supported by this resolver.
         /// </summary>
-        static string[] parameterNames = new string[] { "StringFormat", "Value" };
+        static string[] parameterNames = new string[] { "StringFormat", "String" };
 
         /// <summary>
         /// Parameter Name
@@ -70,7 +70,7 @@ namespace Lexical.Localization.StringFormat
         }
 
         /// <summary>
-        /// Resolve "StringFormat" and "Value" into respective line arguments.
+        /// Resolve "StringFormat" and "String" into respective line arguments.
         /// </summary>
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
@@ -81,11 +81,11 @@ namespace Lexical.Localization.StringFormat
         {
             if (parameterValue != null && parameterValue != "")
             {
-                if (parameterName == "Value")
+                if (parameterName == "String")
                 {
                     IStringFormat stringFormat = previous.FindStringFormat() ?? CSharpFormat.Default;
                     IString value = stringFormat.Parse(parameterValue);
-                    resolvedLineArguments = new LineArguments<ILineValue, IString>(value);
+                    resolvedLineArguments = new LineArguments<ILineString, IString>(value);
                     return true;
                 }
                 else if (parameterName == "StringFormat")

@@ -27,7 +27,7 @@ namespace Lexical.Localization
         /// 
         /// <list type="bullet">
         ///     <item>Parameter "Culture" is created as <see cref="ILineCulture"/></item>
-        ///     <item>Parameter "Value" is created as to <see cref="ILineValue"/></item>
+        ///     <item>Parameter "String" is created as to <see cref="ILineString"/></item>
         ///     <item>Parameter "StringFormat" is created as to <see cref="ILineStringFormat"/></item>
         ///     <item>Parameter "Functions" is created as to <see cref="ILineFunctions"/></item>
         ///     <item>Parameter "PluralRules" is created as to <see cref="ILinePluralRules"/></item>
@@ -86,7 +86,7 @@ namespace Lexical.Localization
         /// 
         /// <list type="bullet">
         ///     <item>Parameter "Culture" is created as <see cref="ILineCulture"/></item>
-        ///     <item>Parameter "Value" is created as to <see cref="ILineValue"/></item>
+        ///     <item>Parameter "String" is created as to <see cref="ILineString"/></item>
         ///     <item>Parameter "StringFormat" is created as to <see cref="ILineStringFormat"/></item>
         ///     <item>Parameter "Functions" is created as to <see cref="ILineFunctions"/></item>
         ///     <item>Parameter "PluralRules" is created as to <see cref="ILinePluralRules"/></item>

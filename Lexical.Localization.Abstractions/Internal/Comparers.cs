@@ -12,7 +12,7 @@ namespace Lexical.Localization.Internal
     /// Order comparer between KeyValuePair&lt;Key, Value&gt;.
     /// </summary>
     /// <typeparam name="Key"></typeparam>
-    /// <typeparam name="Value"></typeparam>
+    /// <typeparam name="String"></typeparam>
     public class KeyValuePairComparer<Key, Value> : IComparer<KeyValuePair<Key, Value>>
     {
         private static KeyValuePairComparer<Key, Value> instance;
@@ -64,7 +64,7 @@ namespace Lexical.Localization.Internal
     /// Equality comparer between <see cref="KeyValuePair{Key, Value}"/>.
     /// </summary>
     /// <typeparam name="Key"></typeparam>
-    /// <typeparam name="Value"></typeparam>
+    /// <typeparam name="String"></typeparam>
     public class KeyValuePairEqualityComparer<Key, Value> : IEqualityComparer<KeyValuePair<Key, Value>>
     {
         private static KeyValuePairEqualityComparer<Key, Value> instance;

@@ -26,7 +26,7 @@ namespace docs
             // Create string key
             ILine key = new LineRoot().Key("hello").Culture("en");
             // Request value
-            IString value = asset.GetString( key ).GetValue();
+            IString value = asset.GetString( key ).GetString();
             // Print result
             Console.WriteLine(value);
             #endregion Snippet

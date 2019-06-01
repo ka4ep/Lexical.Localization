@@ -17,9 +17,9 @@ namespace Lexical.Localization
     public abstract class LineFormatBase : ILinePrinter, ILineParser, ILineAppendParser, ILineFormatFactory
     {
         /// <summary>
-        /// Parameter qualifier that excludes parameter "Value".
+        /// Parameter qualifier that excludes parameter "String".
         /// </summary>
-        protected static readonly ILineQualifier ExcludeValue = new LineQualifierRule.IsEqualTo("Value", -1, ""); // new LineParameterQualifierComposition().Rule("Value", -1, "");
+        protected static readonly ILineQualifier ExcludeValue = new LineQualifierRule.IsEqualTo("String", -1, ""); // new LineParameterQualifierComposition().Rule("String", -1, "");
 
         /// <summary>
         /// Qualifier that validates parameters.
@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create new string serializer
         /// </summary>
-        /// <param name="lineAppender">line appender that can append <see cref="ILineParameter"/> and <see cref="ILineValue"/></param>
+        /// <param name="lineAppender">line appender that can append <see cref="ILineParameter"/> and <see cref="ILineString"/></param>
         /// <param name="parameterQualifier">(optional) parameter qualifier</param>
         public LineFormatBase(ILineFactory lineAppender, ILineQualifier parameterQualifier)
         {

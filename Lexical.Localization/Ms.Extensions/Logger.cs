@@ -28,7 +28,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Observes resolved localization strings and logs into <see cref="ILogger"/>.
     /// </summary>
-    public class LineILogger : IObserver<LineString>
+    public class LineILogger : IObserver<StringFormat.LineString>
     {
         ILogger logger;
 
@@ -67,7 +67,7 @@ namespace Lexical.Localization
         /// Formatter supplies format result.
         /// </summary>
         /// <param name="value"></param>
-        public void OnNext(LineString value)
+        public void OnNext(StringFormat.LineString value)
         {
             // Get reference
             var _logger = logger;

@@ -137,7 +137,7 @@ namespace Lexical.Localization
             {
                 string value = culture == null ? ResourceManager.GetString(id) : ResourceManager.GetString(id, culture);
                 IString str = ValueParser.Parse(value);
-                return key.Value(str);
+                return key.String(str);
             }
             catch (Exception e)
             {

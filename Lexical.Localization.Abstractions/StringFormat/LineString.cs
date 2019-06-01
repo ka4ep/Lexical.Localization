@@ -15,7 +15,7 @@ namespace Lexical.Localization.StringFormat
     public struct LineString
     {
         /// <summary>
-        /// Return string <see cref="Value"/>.
+        /// Return string <see cref="String"/>.
         /// </summary>
         /// <param name="str"></param>
         public static implicit operator string(LineString str)
@@ -215,7 +215,7 @@ namespace Lexical.Localization.StringFormat
                     for(int i = list.Count - 1; i >= 0; i--)
                     {
                         var parameter = list[i];
-                        if (parameter.ParameterName == "Value") continue;
+                        if (parameter.ParameterName == "String") continue;
                         if (i < list.Count - 1) sb.Append(':');
                         sb.Append(parameter.ParameterName);
                         sb.Append(':');
