@@ -21,7 +21,7 @@ namespace Lexical.Localization
         /// If parse fails, then skips the key, doesn't throw exception.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="lineFormat"><see cref="ILineParser"/> parses string to line.</param>
+        /// <param name="lineFormat"><see cref="ILineFormatParser"/> parses string to line.</param>
         /// <returns>lines with <see cref="ILine"/> keys</returns>
         public static IEnumerable<ILine> ToLines(this IEnumerable<KeyValuePair<string, IString>> lines, ILineFormat lineFormat)
         {
@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// Parse string key of each line and put into <see cref="ILineTree"/>.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="lineFormat"><see cref="ILineParser"/> parses strings to lines.</param>
+        /// <param name="lineFormat"><see cref="ILineFormatParser"/> parses strings to lines.</param>
         /// <returns></returns>
         public static ILineTree ToLineTree(this IEnumerable<KeyValuePair<string, IString>> lines, ILineFormat lineFormat)
             => LineTree.Create(lines.ToLines(lineFormat), null, lineFormat.GetParameterInfos());
@@ -48,7 +48,7 @@ namespace Lexical.Localization
         /// Lines are reloaded into the asset if <see cref="IAssetExtensions.Reload(IAsset)"/> is called.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="lineFormat"><see cref="ILineParser"/> parses strings to lines.</param>
+        /// <param name="lineFormat"><see cref="ILineFormatParser"/> parses strings to lines.</param>
         /// <returns></returns>
         public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, IString>> lines, ILineFormat lineFormat)
             => new LocalizationAsset().Add(lines, lineFormat).Load();
@@ -90,7 +90,7 @@ namespace Lexical.Localization.Internal
         /// If parse fails, then skips the key, doesn't throw exception.
         /// </summary>
         /// <param name="lines"></param>
-        /// <param name="lineFormat"><see cref="ILineParser"/> parses string to line.</param>
+        /// <param name="lineFormat"><see cref="ILineFormatParser"/> parses string to line.</param>
         /// <param name="valueParser"></param>
         /// <returns>lines with <see cref="ILine"/> keys</returns>
         public static IEnumerable<ILine> ToLines(this IEnumerable<KeyValuePair<string, string>> lines, ILineFormat lineFormat, IStringFormatParser valueParser)

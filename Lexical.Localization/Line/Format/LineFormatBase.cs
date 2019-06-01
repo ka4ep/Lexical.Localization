@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Base implementation for line formats. 
     /// </summary>
-    public abstract class LineFormatBase : ILinePrinter, ILineParser, ILineAppendParser, ILineFormatFactory
+    public abstract class LineFormatBase : ILineFormatPrinter, ILineFormatParser, ILineFormatAppendParser, ILineFormatFactory
     {
         /// <summary>
         /// Parameter qualifier that excludes parameter "String".

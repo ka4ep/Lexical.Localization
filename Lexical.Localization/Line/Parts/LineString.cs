@@ -161,7 +161,7 @@ namespace Lexical.Localization
         /// <param name="value"></param>
         /// <returns></returns>
         public static ILineString String(this ILine part, String value)
-            => part.Append<ILineString, IString>(NoFormat.Default.Parse(value));
+            => part.Append<ILineString, IString>(TextFormat.Default.Parse(value));
 
         /// <summary>
         /// Create raw non-formulated, non-placeholder string.
@@ -170,6 +170,6 @@ namespace Lexical.Localization
         /// <param name="value"></param>
         /// <returns></returns>
         public static ILineString String(this ILineFactory lineFactory, String value)
-            => lineFactory.Create<ILineString, IString>(null, NoFormat.Default.Parse(value));
+            => lineFactory.Create<ILineString, IString>(null, TextFormat.Default.Parse(value));
     }
 }

@@ -54,7 +54,7 @@ namespace Lexical.Localization
             // Filter with pattern
             if (lineFormat is ILinePattern pattern_) return Filter1(pattern_).ToList();
             // Filter with parser
-            if (lineFormat is ILineParser parser_) return Filter2(parser_).ToList();
+            if (lineFormat is ILineFormatParser parser_) return Filter2(parser_).ToList();
             // Return nothing
             return null;
 
@@ -67,7 +67,7 @@ namespace Lexical.Localization
                     yield return line.Key;
                 }
             }
-            IEnumerable<string> Filter2(ILineParser parser)
+            IEnumerable<string> Filter2(ILineFormatParser parser)
             {
                 foreach (var line in dictionary)
                 {
@@ -110,7 +110,7 @@ namespace Lexical.Localization
                 }
                 return result.Values.ToArray();
             }
-            else if (lineFormat is ILineParser parser)
+            else if (lineFormat is ILineFormatParser parser)
             {
                 //lineFormat.Parse()
                 return dictionary.Keys.Select(k => {

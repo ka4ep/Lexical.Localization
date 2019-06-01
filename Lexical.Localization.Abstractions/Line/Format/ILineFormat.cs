@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// 
     /// Class that implements to this interface should implement one or both of the following interfaces:
     /// <list type="bullet">
-    ///     <item><see cref="ILinePrinter"/></item>
+    ///     <item><see cref="ILineFormatPrinter"/></item>
     ///     <item><see cref="ILinePattern"/></item>
     /// </list>
     /// 
@@ -30,7 +30,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Converts <see cref="ILine"/> to string.
     /// </summary>
-    public interface ILinePrinter : ILineFormat
+    public interface ILineFormatPrinter : ILineFormat
     {
         /// <summary>
         /// Print <paramref name="line"/> as <see cref="String"/>.
@@ -47,7 +47,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Parses string into <see cref="ILine"/>.
     /// </summary>
-    public interface ILineParser : ILineFormat
+    public interface ILineFormatParser : ILineFormat
     {
         /// <summary>
         /// Parse string into <see cref="ILine"/>.
@@ -71,7 +71,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Alternative parser interface where parts are appended right into previous line.
     /// </summary>
-    public interface ILineAppendParser : ILineFormat
+    public interface ILineFormatAppendParser : ILineFormat
     {
         /// <summary>
         /// Parse string into <see cref="ILine"/>.
@@ -121,7 +121,7 @@ namespace Lexical.Localization
         /// <returns>full name string or null</returns>
         public static string Print(this ILineFormat lineFormat, ILine key)
         {
-            if (lineFormat is ILinePrinter provider)
+            if (lineFormat is ILineFormatPrinter provider)
             {
                 string name = provider.Print(key);
                 if (name != null) return name;
@@ -138,22 +138,22 @@ namespace Lexical.Localization
         /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
         /// <returns>key result or null if contained no content</returns>
         /// <exception cref="LineException">If parse failed</exception>
-        /// <exception cref="LineException">If <paramref name="lineFormat"/> doesn't implement <see cref="ILineParser"/>.</exception>
+        /// <exception cref="LineException">If <paramref name="lineFormat"/> doesn't implement <see cref="ILineFormatParser"/>.</exception>
         /// <exception cref="LineException">Error if appender is not available</exception>
         public static ILine Parse(this ILineFormat lineFormat, string str, ILine prevPart = default, ILineFactory appender = default)
         {
-            if (lineFormat is ILineAppendParser appendParser)
+            if (lineFormat is ILineFormatAppendParser appendParser)
             {
                 return appendParser.Parse(str, prevPart, appender);
             }
-            if (lineFormat is ILineParser parser)
+            if (lineFormat is ILineFormatParser parser)
             {
                 if (appender == null) appender = prevPart.GetAppender();
                 foreach (ILineArguments arg in parser.ParseArgs(str))
                     prevPart = appender.Create(prevPart, arg);
                 return prevPart;
             }
-            else throw new LineException(prevPart, $"Cannot parse strings to {nameof(ILine)} with {lineFormat.GetType().FullName}. {lineFormat} doesn't implement {nameof(ILineParser)}.");
+            else throw new LineException(prevPart, $"Cannot parse strings to {nameof(ILine)} with {lineFormat.GetType().FullName}. {lineFormat} doesn't implement {nameof(ILineFormatParser)}.");
         }
 
 
@@ -168,7 +168,7 @@ namespace Lexical.Localization
         /// <returns>true if parse was successful (even through resulted key might be null)</returns>
         public static bool TryParse(this ILineFormat lineFormat, string str, out ILine result, ILine prevPart = default, ILineFactory appender = default)
         {
-            if (lineFormat is ILineAppendParser appendParser)
+            if (lineFormat is ILineFormatAppendParser appendParser)
             {
                 return appendParser.TryParse(str, out result, prevPart, appender);
             }
@@ -177,7 +177,7 @@ namespace Lexical.Localization
             if (appender == null && !prevPart.TryGetAppender(out appender)) { result = null; return false; }
             // Try parse
             IEnumerable<ILineArguments> args;
-            if (lineFormat is ILineParser parser && parser.TryParseArgs(str, out args))
+            if (lineFormat is ILineFormatParser parser && parser.TryParseArgs(str, out args))
             {
                 // Append arguments
                 foreach (ILineArguments arg in parser.ParseArgs(str))

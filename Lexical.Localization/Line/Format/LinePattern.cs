@@ -56,7 +56,7 @@ namespace Lexical.Localization
     ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
     /// 
     /// </summary>
-    public class LinePattern : ILinePattern, ILineParser, ILineAppendParser, ILinePrinter
+    public class LinePattern : ILinePattern, ILineFormatParser, ILineFormatAppendParser, ILineFormatPrinter
     {
         static Regex regex = new Regex(
             @"(?<text>[^\[\{\}\]]+)|" +

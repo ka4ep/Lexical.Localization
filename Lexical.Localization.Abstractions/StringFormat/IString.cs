@@ -10,10 +10,9 @@ using System;
 namespace Lexical.Localization.StringFormat
 {
     /// <summary>
-    /// Preparsed or lazy parsed format string. 
+    /// Preparsed and formulated string.
     /// 
     /// For example "Welcome, {0}!" is a format string. 
-    /// When it's in parsed format the argument "{0}" is extracted and the string can be processed more efficiently.
     /// 
     /// <see cref="IString"/> is produced by <see cref="IStringFormatParser"/>.
     /// </summary>

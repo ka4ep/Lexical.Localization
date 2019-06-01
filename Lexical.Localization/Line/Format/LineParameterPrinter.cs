@@ -23,14 +23,14 @@ namespace Lexical.Localization
     /// For example: root.Section("1").Section("2") is printed out as "1.2".
     /// </summary>
     [Obsolete("doesn't work well")]
-    public class LineParameterPrinter : ILinePrinter, ICloneable
+    public class LineParameterPrinter : ILineFormatPrinter, ICloneable
     {
         /// <summary>
         /// Default name policy. Appends known parameters in <see cref="Utils.ParameterInfos"/> with ":" separator.
         /// 
         /// Example "en:ConsoleApp1:MyController:Success".
         /// </summary>
-        public static ILinePrinter Default => instance;
+        public static ILineFormatPrinter Default => instance;
         private static readonly LineParameterPrinter instance =
             new LineParameterPrinter()
                 .Ignore("String")
@@ -41,7 +41,7 @@ namespace Lexical.Localization
         /// 
         /// Example "en:ConsoleApp1:MyController:Success".
         /// </summary>
-        public static ILinePrinter Colon_Colon_Colon => colon_colon_colon;
+        public static ILineFormatPrinter Colon_Colon_Colon => colon_colon_colon;
         private static readonly LineParameterPrinter colon_colon_colon =
             new LineParameterPrinter()
                 .Ignore("String")
@@ -53,7 +53,7 @@ namespace Lexical.Localization
         /// 
         /// Example "ConsoleApp1:MyController:Success".
         /// </summary>
-        public static ILinePrinter None_Colon_Colon => none_colon_colon;
+        public static ILineFormatPrinter None_Colon_Colon => none_colon_colon;
         private static readonly LineParameterPrinter none_colon_colon =
             new LineParameterPrinter()
                 .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: ":") // Add known parameters for sorting correctly
@@ -66,7 +66,7 @@ namespace Lexical.Localization
         /// 
         /// Example "en:ConsoleApp1:MyController.Success".
         /// </summary>
-        public static ILinePrinter Colon_Colon_Dot => colon_colon_dot;
+        public static ILineFormatPrinter Colon_Colon_Dot => colon_colon_dot;
         private static readonly LineParameterPrinter colon_colon_dot =
             new LineParameterPrinter()
                 .Ignore("String")
@@ -79,7 +79,7 @@ namespace Lexical.Localization
         /// 
         /// Example "en.ConsoleApp1.MyController.Success"
         /// </summary>
-        public static ILinePrinter Dot_Dot_Dot => dot_dot_dot;
+        public static ILineFormatPrinter Dot_Dot_Dot => dot_dot_dot;
         private static readonly LineParameterPrinter dot_dot_dot =
             new LineParameterPrinter()
             .Ignore("String")
@@ -91,7 +91,7 @@ namespace Lexical.Localization
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public static ILinePrinter None_Dot_Dot => none_dot_dot;
+        public static ILineFormatPrinter None_Dot_Dot => none_dot_dot;
         private static readonly LineParameterPrinter none_dot_dot =
             new LineParameterPrinter()
                 .Ignore("String")
@@ -104,7 +104,7 @@ namespace Lexical.Localization
         /// 
         /// Example "en:ConsoleApp1.MyController.Success".
         /// </summary>
-        public static ILinePrinter Colon_Dot_Dot => colon_dot_dot;
+        public static ILineFormatPrinter Colon_Dot_Dot => colon_dot_dot;
         private static readonly LineParameterPrinter colon_dot_dot =
             new LineParameterPrinter()
                 .Ignore("String")

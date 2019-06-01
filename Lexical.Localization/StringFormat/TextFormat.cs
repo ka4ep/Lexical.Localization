@@ -4,13 +4,14 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System;
+using System.Text;
 
 namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// String format that uses no placeholders.
     /// </summary>
-    public class NoFormat : IStringFormatParser, IStringFormatPrinter
+    public class TextFormat : IStringFormatParser, IStringFormatPrinter
     {
         private static IStringFormatParser instance => new CSharpFormat();
 
@@ -22,14 +23,14 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Name of this string format.
         /// </summary>
-        public string Name => "string";
+        public string Name => "text";
 
         IString _null, _empty;
 
         /// <summary>
         /// Create plain string format.
         /// </summary>
-        public NoFormat()
+        public TextFormat()
         {
             _null = new NullString(this);
             _empty = new EmptyString(this);
@@ -42,7 +43,12 @@ namespace Lexical.Localization.StringFormat
         /// <returns></returns>
         public string Print(IString formatString)
         {
-            return formatString.Text;
+            if (formatString.Text != null) return formatString.Text;
+            int len = 0;
+            foreach (var p in formatString.Parts) len += p.Text.Length;
+            StringBuilder sb = new StringBuilder();
+            foreach (var p in formatString.Parts) sb.Append(p.Text);
+            return sb.ToString();
         }
 
         /// <summary>
