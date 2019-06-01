@@ -33,7 +33,7 @@ namespace Lexical.Localization.StringFormat
         LineStatus Status { get; }
 
         /// <summary>
-        /// Format string as it appears, for example "You received {plural:0} coin(s).".
+        /// Format string as it appears, for example "You received {cardinal:0} coin(s).".
         /// </summary>
         string Text { get; }
 
@@ -86,12 +86,12 @@ namespace Lexical.Localization.StringFormat
         StringPartKind Kind { get; }
 
         /// <summary>
-        /// Character index in the format string where argument starts.
+        /// Character index in <see cref="IString.Text"/>.
         /// </summary>
         int Index { get; }
 
         /// <summary>
-        /// Length of the character sequence that defines part.
+        /// Length of the character sequence in <see cref="IString.Text"/>.
         /// </summary>
         int Length { get; }
 
@@ -112,6 +112,10 @@ namespace Lexical.Localization.StringFormat
     /// </summary>
     public interface IStringTextPart : IStringPart
     {
+        /// <summary>
+        /// Unescaped text sequence.
+        /// </summary>
+        string UnescapedText { get; }
     }
 
     /// <summary>
@@ -119,7 +123,7 @@ namespace Lexical.Localization.StringFormat
     /// 
     /// For example "Hello, {0}", the {0} is placeholder.
     /// 
-    /// The default CSharpFormat uses format "{[function:]0[,alignment][:format]}"
+    /// The CSharpFormat uses format "{[pluralCategory:]0[,alignment][:format]}"
     /// </summary>
     public interface IPlaceholder : IStringPart
     {
@@ -187,7 +191,6 @@ namespace Lexical.Localization.StringFormat
             }
             return argumentIndices.ToArray();
         }
-
 
         /// <summary>
         /// Get all the argument indices.

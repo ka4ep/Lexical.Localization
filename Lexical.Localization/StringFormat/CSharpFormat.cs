@@ -4,8 +4,10 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Exp;
+using Lexical.Localization.Internal;
 using System;
 using System.Globalization;
+using System.Text;
 
 namespace Lexical.Localization.StringFormat
 {
@@ -25,12 +27,12 @@ namespace Lexical.Localization.StringFormat
     ///  3. On the right-side of argument are format specifiers:
     ///     "Hex value {0:X4}."
     /// 
-    ///  4. On the left-side of argument a function can be placed. Function cannot start with a number, cannot contain unescaped colon ':'.
-    ///     "There are {optional:0} cats."
+    ///  4. On the left-side there pluralCategory. Category start with a number, cannot contain unescaped colon ':'.
+    ///     "There are {cardinal:0} cats."
     /// 
     /// <see href="https://docs.microsoft.com/en-us/dotnet/api/system.string.format?view=netframework-4.7.2"/>
     /// </summary>
-    public class CSharpFormat : IStringFormatParser, IStringFormatPrinter
+    public partial class CSharpFormat : IStringFormatParser, IStringFormatPrinter
     {
         private static IStringFormatParser instance => new CSharpFormat();
 
@@ -78,20 +80,95 @@ namespace Lexical.Localization.StringFormat
         {
             if (formatString == null) return _null;
             if (formatString == "") return _empty;
-            if (FormatProvider != null) return new CSharpStringWithFormatProvider(formatString, this, FormatProvider);
+            if (FormatProvider != null) return new CSharpString.WithFormatProvider(formatString, this, FormatProvider);
             return new CSharpString(formatString, this);
         }
 
         /// <summary>
         /// Print as string
         /// </summary>
-        /// <param name="formatString"></param>
+        /// <param name="str"></param>
         /// <returns>string or null</returns>
-        public string Print(IString formatString)
+        public LineString Print(IString str)
         {
-            return formatString?.Text;
-            // TODO If string is not of CSharpFormat, then convert to CSharpFormat
-            // Supports pluralCase, Alignment, Format, ArgumentIndex - otherwise fails
+            if (str is CSharpFormat && str.Text != null) return new LineString(null, str.Text, LineStatus.FormatOkString);
+
+            StringBuilder sb = new StringBuilder();
+            LineStatus status = 0UL;
+            foreach(var part in str.Parts)
+            {
+                // Escape '{' '}' and '\' to '\{' '\}' '\\'
+                if (part.Kind == StringPartKind.Text)
+                {
+                    string s = part.Text;
+                    for (int i=0; i<s.Length; i++)
+                    {
+                        char c = s[i];
+                        if (c == '{' || c == '}' || c == '\\') sb.Append('\\');
+                        sb.Append(c);
+                    }
+                    continue;
+                }
+
+                // Placeholder
+                if (part.Kind == StringPartKind.Placeholder && part is IPlaceholder placeholder)
+                {
+                    int argumentIx = -1;
+                    string format = null;
+                    int alignment = 0;
+                    StructList8<IExpression> queue = new StructList8<IExpression>();
+                    queue.Add(placeholder.Expression);
+                    while (queue.Count > 0)
+                    {
+                        IExpression e = queue.Dequeue();
+
+                        if (e is IArgumentIndexExpression arg)
+                        {
+                            // Second argument index
+                            if (argumentIx >= 0) status.Up(LineStatus.FormatErrorPrintNoCapabilityMultipleArguments); 
+                            else argumentIx = arg.Index;
+                            continue;
+                        }
+
+                        if (e is ICallExpression call)
+                        {
+                            if (call.Name == "Format" && call.Args != null && call.Args.Length == 2 && call.Args[1] is IConstantExpression formatExp && formatExp.Value is string formatStr)
+                            {
+                                queue.Add(call.Args[0]);
+                                format = formatStr;
+                            }
+                            else if (call.Name == "Alignment" && call.Args != null && call.Args.Length == 2 && call.Args[1] is IConstantExpression alignmentExp)
+                            {
+                                queue.Add(call.Args[0]);
+                                if (alignmentExp.Value is long longValue) alignment = (int)longValue;
+                                else if (alignmentExp.Value is int intValue) alignment = intValue;
+                                else status.Up(LineStatus.FormatErrorPrintUnsupportedExpression);
+                            }
+                            else status.Up(LineStatus.FormatErrorPrintUnsupportedExpression);
+                            continue;
+                        }
+
+                        status.Up(LineStatus.FormatErrorPrintUnsupportedExpression);
+                    }
+
+                    if (argumentIx>=0)
+                    {
+                        sb.Append('{');
+                        if (placeholder.PluralCategory != null) { sb.Append(placeholder.PluralCategory); sb.Append(':'); }
+                        sb.Append(argumentIx);
+                        if (alignment!=0) { sb.Append(','); sb.Append(alignment); }
+                        if (format != null) { sb.Append(":"); sb.Append(format); }
+                        sb.Append('}');
+                    }
+
+                    continue;
+                }
+
+                // Malformed
+                status.Up(LineStatus.FormatErrorMalformed);
+            }
+
+            return new LineString(null, sb.ToString(), status);
         }
 
         enum ParserState { Text, ArgumentStart, PluralCategory, Index, Alignment, Format, ArgumentEnd }
@@ -200,7 +277,7 @@ namespace Lexical.Localization.StringFormat
                 // Return text part
                 if (state == ParserState.Text)
                 {
-                    IStringPart part = new TextPart(formatString, strIx, length);
+                    IStringPart part = new CSharpString.TextPart(formatString, strIx, length);
                     ResetPartState(endIx);
                     return part;
                 }
@@ -208,7 +285,7 @@ namespace Lexical.Localization.StringFormat
                 if (state == ParserState.ArgumentStart || state == ParserState.PluralCategory)
                 {
                     status = LineStatus.FormatErrorMalformed;
-                    IStringPart part = new TextPart(formatString, strIx, length);
+                    IStringPart part = new CSharpString.TextPart(formatString, strIx, length);
                     ResetPartState(endIx);
                     return part;
                 }
@@ -236,7 +313,7 @@ namespace Lexical.Localization.StringFormat
                 // Error with argument index, return as text 
                 if (indexStartIx < 0 || indexEndIx < 0 || indexStartIx >= indexEndIx)
                 {
-                    IStringPart part = new TextPart(formatString, strIx, length);
+                    IStringPart part = new CSharpString.TextPart(formatString, strIx, length);
                     status = LineStatus.FormatErrorMalformed;
                     ResetPartState(endIx);
                     return part;
@@ -252,7 +329,7 @@ namespace Lexical.Localization.StringFormat
                 catch (Exception)
                 {
                     // Parse failed, probably too large number
-                    IStringPart part = new TextPart(formatString, strIx, length);
+                    IStringPart part = new CSharpString.TextPart(formatString, strIx, length);
                     status = LineStatus.FormatErrorMalformed;
                     ResetPartState(endIx);
                     return part;

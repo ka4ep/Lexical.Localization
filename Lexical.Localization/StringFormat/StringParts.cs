@@ -215,7 +215,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Generic text part implementation of <see cref="IString"/>.
     /// </summary>
-    public class TextPart : IStringPart
+    public class TextPart : IStringTextPart
     {
         /// <summary>
         /// Unify two text parts
@@ -224,7 +224,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="rightPart"></param>
         /// <returns></returns>
         internal static TextPart Unify(TextPart leftPart, TextPart rightPart)
-            => new TextPart(leftPart.String, leftPart.Index, rightPart.Index - leftPart.Index + rightPart.Length);
+            => new TextPart(leftPart.String, leftPart.Index, rightPart.Index - leftPart.Index + rightPart.Length, leftPart.UnescapedText + rightPart.UnescapedText);
 
         /// <summary>
         /// The 'parent' format string.
@@ -257,16 +257,23 @@ namespace Lexical.Localization.StringFormat
         public int PartsIndex { get; internal set; }
 
         /// <summary>
+        /// Unescaped text
+        /// </summary>
+        public string UnescapedText { get; protected set; }
+
+        /// <summary>
         /// Create text part.
         /// </summary>
         /// <param name="formatString"></param>
         /// <param name="index">first character index</param>
         /// <param name="length">character length</param>
-        public TextPart(IString formatString, int index, int length)
+        /// <param name="unescapedText">unescaped sequence</param>
+        public TextPart(IString formatString, int index, int length, string unescapedText)
         {
             String = formatString;
             Index = index;
             Length = length;
+            UnescapedText = unescapedText;
         }
 
         /// <summary>

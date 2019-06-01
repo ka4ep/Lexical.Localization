@@ -173,16 +173,26 @@ namespace Lexical.Localization.StringFormat
         FormatErrorNoPlaceholders = 0x46UL << Shift.Format,
         /// <summary>Format string contained arguments, but too few arguments were provided. Using null values for missing arguments.</summary>
         FormatErrorTooFewPlaceholders = 0x48UL << Shift.Format,
+        /// <summary><see cref="IStringFormatPrinter"/> has no capability to express multiple arguments in string format</summary>
+        FormatErrorPrintNoCapabilityMultipleArguments = 0x4AUL << Shift.Format,
+        /// <summary><see cref="IStringFormatPrinter"/> has no capability to express plural category in string format</summary>
+        FormatErrorPrintNoCapabilityPluralCategory = 0x4BUL << Shift.Format,
+        /// <summary><see cref="IStringFormatPrinter"/> has no capability to express placeholder in string format</summary>
+        FormatErrorPrintNoCapabilityPlaceholder = 0x4CUL << Shift.Format,
+        /// <summary><see cref="IStringFormatPrinter"/> has no capability to express the requested expression</summary>
+        FormatErrorPrintUnsupportedExpression = 0x4DUL << Shift.Format,
         /// <summary>Format string was malformed. Returning the malformed string as value.</summary>
         FormatErrorMalformed = 0x4fUL << Shift.Format,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         FormatFailed = 0x60UL << Shift.Format,
         /// <summary>Format string is null</summary>
-        FormatFailedNull = 0x601L << Shift.Format,
+        FormatFailedNull = 0x61L << Shift.Format,
         /// <summary>No <see cref="IStringFormatParser"/></summary>
-        FormatFailedNoParser = 0x607L << Shift.Format,
+        FormatFailedNoParser = 0x67L << Shift.Format,
+        /// <summary>No <see cref="IStringFormatPrinter"/></summary>
+        FormatFailedNoPrinter = 0x68L << Shift.Format,
         /// <summary>Format parse failed</summary>
-        FormatFailedParse = 0x609L << Shift.Format,
+        FormatFailedParse = 0x69L << Shift.Format,
         /// <summary>Result has not been processed</summary>
         FormatFailedNoResult = 0x7FUL << Shift.Format,
         /// <summary>Mask for severity</summary>

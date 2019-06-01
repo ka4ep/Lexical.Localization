@@ -77,7 +77,10 @@ namespace Lexical.Localization.StringFormat
     /// </summary>
     public class AlignmentFunction : IFunction2
     {
-        static FunctionArgumentInfo[] args = new FunctionArgumentInfo[] { new FunctionArgumentInfo { Name = "str", Type = typeof(string) }, new FunctionArgumentInfo { Name = "alignment", Type = typeof(int) } };
+        static FunctionArgumentInfo[] args = new FunctionArgumentInfo[] {
+            new FunctionArgumentInfo { Name = "argument", Type = typeof(object) },
+            new FunctionArgumentInfo { Name = "alignment", Type = typeof(int) }
+        };
         private static AlignmentFunction instance = new AlignmentFunction();
 
         /// <summary>
@@ -99,13 +102,13 @@ namespace Lexical.Localization.StringFormat
         /// Add padding.
         /// </summary>
         /// <param name="ctx"></param>
-        /// <param name="str"></param>
-        /// <param name="alignment">Int32 or Int64, negative value is padding to left of <paramref name="str"/>, positive value is padding to right of <paramref name="str"/></param>
+        /// <param name="argument"></param>
+        /// <param name="alignment">Int32 or Int64, negative value is padding to left of <paramref name="argument"/>, positive value is padding to right of <paramref name="argument"/></param>
         /// <param name="result"></param>
         /// <returns></returns>
-        public bool TryEvaluate(ref FunctionEvaluationContext ctx, object str, object alignment, out object result)
+        public bool TryEvaluate(ref FunctionEvaluationContext ctx, object argument, object alignment, out object result)
         {
-            String s = str?.ToString();
+            String s = argument?.ToString();
             if (s == null) { result = null; return false; }
             int a;
             if (alignment is Int32 i) a = i;

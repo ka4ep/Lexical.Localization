@@ -13,7 +13,7 @@ namespace Lexical.Localization.StringFormat
     /// </summary>
     public class TextFormat : IStringFormatParser, IStringFormatPrinter
     {
-        private static IStringFormatParser instance => new CSharpFormat();
+        private static IStringFormatParser instance => new TextFormat();
 
         /// <summary>
         /// Default instance.
@@ -37,18 +37,28 @@ namespace Lexical.Localization.StringFormat
         }
 
         /// <summary>
-        /// Print
+        /// Print as plain text
         /// </summary>
-        /// <param name="formatString"></param>
+        /// <param name="str"></param>
         /// <returns></returns>
-        public string Print(IString formatString)
+        public LineString Print(IString str)
         {
-            if (formatString.Text != null) return formatString.Text;
+            if (str == null) return new LineString(null, null, LineStatus.FormatFailedNull);
+            // As is
+            if (str.StringFormat == null || str.StringFormat is TextFormat) return new LineString(null, str.Text, LineStatus.FormatOkString);
+
+            // Put together
             int len = 0;
-            foreach (var p in formatString.Parts) len += p.Text.Length;
+            foreach (var p in str.Parts) len += p.Text.Length;
             StringBuilder sb = new StringBuilder();
-            foreach (var p in formatString.Parts) sb.Append(p.Text);
-            return sb.ToString();
+            foreach (var p in str.Parts)
+            {
+                if (p is IStringTextPart textPart)
+                    sb.Append(textPart.UnescapedText);
+                else
+                    sb.Append(p.Text);
+            }
+            return new LineString(null, sb.ToString(), LineStatus.FormatOkString);
         }
 
         /// <summary>
@@ -122,15 +132,42 @@ namespace Lexical.Localization.StringFormat
             public int PartsIndex => 0;
 
             /// <summary>
+            /// 
+            /// </summary>
+            public string UnescapedText => Text;
+
+            /// <summary>
             /// Create format string that parses formulation <paramref name="text"/> lazily.
             /// </summary>
             /// <param name="text"></param>
             /// <param name="stringFormat"></param>
-            public TextString(string text, IStringFormat stringFormat)
+            public TextString(string text, IStringFormat stringFormat = default)
             {
                 Text = text ?? throw new ArgumentNullException(nameof(text));
-                this.StringFormat = stringFormat;
+                this.StringFormat = stringFormat ?? TextFormat.Default;
             }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+                => Text;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <returns></returns>
+            public override int GetHashCode()
+                => Text.GetHashCode();
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="obj"></param>
+            /// <returns></returns>
+            public override bool Equals(object obj)
+                => obj is TextString textFormat ? textFormat.Text.Equals(Text) : false;
         }
 
     }
