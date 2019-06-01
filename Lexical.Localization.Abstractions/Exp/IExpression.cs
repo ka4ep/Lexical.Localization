@@ -17,9 +17,27 @@ namespace Lexical.Localization.Exp
     }
 
     /// <summary>
+    /// Expression that contains component expressions.
+    /// </summary>
+    public interface ICompositeExpression : IExpression
+    {
+        /// <summary>
+        /// Number of component expressions.
+        /// </summary>
+        int ComponentCount { get; }
+
+        /// <summary>
+        /// Get component expression.
+        /// </summary>
+        /// <param name="ix"></param>
+        /// <returns></returns>
+        IExpression GetComponent(int ix);
+    }
+
+    /// <summary>
     /// Parenthesis expression "(exp)"
     /// </summary>
-    public interface IParenthesisExpression : IExpression
+    public interface IParenthesisExpression : ICompositeExpression
     {
         /// <summary>
         /// Inner expression
@@ -113,7 +131,7 @@ namespace Lexical.Localization.Exp
     /// <summary>
     /// 
     /// </summary>
-    public interface IUnaryOpExpression : IExpression
+    public interface IUnaryOpExpression : ICompositeExpression
     {
         /// <summary>
         /// 
@@ -129,7 +147,7 @@ namespace Lexical.Localization.Exp
     /// <summary>
     /// 
     /// </summary>
-    public interface IBinaryOpExpression : IExpression
+    public interface IBinaryOpExpression : ICompositeExpression
     {
         /// <summary>
         /// 
@@ -150,7 +168,7 @@ namespace Lexical.Localization.Exp
     /// <summary>
     /// "b ? x : y" 
     /// </summary>
-    public interface ITrinaryOpExpression : IExpression
+    public interface ITrinaryOpExpression : ICompositeExpression
     {
         /// <summary>
         /// 
@@ -198,7 +216,7 @@ namespace Lexical.Localization.Exp
     /// <summary>
     /// Function call expression
     /// </summary>
-    public interface ICallExpression : IExpression
+    public interface ICallExpression : ICompositeExpression
     {
         /// <summary>
         /// Function name

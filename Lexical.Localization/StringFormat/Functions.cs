@@ -32,7 +32,10 @@ namespace Lexical.Localization.StringFormat
     /// </summary>
     public class FormatFunction : IFunction2
     {
-        static FunctionArgumentInfo[] args = new FunctionArgumentInfo[] { new FunctionArgumentInfo { Name = "format", Type = typeof(string) }, new FunctionArgumentInfo { Name = "argument", Type = typeof(object) } };
+        static FunctionArgumentInfo[] args = new FunctionArgumentInfo[] {
+            new FunctionArgumentInfo { Name = "argument", Type = typeof(object) },
+            new FunctionArgumentInfo { Name = "format", Type = typeof(string) }
+        };
         private static FormatFunction instance = new FormatFunction();
 
         /// <summary>
@@ -54,11 +57,11 @@ namespace Lexical.Localization.StringFormat
         /// Formulate string.
         /// </summary>
         /// <param name="ctx"></param>
-        /// <param name="format">string that contains the formatting, e.g. "X8"</param>
         /// <param name="argument"></param>
+        /// <param name="format">string that contains the formatting, e.g. "X8"</param>
         /// <param name="result"></param>
         /// <returns></returns>
-        public bool TryEvaluate(ref FunctionEvaluationContext ctx, object format, object argument, out object result)
+        public bool TryEvaluate(ref FunctionEvaluationContext ctx, object argument, object format, out object result)
         {
             if (argument == null) { result = null; return false; }
             string formatStr = format?.ToString();
@@ -110,15 +113,15 @@ namespace Lexical.Localization.StringFormat
             else { result = s; return true; }
 
             if (a == 0) { result = s; return true; }
-            if (a > 0)
+            if (a < 0)
             {
+                a = -a;
                 if (s.Length >= a) { result = s; return true; }
                 result = s + new string(' ', a - s.Length);
                 return true;
             }
             {
-                a = -a;
-                if (s.Length <= a) { result = s; return true; }
+                if (s.Length >= a) { result = s; return true; }
                 result = new string(' ', a - s.Length) + s;
                 return true;
             }

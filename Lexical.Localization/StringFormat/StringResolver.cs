@@ -128,18 +128,15 @@ namespace Lexical.Localization.StringFormat
                     for (int i = 0; i < value.Placeholders.Length; i++)
                     {
                         // Get placeholder
-                        IPlaceholder ph = value.Placeholders[i];
+                        IPlaceholder placeholder = value.Placeholders[i];
                         // No plural category in this placeholder
-                        if (ph.PluralCategory == null) continue;
+                        if (placeholder.PluralCategory == null) continue;
                         // Placeholder value after evaluation
                         string ph_value = placeholder_values[i];
-                        // Placeholder as number
-                        IPluralNumber number = ph_value == null ? DecimalNumber.Empty : new DecimalNumber.Text(ph_value?.ToString(), culture);
-                        // Query possible cases for the plural rules
-                        PluralRuleInfo query = new PluralRuleInfo(null, ph.PluralCategory, culture?.Name, null, -1);
-                        IPluralRule[] cases = features.PluralRules.Evaluate(query, number);
-                        if (cases == null) continue;
-                        permutations.AddPlaceholder(ph, cases);
+                        // Placeholder evaluated value
+                        IPluralNumber placeholderValue = ph_value == null ? DecimalNumber.Empty : new DecimalNumber.Text(ph_value?.ToString(), culture);
+                        // Add placeholder to permutation configuration
+                        permutations.AddPlaceholder(placeholder, placeholderValue, features.PluralRules, culture?.Name ?? "");
                     }
 
                     // Find first value that matches permutations
@@ -241,7 +238,10 @@ namespace Lexical.Localization.StringFormat
 
                 // Evaluate expressions in placeholders into strings
                 StructList12<string> placeholder_values = new StructList12<string>();
-                EvaluatePlaceholderValues(value.Placeholders, ref features, ref placeholder_values, culture);
+                CultureInfo culture_for_format = features.Culture;
+                if (culture_for_format == null && features.CulturePolicy != null) { CultureInfo[] cultures = features.CulturePolicy.Cultures; if (cultures != null && cultures.Length > 0) culture_for_format = cultures[0]; }
+                if (culture_for_format == null) culture_for_format = RootCulture;
+                EvaluatePlaceholderValues(value.Placeholders, ref features, ref placeholder_values, culture_for_format);
 
                 // Plural Rules
                 if (value.HasPluralRules())
@@ -253,18 +253,15 @@ namespace Lexical.Localization.StringFormat
                         for (int i = 0; i < value.Placeholders.Length; i++)
                         {
                             // Get placeholder
-                            IPlaceholder ph = value.Placeholders[i];
+                            IPlaceholder placeholder = value.Placeholders[i];
                             // No plural category in this placeholder
-                            if (ph.PluralCategory == null) continue;
+                            if (placeholder.PluralCategory == null) continue;
                             // Placeholder value after evaluation
                             string ph_value = placeholder_values[i];
-                            // Placeholder as number
-                            IPluralNumber number = ph_value == null ? DecimalNumber.Empty : new DecimalNumber.Text(ph_value?.ToString(), culture);
-                            // Query possible cases for the plural rules
-                            PluralRuleInfo query = new PluralRuleInfo(null, ph.PluralCategory, culture?.Name ?? "", null, -1);
-                            IPluralRule[] cases = features.PluralRules.Evaluate(query, number);
-                            if (cases == null) continue;
-                            permutations.AddPlaceholder(ph, cases);
+                            // Placeholder evaluated value
+                            IPluralNumber placeholderValue = ph_value == null ? DecimalNumber.Empty : new DecimalNumber.Text(ph_value?.ToString(), culture);
+                            // Add placeholder to permutation configuration
+                            permutations.AddPlaceholder(placeholder, placeholderValue, features.PluralRules, culture?.Name ?? "");
                         }
 
                         if (permutations.ArgumentCount <= MaxPluralArguments)
@@ -412,7 +409,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="key"></param>
         /// <param name="features"></param>
-        /// <param name="culture">as input the culture to match, and as output the culture that matched</param>
+        /// <param name="culture">The culture that matched</param>
         /// <returns>matching line or null</returns>
         ILine ResolveKeyToLine(ILine key, ref LineFeatures features, ref CultureInfo culture)
         {
@@ -549,22 +546,12 @@ namespace Lexical.Localization.StringFormat
                                         break;
 
                                     case ResolveSource.Key:
-                                        if (features.Value != null || features.ValueText != null)
+                                        if ((features.Value != null || features.ValueText != null) && c.Equals(features.Culture))
                                         {
-                                            if (c.Name == "" && features.Culture == null)
-                                            {
-                                                if (culture == null) culture = c;
-                                                features.Status.UpResolve(LineStatus.ResolveOkFromKey);
-                                                features.Status.UpCulture(LineStatus.CultureOkMatchedDefaultLine);
-                                                return key;
-                                            }
-                                            else if (c.Equals(features.Culture))
-                                            {
-                                                if (culture == null) culture = c;
-                                                features.Status.UpResolve(LineStatus.ResolveOkFromKey);
-                                                features.Status.UpCulture(LineStatus.CultureOkMatchedCulture);
-                                                return key;
-                                            }
+                                            if (culture == null) culture = c;
+                                            features.Status.UpResolve(LineStatus.ResolveOkFromKey);
+                                            features.Status.UpCulture(LineStatus.CultureOkMatchedCulturePolicy);
+                                            return key;
                                         }
                                         break;
                                 }

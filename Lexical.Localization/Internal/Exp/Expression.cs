@@ -55,6 +55,12 @@ namespace Lexical.Localization.Exp
         public UnaryOp Op { get; internal set; }
         /// <summary> </summary>
         public IExpression Element { get; internal set; }
+        /// <summary> </summary>
+        public int ComponentCount => 1;
+        /// <summary> </summary>
+        public IExpression GetComponent(int ix)
+            => ix == 0 ? Element : throw new IndexOutOfRangeException();
+
         /// <summary>
         /// Create unary operator expression
         /// </summary>
@@ -85,6 +91,12 @@ namespace Lexical.Localization.Exp
         public IExpression Left { get; internal set; }
         /// <summary> </summary>
         public IExpression Right { get; internal set; }
+        /// <summary> </summary>
+        public int ComponentCount => 2;
+        /// <summary> </summary>
+        public IExpression GetComponent(int ix)
+            => ix switch { 0 => Left, 1 => Right, _ => throw new IndexOutOfRangeException() };
+
         /// <summary>
         /// Create expression
         /// </summary>
@@ -130,6 +142,11 @@ namespace Lexical.Localization.Exp
         public IExpression B { get; internal set; }
         /// <summary> </summary>
         public IExpression C { get; internal set; }
+        /// <summary> </summary>
+        public int ComponentCount => 3;
+        /// <summary> </summary>
+        public IExpression GetComponent(int ix)
+            => ix switch { 0 => A, 1 => B, 2 => C, _ => throw new IndexOutOfRangeException() };
 
         /// <summary>
         /// Create expression
@@ -231,6 +248,12 @@ namespace Lexical.Localization.Exp
         /// </summary>
         public IExpression[] Args { get; internal set; }
 
+        /// <summary> </summary>
+        public int ComponentCount => Args==null ? 0 : Args.Length;
+        /// <summary> </summary>
+        public IExpression GetComponent(int ix)
+            => Args[ix];
+
         /// <summary>
         /// Create function call expression
         /// </summary>
@@ -287,6 +310,11 @@ namespace Lexical.Localization.Exp
     {
         /// <summary> </summary>
         public IExpression Element { get; internal set; }
+        /// <summary> </summary>
+        public int ComponentCount => 1;
+        /// <summary> </summary>
+        public IExpression GetComponent(int ix)
+            => ix == 0 ? Element : throw new IndexOutOfRangeException();
 
         /// <summary>
         /// Create parenthesis expression

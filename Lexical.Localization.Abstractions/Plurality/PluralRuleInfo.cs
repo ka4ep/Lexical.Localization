@@ -56,7 +56,7 @@ namespace Lexical.Localization.Plurality
         public readonly string Case;
 
         /// <summary>
-        /// Info whtehr rule is optional.
+        /// Info whether rule is optional.
         /// 
         /// <list type="bullet">
         /// <item>0  = no</item>
@@ -169,7 +169,7 @@ namespace Lexical.Localization.Plurality
             /// <summary>
             /// Default instance.
             /// </summary>
-            public static Comparer Instance => instance;
+            public static Comparer Default => instance;
 
             /// <summary>
             /// Compare for equality

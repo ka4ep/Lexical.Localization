@@ -698,7 +698,7 @@ namespace Lexical.Localization.StringFormat
 
                 // Create argument part
                 IExpression exp = new ArgumentIndexExpression(argumentIndex);
-                if (format != null) exp = new CallExpression("Format", exp);
+                if (format != null) exp = new CallExpression("Format", exp, new ConstantExpression(format));
                 if (alignment != 0) exp = new CallExpression("Alignment", exp, new ConstantExpression(alignment));
                 IFormatStringPart part_ = new Placeholder(formatString, strIx, length, -1, ++placeholderIndex, pluralCategory, exp);
                 // Reset to 'Text' state
@@ -854,7 +854,7 @@ namespace Lexical.Localization.StringFormat
                     if (state == ParserState.Alignment)
                     {
                         // Move indices
-                        if (ch >= '0' && ch <= '9')
+                        if ((ch >= '0' && ch <= '9')||(ch=='-'))
                         {
                             if (alignmentStartIx < 0) alignmentStartIx = i;
                             alignmentEndIx = i + 1;
