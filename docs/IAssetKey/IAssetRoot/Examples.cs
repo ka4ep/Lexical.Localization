@@ -43,7 +43,7 @@ namespace docs
                 // Create reference
                 ILine key = LineAppender.NonResolving.Section("Section").Key("Key");
                 // Retreieve with reference
-                IFormatString str = asset.GetString(key).GetValue();
+                IString str = asset.GetString(key).GetValue();
                 #endregion Snippet_5x
             }
 

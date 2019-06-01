@@ -28,8 +28,8 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="lineFormat"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormatString>> ToStringLines(this IEnumerable<ILine> lines, ILineFormat lineFormat)
-            => lines.Select(line => new KeyValuePair<string, IFormatString>((lineFormat ?? DefaultPolicy).Print(line), line.GetValue()));
+        public static IEnumerable<KeyValuePair<string, IString>> ToStringLines(this IEnumerable<ILine> lines, ILineFormat lineFormat)
+            => lines.Select(line => new KeyValuePair<string, IString>((lineFormat ?? DefaultPolicy).Print(line), line.GetValue()));
 
         /// <summary>
         /// Convert <paramref name="lines"/> to asset key lines.
@@ -38,8 +38,8 @@ namespace Lexical.Localization
         /// <param name="lineFormat"></param>
         /// <param name="valueParser"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormatString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, ILineFormat lineFormat, IStringFormatParser valueParser)
-            => lines.Select(line => new KeyValuePair<string, IFormatString>((lineFormat ?? DefaultPolicy).Print(line.Key), valueParser.Parse(line.Value)));
+        public static IEnumerable<KeyValuePair<string, IString>> ToStringLines(this IEnumerable<KeyValuePair<ILine, string>> lines, ILineFormat lineFormat, IStringFormatParser valueParser)
+            => lines.Select(line => new KeyValuePair<string, IString>((lineFormat ?? DefaultPolicy).Print(line.Key), valueParser.Parse(line.Value)));
 
         /// <summary>
         /// Convert <paramref name="lines"/> to Key Tree of one level.
@@ -253,9 +253,9 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <param name="keyComparer">(optional) <see cref="ILine"/> comparer</param>
         /// <returns></returns>
-        public static Dictionary<ILine, IFormatString> ToDictionary(this IEnumerable<ILine> lines, IEqualityComparer<ILine> keyComparer = default)
+        public static Dictionary<ILine, IString> ToDictionary(this IEnumerable<ILine> lines, IEqualityComparer<ILine> keyComparer = default)
         {
-            Dictionary<ILine, IFormatString> result = new Dictionary<ILine, IFormatString>(keyComparer ?? LineComparer.Default);
+            Dictionary<ILine, IString> result = new Dictionary<ILine, IString>(keyComparer ?? LineComparer.Default);
             foreach (var line in lines)
                 if (line != null) result[line] = line.GetValue();
             return result;

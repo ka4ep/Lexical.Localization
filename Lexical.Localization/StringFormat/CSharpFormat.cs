@@ -4,10 +4,8 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Exp;
-using Lexical.Localization.Internal;
 using System;
 using System.Globalization;
-using System.Threading;
 
 namespace Lexical.Localization.StringFormat
 {
@@ -51,18 +49,22 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         public virtual IFormatProvider FormatProvider { get; protected set; }
 
+        IString _null, _empty;
+
         /// <summary>
         /// Create default format.
         /// </summary>
         public CSharpFormat()
         {
+            _null = new NullString(this);
+            _empty = new EmptyString(this);
         }
 
         /// <summary>
         /// Create format with default <paramref name="formatProvider"/>.
         /// </summary>
         /// <param name="formatProvider">(optional) provider to add to each parsed line.</param>
-        public CSharpFormat(IFormatProvider formatProvider)
+        public CSharpFormat(IFormatProvider formatProvider) : this()
         {
             this.FormatProvider = formatProvider;
         }
@@ -72,12 +74,12 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="formatString"></param>
         /// <returns>preparsed</returns>
-        public IFormatString Parse(string formatString)
+        public IString Parse(string formatString)
         {
-            if (formatString == null) return Null.Default;
-            if (formatString == "") return Empty.Default;
-            if (FormatProvider != null) return new FormatStringWithFormatProvider(formatString, FormatProvider);
-            return new FormatString(formatString);
+            if (formatString == null) return _null;
+            if (formatString == "") return _empty;
+            if (FormatProvider != null) return new CSharpStringWithFormatProvider(formatString, this, FormatProvider);
+            return new CSharpString(formatString, this);
         }
 
         /// <summary>
@@ -85,429 +87,11 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="formatString"></param>
         /// <returns>string or null</returns>
-        public string Print(IFormatString formatString)
+        public string Print(IString formatString)
         {
             return formatString?.Text;
-        }
-
-        /// <summary>
-        /// Lazily parsed format string.
-        /// </summary>
-        public class FormatString : IFormatString
-        {
-            /// <summary>
-            /// Parsed arguments. Set in <see cref="Build"/>.
-            /// </summary>
-            IPlaceholder[] placeholders;
-
-            /// <summary>
-            /// String as sequence of parts. Set in <see cref="Build"/>.
-            /// </summary>
-            IFormatStringPart[] parts;
-
-            /// <summary>
-            /// Parse status. Set in <see cref="Build"/>.
-            /// </summary>
-            LineStatus status;
-
-            /// <summary>
-            /// Get the original format string.
-            /// </summary>
-            public string Text { get; internal set; }
-
-            /// <summary>
-            /// Get parse status.
-            /// </summary>
-            public LineStatus Status { get { if (status == LineStatus.FormatFailedNoResult) Build(); return status; } }
-
-            /// <summary>
-            /// Format string broken into sequence of text and argument parts.
-            /// </summary>
-            public IFormatStringPart[] Parts { get { if (status == LineStatus.FormatFailedNoResult) Build(); return parts; } }
-
-            /// <summary>
-            /// Get placeholders.
-            /// </summary>
-            public IPlaceholder[] Placeholders { get { if (status == LineStatus.FormatFailedNoResult) Build(); return placeholders; } }
-
-            /// <summary>
-            /// (optional) Get associated format provider. This is typically a plurality rules and  originates from a localization file.
-            /// </summary>
-            public virtual IFormatProvider FormatProvider => null;
-
-            /// <summary>
-            /// Create format string that parses formulation <paramref name="text"/> lazily.
-            /// </summary>
-            /// <param name="text"></param>
-            public FormatString(string text)
-            {
-                Text = text;
-                status = text == null ? LineStatus.FormatFailedNull : LineStatus.FormatFailedNoResult;
-            }
-
-            /// <summary>
-            /// Parse string
-            /// </summary>
-            protected void Build()
-            {
-                StructList8<IFormatStringPart> parts = new StructList8<IFormatStringPart>();
-
-                // Create parser
-                Parser parser = new Parser(this);
-
-                // Read parts
-                while (parser.HasMore)
-                {
-                    IFormatStringPart part = parser.ReadNext();
-                    if (part != null) parts.Add(part);
-                }
-
-                // Unify text parts
-                for (int i = 1; i < parts.Count;)
-                {
-                    if (parts[i - 1] is TextPart left && parts[i] is TextPart right)
-                    {
-                        parts[i - 1] = TextPart.Unify(left, right);
-                        parts.RemoveAt(i);
-                    }
-                    else i++;
-                }
-
-                // Create parts array
-                var partArray = new IFormatStringPart[parts.Count];
-                parts.CopyTo(partArray, 0);
-                // Set PartsArrayIndex
-                for (int i = 0; i < partArray.Length; i++)
-                {
-                    if (partArray[i] is TextPart textPart) textPart.PartsIndex = i;
-                    else if (partArray[i] is Placeholder argPart) argPart.PartsIndex = i;
-                }
-
-                // Create arguments array
-                int argumentCount = 0;
-                for (int i = 0; i < parts.Count; i++) if (parts[i] is IPlaceholder) argumentCount++;
-                var placeholdersArray = new IPlaceholder[argumentCount];
-                int j = 0;
-                for (int i = 0; i < parts.Count; i++) if (parts[i] is Placeholder argPart) placeholdersArray[j++] = argPart;
-                Array.Sort(placeholdersArray, FormatStringPartComparer.Default);
-                for (int i = 0; i < placeholdersArray.Length; i++) ((Placeholder)placeholdersArray[i]).PlaceholderIndex = i;
-
-                // Write status.
-                Thread.MemoryBarrier();
-                this.placeholders = placeholdersArray;
-                this.parts = partArray;
-                this.status = parser.status;
-            }
-
-
-            /// <summary>
-            /// Calculate hashcode
-            /// </summary>
-            /// <returns></returns>
-            public override int GetHashCode()
-                => FormatStringComparer.Default.GetHashCode(this);
-
-            /// <summary>
-            /// Compare for equality
-            /// </summary>
-            /// <param name="obj"></param>
-            /// <returns></returns>
-            public override bool Equals(object obj)
-                => obj is IFormatString other ? FormatStringComparer.Default.Equals(this, other) : false;
-
-            /// <summary>
-            /// Format string.
-            /// </summary>
-            /// <returns></returns>
-            public override string ToString()
-                => Text;
-        }
-
-        /// <summary>
-        /// Version of format string that carries an associated format provider.
-        /// </summary>
-        public class FormatStringWithFormatProvider : FormatString
-        {
-            /// <summary>
-            /// (optional) Associated format provider.
-            /// </summary>
-            IFormatProvider formatProvider;
-
-            /// <summary>
-            /// (optional) Get associated format provider. This is typically a plurality rules and  originates from a localization file.
-            /// </summary>
-            public override IFormatProvider FormatProvider => formatProvider;
-
-            /// <summary>
-            /// Create lazily parsed format string that carries a <paramref name="formatProvider"/>.
-            /// </summary>
-            /// <param name="text"></param>
-            /// <param name="formatProvider"></param>
-            public FormatStringWithFormatProvider(string text, IFormatProvider formatProvider) : base(text)
-            {
-                this.formatProvider = formatProvider;
-            }
-        }
-
-        /// <summary>
-        /// Null format string.
-        /// </summary>
-        public class Null : IFormatString
-        {
-            static IFormatString instance => new Null();
-            static IFormatStringPart[] parts = new IFormatStringPart[0];
-            static IPlaceholder[] arguments = new IPlaceholder[0];
-            /// <summary>
-            /// Default instance.
-            /// </summary>
-            public static IFormatString Default => instance;
-            /// <summary />
-            public LineStatus Status => LineStatus.FormatFailedNull;
-            /// <summary />
-            public string Text => null;
-            /// <summary />
-            public IFormatStringPart[] Parts => parts;
-            /// <summary />
-            public IPlaceholder[] Placeholders => arguments;
-            /// <summary />
-            public IFormatProvider FormatProvider => null;
-
-            /// <summary>
-            /// Cached hashcode
-            /// </summary>
-            int hashcode => FormatStringComparer.Default.GetHashCode(this);
-
-            /// <summary>
-            /// Calculate hashcode
-            /// </summary>
-            /// <returns></returns>
-            public override int GetHashCode()
-                => hashcode;
-
-            /// <summary>
-            /// Compare for equality
-            /// </summary>
-            /// <param name="obj"></param>
-            /// <returns></returns>
-            public override bool Equals(object obj)
-                => obj is IFormatString other ? FormatStringComparer.Default.Equals(this, other) : false;
-
-        }
-
-        /// <summary>
-        /// Empty format string.
-        /// </summary>
-        public class Empty : IFormatString
-        {
-            static IFormatString instance => new Empty();
-            static IFormatStringPart[] parts = new IFormatStringPart[0];
-            static IPlaceholder[] arguments = new IPlaceholder[0];
-            /// <summary>
-            /// Default instance.
-            /// </summary>
-            public static IFormatString Default => instance;
-            /// <summary />
-            public LineStatus Status => LineStatus.FormatFailedNull;
-            /// <summary />
-            public string Text => "";
-            /// <summary />
-            public IFormatStringPart[] Parts => parts;
-            /// <summary />
-            public IPlaceholder[] Placeholders => arguments;
-            /// <summary />
-            public IFormatProvider FormatProvider => null;
-
-            /// <summary>
-            /// Cached hashcode
-            /// </summary>
-            int hashcode => FormatStringComparer.Default.GetHashCode(this);
-
-            /// <summary>
-            /// Calculate hashcode
-            /// </summary>
-            /// <returns></returns>
-            public override int GetHashCode()
-                => hashcode;
-
-            /// <summary>
-            /// Compare for equality
-            /// </summary>
-            /// <param name="obj"></param>
-            /// <returns></returns>
-            public override bool Equals(object obj)
-                => obj is IFormatString other ? FormatStringComparer.Default.Equals(this, other) : false;
-        }
-
-        /// <summary>
-        /// Text part
-        /// </summary>
-        public class TextPart : IFormatStringPart
-        {
-            /// <summary>
-            /// Unify two text parts
-            /// </summary>
-            /// <param name="leftPart"></param>
-            /// <param name="rightPart"></param>
-            /// <returns></returns>
-            internal static TextPart Unify(TextPart leftPart, TextPart rightPart)
-                => new TextPart(leftPart.FormatString, leftPart.Index, rightPart.Index - leftPart.Index + rightPart.Length);
-
-            /// <summary>
-            /// The 'parent' format string.
-            /// </summary>
-            public IFormatString FormatString { get; internal set; }
-
-            /// <summary>
-            /// Part type
-            /// </summary>
-            public FormatStringPartKind Kind => FormatStringPartKind.Text;
-
-            /// <summary>
-            /// Start index of first character of the argument in the format string.
-            /// </summary>
-            public int Index { get; internal set; }
-
-            /// <summary>
-            /// Length of characters in the format string.
-            /// </summary>
-            public int Length { get; internal set; }
-
-            /// <summary>
-            /// The text part as it appears in the format string.
-            /// </summary>
-            public string Text => FormatString.Text.Substring(Index, Length);
-
-            /// <summary>
-            /// Index in Parts array.
-            /// </summary>
-            public int PartsIndex { get; internal set; }
-
-            /// <summary>
-            /// Create text part.
-            /// </summary>
-            /// <param name="formatString"></param>
-            /// <param name="index">first character index</param>
-            /// <param name="length">character length</param>
-            public TextPart(IFormatString formatString, int index, int length)
-            {
-                FormatString = formatString;
-                Index = index;
-                Length = length;
-            }
-
-            /// <summary>
-            /// Calculate hashcode
-            /// </summary>
-            /// <returns></returns>
-            public override int GetHashCode()
-                => FormatStringPartComparer.Default.GetHashCode(this);
-
-            /// <summary>
-            /// Compare for equality
-            /// </summary>
-            /// <param name="obj"></param>
-            /// <returns></returns>
-            public override bool Equals(object obj)
-                => FormatStringPartComparer.Default.Equals(obj);
-
-            /// <summary>
-            /// The text part as it appears in the format string.
-            /// </summary>
-            public override string ToString() => FormatString.Text.Substring(Index, Length);
-        }
-
-        /// <summary>
-        /// Placeholder info.
-        /// </summary>
-        public class Placeholder : IPlaceholder
-        {
-            /// <summary>
-            /// The 'parent' format string.
-            /// </summary>
-            public IFormatString FormatString { get; internal set; }
-
-            /// <summary>
-            /// Part type
-            /// </summary>
-            public FormatStringPartKind Kind => FormatStringPartKind.Placeholder;
-
-            /// <summary>
-            /// The whole argument definition as it appears in the format string.
-            /// </summary>
-            public string Text => FormatString.Text.Substring(Index, Length);
-
-            /// <summary>
-            /// Occurance index in <see cref="FormatString"/>.
-            /// </summary>
-            public int PlaceholderIndex { get; internal set; }
-
-            /// <summary>
-            /// Start index of first character of the argument in the format string.
-            /// </summary>
-            public int Index { get; internal set; }
-
-            /// <summary>
-            /// Length of characters in the format string.
-            /// </summary>
-            public int Length { get; internal set; }
-
-            /// <summary>
-            /// Plural category, such as: cardinal, ordinal, optional (with default ruies)
-            /// </summary>
-            public string PluralCategory { get; internal set; }
-
-            /// <summary>
-            /// Index in parts array.
-            /// </summary>
-            public int PartsIndex { get; internal set; }
-
-            /// <summary>
-            /// Expression that describes a function that evaluates to string within the evaluation context.
-            /// </summary>
-            public IExpression Expression { get; internal set; }
-
-            /// <summary>
-            /// Create argument info.
-            /// </summary>
-            /// <param name="formatString"></param>
-            /// <param name="index">first character index</param>
-            /// <param name="length">character length</param>
-            /// <param name="partsIndex"></param>
-            /// <param name="placeholderIndex"></param>
-            /// <param name="pluralCategory"></param>
-            /// <param name="expression">(optional)</param>
-            public Placeholder(IFormatString formatString, int index, int length, int partsIndex, int placeholderIndex, string pluralCategory, IExpression expression)
-            {
-                FormatString = formatString ?? throw new ArgumentNullException(nameof(formatString));
-                Index = index;
-                Length = length;
-                PluralCategory = pluralCategory;
-                Expression = expression;
-                PartsIndex = partsIndex;
-                PlaceholderIndex = placeholderIndex;
-            }
-
-            /// <summary>
-            /// Calculate hashcode
-            /// </summary>
-            /// <returns></returns>
-            public override int GetHashCode()
-                => FormatStringPartComparer.Default.GetHashCode(this);
-
-            /// <summary>
-            /// Compare for equality
-            /// </summary>
-            /// <param name="obj"></param>
-            /// <returns></returns>
-            public override bool Equals(object obj)
-                => FormatStringPartComparer.Default.Equals(obj);
-
-            /// <summary>
-            /// Print argument format as it is in the format string. Example "{0:x2}".
-            /// </summary>
-            /// <returns></returns>
-            public override string ToString()
-                => FormatString.Text.Substring(Index, Length);
+            // TODO If string is not of CSharpFormat, then convert to CSharpFormat
+            // Supports pluralCase, Alignment, Format, ArgumentIndex - otherwise fails
         }
 
         enum ParserState { Text, ArgumentStart, PluralCategory, Index, Alignment, Format, ArgumentEnd }
@@ -515,7 +99,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Parser that breaks format string into parts
         /// </summary>
-        struct Parser
+        public struct CSharpParser
         {
             /// <summary>
             /// Format string
@@ -575,13 +159,13 @@ namespace Lexical.Localization.StringFormat
             /// <summary>
             /// Format string
             /// </summary>
-            IFormatString formatString;
+            IString formatString;
 
             /// <summary>
             /// Initialize parser
             /// </summary>
             /// <param name="formatString"></param>
-            public Parser(IFormatString formatString)
+            public CSharpParser(IString formatString)
             {
                 this.formatString = formatString;
                 str = formatString.Text;
@@ -607,7 +191,7 @@ namespace Lexical.Localization.StringFormat
             /// </summary>
             /// <param name="endIx">end index</param>
             /// <returns>new part or null</returns>
-            IFormatStringPart CompletePart(int endIx)
+            IStringPart CompletePart(int endIx)
             {
                 // Calculate character length
                 int length = endIx - strIx;
@@ -616,7 +200,7 @@ namespace Lexical.Localization.StringFormat
                 // Return text part
                 if (state == ParserState.Text)
                 {
-                    IFormatStringPart part = new TextPart(formatString, strIx, length);
+                    IStringPart part = new TextPart(formatString, strIx, length);
                     ResetPartState(endIx);
                     return part;
                 }
@@ -624,7 +208,7 @@ namespace Lexical.Localization.StringFormat
                 if (state == ParserState.ArgumentStart || state == ParserState.PluralCategory)
                 {
                     status = LineStatus.FormatErrorMalformed;
-                    IFormatStringPart part = new TextPart(formatString, strIx, length);
+                    IStringPart part = new TextPart(formatString, strIx, length);
                     ResetPartState(endIx);
                     return part;
                 }
@@ -652,7 +236,7 @@ namespace Lexical.Localization.StringFormat
                 // Error with argument index, return as text 
                 if (indexStartIx < 0 || indexEndIx < 0 || indexStartIx >= indexEndIx)
                 {
-                    IFormatStringPart part = new TextPart(formatString, strIx, length);
+                    IStringPart part = new TextPart(formatString, strIx, length);
                     status = LineStatus.FormatErrorMalformed;
                     ResetPartState(endIx);
                     return part;
@@ -668,7 +252,7 @@ namespace Lexical.Localization.StringFormat
                 catch (Exception)
                 {
                     // Parse failed, probably too large number
-                    IFormatStringPart part = new TextPart(formatString, strIx, length);
+                    IStringPart part = new TextPart(formatString, strIx, length);
                     status = LineStatus.FormatErrorMalformed;
                     ResetPartState(endIx);
                     return part;
@@ -700,7 +284,7 @@ namespace Lexical.Localization.StringFormat
                 IExpression exp = new ArgumentIndexExpression(argumentIndex);
                 if (format != null) exp = new CallExpression("Format", exp, new ConstantExpression(format));
                 if (alignment != 0) exp = new CallExpression("Alignment", exp, new ConstantExpression(alignment));
-                IFormatStringPart part_ = new Placeholder(formatString, strIx, length, -1, ++placeholderIndex, pluralCategory, exp);
+                IStringPart part_ = new Placeholder(formatString, strIx, length, -1, ++placeholderIndex, pluralCategory, exp);
                 // Reset to 'Text' state
                 ResetPartState(endIx);
                 // Return the constructed argument
@@ -724,7 +308,7 @@ namespace Lexical.Localization.StringFormat
             /// Read next character
             /// </summary>
             /// <returns>possible part</returns>
-            public IFormatStringPart ReadNext()
+            public IStringPart ReadNext()
             {
                 while (HasMore)
                 {
@@ -746,7 +330,7 @@ namespace Lexical.Localization.StringFormat
                         if (state == ParserState.Text)
                         {
                             // Complate previous part, and reset state
-                            IFormatStringPart part = CompletePart(i);
+                            IStringPart part = CompletePart(i);
                             // Start argument
                             state = ParserState.ArgumentStart;
                             // 
@@ -770,7 +354,7 @@ namespace Lexical.Localization.StringFormat
                             // End argument
                             state = ParserState.ArgumentEnd;
                             // Complete previous part, and reset state
-                            IFormatStringPart part = CompletePart(i + 1);
+                            IStringPart part = CompletePart(i + 1);
                             //
                             return part;
                         }
@@ -854,7 +438,7 @@ namespace Lexical.Localization.StringFormat
                     if (state == ParserState.Alignment)
                     {
                         // Move indices
-                        if ((ch >= '0' && ch <= '9')||(ch=='-'))
+                        if ((ch >= '0' && ch <= '9') || (ch == '-'))
                         {
                             if (alignmentStartIx < 0) alignmentStartIx = i;
                             alignmentEndIx = i + 1;

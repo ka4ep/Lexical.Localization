@@ -237,7 +237,7 @@ namespace Lexical.Localization
             else
             {
                 IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Default;
-                IFormatString format = stringFormat.Parse(valueText);
+                IString format = stringFormat.Parse(valueText);
                 ILine value = subline.Value(format);
                 inlines[subline] = value;
             }
@@ -258,7 +258,7 @@ namespace Lexical.Localization
             line = line.GetOrCreateInlines(out inlines);
             ILine subline = line.Culture(culture);
             IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Default;
-            IFormatString format = stringFormat.Parse(valueText);
+            IString format = stringFormat.Parse(valueText);
             ILine value = subline.Value(format);
             inlines[subline] = value;
             return line;
@@ -284,7 +284,7 @@ namespace Lexical.Localization
             else
             {
                 IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Default;
-                IFormatString format = stringFormat.Parse(valueText);
+                IString format = stringFormat.Parse(valueText);
                 ILine value = subline.Value(format);
                 inlines[subline] = value;
             }
@@ -299,7 +299,7 @@ namespace Lexical.Localization
         /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
         /// <returns>new line with inlines or <paramref name="line"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine Inline(this ILine line, string subKeyText, IFormatString value)
+        public static ILine Inline(this ILine line, string subKeyText, IString value)
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);

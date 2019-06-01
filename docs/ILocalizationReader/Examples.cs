@@ -42,7 +42,7 @@ namespace docs
             }
             {
                 #region Snippet_1b
-                IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LineReaderMap.Default.ReadStringLines(
+                IEnumerable<KeyValuePair<string, IString>> string_lines = LineReaderMap.Default.ReadStringLines(
                     filename: "localization.ini", 
                     lineFormat: LineFormat.Parameters,
                     throwIfNotFound: true);
@@ -66,7 +66,7 @@ namespace docs
             }
             {
                 #region Snippet_2b
-                IEnumerable<KeyValuePair<string, IFormatString>> string_lines_reader = 
+                IEnumerable<KeyValuePair<string, IString>> string_lines_reader = 
                     LineReaderMap.Default.FileReaderAsStringLines(
                         filename: "localization.ini",
                         lineFormat: LineFormat.Parameters,
@@ -98,7 +98,7 @@ namespace docs
             {
                 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
                 #region Snippet_3b
-                IEnumerable<KeyValuePair<string, IFormatString>> string_lines_reader = 
+                IEnumerable<KeyValuePair<string, IString>> string_lines_reader = 
                     LineReaderMap.Default.EmbeddedReaderAsStringLines(
                         assembly: asm, 
                         resourceName: "docs.localization.ini", 
@@ -133,7 +133,7 @@ namespace docs
             {
                 #region Snippet_4b
                 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-                IEnumerable<KeyValuePair<string, IFormatString>> string_lines_reader = 
+                IEnumerable<KeyValuePair<string, IString>> string_lines_reader = 
                     LineReaderMap.Default.FileProviderReaderAsStringLines(
                         fileProvider: fileProvider, 
                         filepath: "localization.ini", 
@@ -165,7 +165,7 @@ namespace docs
                 #region Snippet_5b
                 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
                 {
-                    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = IniLinesReader.Default.ReadStringLines(
+                    IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadStringLines(
                         stream: s,
                         namePolicy: LineFormat.Parameters);
                 }
@@ -195,7 +195,7 @@ namespace docs
                 #region Snippet_6b
                 using (TextReader tr = new StringReader(text))
                 {
-                    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = IniLinesReader.Default.ReadStringLines(
+                    IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadStringLines(
                         srcText: tr,
                         namePolicy: LineFormat.Parameters);
                 }
@@ -222,7 +222,7 @@ namespace docs
             {
                 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
                 #region Snippet_7b
-                IEnumerable<KeyValuePair<string, IFormatString>> string_lines = 
+                IEnumerable<KeyValuePair<string, IString>> string_lines = 
                     IniLinesReader.Default.ReadStringAsStringLines(
                         srcText: text,
                         namePolicy: LineFormat.Parameters);

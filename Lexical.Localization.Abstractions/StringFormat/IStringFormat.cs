@@ -36,7 +36,7 @@ namespace Lexical.Localization.StringFormat
     public interface IStringFormatParser : IStringFormat
     {
         /// <summary>
-        /// Parse format string into an <see cref="IFormatString"/>.
+        /// Parse format string into an <see cref="IString"/>.
         /// 
         /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormatErrorMalformed"/>.
         /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormatOk"/> or some other format state.
@@ -44,11 +44,11 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="formatString"></param>
         /// <returns>format string</returns>
-        IFormatString Parse(string formatString);
+        IString Parse(string formatString);
     }
 
     /// <summary>
-    /// Prints <see cref="IFormatString"/> into the format.
+    /// Prints <see cref="IString"/> into the format.
     /// </summary>
     public interface IStringFormatPrinter : IStringFormat
     {
@@ -57,7 +57,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="formatString"></param>
         /// <returns>format string</returns>
-        string Print(IFormatString formatString);
+        string Print(IString formatString);
     }
 
     /// <summary>
@@ -73,7 +73,7 @@ namespace Lexical.Localization.StringFormat
     public static partial class ILocalizationStringFormatExtensions
     {
         /// <summary>
-        /// Parse format string into an <see cref="IFormatString"/>.
+        /// Parse format string into an <see cref="IString"/>.
         /// 
         /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormatErrorMalformed"/>.
         /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormatOk"/> or some other format state.
@@ -84,7 +84,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="formatString"></param>
         /// <returns>format string</returns>
         /// <exception cref="ArgumentException">If <paramref name="format"/> doesn't implement <see cref="IStringFormatParser"/></exception>
-        public static IFormatString Parse(this IStringFormat format, string formatString)
+        public static IString Parse(this IStringFormat format, string formatString)
         {
             if (formatString == null) return new StatusFormatString(formatString, LineStatus.FormatFailedNull);
             if (format is IStringFormatParser parser) return parser.Parse(formatString);
@@ -97,14 +97,14 @@ namespace Lexical.Localization.StringFormat
         /// <param name="format"></param>
         /// <param name="formatString"></param>
         /// <returns>format string</returns>
-        public static string Print(this IStringFormat format, IFormatString formatString)
+        public static string Print(this IStringFormat format, IString formatString)
         {
             if (format is IStringFormatPrinter printer) return printer.Print(formatString);
             throw new ArgumentException($"{format} doesn't implement {nameof(IStringFormatPrinter)}.");
         }
 
         /// <summary>
-        /// Parse format string into an <see cref="IFormatString"/>.
+        /// Parse format string into an <see cref="IString"/>.
         /// 
         /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormatErrorMalformed"/>.
         /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormatOk"/> or some other format state.
@@ -115,7 +115,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="formatString"></param>
         /// <returns>format string</returns>
         /// <exception cref="ArgumentException">If <paramref name="formatName"/> doesn't implement <see cref="IStringFormatParser"/></exception>
-        public static IFormatString Parse(this IReadOnlyDictionary<string, IStringFormat> formats, string formatName, string formatString)
+        public static IString Parse(this IReadOnlyDictionary<string, IStringFormat> formats, string formatName, string formatString)
         {
             IStringFormat format;
             if (!formats.TryGetValue(formatName, out format))

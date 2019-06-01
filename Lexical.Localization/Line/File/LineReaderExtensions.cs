@@ -42,7 +42,7 @@ namespace Lexical.Localization
         /// <param name="srcText"></param>
         /// <param name="namePolicy"></param>
         /// <returns>lines</returns>
-        public static IEnumerable<KeyValuePair<string, IFormatString>> ReadStringAsStringLines(this ILineFileFormat fileFormat, string srcText, ILineFormat namePolicy = default)
+        public static IEnumerable<KeyValuePair<string, IString>> ReadStringAsStringLines(this ILineFileFormat fileFormat, string srcText, ILineFormat namePolicy = default)
             => ReadStringLines(fileFormat, new StringReader(srcText), namePolicy);
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Lexical.Localization
         /// <param name="srcText"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormatString>> ReadStringLines(this ILineFileFormat fileFormat, TextReader srcText, ILineFormat namePolicy = default)
+        public static IEnumerable<KeyValuePair<string, IString>> ReadStringLines(this ILineFileFormat fileFormat, TextReader srcText, ILineFormat namePolicy = default)
         {
             if (fileFormat is ILineStringTextReader r5) return r5.ReadStringLines(srcText, namePolicy);
             if (fileFormat is ILineStringStreamReader r6) return r6.ReadStringLines(srcText.ReadStream(), namePolicy);
@@ -143,7 +143,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="namePolicy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormatString>> ReadStringLines(this ILineFileFormat fileFormat, Stream stream, ILineFormat namePolicy = default)
+        public static IEnumerable<KeyValuePair<string, IString>> ReadStringLines(this ILineFileFormat fileFormat, Stream stream, ILineFormat namePolicy = default)
         {
             if (fileFormat is ILineStringStreamReader r6) return r6.ReadStringLines(stream, namePolicy);
             if (fileFormat is ILineStringTextReader r5) using (var txt = stream.ReadText()) return r5.ReadStringLines(txt, namePolicy);

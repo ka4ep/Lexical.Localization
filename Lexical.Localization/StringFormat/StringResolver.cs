@@ -66,13 +66,13 @@ namespace Lexical.Localization.StringFormat
         }
 
         /// <summary>
-        /// Resolve <paramref name="key"/> into <see cref="IFormatString"/>, but without applying format arguments.
+        /// Resolve <paramref name="key"/> into <see cref="IString"/>, but without applying format arguments.
         /// 
-        /// If the <see cref="IFormatString"/> contains plural categories, then matches into the applicable plurality case.
+        /// If the <see cref="IString"/> contains plural categories, then matches into the applicable plurality case.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>format string</returns>
-        public IFormatString ResolveFormatString(ILine key)
+        public IString ResolveFormatString(ILine key)
         {
             // Extract parameters from line
             LineFeatures features = new LineFeatures { Resolvers = Resolvers };
@@ -103,7 +103,7 @@ namespace Lexical.Localization.StringFormat
             }
 
             // Parse value
-            IFormatString value = features.EffectiveValue;
+            IString value = features.EffectiveValue;
             features.Status.UpFormat(value.Status);
 
             // Value has error
@@ -155,7 +155,7 @@ namespace Lexical.Localization.StringFormat
                         // Got no match
                         if (line_for_plurality_arguments == null) continue;
                         // Parse value
-                        IFormatString value_for_plurality = line_for_plurality_arguments.GetValue(Resolvers);
+                        IString value_for_plurality = line_for_plurality_arguments.GetValue(Resolvers);
                         // Add status from parsing the value
                         features.Status.UpFormat(value_for_plurality.Status);
                         // Value has error
@@ -228,7 +228,7 @@ namespace Lexical.Localization.StringFormat
                 }
 
                 // Parse value
-                IFormatString value = features.EffectiveValue;
+                IString value = features.EffectiveValue;
                 features.Status.UpFormat(value.Status);
 
                 // Value has error
@@ -293,7 +293,7 @@ namespace Lexical.Localization.StringFormat
                                     return new LineString(key, null, features.Status);
                                 }
                                 // Parse value
-                                IFormatString value_for_plurality = features.EffectiveValue;
+                                IString value_for_plurality = features.EffectiveValue;
                                 // Add status from parsing the value
                                 features.Status.UpFormat(value_for_plurality.Status);
                                 // Value has error
@@ -339,8 +339,8 @@ namespace Lexical.Localization.StringFormat
                     // Only one part
                     if (value.Parts.Length == 1)
                     {
-                        if (value.Parts[0].Kind == FormatStringPartKind.Text) text = value.Parts[0].Text;
-                        else if (value.Parts[0].Kind == FormatStringPartKind.Placeholder) text = placeholder_values[0];
+                        if (value.Parts[0].Kind == StringPartKind.Text) text = value.Parts[0].Text;
+                        else if (value.Parts[0].Kind == StringPartKind.Placeholder) text = placeholder_values[0];
                     }
                     else
                     // Compile parts
@@ -349,8 +349,8 @@ namespace Lexical.Localization.StringFormat
                         int length = 0;
                         for (int i = 0; i < value.Parts.Length; i++)
                         {
-                            IFormatStringPart part = value.Parts[i];
-                            length += part.Kind switch { FormatStringPartKind.Text => part.Length, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex].Length, _ => 0 };
+                            IStringPart part = value.Parts[i];
+                            length += part.Kind switch { StringPartKind.Text => part.Length, StringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex].Length, _ => 0 };
                         }
 
                         // Copy characters
@@ -358,8 +358,8 @@ namespace Lexical.Localization.StringFormat
                         int ix = 0;
                         for (int i = 0; i < value.Parts.Length; i++)
                         {
-                            IFormatStringPart part = value.Parts[i];
-                            string str = part.Kind switch { FormatStringPartKind.Text => part.Text, FormatStringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex], _ => null };
+                            IStringPart part = value.Parts[i];
+                            string str = part.Kind switch { StringPartKind.Text => part.Text, StringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex], _ => null };
                             if (str != null) { str.CopyTo(0, arr, ix, str.Length); ix += str.Length; }
                         }
 
@@ -660,7 +660,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="str1"></param>
         /// <param name="str2"></param>
         /// <returns></returns>
-        static bool EqualPlaceholders(IFormatString str1, IFormatString str2)
+        static bool EqualPlaceholders(IString str1, IString str2)
         {
             if (str1 == null && str2 == null) return true;
             if (str1 == null || str2 == null) return false;

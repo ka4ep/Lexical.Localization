@@ -76,14 +76,14 @@ namespace Lexical.Localization
         /// <summary>
         /// No lines
         /// </summary>
-        static IEnumerable<KeyValuePair<string, IFormatString>> empty = new KeyValuePair<string, IFormatString>[0];
+        static IEnumerable<KeyValuePair<string, IString>> empty = new KeyValuePair<string, IString>[0];
 
         /// <summary>
         /// Open file and get new reader.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
-        IEnumerator<KeyValuePair<string, IFormatString>> IEnumerable<KeyValuePair<string, IFormatString>>.GetEnumerator()
+        IEnumerator<KeyValuePair<string, IString>> IEnumerable<KeyValuePair<string, IString>>.GetEnumerator()
         {
             try
             {
@@ -105,7 +105,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         /// <exception cref="FileNotFoundException">if ThrowIfNotFound and not found</exception>
         public override IEnumerator GetEnumerator()
-            => ((IEnumerable<KeyValuePair<string, IFormatString>>)this).GetEnumerator();
+            => ((IEnumerable<KeyValuePair<string, IString>>)this).GetEnumerator();
 
         /// <summary>
         /// Add reader to list.

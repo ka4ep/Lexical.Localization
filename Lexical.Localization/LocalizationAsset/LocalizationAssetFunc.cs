@@ -27,7 +27,7 @@ namespace Lexical.Localization
             Func = func ?? throw new ArgumentNullException(nameof(func));
         }
 
-        IEnumerable<KeyValuePair<string, IFormatString>> ILocalizationStringLinesEnumerable.GetAllStringLines(ILine key)
+        IEnumerable<KeyValuePair<string, IString>> ILocalizationStringLinesEnumerable.GetAllStringLines(ILine key)
             => (Func() as ILocalizationStringLinesEnumerable)?.GetAllStringLines(key);
 
         byte[] IAssetResourceProvider.GetResource(ILine key)
@@ -54,7 +54,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormatString>> GetStringLines(ILine filterKey = null)
+        public IEnumerable<KeyValuePair<string, IString>> GetStringLines(ILine filterKey = null)
             => (Func() as ILocalizationStringProvider)?.GetStringLines(filterKey);
 
         /// <summary>

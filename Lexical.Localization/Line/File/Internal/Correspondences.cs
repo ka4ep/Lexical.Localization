@@ -92,7 +92,7 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Value correspondences
         /// </summary>
-        public readonly Dictionary<KeyValuePair<string, IFormatString>, XElement> Values = new Dictionary<KeyValuePair<string, IFormatString>, XElement>(KeyValuePairEqualityComparer<string, IFormatString>.Default);
+        public readonly Dictionary<KeyValuePair<string, IString>, XElement> Values = new Dictionary<KeyValuePair<string, IString>, XElement>(KeyValuePairEqualityComparer<string, IString>.Default);
     }
 
     /// <summary>

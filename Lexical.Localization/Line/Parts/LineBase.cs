@@ -190,7 +190,7 @@ namespace Lexical.Localization
                     sb.Append(':');
                     sb.Append(parameter.ParameterValue);
                 }
-                IFormatString value = line.GetValue(StringFormatResolver.Default);
+                IString value = line.GetValue(StringFormatResolver.Default);
                 if (value != null && value.Text != null)
                 {
                     sb.Append(" = \"");
@@ -421,7 +421,7 @@ namespace Lexical.Localization
                 IEnumerable<LocalizedString> result = null;
                 while (true)
                 {
-                    IEnumerable<KeyValuePair<string, IFormatString>> strs = collections?.GetAllStringLines(this);
+                    IEnumerable<KeyValuePair<string, IString>> strs = collections?.GetAllStringLines(this);
                     if (strs != null)
                     {
                         IEnumerable<LocalizedString> converted = ConvertStrings(strs);
@@ -434,7 +434,7 @@ namespace Lexical.Localization
             }
             else
             {
-                IEnumerable<KeyValuePair<string, IFormatString>> strs = collections?.GetAllStringLines(this);
+                IEnumerable<KeyValuePair<string, IString>> strs = collections?.GetAllStringLines(this);
                 return strs == null ? null : ConvertStrings(strs);
             }
         }
@@ -444,7 +444,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lines"></param>
         /// <returns></returns>
-        IEnumerable<LocalizedString> ConvertStrings(IEnumerable<KeyValuePair<string, IFormatString>> lines)
+        IEnumerable<LocalizedString> ConvertStrings(IEnumerable<KeyValuePair<string, IString>> lines)
         {
             foreach (var kp in lines)
             {

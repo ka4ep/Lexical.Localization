@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>format string</returns>
         /// <exception cref="LineException">If resolving failed or resolver was not found</exception>
-        public static IFormatString GetAssetValue(this ILine key)
+        public static IString GetAssetValue(this ILine key)
         {
             IAsset asset = key.FindAsset();
             if (asset == null) throw new LineException(key, "String resolver was not found.");
@@ -93,13 +93,13 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <param name="result"></param>
         /// <returns>format string, or null if format string was not found, or if resolver was not found</returns>
-        public static bool TryGetAssetValue(this ILine key, out IFormatString result)
+        public static bool TryGetAssetValue(this ILine key, out IString result)
         {
             IAsset asset = key.FindAsset();
             if (asset == null) { result = null; return false; }
             ILine line = asset.GetString(key);
             if (line == null) { result = null; return false; }
-            IFormatString str = line.GetValue();
+            IString str = line.GetValue();
             result = str;
             return str.Text != null;
         }

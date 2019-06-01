@@ -29,7 +29,7 @@ namespace Lexical.Localization
         /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
         /// <returns>new line with inlines or <paramref name="line"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine Inline(this ILine line, ILine subKey, IFormatString value)
+        public static ILine Inline(this ILine line, ILine subKey, IString value)
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
@@ -53,7 +53,7 @@ namespace Lexical.Localization
         /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
         /// <returns>new line with inlines or <paramref name="line"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine InlineCulture(this ILine line, string culture, IFormatString value)
+        public static ILine InlineCulture(this ILine line, string culture, IString value)
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
@@ -70,7 +70,7 @@ namespace Lexical.Localization
         /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
         /// <returns>new line with inlines or <paramref name="lineFactory"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine Inline(this ILineFactory lineFactory, ILine subkey, IFormatString value)
+        public static ILine Inline(this ILineFactory lineFactory, ILine subkey, IString value)
         {
             ILineInlines inlines = lineFactory.Create<ILineInlines>(null);
             if (value != null) subkey = subkey.Value(value);
@@ -86,7 +86,7 @@ namespace Lexical.Localization
         /// <param name="value">(optional) value to append, if null removes previously existing the inline</param>
         /// <returns>new line with inlines or <paramref name="lineFactory"/></returns>
         /// <exception cref="LineException">If key can't be inlined.</exception>
-        public static ILine InlineCulture(this ILineFactory lineFactory, string culture, IFormatString value)
+        public static ILine InlineCulture(this ILineFactory lineFactory, string culture, IString value)
         {
             ILineInlines inlines = lineFactory.Create<ILineInlines>(null);
             ILine subkey = lineFactory.Create<ILineNonCanonicalKey, string, string>(null, "Culture", culture);

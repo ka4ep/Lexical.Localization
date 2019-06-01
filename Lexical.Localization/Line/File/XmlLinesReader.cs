@@ -340,8 +340,8 @@ namespace Lexical.Localization
                 IStringFormat stringFormat;
                 if (parent.TryGetStringFormat(resolver, out stringFormat))
                 {
-                    IFormatString valueString = stringFormat.Parse(parameterValue);
-                    return LineFactory.Create<ILineValue, IFormatString>(prev, valueString);
+                    IString valueString = stringFormat.Parse(parameterValue);
+                    return LineFactory.Create<ILineValue, IString>(prev, valueString);
                 }
                 else
                 {

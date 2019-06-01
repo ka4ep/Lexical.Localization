@@ -45,7 +45,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Source that provides string based key-value lines
     /// </summary>
-    public interface IStringLineSource : ILineSource, IEnumerable<KeyValuePair<string, IFormatString>>
+    public interface IStringLineSource : ILineSource, IEnumerable<KeyValuePair<string, IString>>
     {
         /// <summary>
         /// Format that is used for converting string to <see cref="ILine"/>.

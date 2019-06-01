@@ -11,7 +11,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Compares format strings
     /// </summary>
-    public class FormatStringComparer : IEqualityComparer<IFormatString>, IComparer<IFormatString>
+    public class FormatStringComparer : IEqualityComparer<IString>, IComparer<IString>
     {
         private static FormatStringComparer instance = new FormatStringComparer(FormatStringPartComparer.Default, FormatStringPartComparer.Default);
 
@@ -20,15 +20,15 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         public static FormatStringComparer Default => instance;
 
-        IEqualityComparer<IFormatStringPart> partComparer;
-        IComparer<IFormatStringPart> partComparer2;
+        IEqualityComparer<IStringPart> partComparer;
+        IComparer<IStringPart> partComparer2;
 
         /// <summary>
         /// Create part comparer
         /// </summary>
         /// <param name="partComparer"></param>
         /// <param name="partComparer2"></param>
-        public FormatStringComparer(IEqualityComparer<IFormatStringPart> partComparer, IComparer<IFormatStringPart> partComparer2)
+        public FormatStringComparer(IEqualityComparer<IStringPart> partComparer, IComparer<IStringPart> partComparer2)
         {
             this.partComparer = partComparer;
             this.partComparer2 = partComparer2;
@@ -40,7 +40,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns>-1, 0, 1</returns>
-        public int Compare(IFormatString x, IFormatString y)
+        public int Compare(IString x, IString y)
         {
             string _x = x?.Text, _y = y?.Text;
             if (_x == null && _y == null) return 0;
@@ -55,7 +55,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public bool Equals(IFormatString x, IFormatString y)
+        public bool Equals(IString x, IString y)
         {
             if (x == null && y == null) return true;
             if (x == null || y == null) return false;
@@ -75,7 +75,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
-        public int GetHashCode(IFormatString o)
+        public int GetHashCode(IString o)
         {
             if (o == null) return 0;
             int result = FNVHashBasis;
@@ -105,7 +105,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Compares format strings
     /// </summary>
-    public class FormatStringPartComparer : IEqualityComparer<IFormatStringPart>, IComparer<IFormatStringPart>
+    public class FormatStringPartComparer : IEqualityComparer<IStringPart>, IComparer<IStringPart>
     {
         private static FormatStringPartComparer instance = new FormatStringPartComparer();
 
@@ -120,7 +120,7 @@ namespace Lexical.Localization.StringFormat
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns>-1, 0, 1</returns>
-        public int Compare(IFormatStringPart x, IFormatStringPart y)
+        public int Compare(IStringPart x, IStringPart y)
             => x.PartsIndex - y.PartsIndex;
 
         /// <summary>
@@ -129,19 +129,19 @@ namespace Lexical.Localization.StringFormat
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public bool Equals(IFormatStringPart x, IFormatStringPart y)
+        public bool Equals(IStringPart x, IStringPart y)
         {
             if (x == null && y == null) return true;
             if (x == null || y == null) return false;
             if (x == y) return true;
             if (x.Kind != y.Kind) return false;
 
-            if (x.Kind == FormatStringPartKind.Text)
+            if (x.Kind == StringPartKind.Text)
             {
                 if (x.Text != y.Text) return false;
             }
 
-            if (x.Kind == FormatStringPartKind.Placeholder)
+            if (x.Kind == StringPartKind.Placeholder)
             {
                 var x_arg = x as IPlaceholder;
                 var y_arg = y as IPlaceholder;
@@ -159,18 +159,18 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
-        public int GetHashCode(IFormatStringPart o)
+        public int GetHashCode(IStringPart o)
         {
             if (o == null) return 0;
             int result = FNVHashBasis;
 
-            if (o.Kind == FormatStringPartKind.Text)
+            if (o.Kind == StringPartKind.Text)
             {
                 result ^= o.Text.GetHashCode();
                 result *= FNVHashPrime;
             }
 
-            if (o.Kind == FormatStringPartKind.Placeholder && o is IPlaceholder arg)
+            if (o.Kind == StringPartKind.Placeholder && o is IPlaceholder arg)
             {
                 result = new PlaceholderExpressionHashCode().Hash(arg.PluralCategory).Hash(arg.Expression).Hash(arg.PlaceholderIndex);
             }

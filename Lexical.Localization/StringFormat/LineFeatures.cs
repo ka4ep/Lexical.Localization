@@ -67,19 +67,19 @@ namespace Lexical.Localization.StringFormat
         public IStringFormat StringFormat;
 
         /// <summary>
-        /// Placeholder for <see cref="IFormatString"/>, if set before <see cref="StringFormats"/>.
+        /// Placeholder for <see cref="IString"/>, if set before <see cref="StringFormats"/>.
         /// </summary>
         public string ValueText;
 
         /// <summary>
         /// Value.
         /// </summary>
-        public IFormatString Value;
+        public IString Value;
 
         /// <summary>
         /// Get Value or parsed ValueText. Call this after all features have been read.
         /// </summary>
-        public IFormatString EffectiveValue => Value ?? (Value = (StringFormat ?? CSharpFormat.Default).Parse(ValueText));
+        public IString EffectiveValue => Value ?? (Value = (StringFormat ?? CSharpFormat.Default).Parse(ValueText));
 
         /// <summary>
         /// Test if has value.

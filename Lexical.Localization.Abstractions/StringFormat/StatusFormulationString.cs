@@ -8,12 +8,12 @@ using System;
 namespace Lexical.Localization.StringFormat
 {
     /// <summary>
-    /// Class that carries a status code result as <see cref="IFormatString"/>.
+    /// Class that carries a status code result as <see cref="IString"/>.
     /// </summary>
-    public class StatusFormatString : IFormatString
+    public class StatusFormatString : IString
     {
         static IPlaceholder[] no_arguments = new IPlaceholder[0];
-        static IFormatStringPart[] no_parts = new IFormatStringPart[0];
+        static IStringPart[] no_parts = new IStringPart[0];
         static StatusFormatString _null = new StatusFormatString(null, LineStatus.FormatFailedNull);
         static StatusFormatString _no_parser = new StatusFormatString(null, LineStatus.FormatFailedNoParser);
         static StatusFormatString _parse_failed = new StatusFormatString(null, LineStatus.FormatFailedParse);
@@ -46,7 +46,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Get the parts
         /// </summary>
-        public IFormatStringPart[] Parts => no_parts;
+        public IStringPart[] Parts => no_parts;
 
         /// <summary>
         /// Get arguments
@@ -57,6 +57,11 @@ namespace Lexical.Localization.StringFormat
         /// Get format provider.
         /// </summary>
         public IFormatProvider FormatProvider => null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IStringFormat StringFormat => null;
 
         /// <summary>
         /// Crate string for status

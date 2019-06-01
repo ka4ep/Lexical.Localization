@@ -11,13 +11,13 @@ namespace Lexical.Localization.StringFormat
     public interface IStringResolver
     {
         /// <summary>
-        /// Resolve <paramref name="key"/> into <see cref="IFormatString"/>, but without applying format arguments.
+        /// Resolve <paramref name="key"/> into <see cref="IString"/>, but without applying format arguments.
         /// 
-        /// If the <see cref="IFormatString"/> contains plural categories, then matches into the applicable plurality case.
+        /// If the <see cref="IString"/> contains plural categories, then matches into the applicable plurality case.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>format string</returns>
-        IFormatString ResolveFormatString(ILine key);
+        IString ResolveFormatString(ILine key);
 
         /// <summary>
         /// Resolve <paramref name="key"/> into <see cref="LineString"/> with format arguments applied.

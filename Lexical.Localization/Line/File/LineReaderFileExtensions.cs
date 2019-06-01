@@ -27,7 +27,7 @@ namespace Lexical.Localization
         /// <returns>lines</returns>
         /// <exception cref="FileNotFoundException">thrown if file was not found and <paramref name="throwIfNotFound"/> is true</exception>
         /// <exception cref="IOException">on io error</exception>
-        public static IEnumerable<KeyValuePair<string, IFormatString>> ReadStringLines(this ILineFileFormat fileFormat, string srcFilename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+        public static IEnumerable<KeyValuePair<string, IString>> ReadStringLines(this ILineFileFormat fileFormat, string srcFilename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
         {
             if (!throwIfNotFound && !File.Exists(srcFilename)) return no_stringlines;
             try
@@ -248,7 +248,7 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IEnumerable<KeyValuePair<string, IFormatString>> ReadStringLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, string filename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+        public static IEnumerable<KeyValuePair<string, IString>> ReadStringLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, string filename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
             => fileFormatProvider[LineFileFormatMap.GetExtension(filename)].ReadStringLines(filename, lineFormat, throwIfNotFound);
 
         /// <summary>
@@ -315,7 +315,7 @@ namespace Lexical.Localization
 
         static ILineTree[] no_trees = new ILineTree[0];
         static ILine[] no_keylines = new ILine[0];
-        static KeyValuePair<string, IFormatString>[] no_stringlines = new KeyValuePair<string, IFormatString>[0];
+        static KeyValuePair<string, IString>[] no_stringlines = new KeyValuePair<string, IString>[0];
 
     }
 

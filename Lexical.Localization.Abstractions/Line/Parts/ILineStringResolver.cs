@@ -43,20 +43,20 @@ namespace Lexical.Localization
             => lineFactory.Create<ILineStringResolver, IStringResolver>(null, resolver);
 
         /// <summary>
-        /// Resolve <paramref name="key"/> into <see cref="IFormatString"/>, but without applying format arguments.
+        /// Resolve <paramref name="key"/> into <see cref="IString"/>, but without applying format arguments.
         /// 
-        /// If the <see cref="IFormatString"/> contains plural categories, then matches into the applicable plurality case.
+        /// If the <see cref="IString"/> contains plural categories, then matches into the applicable plurality case.
         /// </summary>
         /// <param name="key"></param>
         /// <returns>format string</returns>
-        public static IFormatString ResolveFormatString(this ILine key)
+        public static IString ResolveFormatString(this ILine key)
         {
             for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
                 IStringResolver _formatter;
                 if (k is ILineStringResolver formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
                 {
-                    IFormatString str = _formatter.ResolveFormatString(key);
+                    IString str = _formatter.ResolveFormatString(key);
                     if (str != null) return str;
                 }
             }

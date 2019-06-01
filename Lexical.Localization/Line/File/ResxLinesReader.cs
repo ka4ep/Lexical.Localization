@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="lineFormat">unused</param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormatString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default) => ReadElement(XDocument.Load(stream).Root, lineFormat);
+        public IEnumerable<KeyValuePair<string, IString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default) => ReadElement(XDocument.Load(stream).Root, lineFormat);
 
         /// <summary>
         /// Read resx content from <paramref name="text"/>.
@@ -67,7 +67,7 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="lineFormat">unused</param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormatString>> ReadStringLines(TextReader text, ILineFormat lineFormat = default) => ReadElement(XDocument.Load(text).Root, lineFormat);
+        public IEnumerable<KeyValuePair<string, IString>> ReadStringLines(TextReader text, ILineFormat lineFormat = default) => ReadElement(XDocument.Load(text).Root, lineFormat);
 
         /// <summary>
         /// Reads lines from xml element.
@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// <param name="element">parent element that contains data elements</param>
         /// <param name="lineFormat">unused</param>
         /// <returns>lines</returns>
-        public IEnumerable<KeyValuePair<string, IFormatString>> ReadElement(XElement element, ILineFormat lineFormat)
+        public IEnumerable<KeyValuePair<string, IString>> ReadElement(XElement element, ILineFormat lineFormat)
         {
             foreach (XElement dataNode in element.Elements("data"))
             {
@@ -88,9 +88,9 @@ namespace Lexical.Localization
                     {
                         if (textNode is XText text)
                         {
-                            IFormatString value = ValueParser.Parse(text?.Value);
+                            IString value = ValueParser.Parse(text?.Value);
                             if (value != null)
-                                yield return new KeyValuePair<string, IFormatString>(key, value);
+                                yield return new KeyValuePair<string, IString>(key, value);
                         }
                     }
                 }
@@ -104,9 +104,9 @@ namespace Lexical.Localization
         /// <param name="lineFormat">unused</param>
         /// <param name="correspondence"></param>
         /// <returns></returns>
-        public List<KeyValuePair<string, IFormatString>> ReadElement(XElement element, ILineFormat lineFormat, ResXCorrespondence correspondence)
+        public List<KeyValuePair<string, IString>> ReadElement(XElement element, ILineFormat lineFormat, ResXCorrespondence correspondence)
         {
-            List<KeyValuePair<string, IFormatString>> result = new List<KeyValuePair<string, IFormatString>>();
+            List<KeyValuePair<string, IString>> result = new List<KeyValuePair<string, IString>>();
 
             foreach (XElement dataNode in element.Elements("data"))
             {
@@ -120,11 +120,11 @@ namespace Lexical.Localization
                     {
                         if (textNode is XText text)
                         {
-                            IFormatString value = ValueParser.Parse(text?.Value);
+                            IString value = ValueParser.Parse(text?.Value);
                             if (value != null)
                             {
-                                result.Add(new KeyValuePair<string, IFormatString>(key, value));
-                                if (correspondence != null) correspondence.Values[new KeyValuePair<string, IFormatString>(key, value)] = dataNode;
+                                result.Add(new KeyValuePair<string, IString>(key, value));
+                                if (correspondence != null) correspondence.Values[new KeyValuePair<string, IString>(key, value)] = dataNode;
                             }
                         }
                     

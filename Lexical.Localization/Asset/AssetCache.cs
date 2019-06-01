@@ -318,12 +318,12 @@ namespace Lexical.Localization
             /// <summary>
             /// Cached result of GetKeyLines(null)
             /// </summary>
-            public List<KeyValuePair<string, IFormatString>> stringLinesPartial;
+            public List<KeyValuePair<string, IString>> stringLinesPartial;
 
             /// <summary>
             /// Cached result of GetAllKeyLines(null)
             /// </summary>
-            public List<KeyValuePair<string, IFormatString>> stringLinesAll;
+            public List<KeyValuePair<string, IString>> stringLinesAll;
 
             /// <summary>
             /// GetKeyLines(null) was read and it was null.
@@ -518,7 +518,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormatString>> GetStringLines(ILine key = null)
+        public IEnumerable<KeyValuePair<string, IString>> GetStringLines(ILine key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetStringLines(key);
@@ -534,7 +534,7 @@ namespace Lexical.Localization
             if (_cache.stringLinesPartialIsNull) return null;
 
             // Read from source
-            IEnumerable<KeyValuePair<string, IFormatString>> lines = Source.GetStringLines(null);
+            IEnumerable<KeyValuePair<string, IString>> lines = Source.GetStringLines(null);
 
             // Got no results
             if (lines == null)
@@ -544,13 +544,13 @@ namespace Lexical.Localization
             }
 
             // Take snapshot
-            lines = new List<KeyValuePair<string, IFormatString>>(lines);
+            lines = new List<KeyValuePair<string, IString>>(lines);
 
             // Write to cache
             _cache.m_lock.EnterWriteLock();
             try
             {
-                _cache.stringLinesPartial = (List<KeyValuePair<string, IFormatString>>)lines;
+                _cache.stringLinesPartial = (List<KeyValuePair<string, IString>>)lines;
             }
             finally
             {
@@ -566,7 +566,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IFormatString>> GetAllStringLines(ILine key = null)
+        public IEnumerable<KeyValuePair<string, IString>> GetAllStringLines(ILine key = null)
         {
             // Filtered queries are not cached
             if (key != null) return Source.GetAllStringLines(key);
@@ -582,7 +582,7 @@ namespace Lexical.Localization
             if (_cache.stringLinesAllIsNull) return null;
 
             // Read from source
-            IEnumerable<KeyValuePair<string, IFormatString>> lines = Source.GetAllStringLines(null);
+            IEnumerable<KeyValuePair<string, IString>> lines = Source.GetAllStringLines(null);
 
             // Got no results
             if (lines == null)
@@ -592,13 +592,13 @@ namespace Lexical.Localization
             }
 
             // Take snapshot
-            lines = new List<KeyValuePair<string, IFormatString>>(lines);
+            lines = new List<KeyValuePair<string, IString>>(lines);
 
             // Write to cache
             _cache.m_lock.EnterWriteLock();
             try
             {
-                _cache.stringLinesAll = (List<KeyValuePair<string, IFormatString>>)lines;
+                _cache.stringLinesAll = (List<KeyValuePair<string, IString>>)lines;
             }
             finally
             {

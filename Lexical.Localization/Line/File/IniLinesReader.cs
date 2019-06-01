@@ -165,8 +165,8 @@ namespace Lexical.Localization
                                 if (current.TryGetStringFormat(resolver, out stringFormat))
                                 {
                                     // Append FormatString
-                                    IFormatString valueString = stringFormat.Parse(value);
-                                    lineValue = LineFactory.Create<ILineValue, IFormatString>(null, valueString);
+                                    IString valueString = stringFormat.Parse(value);
+                                    lineValue = LineFactory.Create<ILineValue, IString>(null, valueString);
 
                                 }
                                 else

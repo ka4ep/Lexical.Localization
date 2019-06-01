@@ -45,7 +45,7 @@ namespace docs
                 ILine key = new LineRoot().Section("Section").Section("Section").Key("Key");
 
                 // Retrieve string with a reference
-                IFormatString value = asset.GetString(key.Culture("en")).GetValue();
+                IString value = asset.GetString(key.Culture("en")).GetValue();
 
                 // Retrieve binary resource with a reference
                 byte[] data = asset.GetResource(key.Culture("en"));
@@ -115,7 +115,7 @@ namespace docs
                 {
                     #region Snippet_6c
                     // Resolve to localized string "Error (Code=0x{0:X8})", but does not append arguments
-                    IFormatString str = key_formulated.ResolveFormatString();
+                    IString str = key_formulated.ResolveFormatString();
                 #endregion Snippet_6c
                 }
                 {

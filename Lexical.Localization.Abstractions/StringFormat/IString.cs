@@ -14,10 +14,15 @@ namespace Lexical.Localization.StringFormat
     /// For example "Welcome, {0}!" is a format string. 
     /// When it's in parsed format the argument "{0}" is extracted and the string can be processed more efficiently.
     /// 
-    /// <see cref="IFormatString"/> is produced by <see cref="IStringFormatParser"/>.
+    /// <see cref="IString"/> is produced by <see cref="IStringFormatParser"/>.
     /// </summary>
-    public interface IFormatString
+    public interface IString
     {
+        /// <summary>
+        /// (optional) String format.
+        /// </summary>
+        IStringFormat StringFormat { get; }
+
         /// <summary>
         /// Parse result. One of:
         /// <list type="table">
@@ -35,7 +40,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Format string as sequence of text and argument parts.
         /// </summary>
-        IFormatStringPart[] Parts { get; }
+        IStringPart[] Parts { get; }
 
         /// <summary>
         /// Placeholders in order of occurance.
@@ -52,7 +57,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Type of string part
     /// </summary>
-    public enum FormatStringPartKind
+    public enum StringPartKind
     {
         /// <summary>
         /// Text
@@ -68,17 +73,17 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// A part in format string.
     /// </summary>
-    public interface IFormatStringPart
+    public interface IStringPart
     {
         /// <summary>
         /// The 'parent' format string.
         /// </summary>
-        IFormatString FormatString { get; }
+        IString String { get; }
 
         /// <summary>
         /// Part type.
         /// </summary>
-        FormatStringPartKind Kind { get; }
+        StringPartKind Kind { get; }
 
         /// <summary>
         /// Character index in the format string where argument starts.
@@ -97,22 +102,29 @@ namespace Lexical.Localization.StringFormat
         string Text { get; }
 
         /// <summary>
-        /// The index in the <see cref="IFormatString.Parts"/>.
+        /// The index in the <see cref="IString.Parts"/>.
         /// </summary>
         int PartsIndex { get; }
     }
 
     /// <summary>
-    /// Argument placeholder in an <see cref="IFormatString"/> in a format string.
+    /// Text part of a string
+    /// </summary>
+    public interface IStringTextPart : IStringPart
+    {
+    }
+
+    /// <summary>
+    /// Argument placeholder in an <see cref="IString"/> in a format string.
     /// 
     /// For example "Hello, {0}", the {0} is placeholder.
     /// 
     /// The default CSharpFormat uses format "{[function:]0[,alignment][:format]}"
     /// </summary>
-    public interface IPlaceholder : IFormatStringPart
+    public interface IPlaceholder : IStringPart
     {
         /// <summary>
-        /// Index in <see cref="IFormatString.Placeholders"/>
+        /// Index in <see cref="IString.Placeholders"/>
         /// </summary>
         int PlaceholderIndex { get; }
 
@@ -146,7 +158,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="formatString"></param>
         /// <returns>true if has one</returns>
-        public static bool HasPluralRules(this IFormatString formatString)
+        public static bool HasPluralRules(this IString formatString)
         {
             foreach (IPlaceholder ph in formatString.Placeholders)
                 if (ph.PluralCategory != null) return true;

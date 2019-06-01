@@ -16,7 +16,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Localization string value.
         /// </summary>
-        IFormatString Value { get; set; }
+        IString Value { get; set; }
     }
     
     /// <summary></summary>
@@ -28,8 +28,8 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILineValue Value(this ILine part, IFormatString value)
-            => part.Append<ILineValue, IFormatString>(value);
+        public static ILineValue Value(this ILine part, IString value)
+            => part.Append<ILineValue, IString>(value);
 
         /// <summary>
         /// Append "Value" parameter.
@@ -46,8 +46,8 @@ namespace Lexical.Localization
         /// <param name="lineFactory"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILineValue Value(this ILineFactory lineFactory, IFormatString value)
-            => lineFactory.Create<ILineValue, IFormatString>(null, value);
+        public static ILineValue Value(this ILineFactory lineFactory, IString value)
+            => lineFactory.Create<ILineValue, IString>(null, value);
 
         /// <summary>
         /// Create "Value" parameter.
@@ -59,7 +59,7 @@ namespace Lexical.Localization
             => lineFactory.Create<ILineHint, string, string>(null, "Value", value);
 
         /// <summary>
-        /// Get the <see cref="IFormatString"/> of a <see cref="ILineValue"/>.
+        /// Get the <see cref="IString"/> of a <see cref="ILineValue"/>.
         /// 
         /// If parameter "Value" exists and <paramref name="resolver"/> is provided then value is resolved using
         /// the default string format or the format that can be found.
@@ -67,7 +67,7 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <param name="resolver">(optional) type resolver that resolves "IStringFormat" parameter into type. Returns null, if could not resolve, exception if resolve fails</param>
         /// <returns>value</returns>
-        public static IFormatString GetValue(this ILine line, IResolver resolver = null)
+        public static IString GetValue(this ILine line, IResolver resolver = null)
         {
             for (ILine part = line; part != null; part = part.GetPreviousPart())
             {

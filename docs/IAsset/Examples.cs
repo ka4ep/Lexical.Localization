@@ -20,7 +20,7 @@ namespace docs
                 // Create key
                 ILine key = new LineRoot().Key("hello").Culture("en");
                 // Resolve string - Call to LocalizationAssetExtensions.GetString()
-                IFormatString str = asset.GetString(key).GetValue();
+                IString str = asset.GetString(key).GetValue();
                 #endregion Snippet_2
 
             }

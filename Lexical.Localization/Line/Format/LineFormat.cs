@@ -37,7 +37,7 @@ namespace Lexical.Localization
         static readonly LineFormat key = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Default, ExcludeValue);
 
         /// <summary>
-        /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "Value" to <see cref="IFormatString"/>.
+        /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "Value" to <see cref="IString"/>.
         /// </summary>
         static readonly LineFormat line = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.Default, null);
 
@@ -63,7 +63,7 @@ namespace Lexical.Localization
         public static LineFormat Key => key;
 
         /// <summary>
-        /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "Value" to <see cref="IFormatString"/>.
+        /// Format that prints and parses strings as lines. Parameters and values are resolved to default instance types. For example "Culture" to CultureInfo, and "Value" to <see cref="IString"/>.
         /// 
         /// For example "Culture:en:Key:x:Value:z" is parsed into LineCulture("en").LineKeyNonCanonical("Key", "x").LineValue("z")
         /// </summary>

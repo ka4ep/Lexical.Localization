@@ -21,7 +21,7 @@ namespace Lexical.Localization
         /// <param name="LineTree"></param>
         /// <param name="policy"></param>
         /// <returns></returns>
-        public static IEnumerable<KeyValuePair<string, IFormatString>> ToStringLines(this ILineTree LineTree, ILineFormat policy)
+        public static IEnumerable<KeyValuePair<string, IString>> ToStringLines(this ILineTree LineTree, ILineFormat policy)
             => LineTree.ToLines(LineAppender.NonResolving).ToStringLines(policy);
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Lexical.Localization
         /// <param name="tree"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static bool HasValue(this ILineTree tree, IFormatString value)
+        public static bool HasValue(this ILineTree tree, IString value)
         {
             if (value == null) return false;
             if (!tree.HasValues) return false;
@@ -265,7 +265,7 @@ namespace Lexical.Localization
         /// <param name="key">(optional) possible initial key to set.</param>
         /// <param name="value">(optional) possible initial value to add</param>
         /// <returns><paramref name="node"/></returns>
-        public static ILineTree Add(this ILineTree node, ILine key, IFormatString value)
+        public static ILineTree Add(this ILineTree node, ILine key, IString value)
         {
             ILineTree n = node;
             if (key != null) n = n.GetChild(key);
@@ -283,7 +283,7 @@ namespace Lexical.Localization
         /// <param name="key_parts">(optional) possible initial key to set.</param>
         /// <param name="value">(optional) possible initial value to add</param>
         /// <returns>the leaf node where the values was added</returns>
-        public static ILineTree AddRecursive(this ILineTree node, IEnumerable<ILine> key_parts, IFormatString value)
+        public static ILineTree AddRecursive(this ILineTree node, IEnumerable<ILine> key_parts, IString value)
         {
             // Drill into leaf
             ILineTree leaf = node;
