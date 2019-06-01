@@ -227,7 +227,6 @@ namespace Lexical.Localization.Plurality
                     }
                 }
 
-                System.Console.WriteLine(LineFormat.Line.Print(result));
                 return result;
             }
         }

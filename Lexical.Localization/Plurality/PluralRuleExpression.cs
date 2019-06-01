@@ -25,6 +25,11 @@ namespace Lexical.Localization.Plurality
         public IExpression Rule { get; internal set; }
         /// <summary> </summary>
         public ISamplesExpression[] Samples { get; internal set; }
+        /// <summary> </summary>
+        public int ComponentCount => 1 + (Samples == null ? 0 : Samples.Length);
+        /// <summary> </summary>
+        public IExpression GetComponent(int ix)
+            => ix == 0 ? Infos : (IExpression)Samples[ix - 1];
 
         /// <summary>
         /// 
@@ -55,6 +60,11 @@ namespace Lexical.Localization.Plurality
         /// Array of infos.
         /// </summary>
         public IPluralRuleInfoExpression[] Infos { get; internal set; }
+        /// <summary> </summary>
+        public int ComponentCount => Infos == null ? 0 : Infos.Length;
+        /// <summary> </summary>
+        public IExpression GetComponent(int ix)
+            => Infos[ix];
 
         /// <summary>
         /// Create infos
@@ -110,6 +120,11 @@ namespace Lexical.Localization.Plurality
         public string Name { get; internal set; }
         /// <summary> </summary>
         public IExpression[] Samples { get; internal set; }
+        /// <summary> </summary>
+        public int ComponentCount => Samples == null ? 0 : Samples.Length;
+        /// <summary> </summary>
+        public IExpression GetComponent(int ix)
+            => Samples[ix];
 
         /// <summary>
         /// 
@@ -156,6 +171,10 @@ namespace Lexical.Localization.Plurality
     public class RangeExpression : Expression, IRangeExpression
     {
         /// <summary> </summary>
+        public int ComponentCount => 2;
+        /// <summary> </summary>
+        public IExpression GetComponent(int ix) => ix == 0 ? MinValue : ix == 1 ? MaxValue : null;
+        /// <summary> </summary>
         public IExpression MinValue { get; internal set; }
         /// <summary> </summary>
         public IExpression MaxValue { get; internal set; }
@@ -183,6 +202,10 @@ namespace Lexical.Localization.Plurality
     {
         /// <summary> </summary>
         public IExpression[] Values { get; internal set; }
+        /// <summary> </summary>
+        public int ComponentCount => Values == null ? 0 : Values.Length;
+        /// <summary> </summary>
+        public IExpression GetComponent(int ix) => Values[ix];
         /// <summary>
         /// Create group
         /// </summary>

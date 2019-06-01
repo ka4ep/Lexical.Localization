@@ -173,6 +173,11 @@ namespace Lexical.Localization.Plurality
             public IExpression Rule { get; internal set; }
             /// <summary/>
             public ISamplesExpression[] Samples { get; internal set; }
+            /// <summary> </summary>
+            public int ComponentCount => 1 + (Samples==null?0:Samples.Length);
+            /// <summary> </summary>
+            public IExpression GetComponent(int ix)
+                => ix == 0 ? Infos : (IExpression)Samples[ix - 1];
 
             /// <summary>
             /// Create rule that always evaluates to true.
@@ -234,6 +239,12 @@ namespace Lexical.Localization.Plurality
             /// No samples
             /// </summary>
             public static ISamplesExpression[] NO_SAMPLES = new ISamplesExpression[0];
+
+            /// <summary> </summary>
+            public int ComponentCount => 1 + (Samples == null ? 0 : Samples.Length);
+            /// <summary> </summary>
+            public IExpression GetComponent(int ix)
+                => ix == 0 ? Infos : (IExpression)Samples[ix - 1];
 
             /// <summary>
             /// Convert <see cref="IPluralRuleInfosExpression"/> to <see cref="PluralRuleInfo"/>.

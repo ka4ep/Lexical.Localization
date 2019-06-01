@@ -13,7 +13,7 @@ namespace Lexical.Localization.Plurality
     /// 
     /// e.g. "[RuleSet=Unicode.CLDR35,Category=cardinal,Culture=fi,Case=one] v = 0 and i % 10 = 1 @integer 0, 1, 2, 3, … @decimal 0.0~1.5, 10.0, …".
     /// </summary>
-    public interface IPluralRuleExpression : IExpression
+    public interface IPluralRuleExpression : ICompositeExpression
     {
         /// <summary>
         /// (Optional) Rule infos.
@@ -36,7 +36,7 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// e.g. "@decimal 1.0, 1.00, 1.000, 1.0000"
     /// </summary>
-    public interface ISamplesExpression : IExpression
+    public interface ISamplesExpression : ICompositeExpression
     {
         /// <summary>
         /// Name of sample group, e.g. "integer" and "decimal"
@@ -77,7 +77,7 @@ namespace Lexical.Localization.Plurality
     /// 
     /// e.g. "[RuleSet=Unicode.CLDR35,Category=cardinal,Culture=fi,Case=one]"
     /// </summary>
-    public interface IPluralRuleInfosExpression : IExpression
+    public interface IPluralRuleInfosExpression : ICompositeExpression
     {
         /// <summary>
         /// Array of infos.
@@ -111,7 +111,7 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// Range of interger values.
     /// </summary>
-    public interface IRangeExpression : IValuesExpression
+    public interface IRangeExpression : IValuesExpression, ICompositeExpression
     {
         /// <summary>
         /// Start of range (inclusive)
@@ -127,7 +127,7 @@ namespace Lexical.Localization.Plurality
     /// <summary>
     /// Group of values.
     /// </summary>
-    public interface IGroupExpression : IValuesExpression
+    public interface IGroupExpression : IValuesExpression, ICompositeExpression
     {
         /// <summary>
         /// Values.

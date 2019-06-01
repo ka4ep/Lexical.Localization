@@ -121,7 +121,10 @@ namespace Lexical.Localization.StringFormat
                 {
                     // Evaluate expressions in placeholders into strings
                     StructList12<string> placeholder_values = new StructList12<string>();
-                    EvaluatePlaceholderValues(value.Placeholders, ref features, ref placeholder_values, culture);
+                    CultureInfo culture_for_format = features.Culture;
+                    if (culture_for_format == null && features.CulturePolicy != null) { CultureInfo[] cultures = features.CulturePolicy.Cultures; if (cultures != null && cultures.Length > 0) culture_for_format = cultures[0]; }
+                    if (culture_for_format == null) culture_for_format = RootCulture;
+                    EvaluatePlaceholderValues(value.Placeholders, ref features, ref placeholder_values, culture_for_format);
 
                     // Create permutation configuration
                     PluralCasePermutations permutations = new PluralCasePermutations(line);
