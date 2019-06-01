@@ -67,6 +67,7 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <param name="resolver">(optional) type resolver that resolves "IStringFormat" parameter into type. Returns null, if could not resolve, exception if resolve fails</param>
         /// <returns>value</returns>
+        /// <exception cref="LineException">error parsing</exception>
         public static IString GetString(this ILine line, IResolver resolver = null)
         {
             for (ILine part = line; part != null; part = part.GetPreviousPart())
@@ -90,6 +91,48 @@ namespace Lexical.Localization
                 }
             }
             return new StatusFormatString(null, LineStatus.FormatFailedNull);
+        }
+
+        /// <summary>
+        /// Try get string that implements <see cref="IString"/>.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="result"></param>
+        /// <param name="resolver">(optional) type resolver that resolves "StringFormat" parameter into type. Returns null, if could not resolve, exception if resolve fails</param>
+        /// <returns>true if part was found</returns>
+        public static bool TryGetString(this ILine line, out IString result, IResolver resolver = null)
+        {
+            try
+            {
+                for (ILine part = line; part != null; part = part.GetPreviousPart())
+                {
+                    if (part is ILineString valuePart && valuePart.String != null) { result = valuePart.String; return true; }
+                    if (resolver != null && part is ILineParameterEnumerable lineParameters)
+                    {
+                        foreach (ILineParameter parameter in lineParameters)
+                        {
+                            if (parameter.ParameterName == "String" && parameter.ParameterValue != null)
+                            {
+                                IStringFormat stringFormat = line.FindStringFormat(resolver);
+                                result = stringFormat.Parse(parameter.ParameterValue);
+                                return true;
+                            }
+                        }
+                    }
+                    if (resolver != null && part is ILineParameter lineParameter && lineParameter.ParameterName == "String" && lineParameter.ParameterValue != null)
+                    {
+                        IStringFormat stringFormat = line.FindStringFormat(resolver);
+                        result = stringFormat.Parse(lineParameter.ParameterValue);
+                        return true;
+                    }
+                }
+                result = new StatusFormatString(null, LineStatus.FormatFailedNull);
+                return false;
+            } catch(Exception e)
+            {
+                result = new StatusFormatString(null, LineStatus.FailedUnknownReason);
+                return false;
+            }
         }
 
         /// <summary>

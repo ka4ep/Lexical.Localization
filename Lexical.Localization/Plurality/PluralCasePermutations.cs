@@ -243,7 +243,7 @@ namespace Lexical.Localization.Plurality
             while (stack.Count>0)
             {
                 IExpression e = stack.Dequeue();
-                if (e is IArgumentIndexExpression arg) argumentIndices.Add(arg.Index);
+                if (e is IArgumentIndexExpression arg) argumentIndices.AddIfNew(arg.Index);
                 if (e is ICompositeExpression compositeExpression)
                     for(int i=0; i<compositeExpression.ComponentCount; i++)
                     {

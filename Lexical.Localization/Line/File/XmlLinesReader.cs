@@ -223,7 +223,7 @@ namespace Lexical.Localization
                         string trimmedXmlValue = Trim(text?.Value);
                         if (!string.IsNullOrEmpty(trimmedXmlValue))
                         {
-                            ILine lineValue = new LineHint(null, null, "String", trimmedXmlValue);
+                            ILine lineValue = Append(parent, _lineFactory, null, "String", trimmedXmlValue);
                             node.Values.Add(lineValue);
 
                             if (correspondenceContext != null)

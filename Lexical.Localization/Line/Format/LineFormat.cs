@@ -29,7 +29,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Format that prints and parses strings as parameter lines. 
         /// </summary>
-        static readonly LineFormat parametersInclValue = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.NonResolving, null);
+        static readonly LineFormat parametersInclString = new LineFormat("\\:", false, "\\:", false, Lexical.Localization.LineAppender.NonResolving, null);
 
         /// <summary>
         /// Format that prints and parses strings as lines. Parameters are resolved to default instance types. For example "Culture" to CultureInfo. Excludes "String" parameter.
@@ -53,7 +53,7 @@ namespace Lexical.Localization
         /// 
         /// For example "Culture:en:Key:x:Value:z" is parsed into LineKeyNonCanonical("Culture", "en").LineKeyNonCanonical("Key", "x").LineHint("String", "z")
         /// </summary>
-        public static LineFormat ParametersInclValue => parametersInclValue;
+        public static LineFormat ParametersInclString => parametersInclString;
 
         /// <summary>
         /// Format that prints and parses strings as lines. Parameters are resolved to default instance types. For example "Culture" to CultureInfo. Excludes "String" parameter.

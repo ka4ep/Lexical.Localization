@@ -23,7 +23,7 @@ namespace Lexical.Localization
         /// <summary>
         /// ILineLineResolver property
         /// </summary>
-        public IStringResolver Resolver { get => resolver; set => throw new InvalidOperationException(); }
+        public IStringResolver StringResolver { get => resolver; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
@@ -94,7 +94,7 @@ namespace Lexical.Localization
         /// <summary>
         /// ILineLineResolver property
         /// </summary>
-        public IStringResolver Resolver { get => resolver; set => throw new InvalidOperationException(); }
+        public IStringResolver StringResolver { get => resolver; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.

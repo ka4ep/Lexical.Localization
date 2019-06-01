@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Exp;
+using Lexical.Localization.Internal;
 using System;
 
 namespace Lexical.Localization.StringFormat
@@ -163,6 +164,53 @@ namespace Lexical.Localization.StringFormat
             foreach (IPlaceholder ph in formatString.Placeholders)
                 if (ph.PluralCategory != null) return true;
             return false;
+        }
+
+        /// <summary>
+        /// Get all the argument indices.
+        /// </summary>
+        /// <param name="ph"></param>
+        public static int[] GetArgumentIndices(this IPlaceholder ph)
+        {
+            StructList8<int> argumentIndices = new StructList8<int>();
+            StructList8<IExpression> stack = new StructList8<IExpression>();
+            stack.Add(ph.Expression);
+            while (stack.Count > 0)
+            {
+                IExpression e = stack.Dequeue();
+                if (e is IArgumentIndexExpression arg) argumentIndices.AddIfNew(arg.Index);
+                if (e is ICompositeExpression compositeExpression)
+                    for (int i = 0; i < compositeExpression.ComponentCount; i++)
+                    {
+                        IExpression ce = compositeExpression.GetComponent(i);
+                        if (ce != null) stack.Add(ce);
+                    }
+            }
+            return argumentIndices.ToArray();
+        }
+
+
+        /// <summary>
+        /// Get all the argument indices.
+        /// </summary>
+        /// <param name="str"></param>
+        public static int[] GetArgumentIndices(this IString str)
+        {
+            StructList8<int> argumentIndices = new StructList8<int>();
+            StructList12<IExpression> stack = new StructList12<IExpression>();
+            for(int i=str.Placeholders.Length-1; i>=0; i--) stack.Add(str.Placeholders[i].Expression);
+            while (stack.Count > 0)
+            {
+                IExpression e = stack.Dequeue();
+                if (e is IArgumentIndexExpression arg) argumentIndices.AddIfNew(arg.Index);
+                if (e is ICompositeExpression compositeExpression)
+                    for (int i = 0; i < compositeExpression.ComponentCount; i++)
+                    {
+                        IExpression ce = compositeExpression.GetComponent(i);
+                        if (ce != null) stack.Add(ce);
+                    }
+            }
+            return argumentIndices.ToArray();
         }
 
     }

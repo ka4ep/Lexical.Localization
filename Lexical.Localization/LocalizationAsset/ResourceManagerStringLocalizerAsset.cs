@@ -12,6 +12,9 @@ namespace Lexical.Localization
     using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ResourceManagerStringLocalizerAsset
     {
         /// <summary>

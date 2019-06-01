@@ -17,7 +17,7 @@ namespace Lexical.Localization
         /// <summary>
         /// (Optional) The assigned resolver.
         /// </summary>
-        IStringResolver Resolver { get; set; }
+        IStringResolver StringResolver { get; set; }
     }
 
     public static partial class ILineExtensions
@@ -54,7 +54,7 @@ namespace Lexical.Localization
             for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
                 IStringResolver _formatter;
-                if (k is ILineStringResolver formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
+                if (k is ILineStringResolver formatterAssigned && ((_formatter = formatterAssigned.StringResolver) != null))
                 {
                     IString str = _formatter.ResolveFormatString(key);
                     if (str != null) return str;
@@ -81,7 +81,7 @@ namespace Lexical.Localization
             for (ILine k = key; k != null; k = k.GetPreviousPart())
             {
                 IStringResolver _formatter;
-                if (k is ILineStringResolver formatterAssigned && ((_formatter = formatterAssigned.Resolver) != null))
+                if (k is ILineStringResolver formatterAssigned && ((_formatter = formatterAssigned.StringResolver) != null))
                 {
                     LineString str = _formatter.ResolveString(key);
                     if (str.Severity <= result.Severity) result = str;
