@@ -14,12 +14,12 @@ namespace Lexical.Localization
     /// 
     /// For example for string "Hello, {0}" the placeholder {0} is matched to argument at index 0.
     /// </summary>
-    public interface ILineFormatArgs : ILine
+    public interface ILineValue : ILine
     {
         /// <summary>
         /// Attached format arguments (may be null).
         /// </summary>
-        Object[] Args { get; set;  }
+        Object[] Value { get; set;  }
     }
 
     public static partial class ILineExtensions
@@ -31,8 +31,8 @@ namespace Lexical.Localization
         /// <param name="args"></param>
         /// <returns></returns>
         /// <exception cref="LineException">If key can't be formatted</exception>
-        public static ILineFormatArgs Format(this ILine line, params object[] args)
-            => line.Append<ILineFormatArgs, Object[]>(args);
+        public static ILineValue Value(this ILine line, params object[] args)
+            => line.Append<ILineValue, Object[]>(args);
 
         /// <summary>
         /// Append format arguments. Format arguments 
@@ -41,21 +41,21 @@ namespace Lexical.Localization
         /// <param name="args"></param>
         /// <returns></returns>
         /// <exception cref="LineException">If key can't be formatted</exception>
-        public static ILineFormatArgs Format(this ILineFactory lineFactory, params object[] args)
-            => lineFactory.Create<ILineFormatArgs, Object[]>(null, args);
+        public static ILineValue Value(this ILineFactory lineFactory, params object[] args)
+            => lineFactory.Create<ILineValue, Object[]>(null, args);
 
         /// <summary>
         /// Walks linked list and searches for culture policy.
         /// </summary>
         /// <param name="line"></param>
         /// <returns>culture policy or null</returns>
-        public static Object[] FindFormatArgs(this ILine line)
+        public static Object[] FindValues(this ILine line)
         {
-            if (line is ILineFormatArgs args) return args.Args;
+            if (line is ILineValue args) return args.Value;
             if (line is ILine tail)
             {
                 for (ILine p = tail; p != null; p = p.GetPreviousPart())
-                    if (p is ILineFormatArgs casted && casted.Args != null) return casted.Args;
+                    if (p is ILineValue casted && casted.Value != null) return casted.Value;
             }
             return null;
         }
@@ -63,9 +63,9 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Non-canonical comparer that compares <see cref="ILineFormatArgs"/> values of keys.
+    /// Non-canonical comparer that compares <see cref="ILineValue"/> values of keys.
     /// </summary>
-    public class LineFormatArgsComparer : IEqualityComparer<ILine>
+    public class LineValueComparer : IEqualityComparer<ILine>
     {
         static IEqualityComparer<object[]> array_comparer = new ArrayComparer<object>(EqualityComparer<object>.Default);
 
@@ -76,7 +76,7 @@ namespace Lexical.Localization
         /// <param name="y"></param>
         /// <returns></returns>
         public bool Equals(ILine x, ILine y)
-            => array_comparer.Equals(x?.FindFormatArgs(), y?.FindFormatArgs());
+            => array_comparer.Equals(x?.FindValues(), y?.FindValues());
 
         /// <summary>
         /// Calculate hash of last format args value.
@@ -84,6 +84,6 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <returns></returns>
         public int GetHashCode(ILine line)
-            => array_comparer.GetHashCode(line.FindFormatArgs());
+            => array_comparer.GetHashCode(line.FindValues());
     }
 }

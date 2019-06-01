@@ -69,22 +69,22 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Placeholder for <see cref="IString"/>, if set before <see cref="StringFormats"/>.
         /// </summary>
-        public string ValueText;
+        public string StringText;
 
         /// <summary>
-        /// Value.
+        /// String.
         /// </summary>
-        public IString Value;
+        public IString String;
 
         /// <summary>
-        /// Get Value or parsed ValueText. Call this after all features have been read.
+        /// Get String or parsed StringText. Call this after all features have been read.
         /// </summary>
-        public IString EffectiveValue => Value ?? (Value = (StringFormat ?? CSharpFormat.Default).Parse(ValueText));
+        public IString EffectiveString => String ?? (String = (StringFormat ?? CSharpFormat.Default).Parse(StringText));
 
         /// <summary>
         /// Test if has value.
         /// </summary>
-        public bool HasValue => ValueText != null || Value != null;
+        public bool HasValue => StringText != null || String != null;
 
         /// <summary>
         /// Assets
@@ -106,7 +106,7 @@ namespace Lexical.Localization.StringFormat
             bool valueSet = false;
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                if (l is ILineFormatArgs fa && fa != null) FormatArgs = fa.Args;
+                if (l is ILineValue fa && fa != null) FormatArgs = fa.Value;
                 if (l is ILineCulturePolicy cp && cp != null) CulturePolicy = cp.CulturePolicy;
                 if (l is ILineCulture c && c.Culture != null) Culture = c.Culture;
                 if (l is ILineFormatProvider fp && fp.FormatProvider != null) FormatProviders.AddIfNew(fp.FormatProvider);
@@ -115,7 +115,7 @@ namespace Lexical.Localization.StringFormat
                 if (l is ILineLogger ll && ll.Logger != null) Loggers.AddIfNew(ll.Logger);
                 if (l is ILinePluralRules pl && pl.PluralRules != null) PluralRules = pl.PluralRules;
                 if (l is ILineStringFormat sf && sf.StringFormat != null) StringFormat = sf.StringFormat;
-                if (!valueSet && l is ILineString lv && lv.String != null) { Value = lv.String; ValueText = null; valueSet = true; }
+                if (!valueSet && l is ILineString lv && lv.String != null) { String = lv.String; StringText = null; valueSet = true; }
                 if (l is ILineAsset la && la.Asset != null) Assets.AddIfNew(la.Asset);
 
                 if (l is ILineParameterEnumerable lineParameters)
@@ -153,8 +153,8 @@ namespace Lexical.Localization.StringFormat
                         else if (!valueSet && name == "String")
                         {
                             valueSet = true;
-                            Value = null;
-                            ValueText = value; // Parse later
+                            String = null;
+                            StringText = value; // Parse later
                         }
                     }
                 }
@@ -192,8 +192,8 @@ namespace Lexical.Localization.StringFormat
                     else if (!valueSet && name == "String")
                     {
                         valueSet = true;
-                        Value = null;
-                        ValueText = value; // Parse later
+                        String = null;
+                        StringText = value; // Parse later
                     }
 
                 }
@@ -211,7 +211,7 @@ namespace Lexical.Localization.StringFormat
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
                 if (l is ILineStringFormat sf && sf.StringFormat != null) StringFormat = sf.StringFormat;
-                if (!valueSet && l is ILineString lv && lv.String != null) { Value = lv.String; ValueText = null; valueSet = true; }
+                if (!valueSet && l is ILineString lv && lv.String != null) { String = lv.String; StringText = null; valueSet = true; }
 
                 if (l is ILineParameterEnumerable lineParameters)
                 {
@@ -228,8 +228,8 @@ namespace Lexical.Localization.StringFormat
                         else if (!valueSet && name == "String")
                         {
                             valueSet = true;
-                            Value = null;
-                            ValueText = value; // Parse later
+                            String = null;
+                            StringText = value; // Parse later
                         }
                     }
                 }
@@ -247,8 +247,8 @@ namespace Lexical.Localization.StringFormat
                     else if (!valueSet && name == "String")
                     {
                         valueSet = true;
-                        Value = null;
-                        ValueText = value; // Parse later
+                        String = null;
+                        StringText = value; // Parse later
                     }
 
                 }

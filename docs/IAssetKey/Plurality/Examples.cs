@@ -13,19 +13,19 @@ namespace docs
                 #region Snippet_0a
                 IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample0a.xml");
                 ILineRoot root = new LineRoot(asset);
-                ILine key = root.Key("Cats").String("{0} cat(s)");
+                ILine key = root.Key("Cats").Format("{0} cat(s)");
 
                 // Print with the default string (without culture policy)
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(key.Format(cats));
+                    Console.WriteLine(key.Value(cats));
 
                 // Print Culture "en"
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(key.Culture("en").Format(cats));
+                    Console.WriteLine(key.Culture("en").Value(cats));
 
                 // Print Culture "fi"
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(key.Culture("fi").Format(cats));
+                    Console.WriteLine(key.Culture("fi").Value(cats));
                 #endregion Snippet_0a
             }
 
@@ -34,13 +34,13 @@ namespace docs
                 ILineRoot root = new LineRoot();
                 ILine key = root.Key("Cats")
                         .PluralRules(CLDR35.Instance)
-                        .String("{cardinal:0} cat(s)")  // Default string
+                        .Format("{cardinal:0} cat(s)")  // Default string
                         .Inline("N:zero", "no cats")
                         .Inline("N:one", "a cat")
                         .Inline("N:other", "{0} cats");
                 #endregion Snippet_0b
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(key.Format(cats));
+                    Console.WriteLine(key.Value(cats));
             }
 
             {
@@ -48,7 +48,7 @@ namespace docs
                 ILineRoot root = new LineRoot();
                 ILine key = root.Key("Cats")
                         .PluralRules(CLDR35.Instance)
-                        .String("{0} cat(s)")   // Default string
+                        .Format("{0} cat(s)")   // Default string
                         .Inline("Culture:en", "{cardinal:0} cat(s)")
                         .Inline("Culture:en:N:zero", "no cats")
                         .Inline("Culture:en:N:one", "a cat")
@@ -59,7 +59,7 @@ namespace docs
                         .Inline("Culture:fi:N:other", "{0} kissaa");
                 #endregion Snippet_0c
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(key.Culture("en").Format(cats));
+                    Console.WriteLine(key.Culture("en").Value(cats));
             }
 
             {
@@ -69,7 +69,7 @@ namespace docs
                 ILine key = new LineRoot(asset).Key("Cats");
 
                 for (int cats = 0; cats<=2; cats++)
-                    Console.WriteLine(key.Format(cats));
+                    Console.WriteLine(key.Value(cats));
                 #endregion Snippet_1a
             }
 
@@ -79,14 +79,14 @@ namespace docs
                 #region Snippet_2
                 ILine key = LineRoot.Global.Key("CatsDogs")
                         .PluralRules(CLDR35.Instance)
-                        .String("{cardinal:0} cat(s) and {1} dog(s)")
+                        .Format("{cardinal:0} cat(s) and {1} dog(s)")
                         .Inline("N:zero", "no cats and {1} dog(s)")
                         .Inline("N:one", "a cat and {1} dog(s)")
                         .Inline("N:other", "{0} cats and {1} dog(s)");
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)
-                        Console.WriteLine(key.Format(cats, dogs));
+                        Console.WriteLine(key.Value(cats, dogs));
                 #endregion Snippet_2
             }
 
@@ -98,7 +98,7 @@ namespace docs
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)
-                        Console.WriteLine(key.Format(cats, dogs));
+                        Console.WriteLine(key.Value(cats, dogs));
                 #endregion Snippet_3
             }
             {
@@ -109,7 +109,7 @@ namespace docs
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)
-                        Console.WriteLine(key.Format(cats, dogs));
+                        Console.WriteLine(key.Value(cats, dogs));
                 #endregion Snippet_4
             }
             {
@@ -117,11 +117,11 @@ namespace docs
                 #region Snippet_5
                 IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample2-en.xml");
                 ILineRoot root = new LineRoot(asset);
-                ILine key = root.Key("CatsDogs").String("{0} cat(s) and {1} dog(s)");
+                ILine key = root.Key("CatsDogs").Format("{0} cat(s) and {1} dog(s)");
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)
-                        Console.WriteLine(key.Culture("en").Format(cats, dogs));
+                        Console.WriteLine(key.Culture("en").Value(cats, dogs));
                 #endregion Snippet_5
             }
             {
@@ -134,7 +134,7 @@ namespace docs
                     for (int dogs = 0; dogs <= 2; dogs++)
                         for (int ponies = 0; ponies <= 2; ponies++)
                             for (int horses = 0; horses <= 2; horses++)
-                                Console.WriteLine(key.Format(cats, dogs, ponies, horses));
+                                Console.WriteLine(key.Value(cats, dogs, ponies, horses));
                 #endregion Snippet_6
             }
             {
@@ -146,7 +146,7 @@ namespace docs
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)
-                        Console.WriteLine(key.Format(cats, dogs));
+                        Console.WriteLine(key.Value(cats, dogs));
                 #endregion Snippet_7
             }
             {

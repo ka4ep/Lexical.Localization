@@ -71,8 +71,8 @@ namespace Lexical.Localization
         /// If no applicable <see cref="IStringResolver"/> is found return a value with state <see cref="LineStatus.NoResult"/>.
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>If key has <see cref="ILineFormatArgs"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
-        /// If key didn't have <see cref="ILineFormatArgs"/> part, then return the format string "Error (Code=0x{0:X8})".
+        /// <returns>If key has <see cref="ILineValue"/> part, then return the formulated string "Error (Code=0xFEEDF00D)".
+        /// If key didn't have <see cref="ILineValue"/> part, then return the format string "Error (Code=0x{0:X8})".
         /// otherwise return null</returns>
         public static LineString ResolveString(this ILine key)
         {

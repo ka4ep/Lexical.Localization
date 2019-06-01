@@ -51,8 +51,8 @@ namespace docs
                 Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").Print());
                 Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Success"));
                 Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error"));
-                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").Format(0xBAADF00D));
-                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").sv("Sönder (kod=0x{0:X8})").Culture("sv").Format(0xBAADF00D));
+                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").Value(0xBAADF00D));
+                Console.WriteLine(myLocalization.Section("ConsoleApp1.MyController").Key("Error").sv("Sönder (kod=0x{0:X8})").Culture("sv").Value(0xBAADF00D));
                 Console.WriteLine(myLocalization.Type(typeof(ConstructionExamples)).Key("Success"));
                 Console.WriteLine(myLocalization.Type<ConstructionExamples>().Key("Success"));
 
@@ -77,9 +77,9 @@ namespace docs
                 // Try it out
                 var myControllerLocalization = LineRoot.Global.Section("ConsoleApp1.MyController");
                 Console.WriteLine(myControllerLocalization.Key("Error"));
-                Console.WriteLine(myControllerLocalization.Key("Error").Format(0xBAADF00D));
-                Console.WriteLine(myControllerLocalization.Key("Error").Format(0xBAADF00D).Culture("fi"));
-                Console.WriteLine(myControllerLocalization.Key("Error").sv("Sönder (kod=0x{0:X8})").Culture("sv").Format(0xBAADF00D));
+                Console.WriteLine(myControllerLocalization.Key("Error").Value(0xBAADF00D));
+                Console.WriteLine(myControllerLocalization.Key("Error").Value(0xBAADF00D).Culture("fi"));
+                Console.WriteLine(myControllerLocalization.Key("Error").sv("Sönder (kod=0x{0:X8})").Culture("sv").Value(0xBAADF00D));
                 #endregion Snippet_Singleton
             }
 

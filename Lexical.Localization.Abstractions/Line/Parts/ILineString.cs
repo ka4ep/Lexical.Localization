@@ -32,15 +32,6 @@ namespace Lexical.Localization
             => part.Append<ILineString, IString>(value);
 
         /// <summary>
-        /// Append "String" parameter.
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static ILine String(this ILine part, string value)
-            => part.Append<ILineHint, string, string>("String", value);
-
-        /// <summary>
         /// Create <see cref="ILineString"/> part.
         /// </summary>
         /// <param name="lineFactory"></param>
@@ -50,12 +41,21 @@ namespace Lexical.Localization
             => lineFactory.Create<ILineString, IString>(null, value);
 
         /// <summary>
+        /// Append string of current selected "StringFormat"
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILine Format(this ILine part, string value)
+            => part.Append<ILineHint, string, string>("String", value);
+
+        /// <summary>
         /// Create "String" parameter.
         /// </summary>
         /// <param name="lineFactory"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILine String(this ILineFactory lineFactory, string value)
+        public static ILine Format(this ILineFactory lineFactory, string value)
             => lineFactory.Create<ILineHint, string, string>(null, "String", value);
 
         /// <summary>

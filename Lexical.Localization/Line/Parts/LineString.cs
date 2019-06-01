@@ -151,4 +151,25 @@ namespace Lexical.Localization
         }
     }
 
+    /// <summary></summary>
+    public static partial class LineExtensions
+    {
+        /// <summary>
+        /// Append raw non-formulated, non-placeholder string.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILineString String(this ILine part, String value)
+            => part.Append<ILineString, IString>(NoFormat.Default.Parse(value));
+
+        /// <summary>
+        /// Create raw non-formulated, non-placeholder string.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILineString String(this ILineFactory lineFactory, String value)
+            => lineFactory.Create<ILineString, IString>(null, NoFormat.Default.Parse(value));
+    }
 }

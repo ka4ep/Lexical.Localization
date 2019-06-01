@@ -110,7 +110,7 @@ namespace docs
                 // Create key "Error"
                 ILine key = root.Type("ConsoleApp1.MyController").Key("Error");
                 // Formulate key
-                ILine key_formulated = key.Format(0xFeedF00d);
+                ILine key_formulated = key.Value(0xFeedF00d);
                 #endregion Snippet_6b
                 {
                     #region Snippet_6c
@@ -132,7 +132,7 @@ namespace docs
                 // Create root
                 ILineRoot root = new LineRoot();
                 // Create key and add default value
-                ILine key = root.Section("Section").Key("Success").String("Success");
+                ILine key = root.Section("Section").Key("Success").Format("Success");
                 // Resolve string from inlined key "Success"
                 string str = key.ToString();
                 #endregion Snippet_7a
@@ -144,7 +144,7 @@ namespace docs
                 #region Snippet_7b
                 // Create key and add default strings
                 ILine key = root.Section("Section").Key("Success")
-                    .String("Success")                                  // Add inlining to the root culture ""
+                    .Format("Success")                                  // Add inlining to the root culture ""
                     .Inline("Culture:en", "Success")                   // Add inlining to culture "en"
                     .Inline("Culture:fi", "Onnistui")                  // Add inlining to culture "fi"
                     .Inline("Culture:sv", "Det funkar");               // Add inlining to culture "sv"
@@ -159,7 +159,7 @@ namespace docs
                 #region Snippet_7c
                 // Create key and add default strings
                 ILine key = root.Section("Section").Key("Success")
-                    .String("Success")                                  // Add inlining to the root culture ""
+                    .Format("Success")                                  // Add inlining to the root culture ""
                     .en("Success")                                     // Add inlining to culture "en"
                     .fi("Onnistui")                                    // Add inlining to culture "fi"
                     .sv("Det funkar");                                 // Add inlining to culture "sv"
@@ -239,7 +239,7 @@ namespace docs
         class MyController__
         {
             static ILine localization = LineRoot.Global.Type<MyControllerB>();
-            static ILine Success = localization.Key("Success").String("Success").sv("Det funkar").fi("Onnistui");
+            static ILine Success = localization.Key("Success").Format("Success").sv("Det funkar").fi("Onnistui");
 
             public string Do()
             {

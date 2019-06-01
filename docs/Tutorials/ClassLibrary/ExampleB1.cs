@@ -18,7 +18,7 @@ namespace TutorialLibrary
 
         public string Do()
         {
-            return localization.Key("OK").String("Operation Successful").ToString();
+            return localization.Key("OK").Format("Operation Successful").ToString();
         }
     }
 }

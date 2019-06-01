@@ -12,32 +12,32 @@ namespace Lexical.Localization
     /// Line part that carries .Format arguments.
     /// </summary>
     [Serializable]
-    public class LineFormatArgs : LineBase, ILineFormatArgs, ILineArguments<ILineFormatArgs, object[]>
+    public class LineValue : LineBase, ILineValue, ILineArguments<ILineValue, object[]>
     {
         /// <summary>
         /// Format arguments.
         /// </summary>
-        protected object[] args;
+        protected object[] values;
 
         /// <summary>
         /// FormatArgs property
         /// </summary>
-        public object[] Args { get => args; set => throw new InvalidOperationException(); }
+        public object[] Value { get => values; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public object[] Argument0 => args;
+        public object[] Argument0 => values;
 
         /// <summary>
         /// Create new line part.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
-        /// <param name="args"></param>
-        public LineFormatArgs(ILineFactory appender, ILine prevKey, object[] args) : base(appender, prevKey)
+        /// <param name="values"></param>
+        public LineValue(ILineFactory appender, ILine prevKey, object[] values) : base(appender, prevKey)
         {
-            this.args = args;
+            this.values = values;
         }
 
         /// <summary>
@@ -45,9 +45,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public LineFormatArgs(SerializationInfo info, StreamingContext context) : base(info, context)
+        public LineValue(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.args = info.GetValue("Args", typeof(object[])) as object[];
+            this.values = info.GetValue("Value", typeof(object[])) as object[];
         }
 
         /// <summary>
@@ -58,11 +58,11 @@ namespace Lexical.Localization
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("Args", args);
+            info.AddValue("Value", values);
         }
     }
 
-    public partial class LineAppender : ILineFactory<ILineFormatArgs, object[]>
+    public partial class LineAppender : ILineFactory<ILineValue, object[]>
     {
         /// <summary>
         /// Append part.
@@ -72,9 +72,9 @@ namespace Lexical.Localization
         /// <param name="args"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, object[] args, out ILineFormatArgs line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, object[] args, out ILineValue line)
         {
-            line = new LineFormatArgs(appender, previous, args);
+            line = new LineValue(appender, previous, args);
             return true;
         }
     }
@@ -83,32 +83,32 @@ namespace Lexical.Localization
     /// StringLocalizer part that carries .Format arguments.
     /// </summary>
     [Serializable]
-    public class StringLocalizerFormatArgs : StringLocalizerBase, ILineFormatArgs, ILineArguments<ILineFormatArgs, object[]>
+    public class StringLocalizerValue : StringLocalizerBase, ILineValue, ILineArguments<ILineValue, object[]>
     {
         /// <summary>
         /// Format arguments.
         /// </summary>
-        protected object[] args;
+        protected object[] values;
 
         /// <summary>
         /// FormatArgs property
         /// </summary>
-        public object[] Args { get => args; set => throw new InvalidOperationException(); }
+        public object[] Value { get => values; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public object[] Argument0 => args;
+        public object[] Argument0 => values;
 
         /// <summary>
         /// Create new line part.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
-        /// <param name="args"></param>
-        public StringLocalizerFormatArgs(ILineFactory appender, ILine prevKey, object[] args) : base(appender, prevKey)
+        /// <param name="values"></param>
+        public StringLocalizerValue(ILineFactory appender, ILine prevKey, object[] values) : base(appender, prevKey)
         {
-            this.args = args;
+            this.values = values;
         }
 
         /// <summary>
@@ -116,9 +116,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public StringLocalizerFormatArgs(SerializationInfo info, StreamingContext context) : base(info, context)
+        public StringLocalizerValue(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.args = info.GetValue("Args", typeof(object[])) as object[];
+            this.values = info.GetValue("Value", typeof(object[])) as object[];
         }
 
         /// <summary>
@@ -129,11 +129,11 @@ namespace Lexical.Localization
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("Args", args);
+            info.AddValue("Value", values);
         }
     }
 
-    public partial class StringLocalizerAppender : ILineFactory<ILineFormatArgs, object[]>
+    public partial class StringLocalizerAppender : ILineFactory<ILineValue, object[]>
     {
         /// <summary>
         /// Append part.
@@ -143,9 +143,9 @@ namespace Lexical.Localization
         /// <param name="args"></param>
         /// <param name="StringLocalizer"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, object[] args, out ILineFormatArgs StringLocalizer)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, object[] args, out ILineValue StringLocalizer)
         {
-            StringLocalizer = new StringLocalizerFormatArgs(appender, previous, args);
+            StringLocalizer = new StringLocalizerValue(appender, previous, args);
             return true;
         }
     }

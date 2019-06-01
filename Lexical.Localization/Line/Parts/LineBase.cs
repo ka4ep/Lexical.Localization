@@ -37,17 +37,17 @@ namespace Lexical.Localization
     public class LineBase : ILinePart, ILineDefaultHashCode, IDynamicMetaObjectProvider, ILineAppendable
     {
         /// <summary>
-        /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineFormatArgs"/> parts.
+        /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineValue"/> parts.
         /// </summary>
         static IEqualityComparer<ILine> keyAndArgsComparer =
             new LineComparer(ParameterInfos.Default)
                 .AddCanonicalComparer(ParameterComparer.Default)
                 .AddComparer(NonCanonicalComparer.AllParameters)
-                .AddComparer(new LineFormatArgsComparer())
+                .AddComparer(new LineValueComparer())
                 .SetReadonly();
 
         /// <summary>
-        /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineFormatArgs"/> parts.
+        /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineValue"/> parts.
         /// </summary>
         public static IEqualityComparer<ILine> FormatArgsComparer => keyAndArgsComparer;
 
@@ -212,7 +212,7 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Equals comparison. The default comparer compares <see cref="ILineKey"/> and <see cref="ILineFormatArgs"/> parts.
+        /// Equals comparison. The default comparer compares <see cref="ILineKey"/> and <see cref="ILineValue"/> parts.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -259,7 +259,7 @@ namespace Lexical.Localization
                     .AddInterface(typeof(ILineCulture))
                     .AddInterface(typeof(ILineCulturePolicy))
                     .AddInterface(typeof(ILineAssembly))
-                    .AddInterface(typeof(ILineFormatArgs))
+                    .AddInterface(typeof(ILineValue))
                     .AddInterface(typeof(ILineFormatProvider))
                     .AddInterface(typeof(ILineStringResolver))
                     .AddInterface(typeof(ILineLogger))
@@ -396,7 +396,7 @@ namespace Lexical.Localization
             {
                 ILine line = this;
                 if (name != null) line = line.Key(name);
-                if (arguments != null) line = line.Append<ILineFormatArgs, object[]>(arguments);
+                if (arguments != null) line = line.Append<ILineValue, object[]>(arguments);
                 StringFormat.LineString printedString = line.ResolveString();
                 if (printedString.Value == null)
                     return new LocalizedString(name, line.Print(), true);

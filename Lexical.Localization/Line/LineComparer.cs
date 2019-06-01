@@ -38,7 +38,7 @@ namespace Lexical.Localization
         ///    Type                     non-canonical compare
         ///    Assembly                 non-canonical compare
         ///    Culture                  non-canonical compare
-        ///    Format Args              not compared (<see cref="LineFormatArgsComparer"/>.
+        ///    Format Args              not compared (<see cref="LineValueComparer"/>.
         ///    Inlining                 not compared
         ///    CulturePolicy            not compared
         ///    Root                     not compared

@@ -375,7 +375,7 @@ namespace docs
             TextReader text, 
             ILineFormat namePolicy = null)
         {
-            yield return LineAppender.Default.Section("MyClass").Key("HelloWorld").Culture("en").String("Hello World!");
+            yield return LineAppender.Default.Section("MyClass").Key("HelloWorld").Culture("en").Format("Hello World!");
         }
     }
     #endregion Snippet_30

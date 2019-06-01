@@ -103,7 +103,7 @@ namespace Lexical.Localization.StringFormat
             }
 
             // Parse value
-            IString value = features.EffectiveValue;
+            IString value = features.EffectiveString;
             features.Status.UpFormat(value.Status);
 
             // Value has error
@@ -144,8 +144,8 @@ namespace Lexical.Localization.StringFormat
 
                     // Find first value that matches permutations
                     features.CulturePolicy = null;
-                    features.Value = null;
-                    features.ValueText = null;
+                    features.String = null;
+                    features.StringText = null;
                     for (int i = 0; i < permutations.Count - 1; i++)
                     {
                         // Create key with plurality cases
@@ -228,7 +228,7 @@ namespace Lexical.Localization.StringFormat
                 }
 
                 // Parse value
-                IString value = features.EffectiveValue;
+                IString value = features.EffectiveString;
                 features.Status.UpFormat(value.Status);
 
                 // Value has error
@@ -271,8 +271,8 @@ namespace Lexical.Localization.StringFormat
                         {
                             // Find first value that matches permutations
                             features.CulturePolicy = null;
-                            features.Value = null;
-                            features.ValueText = null;
+                            features.String = null;
+                            features.StringText = null;
                             for (int i = 0; i < permutations.Count - 1; i++)
                             {
                                 // Create key with plurality cases
@@ -293,7 +293,7 @@ namespace Lexical.Localization.StringFormat
                                     return new LineString(key, null, features.Status);
                                 }
                                 // Parse value
-                                IString value_for_plurality = features.EffectiveValue;
+                                IString value_for_plurality = features.EffectiveString;
                                 // Add status from parsing the value
                                 features.Status.UpFormat(value_for_plurality.Status);
                                 // Value has error
@@ -474,7 +474,7 @@ namespace Lexical.Localization.StringFormat
 
                             case ResolveSource.Key:
                                 // Key has explicit culture and value, use the value
-                                if (features.Value != null || features.ValueText != null)
+                                if (features.String != null || features.StringText != null)
                                 {
                                     if (culture == null) culture = RootCulture;
                                     features.Status.UpResolve(LineStatus.ResolveOkFromKey);
@@ -549,7 +549,7 @@ namespace Lexical.Localization.StringFormat
                                         break;
 
                                     case ResolveSource.Key:
-                                        if ((features.Value != null || features.ValueText != null) && c.Equals(features.Culture))
+                                        if ((features.String != null || features.StringText != null) && c.Equals(features.Culture))
                                         {
                                             if (culture == null) culture = c;
                                             features.Status.UpResolve(LineStatus.ResolveOkFromKey);
@@ -623,7 +623,7 @@ namespace Lexical.Localization.StringFormat
 
                             case ResolveSource.Key:
                                 // Key has explicit culture and value, use the value
-                                if (features.Value != null || features.ValueText != null)
+                                if (features.String != null || features.StringText != null)
                                 {
                                     if (culture == null) culture = RootCulture;
                                     features.Status.UpResolve(LineStatus.ResolveOkFromKey);
