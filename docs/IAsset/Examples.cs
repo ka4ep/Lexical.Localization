@@ -13,13 +13,13 @@ namespace docs
                 // Language string source
                 Dictionary<string, string> src = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
                 // Create Asset
-                IAsset asset = new LocalizationAsset(src, LineParameterPrinter.Default);
+                IAsset asset = new StringAsset(src, LineParameterPrinter.Default);
                 #endregion Snippet_1
 
                 #region Snippet_2
                 // Create key
                 ILine key = new LineRoot().Key("hello").Culture("en");
-                // Resolve string - Call to LocalizationAssetExtensions.GetString()
+                // Resolve string - Call to StringAssetExtensions.GetString()
                 IString str = asset.GetString(key).GetString();
                 #endregion Snippet_2
 

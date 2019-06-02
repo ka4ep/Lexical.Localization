@@ -26,7 +26,7 @@ namespace docs
                 LineAppender.Default.Culture("en").Type("ConsoleApp1.MyController").Key("Hello").Format("Hello World!")
             };
             // Create asset source
-            IAssetSource assetSource = new LocalizationAsset(lines).ToSource();
+            IAssetSource assetSource = new StringAsset(lines).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
             #endregion Snippet_2

@@ -6,7 +6,7 @@ namespace docs
     {
         static void Main(string[] args)
         {
-            LocalizationAsset_Examples.Main(args);
+            StringAsset_Examples.Main(args);
 
             Plurality_Examples.Main(args);
             TutorialProject.ExampleB.Main(args);
@@ -22,7 +22,7 @@ namespace docs
 
             LocalizationReader_Examples.Main(args);
             LineComparer_Examples.Main(args);
-            LocalizationAsset_Examples.Main(args);
+            StringAsset_Examples.Main(args);
 
             Ms_DependencyInjection_Example0.Main(args);
             Ms_DependencyInjection_Example1.Main(args);

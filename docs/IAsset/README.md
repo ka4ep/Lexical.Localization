@@ -6,11 +6,11 @@ Sources are typically files, embedded resources, and plain code.
 // Language string source
 Dictionary<string, string> src = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
 // Create Asset
-IAsset asset = new LocalizationAsset(src, LineParameterPrinter.Default);
+IAsset asset = new StringAsset(src, LineParameterPrinter.Default);
 ```
 
 IAsset is the root interface for assets. It serves as a signal that the implementing class has further asset features.
-There are more specific interfaces such as **ILocalizationStringProvider** and **IAssetResourceProvider** which 
+There are more specific interfaces such as **IStringAsset** and **IAssetResourceProvider** which 
 retrieve language strings and binary resources.
 
 Asset interfaces are not called directly but used instead by calling extension methods of IAsset.
@@ -18,7 +18,7 @@ Asset interfaces are not called directly but used instead by calling extension m
 ```csharp
 // Create key
 ILine key = new LineRoot().Key("hello").Culture("en");
-// Resolve string - Call to LocalizationAssetExtensions.GetString()
+// Resolve string - Call to StringAssetExtensions.GetString()
 IFormatString str = asset.GetString(key).GetValue();
 ```
 
@@ -42,11 +42,11 @@ IFormatString str = asset.GetString(key).GetValue();
        <td>Provides culture specific binary resources, such as icons and sounds</td>
     </tr>
     <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/LocalizationAsset/ILocalizationStringProvider.cs">ILocalizationStringProvider</a></td>
+       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/StringAsset/IStringAsset.cs">IStringAsset</a></td>
        <td>Provides culture specific language strings</td>
     </tr>
     <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/LocalizationAsset/ILocalizationAssetCultureCapabilities.cs">ILocalizationAssetCultureCapabilities</a></td>
+       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/StringAsset/IAssetCultureEnumerable.cs">IAssetCultureEnumerable</a></td>
        <td>Enumerates available cultures</td>
     </tr>
     <tr>
@@ -74,7 +74,7 @@ IFormatString str = asset.GetString(key).GetValue();
        <td>Loader object</td>
     </tr>
     <tr>
-       <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAssetLoader/IAssetLoaderPartResourceManager.cs">IAssetLoaderPartResourceManager</a></td>
+       <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAssetLoader/IAssetLoaderPartResourceManager.cs">IAssetLoaderPartResourceManager</a></td>
        <td>Loader object for .resources files</td>
     </tr>
     <tr>
@@ -107,27 +107,27 @@ IFormatString str = asset.GetString(key).GetValue();
 </thead>
 <tbody>
     <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/LocalizationAssetFunc.cs">LocalizationAssetFunc</a></td>
+      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/AssetFunc.cs">AssetFunc</a></td>
       <td>Calls delegate Func&lt;IAsset&gt; to provide IAsset</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/LocalizationAsset.cs">LocalizationAsset</a></td>
+      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringAsset.cs">StringAsset</a></td>
       <td>Adapts Dictionary&lt;string, string&gt; to IAsset</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/LocalizationStringsFunc.cs">LocalizationStringsFunc</a></td>
+      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringAssetFunc.cs">StringAssetFunc</a></td>
       <td>Adapts Func&lt;ILine, string&gt; to IAsset</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/ResourceManagerAsset.cs">ResourceManagerAsset</a></td>
+      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/ResourceManagerAsset.cs">ResourceManagerAsset</a></td>
       <td>Adapts ResourceManager to IAsset</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerAsset.cs">StringLocalizerAsset</a></td>
+      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringLocalizerAsset.cs">StringLocalizerAsset</a></td>
       <td>Adapts IStringLocalizer to IAsset</td>
     </tr>
     <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerFactoryAsset.cs">StringLocalizerFactoryAsset</a></td>
+      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringLocalizerFactoryAsset.cs">StringLocalizerFactoryAsset</a></td>
       <td>Adapts IStringLocalizerFactory to IAsset</td>
     </tr>
     <tr>
@@ -139,7 +139,7 @@ IFormatString str = asset.GetString(key).GetValue();
       <td>Adds asset as component when IAssetBuilder builds a new asset</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/ResourceManagerStringLocalizerAssetSource.cs">ResourceManagerStringLocalizerAssetSource</a></td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/ResourceManagerStringLocalizerAssetSource.cs">ResourceManagerStringLocalizerAssetSource</a></td>
       <td>Adapts location of .resources file to IAssetSource</td>
     </tr>
     <tr>
@@ -151,11 +151,11 @@ IFormatString str = asset.GetString(key).GetValue();
       <td>A part that adds feature to cache resource requests.</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/AssetCachePartStrings.cs">AssetCachePartStrings</a></td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/AssetCachePartStrings.cs">AssetCachePartStrings</a></td>
       <td>A part that adds feature to cache string requests.</td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/AssetCachePartCultures.cs">AssetCachePartCultures</a></td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/AssetCachePartCultures.cs">AssetCachePartCultures</a></td>
       <td>A part that adds feature to cache culture enumeration requests.</td>
     </tr>
     <tr>

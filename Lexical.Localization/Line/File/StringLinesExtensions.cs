@@ -51,7 +51,7 @@ namespace Lexical.Localization
         /// <param name="lineFormat"><see cref="ILineFormatParser"/> parses strings to lines.</param>
         /// <returns></returns>
         public static IAsset ToAsset(this IEnumerable<KeyValuePair<string, IString>> lines, ILineFormat lineFormat)
-            => new LocalizationAsset().Add(lines, lineFormat).Load();
+            => new StringAsset().Add(lines, lineFormat).Load();
 
         /// <summary>
         /// Convert <paramref name="lines"/> to <see cref="IAssetSource"/>.

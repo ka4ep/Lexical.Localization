@@ -8,7 +8,7 @@ using Microsoft.Extensions.Localization;
 
 namespace docs
 {
-    public class LocalizationAsset_Examples
+    public class StringAsset_Examples
     {
         public static void Main(string[] args)
         {
@@ -21,7 +21,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!"  }
                 };
                 // Create asset with string source
-                IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
+                IAsset asset = new StringAsset().Add(source, "{Culture:}[Type:][Key]").Load();
                 #endregion Snippet_1a
                 ILine key = new LineRoot(asset).Type("MyController").Key("hello");
                 Console.WriteLine(key);
@@ -38,7 +38,7 @@ namespace docs
                     { LineFormat.Parameters.Parse("Culture:de:Type:MyController:Key:hello").Format("Hallo Welt!")  }
                 };
                 // Create asset with string source
-                IAsset asset = new LocalizationAsset().Add(source).Load();
+                IAsset asset = new StringAsset().Add(source).Load();
                 #endregion Snippet_1b
 
                 #region Snippet_2b
@@ -58,7 +58,7 @@ namespace docs
                     { new LineRoot().Type("MyController").Key("hello").Culture("de"), "Hallo Welt!"  }
                 };
                 // Create asset with string source
-                IAsset asset = new LocalizationAsset().Add(source).Load();
+                IAsset asset = new StringAsset().Add(source).Load();
                 #endregion Snippet_1c
 
                 #region Snippet_2c
@@ -76,7 +76,7 @@ namespace docs
                     { "de:MyController:hello", "Hallo Welt!" }
                 };
                 // Create asset with string source
-                IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
+                IAsset asset = new StringAsset().Add(source, "{Culture:}[Type:][Key]").Load();
                 #region Snippet_3a
                 // Extract all keys
                 foreach (var _key in asset.GetStringLines(null))
@@ -92,7 +92,7 @@ namespace docs
                 };
                 // Keys can be filtered
                 ILine filterKey = LineAppender.Default.Culture("de");
-                IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
+                IAsset asset = new StringAsset().Add(source, "{Culture:}[Type:][Key]").Load();
                 foreach (var _key in asset.GetLines(filterKey))
                     Console.WriteLine(_key.Print(LineFormat.ParametersInclString));
                 #endregion Snippet_3b

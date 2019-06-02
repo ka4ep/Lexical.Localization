@@ -12,7 +12,7 @@ namespace docs
             #region Snippet
             // Create asset
             var source = new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } };
-            IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
+            IAsset asset = new StringAsset(source, LineFormat.Parameters);
 
             // Cache it
             asset = asset.CreateCache();

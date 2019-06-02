@@ -26,8 +26,8 @@ namespace Lexical.Localization
     /// adapter with WithCulture is assigned.
     /// </summary>
     public class StringLocalizerAsset : 
-        ILocalizationStringProvider, 
-        ILocalizationStringLinesEnumerable,  // Doesn't work
+        IStringAsset, 
+        IStringAssetStringLinesEnumerable,  // Doesn't work
         IAssetReloadable
     {
         /// <summary>

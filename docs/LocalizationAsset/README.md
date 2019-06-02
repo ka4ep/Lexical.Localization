@@ -1,5 +1,5 @@
 # Localization Asset
-**LocalizationAsset** is simple language string container. Asset is populated from different IEnumeration sources, which become effective when **Load()** is called.
+**StringAsset** is simple language string container. Asset is populated from different IEnumeration sources, which become effective when **Load()** is called.
 
 <b>.Add(<i>IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;, IAssetNamePolicy keyPolicy</i>)</b> adds language string source with String based keys.
 
@@ -11,7 +11,7 @@ var source = new Dictionary<string, string> {
     { "de:MyController:hello", "Hallo Welt!"  }
 };
 // Create asset with string source
-IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
+IAsset asset = new StringAsset().Add(source, "{Culture:}[Type:][Key]").Load();
 ```
 <br/>
 
@@ -25,7 +25,7 @@ var source = new Dictionary<ILine, string> {
     { new LocalizationRoot().Type("MyController").Key("hello").Culture("de"), "Hallo Welt!"  }
 };
 // Create asset with string source
-IAsset asset = new LocalizationAsset().Add(source).Load();
+IAsset asset = new StringAsset().Add(source).Load();
 ```
 <br/>
 

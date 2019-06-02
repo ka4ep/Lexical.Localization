@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// <summary>
     /// This class adapts IDictionary&lt;ILine, byte[]&gt; to <see cref="IAssetResourceProvider"/> and <see cref="IAssetResourceKeysEnumerable"/>.
     /// </summary>
-    public class ResourceDictionary : IAssetResourceProvider, IAssetResourceKeysEnumerable, ILocalizationAssetCultureCapabilities
+    public class ResourceDictionary : IAssetResourceProvider, IAssetResourceKeysEnumerable, IAssetCultureEnumerable
     {
         /// <summary>
         /// Source dictionary

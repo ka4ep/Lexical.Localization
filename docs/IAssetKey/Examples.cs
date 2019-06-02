@@ -13,7 +13,7 @@ namespace docs
         public static void Main(string[] args)
         {
             {
-                IAsset asset = new LocalizationAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, LineFormat.Parameters);
+                IAsset asset = new StringAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, LineFormat.Parameters);
                 // Assign the composition to root
                 ILineRoot root = new LineRoot(asset, new CulturePolicy());
                 #region Snippet_0
@@ -56,7 +56,7 @@ namespace docs
                 // Language string source
                 Dictionary<string, string> src = new Dictionary<string, string> { { "en:Section:Key", "Hello World!" } };
                 // Create Asset
-                IAsset asset = new LocalizationAsset(src, LineParameterPrinter.Colon_Colon_Colon);
+                IAsset asset = new StringAsset(src, LineParameterPrinter.Colon_Colon_Colon);
                 // Create culture policy
                 ICulturePolicy culturePolicy = new CulturePolicy();
                 // Create root
@@ -101,7 +101,7 @@ namespace docs
                 Dictionary<string, string> strs = new Dictionary<string, string>();
                 strs["ConsoleApp1.MyController:Error"] = "Error (Code=0x{0:X8})";
                 // Create asset
-                IAsset asset = new LocalizationAsset(strs, LineParameterPrinter.Default);
+                IAsset asset = new StringAsset(strs, LineParameterPrinter.Default);
                 // Create root
                 ILineRoot root = new LineRoot(asset);
                 #endregion Snippet_6a

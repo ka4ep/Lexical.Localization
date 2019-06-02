@@ -3,7 +3,6 @@
 // Date:           19.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Internal;
 using Lexical.Localization.StringFormat;
 using System;
 using System.Globalization;
@@ -16,8 +15,8 @@ namespace Lexical.Localization
     /// <summary>
     /// Adapts <see cref="System.Resources.ResourceManager"/> (.resx) to <see cref="IAsset"/>.
     /// </summary>
-    public class ResourceManagerAsset : 
-        ILocalizationStringProvider,
+    public class ResourceManagerAsset :
+        IStringAsset,
         IAssetResourceProvider
     {
         /// <summary>
@@ -42,7 +41,7 @@ namespace Lexical.Localization
         /// 
         /// Example "ConsoleApp1.MyController.Success"
         /// </summary>
-        public  static readonly ILineFormat namepolicy_for_type_resourcemanager = new LineParameterPrinter().Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
+        public static readonly ILineFormat namepolicy_for_type_resourcemanager = new LineParameterPrinter().Rule("Section", true, ".").Rule("Key", true, ".").DefaultRule(false);
 
         /// <summary>
         /// Name policy where "Type", "Section" and "Key" parameters are written out when creating key identifier to match against .resx.
@@ -160,7 +159,8 @@ namespace Lexical.Localization
                 object obj = (culture == null ? ResourceManager.GetObject(id) : ResourceManager.GetObject(id, culture)) as byte[];
                 if (obj == null) return null;
                 return obj is byte[] data ? data : throw new LocalizationException($"Key={id}, Expected byte[], got {obj.GetType().FullName}");
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 throw new LocalizationException(id, e);
             }

@@ -106,7 +106,7 @@ namespace TutorialProject
             // Create asset
             Dictionary<string, string> strs = new Dictionary<string, string>();
             strs["Culture:fi:Type:TutorialLibrary.MyController2:Key:OK"] = "Toiminto onnistui";
-            IAsset asset = new LocalizationAsset()
+            IAsset asset = new StringAsset()
                     .Add(strs, LineFormat.Default)
                     .Load();
 
@@ -185,7 +185,7 @@ namespace TutorialProject
             // Create asset
             Dictionary<string, string> strs = new Dictionary<string, string>();
             strs["Culture:fi:Type:TutorialLibrary.MyController3:Key:OK"] = "Toiminto onnistui";
-            IAsset asset = new LocalizationAsset()
+            IAsset asset = new StringAsset()
                     .Add(strs, LineFormat.Default)
                     .Load();
 

@@ -28,7 +28,7 @@ Assets are contributed to the service provider by adding *IAssetSource*s.
 // Create localization source
 var source = new Dictionary<string, string> { { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" } };
 // Create asset source
-IAssetSource assetSource = new LocalizationAsset(source, LineFormat.Default).ToSource();
+IAssetSource assetSource = new StringAsset(source, LineFormat.Default).ToSource();
 // Add asset source
 serviceCollection.AddSingleton<IAssetSource>(assetSource);
 ```
@@ -78,7 +78,7 @@ namespace docs
             // Create localization source
             var source = new Dictionary<string, string> { { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" } };
             // Create asset source
-            IAssetSource assetSource = new LocalizationAsset(source, LineFormat.Default).ToSource();
+            IAssetSource assetSource = new StringAsset(source, LineFormat.Default).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 
@@ -126,7 +126,7 @@ var source = new Dictionary<string, string> {
     { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" }
 };
 // Create asset source
-IAssetSource assetSource = new LocalizationAsset(source, LineFormat.Default).ToSource();
+IAssetSource assetSource = new StringAsset(source, LineFormat.Default).ToSource();
 // Add asset source
 serviceCollection.AddSingleton<IAssetSource>(assetSource);
 
@@ -176,7 +176,7 @@ namespace docs
                 { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" }
             };
             // Create asset source
-            IAssetSource assetSource = new LocalizationAsset(source, LineFormat.Default).ToSource();
+            IAssetSource assetSource = new StringAsset(source, LineFormat.Default).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 

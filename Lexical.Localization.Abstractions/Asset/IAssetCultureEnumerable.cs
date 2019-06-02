@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Asset that can enumerate supported cultures.
     /// </summary>
-    public interface ILocalizationAssetCultureCapabilities : IAsset
+    public interface IAssetCultureEnumerable : IAsset
     {
         /// <summary>
         /// List supported cultures.
@@ -42,10 +42,10 @@ namespace Lexical.Localization
         public static IEnumerable<CultureInfo> GetSupportedCultures(this IAsset asset)
         {
             IEnumerable<CultureInfo> result = null;
-            if (asset is ILocalizationAssetCultureCapabilities casted) result = casted.GetSupportedCultures();
+            if (asset is IAssetCultureEnumerable casted) result = casted.GetSupportedCultures();
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationAssetCultureCapabilities _ in composition.GetComponents<ILocalizationAssetCultureCapabilities>(true) ?? Enumerable.Empty<ILocalizationAssetCultureCapabilities>())
+                foreach (IAssetCultureEnumerable _ in composition.GetComponents<IAssetCultureEnumerable>(true) ?? Enumerable.Empty<IAssetCultureEnumerable>())
                 {
                     IEnumerable<CultureInfo> _result = _.GetSupportedCultures();
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);

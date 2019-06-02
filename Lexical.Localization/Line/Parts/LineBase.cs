@@ -412,7 +412,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            ILocalizationStringLinesEnumerable collections = this.FindAsset() as ILocalizationStringLinesEnumerable;
+            IStringAssetStringLinesEnumerable collections = this.FindAsset() as IStringAssetStringLinesEnumerable;
             if (collections == null) return null;
 
             CultureInfo ci = null;

@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// 
     /// Consumers of this interface can use <see cref="IAssetExtensions.GetString(IAsset, ILine)"/> with uncasted <see cref="IAsset"/>.
     /// </summary>
-    public interface ILocalizationStringProvider : IAsset
+    public interface IStringAsset : IAsset
     {
         /// <summary>
         /// Try to read a localization string. 
@@ -32,7 +32,7 @@ namespace Lexical.Localization
     /// 
     /// This interface is used by classes that use <see cref="ILine"/> as intrinsic keys.
     /// </summary>
-    public interface ILocalizationKeyLinesEnumerable : IAsset
+    public interface IStringAssetLinesEnumerable : IAsset
     {
         /// <summary>
         /// Get the lines this asset can provide. If cannot return all lines, returns null.
@@ -68,7 +68,7 @@ namespace Lexical.Localization
     /// 
     /// This interface is used by classes that use <see cref="String"/> as intrinsic keys.
     /// </summary>
-    public interface ILocalizationStringLinesEnumerable : IAsset
+    public interface IStringAssetStringLinesEnumerable : IAsset
     {
         /// <summary>
         /// Gets localization key-value pairs as string keys. If cannot return all lines, then return what is available.
@@ -115,14 +115,14 @@ namespace Lexical.Localization
         /// <returns>line with matching key or null</returns>
         public static ILine GetString(this IAsset asset, ILine key)
         {
-            if (asset is ILocalizationStringProvider casted) 
+            if (asset is IStringAsset casted) 
             {
                 ILine result = casted.GetString(key);
                 if (result != null) return result;
             }
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationStringProvider component in composition.GetComponents<ILocalizationStringProvider>(true) ?? Enumerable.Empty<ILocalizationStringProvider>())
+                foreach (IStringAsset component in composition.GetComponents<IStringAsset>(true) ?? Enumerable.Empty<IStringAsset>())
                 {
                     ILine result = component.GetString(key);
                     if (result != null) return result;
@@ -171,10 +171,10 @@ namespace Lexical.Localization
         public static IEnumerable<ILine> GetLines(this IAsset asset, ILine filterKey = null)
         {
             IEnumerable<ILine> result = null;
-            if (asset is ILocalizationKeyLinesEnumerable casted) result = casted.GetLines(filterKey);
+            if (asset is IStringAssetLinesEnumerable casted) result = casted.GetLines(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationKeyLinesEnumerable>())
+                foreach (IStringAssetLinesEnumerable component in composition.GetComponents<IStringAssetLinesEnumerable>(true) ?? Enumerable.Empty<IStringAssetLinesEnumerable>())
                 {
                     IEnumerable<ILine> _result = component.GetLines(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
@@ -224,10 +224,10 @@ namespace Lexical.Localization
         public static IEnumerable<ILine> GetAllLines(this IAsset asset, ILine filterKey = null)
         {
             IEnumerable<ILine> result = null;
-            if (asset is ILocalizationKeyLinesEnumerable casted) result = casted.GetAllLines(filterKey);
+            if (asset is IStringAssetLinesEnumerable casted) result = casted.GetAllLines(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationKeyLinesEnumerable component in composition.GetComponents<ILocalizationKeyLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationKeyLinesEnumerable>())
+                foreach (IStringAssetLinesEnumerable component in composition.GetComponents<IStringAssetLinesEnumerable>(true) ?? Enumerable.Empty<IStringAssetLinesEnumerable>())
                 {
                     IEnumerable<ILine> _result = component.GetAllLines(filterKey);
                     if (_result == null) return null;
@@ -283,10 +283,10 @@ namespace Lexical.Localization
         public static IEnumerable<KeyValuePair<string, IString>> GetStringLines(this IAsset asset, ILine filterKey = null)
         {
             IEnumerable<KeyValuePair<string, IString>> result = null;
-            if (asset is ILocalizationStringLinesEnumerable casted) result = casted.GetStringLines(filterKey);
+            if (asset is IStringAssetStringLinesEnumerable casted) result = casted.GetStringLines(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationStringLinesEnumerable component in composition.GetComponents<ILocalizationStringLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationStringLinesEnumerable>())
+                foreach (IStringAssetStringLinesEnumerable component in composition.GetComponents<IStringAssetStringLinesEnumerable>(true) ?? Enumerable.Empty<IStringAssetStringLinesEnumerable>())
                 {
                     IEnumerable<KeyValuePair<string, IString>> _result = component.GetStringLines(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
@@ -335,10 +335,10 @@ namespace Lexical.Localization
         public static IEnumerable<KeyValuePair<string, IString>> GetAllStringLines(this IAsset asset, ILine filterKey = null)
         {
             IEnumerable<KeyValuePair<string, IString>> result = null;
-            if (asset is ILocalizationStringLinesEnumerable casted) result = casted.GetAllStringLines(filterKey);
+            if (asset is IStringAssetStringLinesEnumerable casted) result = casted.GetAllStringLines(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (ILocalizationStringLinesEnumerable component in composition.GetComponents<ILocalizationStringLinesEnumerable>(true) ?? Enumerable.Empty<ILocalizationStringLinesEnumerable>())
+                foreach (IStringAssetStringLinesEnumerable component in composition.GetComponents<IStringAssetStringLinesEnumerable>(true) ?? Enumerable.Empty<IStringAssetStringLinesEnumerable>())
                 {
                     IEnumerable<KeyValuePair<string, IString>> _result = component.GetAllStringLines(filterKey);
                     if (_result == null) return null;

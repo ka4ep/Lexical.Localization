@@ -8,15 +8,15 @@ Asset cache needs to be populated with [IAssetCacheParts](https://github.com/tag
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } };
-IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
+IAsset asset = new StringAsset(source, LineFormat.Parameters);
 
 // Create cache
 IAssetCache asset_cached = new AssetCache(asset);
 // Adds feature to cache IAssetResourceProvider specific requests
 asset_cached.Add(new AssetCachePartResources(asset_cached.Source, asset_cached.Options));
-// Adds feature to cache ILocalizationStringProvider specific requests
+// Adds feature to cache IStringAsset specific requests
 asset_cached.Add(new AssetCachePartStrings(asset_cached.Source, asset_cached.Options));
-// Adds feature to cache ILocalizationAssetCultureCapabilities specific requests
+// Adds feature to cache IAssetCultureEnumerable specific requests
 asset_cached.Add(new AssetCachePartCultures(asset_cached.Source, asset_cached.Options));
 
 // Assign the cached asset
@@ -77,7 +77,7 @@ public interface IAssetCachePart : IAsset
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } };
-IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
+IAsset asset = new StringAsset(source, LineFormat.Parameters);
 
 // Create cache
 IAssetCache asset_cached = asset.CreateCache();
@@ -115,7 +115,7 @@ Table of Asset cache option's keys
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } };
-IAsset asset = new LocalizationAsset(source, LineFormat.Parameters);
+IAsset asset = new StringAsset(source, LineFormat.Parameters);
 
 // Cache it
 asset = asset.CreateCache();
@@ -137,5 +137,5 @@ asset.Reload();
  * [AssetCache](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization/Asset/AssetCache.cs)
  * [AssetCachePartResources](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Asset/AssetCachePartResources.cs)
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/)) 
- * [AssetCachePartStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/AssetCachePartStrings.cs)
- * [AssetCachePartCultures](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/AssetCachePartCultures.cs)
+ * [AssetCachePartStrings](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/AssetCachePartStrings.cs)
+ * [AssetCachePartCultures](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/AssetCachePartCultures.cs)

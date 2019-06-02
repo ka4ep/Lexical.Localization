@@ -13,7 +13,7 @@ namespace docs
             // Create localization source
             var source = new List<ILine> { LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello").Format("Hello World!") };
             // Create asset
-            IAsset asset = new LocalizationAsset(source);
+            IAsset asset = new StringAsset(source);
             // Create culture policy
             ICulturePolicy culturePolicy = new CulturePolicy();
             // Create root

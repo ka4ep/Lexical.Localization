@@ -8,9 +8,9 @@ namespace Lexical.Localization
     /// <summary>
     /// Adapts delegate into <see cref="IAsset"/>.
     /// </summary>
-    public class LocalizationAssetFunc :
+    public class AssetFunc :
         IAsset,
-        ILocalizationStringProvider, ILocalizationStringLinesEnumerable, ILocalizationKeyLinesEnumerable,
+        IStringAsset, IStringAssetStringLinesEnumerable, IStringAssetLinesEnumerable,
         IAssetResourceProvider, IAssetResourceNamesEnumerable, IAssetResourceKeysEnumerable
     {
         /// <summary>
@@ -22,13 +22,13 @@ namespace Lexical.Localization
         /// Create asset that acquires asset from <paramref name="func"/>.
         /// </summary>
         /// <param name="func"></param>
-        public LocalizationAssetFunc(Func<IAsset> func)
+        public AssetFunc(Func<IAsset> func)
         {
             Func = func ?? throw new ArgumentNullException(nameof(func));
         }
 
-        IEnumerable<KeyValuePair<string, IString>> ILocalizationStringLinesEnumerable.GetAllStringLines(ILine key)
-            => (Func() as ILocalizationStringLinesEnumerable)?.GetAllStringLines(key);
+        IEnumerable<KeyValuePair<string, IString>> IStringAssetStringLinesEnumerable.GetAllStringLines(ILine key)
+            => (Func() as IStringAssetStringLinesEnumerable)?.GetAllStringLines(key);
 
         byte[] IAssetResourceProvider.GetResource(ILine key)
             => (Func() as IAssetResourceProvider)?.GetResource(key);
@@ -36,8 +36,8 @@ namespace Lexical.Localization
         IEnumerable<string> IAssetResourceNamesEnumerable.GetResourceNames(ILine key)
             => (Func() as IAssetResourceNamesEnumerable)?.GetResourceNames(key);
 
-        ILine ILocalizationStringProvider.GetString(ILine key)
-            => (Func() as ILocalizationStringProvider)?.GetString(key);
+        ILine IStringAsset.GetString(ILine key)
+            => (Func() as IStringAsset)?.GetString(key);
 
         Stream IAssetResourceProvider.OpenStream(ILine key)
             => (Func() as IAssetResourceProvider).OpenStream(key);
@@ -55,7 +55,7 @@ namespace Lexical.Localization
         /// <param name="filterKey"></param>
         /// <returns></returns>
         public IEnumerable<KeyValuePair<string, IString>> GetStringLines(ILine filterKey = null)
-            => (Func() as ILocalizationStringProvider)?.GetStringLines(filterKey);
+            => (Func() as IStringAsset)?.GetStringLines(filterKey);
 
         /// <summary>
         /// 
@@ -63,7 +63,7 @@ namespace Lexical.Localization
         /// <param name="filterKey"></param>
         /// <returns></returns>
         public IEnumerable<ILine> GetLines(ILine filterKey = null)
-            => (Func() as ILocalizationStringProvider)?.GetLines(filterKey);
+            => (Func() as IStringAsset)?.GetLines(filterKey);
 
         /// <summary>
         /// 
@@ -71,7 +71,7 @@ namespace Lexical.Localization
         /// <param name="filterKey"></param>
         /// <returns></returns>
         public IEnumerable<ILine> GetAllLines(ILine filterKey = null)
-            => (Func() as ILocalizationStringProvider)?.GetAllLines(filterKey);
+            => (Func() as IStringAsset)?.GetAllLines(filterKey);
 
         /// <summary>
         /// 
@@ -79,7 +79,7 @@ namespace Lexical.Localization
         /// <param name="filterKey"></param>
         /// <returns></returns>
         public IEnumerable<string> GetAllResourceNames(ILine filterKey = null)
-            => (Func() as ILocalizationStringProvider)?.GetAllResourceNames(filterKey);
+            => (Func() as IStringAsset)?.GetAllResourceNames(filterKey);
 
         /// <summary>
         /// 
@@ -87,7 +87,7 @@ namespace Lexical.Localization
         /// <param name="filterKey"></param>
         /// <returns></returns>
         public IEnumerable<ILine> GetResourceKeys(ILine filterKey = null)
-            => (Func() as ILocalizationStringProvider)?.GetResourceKeys(filterKey);
+            => (Func() as IStringAsset)?.GetResourceKeys(filterKey);
 
         /// <summary>
         /// 
@@ -95,7 +95,7 @@ namespace Lexical.Localization
         /// <param name="filterKey"></param>
         /// <returns></returns>
         public IEnumerable<ILine> GetAllResourceKeys(ILine filterKey = null)
-            => (Func() as ILocalizationStringProvider)?.GetAllResourceKeys(filterKey);
+            => (Func() as IStringAsset)?.GetAllResourceKeys(filterKey);
     }
 
     /// <summary></summary>
@@ -107,7 +107,7 @@ namespace Lexical.Localization
         /// <param name="assetProvider"></param>
         /// <returns></returns>
         public static IAssetSource ToSource(this Func<IAsset> assetProvider)
-            => new AssetInstanceSource(new LocalizationAssetFunc(assetProvider));
+            => new AssetInstanceSource(new AssetFunc(assetProvider));
 
         /// <summary>
         /// 
@@ -115,6 +115,6 @@ namespace Lexical.Localization
         /// <param name="assetProvider"></param>
         /// <returns></returns>
         public static IAsset ToAsset(this Func<IAsset> assetProvider)
-            => new LocalizationAssetFunc(assetProvider);
+            => new AssetFunc(assetProvider);
     }
 }

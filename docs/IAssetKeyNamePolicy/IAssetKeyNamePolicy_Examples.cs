@@ -19,7 +19,7 @@ namespace docs
                         .ParameterInfo(ParameterInfos.Default.Comparables(), prefixSeparator: "/") // Sorts parameters
                         .DefaultRule(true, prefixSeparator: "/"); // Default separator
                 // Create asset
-                IAsset asset = new LocalizationAsset(source, policy);
+                IAsset asset = new StringAsset(source, policy);
                 // Create key
                 ILine key = new LineRoot(asset).Section("MyController").Key("Hello");
                 // Retrieve string

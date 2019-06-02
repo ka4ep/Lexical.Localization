@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// A generic configurable name policy that converts <see cref="ILine"/> to strings. 
     /// 
-    /// Used with localizationa assets such <see cref="LocalizationAsset"/>, where keys are non-parseable strings.
+    /// Used with localizationa assets such <see cref="StringAsset"/>, where keys are non-parseable strings.
     /// 
     /// Translation policy can be placed for specific parameter names, non-canonical parameters, canonical parameters, and rest. 
     /// 

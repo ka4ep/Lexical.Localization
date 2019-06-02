@@ -99,7 +99,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public override void Build(IList<IAsset> list)
-            => list.Add(new LocalizationAsset(this, LineFormat));
+            => list.Add(new StringAsset(this, LineFormat));
 
         /// <summary>
         /// Post build action.
@@ -160,7 +160,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public override void Build(IList<IAsset> list)
-            => list.Add(new LocalizationAsset().Add(this).Load());
+            => list.Add(new StringAsset().Add(this).Load());
 
         /// <summary>
         /// Post build action
@@ -228,7 +228,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public override void Build(IList<IAsset> list)
-            => list.Add(new LocalizationAsset().Add(this).Load());
+            => list.Add(new StringAsset().Add(this).Load());
 
         /// <summary>
         /// Post build action

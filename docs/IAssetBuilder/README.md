@@ -11,7 +11,7 @@ Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hell
 // Create IAssetSource that adds cache 
 IAssetSource assetSource_0 = new AssetCacheSource(c => c.AddResourceCache().AddStringsCache().AddCulturesCache());
 // Create IAssetSource that static reference of IAsset (string dictionary)
-IAssetSource assetSource_1 = new AssetInstanceSource(new LocalizationAsset(strings, LineParameterPrinter.Default) );
+IAssetSource assetSource_1 = new AssetInstanceSource(new StringAsset(strings, LineParameterPrinter.Default) );
 
 // Create AssetBuilder
 IAssetBuilder builder = new AssetBuilder(assetSource_0, assetSource_1);
@@ -53,7 +53,7 @@ serviceCollection.AddSingleton<IAssetBuilder, AssetBuilder>();
 serviceCollection.AddSingleton<IAssetSource>(new AssetCacheSource(o => o.AddResourceCache().AddStringsCache().AddCulturesCache()));
 // Add IAssetSource, that adds strings
 Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-serviceCollection.AddSingleton<IAssetSource>(new AssetInstanceSource(new LocalizationAsset(strings, LineParameterPrinter.Default)));
+serviceCollection.AddSingleton<IAssetSource>(new AssetInstanceSource(new StringAsset(strings, LineParameterPrinter.Default)));
 
 // Add delegate to forward IAsset request to IAssetBuilder
 serviceCollection.AddSingleton<IAsset>(s => s.GetService<IAssetBuilder>().Build());
@@ -88,7 +88,7 @@ serviceCollection.AddLexicalLocalization(
 
 // Add dictionary of strings
 Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-serviceCollection.AddSingleton<IAssetSource>(new AssetInstanceSource(new LocalizationAsset(strings, LineParameterPrinter.Default)));
+serviceCollection.AddSingleton<IAssetSource>(new AssetInstanceSource(new StringAsset(strings, LineParameterPrinter.Default)));
 
 // Create service scope
 using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
@@ -167,4 +167,4 @@ public interface IAssetSource
  * [AssetSource](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization/Asset/AssetSource.cs) Passes IAsset to to builder.
  * [AssetCacheSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Asset/AssetCache.cs) Adds cache to the built asset. 
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [ResourceManagerStringLocalizerAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/ResourceManagerStringLocalizerAssetSource.cs) Adapts location of .resources file to IAssetSource.
+ * [ResourceManagerStringLocalizerAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/ResourceManagerStringLocalizerAssetSource.cs) Adapts location of .resources file to IAssetSource.

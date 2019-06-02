@@ -67,7 +67,7 @@ They share the same assets, and the root instances are interchangeable. Assets c
  * [ILineRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILineRoot.cs)
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [LocalizationRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationKey/LocalizationRoot.cs) ([Global](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationKey/LocalizationRoot_Global.cs))
- * [StringLocalizerRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerRoot.cs) ([Global](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/StringLocalizerRoot_Global.cs))
+ * [StringLocalizerRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringLocalizerRoot.cs) ([Global](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/StringLocalizerRoot_Global.cs))
 * [Microsoft.Extensions.Localization.Abstractions](https://github.com/aspnet/Extensions/tree/master/src/Localization/Abstractions/src) ([NuGet](https://www.nuget.org/packages/Microsoft.Extensions.Localization.Abstractions/))
  * [IStringLocalizer](https://github.com/aspnet/Extensions/blob/master/src/Localization/Abstractions/src/IStringLocalizer.cs) 
  * [IStringLocalizer&lt;T&gt;](https://github.com/aspnet/Extensions/blob/master/src/Localization/Abstractions/src/IStringLocalizerOfT.cs)

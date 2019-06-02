@@ -3,7 +3,6 @@
 // Date:           9.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.StringFormat;
 using System;
 
 namespace Lexical.Localization
@@ -11,7 +10,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Line provider that reads from a delegate.
     /// </summary>
-    public class LocalizationStringsFunc : ILocalizationStringProvider
+    public class StringAssetFunc : IStringAsset
     {
         /// <summary>
         /// Function that resolve key to a language string.
@@ -22,7 +21,7 @@ namespace Lexical.Localization
         /// 
         /// </summary>
         /// <param name="resolverFunc"></param>
-        public LocalizationStringsFunc(Func<ILine, ILine> resolverFunc)
+        public StringAssetFunc(Func<ILine, ILine> resolverFunc)
         {
             this.ResolverFunc = resolverFunc;
         }
@@ -41,7 +40,7 @@ namespace Lexical.Localization
         public override string ToString() => $"{GetType().Name}()";
     }
 
-    public static partial class LocalizationAssetExtensions_
+    public static partial class StringAssetExtensions_
     {
         /// <summary>
         /// 
@@ -49,25 +48,25 @@ namespace Lexical.Localization
         /// <param name="stringFunc"></param>
         /// <returns></returns>
         public static IAssetSource ToSource(this Func<ILine, ILine> stringFunc)
-            => new AssetInstanceSource(new LocalizationStringsFunc(stringFunc));
+            => new AssetInstanceSource(new StringAssetFunc(stringFunc));
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="stringFunc"></param>
         /// <returns></returns>
-        public static ILocalizationStringProvider ToAsset(this Func<ILine, ILine> stringFunc)
-            => new LocalizationStringsFunc(stringFunc);
+        public static IStringAsset ToAsset(this Func<ILine, ILine> stringFunc)
+            => new StringAssetFunc(stringFunc);
 
         /// <summary>
-        /// Adapts <see cref="Delegate"/> to <see cref="ILocalizationStringProvider"/> and adds to composition.
+        /// Adapts <see cref="Delegate"/> to <see cref="IStringAsset"/> and adds to composition.
         /// </summary>
         /// <param name="composition"></param>
         /// <param name="resolverFunc"></param>
         /// <returns>composition</returns>
         public static IAssetComposition AddSourceFunc(this IAssetComposition composition, Func<ILine, ILine> resolverFunc)
         {
-            composition.Add(new LocalizationStringsFunc(resolverFunc));
+            composition.Add(new StringAssetFunc(resolverFunc));
             return composition;
         }
 
@@ -80,7 +79,7 @@ namespace Lexical.Localization
         /// <returns>builder</returns>
         public static IAssetBuilder AddSourceFunc(this IAssetBuilder builder, Func<ILine, ILine> resolver)
         {
-            builder.Sources.Add(new AssetInstanceSource(new LocalizationStringsFunc(resolver)));
+            builder.Sources.Add(new AssetInstanceSource(new StringAssetFunc(resolver)));
             return builder;
         }
     }

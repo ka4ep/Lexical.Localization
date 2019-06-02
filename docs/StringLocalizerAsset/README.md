@@ -45,7 +45,7 @@ asset = new StringLocalizerAsset(stringLocalizer);
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Success", "Onnistui" } };
-IAsset asset = new LocalizationAsset(source, LineParameterPrinter.Default);
+IAsset asset = new StringAsset(source, LineParameterPrinter.Default);
 
 // Create root
 ILine root = new StringLocalizerRoot(asset, new CulturePolicy());
@@ -68,7 +68,7 @@ And to <b><i>IStringLocalizer</i></b>.
 ```csharp
 // Create asset
 var source = new Dictionary<string, string> { { "fi:ConsoleApp1.MyController:Success", "Onnistui" } };
-IAsset asset = new LocalizationAsset(source, LineParameterPrinter.Default);
+IAsset asset = new StringAsset(source, LineParameterPrinter.Default);
 
 // Create root
 ILine root = new StringLocalizerRoot(asset, new CulturePolicy());
@@ -91,8 +91,8 @@ string str = stringLocalizer["Success"];
  * [IStringLocalizerFactory](https://github.com/aspnet/Extensions/blob/master/src/Localization/Abstractions/src/IStringLocalizerFactory.cs)
 * [Microsoft.Extensions.Localization](https://github.com/aspnet/Localization/tree/master/src/Microsoft.Extensions.Localization) ([NuGet](https://www.nuget.org/packages/Microsoft.Extensions.Localization/))
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [StringLocalizerAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerAsset.cs)
- * [StringLocalizerRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerRoot.cs)
- * [StringLocalizerFactoryAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/StringLocalizerFactoryAsset.cs)
- * [ResourceManagerStringLocalizerAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/ResourceManagerStringLocalizerAsset.cs)
- * [ResourceManagerStringLocalizerAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationAsset/ResourceManagerStringLocalizerAssetSource.cs)
+ * [StringLocalizerAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringLocalizerAsset.cs)
+ * [StringLocalizerRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringLocalizerRoot.cs)
+ * [StringLocalizerFactoryAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringLocalizerFactoryAsset.cs)
+ * [ResourceManagerStringLocalizerAsset](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/ResourceManagerStringLocalizerAsset.cs)
+ * [ResourceManagerStringLocalizerAssetSource](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/ResourceManagerStringLocalizerAssetSource.cs)

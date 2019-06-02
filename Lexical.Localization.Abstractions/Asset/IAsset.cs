@@ -15,8 +15,8 @@ namespace Lexical.Localization
     /// 
     /// There are more specific interfaces on how. 
     ///  See <see cref="IAsset"/>
-    ///      <see cref="ILocalizationStringLinesEnumerable"/>
-    ///      <see cref="ILocalizationAssetCultureCapabilities"/>.
+    ///      <see cref="IStringAssetStringLinesEnumerable"/>
+    ///      <see cref="IAssetCultureEnumerable"/>.
     /// </summary>
     public interface IAsset
     {

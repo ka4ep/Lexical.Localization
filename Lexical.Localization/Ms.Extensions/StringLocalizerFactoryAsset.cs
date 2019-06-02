@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Adapts <see cref="IStringLocalizerFactory"/> into <see cref="IAsset"/>.
     /// </summary>
-    public class StringLocalizerFactoryAsset : ILocalizationStringProvider, IAssetReloadable
+    public class StringLocalizerFactoryAsset : IStringAsset, IAssetReloadable
     {
         /// <summary>
         /// Source factory

@@ -237,7 +237,7 @@ namespace Lexical.Localization
         /// <param name="lines"></param>
         /// <returns></returns>
         public static IAsset ToAsset(this IEnumerable<ILine> lines)
-            => new LocalizationAsset().Add(lines).Load();
+            => new StringAsset().Add(lines).Load();
 
         /// <summary>
         /// Convert <paramref name="lines"/> to <see cref="IAssetSource"/>..

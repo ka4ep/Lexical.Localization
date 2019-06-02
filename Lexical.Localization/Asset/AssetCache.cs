@@ -161,9 +161,9 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Cache part that caches results of <see cref="ILocalizationAssetCultureCapabilities" />.
+    /// Cache part that caches results of <see cref="IAssetCultureEnumerable" />.
     /// </summary>
-    public class AssetCachePartCultures : IAssetCachePart, ILocalizationAssetCultureCapabilities, IAssetReloadable, IDisposable
+    public class AssetCachePartCultures : IAssetCachePart, IAssetCultureEnumerable, IAssetReloadable, IDisposable
     {
         static CultureInfo[] empty_cultures = new CultureInfo[0];
         static CultureInfo NO_CULTURE = CultureInfo.GetCultureInfo("");
@@ -262,9 +262,9 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Cache part that caches calls to <see cref="ILocalizationKeyLinesEnumerable" /> and <see cref="ILocalizationStringProvider"/>.
+    /// Cache part that caches calls to <see cref="IStringAssetLinesEnumerable" /> and <see cref="IStringAsset"/>.
     /// </summary>
-    public class AssetCachePartStrings : IAssetCachePart, ILocalizationKeyLinesEnumerable, ILocalizationStringLinesEnumerable, ILocalizationStringProvider, IAssetReloadable, IDisposable
+    public class AssetCachePartStrings : IAssetCachePart, IStringAssetLinesEnumerable, IStringAssetStringLinesEnumerable, IStringAsset, IAssetReloadable, IDisposable
     {
         /// <summary>
         /// Source asset that this is cache of.

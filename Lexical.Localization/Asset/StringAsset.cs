@@ -21,11 +21,11 @@ namespace Lexical.Localization
     /// 
     /// Content is loaded from <see cref="IEnumerable{T}"/> sources when <see cref="IAssetReloadable.Reload"/> is called.
     /// </summary>
-    public class LocalizationAsset :
-        ILocalizationStringProvider,
-        ILocalizationStringLinesEnumerable,
-        ILocalizationKeyLinesEnumerable,
-        ILocalizationAssetCultureCapabilities,
+    public class StringAsset :
+        IStringAsset,
+        IStringAssetStringLinesEnumerable,
+        IStringAssetLinesEnumerable,
+        IAssetCultureEnumerable,
         IAssetReloadable,
         IDisposable,
         IAssetObservable
@@ -88,7 +88,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Create localization asset with default properties.
         /// </summary>
-        public LocalizationAsset() : base()
+        public StringAsset() : base()
         {
             this.comparer = LineComparer.Default;
             this.errorHandler = null;
@@ -100,7 +100,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="comparer">(optional) comparer to use</param>
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
-        public LocalizationAsset(IEqualityComparer<ILine> comparer, Func<Exception, bool> errorHandler = null) : base()
+        public StringAsset(IEqualityComparer<ILine> comparer, Func<Exception, bool> errorHandler = null) : base()
         {
             this.comparer = comparer ?? LineComparer.Default;
             this.errorHandler = errorHandler;
@@ -123,7 +123,7 @@ namespace Lexical.Localization
         /// <param name="lineFormat"></param>
         /// <param name="comparer">(optional) comparer to use</param>
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
-        public LocalizationAsset(IEnumerable reader, ILineFormat lineFormat = default, IEqualityComparer<ILine> comparer = default, Func<Exception, bool> errorHandler = null) : base()
+        public StringAsset(IEnumerable reader, ILineFormat lineFormat = default, IEqualityComparer<ILine> comparer = default, Func<Exception, bool> errorHandler = null) : base()
         {
             this.comparer = comparer ?? LineComparer.Default;
             this.errorHandler = errorHandler;
@@ -145,7 +145,7 @@ namespace Lexical.Localization
         /// <param name="keyPattern"></param>
         /// <param name="comparer">(optional) comparer to use</param>
         /// <param name="errorHandler">(optional) handler, if null or returns false, then exception is let to be thrown</param>
-        public LocalizationAsset(IEnumerable reader, string keyPattern, IEqualityComparer<ILine> comparer = default, Func<Exception, bool> errorHandler = null)
+        public StringAsset(IEnumerable reader, string keyPattern, IEqualityComparer<ILine> comparer = default, Func<Exception, bool> errorHandler = null)
             : this(reader, new LinePattern(keyPattern), comparer, errorHandler)
         {
         }
@@ -166,7 +166,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns>this</returns>
         /// <exception cref="Exception">On any non-captured problem</exception>
-        public virtual LocalizationAsset Load()
+        public virtual StringAsset Load()
         {
             foreach (var line in collections.ToArray())
                 line.Value.Load();
@@ -423,9 +423,9 @@ namespace Lexical.Localization
         /// <param name="reader"></param>
         /// <param name="lineFormat">(optional) line format that converts lines to strings. Required if reader implements string lines</param>
         /// <param name="errorHandler">(optional) overrides default handler.</param>
-        /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="LocalizationAsset"/></param>
+        /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="StringAsset"/></param>
         /// <returns></returns>
-        public LocalizationAsset Add(IEnumerable reader, ILineFormat lineFormat = null, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
+        public StringAsset Add(IEnumerable reader, ILineFormat lineFormat = null, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
         {
             // Reader argument not null
             if (reader == null) throw new ArgumentNullException(nameof(reader));
@@ -465,9 +465,9 @@ namespace Lexical.Localization
         /// <param name="reader"></param>
         /// <param name="namePattern">name pattern that reads the content</param>
         /// <param name="errorHandler">(optional) overrides default handler.</param>
-        /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="LocalizationAsset"/></param>
+        /// <param name="disposeReader">Dispose <paramref name="reader"/> along with <see cref="StringAsset"/></param>
         /// <returns></returns>
-        public LocalizationAsset Add(IEnumerable reader, string namePattern, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
+        public StringAsset Add(IEnumerable reader, string namePattern, Func<Exception, bool> errorHandler = null, bool disposeReader = false)
             => Add(reader, new LinePattern(namePattern), errorHandler, disposeReader);
 
         /// <summary>
@@ -475,7 +475,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public LocalizationAsset Remove(IEnumerable reader)
+        public StringAsset Remove(IEnumerable reader)
         {
             Collection c;
             if (collections.TryRemove(reader, out c))
@@ -497,7 +497,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <returns></returns>
         /// <exception cref="AggregateException">If disposing of one of the sources failed</exception>
-        public LocalizationAsset Clear()
+        public StringAsset Clear()
         {
             StructList4<Exception> errors = new StructList4<Exception>();
             foreach (var collectionLine in collections.ToArray())
@@ -629,7 +629,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Parent object
         /// </summary>
-        protected LocalizationAsset parent;
+        protected StringAsset parent;
 
         /// <summary>
         /// Should reader be disposed along with this class.
@@ -649,7 +649,7 @@ namespace Lexical.Localization
         /// <param name="errorHandler">(optional) handles file load and observe errors for logging and capturing exceptions. If <paramref name="errorHandler"/> returns true then exception is caught and not thrown</param>
         /// <param name="parent"></param>
         /// <param name="disposeReader"></param>
-        public Collection(IEnumerable reader, ILineFormat namePolicy, Func<Exception, bool> errorHandler, LocalizationAsset parent, bool disposeReader)
+        public Collection(IEnumerable reader, ILineFormat namePolicy, Func<Exception, bool> errorHandler, StringAsset parent, bool disposeReader)
         {
             this.parent = parent;
             this.reader = reader;
@@ -945,7 +945,7 @@ namespace Lexical.Localization
     }
 
 
-    public static partial class LocalizationAssetExtensions_
+    public static partial class StringAssetExtensions_
     {
         /// <summary>
         /// Add string dictionary to builder.
@@ -955,7 +955,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetBuilder AddKeyLines(this IAssetBuilder builder, IEnumerable<ILine> lines)
         {
-            builder.AddAsset(new LocalizationAsset().Add(lines).Load());
+            builder.AddAsset(new StringAsset().Add(lines).Load());
             return builder;
         }
 
@@ -967,7 +967,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetComposition AddKeyLines(this IAssetComposition composition, IEnumerable<ILine> lines)
         {
-            composition.Add(new LocalizationAsset().Add(lines).Load());
+            composition.Add(new StringAsset().Add(lines).Load());
             return composition;
         }
     }
@@ -975,7 +975,7 @@ namespace Lexical.Localization
 
     /// <summary>
     /// </summary>
-    public static partial class LocalizationAssetExtensions_
+    public static partial class StringAssetExtensions_
     {
         /// <summary>
         /// Add string dictionary to builder.
@@ -986,7 +986,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetBuilder AddStrings(this IAssetBuilder builder, IReadOnlyDictionary<string, string> dictionary, ILineFormat namePolicy)
         {
-            builder.AddAsset(new LocalizationAsset(dictionary, namePolicy));
+            builder.AddAsset(new StringAsset(dictionary, namePolicy));
             return builder;
         }
 
@@ -999,7 +999,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IAssetComposition AddStrings(this IAssetComposition composition, IReadOnlyDictionary<string, string> dictionary, ILineFormat namePolicy)
         {
-            composition.Add(new LocalizationAsset(dictionary, namePolicy));
+            composition.Add(new StringAsset(dictionary, namePolicy));
             return composition;
         }
     }
