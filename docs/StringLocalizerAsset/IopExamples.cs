@@ -17,9 +17,7 @@ namespace docs
                 #region Snippet_0a
                 // Create IStringLocalizerFactory
                 LoggerFactory loggerFactory = new LoggerFactory();
-#pragma warning disable CS0618 // Type or member is obsolete
                 loggerFactory.AddConsole(LogLevel.Trace);
-#pragma warning restore CS0618 // Type or member is obsolete
                 IOptions<LocalizationOptions> options = Options.Create(new LocalizationOptions { ResourcesPath = "" });
                 IStringLocalizerFactory stringLocalizerFactory = new ResourceManagerStringLocalizerFactory(options, loggerFactory);
 
