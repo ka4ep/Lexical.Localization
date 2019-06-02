@@ -3,6 +3,7 @@
 // Date:           25.3.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 
@@ -101,7 +102,34 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <returns>true if line is qualified, false if disqualified</returns>
         public static bool Qualify(this ILineQualifier qualifier, ILine line)
-            => qualifier is ILineQualifierEvaluatable eval ? eval.Qualify(line) : true /*no criteria, accept all*/;
+        {
+            // Evaluate whole line
+            if (qualifier is ILineQualifierEvaluatable eval) return eval.Qualify(line);
+
+            // Evaluate parameter
+            if (qualifier is ILineParameterQualifier parameterQualifier)
+            {
+                if (parameterQualifier.NeedsOccuranceIndex)
+                {
+                    // Break key into effective parameters with occurance index
+                    StructList12<(ILineParameter, int)> list1 = new StructList12<(ILineParameter, int)>();
+                    line.GetParameterPartsWithOccurance(ref list1);
+                    for (int i = 0; i < list1.Count; i++)
+                        if (!parameterQualifier.QualifyParameter(list1[i].Item1, list1[i].Item2)) return false;
+                }
+                else
+                {
+                    // Break key into parameters
+                    StructList12<ILineParameter> list2 = new StructList12<ILineParameter>();
+                    line.GetParameterParts(ref list2);
+                    for (int i = 0; i < list2.Count; i++)
+                        if (!parameterQualifier.QualifyParameter(list2[i], -1)) return false;
+                }
+            }
+
+            // no criteria, accept all
+            return true;
+        }
 
         /// <summary>
         /// Qualifies lines against qualifier rules.
