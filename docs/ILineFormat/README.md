@@ -21,98 +21,24 @@ public interface ILineFormat
 </details>
 
 <details>
-  <summary><b>ILinePrinter</b> is sub-interface that prints *ILines* as *Strings*. (<u>Click here</u>)</summary>
+  <summary><b>ILineFormatPrinter</b> is sub-interface that prints *ILines* as *Strings*. (<u>Click here</u>)</summary>
 
 ```csharp
-/// <summary>
-/// Converts <see cref="ILine"/> to string.
-/// </summary>
-public interface ILineFormatPrinter : ILineFormat
-{
-    /// <summary>
-    /// Print <paramref name="line"/> as <see cref="String"/>.
-    /// 
-    /// The decision on what types are instantiated is a configuration decision of the implementing class.
-    /// </summary>
-    /// <param name="line"></param>
-    /// <returns>full name string</returns>
-    string Print(ILine line);
-}
+
 ```
 </details>
 
 <details>
-  <summary><b>ILineParser</b> is sub-interface that parses *Strings* into *ILine*. (<u>Click here</u>)</summary>
+  <summary><b>ILineFormatParser</b> is sub-interface that parses *Strings* into *ILine*. (<u>Click here</u>)</summary>
 
 ```csharp
-/// <summary>
-/// Parses string into <see cref="ILine"/>.
-/// </summary>
-public interface ILineFormatParser : ILineFormat
-{
-    /// <summary>
-    /// Parse string into <see cref="ILine"/>.
-    /// 
-    /// The decision on what types are instantiated is a configuration decision of the implementing class.
-    /// </summary>
-    /// <param name="str">key as string</param>
-    /// <returns>Arguments that can be used for constructing or appending to a line</returns>
-    /// <exception cref="LineException">If parse failed</exception>
-    IEnumerable<ILineArguments> ParseArgs(string str);
 
-    /// <summary>
-    /// Parse string into key.
-    /// </summary>
-    /// <param name="str"></param>
-    /// <param name="args">Arguments that can be used for constructing or appending to a line</param>
-    /// <returns>true if parse was successful</returns>
-    bool TryParseArgs(string str, out IEnumerable<ILineArguments> args);
-}
-
-/// <summary>
-/// Alternative parser interface where parts are appended right into previous line.
-/// </summary>
-public interface ILineFormatAppendParser : ILineFormat
-{
-    /// <summary>
-    /// Parse string into <see cref="ILine"/>.
-    /// 
-    /// The decision on what types are instantiated is a configuration decision of the implementing class.
-    /// </summary>
-    /// <param name="str">key as string</param>
-    /// <param name="prevPart">(optional) previous part to append to</param>
-    /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
-    /// <returns>key result or null if contained no content</returns>
-    /// <exception cref="FormatException">If parse failed</exception>
-    ILine Parse(string str, ILine prevPart = default, ILineFactory appender = default);
-
-    /// <summary>
-    /// Parse string into key.
-    /// </summary>
-    /// <param name="str"></param>
-    /// <param name="key">key result or null if contained no content</param>
-    /// <param name="prevPart">(optional) previous part to append to</param>
-    /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
-    /// <returns>true if parse was successful</returns>
-    bool TryParse(string str, out ILine key, ILine prevPart = default, ILineFactory appender = default);
-}
-
-/// <summary>
-/// Line format that has assignable appender.
-/// </summary>
-public interface ILineFormatFactory : ILineFormat
-{
-    /// <summary>
-    /// Associated appender.
-    /// </summary>
-    ILineFactory LineFactory { get; set; }
-}
 ```
 </details>
 
 <br />
 
-| Class | ILinePrinter | ILineParser |
+| Class | ILineFormatPrinter | ILineFormatParser |
 |:-------|:-------|:--------|
 | LineFormat.| &#9745; | &#9745; |
 | LinePattern | &#9745;  | &#9745; |
@@ -508,7 +434,7 @@ string str = myPolicy.Print(key);
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [ILineFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs) is the root interface for classes that formulate ILine into identity string.
- * [ILinePrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs) is a subinterface where Build() can be implemented directly.
+ * [ILineFormatPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs) is a subinterface where Build() can be implemented directly.
  * [ILinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILinePattern.cs) is a subinterface that formulates parametrization with a template string.
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [LineParameterPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/Format/LineParameterPrinter.cs) is implementation of IAssetNameProvider.

@@ -5,18 +5,18 @@
 </details>
 
 <details>
-  <summary><b>ILinePrinter</b> is sub-interface that prints *ILines* as *Strings*. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs#ILinePrinter)]
+  <summary><b>ILineFormatPrinter</b> is sub-interface that prints *ILines* as *Strings*. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs#ILineFormatPrinter)]
 </details>
 
 <details>
-  <summary><b>ILineParser</b> is sub-interface that parses *Strings* into *ILine*. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs#ILineParser)]
+  <summary><b>ILineFormatParser</b> is sub-interface that parses *Strings* into *ILine*. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs#ILineFormatParser)]
 </details>
 
 <br />
 
-| Class | ILinePrinter | ILineParser |
+| Class | ILineFormatPrinter | ILineFormatParser |
 |:-------|:-------|:--------|
 | LineFormat.| &#9745; | &#9745; |
 | LinePattern | &#9745;  | &#9745; |
@@ -109,7 +109,7 @@ Policy is created by adding rules to LineParameterPrinter.
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [ILineFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs) is the root interface for classes that formulate ILine into identity string.
- * [ILinePrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs) is a subinterface where Build() can be implemented directly.
+ * [ILineFormatPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs) is a subinterface where Build() can be implemented directly.
  * [ILinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILinePattern.cs) is a subinterface that formulates parametrization with a template string.
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [LineParameterPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/Format/LineParameterPrinter.cs) is implementation of IAssetNameProvider.

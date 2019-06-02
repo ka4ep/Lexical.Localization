@@ -33,6 +33,18 @@ Lexical.Localization is a localization class library for .NET.
 * Singletons
 * File format conversion tools
 
+**Very Short Example**
+```C#
+ILine key = LineRoot.Global
+    .Logger(Console.Out, LineStatusSeverity.Ok)
+    .Key("hello")
+    .Format("Hello, {0}.")
+    .Inline("Culture:fi", "Hei, {0}")
+    .Inline("Culture:de", "Hallo, {0}");
+
+Console.WriteLine(key.Value("mr. anonymous"));
+```
+
 **Links**
 * [Website](http://lexical.fi/Localization/index.html)
 * [Github](https://github.com/tagcode/Lexical.Localization)

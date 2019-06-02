@@ -272,7 +272,7 @@ for (int cats = 0; cats <= 2; cats++)
 
 
 
-If translator wants to supply plurality for two numeric arguments, then all permutations of cases (for example "zero", "one" and "other") for both arguments must be covered.
+If translator wants to supply plurality for two numeric arguments, then all permutations of required cases (for example "zero", "one" and "other") for both arguments must be covered.
 By default the maximum number of pluralized arguments is three arguments. This value can be modified, by creating a custom instance of **StringResolver** into **ILineRoot**.
 
 ```xml
