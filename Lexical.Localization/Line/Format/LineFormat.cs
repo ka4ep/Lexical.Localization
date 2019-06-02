@@ -102,8 +102,8 @@ namespace Lexical.Localization
         /// <param name="unescapeCharacters">list of characters that are to be unescaped</param>
         /// <param name="unescapeControlCharacters">Unescape tnab0f</param>
         /// <param name="lineAppender">line appender that can append <see cref="ILineParameter"/> and <see cref="ILineString"/></param>
-        /// <param name="parameterQualifier">(optional) parameter qualifier</param>
-        public LineFormat(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters, ILineFactory lineAppender, ILineQualifier parameterQualifier) : base(lineAppender, parameterQualifier)
+        /// <param name="qualifier">(optional) qualifier</param>
+        public LineFormat(string escapeCharacters, bool escapeControlCharacters, string unescapeCharacters, bool unescapeControlCharacters, ILineFactory lineAppender, ILineQualifier qualifier) : base(lineAppender, qualifier)
         {
             // Regex.Escape doen't work for brackets []
             //string escapeCharactersEscaped = Regex.Escape(escapeCharacters);

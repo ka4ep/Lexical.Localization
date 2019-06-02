@@ -331,9 +331,9 @@ namespace Lexical.Localization
             // Return all
             if (filterKey == null) return _lines.Values;
             // Create filter
-            LineQualifier filter = new LineQualifier().Rule(filterKey) as LineQualifier;
+            LineQualifier qualifier = new LineQualifier().Rule(filterKey) as LineQualifier;
             // Apply filter
-            return _lines.Where(line => filter.Qualify(line.Key)).Select(kv=>kv.Value);
+            return _lines.Where(line => qualifier.Qualify(line.Key)).Select(kv=>kv.Value);
         }
 
         /// <summary>

@@ -76,23 +76,23 @@ namespace docs
 
             {
                 #region Snippet_8a
-                //    line = [LineCulture]:[LineType]:[LineKeyCanonical]:[LineKeyCanonical]:[Linevalue]
-                ILine line = LineFormat.Line.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:Value:Hello");
+                //    line = [LineCulture]:[LineType]:[LineKeyCanonical]:[LineKeyCanonical]:[LineString]
+                ILine line = LineFormat.Line.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:String:Hello");
                 #endregion Snippet_8a
 
                 #region Snippet_8b
                 //    key = [LineKeyNonCanonical]:[LineKeyNonCanonical]:[LineKeyCanonical]
-                ILine key = LineFormat.Key.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:Value:Hello");
+                ILine key = LineFormat.Key.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:String:Hello");
                 #endregion Snippet_8b
 
                 #region Snippet_8c
                 //    parameters = [LineKeyNonCanonical]:[LineKeyNonCanonical]:[LineKeyCanonical]
-                ILine parameters = LineFormat.Parameters.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:Value:Hello");
+                ILine parameters = LineFormat.Parameters.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:String:Hello");
                 #endregion Snippet_8c
 
                 #region Snippet_8d
                 //    parametersWithValue = [LineKeyNonCanonical]:[LineKeyNonCanonical]:[LineKeyCanonical]:[LineHint]
-                ILine parametersWithValue = LineFormat.ParametersInclValue.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:Value:Hello");
+                ILine parametersWithValue = LineFormat.ParametersInclString.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:String:Hello");
                 #endregion Snippet_8d
             }
         }

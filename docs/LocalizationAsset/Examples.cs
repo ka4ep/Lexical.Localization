@@ -94,7 +94,7 @@ namespace docs
                 ILine filterKey = LineAppender.Default.Culture("de");
                 IAsset asset = new LocalizationAsset().Add(source, "{Culture:}[Type:][Key]").Load();
                 foreach (var _key in asset.GetLines(filterKey))
-                    Console.WriteLine(_key.Print(LineFormat.ParametersInclValue));
+                    Console.WriteLine(_key.Print(LineFormat.ParametersInclString));
                 #endregion Snippet_3b
 
             }

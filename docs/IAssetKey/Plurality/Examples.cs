@@ -57,9 +57,10 @@ namespace docs
                         .Inline("Culture:fi:N:zero", "ei kissoja")
                         .Inline("Culture:fi:N:one", "yksi kissa")
                         .Inline("Culture:fi:N:other", "{0} kissaa");
-                #endregion Snippet_0c
+
                 for (int cats = 0; cats <= 2; cats++)
                     Console.WriteLine(key.Culture("en").Value(cats));
+                #endregion Snippet_0c
             }
 
             {

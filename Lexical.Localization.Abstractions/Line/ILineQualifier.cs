@@ -21,11 +21,11 @@ namespace Lexical.Localization
     public interface ILineQualifierEvaluatable : ILineQualifier
     {
         /// <summary>
-        /// Qualify <paramref name="key"/> against the criteria.
+        /// Qualify <paramref name="line"/> against the criteria.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <returns>true if line is qualified, false if disqualified</returns>
-        bool Qualify(ILine key);
+        bool Qualify(ILine line);
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ namespace Lexical.Localization
     public interface ILineQualifierLinesEvaluatable : ILineQualifier
     {
         /// <summary>
-        /// Qualifies lines against rules.
+        /// Qualifies lines. 
         /// </summary>
         /// <param name="lines"></param>
         /// <returns>all lines that were qualified</returns>
@@ -44,28 +44,33 @@ namespace Lexical.Localization
     /// <summary>
     /// Can evaluate <see cref="ILineParameter"/> whether it qualifies or not.
     /// </summary>
-    public interface ILineParameterQualifierEvaluatable : ILineParameterQualifier
+    public interface ILineParameterQualifier : ILineQualifier
     {
         /// <summary>
-        /// Test rule with <paramref name="parameter"/>.
+        /// Policy whether occuranceIndex is needed for qualifying parameter.
+        /// 
+        /// If true, <see cref="QualifyParameter(ILineParameter, int)"/> caller must have occurance index.
+        /// If false, caller can use -1 for unknown.
+        /// 
+        /// Occurance describes the position of parameter of same parameter name.
+        /// For example, "Section:A:Section:B:Section:C" has parameter "Section" with three 
+        /// occurance indices: 0, 1, 2.
         /// </summary>
-        /// <param name="parameter">parameter part of a compared key (note ParameterName="" for empty), or null if value did not occur</param>
-        /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc</param>
+        bool NeedsOccuranceIndex { get; }
+
+        /// <summary>
+        /// Qualify <paramref name="parameter"/>.
+        /// </summary>
+        /// <param name="parameter">parameter part of a compared line (note ParameterName="" for empty), or null if value did not occur</param>
+        /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc. Use -1 if occurance is unknown</param>
         /// <returns>true if line is qualified, false if disqualified</returns>
         bool QualifyParameter(ILineParameter parameter, int occuranceIndex);
     }
 
     /// <summary>
-    /// 
+    /// Qualifier that can enumerate component qualifiers.
     /// </summary>
     public interface ILineQualifierEnumerable : ILineQualifier, IEnumerable<ILineQualifier>
-    {
-    }
-
-    /// <summary>
-    /// Line qualifier for a <see cref="ILineParameter"/>.
-    /// </summary>
-    public interface ILineParameterQualifier : ILineQualifier
     {
     }
 
@@ -86,57 +91,30 @@ namespace Lexical.Localization
         void Add(ILineQualifier qualifierRule);
     }
 
-    /// <summary>
-    /// Parameter qualifier that has occurance index constraint.
-    /// </summary>
-    public interface ILineParameterQualifierOccuranceConstraint : ILineParameterQualifierEvaluatable
-    {
-        /// <summary>
-        /// Occurance index this rule applies to. 
-        /// 
-        /// Occurance counter starts from the root at 0 and increments for every occurance of the <see cref="ILineParameter.ParameterName"/>.
-        /// For the effective non-canonical parameter, the index is always 0.
-        /// 
-        /// (-1 to not be constrained to one occurance index).
-        /// </summary>
-        int OccuranceIndex { get; }
-    }
-
-    /// <summary>
-    /// Parameter qualifier that applies to only one ParameterName.
-    /// </summary>
-    public interface ILineParameterQualifierNameConstraint : ILineParameterQualifierEvaluatable
-    {
-        /// <summary>
-        /// Parameter name this rule applies to. (null if isn't constrained to one parameter name)
-        /// </summary>
-        string ParameterName { get; }
-    }
-
     /// <summary></summary>
     public static class ILineQualifierExtensions
     {
         /// <summary>
-        /// Qualify <paramref name="key"/> against the qualifier rules.
+        /// Qualify <paramref name="line"/> against the qualifier rules.
         /// </summary>
-        /// <param name="qualifier"></param>
-        /// <param name="key"></param>
+        /// <param name="qualifier">(optional) qualifier</param>
+        /// <param name="line"></param>
         /// <returns>true if line is qualified, false if disqualified</returns>
-        /// <exception cref="InvalidOperationException">If qualifier is not applicable</exception>
-        public static bool Qualify(this ILineQualifier qualifier, ILine key)
-            => qualifier is ILineQualifierEvaluatable eval ? eval.Qualify(key) : throw new InvalidOperationException($"{qualifier} doesn't implement {nameof(ILineQualifierEvaluatable)}");
+        public static bool Qualify(this ILineQualifier qualifier, ILine line)
+            => qualifier is ILineQualifierEvaluatable eval ? eval.Qualify(line) : true /*no criteria, accept all*/;
 
         /// <summary>
         /// Qualifies lines against qualifier rules.
         /// </summary>
-        /// <param name="qualifier"></param>
+        /// <param name="qualifier">(optional) qualifier</param>
         /// <param name="lines"></param>
         /// <returns>all lines that were qualified</returns>
-        /// <exception cref="InvalidOperationException">If qualifier is not applicable</exception>
         public static IEnumerable<ILine> Qualify(this ILineQualifier qualifier, IEnumerable<ILine> lines)
-            => qualifier is ILineQualifierLinesEvaluatable eval ? eval.Qualify(lines) : _qualifier(qualifier, lines);
+            => qualifier is ILineQualifierLinesEvaluatable linesEval ? linesEval.Qualify(lines) :
+               qualifier is ILineQualifierEvaluatable eval ? _qualifier(eval, lines) :
+               lines /*no criteria, accept all*/;
 
-        static IEnumerable<ILine> _qualifier(ILineQualifier qualifier, IEnumerable<ILine> lines)
+        static IEnumerable<ILine> _qualifier(ILineQualifierEvaluatable qualifier, IEnumerable<ILine> lines)
         {
             if (qualifier is ILineQualifierEvaluatable eval)
             {
@@ -152,13 +130,20 @@ namespace Lexical.Localization
         /// <summary>
         /// Qualify parameter <paramref name="parameter"/>.
         /// </summary>
-        /// <param name="qualifier"></param>
-        /// <param name="parameter">parameter part of a compared key (note ParameterName="" for empty), or null if value did not occur</param>
+        /// <param name="qualifier">(optional) qualifier</param>
+        /// <param name="parameter">parameter part of a compared line (note ParameterName="" for empty), or null if value did not occur</param>
         /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc</param>
         /// <returns>true if line is qualified, false if disqualified</returns>
-        /// <exception cref="InvalidOperationException">If qualifier is not applicable</exception>
         public static bool QualifyParameter(this ILineQualifier qualifier, ILineParameter parameter, int occuranceIndex)
-            => qualifier is ILineParameterQualifierEvaluatable eval ? eval.QualifyParameter(parameter, occuranceIndex) : throw new InvalidOperationException($"{qualifier} doesn't implement {nameof(ILineParameterQualifierEvaluatable)}");
+            => qualifier is ILineParameterQualifier parameterQualifier ? parameterQualifier.QualifyParameter(parameter, occuranceIndex) : /*no parameter criteria, accept all*/ true;
+
+        /// <summary>
+        /// Does evaluation need parameter occurances.
+        /// </summary>
+        /// <param name="qualifier"></param>
+        /// <returns>true if needs parameter occurance, if false can use -1</returns>
+        public static bool NeedsOccuranceIndex(this ILineQualifier qualifier)
+            => qualifier is ILineParameterQualifier parameterQualifier ? parameterQualifier.NeedsOccuranceIndex : false;
 
         /// <summary>
         /// Set line qualifier as read-only.

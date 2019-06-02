@@ -42,8 +42,8 @@ namespace Lexical.Localization
                 // Ineffective key
                 if (occuranceIndex > 0 && parameter.IsNonCanonicalKey(parameterInfos)) continue;
                 // parameter with "" is expectation of empty or non-existant value.
-                if (parameter.ParameterValue == "") qualifier.Add(new LineQualifierRule.IsEmpty(parameter.ParameterName, occuranceIndex));
-                else qualifier.Add(new LineQualifierRule.IsEqualTo(parameter.ParameterName, occuranceIndex, parameter.ParameterValue));
+                if (parameter.ParameterValue == "") qualifier.Add(new LineParameterQualifier.IsEmpty(parameter.ParameterName, occuranceIndex));
+                else qualifier.Add(new LineParameterQualifier.IsEqualTo(parameter.ParameterName, occuranceIndex, parameter.ParameterValue));
             }
 
             return qualifier;
@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// <returns><paramref name="qualifier"/></returns>
         public static ILineQualifier Rule(this ILineQualifier qualifier, string parameterName, int occuranceIndex, Regex pattern)
         {
-            qualifier.Add(new LineQualifierRule.Regex(parameterName, occuranceIndex, pattern));
+            qualifier.Add(new LineParameterQualifier.Regex(parameterName, occuranceIndex, pattern));
             return qualifier;
         }
 
@@ -74,8 +74,8 @@ namespace Lexical.Localization
         public static ILineQualifier Rule(this ILineQualifier qualifier, string parameterName, int occuranceIndex, string expectedParameterValue)
         {
             if (expectedParameterValue == null) throw new ArgumentNullException(nameof(expectedParameterValue));
-            if (expectedParameterValue == "") qualifier.Add(new LineQualifierRule.IsEmpty(parameterName, occuranceIndex));
-            else qualifier.Add(new LineQualifierRule.IsEqualTo(parameterName, occuranceIndex, expectedParameterValue));
+            if (expectedParameterValue == "") qualifier.Add(new LineParameterQualifier.IsEmpty(parameterName, occuranceIndex));
+            else qualifier.Add(new LineParameterQualifier.IsEqualTo(parameterName, occuranceIndex, expectedParameterValue));
             return qualifier;
         }
 
@@ -91,7 +91,7 @@ namespace Lexical.Localization
         {
             if (acceptedParameterValues == null || acceptedParameterValues.Length == 0) return qualifier;
             if (acceptedParameterValues.Length == 1) qualifier.Rule(parameterName, occuranceIndex, acceptedParameterValues[0]);
-            else qualifier.Add(new LineQualifierRule.IsInGroup(parameterName, occuranceIndex, acceptedParameterValues));
+            else qualifier.Add(new LineParameterQualifier.IsInGroup(parameterName, occuranceIndex, acceptedParameterValues));
             return qualifier;
         }
 

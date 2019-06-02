@@ -6,6 +6,8 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            LocalizationAsset_Examples.Main(args);
+
             Plurality_Examples.Main(args);
             TutorialProject.ExampleB.Main(args);
             TutorialProject.ExampleC.Main(args);
@@ -13,9 +15,6 @@ namespace docs
             ICulturePolicy_Examples.Main(args);
             ILineFormat_Examples.Main(args);
             Ms_Localization_IopExamples.Main(args);
-
-            // LineQualifier ei filteroi pois puuttuvaa parameteriä
-            LocalizationAsset_Examples.Main(args);
 
 
 

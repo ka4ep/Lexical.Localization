@@ -19,12 +19,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Parameter qualifier that excludes parameter "String".
         /// </summary>
-        protected static readonly ILineQualifier ExcludeValue = new LineQualifierRule.IsEqualTo("String", -1, ""); // new LineParameterQualifierComposition().Rule("String", -1, "");
+        protected static readonly ILineQualifier ExcludeValue = new LineParameterQualifier.IsEqualTo("String", -1, "");
 
         /// <summary>
         /// Qualifier that validates parameters.
         /// </summary>
-        public virtual ILineQualifier ParameterQualifier { get => parameterQualifier; set => new InvalidOperationException("immutable"); }
+        public virtual ILineQualifier Qualifier { get => qualifier; set => new InvalidOperationException("immutable"); }
 
         /// <summary>
         /// Line appender that creates line parts from parsed strings.
@@ -36,7 +36,7 @@ namespace Lexical.Localization
         /// <summary>
         /// (optional) Qualifier that validates parameters.
         /// </summary>
-        protected ILineQualifier parameterQualifier;
+        protected ILineQualifier qualifier;
 
         /// <summary>
         /// Line appender
@@ -47,11 +47,11 @@ namespace Lexical.Localization
         /// Create new string serializer
         /// </summary>
         /// <param name="lineAppender">line appender that can append <see cref="ILineParameter"/> and <see cref="ILineString"/></param>
-        /// <param name="parameterQualifier">(optional) parameter qualifier</param>
-        public LineFormatBase(ILineFactory lineAppender, ILineQualifier parameterQualifier)
+        /// <param name="qualifier">(optional) qualifier</param>
+        public LineFormatBase(ILineFactory lineAppender, ILineQualifier qualifier)
         {
             this.lineFactory = lineAppender ?? throw new ArgumentNullException(nameof(lineAppender));
-            this.parameterQualifier = parameterQualifier;
+            this.qualifier = qualifier;
         }
 
         /// <summary>
@@ -110,13 +110,13 @@ namespace Lexical.Localization
         {
             StructList12<ILineParameter> parameters = new StructList12<ILineParameter>();
             StructList8<(string, int)> occurances = new StructList8<(string, int)>();
-            if (ParameterQualifier != null)
+            if (Qualifier.NeedsOccuranceIndex())
             {
                 foreach (var parameter in keyParameters)
                 {
                     int occ = AddOccurance(ref occurances, parameter.Key);
                     ILineParameter lineParameter = new ParameterArgument(parameter.Key, parameter.Value);
-                    if (!ParameterQualifier.QualifyParameter(lineParameter, occ)) continue;
+                    if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
                     parameters.Add(lineParameter);
                 }
             }
@@ -125,6 +125,7 @@ namespace Lexical.Localization
                 foreach (var parameter in keyParameters)
                 {
                     ILineParameter lineParameter = new ParameterArgument(parameter.Key, parameter.Value);
+                    if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
                     parameters.Add(lineParameter);
                 }
             }
@@ -168,7 +169,7 @@ namespace Lexical.Localization
             Parse(str, ref parameters);
 
             // With qualifier
-            if (ParameterQualifier != null)
+            if (Qualifier.NeedsOccuranceIndex())
             {
                 StructList8<(string, int)> occuranceList = new StructList8<(string, int)>();
                 for (int i = 0; i < parameters.Count; i++)
@@ -176,7 +177,7 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref occuranceList, parameter.Key);
-                    if (!ParameterQualifier.QualifyParameter(lineParameter, occ)) continue;
+                    if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
                     prevPart = lineParameter;
                 }
             }
@@ -186,7 +187,9 @@ namespace Lexical.Localization
                 for (int i = 0; i < parameters.Count; i++)
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
-                    prevPart = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    ILineParameter lineParameter = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
+                    prevPart = lineParameter;
                 }
             }
             return prevPart;
@@ -202,7 +205,7 @@ namespace Lexical.Localization
             StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
             Parse(str, ref parameters);
 
-            if (ParameterQualifier != null)
+            if (Qualifier.NeedsOccuranceIndex())
             {
                 StructList12<ILineArguments> result = new StructList12<ILineArguments>();
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
@@ -212,7 +215,7 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref list, parameter.Key);
-                    if (!ParameterQualifier.QualifyParameter(lineParameter, occ)) continue;
+                    if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
                     result.Add(ToArgument(lineParameter));
                     prev = lineParameter;
                 }
@@ -226,6 +229,7 @@ namespace Lexical.Localization
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
+                    if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
                     result[i] = ToArgument(lineParameter);
                     prev = lineParameter;
                 }
@@ -250,7 +254,7 @@ namespace Lexical.Localization
             if (!TryParse(str, ref parameters)) { result = default; return false; }
 
             // With qualifier
-            if (ParameterQualifier != null)
+            if (Qualifier.NeedsOccuranceIndex())
             {
                 StructList8<(string, int)> occuranceList = new StructList8<(string, int)>();
                 for (int i = 0; i < parameters.Count; i++)
@@ -258,7 +262,7 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref occuranceList, parameter.Key);
-                    if (!ParameterQualifier.QualifyParameter(lineParameter, occ)) continue;
+                    if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
                     prevPart = lineParameter;
                 }
             }
@@ -268,7 +272,9 @@ namespace Lexical.Localization
                 for (int i = 0; i < parameters.Count; i++)
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
-                    prevPart = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    ILineParameter lineParameter = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
+                    prevPart = lineParameter;
                 }
             }
 
@@ -287,7 +293,7 @@ namespace Lexical.Localization
             StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
             if (!TryParse(str, ref parameters)) { args = default; return false; }
 
-            if (ParameterQualifier != null)
+            if (Qualifier.NeedsOccuranceIndex())
             {
                 StructList12<ILineArguments> result = new StructList12<ILineArguments>();
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
@@ -297,7 +303,7 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref list, parameter.Key);
-                    if (!ParameterQualifier.QualifyParameter(lineParameter, occ)) continue;
+                    if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
                     result.Add(ToArgument(lineParameter));
                     prev = lineParameter;
                 }
@@ -312,6 +318,7 @@ namespace Lexical.Localization
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
+                    if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
                     result[i] = ToArgument(lineParameter);
                     prev = lineParameter;
                 }
@@ -331,7 +338,7 @@ namespace Lexical.Localization
             StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
             Parse(str, ref parameters);
 
-            if (ParameterQualifier != null)
+            if (Qualifier.NeedsOccuranceIndex())
             {
                 StructList8<(string, int)> occuranceList = new StructList8<(string, int)>();
                 ILine prevPart = null;
@@ -341,7 +348,17 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref occuranceList, parameter.Key);
-                    if (ParameterQualifier.QualifyParameter(lineParameter, occ)) { i++; prevPart = lineParameter; } else parameters.RemoveAt(i);
+                    if (Qualifier.QualifyParameter(lineParameter, occ)) { i++; prevPart = lineParameter; } else parameters.RemoveAt(i);
+                }
+            } else if (Qualifier is ILineParameterQualifier)
+            {
+                ILine prevPart = null;
+                int i = 0;
+                while (i < parameters.Count)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    if (Qualifier.QualifyParameter(lineParameter, -1)) { i++; prevPart = lineParameter; } else parameters.RemoveAt(i);
                 }
             }
 
@@ -361,7 +378,7 @@ namespace Lexical.Localization
             StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
             if (!TryParse(str, ref parameters)) return false;
 
-            if (ParameterQualifier != null)
+            if (Qualifier.NeedsOccuranceIndex())
             {
                 StructList8<(string, int)> occuranceList = new StructList8<(string, int)>();
                 ILine prevPart = null;
@@ -370,7 +387,17 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref occuranceList, parameter.Key);
-                    if (ParameterQualifier.QualifyParameter(lineParameter, occ)) { result.Add(parameter); prevPart = lineParameter; } else parameters.RemoveAt(i);
+                    if (Qualifier.QualifyParameter(lineParameter, occ)) { result.Add(parameter); prevPart = lineParameter; } else parameters.RemoveAt(i);
+                }
+            }
+            else if (Qualifier is ILineParameterQualifier)
+            {
+                ILine prevPart = null;
+                for (int i = 0; i < parameters.Count; i++)
+                {
+                    KeyValuePair<string, string> parameter = parameters[i];
+                    ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    if (Qualifier.QualifyParameter(lineParameter, -1)) { result.Add(parameter); prevPart = lineParameter; } else parameters.RemoveAt(i);
                 }
             }
             else

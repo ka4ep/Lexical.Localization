@@ -39,7 +39,7 @@ namespace Lexical.Localization.StringFormat
         /// Parse format string into an <see cref="IString"/>.
         /// 
         /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormatErrorMalformed"/>.
-        /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormatOk"/> or some other format state.
+        /// If parse succeeds, the returned instance has state <see cref="LineStatus.FormatOkString"/> or some other format state.
         /// If <paramref name="str"/> is null then stat is <see cref="LineStatus.FormatFailedNull"/>.
         /// </summary>
         /// <param name="str"></param>

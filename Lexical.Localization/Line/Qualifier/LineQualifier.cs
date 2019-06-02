@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -13,57 +14,138 @@ namespace Lexical.Localization
     /// <summary>
     /// Measures qualification of <see cref="ILine"/>s according to configured rules.
     /// </summary>
-    public class LineQualifier : LineParameterQualifierComposition, ILineQualifier, ILineQualifierComposition, ILineQualifierEnumerable, ILineQualifierEvaluatable, ILineQualifierLinesEvaluatable
+    public class LineQualifier : ILineQualifier, ILineParameterQualifier, ILineQualifierComposition, ILineQualifierEnumerable, ILineQualifierEvaluatable, ILineQualifierLinesEvaluatable
     {
         /// <summary>
-        /// List of generic qualifiers. Null if none is assigned.
+        /// Is in read-only state.
         /// </summary>
-        protected List<ILineQualifier> qualifiers;
+        protected bool isReadonly;
+
+        /// <summary>
+        /// Read-only state.
+        /// </summary>
+        public bool ReadOnly
+        {
+            get => isReadonly;
+            set { if (value == isReadonly) return; if (!value) throw new InvalidOperationException("Cannot disable read-only state."); isReadonly = value; }
+        }
+
+        /// <summary>
+        /// List of all qualifier instances. 
+        /// </summary>
+        protected List<ILineQualifier> qualifiers = new List<ILineQualifier>();
+
+        /// <summary>
+        /// List of whole-line-qualifiers. Null if none are assigned.
+        /// </summary>
+        protected List<ILineQualifierEvaluatable> lineQualifiers; 
+
+
+        /// <summary>
+        /// List of parameter qualifiers. Null if none are assigned.
+        /// </summary>
+        protected List<ILineParameterQualifier> parameterQualifiers;
+
+        /// <summary>
+        /// If true, <see cref="QualifyParameter(ILineParameter, int)"/> caller must have occurance index.
+        /// If false, caller can use -1 for unknown.
+        /// </summary>
+        public bool NeedsOccuranceIndex { get; protected set; }
+
+        /// <summary>
+        /// Create line qualifier. 
+        /// </summary>
+        public LineQualifier()
+        {
+        }
+
+        /// <summary>
+        /// Create line qualifier. 
+        /// </summary>
+        /// <param name="qualifiers"></param>
+        public LineQualifier(params ILineQualifier[] qualifiers)
+        {
+            foreach (var f in qualifiers)
+                Add(f);
+        }
+
+        /// <summary>
+        /// Create line qualifier. 
+        /// </summary>
+        /// <param name="qualifiers"></param>
+        public LineQualifier(IEnumerable<ILineQualifier> qualifiers)
+        {
+            foreach (var f in qualifiers)
+                Add(f);
+        }
 
         /// <summary>
         /// Add generic qualifier rule.
         /// </summary>
         /// <param name="qualifier"></param>
-        public override void Add(ILineQualifier qualifier)
+        public void Add(ILineQualifier qualifier)
         {
             if (qualifier == null) throw new ArgumentNullException(nameof(qualifier));
-            if (qualifier is ILineParameterQualifier parameterQualifier) { base.Add(parameterQualifier); return; }
-            if (qualifiers == null) qualifiers = new List<ILineQualifier>();
+            if (qualifier is ILineParameterQualifier parameterQualifier)
+            {
+                if (parameterQualifiers == null) parameterQualifiers = new List<ILineParameterQualifier>();
+                parameterQualifiers.Add(parameterQualifier);
+                NeedsOccuranceIndex |= parameterQualifier.NeedsOccuranceIndex;
+            }
+            if (qualifier is ILineQualifierEvaluatable lineQualifier)
+            {
+                if (lineQualifiers == null) lineQualifiers = new List<ILineQualifierEvaluatable>();
+                lineQualifiers.Add(lineQualifier);
+            }
             qualifiers.Add(qualifier);
         }
 
         /// <summary>
         /// Tests if there are any rules in the qualifier
         /// </summary>
-        public bool HasRules => (qualifiers != null && qualifiers.Count > 0) || HasParameterRules;
+        public bool HasRules => (qualifiers != null && qualifiers.Count > 0);
 
         /// <summary>
-        /// Qualifier <paramref name="key"/> against the qualifier rules.
+        /// Qualifier <paramref name="line"/> against the qualifier rules.
         /// 
-        /// The whole <paramref name="key"/> is matched against every <see cref="qualifiers"/>. 
+        /// The whole <paramref name="line"/> is matched against every <see cref="qualifiers"/>. 
         /// If one of the mismatches then returns false.
         /// 
-        /// The <paramref name="key"/> is broken into key parts.
+        /// The <paramref name="line"/> is broken into key parts.
         /// If any rule for (parameterName, occuranceIndex) passes, the qualifier passes for that key part.
         /// </summary>
-        /// <param name="key"></param>
+        /// <param name="line"></param>
         /// <returns>true if line is qualified, false if disqualified</returns>
-        public virtual bool Qualify(ILine key)
+        public virtual bool Qualify(ILine line)
         {
-            // Apply generic qualifiers
-            if (qualifiers != null)
+            // Apply line qualifiers
+            if (lineQualifiers != null)
             {
-                foreach (var qualifier in qualifiers)
-                    if (!qualifier.Qualify(key)) return false;
+                foreach (var qualifier in lineQualifiers)
+                    if (!qualifier.Qualify(line)) return false;
             }
 
-            if (HasParameterRules)
+            // Apply parameter qualifieres
+            if (parameterQualifiers != null)
             {
-                // Break key into effective parameters with occurance index
-                StructList12<(ILineParameter, int)> list = new StructList12<(ILineParameter, int)>();
-                key.GetParameterPartsWithOccurance(ref list);
-                foreach ((ILineParameter parameter, int occuranceIndexx) in list)
-                    if (!base.QualifyParameter(parameter, occuranceIndexx)) return false;
+                if (NeedsOccuranceIndex)
+                {
+                    // Break key into effective parameters with occurance index
+                    StructList12<(ILineParameter, int)> list1 = new StructList12<(ILineParameter, int)>();
+                    line.GetParameterPartsWithOccurance(ref list1);
+                    foreach (ILineParameterQualifier parameterQualifier in parameterQualifiers)
+                        for (int i = 0; i < list1.Count; i++)
+                            if (!parameterQualifier.QualifyParameter(list1[i].Item1, list1[i].Item2)) return false;                    
+                }
+                else
+                {
+                    // Break key into parameters
+                    StructList12<ILineParameter> list2 = new StructList12<ILineParameter>();
+                    line.GetParameterParts(ref list2);
+                    foreach (ILineParameterQualifier parameterQualifier in parameterQualifiers)
+                        for (int i = 0; i < list2.Count; i++)
+                            if (!parameterQualifier.QualifyParameter(list2[i], -1)) return false;
+                }
             }
 
             // Everything qualified
@@ -73,38 +155,91 @@ namespace Lexical.Localization
         /// <summary>
         /// Qualifiers lines against qualifier rules.
         /// 
-        /// Each key in <paramref name="keys"/> is matched against every <see cref="qualifiers"/>. 
+        /// Each key in <paramref name="lines"/> is matched against every <see cref="qualifiers"/>. 
         /// If every one of them passes the qualifier then key is yielded.
         /// 
-        /// Each key in <paramref name="keys"/> is broken into parts.
+        /// Each key in <paramref name="lines"/> is broken into parts.
         /// If any rule for (parameterName, occuranceIndex) passes, the qualifier passes for that key part.
         /// </summary>
-        /// <param name="keys"></param>
+        /// <param name="lines"></param>
         /// <returns></returns>
-        public virtual IEnumerable<ILine> Qualify(IEnumerable<ILine> keys)
+        public virtual IEnumerable<ILine> Qualify(IEnumerable<ILine> lines)
         {
-            StructList12<(ILineParameter, int)> list = new StructList12<(ILineParameter, int)>();
+            StructList12<(ILineParameter, int)> list1 = new StructList12<(ILineParameter, int)>();
+            StructList12<ILineParameter> list2 = new StructList12<ILineParameter>();
 
-            foreach (ILine key in keys)
+            foreach (ILine line in lines)
             {
-                // Apply generic qualifiers
-                if (qualifiers != null)
-                    foreach (var qualifier in qualifiers)
-                        if (!qualifier.Qualify(key)) continue;
+                bool ok = true;
 
-                // Apply parameter qualifiers
-                if (HasParameterRules)
+                // Apply line qualifiers
+                if (lineQualifiers != null)
                 {
-                    // Break key into effective parameters with occurance index
-                    list.Clear();
-                    key.GetParameterPartsWithOccurance(ref list);
-                    foreach ((ILineParameter parameter, int occuranceIndexx) in list)
-                        if (!base.QualifyParameter(parameter, occuranceIndexx)) continue;
-
+                    foreach (var qualifier in lineQualifiers)
+                    {
+                        ok &= qualifier.Qualify(line);
+                        if (!ok) break;
+                    }
                 }
-                yield return key;
+
+                // Apply parameter qualifieres
+                if (parameterQualifiers != null)
+                {
+                    if (NeedsOccuranceIndex)
+                    {
+                        list1.Clear();
+                        // Break key into effective parameters with occurance index
+                        line.GetParameterPartsWithOccurance(ref list1);
+                        foreach (ILineParameterQualifier parameterQualifier in parameterQualifiers)
+                        {
+                            for (int i = 0; i < list1.Count; i++)
+                            {
+                                ok &= parameterQualifier.QualifyParameter(list1[i].Item1, list1[i].Item2);
+                                if (!ok) break;
+                            }
+                            if (!ok) break;
+                        }
+                    }
+                    else
+                    {
+                        list2.Clear();
+                        // Break key into parameters
+                        line.GetParameterParts(ref list2);
+                        foreach (ILineParameterQualifier parameterQualifier in parameterQualifiers)
+                        {
+                            for (int i = 0; i < list2.Count; i++)
+                            {
+                                ok &= parameterQualifier.QualifyParameter(list2[i], -1);
+                                if (!ok) break;
+                            }
+                            if (!ok) break;
+                        }
+                    }
+                }
+
+                // Everything qualified
+                if (ok) yield return line;
             }
         }
+
+        /// <summary>
+        /// Test rule with <paramref name="parameter"/>.
+        /// </summary>
+        /// <param name="parameter">parameter part of a compared key (note ParameterName="" for empty), or null if value did not occur</param>
+        /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc. Use -1 if occurance is unknown</param>
+        /// <returns>true if line is qualified, false if disqualified</returns>
+        public bool QualifyParameter(ILineParameter parameter, int occuranceIndex)
+        {
+            if (parameterQualifiers != null)
+            {
+                foreach(ILineParameterQualifier parameterQualifier in parameterQualifiers)
+                {
+                    if (!parameterQualifier.QualifyParameter(parameter, occuranceIndex)) return false;
+                }
+            }
+            return true;
+        }
+
 
         /// <summary>
         /// Print qualifier
@@ -130,13 +265,10 @@ namespace Lexical.Localization
         /// Get component qualifiers
         /// </summary>
         /// <returns></returns>
-        public override IEnumerator<ILineQualifier> GetEnumerator()
-        {
-            if (qualifiers != null) foreach (ILineQualifier r in qualifiers) yield return r;
-            if (parameterRules != null) foreach (ILineParameterQualifierEvaluatable r in parameterRules) yield return r;
-            if (nameParameterRules != null) foreach (ILineParameterQualifierEvaluatable r in (IEnumerable<ILineParameterQualifierEvaluatable>)nameParameterRules) yield return r;
-            if (nameOccuranceParameterRules != null) foreach (ILineParameterQualifierEvaluatable r in (IEnumerable<ILineParameterQualifierEvaluatable>)nameOccuranceParameterRules) yield return r;
-            if (occuranceParameterRules != null) foreach (ILineParameterQualifierEvaluatable r in (IEnumerable<ILineParameterQualifierEvaluatable>)occuranceParameterRules) yield return r;
-        }
+        public IEnumerator<ILineQualifier> GetEnumerator()
+            => qualifiers.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator()
+            => qualifiers.GetEnumerator();
     }
 }
