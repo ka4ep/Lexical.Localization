@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// File source to a embedded resource.

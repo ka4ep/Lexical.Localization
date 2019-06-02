@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using Lexical.Localization.Utils;
 using Microsoft.Extensions.Localization;
 

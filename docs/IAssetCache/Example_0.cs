@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 
 namespace docs
 {
@@ -14,7 +15,7 @@ namespace docs
 
             // Create cache
             IAssetCache asset_cached = new AssetCache(asset);
-            // Adds feature to cache IAssetResourceProvider specific requests
+            // Adds feature to cache IResourceAsset specific requests
             asset_cached.Add(new AssetCachePartResources(asset_cached.Source, asset_cached.Options));
             // Adds feature to cache IStringAsset specific requests
             asset_cached.Add(new AssetCachePartStrings(asset_cached.Source, asset_cached.Options));

@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// A composition of <see cref="IAsset"/> instances.
@@ -18,26 +18,87 @@ namespace Lexical.Localization
         Dictionary<Type, Array> snapshotByType = new Dictionary<Type, Array>();
         Dictionary<Type, Array> recursiveSnapshotByType = new Dictionary<Type, Array>();
 
+        /// <summary>
+        /// Create asset composition
+        /// </summary>
         public AssetComposition() : base() { }
-        public AssetComposition(params IAsset[] strsEnumr) : base(strsEnumr) { }
-        public AssetComposition(IEnumerable<IAsset> strsEnumr) : base(strsEnumr) { }
+
+        /// <summary>
+        /// Create asset composition
+        /// </summary>
+        /// <param name="assets"></param>
+        public AssetComposition(params IAsset[] assets) : base(assets) { }
+
+        /// <summary>
+        /// Create asset composition
+        /// </summary>
+        /// <param name="assets"></param>
+        public AssetComposition(IEnumerable<IAsset> assets) : base(assets) { }
 
         /// <summary>
         /// Immutable version of composition where components can only be added in the constructor.
         /// </summary>
         public new class Immutable : AssetComposition
         {
+            /// <summary>
+            /// Is read-only
+            /// </summary>
             public override bool IsReadOnly => true;
+
+            /// <summary>
+            /// Create immutable asset composition.
+            /// </summary>
             public Immutable() : base() { }
+
+            /// <summary>
+            /// Create immutable asset composition.
+            /// </summary>
+            /// <param name="strsEnumr"></param>
             public Immutable(params IAsset[] strsEnumr) : base(strsEnumr) { }
+
+            /// <summary>
+            /// Create immutable asset composition.
+            /// </summary>
+            /// <param name="strsEnumr"></param>
             public Immutable(IEnumerable<IAsset> strsEnumr) : base(strsEnumr) { }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="index"></param>
+            /// <param name="item"></param>
             public override void Insert(int index, IAsset item) => throw new InvalidOperationException("Immutable");
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="item"></param>
+            /// <returns></returns>
             public override bool Remove(IAsset item) => throw new InvalidOperationException("Immutable");
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="index"></param>
             public override void RemoveAt(int index) => throw new InvalidOperationException("Immutable");
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="item"></param>
             public override void Add(IAsset item) => throw new InvalidOperationException("Immutable");
+
+            /// <summary>
+            /// 
+            /// </summary>
             public override void Clear() => throw new InvalidOperationException("Immutable");
         }
 
+        /// <summary>
+        /// Get components of type T.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public T[] _getComponents<T>()
         {
             lock (m_lock)
@@ -75,6 +136,11 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Get components recursively
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public T[] _getComponentsRecursive<T>() where T : IAsset
         {
             lock(m_lock)
@@ -96,9 +162,18 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Get components
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="recursive"></param>
+        /// <returns></returns>
         public IEnumerable<T> GetComponents<T>(bool recursive) where T : IAsset
            => recursive ? _getComponentsRecursive<T>() : _getComponents<T>();
 
+        /// <summary>
+        /// Clear cache
+        /// </summary>
         protected override void ClearCache()
         {
             lock (m_lock)
@@ -109,6 +184,10 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        /// <param name="errors"></param>
         protected virtual void Dispose(ref StructList4<Exception> errors)
         {
             foreach (IDisposable disposable in _getComponents<IDisposable>())
@@ -129,6 +208,9 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Dispose
+        /// </summary>
         public virtual void Dispose()
         {
             StructList4<Exception> errors = new StructList4<Exception>();
@@ -137,6 +219,10 @@ namespace Lexical.Localization
             if (errors.Count > 1) throw new AggregateException(errors);
         }
 
+        /// <summary>
+        /// Reload components
+        /// </summary>
+        /// <returns></returns>
         public IAsset Reload()
         {
             foreach (IAssetReloadable reloadable in _getComponentsRecursive<IAssetReloadable>())
@@ -145,6 +231,10 @@ namespace Lexical.Localization
             return this;
         }
 
+        /// <summary>
+        /// Print info
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}({string.Join(", ", Array.Select(a=>a.ToString()))})";
     }

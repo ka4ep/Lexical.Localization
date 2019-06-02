@@ -6,6 +6,7 @@ using System.Reflection;
 using TutorialLibrary2;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Lexical.Localization.Asset;
 
 namespace TutorialProject2
 {

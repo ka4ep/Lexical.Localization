@@ -10,14 +10,14 @@ using System.IO;
 using System.Reflection;
 using System.Resources;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// Adapts <see cref="System.Resources.ResourceManager"/> (.resx) to <see cref="IAsset"/>.
     /// </summary>
     public class ResourceManagerAsset :
         IStringAsset,
-        IAssetResourceProvider
+        IResourceAsset
     {
         /// <summary>
         /// 

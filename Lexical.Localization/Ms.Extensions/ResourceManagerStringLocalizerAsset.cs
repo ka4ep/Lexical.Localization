@@ -11,6 +11,7 @@ namespace Lexical.Localization
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Options;
     using Microsoft.Extensions.Logging;
+    using Lexical.Localization.Asset;
 
     /// <summary>
     /// 

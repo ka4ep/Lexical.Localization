@@ -5,7 +5,7 @@
 // --------------------------------------------------------
 using System;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary></summary>
     public static partial class AssetCacheExtensions

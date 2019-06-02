@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 namespace Lexical.Localization
 {
+    using Lexical.Localization.Asset;
     using Microsoft.Extensions.Localization;
     using Microsoft.Extensions.Logging;
 

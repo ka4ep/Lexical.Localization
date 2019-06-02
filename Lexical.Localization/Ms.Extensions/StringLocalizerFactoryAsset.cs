@@ -8,7 +8,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Globalization;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     using Lexical.Localization.StringFormat;
     using Microsoft.Extensions.Localization;

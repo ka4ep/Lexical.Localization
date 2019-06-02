@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Lexical.Localization.StringFormat;
+using Lexical.Localization.Asset;
 
 namespace docs
 {

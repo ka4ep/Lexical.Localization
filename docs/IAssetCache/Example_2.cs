@@ -1,4 +1,5 @@
 ﻿using Lexical.Localization;
+using Lexical.Localization.Asset;
 using System.Collections.Generic;
 
 namespace docs

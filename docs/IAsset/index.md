@@ -4,7 +4,7 @@ Sources are typically files, embedded resources, and plain code.
 [!code-csharp[Snippet](Examples.cs#Snippet_1)]
 
 IAsset is the root interface for assets. It serves as a signal that the implementing class has further asset features.
-There are more specific interfaces such as **IStringAsset** and **IAssetResourceProvider** which 
+There are more specific interfaces such as **IStringAsset** and **IResourceAsset** which 
 retrieve language strings and binary resources.
 
 Asset interfaces are not called directly but used instead by calling extension methods of IAsset.
@@ -26,7 +26,7 @@ Asset interfaces are not called directly but used instead by calling extension m
        <td>Root interface.</td>
     </tr>
     <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetResourceProvider.cs">IAssetResourceProvider</a></td>
+       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IResourceAsset.cs">IResourceAsset</a></td>
        <td>Provides culture specific binary resources, such as icons and sounds</td>
     </tr>
     <tr>

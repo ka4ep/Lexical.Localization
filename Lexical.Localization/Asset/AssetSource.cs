@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// Adapts single instance to <see cref="IAssetSource"/>.

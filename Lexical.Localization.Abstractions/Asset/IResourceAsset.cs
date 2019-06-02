@@ -9,14 +9,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// Interface for reading binary resources.
     /// 
     /// Consumers of this interface should always call with <see cref="IAssetExtensions.GetResource(IAsset, ILine)"/>.
     /// </summary>
-    public interface IAssetResourceProvider : IAsset
+    public interface IResourceAsset : IAsset
     {
         /// <summary>
         /// Try to read a binary resource.
@@ -55,7 +55,7 @@ namespace Lexical.Localization
     /// For example, for resource file "mylib.dll/mylib.resources.Logo.svg" the key could be composed as 
     /// <code>root.Assembly("mylib").BaseName("mylib.resources").Key("Logo.svg");</code>.
     /// </summary>
-    public interface IAssetResourceKeysEnumerable : IAsset
+    public interface IResourceAssetKeysEnumerable : IAsset
     {
         /// <summary>
         /// Get the resource keys that could be resolved. 
@@ -90,9 +90,9 @@ namespace Lexical.Localization
     /// Interface to enumerate binary localization resources as strings identifier, which is typically a filename.
     /// 
     /// Note, that the intrinsic key class is <see cref="ILine"/> and not string, therefore
-    /// is is encouraged to use and implement <see cref="IAssetResourceKeysEnumerable"/> instead.
+    /// is is encouraged to use and implement <see cref="IResourceAssetKeysEnumerable"/> instead.
     /// </summary>
-    public interface IAssetResourceNamesEnumerable : IAsset
+    public interface IResourceAssetNamesEnumerable : IAsset
     {
         /// <summary>
         /// Get all resource names as string keys.
@@ -134,14 +134,14 @@ namespace Lexical.Localization
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
         public static byte[] GetResource(this IAsset asset, ILine key)
         {
-            if (asset is IAssetResourceProvider casted)
+            if (asset is IResourceAsset casted)
             {
                 byte[] data = casted.GetResource(key);
                 if (data != null) return data;
             }
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceProvider component in composition.GetComponents<IAssetResourceProvider>(true) ?? Enumerable.Empty<IAssetResourceProvider>())
+                foreach (IResourceAsset component in composition.GetComponents<IResourceAsset>(true) ?? Enumerable.Empty<IResourceAsset>())
                 {
                     byte[] data = component.GetResource(key);
                     if (data != null) return data;
@@ -183,14 +183,14 @@ namespace Lexical.Localization
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
         public static Stream OpenStream(this IAsset asset, ILine key)
         {
-            if (asset is IAssetResourceProvider casted)
+            if (asset is IResourceAsset casted)
             {
                 Stream steam = casted.OpenStream(key);
                 if (steam != null) return steam;
             }
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceProvider component in composition.GetComponents<IAssetResourceProvider>(true) ?? Enumerable.Empty<IAssetResourceProvider>())
+                foreach (IResourceAsset component in composition.GetComponents<IResourceAsset>(true) ?? Enumerable.Empty<IResourceAsset>())
                 {
                     Stream steam = component.OpenStream(key);
                     if (steam != null) return steam;
@@ -239,10 +239,10 @@ namespace Lexical.Localization
         public static IEnumerable<string> GetResourceNames(this IAsset asset, ILine filterKey = null)
         {
             IEnumerable<string> result = null;
-            if (asset is IAssetResourceNamesEnumerable casted) result = casted.GetResourceNames(filterKey);
+            if (asset is IResourceAssetNamesEnumerable casted) result = casted.GetResourceNames(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceNamesEnumerable component in composition.GetComponents<IAssetResourceNamesEnumerable>(true) ?? Enumerable.Empty<IAssetResourceNamesEnumerable>())
+                foreach (IResourceAssetNamesEnumerable component in composition.GetComponents<IResourceAssetNamesEnumerable>(true) ?? Enumerable.Empty<IResourceAssetNamesEnumerable>())
                 {
                     IEnumerable<string> _result = component.GetResourceNames(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
@@ -291,10 +291,10 @@ namespace Lexical.Localization
         public static IEnumerable<string> GetAllResourceNames(this IAsset asset, ILine filterKey = null)
         {
             IEnumerable<string> result = null;
-            if (asset is IAssetResourceNamesEnumerable casted) result = casted.GetAllResourceNames(filterKey);
+            if (asset is IResourceAssetNamesEnumerable casted) result = casted.GetAllResourceNames(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceNamesEnumerable component in composition.GetComponents<IAssetResourceNamesEnumerable>(true) ?? Enumerable.Empty<IAssetResourceNamesEnumerable>())
+                foreach (IResourceAssetNamesEnumerable component in composition.GetComponents<IResourceAssetNamesEnumerable>(true) ?? Enumerable.Empty<IResourceAssetNamesEnumerable>())
                 {
                     IEnumerable<string> _result = component.GetAllResourceNames(filterKey);
                     if (_result == null) return null;
@@ -349,10 +349,10 @@ namespace Lexical.Localization
         public static IEnumerable<ILine> GetResourceKeys(this IAsset asset, ILine filterKey = null)
         {
             IEnumerable<ILine> result = null;
-            if (asset is IAssetResourceKeysEnumerable casted) result = casted.GetResourceKeys(filterKey);
+            if (asset is IResourceAssetKeysEnumerable casted) result = casted.GetResourceKeys(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceKeysEnumerable component in composition.GetComponents<IAssetResourceKeysEnumerable>(true) ?? Enumerable.Empty<IAssetResourceKeysEnumerable>())
+                foreach (IResourceAssetKeysEnumerable component in composition.GetComponents<IResourceAssetKeysEnumerable>(true) ?? Enumerable.Empty<IResourceAssetKeysEnumerable>())
                 {
                     IEnumerable<ILine> _result = component.GetResourceKeys(filterKey);
                     if (_result != null && (_result is Array _array ? _array.Length > 0 : true)) result = result == null ? _result : result.Concat(_result);
@@ -401,10 +401,10 @@ namespace Lexical.Localization
         public static IEnumerable<ILine> GetAllResourceKeys(this IAsset asset, ILine filterKey = null)
         {
             IEnumerable<ILine> result = null;
-            if (asset is IAssetResourceKeysEnumerable casted) result = casted.GetAllResourceKeys(filterKey);
+            if (asset is IResourceAssetKeysEnumerable casted) result = casted.GetAllResourceKeys(filterKey);
             if (asset is IAssetComposition composition)
             {
-                foreach (IAssetResourceKeysEnumerable component in composition.GetComponents<IAssetResourceKeysEnumerable>(true) ?? Enumerable.Empty<IAssetResourceKeysEnumerable>())
+                foreach (IResourceAssetKeysEnumerable component in composition.GetComponents<IResourceAssetKeysEnumerable>(true) ?? Enumerable.Empty<IResourceAssetKeysEnumerable>())
                 {
                     IEnumerable<ILine> _result = component.GetAllResourceKeys(filterKey);
                     if (_result == null) return null;

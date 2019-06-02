@@ -6,7 +6,7 @@
 
 using System.Linq;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// The source of asset can be reloaded.

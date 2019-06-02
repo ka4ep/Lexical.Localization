@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 
 namespace docs
 {

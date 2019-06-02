@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Lexical.Localization.Asset;
 using Lexical.Localization.Internal;
 using Lexical.Localization.StringFormat;
 

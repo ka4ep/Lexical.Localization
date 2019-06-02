@@ -81,7 +81,7 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <param name="parameterName">parameter name</param>
         /// <param name="parameterValue">parameter value</param>
-        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
+        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See ParameterInfos.Default for default configuration</param>
         /// <returns>new parameter part</returns>
         /// <exception cref="LineException">If part could not be appended</exception>
         /// <returns>new part</returns>
@@ -116,7 +116,7 @@ namespace Lexical.Localization
         /// <param name="lineFactory"></param>
         /// <param name="parameterName">parameter name</param>
         /// <param name="parameterValue">parameter value</param>
-        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
+        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See ParameterInfos.Default for default configuration</param>
         /// <returns>new parameter part</returns>
         /// <exception cref="LineException">If part could not be appended</exception>
         /// <returns>new part</returns>
@@ -153,7 +153,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="part"></param>
         /// <param name="parameters">enumeration of parameters to append</param>
-        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See <see cref="ParameterInfos.Default"/> for default configuration</param>
+        /// <param name="parameterInfos">(optional) instructions on whether to instantiate as parameter or key. See ParameterInfos.Default for default configuration</param>
         /// <returns>new key that is appended to this key</returns>
         /// <exception cref="LineException">If key doesn't implement ILineParameterAssignable, or append failed</exception>
         public static ILine Parameters(this ILine part, IEnumerable<KeyValuePair<string, string>> parameters, IParameterInfos parameterInfos)

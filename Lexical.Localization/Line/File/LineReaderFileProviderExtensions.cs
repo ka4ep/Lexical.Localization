@@ -11,6 +11,7 @@ using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
+    using Lexical.Localization.Asset;
     using Microsoft.Extensions.FileProviders;
 
     /// <summary>

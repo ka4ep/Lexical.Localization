@@ -128,7 +128,7 @@ namespace Lexical.Localization
                 }
                 result = new StatusFormatString(null, LineStatus.FormatFailedNull);
                 return false;
-            } catch(Exception e)
+            } catch(Exception)
             {
                 result = new StatusFormatString(null, LineStatus.FailedUnknownReason);
                 return false;

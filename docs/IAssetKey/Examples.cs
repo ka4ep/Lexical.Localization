@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 #region Snippet_7b1
 using Lexical.Localization.Inlines;
 using Lexical.Localization.StringFormat;

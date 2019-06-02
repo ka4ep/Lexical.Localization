@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// Asset file source.

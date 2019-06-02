@@ -10,6 +10,7 @@ using System.IO;
 
 namespace Lexical.Localization
 {
+    using Lexical.Localization.Asset;
     using Lexical.Localization.StringFormat;
     using Microsoft.Extensions.FileProviders;
 

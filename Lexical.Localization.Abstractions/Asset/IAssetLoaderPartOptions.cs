@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     #region interface
     /// <summary>

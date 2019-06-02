@@ -1,4 +1,5 @@
 ﻿using Lexical.Localization;
+using Lexical.Localization.Asset;
 using Lexical.Localization.Utils;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;

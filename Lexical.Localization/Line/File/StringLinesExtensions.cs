@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System.Collections.Generic;
 using System.Linq;
+using Lexical.Localization.Asset;
 using Lexical.Localization.StringFormat;
 using Lexical.Localization.Utils;
 

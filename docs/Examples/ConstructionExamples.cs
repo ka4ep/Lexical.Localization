@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using Lexical.Localization.Inlines;
 using Lexical.Localization.Internal;
 using Microsoft.Extensions.Configuration;

@@ -1,4 +1,5 @@
 ﻿using Lexical.Localization;
+using Lexical.Localization.Asset;
 using System;
 using System.Globalization;
 using TutorialLibrary1;

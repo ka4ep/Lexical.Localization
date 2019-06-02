@@ -6,7 +6,7 @@
 using System;
 using System.IO;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// Source that can send events.

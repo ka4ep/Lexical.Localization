@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Lexical.Localization.Asset;
 using Lexical.Localization.Utils;
 
 namespace Lexical.Localization

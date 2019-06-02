@@ -492,9 +492,9 @@ namespace Lexical.Localization
             => collection.Add(new Delegate3<Line, A0, A1, A2>(func), policy);
 
         /// <summary>
-        /// Concatenate <paramref name="right"/> to <paramref name="line"/>.
+        /// Concatenate <paramref name="right"/> to <paramref name="left"/>.
         /// 
-        /// This method can also be used for cloning if <paramref name="line"/> is null.
+        /// This method can also be used for cloning if <paramref name="left"/> is null.
         /// </summary>
         /// <param name="factory"></param>
         /// <param name="left">(optional)</param>

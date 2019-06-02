@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// Asset builder compiles <see cref="IAsset"/>s from <see cref="IAssetSource"/> into one asset.

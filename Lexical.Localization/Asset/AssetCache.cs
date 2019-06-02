@@ -12,7 +12,7 @@ using System.Threading;
 using Lexical.Localization.Internal;
 using Lexical.Localization.StringFormat;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// Bases for cache. Individual cache features for different interfaces need to be added separately.
@@ -627,9 +627,9 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Cache part that caches the results of <see cref="IAssetResourceKeysEnumerable"/>, <see cref="IAssetResourceNamesEnumerable"/> and <see cref="IAssetResourceProvider"/>.
+    /// Cache part that caches the results of <see cref="IResourceAssetKeysEnumerable"/>, <see cref="IResourceAssetNamesEnumerable"/> and <see cref="IResourceAsset"/>.
     /// </summary>
-    public class AssetCachePartResources : IAssetCachePart, IAssetResourceKeysEnumerable, IAssetResourceNamesEnumerable, IAssetResourceProvider, IAssetReloadable, IDisposable
+    public class AssetCachePartResources : IAssetCachePart, IResourceAssetKeysEnumerable, IResourceAssetNamesEnumerable, IResourceAsset, IAssetReloadable, IDisposable
     {
         /// <summary>
         /// Source this is cache of

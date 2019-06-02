@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using Lexical.Localization.StringFormat;
 
 namespace docs

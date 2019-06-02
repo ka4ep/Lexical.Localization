@@ -9,12 +9,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
-    /// This class adapts IDictionary&lt;ILine, byte[]&gt; to <see cref="IAssetResourceProvider"/> and <see cref="IAssetResourceKeysEnumerable"/>.
+    /// This class adapts IDictionary&lt;ILine, byte[]&gt; to <see cref="IResourceAsset"/> and <see cref="IResourceAssetKeysEnumerable"/>.
     /// </summary>
-    public class ResourceDictionary : IAssetResourceProvider, IAssetResourceKeysEnumerable, IAssetCultureEnumerable
+    public class ResourceDictionary : IResourceAsset, IResourceAssetKeysEnumerable, IAssetCultureEnumerable
     {
         /// <summary>
         /// Source dictionary

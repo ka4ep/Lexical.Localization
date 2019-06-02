@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// Adapts delegate into <see cref="IAsset"/>.
@@ -11,7 +11,7 @@ namespace Lexical.Localization
     public class AssetFunc :
         IAsset,
         IStringAsset, IStringAssetStringLinesEnumerable, IStringAssetLinesEnumerable,
-        IAssetResourceProvider, IAssetResourceNamesEnumerable, IAssetResourceKeysEnumerable
+        IResourceAsset, IResourceAssetNamesEnumerable, IResourceAssetKeysEnumerable
     {
         /// <summary>
         /// Delegate that reads asset.
@@ -30,17 +30,17 @@ namespace Lexical.Localization
         IEnumerable<KeyValuePair<string, IString>> IStringAssetStringLinesEnumerable.GetAllStringLines(ILine key)
             => (Func() as IStringAssetStringLinesEnumerable)?.GetAllStringLines(key);
 
-        byte[] IAssetResourceProvider.GetResource(ILine key)
-            => (Func() as IAssetResourceProvider)?.GetResource(key);
+        byte[] IResourceAsset.GetResource(ILine key)
+            => (Func() as IResourceAsset)?.GetResource(key);
 
-        IEnumerable<string> IAssetResourceNamesEnumerable.GetResourceNames(ILine key)
-            => (Func() as IAssetResourceNamesEnumerable)?.GetResourceNames(key);
+        IEnumerable<string> IResourceAssetNamesEnumerable.GetResourceNames(ILine key)
+            => (Func() as IResourceAssetNamesEnumerable)?.GetResourceNames(key);
 
         ILine IStringAsset.GetString(ILine key)
             => (Func() as IStringAsset)?.GetString(key);
 
-        Stream IAssetResourceProvider.OpenStream(ILine key)
-            => (Func() as IAssetResourceProvider).OpenStream(key);
+        Stream IResourceAsset.OpenStream(ILine key)
+            => (Func() as IResourceAsset).OpenStream(key);
 
         /// <summary>
         /// 

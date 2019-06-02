@@ -7,6 +7,7 @@ using Lexical.Localization.Utils;
 using System.Linq;
 using System.Collections.Generic;
 using Lexical.Localization.StringFormat;
+using Lexical.Localization.Asset;
 
 namespace Lexical.Localization
 {

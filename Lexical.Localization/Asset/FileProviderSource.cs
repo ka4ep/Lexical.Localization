@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     using Lexical.Localization.Internal;
     using Microsoft.Extensions.FileProviders;

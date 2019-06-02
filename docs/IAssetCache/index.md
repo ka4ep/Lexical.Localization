@@ -30,7 +30,7 @@ Table of Asset cache option's keys
 | Key      | Method  | Default | Description |
 |----------|:--------|:--------|:------------|
 | CloneKeys | .SetCloneKeys(bool) | true | Should cache create clones of keys, or should it use the keys that come from requests in its cache structures. |
-| CacheStreams | .SetCacheStreams(bool) | true | Should IAssetResourceProvider#OpenStream requests be cached. |
+| CacheStreams | .SetCacheStreams(bool) | true | Should IResourceAsset#OpenStream requests be cached. |
 | MaxResourceCount | .SetMaxResourceCount(int) | 2147483647 | Maximum number of resources to cache. |
 | MaxResourceSize | .SetMaxResourceSize(int) | 4096 | Maximum size of a resource. |
 | MaxResourceTotalSize | .SetMaxResourceTotalSize(int) | 1048576 | Maximum total number of bytes to reserve for all cached resources. |

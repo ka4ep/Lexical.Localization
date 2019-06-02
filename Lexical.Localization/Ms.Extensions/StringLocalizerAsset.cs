@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Asset
 {
     using Lexical.Localization.StringFormat;
     using Microsoft.Extensions.Localization;

@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 
+using Lexical.Localization.Asset;
 using Lexical.Localization.StringFormat;
 
 namespace Lexical.Localization
