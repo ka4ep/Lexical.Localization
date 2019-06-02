@@ -86,7 +86,7 @@ namespace Lexical.Localization
         public void Add(ILineQualifier qualifier)
         {
             if (qualifier == null) throw new ArgumentNullException(nameof(qualifier));
-            if (qualifier is ILineParameterQualifier parameterQualifier)
+            if (qualifier is ILineParameterQualifier parameterQualifier && qualifier is ILineQualifierEvaluatable == false /*Don't run twice*/)
             {
                 if (parameterQualifiers == null) parameterQualifiers = new List<ILineParameterQualifier>();
                 parameterQualifiers.Add(parameterQualifier);
