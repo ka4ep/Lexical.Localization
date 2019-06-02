@@ -18,14 +18,14 @@ ILineFileFormat format = LineReaderMap.Default["ini"];
 And from singleton instances.
 
 ```csharp
-ILineFileFormat format = LocalizationIniReader.Default;
+ILineFileFormat format = IniLinesReader.Default;
 ```
 
 # Read IAsset
 File can be read right away into an *IAsset* with **.FileAsset()** extension method.
 
 ```csharp
-IAsset asset = LocalizationIniReader.Default.FileAsset(
+IAsset asset = IniLinesReader.Default.FileAsset(
     filename: "localization.ini",
     throwIfNotFound: true);
 ```
@@ -34,7 +34,7 @@ From embedded resource with **.EmbeddedAsset()** method.
 
 ```csharp
 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
-IAsset asset = LocalizationIniReader.Default.EmbeddedAsset(
+IAsset asset = IniLinesReader.Default.EmbeddedAsset(
     assembly: asm,
     resourceName: "docs.localization.ini",
     throwIfNotFound: true);
@@ -44,7 +44,7 @@ And from a file provider with **.FileProviderAsset()**.
 
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-IAsset asset = LocalizationIniReader.Default.FileProviderAsset(
+IAsset asset = IniLinesReader.Default.FileProviderAsset(
     fileProvider: fileProvider,
     filepath: "localization.ini",
     throwIfNotFound: true);
@@ -64,7 +64,7 @@ It is not read right away, but when the asset is built.
 
 ```csharp
 IAssetSource assetSource = 
-    LocalizationIniReader.Default.FileAssetSource(
+    IniLinesReader.Default.FileAssetSource(
         filename: "localization.ini",
         throwIfNotFound: true);
 IAssetBuilder assetBuilder = new AssetBuilder().AddSource(assetSource);
@@ -76,7 +76,7 @@ Reference to embedded resource source with **.EmbeddedAssetSource()**.
 ```csharp
 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
 IAssetSource assetSource = 
-    LocalizationIniReader.Default.EmbeddedAssetSource(
+    IniLinesReader.Default.EmbeddedAssetSource(
         assembly: asm,
         resourceName: "docs.localization.ini",
         throwIfNotFound: true);
@@ -87,7 +87,7 @@ And file provider with **.FileProviderAssetSource()**.
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
 IAssetSource assetSource = 
-    LocalizationIniReader.Default.FileProviderAssetSource(
+    IniLinesReader.Default.FileProviderAssetSource(
         fileProvider: fileProvider,
         filepath: "localization.ini",
         throwIfNotFound: true);
@@ -110,16 +110,16 @@ Different file formats have different intrinsic formats.
 Localization file can be read right away into key lines with **.ReadKeyLines()**.
 
 ```csharp
-IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines = LineReaderMap.Default.ReadKeyLines(
+IEnumerable<ILine> key_lines = LineReaderMap.Default.ReadLines(
     filename: "localization.ini", 
     throwIfNotFound: true);
 ```
 Into string lines with **.ReadStringLines()**.
 
 ```csharp
-IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LineReaderMap.Default.ReadStringLines(
+IEnumerable<KeyValuePair<string, IString>> string_lines = LineReaderMap.Default.ReadStringLines(
     filename: "localization.ini", 
-    namePolicy: LineFormat.Default,
+    lineFormat: LineFormat.Parameters,
     throwIfNotFound: true);
 ```
 And into a tree **.ReadLineTree()**.
@@ -135,18 +135,18 @@ A file reader can be constructed with respective **.FileReaderAsKeyLines()**.
 File reader reads the refered file when **.GetEnumerator()** is called, and will re-read the file again every time.
 
 ```csharp
-IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines_reader = 
-    LineReaderMap.Default.FileReaderAsKeyLines(
+IEnumerable<ILine> key_lines_reader = 
+    LineReaderMap.Default.FileReader(
         filename: "localization.ini", 
         throwIfNotFound: true);
 ```
 **.FileReaderAsStringLines()** creates a reader that returns string lines.
 
 ```csharp
-IEnumerable<KeyValuePair<string, IFormatString>> string_lines_reader = 
+IEnumerable<KeyValuePair<string, IString>> string_lines_reader = 
     LineReaderMap.Default.FileReaderAsStringLines(
         filename: "localization.ini",
-        namePolicy: LineFormat.Default,
+        lineFormat: LineFormat.Parameters,
         throwIfNotFound: true);
 ```
 And **.FileReaderAsLineTree()** a tree reader.
@@ -163,8 +163,8 @@ Embedded resource reader is created with **.EmbeddedReaderAsKeyLines()**.
 
 ```csharp
 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
-IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines_reader = 
-    LineReaderMap.Default.EmbeddedReaderAsKeyLines(
+IEnumerable<ILine> key_lines_reader = 
+    LineReaderMap.Default.EmbeddedReader(
         assembly: asm, 
         resourceName: "docs.localization.ini", 
         throwIfNotFound: true);
@@ -172,11 +172,11 @@ IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines_reader =
 **.EmbeddedReaderAsStringLines()** creates embedded reader of string lines.
 
 ```csharp
-IEnumerable<KeyValuePair<string, IFormatString>> string_lines_reader = 
+IEnumerable<KeyValuePair<string, IString>> string_lines_reader = 
     LineReaderMap.Default.EmbeddedReaderAsStringLines(
         assembly: asm, 
         resourceName: "docs.localization.ini", 
-        namePolicy: LineFormat.Default,
+        namePolicy: LineFormat.Parameters,
         throwIfNotFound: true);
 ```
 And **.EmbeddedReaderAsLineTree()** reader of trees
@@ -194,8 +194,8 @@ File provider reader is created with **.FileProviderReaderAsKeyLines()**.
 
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines_reader = 
-    LineReaderMap.Default.FileProviderReaderAsKeyLines(
+IEnumerable<ILine> key_lines_reader = 
+    LineReaderMap.Default.FileProviderReader(
         fileProvider: fileProvider, 
         filepath: "localization.ini", 
         throwIfNotFound: true);
@@ -204,7 +204,7 @@ IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines_reader =
 
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-IEnumerable<KeyValuePair<string, IFormatString>> string_lines_reader = 
+IEnumerable<KeyValuePair<string, IString>> string_lines_reader = 
     LineReaderMap.Default.FileProviderReaderAsStringLines(
         fileProvider: fileProvider, 
         filepath: "localization.ini", 
@@ -227,7 +227,7 @@ Content can be read from **Stream** into key lines.
 ```csharp
 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
 {
-    IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines = LocalizationIniReader.Default.ReadKeyLines(s);
+    IEnumerable<ILine> key_lines = IniLinesReader.Default.ReadLines(s);
 }
 ```
 Into string lines.
@@ -235,9 +235,9 @@ Into string lines.
 ```csharp
 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
 {
-    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LocalizationIniReader.Default.ReadStringLines(
+    IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadStringLines(
         stream: s,
-        namePolicy: LineFormat.Default);
+        namePolicy: LineFormat.Parameters);
 }
 ```
 And into a tree.
@@ -245,7 +245,7 @@ And into a tree.
 ```csharp
 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
 {
-    ILineTree tree = LocalizationIniReader.Default.ReadLineTree(s);
+    ILineTree tree = IniLinesReader.Default.ReadLineTree(s);
 }
 ```
 
@@ -256,7 +256,7 @@ Content can be read from **TextReader** into key lines.
 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
 using (TextReader tr = new StringReader(text))
 {
-    IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines = LocalizationIniReader.Default.ReadKeyLines(tr);
+    IEnumerable<ILine> key_lines = IniLinesReader.Default.ReadLines(tr);
 }
 ```
 Into string lines.
@@ -264,9 +264,9 @@ Into string lines.
 ```csharp
 using (TextReader tr = new StringReader(text))
 {
-    IEnumerable<KeyValuePair<string, IFormatString>> string_lines = LocalizationIniReader.Default.ReadStringLines(
+    IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadStringLines(
         srcText: tr,
-        namePolicy: LineFormat.Default);
+        namePolicy: LineFormat.Parameters);
 }
 ```
 And into tree.
@@ -274,7 +274,7 @@ And into tree.
 ```csharp
 using (TextReader tr = new StringReader(text))
 {
-    ILineTree tree = LocalizationIniReader.Default.ReadLineTree(tr);
+    ILineTree tree = IniLinesReader.Default.ReadLineTree(tr);
 }
 ```
 
@@ -283,23 +283,23 @@ And from **String** into key lines.
 
 ```csharp
 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";
-IEnumerable<KeyValuePair<ILine, IFormatString>> key_lines = 
-    LocalizationIniReader.Default.ReadStringAsKeyLines(
+IEnumerable<ILine> key_lines = 
+    IniLinesReader.Default.ReadString(
         srcText: text);
 ```
 Into string lines.
 
 ```csharp
-IEnumerable<KeyValuePair<string, IFormatString>> string_lines = 
-    LocalizationIniReader.Default.ReadStringAsStringLines(
+IEnumerable<KeyValuePair<string, IString>> string_lines = 
+    IniLinesReader.Default.ReadStringAsStringLines(
         srcText: text,
-        namePolicy: LineFormat.Default);
+        namePolicy: LineFormat.Parameters);
 ```
 And into a tree.
 
 ```csharp
 ILineTree tree = 
-    LocalizationIniReader.Default.ReadStringAsLineTree(
+    IniLinesReader.Default.ReadStringAsLineTree(
         srcText: text);
 ```
 
@@ -309,7 +309,7 @@ ILineTree tree =
 
 ```csharp
 /// <summary>
-/// Signals that file format can be read localization files.
+/// Signals that file format can read localization files.
 /// 
 /// For reading capability, must implement one of:
 /// <list type="Bullet">
@@ -324,7 +324,7 @@ ILineTree tree =
 public interface ILineReader : ILineFileFormat { }
 
 /// <summary>
-/// Reader that can read localization lines from a <see cref="Stream"/>.
+/// Reader that can read lines from a <see cref="Stream"/>.
 /// </summary>
 public interface ILineStreamReader : ILineReader
 {
@@ -332,25 +332,25 @@ public interface ILineStreamReader : ILineReader
     /// Read <paramref name="stream"/> into lines.
     /// </summary>
     /// <param name="stream"></param>
-    /// <param name="namePolicy">(optional) name policy. </param>
+    /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
     /// <returns>the read lines</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<ILine, IFormatString>> ReadKeyLines(Stream stream, ILineFormat namePolicy = default);
+    IEnumerable<ILine> ReadLines(Stream stream, ILineFormat lineFormat = default);
 }
 
 /// <summary>
-/// Reader that can read localization into tree format format a <see cref="Stream"/>.
+/// Reader that can read tree format from a <see cref="Stream"/>.
 /// </summary>
 public interface ILineTreeStreamReader : ILineReader
 {
     /// <summary>
-    /// Read <paramref name="stream"/> into tree structuer.
+    /// Read <paramref name="stream"/> into tree structure.
     /// </summary>
     /// <param name="stream"></param>
-    /// <param name="namePolicy">(optional) name policy.</param>
+    /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
     /// <returns>lines in tree structure</returns>
     /// <exception cref="IOException"></exception>
-    ILineTree ReadLineTree(Stream stream, ILineFormat namePolicy = default);
+    ILineTree ReadLineTree(Stream stream, ILineFormat lineFormat = default);
 }
 
 /// <summary>
@@ -359,13 +359,13 @@ public interface ILineTreeStreamReader : ILineReader
 public interface ILineTextReader : ILineReader
 {
     /// <summary>
-    /// Read <paramref name="text"/> into lines.
+    /// Read <paramref name="text"/> into tree structure.
     /// </summary>
     /// <param name="text"></param>
-    /// <param name="namePolicy">(optional) name policy.</param>
+    /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
     /// <returns>the read lines</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<ILine, IFormatString>> ReadKeyLines(TextReader text, ILineFormat namePolicy = default);
+    IEnumerable<ILine> ReadLines(TextReader text, ILineFormat lineFormat = default);
 }
 
 /// <summary>
@@ -377,10 +377,10 @@ public interface ILineTreeTextReader : ILineReader
     /// Read <paramref name="text"/> into lines.
     /// </summary>
     /// <param name="text"></param>
-    /// <param name="namePolicy">(optional) name policy.</param>
+    /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
     /// <returns>lines in tree structure</returns>
     /// <exception cref="IOException"></exception>
-    ILineTree ReadLineTree(TextReader text, ILineFormat namePolicy = default);
+    ILineTree ReadLineTree(TextReader text, ILineFormat lineFormat = default);
 }
 
 /// <summary>
@@ -392,10 +392,10 @@ public interface ILineStringTextReader : ILineReader
     /// Read <paramref name="text"/> into lines.
     /// </summary>
     /// <param name="text"></param>
-    /// <param name="namePolicy">(optional) name policy.</param>
+    /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
     /// <returns>the read string key-values</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<string, IFormatString>> ReadStringLines(TextReader text, ILineFormat namePolicy = default);
+    IEnumerable<KeyValuePair<string, IString>> ReadStringLines(TextReader text, ILineFormat lineFormat = default);
 }
 
 /// <summary>
@@ -407,10 +407,10 @@ public interface ILineStringStreamReader : ILineReader
     /// Read <paramref name="stream"/> into lines.
     /// </summary>
     /// <param name="stream"></param>
-    /// <param name="namePolicy">(optional) name policy.</param>
+    /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
     /// <returns>the read string key-values</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<string, IFormatString>> ReadStringLines(Stream stream, ILineFormat namePolicy = default);
+    IEnumerable<KeyValuePair<string, IString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default);
 }
 ```
 </details>
@@ -422,12 +422,11 @@ class ExtFileFormatReader : ILineTextReader
 {
     public string Extension => "ext";
 
-    public IEnumerable<KeyValuePair<ILine, IFormatString>> ReadKeyLines(
+    public IEnumerable<ILine> ReadLines(
         TextReader text, 
         ILineFormat namePolicy = null)
     {
-        ILine key = Key.Create("Section", "MyClass").Append("Key", "HelloWorld").Append("Culture", "en");
-        yield return new KeyValuePair<ILine, IFormatString>(key, CSharpFormat.Default.Parse("Hello World!"));
+        yield return LineAppender.Default.Section("MyClass").Key("HelloWorld").Culture("en").Format("Hello World!");
     }
 }
 ```

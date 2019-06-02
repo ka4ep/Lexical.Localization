@@ -3,7 +3,7 @@
 *Key* is used as an internal class for serializing localization files and for comparing context-dependent keys.
 
 ```csharp
-Key key = new Key("Culture", "en").Append("Type", "MyController").Append("Key", "Success");
+ILine key = LineAppender.NonResolving.Culture("en").Type("MyController").Key("Success");
 ```
 
 Key can be converted to context dependent key ILine with a parametrizer.

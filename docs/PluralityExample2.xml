@@ -6,7 +6,7 @@
               PluralRules="Lexical.Localization.CLDR35">
 
   <!-- Example: Plurality for two numeric arguments {0} and {1} -->
-  <Key:CatsDogs>
+  <Key:CatsDogs Culture="en">
     {cardinal:0} cat(s) and {cardinal:1} dog(s)
     <N:zero>
       <N1:zero>no cats and no dogs</N1:zero>

@@ -1,17 +1,17 @@
 ﻿# ILineFormat
 <details>
   <summary><b>ILineFormat</b> is root interface for *ILine* name converter. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/ILineFormat.cs#ILineFormat)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs#ILineFormat)]
 </details>
 
 <details>
   <summary><b>ILinePrinter</b> is sub-interface that prints *ILines* as *Strings*. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/ILineFormat.cs#ILinePrinter)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs#ILinePrinter)]
 </details>
 
 <details>
   <summary><b>ILineParser</b> is sub-interface that parses *Strings* into *ILine*. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/ILineFormat.cs#ILineParser)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs#ILineParser)]
 </details>
 
 <br />
@@ -22,20 +22,20 @@
 | LinePattern | &#9745;  | &#9745; |
 | LineParameterPrinter | &#9745; | &#9744; |
 
-# LineFormat.
-**LineFormat.* is an *IAssetNameKeyPolicy* class that prints and parses keys into strings using the following notation.
+# LineFormat
+**LineFormat* is an *ILineFormat* class that prints and parses keys into strings using the following notation.
 ```none
 parameterName:parameterValue:parameterName:parameterValue:...
 ```
 
 Keys are converted to strings.
-[!code-csharp[Snippet](LineFormat.Examples.cs#Snippet_2)]
+[!code-csharp[Snippet](LineFormat_Examples.cs#Snippet_2)]
 
 And strings parsed to keys.
-[!code-csharp[Snippet](LineFormat.Examples.cs#Snippet_0)]
+[!code-csharp[Snippet](LineFormat_Examples.cs#Snippet_0)]
 
 A specific *root* can be used from which the constructed key is appended from.
-[!code-csharp[Snippet](LineFormat.Examples.cs#Snippet_0b)]
+[!code-csharp[Snippet](LineFormat_Examples.cs#Snippet_0b)]
 
 Policy uses the following escape rules.
 
@@ -50,12 +50,12 @@ Policy uses the following escape rules.
 | \\U<i>hhhhhhhh</i> | Unicode 32bit |
 
 Example of escaped key "Success\\:Plural".
-[!code-csharp[Snippet](LineFormat.Examples.cs#Snippet_1)]
+[!code-csharp[Snippet](LineFormat_Examples.cs#Snippet_1)]
 
 # LinePattern
 <details>
   <summary><b>ILinePattern</b> is interface for name patterns. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/ILinePattern.cs#Interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILinePattern.cs#Interface)]
 </details>
 <br />
 
@@ -96,7 +96,7 @@ Reserved parameter names and respective extension methods.
 | N | .N(*Type*) | Plurality key |
 
 # LineParameterPrinter
-**LineParameterPrinter** is a generic class that prints key parts into strings using various rules.
+**LineParameterPrinter** is a generic class that prints key parts into strings by applying configured rules.
 
 Let's create an example key.
 [!code-csharp[Snippet](LineParameterPrinter_Examples.cs#Snippet_1)]
@@ -108,10 +108,10 @@ Policy is created by adding rules to LineParameterPrinter.
 
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
- * [ILineFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILineFormat.cs) is the root interface for classes that formulate ILine into identity string.
- * [ILinePrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILineFormat.cs) is a subinterface where Build() can be implemented directly.
- * [ILinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILinePattern.cs) is a subinterface that formulates parametrization with a template string.
+ * [ILineFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs) is the root interface for classes that formulate ILine into identity string.
+ * [ILinePrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs) is a subinterface where Build() can be implemented directly.
+ * [ILinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILinePattern.cs) is a subinterface that formulates parametrization with a template string.
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [LineParameterPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/LineParameterPrinter.cs) is implementation of IAssetNameProvider.
- * [LinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/LinePattern.cs) is the default implementation of ILinePattern.
- * [LineFormat.(https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/LineFormat.cs) is context-free string format.
+ * [LineParameterPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/Format/LineParameterPrinter.cs) is implementation of IAssetNameProvider.
+ * [LinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/Format/LinePattern.cs) is the default implementation of ILinePattern.
+ * [LineFormat.(https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/Format/LineFormat.cs) is context-free string format.

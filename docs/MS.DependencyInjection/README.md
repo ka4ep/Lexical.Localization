@@ -19,16 +19,18 @@ serviceCollection.AddLexicalLocalization(
     addStringLocalizerService: false,
     addCulturePolicyService: true,
     useGlobalInstance: false,
-    addCache: true);
+    addCache: false);
 ```
 
 Assets are contributed to the service provider by adding *IAssetSource*s.
 
 ```csharp
 // Create localization source
-var source = new Dictionary<string, string> { { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" } };
+var lines = new List<ILine> {
+    LineAppender.Default.Culture("en").Type("ConsoleApp1.MyController").Key("Hello").Format("Hello World!")
+};
 // Create asset source
-IAssetSource assetSource = new StringAsset(source, LineFormat.Default).ToSource();
+IAssetSource assetSource = new StringAsset(lines).ToSource();
 // Add asset source
 serviceCollection.AddSingleton<IAssetSource>(assetSource);
 ```
@@ -56,6 +58,7 @@ using (var serviceProvider = serviceCollection.BuildServiceProvider())
 <details><summary>Example full code (<u>click here</u>).</summary>
 ```csharp
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 
@@ -73,12 +76,12 @@ namespace docs
                 addStringLocalizerService: false,
                 addCulturePolicyService: true,
                 useGlobalInstance: false,
-                addCache: true);
+                addCache: false);
 
             // Create localization source
-            var source = new Dictionary<string, string> { { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" } };
+            var lines = new List<ILine> { LineAppender.Default.Culture("en").Type("ConsoleApp1.MyController").Key("Hello").Format("Hello World!") };
             // Create asset source
-            IAssetSource assetSource = new StringAsset(source, LineFormat.Default).ToSource();
+            IAssetSource assetSource = new StringAsset(lines).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 
@@ -119,14 +122,12 @@ serviceCollection.AddLexicalLocalization(
     addStringLocalizerService: true,     // <- string localizer
     addCulturePolicyService: true,
     useGlobalInstance: false,
-    addCache: true);
+    addCache: false);
 
 // Create localization source
-var source = new Dictionary<string, string> {
-    { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" }
-};
+var lines = new List<ILine> { LineAppender.Default.Culture("en").Type("ConsoleApp1.MyController").Key("Hello").Format("Hello World!") };
 // Create asset source
-IAssetSource assetSource = new StringAsset(source, LineFormat.Default).ToSource();
+IAssetSource assetSource = new StringAsset(lines).ToSource();
 // Add asset source
 serviceCollection.AddSingleton<IAssetSource>(assetSource);
 
@@ -148,6 +149,7 @@ using (var serviceProvider = serviceCollection.BuildServiceProvider())
 
 ```csharp
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
@@ -169,14 +171,12 @@ namespace docs
                 addStringLocalizerService: true,     // <- string localizer
                 addCulturePolicyService: true,
                 useGlobalInstance: false,
-                addCache: true);
+                addCache: false);
 
             // Create localization source
-            var source = new Dictionary<string, string> {
-                { "Culture:en:Type:ConsoleApp1.MyController:Key:Hello", "Hello World!" }
-            };
+            var lines = new List<ILine> { LineAppender.Default.Culture("en").Type("ConsoleApp1.MyController").Key("Hello").Format("Hello World!") };
             // Create asset source
-            IAssetSource assetSource = new StringAsset(source, LineFormat.Default).ToSource();
+            IAssetSource assetSource = new StringAsset(lines).ToSource();
             // Add asset source
             serviceCollection.AddSingleton<IAssetSource>(assetSource);
 

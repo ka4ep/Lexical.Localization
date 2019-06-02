@@ -91,8 +91,8 @@ namespace docs
                 #endregion Snippet_8c
 
                 #region Snippet_8d
-                //    parametersWithValue = [LineKeyNonCanonical]:[LineKeyNonCanonical]:[LineKeyCanonical]:[LineHint]
-                ILine parametersWithValue = LineFormat.ParametersInclString.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:String:Hello");
+                //    parametersWithString = [LineKeyNonCanonical]:[LineKeyNonCanonical]:[LineKeyCanonical]:[LineHint]
+                ILine parametersWithString = LineFormat.ParametersInclString.Parse("Culture:en:Type:ConsoleApp4.Program:Key:Hello:String:Hello");
                 #endregion Snippet_8d
             }
         }

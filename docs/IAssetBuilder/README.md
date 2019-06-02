@@ -21,7 +21,7 @@ IAsset asset = builder.Build();
 // Create string key
 ILine key = new LineRoot().Key("hello").Culture("en");
 // Request value
-IFormatString value = asset.GetString( key ).GetValue();
+IString value = asset.GetString( key ).GetString();
 // Print result
 Console.WriteLine(value);
 ```
@@ -67,7 +67,7 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     // Create string key
     ILine key = new LineRoot().Key("hello").Culture("en");
     // Request string
-    IFormatString value = asset.GetString(key).GetValue();
+    IString value = asset.GetString(key).GetString();
     // Print result
     Console.WriteLine(value);
 }
@@ -99,7 +99,7 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     // Create string key
     ILine key = new LineRoot().Key("hello").Culture("en");
     // Request string
-    IFormatString value = asset.GetString(key).GetValue();
+    IString value = asset.GetString(key).GetString();
     // Print result
     Console.WriteLine(value);
 }

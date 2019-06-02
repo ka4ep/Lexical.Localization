@@ -12,12 +12,12 @@ IStringLocalizerFactory stringLocalizerFactory = new ResourceManagerStringLocali
 IAsset asset = new StringLocalizerFactoryAsset(stringLocalizerFactory);
 
 // Create root
-ILineRoot root = new LocalizationRoot(asset, new CulturePolicy());
+ILineRoot root = new LineRoot(asset, new CulturePolicy());
 
 // There are .resx files in "Resources/ConsoleApp1.MyController" with keys "Success" and "Error"
 ILine key = root
     .Assembly(Assembly.GetExecutingAssembly())
-    .Resource("ConsoleApp1.MyController")
+    .BaseName("ConsoleApp1.MyController")
     //.Type(typeof(ConsoleApp1.MyController1))
     .Key("Success")
     .Culture("sv");
@@ -37,7 +37,7 @@ asset = stringLocalizerFactory.ToAsset();
 
 ```csharp
 // Adapt IStringLocalizer to IAsset
-asset = new StringLocalizerAsset(stringLocalizer);
+//asset = new StringLocalizerAsset(stringLocalizer);
 ```
 
 **StringLocalizerRoot** adapts *IAsset* implementations back to <b><i>IStringLocalizerFactory</i></b>. [Read more.](../ILine/ILineRoot/#string-localizer)

@@ -4,17 +4,15 @@
 
 ```csharp
 /// <summary>
-/// Signal that the class can do conversions of <see cref="ILine"/> and <see cref="String"/>.
-/// 
-/// User of this interface should use extensions methods 
-/// <list type="bullet">
-/// <item><see cref="LineNamePolicyExtensions.BuildName(ILineFormat, ILine)"/></item>
-/// <item><see cref="LineNamePolicyExtensions.Parse(ILineFormat, string, ILine)"/></item>
-/// </list>
+/// Line format makes conversions between <see cref="ILine"/> and <see cref="String"/>.
 /// 
 /// Class that implements to this interface should implement one or both of the following interfaces:
-///  <see cref="ILinePrinter"/>
-///  <see cref="ILinePattern"/>
+/// <list type="bullet">
+///     <item><see cref="ILineFormatPrinter"/></item>
+///     <item><see cref="ILinePattern"/></item>
+/// </list>
+/// 
+/// The decision on what types are instantiated is a configuration decision of the implementing class.
 /// </summary>
 public interface ILineFormat
 {
@@ -27,16 +25,18 @@ public interface ILineFormat
 
 ```csharp
 /// <summary>
-/// Converts <see cref="ILine"/> to <see cref="String"/>.
+/// Converts <see cref="ILine"/> to string.
 /// </summary>
-public interface ILinePrinter : ILineFormat
+public interface ILineFormatPrinter : ILineFormat
 {
     /// <summary>
-    /// Build path string from key.
+    /// Print <paramref name="line"/> as <see cref="String"/>.
+    /// 
+    /// The decision on what types are instantiated is a configuration decision of the implementing class.
     /// </summary>
-    /// <param name="str"></param>
+    /// <param name="line"></param>
     /// <returns>full name string</returns>
-    string BuildName(ILine str);
+    string Print(ILine line);
 }
 ```
 </details>
@@ -46,27 +46,66 @@ public interface ILinePrinter : ILineFormat
 
 ```csharp
 /// <summary>
-/// Parses <see cref="String"/> into <see cref="ILine"/>.
+/// Parses string into <see cref="ILine"/>.
 /// </summary>
-public interface ILineParser : ILineFormat
+public interface ILineFormatParser : ILineFormat
 {
+    /// <summary>
+    /// Parse string into <see cref="ILine"/>.
+    /// 
+    /// The decision on what types are instantiated is a configuration decision of the implementing class.
+    /// </summary>
+    /// <param name="str">key as string</param>
+    /// <returns>Arguments that can be used for constructing or appending to a line</returns>
+    /// <exception cref="LineException">If parse failed</exception>
+    IEnumerable<ILineArguments> ParseArgs(string str);
+
     /// <summary>
     /// Parse string into key.
     /// </summary>
+    /// <param name="str"></param>
+    /// <param name="args">Arguments that can be used for constructing or appending to a line</param>
+    /// <returns>true if parse was successful</returns>
+    bool TryParseArgs(string str, out IEnumerable<ILineArguments> args);
+}
+
+/// <summary>
+/// Alternative parser interface where parts are appended right into previous line.
+/// </summary>
+public interface ILineFormatAppendParser : ILineFormat
+{
+    /// <summary>
+    /// Parse string into <see cref="ILine"/>.
+    /// 
+    /// The decision on what types are instantiated is a configuration decision of the implementing class.
+    /// </summary>
     /// <param name="str">key as string</param>
-    /// <param name="rootKey">(optional) root key to span values from</param>
+    /// <param name="prevPart">(optional) previous part to append to</param>
+    /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
     /// <returns>key result or null if contained no content</returns>
     /// <exception cref="FormatException">If parse failed</exception>
-    ILine Parse(string str, ILine rootKey = default);
+    ILine Parse(string str, ILine prevPart = default, ILineFactory appender = default);
 
     /// <summary>
     /// Parse string into key.
     /// </summary>
     /// <param name="str"></param>
     /// <param name="key">key result or null if contained no content</param>
-    /// <param name="rootKey">(optional) root key to span values from</param>
+    /// <param name="prevPart">(optional) previous part to append to</param>
+    /// <param name="appender">(optional) line appender to append with. If null, uses appender from <paramref name="prevPart"/>. If null, uses default appender.</param>
     /// <returns>true if parse was successful</returns>
-    bool TryParse(string str, out ILine key, ILine rootKey = default);
+    bool TryParse(string str, out ILine key, ILine prevPart = default, ILineFactory appender = default);
+}
+
+/// <summary>
+/// Line format that has assignable appender.
+/// </summary>
+public interface ILineFormatFactory : ILineFormat
+{
+    /// <summary>
+    /// Associated appender.
+    /// </summary>
+    ILineFactory LineFactory { get; set; }
 }
 ```
 </details>
@@ -79,8 +118,8 @@ public interface ILineParser : ILineFormat
 | LinePattern | &#9745;  | &#9745; |
 | LineParameterPrinter | &#9745; | &#9744; |
 
-# LineFormat.
-**LineFormat.* is an *IAssetNameKeyPolicy* class that prints and parses keys into strings using the following notation.
+# LineFormat
+**LineFormat* is an *ILineFormat* class that prints and parses keys into strings using the following notation.
 ```none
 parameterName:parameterValue:parameterName:parameterValue:...
 ```
@@ -88,15 +127,15 @@ parameterName:parameterValue:parameterName:parameterValue:...
 Keys are converted to strings.
 
 ```csharp
-ILine key = LocalizationRoot.Global.Type("MyController").Key("Success").Culture("en");
-string str = LineFormat.Default.BuildName(key);
+ILine key = LineAppender.NonResolving.Type("MyController").Key("Success").Culture("en");
+string str = LineFormat.Parameters.Print(key);
 ```
 
 And strings parsed to keys.
 
 ```csharp
 string str = @"Culture:en:Type:MyController:Key:Ok";
-ILine key = LineFormat.Default.Parse(str);
+ILine key = LineFormat.Parameters.Parse(str, null, LineAppender.NonResolving);
 ```
 
 A specific *root* can be used from which the constructed key is appended from.
@@ -104,7 +143,7 @@ A specific *root* can be used from which the constructed key is appended from.
 ```csharp
 string str = @"Culture:en:Type:MyController:Key:Ok";
 ILine root = new StringLocalizerRoot();
-ILine key = LineFormat.Default.Parse(str, root);
+ILine key = LineFormat.Parameters.Parse(str, root);
 ```
 
 Policy uses the following escape rules.
@@ -123,7 +162,7 @@ Example of escaped key "Success\\:Plural".
 
 ```csharp
 string str = @"Key:Success\:Plural";
-ILine key = LineFormat.Default.Parse(str);
+ILine key = LineFormat.Parameters.Parse(str, null, LineAppender.NonResolving);
 ```
 
 # LinePattern
@@ -251,6 +290,7 @@ public interface ILinePatternPart
     /// Parameter identifier. Does not include occurance index, e.g. "_1".
     /// </summary>
     string ParameterName { get; }
+
     /// <summary>
     /// If set, then is non-matchable Text part.
     /// </summary>
@@ -305,7 +345,7 @@ public interface ILinePatternMatch : IReadOnlyDictionary<string, string>
     ILinePattern Pattern { get; }
 
     /// <summary>
-    /// Resolved part values.
+    /// Resolved part values. Corresponds to <see cref="ILinePattern.CaptureParts"/>.
     /// </summary>
     string[] PartValues { get; }
 
@@ -336,7 +376,7 @@ public interface ILinePatternMatch : IReadOnlyDictionary<string, string>
 
 ```csharp
 // Let's create an example key
-ILine key = new LocalizationRoot()
+ILine key = new LineRoot()
         .Location("Patches")
         .Type("MyController")
         .Section("Errors")
@@ -348,7 +388,7 @@ ILine key = new LocalizationRoot()
 // Create pattern
 ILineFormat myPolicy = new LinePattern("{Culture/}{Location/}{Type/}{Section/}[Key].txt");
 // "en/Patches/MyController/Errors/InvalidState.txt"
-string str = myPolicy.BuildName(key);
+string str = myPolicy.Print(key);
 ```
 
 Name pattern consists of parameters. They are written in format of "{prefix **ParameterName** suffix}".  
@@ -365,9 +405,9 @@ Parameter can be added multiple times.
 // Create pattern
 ILineFormat myPolicy = new LinePattern("{Location/}{Location/}{Location/}{Section}{-Key}{-Culture}.png");
 // Create key
-ILine key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+ILine key2 = new LineRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
 // Converts to "Patches/20181130/icons-ok-de.png"
-string str = myPolicy.BuildName(key2);
+string str = myPolicy.Print(key2);
 ```
 
 A shorter way to add consecutive parameters is use suffix "_n". It translates to the five following occurances.
@@ -377,9 +417,9 @@ If part is required, e.g. "[parametername_n]", then only first part is required 
 // "[Location_n/]" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
 ILineFormat myPolicy = new LinePattern("[Location_n/]{Section}{-Key}{-Culture}.png");
 // Create key
-ILine key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+ILine key2 = new LineRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
 // Converts to "Patches/20181130/icons-ok-de.png"
-string str = myPolicy.BuildName(key2);
+string str = myPolicy.Print(key2);
 ```
 
 Parameters need to be added in non-consecutive order, then "_#" can be used to represent the occurance index.
@@ -388,9 +428,9 @@ Parameters need to be added in non-consecutive order, then "_#" can be used to r
 // Create pattern
 ILineFormat myPolicy = new LinePattern("{Location_3}{Location_2/}{Location_1/}{Location/}{Section}{-Key}{-Culture}.png");
 // Create key
-ILine key2 = new LocalizationRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+ILine key2 = new LineRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
 // Converts to "20181130/Patches/icons-ok-de.png"
-string str = myPolicy.BuildName(key2);
+string str = myPolicy.Print(key2);
 ```
 
 Regular expression can be written inside angle brackets "{parameter&lt;*regexp*&gt;/}", which gives more control over matching.
@@ -418,13 +458,13 @@ Reserved parameter names and respective extension methods.
 | N | .N(*Type*) | Plurality key |
 
 # LineParameterPrinter
-**LineParameterPrinter** is a generic class that prints key parts into strings using various rules.
+**LineParameterPrinter** is a generic class that prints key parts into strings by applying configured rules.
 
 Let's create an example key.
 
 ```csharp
 // Let's create an example key
-ILine key = new LocalizationRoot()
+ILine key = new LineRoot()
         .Location("Patches")
         .Section("Controllers")
         .Type("MyController")
@@ -436,15 +476,15 @@ And now, let's try out different policies to see how they look.
 
 ```csharp
 // "en:Patches:Controllers:MyController:Errors:InvalidState"
-string str1 = LineParameterPrinter.Default.BuildName(key);
+string str1 = LineParameterPrinter.Default.Print(key);
 // "en.Patches.Controllers.MyController.Errors.InvalidState"
-string str2 = LineParameterPrinter.Dot_Dot_Dot.BuildName(key);
+string str2 = LineParameterPrinter.Dot_Dot_Dot.Print(key);
 // "Patches:Controllers:MyController:Errors:InvalidState"
-string str3 = LineParameterPrinter.None_Colon_Colon.BuildName(key);
+string str3 = LineParameterPrinter.None_Colon_Colon.Print(key);
 // "en:Patches.Controllers.MyController.Errors.InvalidState"
-string str4 = LineParameterPrinter.Colon_Dot_Dot.BuildName(key);
+string str4 = LineParameterPrinter.Colon_Dot_Dot.Print(key);
 // "en:Patches:Controllers:MyController:Errors.InvalidState"
-string str5 = LineParameterPrinter.Colon_Colon_Dot.BuildName(key);
+string str5 = LineParameterPrinter.Colon_Colon_Dot.Print(key);
 ```
 
 Policy is created by adding rules to LineParameterPrinter.
@@ -453,24 +493,24 @@ Policy is created by adding rules to LineParameterPrinter.
 // Create a custom policy 
 ILineFormat myPolicy = new LineParameterPrinter()
     // Enable non-canonical "Culture" parameter with "/" separator
-    .Rule("Culture", true, postfixSeparator: "/", order: ParameterInfos.Default["Culture"].Order)
+    .Rule("Culture", true, postfixSeparator: "/", order: ParameterInfos.Default.GetValue("Culture").Order)
     // Disable other non-canonical parts
     .NonCanonicalRule(false)
     // Enable canonical all parts with "/" separator
     .CanonicalRule(true, prefixSeparator: "/")
     // Set "Key" parameter's prefix to "/"
-    .Rule("Key", true, prefixSeparator: "/", order: ParameterInfos.Default["Key"].Order);
+    .Rule("Key", true, prefixSeparator: "/", order: ParameterInfos.Default.GetValue("Key").Order);
 
 // "en/Patches/MyController/Errors/InvalidState"
-string str = myPolicy.BuildName(key);
+string str = myPolicy.Print(key);
 ```
 
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
- * [ILineFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILineFormat.cs) is the root interface for classes that formulate ILine into identity string.
- * [ILinePrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILineFormat.cs) is a subinterface where Build() can be implemented directly.
- * [ILinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILinePattern.cs) is a subinterface that formulates parametrization with a template string.
+ * [ILineFormat](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs) is the root interface for classes that formulate ILine into identity string.
+ * [ILinePrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs) is a subinterface where Build() can be implemented directly.
+ * [ILinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/Format/ILinePattern.cs) is a subinterface that formulates parametrization with a template string.
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [LineParameterPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/LineParameterPrinter.cs) is implementation of IAssetNameProvider.
- * [LinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/LinePattern.cs) is the default implementation of ILinePattern.
- * [LineFormat.(https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/LineFormat.cs) is context-free string format.
+ * [LineParameterPrinter](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/Format/LineParameterPrinter.cs) is implementation of IAssetNameProvider.
+ * [LinePattern](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/Format/LinePattern.cs) is the default implementation of ILinePattern.
+ * [LineFormat.(https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Line/Format/LineFormat.cs) is context-free string format.

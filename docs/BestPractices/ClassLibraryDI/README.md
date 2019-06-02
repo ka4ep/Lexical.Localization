@@ -11,6 +11,7 @@ Internal localization files are typically embedded resources.
 ```csharp
 using System.Collections.Generic;
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using Microsoft.Extensions.FileProviders;
 
 namespace TutorialLibrary2
@@ -112,7 +113,7 @@ namespace TutorialLibrary2
 
         public string Do()
         {
-            return localizer.Key("OK").Value("Operation Successful").ToString();
+            return localizer.Key("OK").Format("Operation Successful").ToString();
         }
     }
 }
@@ -146,6 +147,7 @@ Console.WriteLine(myClass.Do());
 
 ```csharp
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Globalization;
@@ -197,6 +199,7 @@ builder.AddSource(assetSource).Build();
 
 ```csharp
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using System;
 using System.Globalization;
 using System.Reflection;
@@ -314,6 +317,7 @@ using System.Reflection;
 using TutorialLibrary2;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Lexical.Localization.Asset;
 
 namespace TutorialProject2
 {

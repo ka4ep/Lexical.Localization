@@ -11,6 +11,7 @@ Internal localization files are typically embedded resources.
 ```csharp
 using System.Collections.Generic;
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 
 namespace TutorialLibrary1
 {
@@ -56,6 +57,7 @@ Class library can be configured to search for external localization from preconf
 ```csharp
 using System.Collections.Generic;
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 
 namespace TutorialLibrary1
 {
@@ -91,6 +93,7 @@ This root can be linked to the global static root and shares its assets.
 
 ```csharp
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 
 namespace TutorialLibrary1
 {
@@ -134,7 +137,7 @@ namespace TutorialLibrary1
 
         public string Do()
         {
-            return localizer.Key("OK").Value("Operation Successful").ToString();
+            return localizer.Key("OK").Format("Operation Successful").ToString();
         }
     }
 }
@@ -208,6 +211,7 @@ Console.WriteLine(myClass.Do());
 
 ```csharp
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using System;
 using System.Globalization;
 using TutorialLibrary1;

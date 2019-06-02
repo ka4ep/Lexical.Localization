@@ -154,9 +154,6 @@
     <None Update="PluralityExample4.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="PluralityExample2-en.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="PluralityExample2.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

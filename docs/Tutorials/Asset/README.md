@@ -40,6 +40,7 @@ Next, open the **Program.cs** and modify the code to the following.
 
 ```csharp
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using System;
 using System.Globalization;
 
@@ -50,17 +51,17 @@ namespace TutorialProject
         public static void Main(string[] args)
         {
             // Create a loader
-            IAsset asset = LocalizationIniReader.Default.FileAsset("HelloWorld.ini");
+            IAsset asset = IniLinesReader.Default.FileAsset("HelloWorld.ini");
 
             // Add asset to global singleton instance
-            LocalizationRoot.Builder.AddAsset(asset);
-            LocalizationRoot.Builder.Build();
+            LineRoot.Builder.AddAsset(asset);
+            LineRoot.Builder.Build();
 
             // Take reference of the root
-            ILineRoot root = LocalizationRoot.Global;
+            ILineRoot root = LineRoot.Global;
 
             // Create key
-            ILine key = root.Type<Program>().Key("Hello").Inline("Hello World!");
+            ILine key = root.Type<Program>().Key("Hello").Format("Hello World!");
 
             // Print with current culture
             Console.WriteLine(key);

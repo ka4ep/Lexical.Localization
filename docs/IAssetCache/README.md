@@ -122,7 +122,7 @@ asset = asset.CreateCache();
 
 // Issue a request which will be cached.
 ILine key = new LineRoot().Key("hello");
-IFormatString value = asset.GetString( key.Culture("en") ).GetValue();
+IString value = asset.GetString( key.Culture("en") ).GetString();
 Console.WriteLine(value);
 
 // Clear cache

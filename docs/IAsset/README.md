@@ -19,7 +19,7 @@ Asset interfaces are not called directly but used instead by calling extension m
 // Create key
 ILine key = new LineRoot().Key("hello").Culture("en");
 // Resolve string - Call to StringAssetExtensions.GetString()
-IFormatString str = asset.GetString(key).GetValue();
+IString str = asset.GetString(key).GetString();
 ```
 
 <details>

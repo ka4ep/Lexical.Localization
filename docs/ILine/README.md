@@ -35,7 +35,7 @@ Key can be used as a *reference*.
 ILine key = new LineRoot().Section("Section").Section("Section").Key("Key");
 
 // Retrieve string with a reference
-IFormatString value = asset.GetString(key.Culture("en")).GetValue();
+IString value = asset.GetString(key.Culture("en")).GetString();
 
 // Retrieve binary resource with a reference
 byte[] data = asset.GetResource(key.Culture("en"));
@@ -148,21 +148,21 @@ The key assigned with a format argument by **.Format(*Object[]* args)** call.
 // Create key "Error"
 ILine key = root.Type("ConsoleApp1.MyController").Key("Error");
 // Formulate key
-ILine key_formulated = key.Format(0xFeedF00d);
+ILine key_formulated = key.Value(0xFeedF00d);
 ```
 
 The parametrized key can be resolved to formatted string with **.ToString()** or **.ResolveFormulatedString()**.
 
 ```csharp
 // Resolve to formulated string to "Error (Code=0xFEEDF00D)"
-LineString str = key_formulated.ResolveString();
+Lexical.Localization.StringFormat.LineString str = key_formulated.ResolveString();
 ```
 
 But, if needed an unformulated string can be resolved with **.ResolveString()**.
 
 ```csharp
 // Resolve to localized string "Error (Code=0x{0:X8})", but does not append arguments
-IFormatString str = key_formulated.ResolveFormatString();
+IString str = key_formulated.ResolveFormatString();
 ```
 
 ## Inlining
@@ -177,7 +177,7 @@ Default language strings can be written right into the code with
 // Create root
 ILineRoot root = new LineRoot();
 // Create key and add default value
-ILine key = root.Section("Section").Key("Success").Value("Success");
+ILine key = root.Section("Section").Key("Success").Format("Success");
 // Resolve string from inlined key "Success"
 string str = key.ToString();
 ```
@@ -187,7 +187,7 @@ Inlining can be provided for specific cultures with <b>.Inline(<i>string</i>, <i
 ```csharp
 // Create key and add default strings
 ILine key = root.Section("Section").Key("Success")
-    .Value("Success")                                  // Add inlining to the root culture ""
+    .Format("Success")                                  // Add inlining to the root culture ""
     .Inline("Culture:en", "Success")                   // Add inlining to culture "en"
     .Inline("Culture:fi", "Onnistui")                  // Add inlining to culture "fi"
     .Inline("Culture:sv", "Det funkar");               // Add inlining to culture "sv"
@@ -200,7 +200,7 @@ There are shorter extension methods for every language in namespace **Lexical.Lo
 ```csharp
 // Create key and add default strings
 ILine key = root.Section("Section").Key("Success")
-    .Value("Success")                                  // Add inlining to the root culture ""
+    .Format("Success")                                  // Add inlining to the root culture ""
     .en("Success")                                     // Add inlining to culture "en"
     .fi("Onnistui")                                    // Add inlining to culture "fi"
     .sv("Det funkar");                                 // Add inlining to culture "sv"
@@ -212,7 +212,7 @@ Caveat however, that inlining to specific cultures with <b>.Inline(<i>string</i>
 class MyController__
 {
     static ILine localization = LineRoot.Global.Type<MyControllerB>();
-    static ILine Success = localization.Key("Success").Value("Success").sv("Det funkar").fi("Onnistui");
+    static ILine Success = localization.Key("Success").Format("Success").sv("Det funkar").fi("Onnistui");
 
     public string Do()
     {

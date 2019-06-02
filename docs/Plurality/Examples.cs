@@ -11,6 +11,22 @@ namespace docs
         public static void Main(string[] args)
         {
             {
+                #region Snippet_A1
+                ILine root = new LineRoot().PluralRules(CLDR35.Instance);
+                #endregion Snippet_A1
+            }
+            {
+                #region Snippet_A2
+                ILine root = new LineRoot().PluralRules("Lexical.Localization.CLDR35");
+                #endregion Snippet_A2
+            }
+            {
+                #region Snippet_A3
+                ILine root = new LineRoot().PluralRules("[Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true");
+                #endregion Snippet_A3
+            }
+
+            {
                 #region Snippet_0a
                 IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample0a.xml");
                 ILineRoot root = new LineRoot(asset);
@@ -103,17 +119,7 @@ namespace docs
                         Console.WriteLine(key.Value(cats, dogs));
                 #endregion Snippet_3
             }
-            {
-                // Plurality permutations for two arguments
-                #region Snippet_4
-                IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample2.xml");
-                ILine key = new LineRoot(asset).Key("CatsDogs");
 
-                for (int cats = 0; cats <= 2; cats++)
-                    for (int dogs = 0; dogs <= 2; dogs++)
-                        Console.WriteLine(key.Value(cats, dogs));
-                #endregion Snippet_4
-            }
             {
                 // Plurality permutations for argument 0 and argument 1
                 #region Snippet_5

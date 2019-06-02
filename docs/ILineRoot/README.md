@@ -38,7 +38,7 @@ These keys cannot be used as providers, only as references.
 // Create reference
 ILine key = LineAppender.NonResolving.Section("Section").Key("Key");
 // Retreieve with reference
-IFormatString str = asset.GetString(key).GetValue();
+IString str = asset.GetString(key).GetString();
 ```
 
 # String Localizer
@@ -49,9 +49,9 @@ StringLocalizerRoot is constructed with an asset and a culture policy, just as L
 
 ```csharp
 // Create localization source
-var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
+var source = new List<ILine> { LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello").Format("Hello World!") };
 // Create asset
-IAsset asset = new StringAsset(source, LineFormat.Parameters);
+IAsset asset = new StringAsset(source);
 // Create culture policy
 ICulturePolicy culturePolicy = new CulturePolicy();
 // Create root
@@ -63,7 +63,7 @@ Keys can be type-casted to **IStringLocalizer**.
 
 ```csharp
 // Assign as IStringLocalizer, use "MyController" as root.
-IStringLocalizer stringLocalizer = root.Section("MyController") as IStringLocalizer;
+IStringLocalizer stringLocalizer = root.Section("MyController").AsStringLocalizer();
 ```
 And to **IStringLocalizerFactory**.
 
@@ -82,8 +82,7 @@ Key can be assigned for a type **.Type(*Type*)** and then casted to **IStringLoc
 ```csharp
 // Assign to IStringLocalizer for the class MyController
 IStringLocalizer<MyController> stringLocalizer = 
-    root.Type(typeof(MyController)) 
-    as IStringLocalizer<MyController>;
+    root.Type(typeof(MyController)).AsStringLocalizer<MyController>();
 ```
 Also after type casting to IStringLocalizerFactory with **.Create(*Type*)**.
 
@@ -92,8 +91,7 @@ Also after type casting to IStringLocalizerFactory with **.Create(*Type*)**.
 IStringLocalizerFactory stringLocalizerFactory = root as IStringLocalizerFactory;
 // Create IStringLocalizer for the class MyController
 IStringLocalizer<MyController> stringLocalizer = 
-    stringLocalizerFactory.Create(typeof(MyController)) 
-    as IStringLocalizer<MyController>;
+    stringLocalizerFactory.Create(typeof(MyController)) as IStringLocalizer<MyController>;
 ```
 
 <br/>

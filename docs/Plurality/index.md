@@ -1,7 +1,41 @@
 ﻿# Plurality
 Language strings with numeric arguments can be customized for declination of pluralized nouns.
-The parameter name for pluralization of argument "{0}" is **N**, and cases are "Zero", "One", "Plural".
-[!code-xml[Snippet](../../PluralityExample0b.xml)]
+
+To use plurality, the key must have "PluralRules" parameter configured.
+There are five ways to configure the plurality rule:
+
+1. Add class name of plural rules into the localization file (*recommended way*). The value "Lexical.Localization.CLDR35" uses [Unicode CLDR35 plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules). 
+The class is derivate of CLDR35 and is licensed under [Unicode License agreement](https://www.unicode.org/license.html) as "Data Files".
+<details>
+  <summary>PluralRules="Lexical.Localization.CLDR35" (<u>click here</u>)</summary>
+[!code-xml[Snippet](../PluralityExample0a.xml)]
+</details>
+<br/>
+
+2. Add plural rules expression to localization file. See [Unicode CLDR Plural Rule Syntax](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
+<details>
+  <summary>PluralRules="[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true" (<u>click here</u>)</summary> 
+[!code-xml[Snippet](../PluralityExample5.xml)]
+</details>
+<br/>
+
+3. Add instance of **IPluralRules** to line.
+[!code-csharp[Snippet](Examples.cs#Snippet_A1)]
+
+4. Add *class name* of "PluralRules" to line.
+[!code-csharp[Snippet](Examples.cs#Snippet_A2)]
+
+5. Add unicode plural rules expression to line. ([Unicode CLDR Plural Rule Syntax](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules))
+[!code-csharp[Snippet](Examples.cs#Snippet_A3)]
+<br/>
+<br/>
+
+Plural *category* is placed into argument placeholder, for example "There are {cardinal:0} cats.".
+The available cases depend on the culture and the *category*. 
+For root culture "" the category "cardinal" has cases "zero", "one" and "other".
+See [full table of cases for each culture and category](https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html).
+Each case must be matched with a subkey **N:<i>case</i>**.
+[!code-xml[Snippet](../PluralityExample0b.xml)]
 
 [!code-csharp[Snippet](Examples.cs#Snippet_1a)]
 <details>
@@ -14,15 +48,16 @@ a cat
 </details>
 
 <br/>
-If pluralized string is not found then default string is used.
-[!code-xml[Snippet](../../PluralityExample0c.xml)]
+
+If all cases are not used, then then **StringResolver** will to default string.
+For example, "N:one" is provided, and for values other than "1", the rules revert to default string.
+[!code-xml[Snippet](../PluralityExample0c.xml)]
 
 <br/>
-Inlined strings are picked up by [inline scanner](~/sdk/Localization/docs/Tool/index.html) and placed to a localization file.
 Translator adds localized strings for different cultures.
-The decision whether to use pluralization is left for the translator. The file is read into the application. 
+The decision whether to use pluralization is left for the translator.
 [!code-csharp[Snippet](Examples.cs#Snippet_0a)]
-[!code-xml[Snippet](../../PluralityExample0a.xml)]
+[!code-xml[Snippet](../PluralityExample0a.xml)]
 <details>
   <summary>The result (<u>click here</u>)</summary>
 <pre>
@@ -39,34 +74,18 @@ yksi kissa
 </details>
 <br/>
 
-Pluralization can be added to inlining too. Add sub-key with parameter name **N** for argument "{0}" and value for each of "Zero", "One", "Plural".
+Inlined strings are picked up by [inline scanner](~/sdk/Localization/docs/Tool/index.html) and placed to a localization file.
+Add sub-key with parameter name **N** for argument "{0}" and value for each of "zero", "one", "other".
 [!code-csharp[Snippet](Examples.cs#Snippet_0b)]
 
 And inlining for specific cultures too with subkey "Culture:*culture*:N:*case*".
 [!code-csharp[Snippet](Examples.cs#Snippet_0c)]
 
 
-If language string has two numeric arguments, then plurality keys can be added to one or both of them. The parameter name for argument "{1}" is **N1**. 
-[!code-xml[Snippet](../../PluralityExample2.xml)]
-[!code-csharp[Snippet](Examples.cs#Snippet_4)]
-<details>
-  <summary>The result (<u>click here</u>)</summary>
-<pre>
-0 cat(s) and no dogs
-0 cat(s) and a dog
-0 cat(s) and 2 dogs
-1 cat(s) and no dogs
-1 cat(s) and a dog
-1 cat(s) and 2 dogs
-2 cat(s) and no dogs
-2 cat(s) and a dog
-2 cat(s) and 2 dogs
-</pre>
-</details>
-<br/>
 
-If translator wants to supply plurality for two numeric arguments, then all permutations of cases "Zero", "One" and "Plural" for both arguments must be covered.
-[!code-xml[Snippet](../../PluralityExample2-en.xml)]
+If translator wants to supply plurality for two numeric arguments, then all permutations of required cases (for example "zero", "one" and "other") for both arguments must be covered.
+By default the maximum number of pluralized arguments is three arguments. This value can be modified, by creating a custom instance of **StringResolver** into **ILineRoot**.
+[!code-xml[Snippet](../PluralityExample2.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_5)]
 <details>
   <summary>The result (<u>click here</u>)</summary>
@@ -84,8 +103,8 @@ a cat and 2 dogs
 </details>
 <br/>
 
-If there are more than two numeric arguments, pluralization can be provided for one argument, but not for any permutation of two or more arguments.
-[!code-xml[Snippet](../../PluralityExample4.xml)]
+Pluralization is applied only to the arguments that have "{<i>category</i>:<i>arg</i>}".
+[!code-xml[Snippet](../PluralityExample4.xml)]
 [!code-csharp[Snippet](Examples.cs#Snippet_6)]
 <details>
   <summary>The result (<u>click here</u>)</summary>
@@ -173,3 +192,6 @@ If there are more than two numeric arguments, pluralization can be provided for 
 2 cat(s), 2 dog(s), 2 ponies and 2 horse(s)
 </pre>
 </details>
+
+
+

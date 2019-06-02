@@ -31,11 +31,11 @@ namespace TutorialLibrary
     public class MyController1
     {
         // Use this reference 
-        static ILine localization = LocalizationRoot.Global.Type(typeof(MyController1));
+        static ILine localization = LineRoot.Global.Type(typeof(MyController1));
 
         public string Do()
         {
-            return localization.Key("OK").Inline("Operation Successful").ToString();
+            return localization.Key("OK").Format("Operation Successful").ToString();
         }
     }
 }
@@ -80,7 +80,7 @@ namespace TutorialLibrary
 
         public string Do()
         {
-            return localization.Key("OK").Inline("Operation Successful").ToString();
+            return localization.Key("OK").Format("Operation Successful").ToString();
         }
     }
 }
@@ -91,6 +91,7 @@ In the setup of the application ILineRoot needs to be provided for the class.
 
 ```csharp
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
@@ -107,11 +108,11 @@ namespace TutorialProject
             Dictionary<string, string> strs = new Dictionary<string, string>();
             strs["Culture:fi:Type:TutorialLibrary.MyController2:Key:OK"] = "Toiminto onnistui";
             IAsset asset = new StringAsset()
-                    .Add(strs, LineFormat.Default)
+                    .Add(strs, LineFormat.Parameters)
                     .Load();
 
             // Create asset root
-            ILineRoot root = new LocalizationRoot(asset, new CulturePolicy());
+            ILineRoot root = new LineRoot(asset, new CulturePolicy());
 
             // Call Controller
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fi");
@@ -170,6 +171,7 @@ In the setup of the application IStringLocalizerFactory or IStringLocalizer&lt;T
 
 ```csharp
 using Lexical.Localization;
+using Lexical.Localization.Asset;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -186,7 +188,7 @@ namespace TutorialProject
             Dictionary<string, string> strs = new Dictionary<string, string>();
             strs["Culture:fi:Type:TutorialLibrary.MyController3:Key:OK"] = "Toiminto onnistui";
             IAsset asset = new StringAsset()
-                    .Add(strs, LineFormat.Default)
+                    .Add(strs, LineFormat.Parameters)
                     .Load();
 
             // Create asset root
