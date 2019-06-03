@@ -737,7 +737,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public byte[] GetResource(ILine key)
+        public byte[] GetResourceBytes(ILine key)
         {
             Cache _cache = this.cache;
 
@@ -754,7 +754,7 @@ namespace Lexical.Localization.Asset
             }
 
             // Read from backend and write to cache
-            value = Source.GetResource(key);
+            value = Source.GetResourceBytes(key);
 
             // Write to cache, be that null or not
             if (value != null && value.Length <= Options.GetMaxResourceSize())
@@ -779,7 +779,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Stream OpenStream(ILine key)
+        public Stream GetResourceStream(ILine key)
         {
             Cache _cache = this.cache;
 
@@ -797,7 +797,7 @@ namespace Lexical.Localization.Asset
             }
 
             // Open stream
-            Stream stream = Source.OpenStream(key);
+            Stream stream = Source.GetResourceStream(key);
 
             // Store into cache?
             if (Options.GetCacheStreams())
@@ -888,7 +888,7 @@ namespace Lexical.Localization.Asset
                     if (ix > 0)
                     {
                         stream.Dispose();
-                        return Source.OpenStream(key);
+                        return Source.GetResourceStream(key);
                     }
                 }
             }

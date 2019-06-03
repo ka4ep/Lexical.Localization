@@ -3,12 +3,14 @@
 // Date:           25.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using System;
 
-namespace Lexical.Localization.StringFormat
+using Lexical.Localization.StringFormat;
+
+namespace Lexical.Localization.Resolver
 {
     /// <summary>
-    /// Set of resolvers that <see cref="StringResolver"/> uses.
+    /// Set of resolvers that resolve parameters values into instances.
+    /// Resolves following parameter names: "StringFormat", "Functions", "FormatProvider", "PluralRules", "Culture", "CulturePolicy", "StringResolver", "ResourceResolver".
     /// </summary>
     public class Resolvers : ResolverComposition
     {
@@ -19,7 +21,9 @@ namespace Lexical.Localization.StringFormat
             .Add(Lexical.Localization.Plurality.PluralRulesResolver.Default)
             .Add(Lexical.Localization.CultureResolver.Default)
             .Add(Lexical.Localization.CulturePolicyResolver.Default)
-            //.Add(Lexical.Localization.StringFormat.TypeResolver.Default)  // <-- No practical reasons to resolve "Type" parameters. String keys do better.
+            .Add(Lexical.Localization.StringFormat.StringResolverResolver.Default)
+            .Add(Lexical.Localization.Resource.ResourceResolverResolver.Default)
+            //.Add(Lexical.Localization.StringFormat.TypeResolver.Default)  // <-- No practical reasons to resolve "Type" parameters. String keys do better. Enabling this makes unnecessary resolves.
             .ReadOnly();
 
         /// <summary>

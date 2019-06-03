@@ -56,9 +56,9 @@ namespace Lexical.Localization
         public static LineComparer IgnoreCulture => ignoreCulture;
 
         /// <summary>
-        /// Compares line's effective values for hash-equality.
+        /// Compares line's effective "String" for hash-equality.
         /// </summary>
-        public static IEqualityComparer<ILine> Value => LineValueComparer.Default;
+        public static IEqualityComparer<ILine> String => LineStringComparer.Default;
 
         /// <summary>
         /// List of canonical comparers that compare <see cref="ILineCanonicalKey"/> parts.
@@ -448,14 +448,14 @@ namespace Lexical.Localization
     /// 
     /// The last part that defines "String" or <see cref="ILineString"/> is considered effective.
     /// </summary>
-    public class LineValueComparer : IEqualityComparer<ILine>
+    public class LineStringComparer : IEqualityComparer<ILine>
     {
-        private static LineValueComparer instance = new LineValueComparer();
+        private static LineStringComparer instance = new LineStringComparer();
 
         /// <summary>
         /// Get parameter comparer.
         /// </summary>
-        public static LineValueComparer Default => instance;
+        public static LineStringComparer Default => instance;
 
         /// <summary>
         /// 

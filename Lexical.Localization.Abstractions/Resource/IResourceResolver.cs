@@ -100,33 +100,5 @@ namespace Lexical.Localization
             return result;
         }
 
-
-
-        /// <summary>
-        /// Find <see cref="IAsset"/> and match resource to <paramref name="key"/>.
-        /// Does not apply contextual information.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns>byte[] or null</returns>
-        /// <exception cref="LineException">If resolving failed or resolver was not found</exception>
-        public static byte[] GetResource(this ILine key)
-        {
-            IAsset asset = key.FindAsset();
-            if (asset == null) return null;
-            return asset.GetResource(key);
-        }
-
-        /// <summary>
-        /// Find <see cref="IAsset"/> and get language string.
-        /// Ignores culture policy, ignores inlining, ignores formatting.
-        /// 
-        /// <see cref="ResolveFormatString(ILine)"/> to resolve string with active culture from <see cref="ICulturePolicy"/>.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns>byte[] or null</returns>
-        public static byte[] TryGetResource(this ILine key)
-            => key.FindAsset()?.GetResource(key);
-
-
     }
 }

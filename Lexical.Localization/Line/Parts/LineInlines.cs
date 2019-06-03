@@ -303,7 +303,7 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = LineFormat.Parameters.Parse(subKeyText, line);
+            ILine subline = LineFormat.ParametersInclString.Parse(subKeyText, line);
             if (value == null)
             {
                 inlines.Remove(subline);

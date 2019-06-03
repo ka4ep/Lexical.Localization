@@ -44,7 +44,7 @@ namespace Lexical.Localization
             new LineComparer(ParameterInfos.Default)
                 .AddCanonicalComparer(ParameterComparer.Default)
                 .AddComparer(NonCanonicalComparer.AllParameters)
-                .AddComparer(new LineValueComparer())
+                .AddComparer(LineValueComparer.Default)
                 .SetReadonly();
 
         /// <summary>

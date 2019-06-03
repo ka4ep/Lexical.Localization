@@ -43,7 +43,7 @@ namespace Lexical.Localization.StringFormat
         /// <returns></returns>
         public LineString Print(IString str)
         {
-            if (str == null) return new LineString(null, null, LineStatus.FormatFailedNull);
+            if (str == null) return new LineString(null, (Exception)null, LineStatus.FormatFailedNull);
             // As is
             if (str.StringFormat == null || str.StringFormat is TextFormat) return new LineString(null, str.Text, LineStatus.FormatOkString);
 

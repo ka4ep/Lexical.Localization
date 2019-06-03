@@ -123,7 +123,7 @@ namespace docs
             {
                 // Plurality permutations for argument 0 and argument 1
                 #region Snippet_5
-                IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample2-en.xml");
+                IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample2.xml");
                 ILineRoot root = new LineRoot(asset);
                 ILine key = root.Key("CatsDogs").Format("{0} cat(s) and {1} dog(s)");
 

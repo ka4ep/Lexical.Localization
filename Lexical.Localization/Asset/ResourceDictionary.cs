@@ -65,7 +65,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public byte[] GetResource(ILine key)
+        public byte[] GetResourceBytes(ILine key)
         {
             byte[] result = null;
             // Search dictionary
@@ -78,9 +78,9 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Stream OpenStream(ILine key)
+        public Stream GetResourceStream(ILine key)
         {
-            byte[] data = GetResource(key);
+            byte[] data = GetResourceBytes(key);
             if (data == null) return null;
             return new MemoryStream(data);
         }

@@ -6,6 +6,7 @@
 using Lexical.Localization.Asset;
 using Lexical.Localization.Internal;
 using Lexical.Localization.Plurality;
+using Lexical.Localization.Resolver;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

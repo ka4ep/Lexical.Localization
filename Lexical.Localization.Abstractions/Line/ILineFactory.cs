@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
 using Lexical.Localization.Line.Internal;
+using Lexical.Localization.Resolver;
 using Lexical.Localization.StringFormat;
 using Lexical.Localization.Utils;
 using System;

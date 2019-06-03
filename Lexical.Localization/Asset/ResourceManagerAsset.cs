@@ -150,7 +150,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public byte[] GetResource(ILine key)
+        public byte[] GetResourceBytes(ILine key)
         {
             string id = namePolicy.Print(key);
             CultureInfo culture = key.GetCultureInfo();
@@ -171,7 +171,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Stream OpenStream(ILine key)
+        public Stream GetResourceStream(ILine key)
         {
             string id = namePolicy.Print(key);
             CultureInfo culture = key.GetCultureInfo();

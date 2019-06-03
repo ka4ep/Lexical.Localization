@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.Resolver;
 using System;
 using System.Reflection;
 
@@ -12,7 +13,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves string format class name to string format.
     /// </summary>
-    public class StringFormatResolver : BaseTypeResolver<IStringFormat>, IParameterResolver
+    public class StringFormatResolver : BaseResolver<IStringFormat>, IParameterResolver
     {
         /// <summary>
         /// Default instance.

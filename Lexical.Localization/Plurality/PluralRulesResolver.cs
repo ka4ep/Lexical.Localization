@@ -4,7 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
-using Lexical.Localization.StringFormat;
+using Lexical.Localization.Resolver;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -92,7 +92,7 @@ namespace Lexical.Localization.Plurality
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public PluralRulesResolver() : this(BaseTypeResolver.DefaultAssemblyResolver, BaseTypeResolver.DefaultTypeResolver, DefaultRuleExpressionParser, DefaultRulesFactory)
+        public PluralRulesResolver() : this(BaseResolver.DefaultAssemblyResolver, BaseResolver.DefaultTypeResolver, DefaultRuleExpressionParser, DefaultRulesFactory)
         {
         }
 
@@ -119,13 +119,14 @@ namespace Lexical.Localization.Plurality
                     // Enumerable
                     IEnumerable<IPluralRule> enumr = null;
                     // Parse Expression
-                    if (rules[0]=='[')
+                    if (rules[0] == '[')
                     {
                         // Assert ruleExpressionParser is not null
                         if (ruleExpressionParser == null) throw new InvalidOperationException($"{nameof(ruleExpressionParser)} is null");
                         // Create parse
                         enumr = this.ruleExpressionParser(rules);
-                    } else
+                    }
+                    else
                     // Resolve class
                     {
                         enumr = ResolveRulesClass(rules);

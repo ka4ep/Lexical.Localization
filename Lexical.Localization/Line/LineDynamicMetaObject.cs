@@ -91,7 +91,7 @@ namespace Lexical.Localization
             // (byte[]) maps to LineExtensions.GetResource(obj)
             if (typeof(byte[]).IsAssignableFrom(binder.ReturnType))
             {
-                if (miGetResource == null) miGetResource = typeof(ILineExtensions).GetMethod(nameof(ILineExtensions.GetResource));
+                if (miGetResource == null) miGetResource = typeof(ILineExtensions).GetMethod(nameof(ILineExtensions.GetResourceBytes));
                 mi = miGetResource;
             }
 

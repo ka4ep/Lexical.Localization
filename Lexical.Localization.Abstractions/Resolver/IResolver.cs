@@ -3,12 +3,11 @@
 // Date:           16.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Lexical.Localization
+namespace Lexical.Localization.Resolver
 {
     /// <summary>
     /// Resolver
@@ -97,6 +96,11 @@ namespace Lexical.Localization
     public interface IResolverEnumerable : IResolver, IEnumerable<IResolver>
     {
     }
+}
+
+namespace Lexical.Localization
+{
+    using Lexical.Localization.Resolver;
 
     /// <summary></summary>
     public static class IResolverExtensions

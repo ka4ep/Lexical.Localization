@@ -134,7 +134,7 @@ namespace Lexical.Localization.Internal
         /// <param name="obj"></param>
         /// <returns></returns>
         public override bool Equals(object obj)
-            => obj is LineTreeValue other ? tree == other.tree && LineComparer.Value.Equals(value, other.value) && valueIndex == other.valueIndex : false;
+            => obj is LineTreeValue other ? tree == other.tree && LineComparer.String.Equals(value, other.value) && valueIndex == other.valueIndex : false;
 
         /// <summary>
         /// Compare for equality
@@ -142,7 +142,7 @@ namespace Lexical.Localization.Internal
         /// <param name="other"></param>
         /// <returns></returns>
         public bool Equals(LineTreeValue other)
-            => tree == other.tree && LineComparer.Value.Equals(value, other.value) && valueIndex == other.valueIndex;
+            => tree == other.tree && LineComparer.String.Equals(value, other.value) && valueIndex == other.valueIndex;
 
         /// <summary>
         /// Calculate hash-code
@@ -153,7 +153,7 @@ namespace Lexical.Localization.Internal
             int hash = -2128831035;
             hash ^= tree.GetHashCode();
             hash *= 0x1000193;
-            hash ^= LineComparer.Value.GetHashCode(value);
+            hash ^= LineComparer.String.GetHashCode(value);
             hash *= 0x1000193;
             hash ^= valueIndex;
             hash *= 0x1000193;
@@ -180,7 +180,7 @@ namespace Lexical.Localization.Internal
         /// <param name="y"></param>
         /// <returns></returns>
         public bool Equals(LineTreeValue x, LineTreeValue y)
-            => x.tree == y.tree && LineComparer.Value.Equals(x.value, y.value) && x.valueIndex == y.valueIndex;
+            => x.tree == y.tree && LineComparer.String.Equals(x.value, y.value) && x.valueIndex == y.valueIndex;
 
         /// <summary>
         /// Calculate hash-code

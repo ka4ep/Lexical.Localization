@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using Lexical.Localization.Asset;
 using Lexical.Localization.Internal;
+using Lexical.Localization.Resolver;
 using System;
 using System.Globalization;
 

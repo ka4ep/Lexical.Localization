@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lexical.Localization.StringFormat
+namespace Lexical.Localization.Resolver
 {
     /// <summary>
     /// Composition of <see cref="IResolver"/>.

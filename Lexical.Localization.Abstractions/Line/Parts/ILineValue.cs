@@ -69,6 +69,13 @@ namespace Lexical.Localization
     {
         static IEqualityComparer<object[]> array_comparer = new ArrayComparer<object>(EqualityComparer<object>.Default);
 
+        private static LineValueComparer instance = new LineValueComparer();
+
+        /// <summary>
+        /// Get the value arguments comparer.
+        /// </summary>
+        public static LineValueComparer Default => instance;
+
         /// <summary>
         /// Compare last format args value.
         /// </summary>

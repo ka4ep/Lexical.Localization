@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.Resolver;
 using Lexical.Localization.StringFormat;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,8 @@ namespace Lexical.Localization.Utils
             .Add("PluralRules", interfaceType: typeof(ILineHint), sortingOrder: -22000, pattern: null)
             .Add("StringFormatFunctions", interfaceType: typeof(ILineHint), sortingOrder: -21000, pattern: null)
             .Add("StringFormat", interfaceType: typeof(ILineHint), sortingOrder: -200000, pattern: null)
+            .Add("StringResolver", interfaceType: typeof(ILineHint), sortingOrder: -201000, pattern: null)
+            .Add("ResourceResolver", interfaceType: typeof(ILineHint), sortingOrder: -202000, pattern: null)
             as ParameterInfos;
 
         /// <summary>

@@ -6,6 +6,7 @@
 using Lexical.Localization.Asset;
 using Lexical.Localization.Internal;
 using Lexical.Localization.Plurality;
+using Lexical.Localization.Resolver;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -48,7 +49,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         public StringResolver()
         {
-            this.Resolvers = StringFormat.Resolvers.Default;
+            this.Resolvers = Lexical.Localization.Resolver.Resolvers.Default;
             this.ResolveSequence = new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
             this.maxPluralArguments = 3;
         }

@@ -14,7 +14,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Interface for reading binary resources.
     /// 
-    /// Consumers of this interface should always call with <see cref="IAssetExtensions.GetResource(IAsset, ILine)"/>.
+    /// Consumers of this interface should always call with <see cref="IAssetExtensions.GetResourceBytes(IAsset, ILine)"/>.
     /// </summary>
     public interface IResourceAsset : IAsset
     {
@@ -26,7 +26,7 @@ namespace Lexical.Localization.Asset
         /// <param name="key"></param>
         /// <returns>resolved resource, or null or resource was not found</returns>
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        byte[] GetResource(ILine key);
+        byte[] GetResourceBytes(ILine key);
 
         /// <summary>
         /// Try to open a stream to a resource by matching <paramref name="key"/> as is.
@@ -36,7 +36,7 @@ namespace Lexical.Localization.Asset
         /// <param name="key"></param>
         /// <returns>resolved resource in an open stream, or null if resource was not found</returns>
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        Stream OpenStream(ILine key);
+        Stream GetResourceStream(ILine key);
     }
 
     /// <summary>
@@ -141,18 +141,18 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>resolved string or null or resource was not found</returns>
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        public static byte[] GetResource(this IAsset asset, ILine key)
+        public static byte[] GetResourceBytes(this IAsset asset, ILine key)
         {
             if (asset is IResourceAsset casted)
             {
-                byte[] data = casted.GetResource(key);
+                byte[] data = casted.GetResourceBytes(key);
                 if (data != null) return data;
             }
             if (asset is IAssetComposition composition)
             {
                 foreach (IResourceAsset component in composition.GetComponents<IResourceAsset>(true) ?? Enumerable.Empty<IResourceAsset>())
                 {
-                    byte[] data = component.GetResource(key);
+                    byte[] data = component.GetResourceBytes(key);
                     if (data != null) return data;
                 }
                 foreach(IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
@@ -162,7 +162,7 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            byte[] data = loaded_asset.GetResource(key);
+                            byte[] data = loaded_asset.GetResourceBytes(key);
                             if (data != null) return data;
                         }
                     }
@@ -175,7 +175,7 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in assets)
                     {
-                        byte[] data = loaded_asset.GetResource(key);
+                        byte[] data = loaded_asset.GetResourceBytes(key);
                         if (data != null) return data;
                     }
                 }
@@ -190,18 +190,18 @@ namespace Lexical.Localization
         /// <param name="key"></param>
         /// <returns>resolved string or null if resource was not found</returns>
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        public static Stream OpenStream(this IAsset asset, ILine key)
+        public static Stream GetResourceStream(this IAsset asset, ILine key)
         {
             if (asset is IResourceAsset casted)
             {
-                Stream steam = casted.OpenStream(key);
+                Stream steam = casted.GetResourceStream(key);
                 if (steam != null) return steam;
             }
             if (asset is IAssetComposition composition)
             {
                 foreach (IResourceAsset component in composition.GetComponents<IResourceAsset>(true) ?? Enumerable.Empty<IResourceAsset>())
                 {
-                    Stream steam = component.OpenStream(key);
+                    Stream steam = component.GetResourceStream(key);
                     if (steam != null) return steam;
                 }
                 foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
@@ -211,7 +211,7 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            Stream steam = loaded_asset.OpenStream(key);
+                            Stream steam = loaded_asset.GetResourceStream(key);
                             if (steam != null) return steam;
                         }
                     }
@@ -224,7 +224,7 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in assets)
                     {
-                        Stream steam = loaded_asset.OpenStream(key);
+                        Stream steam = loaded_asset.GetResourceStream(key);
                         if (steam != null) return steam;
                     }
                 }

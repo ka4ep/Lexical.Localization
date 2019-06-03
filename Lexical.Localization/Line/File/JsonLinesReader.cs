@@ -11,6 +11,7 @@ using System.IO;
 using Lexical.Localization.Utils;
 using Newtonsoft.Json.Linq;
 using Lexical.Localization.StringFormat;
+using Lexical.Localization.Resolver;
 
 namespace Lexical.Localization
 {
