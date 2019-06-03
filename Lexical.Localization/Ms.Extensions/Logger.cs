@@ -3,7 +3,7 @@
 // Date:           9.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.StringFormat;
+using Lexical.Localization.Resource;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -28,7 +28,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Observes resolved localization strings and logs into <see cref="ILogger"/>.
     /// </summary>
-    public class LineILogger : IObserver<StringFormat.LineString>
+    public class LineILogger : ILocalizationLogger, ILocalizationStringLogger, ILocalizationResourceLogger
     {
         ILogger logger;
 
@@ -64,10 +64,46 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Formatter supplies format result.
+        /// Log string resolve
         /// </summary>
         /// <param name="value"></param>
         public void OnNext(StringFormat.LineString value)
+        {
+            // Get reference
+            var _logger = logger;
+            // Is disposed?
+            if (_logger == null) return;
+            // Get severity
+            LineStatusSeverity severity = value.Severity;
+            // Write status
+            if (_logger.IsEnabled(LogLevel.Trace) && severity == LineStatusSeverity.Ok) { _logger.LogError(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Warning) && severity == LineStatusSeverity.Warning) { _logger.LogWarning(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Error) && severity >= LineStatusSeverity.Error) { _logger.LogError(value.DebugInfo); return; }
+        }
+
+        /// <summary>
+        /// Log resource resolve
+        /// </summary>
+        /// <param name="value"></param>
+        public void OnNext(LineResourceBytes value)
+        {
+            // Get reference
+            var _logger = logger;
+            // Is disposed?
+            if (_logger == null) return;
+            // Get severity
+            LineStatusSeverity severity = value.Severity;
+            // Write status
+            if (_logger.IsEnabled(LogLevel.Trace) && severity == LineStatusSeverity.Ok) { _logger.LogError(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Warning) && severity == LineStatusSeverity.Warning) { _logger.LogWarning(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Error) && severity >= LineStatusSeverity.Error) { _logger.LogError(value.DebugInfo); return; }
+        }
+
+        /// <summary>
+        /// Log resource resolve
+        /// </summary>
+        /// <param name="value"></param>
+        public void OnNext(LineResourceStream value)
         {
             // Get reference
             var _logger = logger;

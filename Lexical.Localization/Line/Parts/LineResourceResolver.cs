@@ -1,34 +1,34 @@
 ﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           3.5.2019
+// Date:           3.6.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.StringFormat;
+using Lexical.Localization.Resource;
 using System;
 using System.Runtime.Serialization;
 
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Line part that carries <see cref="ILineStringResolver"/>. 
+    /// Line part that carries <see cref="ILineResourceResolver"/>. 
     /// </summary>
     [Serializable]
-    public class LineStringResolver : LineBase, ILineStringResolver, ILineArguments<IStringResolver>
+    public class LineResourceResolver : LineBase, ILineResourceResolver, ILineArguments<IResourceResolver>
     {
         /// <summary>
         /// Localization resolver.
         /// </summary>
-        protected IStringResolver resolver;
+        protected IResourceResolver resolver;
 
         /// <summary>
         /// ILineLineResolver property
         /// </summary>
-        public IStringResolver StringResolver { get => resolver; set => throw new InvalidOperationException(); }
+        public IResourceResolver ResourceResolver { get => resolver; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public IStringResolver Argument0 => resolver;
+        public IResourceResolver Argument0 => resolver;
 
         /// <summary>
         /// Create new line part.
@@ -36,7 +36,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="LineResolver"></param>
-        public LineStringResolver(ILineFactory appender, ILine prevKey, IStringResolver LineResolver) : base(appender, prevKey)
+        public LineResourceResolver(ILineFactory appender, ILine prevKey, IResourceResolver LineResolver) : base(appender, prevKey)
         {
             this.resolver = LineResolver;
         }
@@ -46,9 +46,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public LineStringResolver(SerializationInfo info, StreamingContext context) : base(info, context)
+        public LineResourceResolver(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.resolver = info.GetValue("StringResolver", typeof(IStringResolver)) as IStringResolver;
+            this.resolver = info.GetValue("ResourceResolver", typeof(IResourceResolver)) as IResourceResolver;
         }
 
         /// <summary>
@@ -59,11 +59,11 @@ namespace Lexical.Localization
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("StringResolver", resolver);
+            info.AddValue("ResourceResolver", resolver);
         }
     }
 
-    public partial class LineAppender : ILineFactory<ILineStringResolver, IStringResolver>
+    public partial class LineAppender : ILineFactory<ILineResourceResolver, IResourceResolver>
     {
         /// <summary>
         /// Append part.
@@ -73,41 +73,41 @@ namespace Lexical.Localization
         /// <param name="LineResolver"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, IStringResolver LineResolver, out ILineStringResolver line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IResourceResolver LineResolver, out ILineResourceResolver line)
         {
-            line = new LineStringResolver(appender, previous, LineResolver);
+            line = new LineResourceResolver(appender, previous, LineResolver);
             return true;
         }
     }
 
     /// <summary>
-    /// StringLocalizer part that carries <see cref="ILineStringResolver"/>. 
+    /// ResourceLocalizer part that carries <see cref="ILineResourceResolver"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerLineResolver : StringLocalizerBase, ILineStringResolver, ILineArguments<IStringResolver>
+    public class ResourceLocalizerLineResolver : StringLocalizerBase, ILineResourceResolver, ILineArguments<IResourceResolver>
     {
         /// <summary>
         /// Localization resolver.
         /// </summary>
-        protected IStringResolver resolver;
+        protected IResourceResolver resolver;
 
         /// <summary>
         /// ILineLineResolver property
         /// </summary>
-        public IStringResolver StringResolver { get => resolver; set => throw new InvalidOperationException(); }
+        public IResourceResolver ResourceResolver { get => resolver; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
         /// </summary>
-        public IStringResolver Argument0 => resolver;
+        public IResourceResolver Argument0 => resolver;
 
         /// <summary>
-        /// Create new StringLocalizer part.
+        /// Create new ResourceLocalizer part.
         /// </summary>
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="LineResolver"></param>
-        public StringLocalizerLineResolver(ILineFactory appender, ILine prevKey, IStringResolver LineResolver) : base(appender, prevKey)
+        public ResourceLocalizerLineResolver(ILineFactory appender, ILine prevKey, IResourceResolver LineResolver) : base(appender, prevKey)
         {
             this.resolver = LineResolver;
         }
@@ -117,9 +117,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public StringLocalizerLineResolver(SerializationInfo info, StreamingContext context) : base(info, context)
+        public ResourceLocalizerLineResolver(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.resolver = info.GetValue("StringResolver", typeof(IStringResolver)) as IStringResolver;
+            this.resolver = info.GetValue("ResourceResolver", typeof(IResourceResolver)) as IResourceResolver;
         }
 
         /// <summary>
@@ -130,11 +130,11 @@ namespace Lexical.Localization
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
-            info.AddValue("StringResolver", resolver);
+            info.AddValue("ResourceResolver", resolver);
         }
     }
 
-    public partial class StringLocalizerAppender : ILineFactory<ILineStringResolver, IStringResolver>
+    public partial class StringLocalizerAppender : ILineFactory<ILineResourceResolver, IResourceResolver>
     {
         /// <summary>
         /// Append part.
@@ -142,11 +142,11 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="previous"></param>
         /// <param name="LineResolver"></param>
-        /// <param name="StringLocalizer"></param>
+        /// <param name="ResourceLocalizer"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, IStringResolver LineResolver, out ILineStringResolver StringLocalizer)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, IResourceResolver LineResolver, out ILineResourceResolver ResourceLocalizer)
         {
-            StringLocalizer = new StringLocalizerLineResolver(appender, previous, LineResolver);
+            ResourceLocalizer = new ResourceLocalizerLineResolver(appender, previous, LineResolver);
             return true;
         }
     }

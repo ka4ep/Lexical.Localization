@@ -98,7 +98,7 @@ namespace Lexical.Localization.StringFormat
             if (line == null || !features.HasValue)
             {
                 features.Status.UpResolve(LineStatus.ResolveFailedNoValue);
-                LineString str = new LineString(key, null, features.Status);
+                LineString str = new LineString(key, (Exception)null, features.Status);
                 features.Log(str);
                 return new StatusString(null, features.Status);
             }
@@ -110,7 +110,7 @@ namespace Lexical.Localization.StringFormat
             // Value has error
             if (value.Parts == null || value.Status.Failed())
             {
-                LineString str = new LineString(key, null, features.Status);
+                LineString str = new LineString(key, (Exception)null, features.Status);
                 features.Log(str);
                 return new StatusString(null, features.Status);
             }
@@ -162,7 +162,7 @@ namespace Lexical.Localization.StringFormat
                         // Value has error
                         if (value_for_plurality.Parts == null || value_for_plurality.Status.Failed())
                         {
-                            LineString str = new LineString(key, null, features.Status);
+                            LineString str = new LineString(key, (Exception)null, features.Status);
                             features.Log(str);
                             return new StatusString(null, features.Status);
                         }
@@ -210,7 +210,7 @@ namespace Lexical.Localization.StringFormat
             {
                 features.Log(e);
                 features.Status.Up(LineStatus.FailedUnknownReason);
-                return new LineString(key, null, features.Status);
+                return new LineString(key, e, features.Status);
             }
 
             try
@@ -223,7 +223,7 @@ namespace Lexical.Localization.StringFormat
                 if (line == null || !features.HasValue)
                 {
                     features.Status.UpResolve(LineStatus.ResolveFailedNoValue);
-                    LineString str = new LineString(key, null, features.Status);
+                    LineString str = new LineString(key, (Exception)null, features.Status);
                     features.Log(str);
                     return str;
                 }
@@ -235,7 +235,7 @@ namespace Lexical.Localization.StringFormat
                 // Value has error
                 if (value.Parts == null || value.Status.Failed())
                 {
-                    LineString str = new LineString(key, null, features.Status);
+                    LineString str = new LineString(key, (Exception)null, features.Status);
                     features.Log(str);
                     return str;
                 }
@@ -291,7 +291,7 @@ namespace Lexical.Localization.StringFormat
                                 {
                                     features.Log(e);
                                     features.Status.Up(LineStatus.FailedUnknownReason);
-                                    return new LineString(key, null, features.Status);
+                                    return new LineString(key, e, features.Status);
                                 }
                                 // Parse value
                                 IString value_for_plurality = features.EffectiveString;
@@ -300,7 +300,7 @@ namespace Lexical.Localization.StringFormat
                                 // Value has error
                                 if (value_for_plurality.Parts == null || value_for_plurality.Status.Failed())
                                 {
-                                    LineString str = new LineString(key, null, features.Status);
+                                    LineString str = new LineString(key, (Exception)null, features.Status);
                                     features.Log(str);
                                     return str;
                                 }
@@ -382,7 +382,7 @@ namespace Lexical.Localization.StringFormat
             {
                 // Capture unexpected error
                 features.Log(e);
-                LineString lineString = new LineString(key, null, LineStatus.FailedUnknownReason);
+                LineString lineString = new LineString(key, e, LineStatus.FailedUnknownReason);
                 features.Log(lineString);
                 return lineString;
             }
@@ -686,7 +686,7 @@ namespace Lexical.Localization.StringFormat
         void EvaluatePlaceholderValues(ILine line, IPlaceholder[] placeholders, ref LineFeatures features, ref StructList12<string> placeholder_values, CultureInfo culture)
         {
             PlaceholderExpressionEvaluator placeholder_evaluator = new PlaceholderExpressionEvaluator();
-            placeholder_evaluator.Args = features.FormatArgs;
+            placeholder_evaluator.Args = features.ValueArgs;
             placeholder_evaluator.FunctionEvaluationCtx.Culture = culture;
             placeholder_evaluator.FunctionEvaluationCtx.Line = line;
             if (features.FormatProviders.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = features.FormatProviders[0]; else if (features.FormatProviders.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = new FormatProviderComposition(features.FormatProviders.ToArray());

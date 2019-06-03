@@ -118,7 +118,7 @@ namespace Lexical.Localization.StringFormat
         public static LineString Print(this IStringFormat stringFormat, IString str)
         {
             if (stringFormat is IStringFormatPrinter printer) return printer.Print(str);
-            return new LineString(null, null, LineStatus.FormatFailedNoPrinter);
+            return new LineString(null, (Exception)null, LineStatus.FormatFailedNoPrinter);
         }
 
         /// <summary>

@@ -1,26 +1,20 @@
 ﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           7.4.2019
+// Date:           3.6.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
 using System;
+using System.IO;
 using System.Text;
 
-namespace Lexical.Localization.StringFormat
+namespace Lexical.Localization.Resource
 {
     /// <summary>
     /// Result of an operation that resolves a <see cref="ILine"/> into a string within an executing context, such as one that includes current active culture.
     /// </summary>
-    public struct LineString
+    public struct LineResourceStream
     {
-        /// <summary>
-        /// Return string <see cref="String"/>.
-        /// </summary>
-        /// <param name="str"></param>
-        public static implicit operator string(LineString str)
-            => str.Value;
-
         /// <summary>
         /// Status code
         /// </summary>
@@ -32,18 +26,21 @@ namespace Lexical.Localization.StringFormat
         public ILine Line;
 
         /// <summary>
-        /// Resolved string.
-        /// 
-        /// Depending on what was requested, either format string as is, or formatted string with arguments applied to the format.
+        /// Resolved resource.
         /// 
         /// Null, if value was not available.
         /// </summary>
-        public String Value;
+        public Stream Value;
 
         /// <summary>
         /// Unexpected exception.
         /// </summary>
         public Exception Exception;
+
+        /// <summary>
+        /// Tests if there is a result, be that successful or an error.
+        /// </summary>
+        public bool HasResult => Status != LineStatus.NoResult;
 
         /// <summary>
         /// Highest severity value out of each category.
@@ -56,11 +53,6 @@ namespace Lexical.Localization.StringFormat
         /// </list>
         /// </summary>
         public LineStatusSeverity Severity => Status.Severity();
-
-        /// <summary>
-        /// Tests if there is a result, be that successful or an error.
-        /// </summary>
-        public bool HasResult => Status != LineStatus.NoResult;
 
         /// <summary>
         /// Result has ok state out of four severity states (Ok, Warning, Error, Failed).
@@ -91,31 +83,31 @@ namespace Lexical.Localization.StringFormat
         public bool Failed => Status.Failed();
 
         /// <summary>
-        /// Create new localization string.
+        /// Create resource result
         /// </summary>
         /// <param name="line">(optional) source line</param>
-        /// <param name="value">resolved string</param>
+        /// <param name="value">resolved bytes</param>
         /// <param name="status">resolve reslut</param>
-        public LineString(ILine line, string value, LineStatus status)
+        public LineResourceStream(ILine line, Stream value, LineStatus status)
         {
             Line = line;
-            Exception = null;
             Value = value;
             Status = status;
+            Exception = null;
         }
 
         /// <summary>
-        /// Create new localization string.
+        /// Create resource error result
         /// </summary>
         /// <param name="line">(optional) source line</param>
         /// <param name="error">error</param>
         /// <param name="status">resolve reslut</param>
-        public LineString(ILine line, Exception error, LineStatus status)
+        public LineResourceStream(ILine line, Exception error, LineStatus status)
         {
             Line = line;
             Value = null;
-            Exception = error;
             Status = status;
+            Exception = error;
         }
 
         /// <summary>
@@ -123,7 +115,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-            => Value ?? "";
+            => DebugInfo;
 
         /// <summary>
         /// Print debug information about the formatting result.
@@ -144,7 +136,7 @@ namespace Lexical.Localization.StringFormat
                     sb.Append(" ");
                     StructList12<ILineParameter> list = new StructList12<ILineParameter>();
                     Line.GetParameterParts<StructList12<ILineParameter>>(ref list);
-                    for(int i = list.Count - 1; i >= 0; i--)
+                    for (int i = list.Count - 1; i >= 0; i--)
                     {
                         var parameter = list[i];
                         if (parameter.ParameterName == "String") continue;
@@ -158,9 +150,7 @@ namespace Lexical.Localization.StringFormat
                 // Append result
                 if (Value != null)
                 {
-                    sb.Append(" = \"");
-                    sb.Append(Value);
-                    sb.Append("\"");
+                    sb.Append(Value.ToString());
                 }
 
                 // Compile string

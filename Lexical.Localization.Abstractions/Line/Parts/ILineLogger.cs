@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using Lexical.Localization.Internal;
+using Lexical.Localization.Resource;
 using Lexical.Localization.StringFormat;
 
 namespace Lexical.Localization
@@ -18,7 +19,28 @@ namespace Lexical.Localization
         /// <summary>
         /// (Optional) The assigned logger.
         /// </summary>
-        IObserver<LineString> Logger { get; set; }
+        ILocalizationLogger Logger { get; set; }
+    }
+
+    /// <summary>
+    /// Localization logger
+    /// </summary>
+    public interface ILocalizationLogger
+    {
+    }
+
+    /// <summary>
+    /// Localization logger that logs string resolve events
+    /// </summary>
+    public interface ILocalizationStringLogger : ILocalizationLogger, IObserver<LineString>
+    {
+    }
+
+    /// <summary>
+    /// Localization logger that logs string resolve events
+    /// </summary>
+    public interface ILocalizationResourceLogger : ILocalizationLogger, IObserver<LineResourceBytes>, IObserver<LineResourceStream>
+    {
     }
 
     public static partial class ILineExtensions
@@ -30,8 +52,8 @@ namespace Lexical.Localization
         /// <param name="logger"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">Append logger</exception>
-        public static ILineLogger Logger(this ILine line, IObserver<LineString> logger)
-            => line.Append<ILineLogger, IObserver<LineString>>(logger);
+        public static ILineLogger Logger(this ILine line, ILocalizationLogger logger)
+            => line.Append<ILineLogger, ILocalizationLogger>(logger);
 
         /// <summary>
         /// Append observer that monitors resolving of localization strings.
@@ -40,8 +62,8 @@ namespace Lexical.Localization
         /// <param name="logger"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">Append logger</exception>
-        public static ILineLogger Logger(this ILineFactory lineFactory, IObserver<LineString> logger)
-            => lineFactory.Create<ILineLogger, IObserver<LineString>>(null, logger);
+        public static ILineLogger Logger(this ILineFactory lineFactory, ILocalizationLogger logger)
+            => lineFactory.Create<ILineLogger, ILocalizationLogger>(null, logger);
 
         /// <summary>
         /// Try to add a <paramref name="logger"/> to <paramref name="line"/>.

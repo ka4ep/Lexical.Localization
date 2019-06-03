@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Lexical.Localization.Internal;
+using Lexical.Localization.Resource;
 
 namespace Lexical.Localization
 {
@@ -118,6 +119,10 @@ namespace Lexical.Localization
 
             return base.BindConvert(binder);
         }
+
+        /// <summary>
+        /// Method Info 
+        /// </summary>
         protected static MethodInfo miBuildName, miGetResource;
 
         protected virtual DynamicMetaObject createKeyMember(GetMemberBinder binder)
@@ -168,7 +173,7 @@ namespace Lexical.Localization
             // (byte[]) maps to LocalizationKeyExtensions.ResolveResource(obj)
             if (typeof(byte[]).IsAssignableFrom(binder.ReturnType))
             {
-                if (miResolveResource == null) miResolveResource = typeof(ILineExtensions).GetMethod(nameof(ILineExtensions.ResolveResource));
+                if (miResolveResource == null) miResolveResource = typeof(ILineExtensions).GetMethod(nameof(ILineExtensions.ResolveBytes));
                 mi = miResolveResource;
             }
 
@@ -181,6 +186,8 @@ namespace Lexical.Localization
 
                 BindingRestrictions restrictions = BindingRestrictions.GetTypeRestriction(Expression, LimitType);
                 Expression exp = Expression.Call(mi, selfExpression);
+                FieldInfo fi = typeof(LineResourceBytes).GetField(nameof(LineResourceBytes.Value));
+                exp = Expression.Field(exp, fi);
                 return new DynamicMetaObject(exp, restrictions);
             }
 

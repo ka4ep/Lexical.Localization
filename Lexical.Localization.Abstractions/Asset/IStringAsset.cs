@@ -18,12 +18,12 @@ namespace Lexical.Localization.Asset
     public interface IStringAsset : IAsset
     {
         /// <summary>
-        /// Try to read a localization string. 
+        /// Try to read a localization string by matching <paramref name="key"/> as is.
         /// 
-        /// The returned string is in format format where possible arguments are numbered and inide brace parenthesis, e.g. "Welcome {0}."
+        /// Does not apply contextual information from executing context. (See <see cref="ILineExtensions.ResolveString(ILine)"/> to match in context.)
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>line that has matching key or null</returns>
+        /// <returns>line that has a string value or null</returns>
         ILine GetString(ILine key);
     }
 
@@ -111,13 +111,13 @@ namespace Lexical.Localization
     public static partial class IAssetExtensions
     {
         /// <summary>
-        /// Try to read a localization string.
+        /// Try to read a localization string by matching <paramref name="key"/> as is.
         /// 
-        /// Uses key as is and ignores culture policy.
+        /// Does not apply contextual information from executing context.
         /// </summary>
         /// <param name="asset"></param>
         /// <param name="key"></param>
-        /// <returns>line with matching key or null</returns>
+        /// <returns>line that has a string value or null</returns>
         public static ILine GetString(this IAsset asset, ILine key)
         {
             if (asset is IStringAsset casted) 

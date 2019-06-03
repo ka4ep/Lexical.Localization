@@ -23,9 +23,9 @@ namespace Lexical.Localization.StringFormat
         public IResolver Resolvers;
 
         /// <summary>
-        /// Format arguments
+        /// Format value arguments.
         /// </summary>
-        public object[] FormatArgs;
+        public object[] ValueArgs;
 
         /// <summary>
         /// Effective culture policy
@@ -55,7 +55,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Configured loggers
         /// </summary>
-        public StructList2<IObserver<LineString>> Loggers;
+        public StructList2<ILocalizationLogger> Loggers;
 
         /// <summary>
         /// Effective plural rules
@@ -107,7 +107,7 @@ namespace Lexical.Localization.StringFormat
             bool valueSet = false;
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                if (l is ILineValue fa && fa != null) FormatArgs = fa.Value;
+                if (l is ILineValue fa && fa != null) ValueArgs = fa.Value;
                 if (l is ILineCulturePolicy cp && cp != null) CulturePolicy = cp.CulturePolicy;
                 if (l is ILineCulture c && c.Culture != null) Culture = c.Culture;
                 if (l is ILineFormatProvider fp && fp.FormatProvider != null) FormatProviders.AddIfNew(fp.FormatProvider);
@@ -263,7 +263,8 @@ namespace Lexical.Localization.StringFormat
         public void Log(Exception e)
         {
             for (int i = 0; i < Loggers.Count; i++)
-                Loggers[i].OnError(e);
+                if (Loggers[i] is IObserver<LineString> logger)
+                    logger.OnError(e);
         }
 
         /// <summary>
@@ -273,7 +274,8 @@ namespace Lexical.Localization.StringFormat
         public void Log(LineString str)
         {
             for (int i = 0; i < Loggers.Count; i++)
-                Loggers[i].OnNext(str);
+                if (Loggers[i] is IObserver<LineString> logger)
+                    logger.OnNext(str);
         }
 
         /// <summary>
@@ -285,9 +287,11 @@ namespace Lexical.Localization.StringFormat
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
-                var logger = Loggers[i];
-                logger.OnNext(str);
-                logger.OnError(e);
+                if (Loggers[i] is IObserver<LineString> logger)
+                {
+                    logger.OnNext(str);
+                    logger.OnError(e);
+                }
             }
         }
 

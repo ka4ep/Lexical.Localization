@@ -19,7 +19,7 @@ namespace Lexical.Localization
         /// <summary>Request has not been resolved</summary>
         NoResult = 0xFFFFFFFFFFFFFFFFUL,
         /// <summary>Unknown error</summary>
-        FailedUnknownReason = ResolveFailed|CultureFailed|PluralityFailed|PlaceholderFailed|FormatFailed,
+        FailedUnknownReason = ResolveFailed|CultureFailed|PluralityFailed|PlaceholderFailed|FormatFailed|ResourceFailed,
 
         //// Resolve - Step that searches format string for ILine from IAsset or Inlines.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
@@ -44,6 +44,8 @@ namespace Lexical.Localization
         ResolveFailed = 0x60UL << Shift.Resolve,
         /// <summary><see cref="IStringResolver"/> was not detected</summary>
         ResolveFailedNoStringResolver = 0x62UL << Shift.Resolve,
+        /// <summary><see cref="IResourceResolver"/> was not detected</summary>
+        ResolveFailedNoResourceResolver = 0x63UL << Shift.Resolve,
         /// <summary>Could not find a line with a value</summary>
         ResolveFailedNoValue = 0x64UL << Shift.Resolve,
         /// <summary>Result has not been processed</summary>
@@ -201,6 +203,22 @@ namespace Lexical.Localization
         /// <summary>Mask for argument status</summary>
         FormatMask = 0x7FUL << Shift.Format,
 
+        //// Resource - Binary resources related status codes
+        /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
+        ResourceOk = 0x01UL << Shift.Resource,
+        /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
+        ResourceWarning = 0x20UL << Shift.Resource,
+        /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
+        ResourceError = 0x40UL << Shift.Resource,
+        /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
+        ResourceFailed = 0x60UL << Shift.Resource,
+        /// <summary>Result has not been processed</summary>
+        ResourceFailedNoResult = 0x7FUL << Shift.Resource,
+        /// <summary>Mask for severity</summary>
+        ResourceSeverityMask = 0x60UL << Shift.Resource,
+        /// <summary>Mask for resolve status</summary>
+        ResourceMask = 0x7FUL << Shift.Resource,
+
         //// Custom0 - ILineResolver implementation specific status flags. Can be used for any purpose by the resolver.
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         Custom0Ok = 0x01UL << Shift.Custom0,
@@ -242,13 +260,13 @@ namespace Lexical.Localization
     /// </summary>
     public enum LineStatusSeverity : int
     {
-        /// <summary>Line resolved successfully</summary>
+        /// <summary>OK value.</summary>
         Ok = 0,
-        /// <summary>Line resolved, but there was a minor issue</summary>
+        /// <summary>Warning, but produced a value.</summary>
         Warning = 1,
-        /// <summary>Error occured during resolving. A fallback string was returned. </summary>
+        /// <summary>Error occured, but produced some kind of fallback value.</summary>
         Error = 2,
-        /// <summary>Resolve failed completely. No string was returned.</summary>
+        /// <summary>Failed, no value.</summary>
         Failed = 3
     }
 
@@ -263,10 +281,10 @@ namespace Lexical.Localization
         internal const int Plurality = 14;
         internal const int Placeholder = 21;
         internal const int Format = 28;
-        internal const int Custom0 = 35;    // ILineResolver implemtation can use for any custom purpose.
-        internal const int Custom1 = 42;    // ILineResolver implemtation can use for any custom purpose.
-        internal const int Reserved0 = 49;  // Reserved for future use
-        internal const int Reserved1 = 56;  // Reserved for future use
+        internal const int Resource = 35;   
+        internal const int Reserved = 42;  // Reserved for future use
+        internal const int Custom0 = 49;   // Resolver implentations can use for any custom purpose.
+        internal const int Custom1 = 56;   // Resolver implentations can use for any custom purpose.
 
         // bit shifts for severity bits (2bits) of each category.
         internal const int ResolveSeverity = Resolve + 5;
@@ -276,9 +294,8 @@ namespace Lexical.Localization
         internal const int FormatSeverity = Format + 5;
         internal const int Custom0Severity = Custom0 + 5;
         internal const int Custom1Severity = Custom1 + 5;
-        internal const int Reserved0Severity = Reserved0 + 5;  // Reserved for future use
-        internal const int Reserved1Severity = Reserved1 + 5;  // Reserved for future use
-
+        internal const int ReservedSeverity = Reserved + 5;  // Reserved for future use
+        internal const int ResourceSeverity = Resource + 5;  // Reserved for future use
     }
 
     /// <summary></summary>
@@ -389,6 +406,27 @@ namespace Lexical.Localization
             => status & LineStatus.FormatMask;
 
         /// <summary>
+        /// Severity of the step that resolves <see cref="ILine"/> into binarty resource.
+        /// 
+        /// <list type="table">
+        /// <item>0 OK, value</item>
+        /// <item>1 Warning, but produced a value</item>
+        /// <item>2 Error, but produced some kind of fallback value</item>
+        /// <item>3 Failed, no value</item>
+        /// </list>
+        /// </summary>
+        /// <param name="status"></param>
+        public static LineStatusSeverity ResourceSeverity(this LineStatus status)
+            => (LineStatusSeverity)(((ulong)status >> Shift.ResourceSeverity) & 3);
+
+        /// <summary>
+        /// Get resource related status code.
+        /// </summary>
+        /// <param name="status"></param>
+        public static LineStatus Resource(this LineStatus status)
+            => status & LineStatus.ResourceMask;
+
+        /// <summary>
         /// Severity for <see cref="IStringResolver"/> implementation specific "Custom0" status.
         /// 
         /// "Custom0" is a status code that is specific to the <see cref="IStringResolver"/> implementation.
@@ -447,13 +485,13 @@ namespace Lexical.Localization
         /// <param name="status"></param>
         public static LineStatusSeverity Severity(this LineStatus status)
         {
-            LineStatusSeverity a = status.ResolveSeverity(), b = status.CultureSeverity(), c = status.PluralitySeverity(), d = status.PlaceholderSeverity(), e = status.FormatSeverity(), h = status.Custom0Severity(), i = status.Custom1Severity();
+            LineStatusSeverity a = status.ResolveSeverity(), b = status.CultureSeverity(), c = status.PluralitySeverity(), d = status.PlaceholderSeverity(), e = status.FormatSeverity(), f = status.ResourceSeverity(), h = status.Custom0Severity(), i = status.Custom1Severity();
             LineStatusSeverity result = a;
             if (b > result) result = b;
             if (c > result) result = c;
             if (d > result) result = d;
             if (e > result) result = e;
-            // if (f > result) result = f;
+            if (f > result) result = f;
             //if (g > result) result = g;
             if (h > result) result = h;
             if (i > result) result = i;
@@ -535,6 +573,9 @@ namespace Lexical.Localization
             str = Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.FormatMask);
             if (str != null) { if (c > 0) sb.Append("|"); sb.Append(str); c++; }
 
+            str = Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.ResourceMask);
+            if (str != null) { if (c > 0) sb.Append("|"); sb.Append(str); c++; }
+
             LineStatus custom0 = status & LineStatus.Custom0Mask;
             if (custom0 != 0UL)
             {
@@ -597,6 +638,8 @@ namespace Lexical.Localization
             tw.Write(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.PlaceholderMask));
             tw.Write("|");
             tw.Write(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.FormatMask));
+            tw.Write("|");
+            tw.Write(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.ResourceMask));
 
             LineStatus custom0 = status & LineStatus.Custom0Mask;
             if (custom0 != LineStatus.NoResult)
@@ -697,6 +740,16 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Upgrade <paramref name="status"/>'s status code, if <paramref name="resourceStatus"/> is higher than the one in <paramref name="status"/>.
+        /// </summary>
+        /// <param name="status"></param>
+        /// <param name="resourceStatus"></param>
+        public static void UpResource(this ref LineStatus status, LineStatus resourceStatus)
+        {
+            if ((status & LineStatus.ResolveMask) < (resourceStatus & LineStatus.ResolveMask)) status = (status & ~LineStatus.ResolveMask) | resourceStatus;
+        }
+
+        /// <summary>
         /// Upgrade <paramref name="status"/>'s status code, if <paramref name="custom0Status"/> is higher than the one in <paramref name="status"/>.
         /// </summary>
         /// <param name="status"></param>
@@ -728,6 +781,7 @@ namespace Lexical.Localization
             UpPlurality(ref status, other);
             UpPlaceholder(ref status, other);
             UpFormat(ref status, other);
+            UpResource(ref status, other);
             UpCustom0(ref status, other);
             UpCustom1(ref status, other);
         }
@@ -745,6 +799,7 @@ namespace Lexical.Localization
             UpPlurality(ref status, other);
             UpPlaceholder(ref status, other);
             UpFormat(ref status, other);
+            UpResource(ref status, other);
             UpCustom0(ref status, other);
             UpCustom1(ref status, other);
             return status;

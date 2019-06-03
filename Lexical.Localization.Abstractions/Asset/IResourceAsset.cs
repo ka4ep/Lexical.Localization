@@ -19,18 +19,22 @@ namespace Lexical.Localization.Asset
     public interface IResourceAsset : IAsset
     {
         /// <summary>
-        /// Try to read a binary resource.
+        /// Try to read a binary resource by matching <paramref name="key"/> as is.
+        /// 
+        /// Does not apply contextual information from executing context. (See <see cref="ILineExtensions.ResolveBytes(ILine)"/> to match in context.)
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>resolved string or null or resource was not found</returns>
+        /// <returns>resolved resource, or null or resource was not found</returns>
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
         byte[] GetResource(ILine key);
 
         /// <summary>
-        /// Try to open a stream to a resource.
+        /// Try to open a stream to a resource by matching <paramref name="key"/> as is.
+        /// 
+        /// Does not apply contextual information from executing context. (See <see cref="ILineExtensions.ResolveStream(ILine)"/> to match in context.)
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>resolved string or null if resource was not found</returns>
+        /// <returns>resolved resource in an open stream, or null if resource was not found</returns>
         /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
         Stream OpenStream(ILine key);
     }
