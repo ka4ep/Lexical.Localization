@@ -11,7 +11,7 @@ namespace Lexical.Localization.Internal
     /// MapList is a dictionary that has multiple values per key.
     /// </summary>
     /// <typeparam name="Key"></typeparam>
-    /// <typeparam name="String"></typeparam>
+    /// <typeparam name="Value"></typeparam>
     public class MapList<Key, Value> : Dictionary<Key, List<Value>>//, IEnumerable<Value>
     {
         /// <summary>
@@ -183,7 +183,7 @@ namespace Lexical.Localization.Internal
         /// Convert to map list.
         /// </summary>
         /// <typeparam name="Key"></typeparam>
-        /// <typeparam name="String"></typeparam>
+        /// <typeparam name="Value"></typeparam>
         /// <param name="enumr"></param>
         /// <returns></returns>
         public static MapList<Key, Value> ToMapList<Key, Value>(this IEnumerable<KeyValuePair<Key, Value>> enumr)
@@ -193,7 +193,7 @@ namespace Lexical.Localization.Internal
         /// Convert to map list.
         /// </summary>
         /// <typeparam name="Key"></typeparam>
-        /// <typeparam name="String"></typeparam>
+        /// <typeparam name="Value"></typeparam>
         /// <param name="enumr"></param>
         /// <returns></returns>
         public static MapList<Key, Value> ToMapList<Key, Value>(this IEnumerable<KeyValuePair<Key, List<Value>>> enumr)

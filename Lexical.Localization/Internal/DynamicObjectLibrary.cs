@@ -476,7 +476,16 @@ namespace Lexical.Localization.Internal
         //    = o => typeof(RuntimeBinderException)
         //o is Microsoft.CSharp.RuntimeBinder.CSharpInvokeMemberBinder binder ? binder : null;
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected static Dictionary<Type, Func<Object, IList<Type>>> getTypeArgumentsFuncDictionary = new Dictionary<Type, Func<Object, IList<Type>>>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="binderType"></param>
+        /// <returns></returns>
         protected static Func<Object, IList<Type>> GetTypeArgumentsFunc(Type binderType)
         {
             Func<Object, IList<Type>> func = null;

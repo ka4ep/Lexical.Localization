@@ -75,6 +75,11 @@ namespace Lexical.Localization
         public override DynamicMetaObject BindGetIndex(GetIndexBinder binder, DynamicMetaObject[] args)
             => library.BindGetIndex(binder, args, LimitType ?? this.Value?.GetType(), Expression) ?? base.BindGetIndex(binder, args);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="binder"></param>
+        /// <returns></returns>
         public override DynamicMetaObject BindConvert(ConvertBinder binder)
         {
             var result_ = BindResolveResourceConvert(binder);
@@ -125,6 +130,11 @@ namespace Lexical.Localization
         /// </summary>
         protected static MethodInfo miBuildName, miGetResource;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="binder"></param>
+        /// <returns></returns>
         protected virtual DynamicMetaObject createKeyMember(GetMemberBinder binder)
         {
             MethodInfo mi = typeof(ILineExtensions).GetMethod("Key");

@@ -23,13 +23,14 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lines"></param>
         /// <param name="lineFormat"><see cref="ILineFormatParser"/> parses string to line.</param>
+        /// <param name="lineFactory"></param>
         /// <returns>lines with <see cref="ILine"/> keys</returns>
-        public static IEnumerable<ILine> ToLines(this IEnumerable<KeyValuePair<string, IString>> lines, ILineFormat lineFormat)
+        public static IEnumerable<ILine> ToLines(this IEnumerable<KeyValuePair<string, IString>> lines, ILineFormat lineFormat, ILineFactory lineFactory = default)
         {
             foreach (var line in lines)
             {
                 ILine l;
-                if (lineFormat.TryParse(line.Key, out l))
+                if (lineFormat.TryParse(line.Key, out l, null, lineFactory ?? (lineFormat is ILineFormatFactory factory ? factory.LineFactory : null)))
                     yield return line.Value == null ? l : l = l.String(line.Value);
             }
         }

@@ -472,6 +472,7 @@ namespace Lexical.Localization
             /// <param name="asset"></param>
             /// <param name="culturePolicy"></param>
             /// <param name="stringResolver"></param>
+            /// <param name="resourceResolver"></param>
             /// <param name="stringFormat"></param>
             /// <param name="formatProvider"></param>
             /// <param name="logger"></param>
