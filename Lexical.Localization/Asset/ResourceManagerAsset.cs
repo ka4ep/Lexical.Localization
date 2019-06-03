@@ -3,6 +3,7 @@
 // Date:           19.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Resource;
 using Lexical.Localization.StringFormat;
 using System;
 using System.Globalization;
@@ -150,15 +151,17 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public byte[] GetResourceBytes(ILine key)
+        public LineResourceBytes GetResourceBytes(ILine key)
         {
             string id = namePolicy.Print(key);
             CultureInfo culture = key.GetCultureInfo();
             try
             {
                 object obj = (culture == null ? ResourceManager.GetObject(id) : ResourceManager.GetObject(id, culture)) as byte[];
-                if (obj == null) return null;
-                return obj is byte[] data ? data : throw new LocalizationException($"Key={id}, Expected byte[], got {obj.GetType().FullName}");
+                if (obj == null) return new LineResourceBytes(key, LineStatus.ResolveFailedNoValue);
+                return obj is byte[] data ? 
+                    new LineResourceBytes(key, data, LineStatus.ResolveOkFromAsset) :
+                    new LineResourceBytes(key, LineStatus.ResolveFailedNoValue | LineStatus.ResourceFailedConversionError);
             }
             catch (Exception e)
             {
@@ -171,15 +174,17 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Stream GetResourceStream(ILine key)
+        public LineResourceStream GetResourceStream(ILine key)
         {
             string id = namePolicy.Print(key);
             CultureInfo culture = key.GetCultureInfo();
             try
             {
                 object obj = (culture == null ? ResourceManager.GetObject(id) : ResourceManager.GetObject(id, culture)) as byte[];
-                if (obj == null) return null;
-                return obj is byte[] data ? new MemoryStream(data) : throw new LocalizationException($"Key={id}, Expected byte[], got {obj.GetType().FullName}");
+                if (obj == null) return new LineResourceStream(key, LineStatus.ResolveFailedNoValue);
+                return obj is byte[] data ?
+                    new LineResourceStream(key, new MemoryStream(data), LineStatus.ResolveOkFromAsset) :
+                    new LineResourceStream(key, LineStatus.ResolveFailedNoValue | LineStatus.ResourceFailedConversionError);
             }
             catch (Exception e)
             {

@@ -87,7 +87,7 @@ namespace Lexical.Localization.StringFormat
             catch (Exception e)
             {
                 features.Log(e);
-                features.Status.Up(LineStatus.FailedUnknownReason);
+                features.Status.UpResolve(LineStatus.ResolveFailedException);
                 return new StatusString(null, features.Status);
             }
 
@@ -210,7 +210,7 @@ namespace Lexical.Localization.StringFormat
             catch (Exception e)
             {
                 features.Log(e);
-                features.Status.Up(LineStatus.FailedUnknownReason);
+                features.Status.UpResolve(LineStatus.ResolveFailedException);
                 return new LineString(key, e, features.Status);
             }
 
@@ -383,7 +383,8 @@ namespace Lexical.Localization.StringFormat
             {
                 // Capture unexpected error
                 features.Log(e);
-                LineString lineString = new LineString(key, e, LineStatus.FailedUnknownReason);
+                features.Status.UpResolve(LineStatus.ResolveFailedException);
+                LineString lineString = new LineString(key, e, features.Status);
                 features.Log(lineString);
                 return lineString;
             }

@@ -85,7 +85,7 @@ namespace Lexical.Localization
         /// otherwise return null</returns>
         public static LineString ResolveString(this ILine line)
         {
-            LineString result = new LineString(line, (Exception)null, LineStatus.ResolveFailedNoStringResolver | LineStatus.CultureFailedNoResult | LineStatus.PluralityFailedNoResult | LineStatus.PlaceholderFailedNoResult | LineStatus.FormatFailedNoResult);
+            LineString result = new LineString(line, (Exception)null, LineStatus.ResolveFailedNoStringResolver);
             for (ILine k = line; k != null; k = k.GetPreviousPart())
             {
                 IStringResolver _formatter;

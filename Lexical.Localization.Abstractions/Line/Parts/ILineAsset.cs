@@ -55,6 +55,20 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Try get IAsset. 
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="asset"></param>
+        /// <returns>true if asset was returned</returns>
+        public static bool TryGetAsset(this ILine line, out IAsset asset)
+        {
+            for (; line != null; line = line.GetPreviousPart())
+                if (line is ILineAsset lineAsset && lineAsset.Asset != null)
+                    { asset = lineAsset.Asset; return true; }
+            asset = default; return false;
+        }
+
+        /// <summary>
         /// Search for IAsset. 
         /// </summary>
         /// <param name="line"></param>

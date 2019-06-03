@@ -58,35 +58,6 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Find <see cref="IAsset"/> and match resource to <paramref name="key"/>.
-        /// Does not apply contextual information.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns>byte[] or null</returns>
-        /// <exception cref="LineException">If resolving failed or resolver was not found</exception>
-        public static byte[] GetResourceBytes(this ILine key)
-        {
-            IAsset asset = key.FindAsset();
-            if (asset == null) return null;
-            return asset.GetResourceBytes(key);
-        }
-
-        /// <summary>
-        /// Get the <paramref name="line"/>'s bytes.
-        /// </summary>
-        /// <param name="line"></param>
-        /// <returns>value</returns>
-        /// <exception cref="LineException">no resource value</exception>
-        public static byte[] _GetResource(this ILine line)
-        {
-            for (ILine part = line; part != null; part = part.GetPreviousPart())
-            {
-                if (part is ILineResource valuePart && valuePart.Resource != null) return valuePart.Resource;
-            }
-            throw new LineException(line, $"No {nameof(ILineResource)}");
-        }
-
-        /// <summary>
         /// Try get the <paramref name="line"/>'s bytes.
         /// </summary>
         /// <param name="line"></param>

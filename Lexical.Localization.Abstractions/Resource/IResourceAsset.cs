@@ -3,13 +3,16 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization;
+using Lexical.Localization.Asset;
+using Lexical.Localization.Resource;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Lexical.Localization.Asset
+namespace Lexical.Localization.Resource
 {
     /// <summary>
     /// Interface for reading binary resources.
@@ -19,24 +22,43 @@ namespace Lexical.Localization.Asset
     public interface IResourceAsset : IAsset
     {
         /// <summary>
-        /// Try to read a binary resource by matching <paramref name="key"/> as is.
+        /// Try to read a binary resource by matching <paramref name="key"/> to the asset's resources
         /// 
-        /// Does not apply contextual information from executing context. (See <see cref="ILineExtensions.ResolveBytes(ILine)"/> to match in context.)
+        /// Does not apply contextual information from the executing context. (See <see cref="ILineExtensions.ResolveBytes(ILine)"/> to match in context.)
+        /// 
+        /// Status codes:
+        /// <list type="bullet">
+        ///     <item><see cref="LineStatus.ResolveOkFromAsset"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromInline"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromKey"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceBytes.Exception"/></item>
+        /// </list>
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>resolved resource, or null or resource was not found</returns>
-        /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        byte[] GetResourceBytes(ILine key);
+        /// <returns>result info</returns>
+        LineResourceBytes GetResourceBytes(ILine key);
 
         /// <summary>
-        /// Try to open a stream to a resource by matching <paramref name="key"/> as is.
+        /// Try to open a stream to a resource by matching <paramref name="key"/> to the asset's resources.
+        /// If Stream (<see cref="LineResourceStream.Value"/>) is provided, then the caller is responsible for disposing it.
         /// 
-        /// Does not apply contextual information from executing context. (See <see cref="ILineExtensions.ResolveStream(ILine)"/> to match in context.)
+        /// Does not apply contextual information from the executing context. (See <see cref="ILineExtensions.ResolveStream(ILine)"/> to match in context.)
+        /// 
+        /// Status codes:
+        /// <list type="bullet">
+        ///     <item><see cref="LineStatus.ResolveOkFromAsset"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromInline"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromKey"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceStream.Exception"/></item>
+        /// </list>
         /// </summary>
         /// <param name="key"></param>
-        /// <returns>resolved resource in an open stream, or null if resource was not found</returns>
-        /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        Stream GetResourceStream(ILine key);
+        /// <returns>result info</returns>
+        LineResourceStream GetResourceStream(ILine key);
     }
 
     /// <summary>
@@ -131,29 +153,41 @@ namespace Lexical.Localization.Asset
 namespace Lexical.Localization
 {
     using Lexical.Localization.Asset;
+    using Lexical.Localization.Resource;
 
     public static partial class IAssetExtensions
     {
         /// <summary>
-        /// Try to read a resource.
+        /// Try to read a binary resource by matching <paramref name="key"/> to the asset's resources
+        /// 
+        /// Does not apply contextual information from the executing context. (See <see cref="ILineExtensions.ResolveBytes(ILine)"/> to match in context.)
+        /// 
+        /// Status codes:
+        /// <list type="bullet">
+        ///     <item><see cref="LineStatus.ResolveOkFromAsset"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromInline"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromKey"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceBytes.Exception"/></item>
+        /// </list>
         /// </summary>
         /// <param name="asset"></param>
         /// <param name="key"></param>
-        /// <returns>resolved string or null or resource was not found</returns>
-        /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        public static byte[] GetResourceBytes(this IAsset asset, ILine key)
+        /// <returns>result info</returns>
+        public static LineResourceBytes GetResourceBytes(this IAsset asset, ILine key)
         {
             if (asset is IResourceAsset casted)
             {
-                byte[] data = casted.GetResourceBytes(key);
-                if (data != null) return data;
+                LineResourceBytes data = casted.GetResourceBytes(key);
+                if (data.Value != null) return data;
             }
             if (asset is IAssetComposition composition)
             {
                 foreach (IResourceAsset component in composition.GetComponents<IResourceAsset>(true) ?? Enumerable.Empty<IResourceAsset>())
                 {
-                    byte[] data = component.GetResourceBytes(key);
-                    if (data != null) return data;
+                    LineResourceBytes data = component.GetResourceBytes(key);
+                    if (data.Value != null) return data;
                 }
                 foreach(IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
@@ -162,8 +196,8 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            byte[] data = loaded_asset.GetResourceBytes(key);
-                            if (data != null) return data;
+                            LineResourceBytes data = loaded_asset.GetResourceBytes(key);
+                            if (data.Value != null) return data;
                         }
                     }
                 }
@@ -175,34 +209,48 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in assets)
                     {
-                        byte[] data = loaded_asset.GetResourceBytes(key);
-                        if (data != null) return data;
+                        LineResourceBytes data = loaded_asset.GetResourceBytes(key);
+                        if (data.Value != null) return data;
                     }
                 }
             }
-            return null;
+
+            // No result
+            return new LineResourceBytes(key, (Exception)null, LineStatus.ResolveFailedNoResult);
         }
 
         /// <summary>
-        /// Try to open a stream to a resource.
+        /// Try to open a stream to a resource by matching <paramref name="key"/> to the asset's resources.
+        /// If Stream (<see cref="LineResourceStream.Value"/>) is provided, then the caller is responsible for disposing it.
+        /// 
+        /// Does not apply contextual information from the executing context. (See <see cref="ILineExtensions.ResolveStream(ILine)"/> to match in context.)
+        /// 
+        /// Status codes:
+        /// <list type="bullet">
+        ///     <item><see cref="LineStatus.ResolveOkFromAsset"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromInline"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromKey"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceStream.Exception"/></item>
+        /// </list>
         /// </summary>
         /// <param name="asset"></param>
         /// <param name="key"></param>
-        /// <returns>resolved string or null if resource was not found</returns>
-        /// <exception cref="AssetException">If resource was found, but there was a problem opening the stream</exception>
-        public static Stream GetResourceStream(this IAsset asset, ILine key)
+        /// <returns>result info</returns>
+        public static LineResourceStream GetResourceStream(this IAsset asset, ILine key)
         {
             if (asset is IResourceAsset casted)
             {
-                Stream steam = casted.GetResourceStream(key);
-                if (steam != null) return steam;
+                LineResourceStream data = casted.GetResourceStream(key);
+                if (data.Value != null) return data;
             }
             if (asset is IAssetComposition composition)
             {
                 foreach (IResourceAsset component in composition.GetComponents<IResourceAsset>(true) ?? Enumerable.Empty<IResourceAsset>())
                 {
-                    Stream steam = component.GetResourceStream(key);
-                    if (steam != null) return steam;
+                    LineResourceStream data = component.GetResourceStream(key);
+                    if (data.Value != null) return data;
                 }
                 foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
                 {
@@ -211,8 +259,8 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            Stream steam = loaded_asset.GetResourceStream(key);
-                            if (steam != null) return steam;
+                            LineResourceStream data = loaded_asset.GetResourceStream(key);
+                            if (data.Value != null) return data;
                         }
                     }
                 }
@@ -224,12 +272,14 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in assets)
                     {
-                        Stream steam = loaded_asset.GetResourceStream(key);
-                        if (steam != null) return steam;
+                        LineResourceStream data = loaded_asset.GetResourceStream(key);
+                        if (data.Value != null) return data;
                     }
                 }
             }
-            return null;
+
+            // No result
+            return new LineResourceStream(key, (Exception)null, LineStatus.ResolveFailedNoResult);
         }
 
         /// <summary>
@@ -450,6 +500,62 @@ namespace Lexical.Localization
                 }
             }
             return result;
+        }
+
+    }
+
+    /// <summary></summary>
+    public static partial class ILineExtensions
+    {
+        /// <summary>
+        /// Try to read a binary resource by matching <paramref name="line"/> to the asset's resources
+        /// 
+        /// Does not apply contextual information from the executing context. (See <see cref="ILineExtensions.ResolveBytes(ILine)"/> to match in context.)
+        /// 
+        /// Status codes:
+        /// <list type="bullet">
+        ///     <item><see cref="LineStatus.ResolveOkFromAsset"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromInline"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromKey"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceBytes.Exception"/></item>
+        /// </list>
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns>result info</returns>
+        public static LineResourceBytes GetResourceBytes(this ILine line)
+        {
+            IAsset asset;
+            if (line.TryGetAsset(out asset)) return asset.GetResourceBytes(line);
+            // No result
+            return new LineResourceBytes(line, (Exception)null, LineStatus.ResolveFailedNoResult);
+        }
+
+        /// <summary>
+        /// Try to open a stream to a resource by matching <paramref name="line"/> to the asset's resources.
+        /// If Stream (<see cref="LineResourceStream.Value"/>) is provided, then the caller is responsible for disposing it.
+        /// 
+        /// Does not apply contextual information from the executing context. (See <see cref="ILineExtensions.ResolveStream(ILine)"/> to match in context.)
+        /// 
+        /// Status codes:
+        /// <list type="bullet">
+        ///     <item><see cref="LineStatus.ResolveOkFromAsset"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromInline"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromKey"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceStream.Exception"/></item>
+        /// </list>
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns>result info</returns>
+        public static LineResourceStream GetResourceStream(this ILine line)
+        {
+            IAsset asset;
+            if (line.TryGetAsset(out asset)) return asset.GetResourceStream(line);
+            // No result
+            return new LineResourceStream(line, (Exception)null, LineStatus.ResolveFailedNoResult);
         }
 
     }

@@ -3,6 +3,7 @@
 // Date:           7.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Resource;
 using Lexical.Localization.StringFormat;
 using System;
 using System.IO;
@@ -48,6 +49,8 @@ namespace Lexical.Localization
         ResolveFailedNoResourceResolver = 0x63UL << Shift.Resolve,
         /// <summary>Could not find a line with a value</summary>
         ResolveFailedNoValue = 0x64UL << Shift.Resolve,
+        /// <summary>Expected exception was thrown during resolve process</summary>
+        ResolveFailedException = 0x7BUL << Shift.Resolve,
         /// <summary>Result has not been processed</summary>
         ResolveFailedNoResult = 0x7FUL << Shift.Resolve,
         /// <summary>Mask for severity</summary>
@@ -212,6 +215,8 @@ namespace Lexical.Localization
         ResourceError = 0x40UL << Shift.Resource,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResourceFailed = 0x60UL << Shift.Resource,
+        /// <summary>Failed to convert resource format</summary>
+        ResourceFailedConversionError = 0x6cUL << Shift.Resource,
         /// <summary>Result has not been processed</summary>
         ResourceFailedNoResult = 0x7FUL << Shift.Resource,
         /// <summary>Mask for severity</summary>

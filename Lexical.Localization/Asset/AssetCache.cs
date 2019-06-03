@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Lexical.Localization.Internal;
+using Lexical.Localization.Resource;
 using Lexical.Localization.StringFormat;
 
 namespace Lexical.Localization.Asset
@@ -678,7 +679,7 @@ namespace Lexical.Localization.Asset
             /// <summary>
             /// Cached result of individual GetString() fetches
             /// </summary>
-            public Dictionary<ILine, byte[]> data;
+            public Dictionary<ILine, LineResourceBytes> data;
 
             /// <summary>
             /// GetResourceKeys(null) was read and it was null.
@@ -702,7 +703,7 @@ namespace Lexical.Localization.Asset
 
             public Cache(LineComparer comparer)
             {
-                this.data = new Dictionary<ILine, byte[]>(comparer);
+                this.data = new Dictionary<ILine, LineResourceBytes>(comparer);
             }
         }
 
@@ -737,12 +738,12 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public byte[] GetResourceBytes(ILine key)
+        public LineResourceBytes GetResourceBytes(ILine key)
         {
             Cache _cache = this.cache;
 
             // Try to read previously cached value
-            byte[] value = null;
+            LineResourceBytes value = default;
             _cache.m_lock.EnterReadLock();
             try
             {
@@ -757,7 +758,7 @@ namespace Lexical.Localization.Asset
             value = Source.GetResourceBytes(key);
 
             // Write to cache, be that null or not
-            if (value != null && value.Length <= Options.GetMaxResourceSize())
+            if (value.Value != null && value.Value.Length <= Options.GetMaxResourceSize())
             {
                 ILine cacheKey = key.CloneKey(LineAppender.NonResolving);
                 _cache.m_lock.EnterWriteLock();
@@ -779,17 +780,20 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Stream GetResourceStream(ILine key)
+        public LineResourceStream GetResourceStream(ILine key)
         {
             Cache _cache = this.cache;
 
             // Try to read previously cached value
-            byte[] value = null;
+            LineResourceBytes value = default;
             _cache.m_lock.EnterReadLock();
             try
             {
                 if (_cache.data.TryGetValue(key, out value))
-                    return new MemoryStream(value);
+                {
+                    if (value.Value!=null)
+                        return new LineResourceStream(value.Line, value.Value == null ? null : new MemoryStream(value.Value), value.Exception, value.Status);
+                }
             }
             finally
             {
@@ -797,7 +801,7 @@ namespace Lexical.Localization.Asset
             }
 
             // Open stream
-            Stream stream = Source.GetResourceStream(key);
+            LineResourceStream stream = Source.GetResourceStream(key);
 
             // Store into cache?
             if (Options.GetCacheStreams())
@@ -805,13 +809,13 @@ namespace Lexical.Localization.Asset
                 ILine cacheKey = Options.GetCloneKeys() ? key.CloneKey(LineAppender.NonResolving) : key;
 
                 // Cache null value
-                if (stream == null)
+                if (stream.Value == null)
                 {
                     _cache.m_lock.EnterWriteLock();
                     try
                     {
-                        _cache.data[cacheKey] = null;
-                        return null;
+                        _cache.data[cacheKey] = new LineResourceBytes(value.Line, value.Exception, value.Status);
+                        return stream;
                     }
                     finally
                     {
@@ -825,12 +829,12 @@ namespace Lexical.Localization.Asset
                 try
                 {
                     // Try to read stream length, if fails, throws an exception
-                    long len = stream.Length;
+                    long len = stream.Value.Length;
 
                     if (len < Options.GetMaxResourceSize())
                     {
                         // Try to read position.
-                        position = stream.Position;
+                        position = stream.Value.Position;
 
                         // Try to read stream completely.
                         int len_ = (int)len;
@@ -839,7 +843,7 @@ namespace Lexical.Localization.Asset
                         // Read chunks
                         while (ix < len_)
                         {
-                            int count = stream.Read(data, ix, len_ - ix);
+                            int count = stream.Value.Read(data, ix, len_ - ix);
 
                             // 
                             // "returns zero (0) if the end of the stream has been reached."
@@ -855,9 +859,9 @@ namespace Lexical.Localization.Asset
                             _cache.m_lock.EnterWriteLock();
                             try
                             {
-                                _cache.data[cacheKey] = data;
+                                _cache.data[cacheKey] = new LineResourceBytes(value.Line, data, value.Status);
                                 // Wrap to new stream.
-                                return new MemoryStream(data);
+                                return new LineResourceStream(value.Line, new MemoryStream(data), value.Status);
                             }
                             finally
                             {
@@ -867,7 +871,7 @@ namespace Lexical.Localization.Asset
                         else
                         {
                             // Reading completely failed, revert position
-                            stream.Position = position;
+                            stream.Value.Position = position;
                             ix = 0;
                         }
                     }
@@ -877,7 +881,7 @@ namespace Lexical.Localization.Asset
                     try
                     {
                         // Return position. 
-                        if (position > 0L) { stream.Position = position; ix = 0; }
+                        if (position > 0L) { stream.Value.Position = position; ix = 0; }
                     }
                     catch (Exception)
                     {
@@ -887,12 +891,12 @@ namespace Lexical.Localization.Asset
                     // Stream has not been rewound. Let's open it again.
                     if (ix > 0)
                     {
-                        stream.Dispose();
+                        stream.Value.Dispose();
                         return Source.GetResourceStream(key);
                     }
                 }
             }
-            return null;
+            return new LineResourceStream(key, (Exception)null, LineStatus.ResolveFailedNoResult);
         }
 
         /// <summary>

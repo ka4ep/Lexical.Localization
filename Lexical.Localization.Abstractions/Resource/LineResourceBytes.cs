@@ -110,6 +110,19 @@ namespace Lexical.Localization.Resource
         }
 
         /// <summary>
+        /// Create resource result
+        /// </summary>
+        /// <param name="line">(optional) source line</param>
+        /// <param name="status">resolve reslut</param>
+        public LineResourceBytes(ILine line, LineStatus status)
+        {
+            Line = line;
+            Value = null;
+            Status = status;
+            Exception = null;
+        }
+
+        /// <summary>
         /// Return Value or ""
         /// </summary>
         /// <returns></returns>

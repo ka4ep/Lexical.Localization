@@ -49,7 +49,7 @@ namespace docs
                 IString value = asset.GetString(key.Culture("en")).GetString();
 
                 // Retrieve binary resource with a reference
-                byte[] data = asset.GetResourceBytes(key.Culture("en"));
+                byte[] data = asset.GetResourceBytes(key.Culture("en")).Value;
                 #endregion Snippet_3a
             }
             {
@@ -69,7 +69,7 @@ namespace docs
                 // Retieve string from provider
                 string str = key.ToString();
                 // Retrieve binary resoruce from provider
-                byte[] data = key.GetResourceBytes();
+                byte[] data = key.GetResourceBytes().Value;
                 #endregion Snippet_3b
             }
 

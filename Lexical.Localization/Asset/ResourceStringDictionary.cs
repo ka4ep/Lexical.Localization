@@ -3,6 +3,7 @@
 // Date:           12.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Resource;
 using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
@@ -131,14 +132,16 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns>resource or null</returns>
-        public byte[] GetResourceBytes(ILine key)
+        public LineResourceBytes GetResourceBytes(ILine key)
         {
             byte[] result = null;
             string id = lineFormat.Print(key);
 
             // Search dictionary
-            dictionary.TryGetValue(id, out result);
-            return result;
+            if (dictionary.TryGetValue(id, out result))
+                return new LineResourceBytes(key, result, LineStatus.ResolveOkFromAsset);
+            else
+                return new LineResourceBytes(key, LineStatus.ResolveFailedNoValue);
         }
 
         /// <summary>
@@ -146,11 +149,16 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Stream GetResourceStream(ILine key)
+        public LineResourceStream GetResourceStream(ILine key)
         {
-            byte[] data = GetResourceBytes(key);
-            if (data == null) return null;
-            return new MemoryStream(data);
+            byte[] result = null;
+            string id = lineFormat.Print(key);
+
+            // Search dictionary
+            if (dictionary.TryGetValue(id, out result))
+                return new LineResourceStream(key, new MemoryStream(result), LineStatus.ResolveOkFromAsset);
+            else
+                return new LineResourceStream(key, LineStatus.ResolveFailedNoValue);
         }
 
         /// <summary>

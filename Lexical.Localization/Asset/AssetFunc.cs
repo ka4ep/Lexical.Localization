@@ -1,4 +1,5 @@
-﻿using Lexical.Localization.StringFormat;
+﻿using Lexical.Localization.Resource;
+using Lexical.Localization.StringFormat;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,8 +31,8 @@ namespace Lexical.Localization.Asset
         IEnumerable<KeyValuePair<string, IString>> IStringAssetStringLinesEnumerable.GetAllStringLines(ILine key)
             => (Func() as IStringAssetStringLinesEnumerable)?.GetAllStringLines(key);
 
-        byte[] IResourceAsset.GetResourceBytes(ILine key)
-            => (Func() as IResourceAsset)?.GetResourceBytes(key);
+        LineResourceBytes IResourceAsset.GetResourceBytes(ILine key)
+            => Func() is IResourceAsset resourceAsset ? resourceAsset.GetResourceBytes(key) : new LineResourceBytes(key, (Exception)null, LineStatus.ResolveFailedNoResult);
 
         IEnumerable<string> IResourceAssetNamesEnumerable.GetResourceNames(ILine key)
             => (Func() as IResourceAssetNamesEnumerable)?.GetResourceNames(key);
@@ -39,8 +40,8 @@ namespace Lexical.Localization.Asset
         ILine IStringAsset.GetString(ILine key)
             => (Func() as IStringAsset)?.GetString(key);
 
-        Stream IResourceAsset.GetResourceStream(ILine key)
-            => (Func() as IResourceAsset).GetResourceStream(key);
+        LineResourceStream IResourceAsset.GetResourceStream(ILine key)
+            => Func() is IResourceAsset resourceAsset ? resourceAsset.GetResourceStream(key) : new LineResourceStream(key, (Exception)null, LineStatus.ResolveFailedNoResult);
 
         /// <summary>
         /// 

@@ -111,6 +111,34 @@ namespace Lexical.Localization.Resource
         }
 
         /// <summary>
+        /// Create resource error result
+        /// </summary>
+        /// <param name="line">(optional) source line</param>
+        /// <param name="status">resolve reslut</param>
+        public LineResourceStream(ILine line, LineStatus status)
+        {
+            Line = line;
+            Value = null;
+            Status = status;
+            Exception = null;
+        }
+
+        /// <summary>
+        /// Create resource result
+        /// </summary>
+        /// <param name="line">(optional) source line</param>
+        /// <param name="value">resolved bytes</param>
+        /// <param name="error"></param>
+        /// <param name="status">resolve reslut</param>
+        public LineResourceStream(ILine line, Stream value, Exception error, LineStatus status)
+        {
+            Line = line;
+            Value = value;
+            Status = status;
+            Exception = error;
+        }
+
+        /// <summary>
         /// Return Value or ""
         /// </summary>
         /// <returns></returns>
