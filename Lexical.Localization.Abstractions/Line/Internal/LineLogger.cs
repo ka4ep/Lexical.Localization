@@ -14,8 +14,11 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Observes resolved keys and writes log lines to <see cref="TextWriter"/>.
     /// </summary>
-    public class LineTextLogger : ILocalizationStringLogger, ILocalizationResourceLogger
+    public class LineTextLogger : IStringResolverLogger, IResourceResolverLogger
     {
+        /// <summary>
+        /// Text output stream.
+        /// </summary>
         TextWriter logger;
 
         /// <summary>
@@ -118,7 +121,7 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Observes resolved keys and writes log lines to <see cref="Trace"/>.
     /// </summary>
-    public class LineDiagnosticsTrace : ILocalizationStringLogger, ILocalizationResourceLogger
+    public class LineDiagnosticsTrace : IStringResolverLogger, IResourceResolverLogger
     {
         /// <summary>
         /// Severity to log

@@ -3,11 +3,9 @@
 // Date:           9.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using System;
-using System.IO;
 using Lexical.Localization.Internal;
-using Lexical.Localization.Resource;
 using Lexical.Localization.StringFormat;
+using System.IO;
 
 namespace Lexical.Localization
 {
@@ -20,27 +18,6 @@ namespace Lexical.Localization
         /// (Optional) The assigned logger.
         /// </summary>
         ILocalizationLogger Logger { get; set; }
-    }
-
-    /// <summary>
-    /// Localization logger
-    /// </summary>
-    public interface ILocalizationLogger
-    {
-    }
-
-    /// <summary>
-    /// Localization logger that logs string resolve events
-    /// </summary>
-    public interface ILocalizationStringLogger : ILocalizationLogger, IObserver<LineString>
-    {
-    }
-
-    /// <summary>
-    /// Localization logger that logs string resolve events
-    /// </summary>
-    public interface ILocalizationResourceLogger : ILocalizationLogger, IObserver<LineResourceBytes>, IObserver<LineResourceStream>
-    {
     }
 
     public static partial class ILineExtensions

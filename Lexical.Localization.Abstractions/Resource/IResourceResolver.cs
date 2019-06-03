@@ -35,6 +35,13 @@ namespace Lexical.Localization.Resource
         /// <returns>reslut</returns>
         LineResourceBytes ResolveBytes(ILine line);
     }
+
+    /// <summary>
+    /// Logger that logs resource resolving of <see cref="IResourceResolver"/>.
+    /// </summary>
+    public interface IResourceResolverLogger : ILocalizationLogger, IObserver<LineResourceBytes>, IObserver<LineResourceStream>
+    {
+    }
 }
 
 namespace Lexical.Localization

@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Resource;
+using Lexical.Localization.StringFormat;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -28,7 +29,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Observes resolved localization strings and logs into <see cref="ILogger"/>.
     /// </summary>
-    public class LineILogger : ILocalizationLogger, ILocalizationStringLogger, ILocalizationResourceLogger
+    public class LineILogger : ILocalizationLogger, IStringResolverLogger, IResourceResolverLogger
     {
         ILogger logger;
 
