@@ -37,6 +37,11 @@ namespace Lexical.Localization.Asset
         IAssetLoader AddRange(IEnumerable<IAssetLoaderPart> part);
     }
     #endregion interface
+}
+
+namespace Lexical.Localization
+{
+    using Lexical.Localization.Asset;
 
     /// <summary></summary>
     public static partial class IAssetLoaderExtensions

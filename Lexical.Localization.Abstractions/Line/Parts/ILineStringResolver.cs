@@ -61,7 +61,7 @@ namespace Lexical.Localization
                     if (str != null) return str;
                 }
             }
-            return StatusFormatString.Null;
+            return StatusString.Null;
         }
 
         /// <summary>

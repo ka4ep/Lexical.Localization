@@ -55,6 +55,11 @@ namespace Lexical.Localization.Asset
         IEnumerable<IReadOnlyDictionary<string, string>> ListLoadables(IReadOnlyDictionary<string, string> parameters = null);
     }
     #endregion interface
+}
+
+namespace Lexical.Localization
+{
+    using Lexical.Localization.Asset;
 
     /// <summary></summary>
     public static partial class IAssetLoaderPartExtensions

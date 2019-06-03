@@ -26,6 +26,11 @@ namespace Lexical.Localization.Asset
         /// <returns>cultures or null of feature is not supported</returns>
         IEnumerable<CultureInfo> GetSupportedCultures();
     }
+}
+
+namespace Lexical.Localization
+{
+    using Lexical.Localization.Asset;
 
     public static partial class IAssetExtensions
     {

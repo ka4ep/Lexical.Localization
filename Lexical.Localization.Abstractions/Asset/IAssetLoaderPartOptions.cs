@@ -17,6 +17,11 @@ namespace Lexical.Localization.Asset
     {
     }
     #endregion interface
+}
+
+namespace Lexical.Localization
+{
+    using Lexical.Localization.Asset;
 
     /// <summary></summary>
     public static partial class IAssetLoaderPartOptionsExtensions

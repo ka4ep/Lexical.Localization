@@ -3,11 +3,12 @@
 // Date:           7.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.StringFormat;
 using System;
 using System.IO;
 using System.Text;
 
-namespace Lexical.Localization.StringFormat
+namespace Lexical.Localization
 {
     /// <summary>
     /// Status code for <see cref="LineString"/>.

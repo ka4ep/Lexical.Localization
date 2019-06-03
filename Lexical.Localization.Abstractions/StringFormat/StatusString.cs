@@ -10,28 +10,28 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Class that carries a status code result as <see cref="IString"/>.
     /// </summary>
-    public class StatusFormatString : IString
+    public class StatusString : IString
     {
         static IPlaceholder[] no_arguments = new IPlaceholder[0];
         static IStringPart[] no_parts = new IStringPart[0];
-        static StatusFormatString _null = new StatusFormatString(null, LineStatus.FormatFailedNull);
-        static StatusFormatString _no_parser = new StatusFormatString(null, LineStatus.FormatFailedNoParser);
-        static StatusFormatString _parse_failed = new StatusFormatString(null, LineStatus.FormatFailedParse);
+        static StatusString _null = new StatusString(null, LineStatus.FormatFailedNull);
+        static StatusString _no_parser = new StatusString(null, LineStatus.FormatFailedNoParser);
+        static StatusString _parse_failed = new StatusString(null, LineStatus.FormatFailedParse);
 
         /// <summary>
         /// Status for null value.
         /// </summary>
-        public static StatusFormatString Null => _null;
+        public static StatusString Null => _null;
 
         /// <summary>
         /// Status for null value.
         /// </summary>
-        public static StatusFormatString ParseFailed => _parse_failed;
+        public static StatusString ParseFailed => _parse_failed;
 
         /// <summary>
         /// Status for null value.
         /// </summary>
-        public static StatusFormatString NoParser => _no_parser;
+        public static StatusString NoParser => _no_parser;
 
         /// <summary>
         /// Get the status
@@ -68,7 +68,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="text"></param>
         /// <param name="status"></param>
-        public StatusFormatString(string text, LineStatus status)
+        public StatusString(string text, LineStatus status)
         {
             this.Status = status;
             this.Text = text;

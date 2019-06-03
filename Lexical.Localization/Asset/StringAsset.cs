@@ -234,7 +234,7 @@ namespace Lexical.Localization.Asset
             return this.stringLines = newLines;
         }
 
-        static ILine nullLine = new LineString(null, null, StatusFormatString.Null);
+        static ILine nullLine = new LineString(null, null, StatusString.Null);
 
         /// <summary>
         /// Replaces <see cref="stringLines"/> with a new dictionary that is filled with lines from <see cref="collections"/>.

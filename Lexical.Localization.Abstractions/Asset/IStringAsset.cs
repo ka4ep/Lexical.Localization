@@ -102,6 +102,11 @@ namespace Lexical.Localization.Asset
         /// <returns>key to language string mapping, or null</returns>
         IEnumerable<KeyValuePair<string, IString>> GetAllStringLines(ILine filterKey = null);
     }
+}
+
+namespace Lexical.Localization
+{
+    using Lexical.Localization.Asset;
 
     public static partial class IAssetExtensions
     {

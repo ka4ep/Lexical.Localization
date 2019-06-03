@@ -3,7 +3,6 @@
 // Date:           8.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +20,11 @@ namespace Lexical.Localization.Asset
     public interface IAsset
     {
     }
+}
+
+namespace Lexical.Localization
+{
+    using Lexical.Localization.Asset;
 
     /// <summary></summary>
     public static partial class IAssetExtensions

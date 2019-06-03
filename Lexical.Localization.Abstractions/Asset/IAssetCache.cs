@@ -67,9 +67,13 @@ namespace Lexical.Localization.Asset
             => $"{GetType().Name}({String.Join(", ", this.Select(kp=>$"{kp.Key}={kp.Value}"))})";
     }
     #endregion options
+}
+
+namespace Lexical.Localization
+{
+    using Lexical.Localization.Asset;
 
     /// <summary></summary>
-    #region extensions
     public static partial class IAssetCacheExtensions
     {
         /// <summary>
@@ -84,5 +88,4 @@ namespace Lexical.Localization.Asset
             return cache;
         }
     }
-    #endregion extensions
 }

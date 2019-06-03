@@ -122,6 +122,11 @@ namespace Lexical.Localization.Asset
         /// <returns>all resource names, or null</returns>
         IEnumerable<string> GetAllResourceNames(ILine filterKey = null);
     }
+}
+
+namespace Lexical.Localization
+{
+    using Lexical.Localization.Asset;
 
     public static partial class IAssetExtensions
     {

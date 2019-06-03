@@ -108,6 +108,11 @@ namespace Lexical.Localization.Asset
             ChangeType = changeType;
         }
     }
+}
+
+namespace Lexical.Localization
+{
+    using Lexical.Localization.Asset;
 
     public static partial class IAssetExtensions
     {

@@ -96,9 +96,9 @@ namespace Lexical.Localization.StringFormat
         /// <exception cref="ArgumentException">If <paramref name="stringFormat"/> doesn't implement <see cref="IStringFormatParser"/></exception>
         public static IString Parse(this IStringFormat stringFormat, string str)
         {
-            if (str == null) return new StatusFormatString(str, LineStatus.FormatFailedNull);
+            if (str == null) return new StatusString(str, LineStatus.FormatFailedNull);
             if (stringFormat is IStringFormatParser parser) return parser.Parse(str);
-            return new StatusFormatString(str, LineStatus.FormatFailedNoParser);
+            return new StatusString(str, LineStatus.FormatFailedNoParser);
         }
 
         /// <summary>

@@ -87,7 +87,7 @@ namespace Lexical.Localization.StringFormat
             {
                 features.Log(e);
                 features.Status.Up(LineStatus.FailedUnknownReason);
-                return new StatusFormatString(null, features.Status);
+                return new StatusString(null, features.Status);
             }
 
             // Resolve key to line
@@ -100,7 +100,7 @@ namespace Lexical.Localization.StringFormat
                 features.Status.UpResolve(LineStatus.ResolveFailedNoValue);
                 LineString str = new LineString(key, null, features.Status);
                 features.Log(str);
-                return new StatusFormatString(null, features.Status);
+                return new StatusString(null, features.Status);
             }
 
             // Parse value
@@ -112,7 +112,7 @@ namespace Lexical.Localization.StringFormat
             {
                 LineString str = new LineString(key, null, features.Status);
                 features.Log(str);
-                return new StatusFormatString(null, features.Status);
+                return new StatusString(null, features.Status);
             }
 
             // Plural Rules
@@ -125,7 +125,7 @@ namespace Lexical.Localization.StringFormat
                     CultureInfo culture_for_format = features.Culture;
                     if (culture_for_format == null && features.CulturePolicy != null) { CultureInfo[] cultures = features.CulturePolicy.Cultures; if (cultures != null && cultures.Length > 0) culture_for_format = cultures[0]; }
                     if (culture_for_format == null) culture_for_format = RootCulture;
-                    EvaluatePlaceholderValues(value.Placeholders, ref features, ref placeholder_values, culture_for_format);
+                    EvaluatePlaceholderValues(line, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
 
                     // Create permutation configuration
                     PluralCasePermutations permutations = new PluralCasePermutations(line);
@@ -164,7 +164,7 @@ namespace Lexical.Localization.StringFormat
                         {
                             LineString str = new LineString(key, null, features.Status);
                             features.Log(str);
-                            return new StatusFormatString(null, features.Status);
+                            return new StatusString(null, features.Status);
                         }
                         // Return with match
                         features.Status.UpPlurality(LineStatus.PluralityOkMatched);
@@ -245,7 +245,7 @@ namespace Lexical.Localization.StringFormat
                 CultureInfo culture_for_format = features.Culture;
                 if (culture_for_format == null && features.CulturePolicy != null) { CultureInfo[] cultures = features.CulturePolicy.Cultures; if (cultures != null && cultures.Length > 0) culture_for_format = cultures[0]; }
                 if (culture_for_format == null) culture_for_format = RootCulture;
-                EvaluatePlaceholderValues(value.Placeholders, ref features, ref placeholder_values, culture_for_format);
+                EvaluatePlaceholderValues(line, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
 
                 // Plural Rules
                 if (value.HasPluralRules())
@@ -307,7 +307,7 @@ namespace Lexical.Localization.StringFormat
                                 // Return with match
                                 features.Status.UpPlurality(LineStatus.PluralityOkMatched);
                                 // Evaluate placeholders again
-                                if (!EqualPlaceholders(value, value_for_plurality)) { placeholder_values.Clear(); EvaluatePlaceholderValues(value_for_plurality.Placeholders, ref features, ref placeholder_values, culture); }
+                                if (!EqualPlaceholders(value, value_for_plurality)) { placeholder_values.Clear(); EvaluatePlaceholderValues(line, value_for_plurality.Placeholders, ref features, ref placeholder_values, culture); }
                                 // Update status codes
                                 features.Status.UpFormat(value_for_plurality.Status);
                                 // Return values
@@ -678,15 +678,17 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Evaluate placeholders into string values.
         /// </summary>
+        /// <param name="line"></param>
         /// <param name="placeholders"></param>
         /// <param name="features">contextual data</param>
         /// <param name="placeholder_values">collection where strings are placed, one for each placeholder</param>
         /// <param name="culture">the culture in which to evaluate</param>
-        void EvaluatePlaceholderValues(IPlaceholder[] placeholders, ref LineFeatures features, ref StructList12<string> placeholder_values, CultureInfo culture)
+        void EvaluatePlaceholderValues(ILine line, IPlaceholder[] placeholders, ref LineFeatures features, ref StructList12<string> placeholder_values, CultureInfo culture)
         {
             PlaceholderExpressionEvaluator placeholder_evaluator = new PlaceholderExpressionEvaluator();
             placeholder_evaluator.Args = features.FormatArgs;
             placeholder_evaluator.FunctionEvaluationCtx.Culture = culture;
+            placeholder_evaluator.FunctionEvaluationCtx.Line = line;
             if (features.FormatProviders.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = features.FormatProviders[0]; else if (features.FormatProviders.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = new FormatProviderComposition(features.FormatProviders.ToArray());
             if (features.Functions.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = features.Functions[0]; else if (features.Functions.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = new FunctionsMap(features.Functions);
             for (int i = 0; i < placeholders.Length; i++)

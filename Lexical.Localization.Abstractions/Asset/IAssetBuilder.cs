@@ -30,6 +30,11 @@ namespace Lexical.Localization.Asset
         IAsset Build();
     }
     #endregion interface
+}
+
+namespace Lexical.Localization
+{
+    using Lexical.Localization.Asset;
 
     /// <summary>
     /// Extension methods.
