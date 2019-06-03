@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// Localization root where culture policy and language strings cannot be modified after construction.
     /// </summary>
     [Serializable]
-    public partial class LineRoot : LineBase, ILineRoot, ILineCulturePolicy, ILineAsset, ILineStringResolver, ILineFormatProvider, ILineLogger, ILineFunctions, ILineStringFormat
+    public partial class LineRoot : LineBase, ILineRoot, ILineCulturePolicy, ILineAsset, ILineStringResolver, ILineResourceResolver, ILineFormatProvider, ILineLogger, ILineFunctions, ILineStringFormat
     {
         /// <summary>
         /// (Optional) The assigned culture policy.
@@ -319,7 +319,7 @@ namespace Lexical.Localization
     /// Localization root where culture policy and language strings cannot be modified after construction.
     /// </summary>
     [Serializable]
-    public partial class StringLocalizerRoot : StringLocalizerBase, ILineRoot, ILineCulturePolicy, ILineAsset, ILineStringResolver, ILineFormatProvider, ILineLogger, ILineFunctions, ILineStringFormat
+    public partial class StringLocalizerRoot : StringLocalizerBase, ILineRoot, ILineCulturePolicy, ILineAsset, ILineStringResolver, ILineResourceResolver, ILineFormatProvider, ILineLogger, ILineFunctions, ILineStringFormat
     {
         /// <summary>
         /// (Optional) The assigned culture policy.

@@ -32,6 +32,11 @@ namespace Lexical.Localization.StringFormat
         public readonly IResolver Resolvers;
 
         /// <summary>
+        /// Resolve sequence
+        /// </summary>
+        public readonly ResolveSource[] ResolveSequence;
+
+        /// <summary>
         /// Maximum plural arguments. If argument count is exceeded returns error with <see cref="LineStatus.PluralityErrorMaxPluralArgumentsExceeded"/>.
         /// 
         /// The higher the number, the more potential permutation overhead can occur.
@@ -50,7 +55,7 @@ namespace Lexical.Localization.StringFormat
         public StringResolver()
         {
             this.Resolvers = Lexical.Localization.Resolver.Resolvers.Default;
-            this.ResolveSequence = new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
+            this.ResolveSequence = ResolverSequence.Default;
             this.maxPluralArguments = 3;
         }
 
@@ -63,7 +68,7 @@ namespace Lexical.Localization.StringFormat
         public StringResolver(IResolver resolvers, ResolveSource[] resolveSequence = default, int maxPluralArguments = 3)
         {
             this.Resolvers = resolvers ?? throw new ArgumentNullException(nameof(resolvers));
-            this.ResolveSequence = resolveSequence ?? new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
+            this.ResolveSequence = resolveSequence ?? ResolverSequence.Default;
             this.maxPluralArguments = maxPluralArguments;
         }
 
@@ -389,24 +394,6 @@ namespace Lexical.Localization.StringFormat
                 return lineString;
             }
         }
-
-        /// <summary>
-        /// Resolve source
-        /// </summary>
-        public enum ResolveSource {
-            /// <summary>Resolve from <see cref="ILineAsset"/></summary>
-            Asset,
-            /// <summary>Resolve from <see cref="ILineInlines"/></summary>
-            Inlines,
-            /// <summary>Resolve from the Value part of Key itself</summary>
-            Key
-        };
-
-        /// <summary>
-        /// Resolve sequence
-        /// </summary>
-        public readonly ResolveSource[] ResolveSequence;
-
 
         /// <summary>
         /// Resolve keys into a line. Searches from asset, inlines and key itself.

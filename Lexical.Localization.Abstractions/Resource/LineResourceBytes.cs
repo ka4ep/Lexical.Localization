@@ -162,6 +162,7 @@ namespace Lexical.Localization.Resource
                 // Append result
                 if (Value != null)
                 {
+                    sb.Append(" ");
                     sb.Append(Value.Length);
                     sb.Append(Value.Length == 1 ? " byte" : " bytes");
                 }

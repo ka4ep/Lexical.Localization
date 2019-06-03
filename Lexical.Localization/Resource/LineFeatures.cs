@@ -1,12 +1,13 @@
 ﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           21.5.2019
+// Date:           3.6.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Asset;
 using Lexical.Localization.Internal;
 using Lexical.Localization.Resolver;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace Lexical.Localization.Resource
@@ -32,6 +33,11 @@ namespace Lexical.Localization.Resource
         public CultureInfo Culture;
 
         /// <summary>
+        /// Inlines
+        /// </summary>
+        public StructList1<IDictionary<ILine, ILine>> Inlines;
+
+        /// <summary>
         /// Configured loggers
         /// </summary>
         public StructList2<ILocalizationLogger> Loggers;
@@ -42,9 +48,19 @@ namespace Lexical.Localization.Resource
         public StructList1<IAsset> Assets;
 
         /// <summary>
+        /// Resource.
+        /// </summary>
+        public byte[] Resource;
+
+        /// <summary>
         /// Status code from reading lines
         /// </summary>
         public LineStatus Status;
+
+        /// <summary>
+        /// Test if has value.
+        /// </summary>
+        public bool HasValue => Resource != null;
 
         /// <summary>
         /// Scan features from <paramref name="line"/>
@@ -57,6 +73,8 @@ namespace Lexical.Localization.Resource
             {
                 if (l is ILineCulturePolicy cp && cp != null) CulturePolicy = cp.CulturePolicy;
                 if (l is ILineCulture c && c.Culture != null) Culture = c.Culture;
+                if (l is ILineInlines inlines) Inlines.AddIfNew(inlines);
+                if (l is ILineResource resource && resource.Resource != null) Resource = resource.Resource;
                 if (l is ILineLogger ll && ll.Logger != null) Loggers.AddIfNew(ll.Logger);
                 if (l is ILineAsset la && la.Asset != null) Assets.AddIfNew(la.Asset);
 
@@ -84,7 +102,7 @@ namespace Lexical.Localization.Resource
         /// Log error <paramref name="e"/>, if loggers are configured.
         /// </summary>
         /// <param name="e"></param>
-        public void LogStreamResolve(Exception e)
+        public void LogResolveStream(Exception e)
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
@@ -96,7 +114,7 @@ namespace Lexical.Localization.Resource
         /// Log <paramref name="str"/>, if loggers are configured.
         /// </summary>
         /// <param name="str"></param>
-        public void LogStreamResolve(LineResourceStream str)
+        public void LogResolveStream(LineResourceStream str)
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
@@ -109,7 +127,7 @@ namespace Lexical.Localization.Resource
         /// </summary>
         /// <param name="e"></param>
         /// <param name="stream"></param>
-        public void LogStreamResolve(Exception e, LineResourceStream stream)
+        public void LogResolveStream(Exception e, LineResourceStream stream)
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
@@ -126,7 +144,7 @@ namespace Lexical.Localization.Resource
         /// Log error <paramref name="e"/>, if loggers are configured.
         /// </summary>
         /// <param name="e"></param>
-        public void LogBytesResolve(Exception e)
+        public void LogResolveBytes(Exception e)
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
@@ -138,7 +156,7 @@ namespace Lexical.Localization.Resource
         /// Log <paramref name="str"/>, if loggers are configured.
         /// </summary>
         /// <param name="str"></param>
-        public void LogBytesResolve(LineResourceBytes str)
+        public void LogResolveBytes(LineResourceBytes str)
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
@@ -151,7 +169,7 @@ namespace Lexical.Localization.Resource
         /// </summary>
         /// <param name="e"></param>
         /// <param name="stream"></param>
-        public void LogBytesResolve(Exception e, LineResourceBytes stream)
+        public void LogResolveBytes(Exception e, LineResourceBytes stream)
         {
             for (int i = 0; i < Loggers.Count; i++)
             {

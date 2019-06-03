@@ -178,7 +178,26 @@ namespace Lexical.Localization.Resource
                 // Append result
                 if (Value != null)
                 {
-                    sb.Append(Value.ToString());
+                    sb.Append(" ");
+                    string str1 = Value.GetType().FullName;
+                    string str2 = Value.ToString();
+                    sb.Append(str1);
+                    if (str1 != str2)
+                    {
+                        sb.Append("(");
+                        sb.Append(str2);
+                        sb.Append(")");
+                    }
+
+                    // Print length
+                    try
+                    {
+                        long len = Value.Length;
+                        sb.Append(" ");
+                        sb.Append(len);
+                        sb.Append(len == 1L ? " byte" : " bytes");
+                    } catch (Exception) { }
+
                 }
 
                 // Compile string
