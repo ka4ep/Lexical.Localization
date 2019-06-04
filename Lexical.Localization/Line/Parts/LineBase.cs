@@ -381,7 +381,7 @@ namespace Lexical.Localization
             {
                 ILine line = this;
                 if (name != null) line = line.Key(name);
-                StringFormat.LineString printedString = line.ResolveString();
+                LineString printedString = line.ResolveString();
                 if (printedString.Value == null)
                     return new LocalizedString(name, line.Print(), true);
                 else
@@ -402,7 +402,7 @@ namespace Lexical.Localization
                 ILine line = this;
                 if (name != null) line = line.Key(name);
                 if (arguments != null) line = line.Append<ILineValue, object[]>(arguments);
-                StringFormat.LineString printedString = line.ResolveString();
+                LineString printedString = line.ResolveString();
                 if (printedString.Value == null)
                     return new LocalizedString(name, line.Print(), true);
                 else

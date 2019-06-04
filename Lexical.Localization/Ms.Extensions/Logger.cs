@@ -68,7 +68,7 @@ namespace Lexical.Localization
         /// Log string resolve
         /// </summary>
         /// <param name="value"></param>
-        public void OnNext(StringFormat.LineString value)
+        public void OnNext(LineString value)
         {
             // Get reference
             var _logger = logger;

@@ -438,7 +438,7 @@ namespace Lexical.Localization.StringFormat
                                         if ((line = asset.GetString(key)) != null)
                                         {
                                             features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
-                                            features.Status.UpCulture(LineStatus.CultureOkMatchedCulture);
+                                            features.Status.UpCulture(LineStatus.CultureOkMatchedKeyCulture);
                                             features.ScanFeatures(line);
                                             return line;
                                         }
@@ -460,7 +460,7 @@ namespace Lexical.Localization.StringFormat
                                         if (features.Inlines[i].TryGetValue(key, out line))
                                         {
                                             features.Status.UpResolve(LineStatus.ResolveOkFromInline);
-                                            features.Status.UpCulture(LineStatus.CultureOkMatchedCulture);
+                                            features.Status.UpCulture(LineStatus.CultureOkMatchedKeyCulture);
                                             features.ScanFeatures(line);
                                             return line;
                                         }
@@ -479,7 +479,7 @@ namespace Lexical.Localization.StringFormat
                                 {
                                     if (culture == null) culture = RootCulture;
                                     features.Status.UpResolve(LineStatus.ResolveOkFromKey);
-                                    features.Status.UpCulture(LineStatus.CultureOkMatchedCulture);
+                                    features.Status.UpCulture(LineStatus.CultureOkMatchedKeyCulture);
                                     return key;
                                 }
                                 break;
@@ -587,7 +587,7 @@ namespace Lexical.Localization.StringFormat
                                         if ((line = asset.GetString(key)) != null)
                                         {
                                             features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
-                                            features.Status.UpCulture(LineStatus.CultureOkMatchedDefaultLine);
+                                            features.Status.UpCulture(LineStatus.CultureOkMatchedNoCulture);
                                             features.ScanFeatures(line);
                                             return line;
                                         }
@@ -609,7 +609,7 @@ namespace Lexical.Localization.StringFormat
                                         if (features.Inlines[i].TryGetValue(key, out line))
                                         {
                                             features.Status.UpResolve(LineStatus.ResolveOkFromInline);
-                                            features.Status.UpCulture(LineStatus.CultureOkMatchedDefaultLine);
+                                            features.Status.UpCulture(LineStatus.CultureOkMatchedNoCulture);
                                             features.ScanFeatures(line);
                                             return line;
                                         }
@@ -628,7 +628,7 @@ namespace Lexical.Localization.StringFormat
                                 {
                                     if (culture == null) culture = RootCulture;
                                     features.Status.UpResolve(LineStatus.ResolveOkFromKey);
-                                    features.Status.UpCulture(LineStatus.CultureOkMatchedDefaultLine);
+                                    features.Status.UpCulture(LineStatus.CultureOkMatchedNoCulture);
                                     return key;
                                 }
                                 break;

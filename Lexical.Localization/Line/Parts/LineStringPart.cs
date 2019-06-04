@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// Line localization string value.
     /// </summary>
     [Serializable]
-    public class LineString : LineParameterBase, ILineString, ILineHint, ILineArguments<ILineString, IString>
+    public class LineStringPart : LineParameterBase, ILineString, ILineHint, ILineArguments<ILineString, IString>
     {
         /// <summary>
         /// Value
@@ -36,7 +36,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="value"></param>
-        public LineString(ILineFactory appender, ILine prevKey, IString value) : base(appender, prevKey, "String", value?.Text)
+        public LineStringPart(ILineFactory appender, ILine prevKey, IString value) : base(appender, prevKey, "String", value?.Text)
         {
             this.value = value;
         }
@@ -46,7 +46,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public LineString(SerializationInfo info, StreamingContext context) : base(info, context)
+        public LineStringPart(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.value = info.GetValue("String", typeof(IString)) as IString;
         }
@@ -75,7 +75,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public virtual bool TryCreate(ILineFactory appender, ILine previous, IString value, out ILineString line)
         {
-            line = new LineString(appender, previous, value);
+            line = new LineStringPart(appender, previous, value);
             return true;
         }
     }
@@ -84,7 +84,7 @@ namespace Lexical.Localization
     /// StringLocalizer localization string value.
     /// </summary>
     [Serializable]
-    public class StringLocalizerString : StringLocalizerParameterBase, ILineString, ILineHint, ILineArguments<ILineString, IString>
+    public class StringLocalizerStringPart : StringLocalizerParameterBase, ILineString, ILineHint, ILineArguments<ILineString, IString>
     {
         /// <summary>
         /// Value
@@ -107,7 +107,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="value"></param>
-        public StringLocalizerString(ILineFactory appender, ILine prevKey, IString value) : base(appender, prevKey, "String", value?.Text)
+        public StringLocalizerStringPart(ILineFactory appender, ILine prevKey, IString value) : base(appender, prevKey, "String", value?.Text)
         {
             this.value = value;
         }
@@ -117,7 +117,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public StringLocalizerString(SerializationInfo info, StreamingContext context) : base(info, context)
+        public StringLocalizerStringPart(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.value = info.GetValue("String", typeof(IString)) as IString;
         }
@@ -146,7 +146,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public virtual bool TryCreate(ILineFactory appender, ILine previous, IString value, out ILineString StringLocalizer)
         {
-            StringLocalizer = new StringLocalizerString(appender, previous, value);
+            StringLocalizer = new StringLocalizerStringPart(appender, previous, value);
             return true;
         }
     }

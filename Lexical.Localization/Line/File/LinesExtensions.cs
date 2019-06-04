@@ -89,7 +89,7 @@ namespace Lexical.Localization
 
             // Clone value
             ILine valueClone = null;
-            if (valuePart is ILineString lineValue) { value = new LineString(null, null, lineValue.String); return true; }
+            if (valuePart is ILineString lineValue) { value = new LineStringPart(null, null, lineValue.String); return true; }
             if (valueClone == null && valuePart is ILineParameterEnumerable lineParameters)
             {
                 foreach (ILineParameter lineParameter in lineParameters)

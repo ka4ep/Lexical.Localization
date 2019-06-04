@@ -271,7 +271,7 @@ namespace Lexical.Localization
         {
             ILineTree n = node;
             if (key != null) n = n.GetChild(key);
-            if (value != null) n.Values.Add(new LineString(null, null, value));
+            if (value != null) n.Values.Add(new LineStringPart(null, null, value));
             return node;
         }
 
@@ -293,7 +293,7 @@ namespace Lexical.Localization
                 leaf = leaf.GetOrCreate(key);
 
             // Add value
-            if (value != null && !leaf.HasValue(value)) leaf.Values.Add( new LineString(null, null, value) );
+            if (value != null && !leaf.HasValue(value)) leaf.Values.Add( new LineStringPart(null, null, value) );
 
             // Return leaf
             return leaf;

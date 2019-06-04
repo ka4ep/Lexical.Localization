@@ -77,9 +77,9 @@ namespace Lexical.Localization
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         CultureOk = 0x01UL << Shift.Culture,
         /// <summary>Key contained no culture, and it matched to default line</summary>
-        CultureOkMatchedDefaultLine = 0x04UL << Shift.Culture,
+        CultureOkMatchedNoCulture = 0x04UL << Shift.Culture,
         /// <summary>Key contained an explicit culture, and it matched to a line</summary>
-        CultureOkMatchedCulture = 0x08UL << Shift.Culture,
+        CultureOkMatchedKeyCulture = 0x08UL << Shift.Culture,
         /// <summary>Key contained culture policy which provided a culture that matched to a line</summary>
         CultureOkMatchedCulturePolicy = 0x0CUL << Shift.Culture,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>

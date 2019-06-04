@@ -181,10 +181,10 @@ namespace Lexical.Localization
         /// <returns></returns>
         static IServiceCollection AddLoggerAdapter(this IServiceCollection serviceCollection)
         {
-            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IObserver<StringFormat.LineString>), s =>
+            serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IObserver<LineString>), s =>
             {
                 ILogger<ILine> logger = s.GetService<ILogger<ILine>>();
-                IObserver<StringFormat.LineString> adapter = logger == null ? null : new LineILogger(logger);
+                IObserver<LineString> adapter = logger == null ? null : new LineILogger(logger);
                 return adapter;
             }));
             return serviceCollection;

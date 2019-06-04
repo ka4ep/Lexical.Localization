@@ -236,14 +236,14 @@ namespace Lexical.Localization.Asset
                 foreach (var line in collectionsLine.Value.StringLines)
                 {
                     IString format = line.Value;
-                    ILine value = format == null ? nullLine: new LineString(null, null, format);
+                    ILine value = format == null ? nullLine: new LineStringPart(null, null, format);
                     newLines[line.Key] = value;
                 }
             }
             return this.stringLines = newLines;
         }
 
-        static ILine nullLine = new LineString(null, null, StatusString.Null);
+        static ILine nullLine = new LineStringPart(null, null, StatusString.Null);
 
         /// <summary>
         /// Replaces <see cref="stringLines"/> with a new dictionary that is filled with lines from <see cref="collections"/>.
@@ -269,7 +269,7 @@ namespace Lexical.Localization.Asset
                     foreach (var line in c.StringLines)
                     {
                         IString format = line.Value;
-                        ILine value = format == null ? nullLine : new LineString(null, null, format);
+                        ILine value = format == null ? nullLine : new LineStringPart(null, null, format);
                         newLines[line.Key] = value;
                     }
                 } 
