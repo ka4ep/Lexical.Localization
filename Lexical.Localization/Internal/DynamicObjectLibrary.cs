@@ -391,7 +391,7 @@ namespace Lexical.Localization.Internal
                     {
                         match = true;
                         ix_parameter_varargs = pis.Length - 1;
-                        for (int i = 0; i < args.Length-1; i++)
+                        for (int i = 0; i < ix_parameter_varargs-1; i++)
                         {
                             Type piType = pis[i + offset].ParameterType;
                             DynamicMetaObject arg = args[i];
@@ -440,26 +440,27 @@ namespace Lexical.Localization.Internal
                         {
                             // Convert Type
                             if (args[i].Expression.Type.Equals(pis[i + offset].ParameterType)) argExps[i + offset] = Expression.Convert(args[i].Expression, pis[i + offset].ParameterType);
-                            // Add restriction
-                            restrictions = restrictions.Merge(BindingRestrictions.GetTypeRestriction(args[i].Expression, pis[i + offset].ParameterType));
                         }
+                        // Add restriction
+                        restrictions = restrictions.Merge(BindingRestrictions.GetTypeRestriction(args[i].Expression, args[i].LimitType));
                     }
 
                     // Support varargs
                     if (ix_parameter_varargs >= 0)
                     {
                         // Split argExps to half
-                        Expression[] new_argExps = new Expression[ix_parameter_varargs + offset + 1];
+                        Expression[] new_argExps = new Expression[ix_parameter_varargs + offset];
                         Array.Copy(argExps, new_argExps, new_argExps.Length-1);
-                        new_argExps[ix_parameter_varargs+offset] = 
+                        new_argExps[ix_parameter_varargs] = 
                             Expression.NewArrayInit(typeof(object), 
                             argExps
-                            .Skip(ix_parameter_varargs + offset)   // Skip arguments before the "param object[] args"
+                            .Skip(ix_parameter_varargs)   // Skip arguments before the "param object[] args"
                             .Select(e=>typeof(object).Equals(e.Type) ? e : Expression.Convert(e, typeof(object))) // Cast to object
                             .ToArray() // to object[] required by Expression.NewArrayInit
                             );
+                        // Add restriction
                         argExps = new_argExps;
-                    }
+                    }  
                     Expression exp =
                         mi.IsStatic ?
                         Expression.Call(mi_genericsCasted, argExps) :
@@ -490,13 +491,15 @@ namespace Lexical.Localization.Internal
         {
             Func<Object, IList<Type>> func = null;
             if (getTypeArgumentsFuncDictionary.TryGetValue(binderType, out func)) return func;
-            PropertyInfo pi = binderType.GetProperty("TypeArguments", typeof(IList<Type>));
+            PropertyInfo pi = binderType.GetProperty("TypeArguments", typeof(Type[])); 
+            if (pi == null) pi = binderType.GetProperty("TypeArguments", typeof(IList<Type>)); // Depends on runtime
             MethodInfo mi = pi?.GetGetMethod();
             if (pi != null)
             {
                 ParameterExpression param = Expression.Parameter(typeof(object));
                 Expression body = Expression.Call(Expression.Convert(param, binderType), mi);
                 Expression<Func<object, IList<Type>>> lambda = Expression.Lambda<Func<object, IList<Type>>>(body, param);
+                body = Expression.Convert(body, typeof(IList<Type>));
                 func = lambda.Compile();
             }
             getTypeArgumentsFuncDictionary[binderType] = func;
