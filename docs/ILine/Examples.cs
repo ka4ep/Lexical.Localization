@@ -122,7 +122,7 @@ namespace docs
                 {
                     #region Snippet_6d
                     // Resolve to formulated string to "Error (Code=0xFEEDF00D)"
-                    Lexical.Localization.StringFormat.LineString str = key_formulated.ResolveString();
+                    LineString str = key_formulated.ResolveString();
                     #endregion Snippet_6d
                 }
             }
