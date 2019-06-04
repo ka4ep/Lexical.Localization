@@ -120,8 +120,8 @@ namespace Lexical.Localization.Asset
         /// 
         /// <paramref name="reader"/> must implement one of:
         /// <list type="bullet">
-        /// <item>IEnumerable&gt;KeyValuePair&gt;ILine, IFormatString&lt;&lt;</item>
-        /// <item>IEnumerable&gt;KeyValuePair&gt;string, IFormatString&lt;&lt;</item>
+        /// <item>IEnumerable&gt;KeyValuePair&gt;ILine, IString&lt;&lt;</item>
+        /// <item>IEnumerable&gt;KeyValuePair&gt;string, IString&lt;&lt;</item>
         /// <item>IEnumerable&gt;KeyValuePair&gt;ILine, string&lt;&lt;</item>
         /// <item>IEnumerable&gt;KeyValuePair&gt;string, string&lt;&lt;</item>
         /// <item>IEnumerable&gt;ILineTree&lt;</item>

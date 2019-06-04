@@ -12,7 +12,7 @@ using Lexical.Localization.Utils;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Extensions for IEnumerable&lt;KeyValuePair&lt;string, IFormatString&gt;&gt;.
+    /// Extensions for IEnumerable&lt;KeyValuePair&lt;string, IString&gt;&gt;.
     /// </summary>
     public static class StringLinesExtensions
     {
@@ -82,7 +82,7 @@ namespace Lexical.Localization
 namespace Lexical.Localization.Internal
 {
     /// <summary>
-    /// Extensions for IEnumerable&lt;KeyValuePair&lt;string, IFormatString&gt;&gt;.
+    /// Extensions for IEnumerable&lt;KeyValuePair&lt;string, IString&gt;&gt;.
     /// </summary>
     public static class StringLinesExtensions
     { 

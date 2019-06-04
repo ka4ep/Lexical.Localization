@@ -146,7 +146,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// 
     /// </summary>
-    public static partial class IFormatStringExtensions
+    public static partial class IStringExtensions
     {
         /// <summary>
         /// Get default value (as " ?? value" expression at the end) , if has one.
