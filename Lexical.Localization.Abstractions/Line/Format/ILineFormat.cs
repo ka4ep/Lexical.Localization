@@ -77,6 +77,13 @@ namespace Lexical.Localization
         /// Parse string into <see cref="ILine"/>.
         /// 
         /// The decision on what types are instantiated is a configuration decision of the implementing class.
+        /// 
+        /// Appender is resolved in the following order:
+        /// <list type="number">
+        ///     <item><paramref name="appender"/> if provided</item>
+        ///     <item><paramref name="prevPart"/> if has appender</item>
+        ///     <item><see cref="ILineFormatFactory"/> if implemented</item>
+        /// </list>
         /// </summary>
         /// <param name="str">key as string</param>
         /// <param name="prevPart">(optional) previous part to append to</param>

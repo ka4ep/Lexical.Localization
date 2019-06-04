@@ -153,6 +153,40 @@ namespace Lexical.Localization
         public abstract bool TryParse(string str, ref StructList12<KeyValuePair<string, string>> parameters);
 
         /// <summary>
+        /// Append part
+        /// </summary>
+        /// <param name="appenders"></param>
+        /// <param name="prevPart"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException">If part could not append parameter</exception>
+        static ILineParameter Append(ref StructList3<ILineFactory> appenders, ILine prevPart, string parameterName, string parameterValue)
+        {
+            ILineParameter result;
+            for (int i = 0; i < appenders.Count; i++)
+                if (appenders[i].TryCreate<ILineParameter, string, string>(prevPart, parameterName, parameterValue, out result)) return result;
+            throw new LineException(prevPart, $"Appender doesn't have capability to append {nameof(ILineParameter)}.");
+        }
+
+        /// <summary>
+        /// Try append part
+        /// </summary>
+        /// <param name="appenders"></param>
+        /// <param name="prevPart"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        /// <param name="result"></param>
+        /// <exception cref="LineException">If part could not append parameter</exception>
+        static bool TryAppend(ref StructList3<ILineFactory> appenders, ILine prevPart, string parameterName, string parameterValue, out ILineParameter result)
+        {
+            for (int i = 0; i < appenders.Count; i++)
+                if (appenders[i].TryCreate<ILineParameter, string, string>(prevPart, parameterName, parameterValue, out result)) return true;
+            result = default;
+            return false;
+        }
+
+        /// <summary>
         /// Parse string into ILine.
         /// </summary>
         /// <param name="str"></param>
@@ -162,9 +196,13 @@ namespace Lexical.Localization
         /// <exception cref="LineException">The parameter is not of the correct format.</exception>
         public virtual ILine Parse(string str, ILine prevPart = default, ILineFactory appender = default)
         {
-            if (appender == null) appender = lineFactory;
-            if (appender == null) appender = prevPart.GetAppender();
-
+            // Get appenders
+            StructList3<ILineFactory> appenders = new StructList3<ILineFactory>();
+            if (appender != null) appenders.Add(appender);
+            ILineFactory _appender;
+            if (prevPart.TryGetAppender(out _appender)) appenders.AddIfNew(_appender);
+            if (this.LineFactory != null) appenders.AddIfNew(this.LineFactory);
+            
             StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
             Parse(str, ref parameters);
 
@@ -175,7 +213,7 @@ namespace Lexical.Localization
                 for (int i = 0; i < parameters.Count; i++)
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
-                    ILineParameter lineParameter = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    ILineParameter lineParameter = Append(ref appenders, prevPart, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref occuranceList, parameter.Key);
                     if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
                     prevPart = lineParameter;
@@ -187,7 +225,7 @@ namespace Lexical.Localization
                 for (int i = 0; i < parameters.Count; i++)
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
-                    ILineParameter lineParameter = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    ILineParameter lineParameter = Append(ref appenders, prevPart, parameter.Key, parameter.Value);
                     if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
                     prevPart = lineParameter;
                 }
@@ -247,8 +285,12 @@ namespace Lexical.Localization
         /// <returns>true if parse was successful</returns>
         public virtual bool TryParse(string str, out ILine result, ILine prevPart = default, ILineFactory appender = default)
         {
-            if (appender == null) appender = lineFactory;
-            if (appender == null && !prevPart.TryGetAppender(out appender)) { result = null; return false; }
+            // Get appenders
+            StructList3<ILineFactory> appenders = new StructList3<ILineFactory>();
+            if (appender != null) appenders.Add(appender);
+            ILineFactory _appender;
+            if (prevPart.TryGetAppender(out _appender)) appenders.AddIfNew(_appender);
+            if (this.LineFactory != null) appenders.AddIfNew(this.LineFactory);
 
             StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
             if (!TryParse(str, ref parameters)) { result = default; return false; }
@@ -260,7 +302,8 @@ namespace Lexical.Localization
                 for (int i = 0; i < parameters.Count; i++)
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
-                    ILineParameter lineParameter = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    ILineParameter lineParameter;
+                    if (!TryAppend(ref appenders, prevPart, parameter.Key, parameter.Value, out lineParameter)) { result = default; return false; }
                     int occ = AddOccurance(ref occuranceList, parameter.Key);
                     if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
                     prevPart = lineParameter;
@@ -272,7 +315,8 @@ namespace Lexical.Localization
                 for (int i = 0; i < parameters.Count; i++)
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
-                    ILineParameter lineParameter = appender.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
+                    ILineParameter lineParameter;
+                    if (!TryAppend(ref appenders, prevPart, parameter.Key, parameter.Value, out lineParameter)) { result = default; return false; }
                     if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
                     prevPart = lineParameter;
                 }

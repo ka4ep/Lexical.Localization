@@ -3,6 +3,7 @@
 // Date:           7.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Exp;
 using Lexical.Localization.Resource;
 using Lexical.Localization.StringFormat;
 using System;
@@ -134,17 +135,37 @@ namespace Lexical.Localization
         /// <summary>One of the argument was null, or custom formatter resulted into null.</summary>
         PlaceholderOkNull = 0x04UL << Shift.Placeholder,
         /// <summary>Request asked for the format string, without applying arguments to it.</summary>
-        PlaceholderOkNotApplied = 0x08L << Shift.Format,
+        PlaceholderOkNotApplied = 0x08L << Shift.Placeholder,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PlaceholderWarning = 0x20UL << Shift.Placeholder,
+        /// <summary>Placeholders referred to arguments to which values were not supplied</summary>
+        PlaceholderWarningArgumentValuesNotSupplied = 0x23UL << Shift.Placeholder,
         /// <summary>No IFormattable implementation or ICustomFormatter was found, or they returned null, ToString was applied</summary>
-        PlaceholderWarningToStringUsed = 0x21UL << Shift.Placeholder,
+        PlaceholderWarningToStringUsed = 0x26UL << Shift.Placeholder,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PlaceholderError = 0x40UL << Shift.Placeholder,
-        /// <summary>Got exception while evaluating placeholder exception</summary>
-        PlaceholderErrorExpressionEvaluationException = 0x45UL << Shift.Placeholder,
         /// <summary>The argument object did not match the type in format string</summary>
-        PlaceholderErrorTypeMismatch = 0x48UL << Shift.Placeholder,
+        PlaceholderErrorTypeMismatch = 0x46UL << Shift.Placeholder,
+        /// <summary>Expression </summary>
+        PlaceholderErrorExpressionUnsupported = 0x48UL << Shift.Placeholder,
+        /// <summary>UnaryOp unknown</summary>
+        PlaceholderErrorUnaryOpUnsupported = 0x49UL << Shift.Placeholder,
+        /// <summary>BinaryOp unknown</summary>
+        PlaceholderErrorBinaryOpUnsupported = 0x4AUL << Shift.Placeholder,
+        /// <summary>TrinaryOp unknown</summary>
+        PlaceholderErrorTrinaryOpUnsupported = 0x4BUL << Shift.Placeholder,
+        /// <summary>A parameter in <see cref="ICallExpression"/> is not supported</summary>
+        PlaceholderErrorCallExpressionUnknown = 0x4CUL << Shift.Placeholder,
+        /// <summary>Error in evaluation of logical operation</summary>
+        PlaceholderErrorLogicalOpError = 0x4DUL << Shift.Placeholder,
+        /// <summary>Error in evaluation of arithmetic operation</summary>
+        PlaceholderErrorArithmeticOpError = 0x4EUL << Shift.Placeholder,
+        /// <summary>Error in evaluation of floating operation</summary>
+        PlaceholderErrorFloatingOpError = 0x4FUL << Shift.Placeholder,
+        /// <summary>Error in evaluation of inequality operation</summary>
+        PlaceholderErrorInequalityOpError = 0x50UL << Shift.Placeholder,
+        /// <summary>Error in evaluation of expression</summary>
+        PlaceholderErrorExpressionEvaluation = 0x51UL << Shift.Placeholder,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PlaceholderFailed = 0x60UL << Shift.Placeholder,
         /// <summary>Result has not been processed</summary>
@@ -165,8 +186,6 @@ namespace Lexical.Localization
         FormatOkString = 0x10UL << Shift.Format,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
         FormatWarning = 0x20UL << Shift.Format,
-        /// <summary>Format string contained arguments, but too many arguments were provided</summary>
-        FormatWarningTooManyPlaceholders = 0x21UL << Shift.Format,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
         FormatError = 0x40UL << Shift.Format,
         /// <summary>Failed to resolve class name to <see cref="IFormatProvider"/></summary>
@@ -175,10 +194,6 @@ namespace Lexical.Localization
         FormatErrorFunctionsResolveFailed = 0x44UL << Shift.Format,
         /// <summary>Failed to resolve class name to <see cref="IStringFormat"/></summary>
         FormatErrorStringFormatResolveFailed = 0x45UL << Shift.Format,
-        /// <summary>Format string contained arguments, but arguments were not provided</summary>
-        FormatErrorNoPlaceholders = 0x46UL << Shift.Format,
-        /// <summary>Format string contained arguments, but too few arguments were provided. Using null values for missing arguments.</summary>
-        FormatErrorTooFewPlaceholders = 0x48UL << Shift.Format,
         /// <summary><see cref="IStringFormatPrinter"/> has no capability to express multiple arguments in string format</summary>
         FormatErrorPrintNoCapabilityMultipleArguments = 0x4AUL << Shift.Format,
         /// <summary><see cref="IStringFormatPrinter"/> has no capability to express plural category in string format</summary>
@@ -731,7 +746,7 @@ namespace Lexical.Localization
         /// <param name="argumentStatus"></param>
         public static void UpPlaceholder(this ref LineStatus status, LineStatus argumentStatus)
         {
-            if ((status & LineStatus.PluralityMask) < (argumentStatus & LineStatus.PluralityMask)) status = (status & ~LineStatus.PluralityMask) | argumentStatus;
+            if ((status & LineStatus.PlaceholderMask) < (argumentStatus & LineStatus.PlaceholderMask)) status = (status & ~LineStatus.PlaceholderMask) | argumentStatus;
         }
 
         /// <summary>
@@ -751,7 +766,7 @@ namespace Lexical.Localization
         /// <param name="resourceStatus"></param>
         public static void UpResource(this ref LineStatus status, LineStatus resourceStatus)
         {
-            if ((status & LineStatus.ResolveMask) < (resourceStatus & LineStatus.ResolveMask)) status = (status & ~LineStatus.ResolveMask) | resourceStatus;
+            if ((status & LineStatus.ResourceMask) < (resourceStatus & LineStatus.ResourceMask)) status = (status & ~LineStatus.ResourceMask) | resourceStatus;
         }
 
         /// <summary>

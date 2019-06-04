@@ -190,7 +190,7 @@ namespace Lexical.Localization.Asset
 
             // Parse basename/location/type from key
             string _location, _basename, _type;
-            int x = key.FindResourceInfos(out _type, out _location, out _basename);
+            int x = key.FindResourceInfos(out _type, out _basename, out _location);
 
             // If key has type, and this handler is also assigned to type, but they mismatch, don't strip the type name from key (below)
             if (x == 1)
@@ -379,14 +379,14 @@ namespace Lexical.Localization.Asset
                         if (parameter is ILineType lineType && lineType.Type != null) _type = lineType.Type.FullName;
                         else if (parameter.ParameterName == "Type" && parameter.ParameterValue != null) _type = parameter.ParameterValue;
                         else if ((parameter.ParameterName == "Assembly" || parameter.ParameterName == "Location") && parameter.ParameterValue!= null) _location = parameter.ParameterValue;
-                        else if (parameter.ParameterName == "BaseName" && parameter.ParameterValue != null) _basename = parameter.ParameterValue; ;
+                        else if (parameter.ParameterName == "BaseName" && parameter.ParameterValue != null) _basename = parameter.ParameterValue;
                     }
                 else if (l is ILineParameter parameter)
                 {
                     if (parameter is ILineType lineType && lineType.Type != null) _type = lineType.Type.FullName;
                     else if (parameter.ParameterName == "Type" && parameter.ParameterValue != null) _type = parameter.ParameterValue;
                     else if ((parameter.ParameterName == "Assembly" || parameter.ParameterName == "Location") && parameter.ParameterValue != null) _location = parameter.ParameterValue;
-                    else if (parameter.ParameterName == "BaseName" && parameter.ParameterValue != null) _basename = parameter.ParameterValue; ;
+                    else if (parameter.ParameterName == "BaseName" && parameter.ParameterValue != null) _basename = parameter.ParameterValue;
                 }
             }
 

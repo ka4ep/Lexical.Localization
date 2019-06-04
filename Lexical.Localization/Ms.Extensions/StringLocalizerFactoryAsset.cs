@@ -89,7 +89,7 @@ namespace Lexical.Localization.Asset
             string _location;
             string _basename;
             string _type;
-            int x = key.FindResourceInfos(out _type, out _location, out _basename);
+            int x = key.FindResourceInfos(out _type, out _basename, out _location);
             return
                 x == 1 ? map_by_type.GetOrAdd(_type, createByTypeFunc) :
                 x == 2 ? (StringLocalizerAsset)map_by_location.GetOrAdd(new Pair<string, string>(_basename, _location), createByLocationFunc) :

@@ -341,38 +341,49 @@ namespace Lexical.Localization.StringFormat
 
                 // Put string together
                 string text = null;
-                if (value != null && value.Parts != null)
+                
+                if (value == null || value.Parts == null)
                 {
-                    // Only one part
-                    if (value.Parts.Length == 1)
-                    {
-                        if (value.Parts[0].Kind == StringPartKind.Text) text = value.Parts[0].Text;
-                        else if (value.Parts[0].Kind == StringPartKind.Placeholder) text = placeholder_values[0];
-                    }
-                    else
-                    // Compile parts
-                    {
-                        // Calculate length
-                        int length = 0;
-                        for (int i = 0; i < value.Parts.Length; i++)
-                        {
-                            IStringPart part = value.Parts[i];
-                            length += part.Kind switch { StringPartKind.Text => part.Length, StringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex].Length, _ => 0 };
-                        }
+                    text = null;
+                }
 
-                        // Copy characters
-                        char[] arr = new char[length];
-                        int ix = 0;
-                        for (int i = 0; i < value.Parts.Length; i++)
-                        {
-                            IStringPart part = value.Parts[i];
-                            string str = part.Kind switch { StringPartKind.Text => part.Text, StringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex], _ => null };
-                            if (str != null) { str.CopyTo(0, arr, ix, str.Length); ix += str.Length; }
-                        }
-
-                        // String
-                        text = new string(arr);
+                // Only one part
+                else if (value.Parts.Length == 1)
+                {
+                    if (value.Parts[0].Kind == StringPartKind.Text)
+                    {
+                        text = value.Parts[0].Text;
+                        features.Status.UpFormat(LineStatus.FormatOkString);
                     }
+                    else if (value.Parts[0].Kind == StringPartKind.Placeholder)
+                    {
+                        text = placeholder_values[0];
+                        features.Status.UpFormat(LineStatus.FormatOkString);
+                    }
+                }
+                // Compile multiple parts
+                else {
+                    // Calculate length
+                    int length = 0;
+                    for (int i = 0; i < value.Parts.Length; i++)
+                    {
+                        IStringPart part = value.Parts[i];
+                        string partText = part.Kind switch { StringPartKind.Text => part.Text, StringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex], _ => null };
+                        if (partText != null) length += partText.Length;
+                    }
+
+                    // Copy characters
+                    char[] arr = new char[length];
+                    int ix = 0;
+                    for (int i = 0; i < value.Parts.Length; i++)
+                    {
+                        IStringPart part = value.Parts[i];
+                        string str = part.Kind switch { StringPartKind.Text => part.Text, StringPartKind.Placeholder => placeholder_values[((IPlaceholder)part).PlaceholderIndex], _ => null };
+                        if (str != null) { str.CopyTo(0, arr, ix, str.Length); ix += str.Length; }
+                    }
+
+                    // String
+                    text = new string(arr);
                     features.Status.UpFormat(LineStatus.FormatOkString);
                 }
 
@@ -690,13 +701,15 @@ namespace Lexical.Localization.StringFormat
                     object ph_value = placeholder_evaluator.Evaluate(ph.Expression);
                     // Add to array
                     placeholder_values.Add(ph_value?.ToString());
+                    // Update code
+                    features.Status.UpPlaceholder(placeholder_evaluator.Status);
                 }
                 catch (Exception e)
                 {
                     // Log exceptions
                     features.Log(e);
                     // Mark error
-                    features.Status.UpPlaceholder(LineStatus.PlaceholderErrorExpressionEvaluationException);
+                    features.Status.UpPlaceholder(LineStatus.PlaceholderErrorExpressionEvaluation);
                     // Put empty value
                     placeholder_values.Add(null);
                 }

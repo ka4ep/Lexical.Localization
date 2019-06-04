@@ -34,6 +34,11 @@ namespace Lexical.Localization.StringFormat
         public IReadOnlyDictionary<string, object> ArgsByName;
 
         /// <summary>
+        /// Placeholder status.
+        /// </summary>
+        public LineStatus Status;
+
+        /// <summary>
         /// Evaluate expression into object.
         /// 
         /// The following types are supported by Ops:
@@ -44,10 +49,11 @@ namespace Lexical.Localization.StringFormat
         ///     <item>object (as string or understod by function such as Format)</item>
         ///     <item>null</item>
         /// </list>
+        /// 
+        /// If error occurs <see cref="Status"/> is updated with an error code.
         /// </summary>
         /// <param name="exp"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">If invalid argument</exception>
         public object Evaluate(IExpression exp)
             => exp switch
             {
@@ -59,19 +65,36 @@ namespace Lexical.Localization.StringFormat
                     top.Op switch
                     {
                         TrinaryOp.Condition => EvaluateCondition(Evaluate(top.A), Evaluate(top.B), Evaluate(top.C)),
-                        _ => throw new ArgumentException($"Unsupported {nameof(TrinaryOp)} {top.Op}")
+                        _ => Error(LineStatus.PlaceholderErrorTrinaryOpUnsupported)
                     },
-                IArgumentIndexExpression arg => Args == null || arg.Index < 0 || arg.Index >= Args.Length ? null : Args[arg.Index],
+                IArgumentIndexExpression arg => GetArgByIndex(arg.Index),
                 IArgumentNameExpression argName => GetArgByName(argName.Name),
                 ICallExpression call => EvaluateCall(call),
-                _ => throw new ArgumentException($"Unsupported exeption {exp}")
+                _ => Error(LineStatus.PlaceholderErrorExpressionUnsupported)
             };
+
+        object Error(LineStatus code)
+        {
+            Status.UpPlaceholder(code);
+            return null;
+        }
+
+        object GetArgByIndex(int argIndex)
+        {
+            if (Args == null || argIndex < 0 || argIndex >= Args.Length)
+            {
+                Status.UpPlaceholder(LineStatus.PlaceholderWarningArgumentValuesNotSupplied);
+                return null;
+            }
+            return Args[argIndex];
+        }
 
         object GetArgByName(string argName)
         {
-            if (ArgsByName == null || argName == null) return null;
+            if (argName == null) return null;
             object result;
-            if (ArgsByName.TryGetValue(argName, out result)) return result;
+            if (ArgsByName != null && ArgsByName.TryGetValue(argName, out result)) return result;
+            Status.UpPlaceholder(LineStatus.PlaceholderWarningArgumentValuesNotSupplied);
             return null;
         }
 
@@ -106,7 +129,8 @@ namespace Lexical.Localization.StringFormat
                 if (FunctionEvaluationCtx.Functions.TryEvaluate(call.Name, ref FunctionEvaluationCtx, args, out result)) return result;
                 if (Functions.Default.TryEvaluate(call.Name, ref FunctionEvaluationCtx, args, out result)) return result;
             }
-            throw new InvalidOperationException();
+            Status.UpPlaceholder(LineStatus.PlaceholderErrorCallExpressionUnknown);
+            return null;
         }
         object EvaluateUnary(IUnaryOpExpression uop)
         {
@@ -117,19 +141,22 @@ namespace Lexical.Localization.StringFormat
                 UnaryOp.Not => EvaluateNot(a),
                 UnaryOp.OnesComplement => EvaluateOnesComplement(a),
                 UnaryOp.Plus => a,
-                _ => throw new ArgumentException($"Unsupported {nameof(UnaryOp)} {uop.Op}")
+                _ => Error(LineStatus.PlaceholderErrorUnaryOpUnsupported)
             };
         }
         object EvaluateNegate(object o)
         {
+            Error(LineStatus.PlaceholderErrorExpressionUnsupported);
             return null;
         }
         object EvaluateNot(object o)
         {
+            Error(LineStatus.PlaceholderErrorExpressionUnsupported);
             return null;
         }
         object EvaluateOnesComplement(object o)
         {
+            Error(LineStatus.PlaceholderErrorExpressionUnsupported);
             return null;
         }
         object EvaluateBinary(IBinaryOpExpression bop)
@@ -158,8 +185,8 @@ namespace Lexical.Localization.StringFormat
                 BinaryOp.RightShift => EvaluateRightShift(a, b),
                 BinaryOp.Subtract => EvaluateSubtract(a, b),
                 BinaryOp.Xor => EvaluateXor(a, b),
-                _ => throw new ArgumentException($"Unsupported {nameof(BinaryOp)} {bop.Op}")
-              };
+                _ => Error(LineStatus.PlaceholderErrorBinaryOpUnsupported)
+        };
         }
         bool isInteger(object a) => a is int || a is uint || a is long || a is ulong;
         bool isFloat(object a) => a is float || a is double;
@@ -201,14 +228,14 @@ namespace Lexical.Localization.StringFormat
             return toString(a) + toString(b);
         }
         object EvaluateAnd(object a, object b)
-            => isInteger(a) && isInteger(b) ? toInteger(a) & toInteger(b) : throw new ArgumentException($"Cannot evaluate And with arguments {a} and {b}");
+            => isInteger(a) && isInteger(b) ? toInteger(a) & toInteger(b) : Error(LineStatus.PlaceholderErrorLogicalOpError);
         object EvaluateCoalesce(object a, object b)
             => a == null ? b : a;
         object EvaluateDivide(object a, object b)
         {
             if (isFloat(a) || isFloat(b)) return toFloat(a) / toFloat(b);
             if (isInteger(a) || isInteger(b)) return toInteger(a) / toInteger(b);
-            throw new ArgumentException($"Cannot evaluate '/' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorArithmeticOpError);
         }
         object EvaluateEqual(object a, object b)
         {
@@ -223,13 +250,13 @@ namespace Lexical.Localization.StringFormat
         {
             if (isFloat(a) || isFloat(b)) return toFloat(a) > toFloat(b);
             if (isInteger(a) || isInteger(b)) return toInteger(a) > toInteger(b);
-            throw new ArgumentException($"Cannot evaluate '>' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorInequalityOpError);
         }
         object EvaluateGreaterThanOrEqual(object a, object b)
         {
             if (isFloat(a) || isFloat(b)) return toFloat(a) >= toFloat(b);
             if (isInteger(a) || isInteger(b)) return toInteger(a) >= toInteger(b);
-            throw new ArgumentException($"Cannot evaluate '>=' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorInequalityOpError);
         }
         object EvaluateIn(object a, object b)
         {
@@ -240,24 +267,19 @@ namespace Lexical.Localization.StringFormat
                     if ((bool)EvaluateEqual(a, o)) return true;
                 return false;
             }
-            throw new ArgumentException($"Cannot evaluate 'in' with arguments {a} and {b}");
-        }
-        object EvaluateLeftShift(object a, object b)
-        {
-            if (isInteger(a) || isInteger(b)) return toInteger(a) << (int)toInteger(b);
-            throw new ArgumentException($"Cannot evaluate '<<' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorExpressionEvaluation);
         }
         object EvaluateLessThan(object a, object b)
         {
             if (isFloat(a) || isFloat(b)) return toFloat(a) < toFloat(b);
             if (isInteger(a) || isInteger(b)) return toInteger(a) < toInteger(b);
-            throw new ArgumentException($"Cannot evaluate '<' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorInequalityOpError);
         }
         object EvaluateLessThanOrEqual(object a, object b)
         {
             if (isFloat(a) || isFloat(b)) return toFloat(a) <= toFloat(b);
             if (isInteger(a) || isInteger(b)) return toInteger(a) <= toInteger(b);
-            throw new ArgumentException($"Cannot evaluate '<=' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorInequalityOpError);
         }
         object EvaluateLogicalAnd(object a, object b)
             => toBool(a) && toBool(b);
@@ -267,13 +289,13 @@ namespace Lexical.Localization.StringFormat
         {
             if (isFloat(a) || isFloat(b)) return toFloat(a) % toFloat(b);
             if (isInteger(a) || isInteger(b)) return toInteger(a) % toInteger(b);
-            throw new ArgumentException($"Cannot evaluate '%' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorArithmeticOpError);
         }
         object EvaluateMultiply(object a, object b)
         {
             if (isFloat(a) || isFloat(b)) return toFloat(a) * toFloat(b);
             if (isInteger(a) || isInteger(b)) return toInteger(a) * toInteger(b);
-            throw new ArgumentException($"Cannot evaluate '*' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorArithmeticOpError);
         }
         object EvaluateNotEqual(object a, object b)
         {
@@ -285,28 +307,33 @@ namespace Lexical.Localization.StringFormat
             return toString(a) != toString(b);
         }
         object EvaluateOr(object a, object b)
-            => isInteger(a) && isInteger(b) ? toInteger(a) | toInteger(b) : throw new ArgumentException($"Cannot evaluate Or with arguments {a} and {b}");
+            => isInteger(a) && isInteger(b) ? toInteger(a) | toInteger(b) : Error(LineStatus.PlaceholderErrorArithmeticOpError);
         object EvaluatePower(object a, object b)
         {
             if (isFloat(a) || isFloat(b)) return Math.Pow(toFloat(a), toFloat(b));
             if (isInteger(a) || isInteger(b)) return Math.Pow(toInteger(a), toInteger(b));
-            throw new ArgumentException($"Cannot evaluate 'pow' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorFloatingOpError);
+        }
+        object EvaluateLeftShift(object a, object b)
+        {
+            if (isInteger(a) || isInteger(b)) return toInteger(a) << (int)toInteger(b);
+            return Error(LineStatus.PlaceholderErrorArithmeticOpError);
         }
         object EvaluateRightShift(object a, object b)
         {
             if (isInteger(a) || isInteger(b)) return toInteger(a) >> (int)toInteger(b);
-            throw new ArgumentException($"Cannot evaluate '>>' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorArithmeticOpError);
         }
         object EvaluateSubtract(object a, object b)
         {
             if (isFloat(a) || isFloat(b)) return toFloat(a) - toFloat(b);
             if (isInteger(a) || isInteger(b)) return toInteger(a) - toInteger(b);
-            throw new ArgumentException($"Cannot evaluate '-' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorArithmeticOpError);
         }
         object EvaluateXor(object a, object b)
         {
             if (isInteger(a) || isInteger(b)) return toInteger(a) ^ toInteger(b);
-            throw new ArgumentException($"Cannot evaluate '^' with arguments {a} and {b}");
+            return Error(LineStatus.PlaceholderErrorLogicalOpError);
         }
         object EvaluateCondition(object a, object b, object c)
             => toBool(a) ? b : c;

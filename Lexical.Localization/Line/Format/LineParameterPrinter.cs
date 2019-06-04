@@ -3,6 +3,7 @@
 // Date:           31.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Asset;
 using Lexical.Localization.Internal;
 using Lexical.Localization.Utils;
 using System;
@@ -22,7 +23,7 @@ namespace Lexical.Localization
     /// Parameters with same sort order, are printed out in order of occurance in the key, from left (root) to right (tail).
     /// For example: root.Section("1").Section("2") is printed out as "1.2".
     /// </summary>
-    [Obsolete("doesn't work well")]
+    [Obsolete("Doesn't work well. Needs fixing.")]
     public class LineParameterPrinter : ILineFormatPrinter, ICloneable
     {
         /// <summary>

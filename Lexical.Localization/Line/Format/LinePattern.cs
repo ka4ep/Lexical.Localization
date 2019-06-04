@@ -56,7 +56,7 @@ namespace Lexical.Localization
     ///   "{Culture.}{Type.}{Section_0.}{Section_1.}{Section_2.}[Section_n]{.Key_0}{.Key_1}{.Key_n}"
     /// 
     /// </summary>
-    public class LinePattern : ILinePattern, ILineFormatParser, ILineFormatAppendParser, ILineFormatPrinter
+    public class LinePattern : ILinePattern, ILineFormatParser, ILineFormatAppendParser, ILineFormatPrinter, ILineFormatFactory
     {
         static Regex regex = new Regex(
             @"(?<text>[^\[\{\}\]]+)|" +
@@ -148,20 +148,34 @@ namespace Lexical.Localization
         public IParameterInfos ParameterInfos { get => parameterInfos; set => new InvalidOperationException("read-only"); }
 
         /// <summary>
+        /// Line appender that creates line parts from parsed strings.
+        /// 
+        /// Appender implementation may also resolve parameter into instance, for example "Culture" into <see cref="CultureInfo"/>.
+        /// </summary>
+        public virtual ILineFactory LineFactory { get => lineFactory; set => throw new InvalidOperationException("immutable"); }
+
+        /// <summary>
         /// (optional) Parameter infos for determining if parameter is key.
         /// </summary>
         protected IParameterInfos parameterInfos;
+
+        /// <summary>
+        /// Line appender
+        /// </summary>
+        protected ILineFactory lineFactory;
 
         /// <summary>
         /// Create pattern
         /// </summary>
         /// <param name="pattern"></param>
         /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
+        /// <param name="lineFactory">(optional) fallback appender</param>
         /// <exception cref="ArgumentException">If there was a problem parsing the filename pattern</exception>
-        public LinePattern(string pattern, IParameterInfos parameterInfos = null)
+        public LinePattern(string pattern, IParameterInfos parameterInfos = null, ILineFactory lineFactory = null)
         {
             this.Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
             this.parameterInfos = parameterInfos;
+            this.lineFactory = lineFactory;
             System.Text.RegularExpressions.MatchCollection matches = regex.Matches(pattern);
             //if (matches.Count == 0) throw new ArgumentException($"Failed to parse filename pattern \"{pattern}\"");
 
@@ -287,7 +301,7 @@ namespace Lexical.Localization
             public string PostfixSeparator { get; set; }
 
             /// <summary>
-            /// Part identifier, unique identifier.
+            /// Part identifier, unique identifier (with possible suffix "_#").
             /// </summary>
             public string Identifier { get; set; }
 
@@ -361,7 +375,9 @@ namespace Lexical.Localization
             if (parameter == null || parameter == "") return default_reluctant_pattern;
 
             IParameterInfo parameterInfo;
-            if ((parameterInfos ?? Lexical.Localization.Utils.ParameterInfos.Default).TryGetValue(parameter, out parameterInfo) && parameterInfo.Pattern != null) return parameterInfo.Pattern;
+            if (parameterInfos != null && parameterInfos.TryGetValue(parameter, out parameterInfo) && parameterInfo.Pattern != null) return parameterInfo.Pattern;
+            else if (Lexical.Localization.Utils.ParameterInfos.Default != null && Lexical.Localization.Utils.ParameterInfos.Default.TryGetValue(parameter, out parameterInfo) && parameterInfo.Pattern != null) return parameterInfo.Pattern;
+             
             return default_reluctant_pattern;
         }
 
@@ -427,6 +443,40 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Append part
+        /// </summary>
+        /// <param name="appenders"></param>
+        /// <param name="prevPart"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException">If part could not append parameter</exception>
+        static ILineParameter Append(ref StructList3<ILineFactory> appenders, ILine prevPart, string parameterName, string parameterValue)
+        {
+            ILineParameter result;
+            for (int i = 0; i < appenders.Count; i++)
+                if (appenders[i].TryCreate<ILineParameter, string, string>(prevPart, parameterName, parameterValue, out result)) return result;
+            throw new LineException(prevPart, $"Appender doesn't have capability to append {nameof(ILineParameter)}.");
+        }
+
+        /// <summary>
+        /// Try append part
+        /// </summary>
+        /// <param name="appenders"></param>
+        /// <param name="prevPart"></param>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue"></param>
+        /// <param name="result"></param>
+        /// <exception cref="LineException">If part could not append parameter</exception>
+        static bool TryAppend(ref StructList3<ILineFactory> appenders, ILine prevPart, string parameterName, string parameterValue, out ILineParameter result)
+        {
+            for (int i = 0; i < appenders.Count; i++)
+                if (appenders[i].TryCreate<ILineParameter, string, string>(prevPart, parameterName, parameterValue, out result)) return true;
+            result = default;
+            return false;
+        }
+
+        /// <summary>
         /// Parse string into key.
         /// </summary>
         /// <param name="str">key as string</param>
@@ -436,8 +486,12 @@ namespace Lexical.Localization
         /// <exception cref="LineException">If parse failed</exception>
         public ILine Parse(string str, ILine prevPart = default, ILineFactory appender = default)
         {
-            // Get appender
-            if (appender == null) appender = prevPart.GetAppender();
+            // Get appenders
+            StructList3<ILineFactory> appenders = new StructList3<ILineFactory>();
+            if (appender != null) appenders.Add(appender);
+            ILineFactory _appender;
+            if (prevPart.TryGetAppender(out _appender)) appenders.AddIfNew(_appender);
+            if (this.lineFactory != null) appenders.AddIfNew(this.lineFactory);
 
             // Match
             ILinePatternMatch match = this.Match(text: str, filledParameters: null);
@@ -450,7 +504,7 @@ namespace Lexical.Localization
                 if (value == null) continue;
                 string key = CaptureParts[i].ParameterName;
                 if (key == "anysection") key = "Section";
-                prevPart = appender.Create<ILineParameter, string, string>(prevPart, key, value);
+                prevPart = Append(ref appenders, prevPart, key, value);
             }
 
             // Return line
@@ -498,8 +552,12 @@ namespace Lexical.Localization
         /// <returns>true if parse was successful</returns>
         public bool TryParse(string str, out ILine result, ILine prevPart = default, ILineFactory appender = default)
         {
-            // Get appender
-            if (appender == null && !prevPart.TryGetAppender(out appender)) { result = null; return false; }
+            // Get appenders
+            StructList3<ILineFactory> appenders = new StructList3<ILineFactory>();
+            if (appender != null) appenders.Add(appender);
+            ILineFactory _appender;
+            if (prevPart.TryGetAppender(out _appender)) appenders.AddIfNew(_appender);
+            if (this.lineFactory != null) appenders.AddIfNew(this.lineFactory);
 
             // Match
             ILinePatternMatch match = this.Match(text: str, filledParameters: null);
@@ -513,7 +571,7 @@ namespace Lexical.Localization
                 string key = CaptureParts[i].ParameterName;
                 if (key == "anysection") key = "Section";
                 ILineParameter parameter;
-                if (appender.TryCreate<ILineParameter, string, string>(prevPart, key, value, out parameter)) prevPart = parameter; else { result = null; return false; }
+                if (TryAppend(ref appenders, prevPart, key, value, out parameter)) prevPart = parameter; else { result = null; return false; }
             }
 
             // Return line

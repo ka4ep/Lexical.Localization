@@ -36,7 +36,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="assembly"></param>
-        public LineAssembly(ILineFactory appender, ILine prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.GetName()?.FullName)
+        public LineAssembly(ILineFactory appender, ILine prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.GetName()?.Name)
         {
             this.assembly = assembly;
         }
@@ -107,7 +107,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="assembly"></param>
-        public StringLocalizerAssembly(ILineFactory appender, ILine prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.GetName()?.FullName)
+        public StringLocalizerAssembly(ILineFactory appender, ILine prevKey, Assembly assembly) : base(appender, prevKey, "Assembly", assembly?.GetName()?.Name)
         {
             this.assembly = assembly;
         }

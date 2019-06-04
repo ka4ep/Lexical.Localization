@@ -48,9 +48,11 @@ namespace Lexical.Localization.Utils
             .Add("N17", interfaceType: typeof(ILineNonCanonicalKey), sortingOrder: 9700, pattern: null)
             .Add("N18", interfaceType: typeof(ILineNonCanonicalKey), sortingOrder: 9800, pattern: null)
             .Add("N19", interfaceType: typeof(ILineNonCanonicalKey), sortingOrder: 9900, pattern: null)
+            .Add("StringFormat", interfaceType: typeof(ILineHint), sortingOrder: -18000, pattern: null)
+            .Add("CulturePolicy", interfaceType: typeof(ILineHint), sortingOrder: -19000, pattern: null)
+            .Add("FormatProvider", interfaceType: typeof(ILineHint), sortingOrder: -20000, pattern: null)
+            .Add("Functions", interfaceType: typeof(ILineHint), sortingOrder: -21000, pattern: null)
             .Add("PluralRules", interfaceType: typeof(ILineHint), sortingOrder: -22000, pattern: null)
-            .Add("StringFormatFunctions", interfaceType: typeof(ILineHint), sortingOrder: -21000, pattern: null)
-            .Add("StringFormat", interfaceType: typeof(ILineHint), sortingOrder: -200000, pattern: null)
             .Add("StringResolver", interfaceType: typeof(ILineHint), sortingOrder: -201000, pattern: null)
             .Add("ResourceResolver", interfaceType: typeof(ILineHint), sortingOrder: -202000, pattern: null)
             as ParameterInfos;
