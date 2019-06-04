@@ -91,7 +91,7 @@ namespace Lexical.Localization
                     return stringFormat.Parse(lineParameter.ParameterValue);
                 }
             }
-            return new StatusString(null, LineStatus.FormatFailedNull);
+            return new StatusString(null, LineStatus.StringFormatFailedNull);
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Lexical.Localization
                         return true;
                     }
                 }
-                result = new StatusString(null, LineStatus.FormatFailedNull);
+                result = new StatusString(null, LineStatus.StringFormatFailedNull);
                 return false;
             } catch(Exception)
             {

@@ -91,7 +91,7 @@ namespace Lexical.Localization.StringFormat
         /// <returns>string or null</returns>
         public LineString Print(IString str)
         {
-            if (str is CSharpFormat && str.Text != null) return new LineString(null, str.Text, LineStatus.FormatOkString);
+            if (str is CSharpFormat && str.Text != null) return new LineString(null, str.Text, LineStatus.StringFormatOkString);
 
             StringBuilder sb = new StringBuilder();
             LineStatus status = 0UL;
@@ -125,7 +125,7 @@ namespace Lexical.Localization.StringFormat
                         if (e is IArgumentIndexExpression arg)
                         {
                             // Second argument index
-                            if (argumentIx >= 0) status.Up(LineStatus.FormatErrorPrintNoCapabilityMultipleArguments); 
+                            if (argumentIx >= 0) status.Up(LineStatus.StringFormatErrorPrintNoCapabilityMultipleArguments); 
                             else argumentIx = arg.Index;
                             continue;
                         }
@@ -142,13 +142,13 @@ namespace Lexical.Localization.StringFormat
                                 queue.Add(call.Args[0]);
                                 if (alignmentExp.Value is long longValue) alignment = (int)longValue;
                                 else if (alignmentExp.Value is int intValue) alignment = intValue;
-                                else status.Up(LineStatus.FormatErrorPrintUnsupportedExpression);
+                                else status.Up(LineStatus.StringFormatErrorPrintUnsupportedExpression);
                             }
-                            else status.Up(LineStatus.FormatErrorPrintUnsupportedExpression);
+                            else status.Up(LineStatus.StringFormatErrorPrintUnsupportedExpression);
                             continue;
                         }
 
-                        status.Up(LineStatus.FormatErrorPrintUnsupportedExpression);
+                        status.Up(LineStatus.StringFormatErrorPrintUnsupportedExpression);
                     }
 
                     if (argumentIx>=0)
@@ -165,7 +165,7 @@ namespace Lexical.Localization.StringFormat
                 }
 
                 // Malformed
-                status.Up(LineStatus.FormatErrorMalformed);
+                status.Up(LineStatus.StringFormatErrorMalformed);
             }
 
             return new LineString(null, sb.ToString(), status);
@@ -255,7 +255,7 @@ namespace Lexical.Localization.StringFormat
                 alignmentStartIx = -1; alignmentEndIx = -1;
                 formatStartIx = -1; formatEndIx = -1;
                 i = -1;
-                status = LineStatus.FormatOk;
+                status = LineStatus.StringFormatOk;
             }
 
             /// <summary>
@@ -284,7 +284,7 @@ namespace Lexical.Localization.StringFormat
                 // Argument ended too soon '{}' or '{function}', return as text part and mark error
                 if (state == ParserState.ArgumentStart || state == ParserState.PluralCategory)
                 {
-                    status = LineStatus.FormatErrorMalformed;
+                    status = LineStatus.StringFormatErrorMalformed;
                     IStringPart part = new CSharpString.TextPart(formatString, strIx, length);
                     ResetPartState(endIx);
                     return part;
@@ -294,27 +294,27 @@ namespace Lexical.Localization.StringFormat
                 {
                     indexEndIx = endIx;
                     // Unfinished, did not get '}'
-                    status = LineStatus.FormatErrorMalformed;
+                    status = LineStatus.StringFormatErrorMalformed;
                 }
                 // Complete at alignment
                 else if (state == ParserState.Alignment)
                 {
                     alignmentEndIx = endIx;
                     // Unfinished, did not get '}'
-                    status = LineStatus.FormatErrorMalformed;
+                    status = LineStatus.StringFormatErrorMalformed;
                 }
                 else if (state == ParserState.Format)
                 {
                     formatEndIx = endIx;
                     // Unfinished, did not get '}'
-                    status = LineStatus.FormatErrorMalformed;
+                    status = LineStatus.StringFormatErrorMalformed;
                 }
 
                 // Error with argument index, return as text 
                 if (indexStartIx < 0 || indexEndIx < 0 || indexStartIx >= indexEndIx)
                 {
                     IStringPart part = new CSharpString.TextPart(formatString, strIx, length);
-                    status = LineStatus.FormatErrorMalformed;
+                    status = LineStatus.StringFormatErrorMalformed;
                     ResetPartState(endIx);
                     return part;
                 }
@@ -330,7 +330,7 @@ namespace Lexical.Localization.StringFormat
                 {
                     // Parse failed, probably too large number
                     IStringPart part = new CSharpString.TextPart(formatString, strIx, length);
-                    status = LineStatus.FormatErrorMalformed;
+                    status = LineStatus.StringFormatErrorMalformed;
                     ResetPartState(endIx);
                     return part;
                 }
@@ -353,7 +353,7 @@ namespace Lexical.Localization.StringFormat
                     catch (Exception)
                     {
                         // Parse failed, probably too large number
-                        status = LineStatus.FormatErrorMalformed;
+                        status = LineStatus.StringFormatErrorMalformed;
                     }
                 }
 
@@ -416,7 +416,7 @@ namespace Lexical.Localization.StringFormat
                         else
                         {
                             // Already in argument format and got unexpected unescaped '{'
-                            status = LineStatus.FormatErrorMalformed;
+                            status = LineStatus.StringFormatErrorMalformed;
                             //
                             continue;
                         }
@@ -507,7 +507,7 @@ namespace Lexical.Localization.StringFormat
                             continue;
                         }
                         // Unexpected character
-                        status = LineStatus.FormatErrorMalformed;
+                        status = LineStatus.StringFormatErrorMalformed;
                         return CompletePart(i);
                     }
 
@@ -528,7 +528,7 @@ namespace Lexical.Localization.StringFormat
                             continue;
                         }
                         // Unexpected character
-                        status = LineStatus.FormatErrorMalformed;
+                        status = LineStatus.StringFormatErrorMalformed;
                         return CompletePart(i);
                     }
 

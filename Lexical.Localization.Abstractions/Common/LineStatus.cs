@@ -21,9 +21,9 @@ namespace Lexical.Localization
         /// <summary>Request has not been resolved</summary>
         NoResult = 0xFFFFFFFFFFFFFFFFUL,
         /// <summary>Unknown error</summary>
-        FailedUnknownReason = ResolveFailed|CultureFailed|PluralityFailed|PlaceholderFailed|FormatFailed|ResourceFailed,
+        FailedUnknownReason = ResolveFailed|CultureFailed|PluralityFailed|PlaceholderFailed|StringFormatFailed|ResourceFailed,
 
-        //// Resolve - Step that searches format string for ILine from IAsset or Inlines.
+        //// IResolver, IStringResolver and IResourceResolver error codes
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResolveOk = 0x01UL << Shift.Resolve,
         /// <summary>Resolved value from key</summary>
@@ -42,6 +42,20 @@ namespace Lexical.Localization
         ResolveErrorAssetException = 0x44UL << Shift.Resolve,
         /// <summary>ILineInlines throw exception.</summary>
         ResolveErrorInlinesException = 0x46UL << Shift.Resolve,
+        /// <summary>Resolve "StringResolver" failed</summary>
+        ResolveErrorStringResolverResolveFailed = 0x50UL << Shift.Resolve,
+        /// <summary>Resolve "ResourceResolver" failed</summary>
+        ResolveErrorResourceResolverResolveFailed = 0x51UL << Shift.Resolve,
+        /// <summary>Resolve "FormatProvider" failed</summary>
+        ResolveErrorFormatProviderResolveFailed = 0x52UL << Shift.Resolve,
+        /// <summary>Resolve "Functions" failed</summary>
+        ResolveErrorFunctionsResolveFailed = 0x53UL << Shift.Resolve,
+        /// <summary>Resolve "PluralRules" failed</summary>
+        ResolveErrorPluralRulesResolveFailed = 0x54UL << Shift.Resolve,
+        /// <summary>Resolve "StringFormat" failed</summary>
+        ResolveErrorStringFormatResolveFailed = 0x55UL << Shift.Resolve,
+        /// <summary>Resolve failed</summary>
+        ResolveErrorResolveFailed = 0x5FUL << Shift.Resolve,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResolveFailed = 0x60UL << Shift.Resolve,
         /// <summary><see cref="IStringResolver"/> was not detected</summary>
@@ -108,8 +122,6 @@ namespace Lexical.Localization
         PluralityError = 0x40UL << Shift.Plurality,
         /// <summary>Value contained plurality category, but the plurality rules were not found</summary>
         PluralityErrorRulesNotFound = 0x46UL << Shift.Plurality,
-        /// <summary>String contained "plurality/ordinal/range" argument format(s), but the plurality rules were not found in the key or in the asset</summary>
-        PluralityErrorRulesResolveError = 0x47UL << Shift.Plurality,
         /// <summary>Placeholder is null, but expected a number</summary>
         PluralityErrorPlaceholderNull = 0x48UL << Shift.Plurality,
         /// <summary>Placeholder is not a number</summary>
@@ -175,53 +187,47 @@ namespace Lexical.Localization
         /// <summary>Mask for argument status</summary>
         PlaceholderMask = 0x7FUL << Shift.Placeholder,
 
-        //// Format - Step that parses format string, inserts arguments, and builds into formulated string.
+        //// IString and IStringFormat error codes
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        FormatOk = 0x01UL << Shift.Format,
+        StringFormatOk = 0x01UL << Shift.StringFormat,
         /// <summary>There were no arguments to formulate</summary>
-        FormatOkNoPlaceholders = 0x04UL << Shift.Format,
+        StringFormatOkNoPlaceholders = 0x04UL << Shift.StringFormat,
         /// <summary>Request asked for the format string, without applying arguments to it.</summary>
-        FormatOkNotApplied = 0x08UL << Shift.Format,
+        StringFormatOkNotApplied = 0x08UL << Shift.StringFormat,
         /// <summary>Created string</summary>
-        FormatOkString = 0x10UL << Shift.Format,
+        StringFormatOkString = 0x10UL << Shift.StringFormat,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        FormatWarning = 0x20UL << Shift.Format,
+        StringFormatWarning = 0x20UL << Shift.StringFormat,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        FormatError = 0x40UL << Shift.Format,
-        /// <summary>Failed to resolve class name to <see cref="IFormatProvider"/></summary>
-        FormatErrorFormatProviderResolveFailed = 0x43UL << Shift.Format,
-        /// <summary>Failed to resolve class name to <see cref="IFunctions"/></summary>
-        FormatErrorFunctionsResolveFailed = 0x44UL << Shift.Format,
-        /// <summary>Failed to resolve class name to <see cref="IStringFormat"/></summary>
-        FormatErrorStringFormatResolveFailed = 0x45UL << Shift.Format,
+        StringFormatError = 0x40UL << Shift.StringFormat,
         /// <summary><see cref="IStringFormatPrinter"/> has no capability to express multiple arguments in string format</summary>
-        FormatErrorPrintNoCapabilityMultipleArguments = 0x4AUL << Shift.Format,
+        StringFormatErrorPrintNoCapabilityMultipleArguments = 0x4AUL << Shift.StringFormat,
         /// <summary><see cref="IStringFormatPrinter"/> has no capability to express plural category in string format</summary>
-        FormatErrorPrintNoCapabilityPluralCategory = 0x4BUL << Shift.Format,
+        StringFormatErrorPrintNoCapabilityPluralCategory = 0x4BUL << Shift.StringFormat,
         /// <summary><see cref="IStringFormatPrinter"/> has no capability to express placeholder in string format</summary>
-        FormatErrorPrintNoCapabilityPlaceholder = 0x4CUL << Shift.Format,
+        StringFormatErrorPrintNoCapabilityPlaceholder = 0x4CUL << Shift.StringFormat,
         /// <summary><see cref="IStringFormatPrinter"/> has no capability to express the requested expression</summary>
-        FormatErrorPrintUnsupportedExpression = 0x4DUL << Shift.Format,
+        StringFormatErrorPrintUnsupportedExpression = 0x4DUL << Shift.StringFormat,
         /// <summary>Format string was malformed. Returning the malformed string as value.</summary>
-        FormatErrorMalformed = 0x4fUL << Shift.Format,
+        StringFormatErrorMalformed = 0x4fUL << Shift.StringFormat,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
-        FormatFailed = 0x60UL << Shift.Format,
-        /// <summary>Format string is null</summary>
-        FormatFailedNull = 0x61L << Shift.Format,
+        StringFormatFailed = 0x60UL << Shift.StringFormat,
+        /// <summary>string is null</summary>
+        StringFormatFailedNull = 0x61L << Shift.StringFormat,
         /// <summary>No <see cref="IStringFormatParser"/></summary>
-        FormatFailedNoParser = 0x67L << Shift.Format,
+        StringFormatFailedNoParser = 0x67L << Shift.StringFormat,
         /// <summary>No <see cref="IStringFormatPrinter"/></summary>
-        FormatFailedNoPrinter = 0x68L << Shift.Format,
+        StringFormatFailedNoPrinter = 0x68L << Shift.StringFormat,
         /// <summary>Format parse failed</summary>
-        FormatFailedParse = 0x69L << Shift.Format,
+        StringFormatFailedParse = 0x69L << Shift.StringFormat,
         /// <summary>Result has not been processed</summary>
-        FormatFailedNoResult = 0x7FUL << Shift.Format,
+        StringFormatFailedNoResult = 0x7FUL << Shift.StringFormat,
         /// <summary>Mask for severity</summary>
-        FormatSeverityMask = 0x60UL << Shift.Format,
+        StringFormatSeverityMask = 0x60UL << Shift.StringFormat,
         /// <summary>Mask for argument status</summary>
-        FormatMask = 0x7FUL << Shift.Format,
+        StringFormatMask = 0x7FUL << Shift.StringFormat,
 
-        //// Resource - Binary resources related status codes
+        //// Resource - IResourceAsset error codes
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResourceOk = 0x01UL << Shift.Resource,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
@@ -300,7 +306,7 @@ namespace Lexical.Localization
         internal const int Culture = 7;
         internal const int Plurality = 14;
         internal const int Placeholder = 21;
-        internal const int Format = 28;
+        internal const int StringFormat = 28;
         internal const int Resource = 35;   
         internal const int Reserved = 42;  // Reserved for future use
         internal const int Custom0 = 49;   // Resolver implentations can use for any custom purpose.
@@ -311,7 +317,7 @@ namespace Lexical.Localization
         internal const int CultureSeverity = Culture + 5;
         internal const int PluralitySeverity = Plurality + 5;
         internal const int PlaceholderSeverity = Placeholder + 5;
-        internal const int FormatSeverity = Format + 5;
+        internal const int StringFormatSeverity = StringFormat + 5;
         internal const int Custom0Severity = Custom0 + 5;
         internal const int Custom1Severity = Custom1 + 5;
         internal const int ReservedSeverity = Reserved + 5;  // Reserved for future use
@@ -415,15 +421,15 @@ namespace Lexical.Localization
         /// </list>
         /// </summary>
         /// <param name="status"></param>
-        public static LineStatusSeverity FormatSeverity(this LineStatus status)
-            => (LineStatusSeverity)(((ulong)status >> Shift.FormatSeverity) & 3);
+        public static LineStatusSeverity StringFormatSeverity(this LineStatus status)
+            => (LineStatusSeverity)(((ulong)status >> Shift.StringFormatSeverity) & 3);
 
         /// <summary>
         /// Get format step status code.
         /// </summary>
         /// <param name="status"></param>
-        public static LineStatus Format(this LineStatus status)
-            => status & LineStatus.FormatMask;
+        public static LineStatus StringFormat(this LineStatus status)
+            => status & LineStatus.StringFormatMask;
 
         /// <summary>
         /// Severity of the step that resolves <see cref="ILine"/> into binarty resource.
@@ -505,7 +511,7 @@ namespace Lexical.Localization
         /// <param name="status"></param>
         public static LineStatusSeverity Severity(this LineStatus status)
         {
-            LineStatusSeverity a = status.ResolveSeverity(), b = status.CultureSeverity(), c = status.PluralitySeverity(), d = status.PlaceholderSeverity(), e = status.FormatSeverity(), f = status.ResourceSeverity(), h = status.Custom0Severity(), i = status.Custom1Severity();
+            LineStatusSeverity a = status.ResolveSeverity(), b = status.CultureSeverity(), c = status.PluralitySeverity(), d = status.PlaceholderSeverity(), e = status.StringFormatSeverity(), f = status.ResourceSeverity(), h = status.Custom0Severity(), i = status.Custom1Severity();
             LineStatusSeverity result = a;
             if (b > result) result = b;
             if (c > result) result = c;
@@ -590,7 +596,7 @@ namespace Lexical.Localization
             str = Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.PlaceholderMask);
             if (str != null) { if (c > 0) sb.Append("|"); sb.Append(str); c++; }
 
-            str = Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.FormatMask);
+            str = Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.StringFormatMask);
             if (str != null) { if (c > 0) sb.Append("|"); sb.Append(str); c++; }
 
             str = Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.ResourceMask);
@@ -657,7 +663,7 @@ namespace Lexical.Localization
             tw.Write("|");
             tw.Write(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.PlaceholderMask));
             tw.Write("|");
-            tw.Write(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.FormatMask));
+            tw.Write(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.StringFormatMask));
             tw.Write("|");
             tw.Write(Enum.GetName(flagsType ?? typeof(LineStatus), status & LineStatus.ResourceMask));
 
@@ -754,9 +760,9 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="status"></param>
         /// <param name="formatStatus"></param>
-        public static void UpFormat(this ref LineStatus status, LineStatus formatStatus)
+        public static void UpStringFormat(this ref LineStatus status, LineStatus formatStatus)
         {
-            if ((status & LineStatus.FormatMask) < (formatStatus & LineStatus.FormatMask)) status = (status & ~LineStatus.FormatMask) | formatStatus;
+            if ((status & LineStatus.StringFormatMask) < (formatStatus & LineStatus.StringFormatMask)) status = (status & ~LineStatus.StringFormatMask) | formatStatus;
         }
 
         /// <summary>
@@ -800,7 +806,7 @@ namespace Lexical.Localization
             UpResolve(ref status, other);
             UpPlurality(ref status, other);
             UpPlaceholder(ref status, other);
-            UpFormat(ref status, other);
+            UpStringFormat(ref status, other);
             UpResource(ref status, other);
             UpCustom0(ref status, other);
             UpCustom1(ref status, other);
@@ -818,7 +824,7 @@ namespace Lexical.Localization
             UpResolve(ref status, other);
             UpPlurality(ref status, other);
             UpPlaceholder(ref status, other);
-            UpFormat(ref status, other);
+            UpStringFormat(ref status, other);
             UpResource(ref status, other);
             UpCustom0(ref status, other);
             UpCustom1(ref status, other);

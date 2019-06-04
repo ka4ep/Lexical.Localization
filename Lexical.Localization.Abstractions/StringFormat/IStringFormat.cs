@@ -38,9 +38,9 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Parse format string into an <see cref="IString"/>.
         /// 
-        /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormatErrorMalformed"/>.
-        /// If parse succeeds, the returned instance has state <see cref="LineStatus.FormatOkString"/> or some other format state.
-        /// If <paramref name="str"/> is null then stat is <see cref="LineStatus.FormatFailedNull"/>.
+        /// If parse fails this method should return an instance where state is <see cref="LineStatus.StringFormatErrorMalformed"/>.
+        /// If parse succeeds, the returned instance has state <see cref="LineStatus.StringFormatOkString"/> or some other format state.
+        /// If <paramref name="str"/> is null then stat is <see cref="LineStatus.StringFormatFailedNull"/>.
         /// </summary>
         /// <param name="str"></param>
         /// <returns>format string</returns>
@@ -57,13 +57,13 @@ namespace Lexical.Localization.StringFormat
         /// 
         /// If print fails status is:
         /// <list type="bullet">
-        ///     <item><see cref="LineStatus.FormatErrorPrintNoCapabilityPluralCategory"/></item>
-        ///     <item><see cref="LineStatus.FormatErrorPrintNoCapabilityPlaceholder"/></item>
-        ///     <item><see cref="LineStatus.FormatErrorPrintUnsupportedExpression"/></item>
-        ///     <item><see cref="LineStatus.FormatFailed"/></item>
+        ///     <item><see cref="LineStatus.StringFormatErrorPrintNoCapabilityPluralCategory"/></item>
+        ///     <item><see cref="LineStatus.StringFormatErrorPrintNoCapabilityPlaceholder"/></item>
+        ///     <item><see cref="LineStatus.StringFormatErrorPrintUnsupportedExpression"/></item>
+        ///     <item><see cref="LineStatus.StringFormatFailed"/></item>
         /// </list>
         /// 
-        /// If formulated ok, status is <see cref="LineStatus.FormatOkString"/>.
+        /// If formulated ok, status is <see cref="LineStatus.StringFormatOkString"/>.
         /// </summary>
         /// <param name="str"></param>
         /// <returns>format string</returns>
@@ -85,10 +85,10 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Parse format string into an <see cref="IString"/>.
         /// 
-        /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormatErrorMalformed"/>.
-        /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormatOk"/> or some other format state.
-        /// If <paramref name="str"/> is null then stat is <see cref="LineStatus.FormatFailedNull"/>.
-        /// If <paramref name="stringFormat"/> is not <see cref="IStringFormatParser"/>, then stat is <see cref="LineStatus.FormatFailedNoParser"/>.
+        /// If parse fails this method should return an instance where state is <see cref="LineStatus.StringFormatErrorMalformed"/>.
+        /// If parse succeeds, the returned instance should have state <see cref="LineStatus.StringFormatOk"/> or some other format state.
+        /// If <paramref name="str"/> is null then stat is <see cref="LineStatus.StringFormatFailedNull"/>.
+        /// If <paramref name="stringFormat"/> is not <see cref="IStringFormatParser"/>, then stat is <see cref="LineStatus.StringFormatFailedNoParser"/>.
         /// </summary>
         /// <param name="stringFormat"></param>
         /// <param name="str"></param>
@@ -96,9 +96,9 @@ namespace Lexical.Localization.StringFormat
         /// <exception cref="ArgumentException">If <paramref name="stringFormat"/> doesn't implement <see cref="IStringFormatParser"/></exception>
         public static IString Parse(this IStringFormat stringFormat, string str)
         {
-            if (str == null) return new StatusString(str, LineStatus.FormatFailedNull);
+            if (str == null) return new StatusString(str, LineStatus.StringFormatFailedNull);
             if (stringFormat is IStringFormatParser parser) return parser.Parse(str);
-            return new StatusString(str, LineStatus.FormatFailedNoParser);
+            return new StatusString(str, LineStatus.StringFormatFailedNoParser);
         }
 
         /// <summary>
@@ -106,10 +106,10 @@ namespace Lexical.Localization.StringFormat
         /// 
         /// If print fails, then states is set:
         /// <list type="bullet">
-        ///     <item><see cref="LineStatus.FormatErrorPrintNoCapabilityPluralCategory"/></item>
-        ///     <item><see cref="LineStatus.FormatErrorPrintNoCapabilityPlaceholder"/></item>
-        ///     <item><see cref="LineStatus.FormatErrorPrintUnsupportedExpression"/></item>
-        ///     <item><see cref="LineStatus.FormatFailedNoPrinter"/></item>
+        ///     <item><see cref="LineStatus.StringFormatErrorPrintNoCapabilityPluralCategory"/></item>
+        ///     <item><see cref="LineStatus.StringFormatErrorPrintNoCapabilityPlaceholder"/></item>
+        ///     <item><see cref="LineStatus.StringFormatErrorPrintUnsupportedExpression"/></item>
+        ///     <item><see cref="LineStatus.StringFormatFailedNoPrinter"/></item>
         /// </list>
         /// </summary>
         /// <param name="stringFormat"></param>
@@ -118,15 +118,15 @@ namespace Lexical.Localization.StringFormat
         public static LineString Print(this IStringFormat stringFormat, IString str)
         {
             if (stringFormat is IStringFormatPrinter printer) return printer.Print(str);
-            return new LineString(null, (Exception)null, LineStatus.FormatFailedNoPrinter);
+            return new LineString(null, (Exception)null, LineStatus.StringFormatFailedNoPrinter);
         }
 
         /// <summary>
         /// Parse format string into an <see cref="IString"/>.
         /// 
-        /// If parse fails this method should return an instance where state is <see cref="LineStatus.FormatErrorMalformed"/>.
-        /// If parse succeeds, the returned instance should have state <see cref="LineStatus.FormatOk"/> or some other format state.
-        /// If <paramref name="formatString"/> is null then stat is <see cref="LineStatus.FormatFailedNull"/>.
+        /// If parse fails this method should return an instance where state is <see cref="LineStatus.StringFormatErrorMalformed"/>.
+        /// If parse succeeds, the returned instance should have state <see cref="LineStatus.StringFormatOk"/> or some other format state.
+        /// If <paramref name="formatString"/> is null then stat is <see cref="LineStatus.StringFormatFailedNull"/>.
         /// </summary>
         /// <param name="formats"></param>
         /// <param name="formatName"></param>

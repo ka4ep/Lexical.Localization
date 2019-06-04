@@ -42,17 +42,17 @@ namespace Lexical.Localization.StringFormat
             /// <summary>
             /// Get parse status.
             /// </summary>
-            public LineStatus Status { get { if (status == LineStatus.FormatFailedNoResult) Build(); return status; } }
+            public LineStatus Status { get { if (status == LineStatus.StringFormatFailedNoResult) Build(); return status; } }
 
             /// <summary>
             /// Format string broken into sequence of text and argument parts.
             /// </summary>
-            public IStringPart[] Parts { get { if (status == LineStatus.FormatFailedNoResult) Build(); return parts; } }
+            public IStringPart[] Parts { get { if (status == LineStatus.StringFormatFailedNoResult) Build(); return parts; } }
 
             /// <summary>
             /// Get placeholders.
             /// </summary>
-            public IPlaceholder[] Placeholders { get { if (status == LineStatus.FormatFailedNoResult) Build(); return placeholders; } }
+            public IPlaceholder[] Placeholders { get { if (status == LineStatus.StringFormatFailedNoResult) Build(); return placeholders; } }
 
             /// <summary>
             /// (optional) Get associated format provider. This is typically a plurality rules and  originates from a localization file.
@@ -72,7 +72,7 @@ namespace Lexical.Localization.StringFormat
             public CSharpString(string text, IStringFormat stringFormat)
             {
                 Text = text;
-                status = text == null ? LineStatus.FormatFailedNull : LineStatus.FormatFailedNoResult;
+                status = text == null ? LineStatus.StringFormatFailedNull : LineStatus.StringFormatFailedNoResult;
                 this.StringFormat = stringFormat;
             }
 

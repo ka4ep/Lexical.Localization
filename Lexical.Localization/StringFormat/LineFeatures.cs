@@ -131,25 +131,25 @@ namespace Lexical.Localization.StringFormat
                         else if (name == "FormatProvider" && !(l is ILineFormatProvider fp_ && fp_.FormatProvider != null /*to not add second time*/))
                         {
                             IFormatProvider _fp;
-                            if (Resolvers.TryResolve<IFormatProvider>(value, out _fp)) FormatProviders.AddIfNew(_fp); else Status.UpFormat(LineStatus.FormatErrorFormatProviderResolveFailed);
+                            if (Resolvers.TryResolve<IFormatProvider>(value, out _fp)) FormatProviders.AddIfNew(_fp); else Status.UpStringFormat(LineStatus.ResolveErrorFormatProviderResolveFailed);
                         }
 
                         else if (name == "Functions" && !(l is ILineFunctions funcs_ && funcs_.Functions != null /*to not add second time*/))
                         {
                             IFunctions _funcs;
-                            if (Resolvers.TryResolve<IFunctions>(value, out _funcs)) Functions.AddIfNew(_funcs); else Status.UpFormat(LineStatus.FormatErrorFunctionsResolveFailed);
+                            if (Resolvers.TryResolve<IFunctions>(value, out _funcs)) Functions.AddIfNew(_funcs); else Status.UpStringFormat(LineStatus.ResolveErrorFunctionsResolveFailed);
                         }
 
                         else if (name == "PluralRules" && !(l is ILinePluralRules pluralRules_ && pluralRules_.PluralRules != null /*to not add second time*/))
                         {
                             IPluralRules _rules;
-                            if (Resolvers.TryResolve<IPluralRules>(name, out _rules)) PluralRules = _rules; else Status.UpPlurality(LineStatus.PluralityErrorRulesResolveError);
+                            if (Resolvers.TryResolve<IPluralRules>(name, out _rules)) PluralRules = _rules; else Status.UpPlurality(LineStatus.ResolveErrorPluralRulesResolveFailed);
                         }
 
                         else if (name == "StringFormat" && !(l is ILineStringFormat stringFormat_ && stringFormat_.StringFormat != null /*to not add second time*/))
                         {
                             IStringFormat _stringFormat;
-                            if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
+                            if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpStringFormat(LineStatus.ResolveErrorStringFormatResolveFailed);
                         }
 
                         else if (!valueSet && name == "String")
@@ -170,25 +170,25 @@ namespace Lexical.Localization.StringFormat
                     else if (name == "FormatProvider" && !(l is ILineFormatProvider fp_ && fp_.FormatProvider != null /*to not add second time*/))
                     {
                         IFormatProvider _fp;
-                        if (Resolvers.TryResolve<IFormatProvider>(value, out _fp)) FormatProviders.AddIfNew(_fp); else Status.UpFormat(LineStatus.FormatErrorFormatProviderResolveFailed);
+                        if (Resolvers.TryResolve<IFormatProvider>(value, out _fp)) FormatProviders.AddIfNew(_fp); else Status.UpStringFormat(LineStatus.ResolveErrorFormatProviderResolveFailed);
                     }
 
                     else if (name == "Functions" && !(l is ILineFunctions funcs_ && funcs_.Functions != null /*to not add second time*/))
                     {
                         IFunctions _funcs;
-                        if (Resolvers.TryResolve<IFunctions>(value, out _funcs)) Functions.AddIfNew(_funcs); else Status.UpFormat(LineStatus.FormatErrorFunctionsResolveFailed);
+                        if (Resolvers.TryResolve<IFunctions>(value, out _funcs)) Functions.AddIfNew(_funcs); else Status.UpStringFormat(LineStatus.ResolveErrorFunctionsResolveFailed);
                     }
 
                     else if (name == "PluralRules" && !(l is ILinePluralRules pluralRules_ && pluralRules_.PluralRules != null /*to not add second time*/))
                     {
                         IPluralRules _rules;
-                        if (Resolvers.TryResolve<IPluralRules>(name, out _rules)) PluralRules = _rules; else Status.UpPlurality(LineStatus.PluralityErrorRulesResolveError);
+                        if (Resolvers.TryResolve<IPluralRules>(name, out _rules)) PluralRules = _rules; else Status.UpPlurality(LineStatus.ResolveErrorPluralRulesResolveFailed);
                     }
 
                     else if (name == "StringFormat" && !(l is ILineStringFormat stringFormat_ && stringFormat_.StringFormat != null /*to not add second time*/))
                     {
                         IStringFormat _stringFormat;
-                        if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
+                        if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpStringFormat(LineStatus.ResolveErrorStringFormatResolveFailed);
                     }
 
                     else if (!valueSet && name == "String")
@@ -224,7 +224,7 @@ namespace Lexical.Localization.StringFormat
                         if (name == "StringFormat" && !(l is ILineStringFormat stringFormat_ && stringFormat_.StringFormat != null /*to not add second time*/))
                         {
                             IStringFormat _stringFormat;
-                            if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
+                            if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpStringFormat(LineStatus.ResolveErrorStringFormatResolveFailed);
                         }
 
                         else if (!valueSet && name == "String")
@@ -243,7 +243,7 @@ namespace Lexical.Localization.StringFormat
                     if (name == "StringFormat" && !(l is ILineStringFormat stringFormat_ && stringFormat_.StringFormat != null /*to not add second time*/))
                     {
                         IStringFormat _stringFormat;
-                        if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpFormat(LineStatus.FormatErrorStringFormatResolveFailed);
+                        if (Resolvers.TryResolve<IStringFormat>(value, out _stringFormat)) StringFormat = _stringFormat; else Status.UpStringFormat(LineStatus.ResolveErrorStringFormatResolveFailed);
                     }
 
                     else if (!valueSet && name == "String")

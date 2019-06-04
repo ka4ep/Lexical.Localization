@@ -132,7 +132,8 @@ namespace Lexical.Localization.Asset
         public ILine GetString(ILine key)
         {
             string id = namePolicy.Print(key);
-            CultureInfo culture = key.GetCultureInfo();
+            CultureInfo culture = null;
+            key.TryGetCultureInfo(out culture);
             try
             {
                 string value = culture == null ? ResourceManager.GetString(id) : ResourceManager.GetString(id, culture);
@@ -154,7 +155,8 @@ namespace Lexical.Localization.Asset
         public LineResourceBytes GetResourceBytes(ILine key)
         {
             string id = namePolicy.Print(key);
-            CultureInfo culture = key.GetCultureInfo();
+            CultureInfo culture = null;
+            key.TryGetCultureInfo(out culture);
             try
             {
                 object obj = (culture == null ? ResourceManager.GetObject(id) : ResourceManager.GetObject(id, culture)) as byte[];
@@ -177,7 +179,8 @@ namespace Lexical.Localization.Asset
         public LineResourceStream GetResourceStream(ILine key)
         {
             string id = namePolicy.Print(key);
-            CultureInfo culture = key.GetCultureInfo();
+            CultureInfo culture = null;
+            key.TryGetCultureInfo(out culture);
             try
             {
                 object obj = (culture == null ? ResourceManager.GetObject(id) : ResourceManager.GetObject(id, culture)) as byte[];

@@ -19,7 +19,7 @@ namespace Lexical.Localization.StringFormat
         static IStringPart[] parts = new IStringPart[0];
         static IPlaceholder[] arguments = new IPlaceholder[0];
         /// <summary />
-        public LineStatus Status => LineStatus.FormatFailedNull;
+        public LineStatus Status => LineStatus.StringFormatFailedNull;
         /// <summary />
         public string Text => null;
         /// <summary />
@@ -72,7 +72,7 @@ namespace Lexical.Localization.StringFormat
         static IStringPart[] parts = new IStringPart[0];
         static IPlaceholder[] arguments = new IPlaceholder[0];
         /// <summary />
-        public LineStatus Status => LineStatus.FormatFailedNull;
+        public LineStatus Status => LineStatus.StringFormatFailedNull;
         /// <summary />
         public string Text => "";
         /// <summary />

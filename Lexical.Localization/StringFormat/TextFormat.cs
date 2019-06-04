@@ -43,9 +43,9 @@ namespace Lexical.Localization.StringFormat
         /// <returns></returns>
         public LineString Print(IString str)
         {
-            if (str == null) return new LineString(null, (Exception)null, LineStatus.FormatFailedNull);
+            if (str == null) return new LineString(null, (Exception)null, LineStatus.StringFormatFailedNull);
             // As is
-            if (str.StringFormat == null || str.StringFormat is TextFormat) return new LineString(null, str.Text, LineStatus.FormatOkString);
+            if (str.StringFormat == null || str.StringFormat is TextFormat) return new LineString(null, str.Text, LineStatus.StringFormatOkString);
 
             // Put together
             int len = 0;
@@ -58,7 +58,7 @@ namespace Lexical.Localization.StringFormat
                 else
                     sb.Append(p.Text);
             }
-            return new LineString(null, sb.ToString(), LineStatus.FormatOkString);
+            return new LineString(null, sb.ToString(), LineStatus.StringFormatOkString);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Lexical.Localization.StringFormat
             /// <summary>
             /// Get parse status.
             /// </summary>
-            public LineStatus Status => LineStatus.FormatOkString;
+            public LineStatus Status => LineStatus.StringFormatOkString;
 
             /// <summary>
             /// Format string broken into sequence of text and argument parts.

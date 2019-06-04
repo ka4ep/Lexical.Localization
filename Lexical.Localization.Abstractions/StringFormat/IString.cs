@@ -26,8 +26,8 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Parse result. One of:
         /// <list type="table">
-        /// <item><see cref="LineStatus.FormatErrorMalformed"/> if there is a problem in the stirng</item>
-        /// <item><see cref="LineStatus.FormatOk"/> if format was parsed ok.</item>
+        /// <item><see cref="LineStatus.StringFormatErrorMalformed"/> if there is a problem in the stirng</item>
+        /// <item><see cref="LineStatus.StringFormatOk"/> if format was parsed ok.</item>
         /// </list>
         /// </summary>
         LineStatus Status { get; }

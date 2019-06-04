@@ -81,7 +81,7 @@ namespace Lexical.Localization.StringFormat
             int result = FNVHashBasis;
 
             // Hash Status
-            UInt64 code = (UInt64)o.Status.Format();
+            UInt64 code = (UInt64)o.Status.StringFormat();
             result ^= (int)(code & 0xffffffff);
             result ^= (int)(code >> 32);
             result *= FNVHashPrime;

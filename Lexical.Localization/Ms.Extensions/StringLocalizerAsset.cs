@@ -173,8 +173,8 @@ namespace Lexical.Localization.Asset
         /// <returns></returns>
         public ILine GetString(ILine key)
         {
-            CultureInfo key_culture = key.GetCultureInfo();
-            if (key_culture != null)
+            CultureInfo key_culture;
+            if (key.TryGetCultureInfo(out key_culture))
             {
                 // Get-or-create culture specific adapter, use that
                 if (this.culture == null)
@@ -291,7 +291,8 @@ namespace Lexical.Localization.Asset
         /// <returns></returns>
         public IEnumerable<KeyValuePair<string, IString>> GetStringLines(ILine key = null)
         {
-            CultureInfo key_culture = key?.GetCultureInfo();
+            CultureInfo key_culture = null;
+            key.TryGetCultureInfo(out key_culture);
             IStringLocalizer localizer = key == null ? stringLocalizer : FindStringLocalizer(key, key_culture).stringLocalizer;
             if (localizer == null) return null;
 

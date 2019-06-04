@@ -14,9 +14,9 @@ namespace Lexical.Localization.StringFormat
     {
         static IPlaceholder[] no_arguments = new IPlaceholder[0];
         static IStringPart[] no_parts = new IStringPart[0];
-        static StatusString _null = new StatusString(null, LineStatus.FormatFailedNull);
-        static StatusString _no_parser = new StatusString(null, LineStatus.FormatFailedNoParser);
-        static StatusString _parse_failed = new StatusString(null, LineStatus.FormatFailedParse);
+        static StatusString _null = new StatusString(null, LineStatus.StringFormatFailedNull);
+        static StatusString _no_parser = new StatusString(null, LineStatus.StringFormatFailedNoParser);
+        static StatusString _parse_failed = new StatusString(null, LineStatus.StringFormatFailedParse);
 
         /// <summary>
         /// Status for null value.

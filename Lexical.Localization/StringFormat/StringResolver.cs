@@ -111,7 +111,7 @@ namespace Lexical.Localization.StringFormat
 
             // Parse value
             IString value = features.EffectiveString;
-            features.Status.UpFormat(value.Status);
+            features.Status.UpStringFormat(value.Status);
 
             // Value has error
             if (value.Parts == null || value.Status.Failed())
@@ -164,7 +164,7 @@ namespace Lexical.Localization.StringFormat
                         // Parse value
                         IString value_for_plurality = line_for_plurality_arguments.GetString(Resolvers);
                         // Add status from parsing the value
-                        features.Status.UpFormat(value_for_plurality.Status);
+                        features.Status.UpStringFormat(value_for_plurality.Status);
                         // Value has error
                         if (value_for_plurality.Parts == null || value_for_plurality.Status.Failed())
                         {
@@ -175,7 +175,7 @@ namespace Lexical.Localization.StringFormat
                         // Return with match
                         features.Status.UpPlurality(LineStatus.PluralityOkMatched);
                         // Update status codes
-                        features.Status.UpFormat(value_for_plurality.Status);
+                        features.Status.UpStringFormat(value_for_plurality.Status);
                         // Return values
                         value = value_for_plurality;
                         line = line_for_plurality_arguments;
@@ -236,7 +236,7 @@ namespace Lexical.Localization.StringFormat
 
                 // Parse value
                 IString value = features.EffectiveString;
-                features.Status.UpFormat(value.Status);
+                features.Status.UpStringFormat(value.Status);
 
                 // Value has error
                 if (value.Parts == null || value.Status.Failed())
@@ -302,7 +302,7 @@ namespace Lexical.Localization.StringFormat
                                 // Parse value
                                 IString value_for_plurality = features.EffectiveString;
                                 // Add status from parsing the value
-                                features.Status.UpFormat(value_for_plurality.Status);
+                                features.Status.UpStringFormat(value_for_plurality.Status);
                                 // Value has error
                                 if (value_for_plurality.Parts == null || value_for_plurality.Status.Failed())
                                 {
@@ -315,7 +315,7 @@ namespace Lexical.Localization.StringFormat
                                 // Evaluate placeholders again
                                 if (!EqualPlaceholders(value, value_for_plurality)) { placeholder_values.Clear(); EvaluatePlaceholderValues(line, value_for_plurality.Placeholders, ref features, ref placeholder_values, culture); }
                                 // Update status codes
-                                features.Status.UpFormat(value_for_plurality.Status);
+                                features.Status.UpStringFormat(value_for_plurality.Status);
                                 // Return values
                                 value = value_for_plurality;
                                 line = line_for_plurality_arguments;
@@ -353,12 +353,12 @@ namespace Lexical.Localization.StringFormat
                     if (value.Parts[0].Kind == StringPartKind.Text)
                     {
                         text = value.Parts[0].Text;
-                        features.Status.UpFormat(LineStatus.FormatOkString);
+                        features.Status.UpStringFormat(LineStatus.StringFormatOkString);
                     }
                     else if (value.Parts[0].Kind == StringPartKind.Placeholder)
                     {
                         text = placeholder_values[0];
-                        features.Status.UpFormat(LineStatus.FormatOkString);
+                        features.Status.UpStringFormat(LineStatus.StringFormatOkString);
                     }
                 }
                 // Compile multiple parts
@@ -384,7 +384,7 @@ namespace Lexical.Localization.StringFormat
 
                     // String
                     text = new string(arr);
-                    features.Status.UpFormat(LineStatus.FormatOkString);
+                    features.Status.UpStringFormat(LineStatus.StringFormatOkString);
                 }
 
                 // Create result 
