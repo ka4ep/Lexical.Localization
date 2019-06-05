@@ -180,8 +180,8 @@ namespace Lexical.Localization
                         // No matching parameter for this capture part
                         if (next_parameter_ix < 0) continue;
 
-                        // This part is canonical.
-                        if (next_parameter.IsCanonicalKey(parameterInfos))
+                        // This part is canonical, hint, or parameter.
+                        if (!next_parameter.IsNonCanonicalKey(parameterInfos))
                         {
                             // There (may be) are other canonical parts between part_ix and next_part_is. We have to add them here.
                             for (int ix = 0; ix < next_parameter_ix; ix++)
@@ -189,15 +189,15 @@ namespace Lexical.Localization
                                 // Copy
                                 ILineParameter parameter = parameters[ix];
                                 // Has been added before
-                                if ((parameter.ParameterName == null) || !parameter.IsCanonicalKey(parameterInfos)) continue;
+                                if ((parameter.ParameterName == null) || parameter.IsNonCanonicalKey(parameterInfos)) continue;
                                 // Append to level's key
-                                levelKey = LineAppender.NonResolving.Concat(parameter, levelKey);
+                                levelKey = LineAppender.NonResolving.Create(levelKey, LineArguments.ToArguments(parameter));
                                 // Mark handled
                                 parameters[ix] = unused;
                             }
                         }
                         // Append to level's key
-                        levelKey = LineAppender.NonResolving.Concat(next_parameter, levelKey);
+                        levelKey = LineAppender.NonResolving.Create(levelKey, LineArguments.ToArguments(next_parameter));
                         // Mark handled
                         parameters[next_parameter_ix] = unused;
                         // Yield level
@@ -210,7 +210,7 @@ namespace Lexical.Localization
                 {
                     // Copy
                     ILineParameter parameter = parameters[ix];
-                    if (parameter.ParameterName != null) levelKey = LineAppender.NonResolving.Concat(parameter, levelKey);
+                    if (parameter.ParameterName != null && parameter.ParameterName != "String") levelKey = LineAppender.NonResolving.Create(levelKey, LineArguments.ToArguments(parameter));
                 }
 
                 // yield levelKey

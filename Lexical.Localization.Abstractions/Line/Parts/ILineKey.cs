@@ -320,11 +320,7 @@ namespace Lexical.Localization
                         {
                             int ix = -1;
                             for (int i = 0; i < result.Count; i++) if (result[i].Key == name) { ix = i; break; }
-                            if (ix >= 0)
-                            {
-                                result[ix] = new KeyValuePair<string, string>(name, value);
-                                break;
-                            }
+                            if (ix >= 0) result[ix] = new KeyValuePair<string, string>(name, value);
                             else result.Add(new KeyValuePair<string, string>(name, value));
                         }
                     }
@@ -336,11 +332,7 @@ namespace Lexical.Localization
                     {
                         int ix = -1;
                         for (int i = 0; i < result.Count; i++) if (result[i].Key == name) { ix = i; break; }
-                        if (ix >= 0)
-                        {
-                            result[ix] = new KeyValuePair<string, string>(name, value);
-                            break;
-                        }
+                        if (ix >= 0) result[ix] = new KeyValuePair<string, string>(name, value);
                         else result.Add(new KeyValuePair<string, string>(name, value));
                     }
                 }

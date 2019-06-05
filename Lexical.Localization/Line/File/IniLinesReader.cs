@@ -156,7 +156,8 @@ namespace Lexical.Localization
                         ILine key_ = null;
                         if (_escaper_key.TryParse(token.KeyText, out key_))
                         {
-                            ILineTree current = key_ == null ? null : (section ?? root).GetOrCreate(key_);
+                            if (key_ == null) key_ = LineFactory.Create<ILinePart>(null);
+                            ILineTree current = (section ?? root).GetOrCreate(key_);
                             string value = escaper_value.UnescapeLiteral(token.ValueText);
 
                             if (value != null)

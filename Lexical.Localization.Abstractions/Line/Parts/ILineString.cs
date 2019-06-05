@@ -67,9 +67,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="line"></param>
         /// <param name="resolver">(optional) type resolver that resolves "IStringFormat" parameter into type. Returns null, if could not resolve, exception if resolve fails</param>
+        /// <param name="fallbackStringFormat">(optional) fallback string format to use in case line didnt have one</param>
         /// <returns>value</returns>
         /// <exception cref="LineException">error parsing</exception>
-        public static IString GetString(this ILine line, IResolver resolver = null)
+        public static IString GetString(this ILine line, IResolver resolver = null, IStringFormat fallbackStringFormat = null)
         {
             for (ILine part = line; part != null; part = part.GetPreviousPart())
             {
@@ -80,18 +81,18 @@ namespace Lexical.Localization
                     {
                         if (parameter.ParameterName == "String" && parameter.ParameterValue != null)
                         {
-                            IStringFormat stringFormat = line.FindStringFormat(resolver);
+                            IStringFormat stringFormat = line.FindStringFormat(resolver) ?? fallbackStringFormat;
                             return stringFormat.Parse(parameter.ParameterValue);
                         }
                     }
                 }
                 if (resolver != null && part is ILineParameter lineParameter && lineParameter.ParameterName == "String" && lineParameter.ParameterValue != null)
                 {
-                    IStringFormat stringFormat = line.FindStringFormat(resolver);
+                    IStringFormat stringFormat = line.FindStringFormat(resolver) ?? fallbackStringFormat;
                     return stringFormat.Parse(lineParameter.ParameterValue);
                 }
             }
-            return new StatusString(null, LineStatus.StringFormatFailedNull);
+            return StatusString.Null;
         }
 
         /// <summary>

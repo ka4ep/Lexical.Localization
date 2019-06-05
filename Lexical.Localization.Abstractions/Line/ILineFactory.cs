@@ -549,6 +549,34 @@ namespace Lexical.Localization
             return result;
         }
 
+
+        /// <summary>
+        /// Try to clone <paramref name="line"/>.
+        /// </summary>
+        /// <param name="factory"></param>
+        /// <param name="line"></param>
+        /// <param name="clone"></param>
+        /// <returns></returns>
+        public static bool TryClone(this ILineFactory factory, ILine line, out ILine clone)
+        {
+            if (factory == null) { clone = default; return false; }
+            ILine result = null;
+            StructList16<ILine> args = new StructList16<ILine>();
+            for (ILine l = line; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+            for (int i = args.Count - 1; i >= 0; i--)
+            {
+                ILine l = args[i];
+                if (l is ILineArgumentsEnumerable enumr)
+                    foreach (ILineArguments args_ in enumr)
+                        if (!factory.TryCreate(result, args_, out result)) { clone = default; return false; }
+
+                if (l is ILineArguments arg)
+                    if (!factory.TryCreate(result, args, out result)) { clone = default; return false; }
+            }
+            clone = result;
+            return true;
+        }
+
         /// <summary>
         /// Append <paramref name="right"/> to <paramref name="left"/>.
         /// </summary>

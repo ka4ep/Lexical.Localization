@@ -418,7 +418,7 @@ namespace Lexical.Localization.Internal
         }
 
         static Regex parser = new Regex(
-            @"(?<section_line>\[(?<section>(\\[^\r\n]|[^\]\n\r\\])*)\][ \t]*(\r\n|\n\r|\n)?)|(?<comment_line>(;|#|//)(?<comment>[^\r\n]*)[ \t]*(\r\n|\n\r|\n)?)|(?<keyvalue_line>(?<key>(\\( |[^\r\n])|[^ \\=\r\n])+)[ \t]*=[ \t]*(?<value>(\\[^\r\n]|[^\\\n\r])*)[ \t]*(\r\n|\n\r|\n)?)|(?<text>.+?)",
+            @"(?<section_line>\[(?<section>(\\[^\r\n]|[^\]\n\r\\])*)\][ \t]*(\r\n|\n\r|\n)?)|(?<comment_line>(;|#|//)(?<comment>[^\r\n]*)[ \t]*(\r\n|\n\r|\n)?)|(?<keyvalue_line>(?<key>(\\( |[^\r\n])|[^ \\=\r\n])*)[ \t]*=[ \t]*(?<value>(\\[^\r\n]|[^\\\n\r])*)[ \t]*(\r\n|\n\r|\n)?)|(?<text>.+?)",
             RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
         /// <summary>

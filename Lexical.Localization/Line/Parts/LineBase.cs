@@ -43,7 +43,7 @@ namespace Lexical.Localization
         static IEqualityComparer<ILine> keyAndArgsComparer =
             new LineComparer(ParameterInfos.Default)
                 .AddCanonicalComparer(ParameterComparer.Default)
-                .AddComparer(NonCanonicalComparer.AllParameters)
+                .AddComparer(NonCanonicalKeyComparer.AllParameters)
                 .AddComparer(LineValueComparer.Default)
                 .SetReadonly();
 

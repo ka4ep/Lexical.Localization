@@ -100,6 +100,23 @@ namespace Lexical.Localization
     public class LineArguments
     {
         /// <summary>
+        /// Convert <paramref name="linePart"/> to <see cref="ILineArguments"/>.
+        /// </summary>
+        /// <param name="linePart"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="linePart"/> is null.</exception>
+        /// <exception cref="LineException">If conversion fails.</exception>
+        public static ILineArguments ToArguments(ILine linePart)
+        {
+            if (linePart == null) throw new ArgumentNullException(nameof(linePart));
+            if (linePart is ILineArguments args) return args;
+            if (linePart is ILineHint hint) return new LineArguments<ILineHint, string, string>(hint.ParameterName, hint.ParameterValue);
+            if (linePart is ILineCanonicalKey canonicalKey) return new LineArguments<ILineCanonicalKey, string, string>(canonicalKey.ParameterName, canonicalKey.ParameterValue);
+            if (linePart is ILineNonCanonicalKey nonCanonicalKey) return new LineArguments<ILineNonCanonicalKey, string, string>(nonCanonicalKey.ParameterName, nonCanonicalKey.ParameterValue);
+            throw new LineException(linePart, $"Failed to convert {linePart.GetType().FullName}:{linePart.ToString()} to {nameof(ILineArguments)}.");
+        }
+
+        /// <summary>
         /// Create line arguments with only interface argument.
         /// </summary>
         /// <typeparam name="Intf"></typeparam>

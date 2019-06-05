@@ -254,7 +254,7 @@ namespace Lexical.Localization
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref list, parameter.Key);
                     if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
-                    result.Add(ToArgument(lineParameter));
+                    result.Add(LineArguments.ToArguments(lineParameter));
                     prev = lineParameter;
                 }
                 return result.ToArray();
@@ -268,7 +268,7 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
-                    result[i] = ToArgument(lineParameter);
+                    result[i] = LineArguments.ToArguments(lineParameter);
                     prev = lineParameter;
                 }
                 return result;
@@ -348,7 +348,7 @@ namespace Lexical.Localization
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref list, parameter.Key);
                     if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
-                    result.Add(ToArgument(lineParameter));
+                    result.Add(LineArguments.ToArguments(lineParameter));
                     prev = lineParameter;
                 }
                 args = result.ToArray();
@@ -363,7 +363,7 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
-                    result[i] = ToArgument(lineParameter);
+                    result[i] = LineArguments.ToArguments(lineParameter);
                     prev = lineParameter;
                 }
                 args = result;
@@ -475,35 +475,6 @@ namespace Lexical.Localization
             return 0;
         }
 
-        /// <summary>
-        /// Ensure <paramref name="parameter"/> implements <see cref="ILineArguments"/>, if not, then create one.
-        /// </summary>
-        /// <param name="parameter"></param>
-        /// <returns></returns>
-        protected ILineArguments ToArgument(ILineParameter parameter)
-        {
-            if (parameter is ILineArguments args) return args;
-            if (parameter is ILineHint hint) return new HintArgument(parameter.ParameterName, parameter.ParameterValue);
-            if (parameter is ILineCanonicalKey canonicalKey) return new KeyCanonicalArgument(parameter.ParameterName, parameter.ParameterValue);
-            if (parameter is ILineNonCanonicalKey nonCanonicalKey) return new KeyNonCanonicalArgument(parameter.ParameterName, parameter.ParameterValue);
-            return null;
-        }
-
-        /// <summary></summary>
-        protected class Argument<T> : ILineArguments<T, string, string>, ILineParameter
-        {
-            /// <summary></summary>
-            public string Argument0 => ParameterName;
-            /// <summary></summary>
-            public string Argument1 => ParameterValue;
-            /// <summary></summary>
-            public string ParameterName { get; set; }
-            /// <summary></summary>
-            public string ParameterValue { get; set; }
-            /// <summary></summary>
-            public Argument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
-        }
-
         /// <summary></summary>
         protected class ParameterArgument : ILineArguments<ILineParameter, string, string>, ILineParameter
         {
@@ -517,51 +488,6 @@ namespace Lexical.Localization
             public string ParameterValue { get; set; }
             /// <summary></summary>
             public ParameterArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
-        }
-
-        /// <summary></summary>
-        protected class HintArgument : ILineArguments<ILineHint, string, string>, ILineHint
-        {
-            /// <summary></summary>
-            public string Argument0 => ParameterName;
-            /// <summary></summary>
-            public string Argument1 => ParameterValue;
-            /// <summary></summary>
-            public string ParameterName { get; set; }
-            /// <summary></summary>
-            public string ParameterValue { get; set; }
-            /// <summary></summary>
-            public HintArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
-        }
-
-        /// <summary></summary>
-        protected class KeyCanonicalArgument : ILineArguments<ILineCanonicalKey, string, string>, ILineCanonicalKey
-        {
-            /// <summary></summary>
-            public string Argument0 => ParameterName;
-            /// <summary></summary>
-            public string Argument1 => ParameterValue;
-            /// <summary></summary>
-            public string ParameterName { get; set; }
-            /// <summary></summary>
-            public string ParameterValue { get; set; }
-            /// <summary></summary>
-            public KeyCanonicalArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
-        }
-
-        /// <summary></summary>
-        protected class KeyNonCanonicalArgument : ILineArguments<ILineNonCanonicalKey, string, string>, ILineNonCanonicalKey
-        {
-            /// <summary></summary>
-            public string Argument0 => ParameterName;
-            /// <summary></summary>
-            public string Argument1 => ParameterValue;
-            /// <summary></summary>
-            public string ParameterName { get; set; }
-            /// <summary></summary>
-            public string ParameterValue { get; set; }
-            /// <summary></summary>
-            public KeyNonCanonicalArgument(string parameterName, string parameterValue) { ParameterName = parameterName; ParameterValue = parameterValue; }
         }
 
     }

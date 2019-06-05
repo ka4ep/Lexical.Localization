@@ -60,7 +60,7 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Value correspondences
         /// </summary>
-        public readonly Dictionary<LineTreeValue, XText> Values = new Dictionary<LineTreeValue, XText>(new KeyValueTreeComparer());
+        public readonly Dictionary<LineTreeValue, XText> Values = new Dictionary<LineTreeValue, XText>(new LineTreeValueComparer());
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Value correspondences
         /// </summary>
-        public readonly Dictionary<LineTreeValue, IniToken> Values = new Dictionary<LineTreeValue, IniToken>(new KeyValueTreeComparer());
+        public readonly Dictionary<LineTreeValue, IniToken> Values = new Dictionary<LineTreeValue, IniToken>(new LineTreeValueComparer());
     }
 
     /// <summary>
@@ -129,6 +129,19 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
+        /// Line value tree.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="value"></param>
+        /// <param name="valueIndex"></param>
+        public LineTreeValue(ILineTree tree, IString value, int valueIndex)
+        {
+            this.tree = tree ?? throw new ArgumentNullException(nameof(tree));
+            this.value = new LineStringPart(null, null, value);
+            this.valueIndex = valueIndex;
+        }
+
+        /// <summary>
         /// Compare for quality.
         /// </summary>
         /// <param name="obj"></param>
@@ -171,8 +184,14 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Comparer class
     /// </summary>
-    public class KeyValueTreeComparer : IEqualityComparer<LineTreeValue>
+    public class LineTreeValueComparer : IEqualityComparer<LineTreeValue>
     {
+        private static LineTreeValueComparer instance = new LineTreeValueComparer();
+
+        /// <summary>
+        /// </summary>
+        public static LineTreeValueComparer Default => instance;
+
         /// <summary>
         /// Compare for equality
         /// </summary>
@@ -211,7 +230,7 @@ namespace Lexical.Localization.Internal
         /// <summary>
         /// Value correspondences
         /// </summary>
-        public readonly Dictionary<LineTreeValue, JValue> Values = new Dictionary<LineTreeValue, JValue>(new KeyValueTreeComparer());
+        public readonly Dictionary<LineTreeValue, JValue> Values = new Dictionary<LineTreeValue, JValue>(new LineTreeValueComparer());
     }
 
 }

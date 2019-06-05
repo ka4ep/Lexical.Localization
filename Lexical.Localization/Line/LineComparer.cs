@@ -22,31 +22,21 @@ namespace Lexical.Localization
     /// </summary>
     public class LineComparer : IEqualityComparer<ILine>
     {
-        private static LineComparer instance = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Default).AddComparer(NonCanonicalComparer.AllParameters).SetReadonly();
-        private static LineComparer ignoreCulture = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Default).AddComparer(NonCanonicalComparer.IgnoreCulture).SetReadonly();
+        private static LineComparer key = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Default).AddComparer(NonCanonicalKeyComparer.AllParameters).SetReadonly();
+        private static LineComparer keyValue = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Default).AddComparer(NonCanonicalKeyComparer.AllParameters).AddComparer(LineStringComparer.Default).SetReadonly();        
+        private static LineComparer ignoreCulture = new LineComparer(ParameterInfos.Default).AddCanonicalComparer(ParameterComparer.Default).AddComparer(NonCanonicalKeyComparer.IgnoreCulture).SetReadonly();
         private static LineComparer parameters = new LineComparer(null).AddParameterComparer(ParameterComparer.Default).SetReadonly();
 
         /// <summary>
-        /// Makes comparisons on interface level. 
-        /// Compares parametrized properties of keys.
+        /// Compares canonical and non-canonical keys of <see cref="ILine"/>s.
         /// 
-        /// This comparer uses the following pattern for comparisons:
-        ///    Key                      canonical compare
-        ///    Section                  canonical compare
-        ///    Resource                 canonical compare
-        ///    Location                 canonical compare
-        ///    Type                     non-canonical compare
-        ///    Assembly                 non-canonical compare
-        ///    Culture                  non-canonical compare
-        ///    Format Args              not compared (<see cref="LineValueComparer"/>.
-        ///    Inlining                 not compared
-        ///    CulturePolicy            not compared
-        ///    Root                     not compared
+        /// If a key part implements <see cref="ILineParameter"/>, then the parameter is cross-referenced with
+        /// <see cref="ParameterInfos.Default"/> to see if it should be interpreted as canonical or non-canonical key.
         /// </summary>
-        public static LineComparer Default => instance;
+        public static LineComparer Default => key;
 
         /// <summary>
-        /// Comparer that compares parameters.
+        /// Comparer that compares parameters in order of occurance. This includes hints. Ignores the compare rules of that non-canonical keys.
         /// </summary>
         public static LineComparer Parameters => parameters;
 
@@ -54,6 +44,11 @@ namespace Lexical.Localization
         /// Comparer that is oblivious to "Culture" parameter.
         /// </summary>
         public static LineComparer IgnoreCulture => ignoreCulture;
+
+        /// <summary>
+        /// Comparer that compares effective key and effective value ("String" parameter).
+        /// </summary>
+        public static LineComparer KeyValue => keyValue;
 
         /// <summary>
         /// Compares line's effective "String" for hash-equality.
@@ -157,8 +152,9 @@ namespace Lexical.Localization
             if (Object.ReferenceEquals(x, y)) return true;
 
             // Test if cached hash-codes mismatch.
-            if (this == LineComparer.instance && x is ILineDefaultHashCode x_code && y is ILineDefaultHashCode y_code)
-                if (x_code.GetDefaultHashCode() != y_code.GetDefaultHashCode()) return false;
+            if (this == LineComparer.key && x is ILineDefaultHashCode x_code && y is ILineDefaultHashCode y_code)
+                if (x_code.GetDefaultHashCode() != y_code.GetDefaultHashCode())
+                    return false;
 
             // Regular comparers
             foreach (var comparer in comparers)
@@ -216,7 +212,7 @@ namespace Lexical.Localization
             // No key
             if (line == null) return 0;
             // Get-or-calculate cached hashcode with ILineDefaultHashCode.
-            if (this == LineComparer.instance && line is ILineDefaultHashCode defaultHashCode) return defaultHashCode.GetDefaultHashCode();
+            if (this == LineComparer.key && line is ILineDefaultHashCode defaultHashCode) return defaultHashCode.GetDefaultHashCode();
             // Calculate new hashcode
             return CalculateHashCode(line);
         }
@@ -324,26 +320,26 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Compares all non-canonical parameters keys against each other.
+    /// Compares all non-canonical keys against each other.
     /// 
     /// These are keys that implement <see cref="ILineParameter"/> and <see cref="ILineNonCanonicalKey"/>.
     /// 
     /// If <see cref="ILineNonCanonicalKey"/> occurs more than once, only the left-most is considered effective.
     /// </summary>
-    public class NonCanonicalComparer : IEqualityComparer<ILine>
+    public class NonCanonicalKeyComparer : IEqualityComparer<ILine>
     {
-        private static NonCanonicalComparer all = new NonCanonicalComparer(parameterInfos: ParameterInfos.Default, keyNamesToIgnore: null);
-        private static NonCanonicalComparer Ignore_culture = new NonCanonicalComparer(parameterInfos: ParameterInfos.Default, keyNamesToIgnore: new string[] { "Culture" });
+        private static NonCanonicalKeyComparer all = new NonCanonicalKeyComparer(parameterInfos: ParameterInfos.Default, keyNamesToIgnore: null);
+        private static NonCanonicalKeyComparer Ignore_culture = new NonCanonicalKeyComparer(parameterInfos: ParameterInfos.Default, keyNamesToIgnore: new string[] { "Culture" });
 
         /// <summary>
         /// Default instance that compares every non-canonical parameter.
         /// </summary>
-        public static NonCanonicalComparer AllParameters => all;
+        public static NonCanonicalKeyComparer AllParameters => all;
 
         /// <summary>
         /// Instance that excludes "Culture" key from comparison.
         /// </summary>
-        public static NonCanonicalComparer IgnoreCulture => Ignore_culture;
+        public static NonCanonicalKeyComparer IgnoreCulture => Ignore_culture;
 
         /// <summary>
         /// List of parameter names to ignore.
@@ -360,7 +356,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="parameterInfos">(optional) Parameter infos for determining if parameter is key. <see cref="ParameterInfos.Default"/> for default infos.</param>
         /// <param name="keyNamesToIgnore">(optional) list of parameter names to not to compare</param>
-        public NonCanonicalComparer(IParameterInfos parameterInfos = null, IEnumerable<string> keyNamesToIgnore = null)
+        public NonCanonicalKeyComparer(IParameterInfos parameterInfos = null, IEnumerable<string> keyNamesToIgnore = null)
         {
             this.parameterInfos = parameterInfos;
             if (keyNamesToIgnore != null) this.parameterNamesToIgnore = new HashSet<string>(keyNamesToIgnore);

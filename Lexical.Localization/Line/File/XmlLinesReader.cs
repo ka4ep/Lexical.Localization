@@ -104,13 +104,14 @@ namespace Lexical.Localization
         /// Create new xml reader
         /// </summary>
         /// <param name="extension"></param>
-        /// <param name="lineFactory"></param>
+        /// <param name="lineFactory">Line factory that converts parameters into <see cref="ILine"/>s.</param>
         /// <param name="xmlReaderSettings"></param>
         public XmlLinesReader(string extension, ILineFactory lineFactory, XmlReaderSettings xmlReaderSettings = default)
         {
             this.Extension = extension;
             this.xmlReaderSettings = xmlReaderSettings ?? CreateXmlReaderSettings();
             this.LineFactory = lineFactory ?? throw new ArgumentNullException(nameof(lineFactory));
+            // Extract resolver from line factory
             lineFactory.TryGetResolver(out resolver);
         }
 

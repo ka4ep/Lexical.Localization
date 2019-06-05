@@ -155,6 +155,25 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Tests if <paramref name="tree"/> has a <paramref name="value"/>.
+        /// 
+        /// If <paramref name="value"/> is null, then returns always false.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool HasValue(this ILineTree tree, ILine value)
+        {
+            if (value == null) return false;
+            if (!tree.HasValues) return false;
+            foreach (ILine linevalue in tree.Values)
+            {
+                if (LineComparer.String.Equals(linevalue, value)) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Try to find <see cref="IStringFormat"/>.
         /// </summary>
         /// <param name="node"></param>
@@ -177,6 +196,77 @@ namespace Lexical.Localization
             }
             stringFormat = default;
             return false;
+        }
+
+        /// <summary>
+        /// Try to find <see cref="IStringFormat"/>.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="line">A line part from <see cref="ILineTree.Key"/></param>
+        /// <param name="resolver">(optional) string format resolver</param>
+        /// <param name="stringFormat"></param>
+        /// <returns>true if string format was found</returns>
+        public static bool TryGetStringFormat(this ILineTree node, ILine line, IResolver resolver, out IStringFormat stringFormat)
+        {
+            for (ILine l = line; l != null; GetPrevPart(ref node, ref line))
+            {
+                if (l is ILineStringFormat lineStringFormat && lineStringFormat.StringFormat != null) { stringFormat = lineStringFormat.StringFormat; return true; }
+                if (l is ILineParameterEnumerable lineParameters)
+                    foreach (ILineParameter lineParameter in lineParameters)
+                        if (lineParameter.ParameterName == "StringFormat" && lineParameter.ParameterValue != null && resolver.TryResolve<IStringFormat>(lineParameter.ParameterValue, out stringFormat)) return true;
+                if (l is ILineParameter parameter)
+                    if (parameter.ParameterName == "StringFormat" && parameter.ParameterValue != null && resolver.TryResolve<IStringFormat>(parameter.ParameterValue, out stringFormat)) return true;
+            }
+            stringFormat = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Starts at <paramref name="line"/> of <paramref name="node"/> and resolves to first <see cref="IString"/> value.
+        /// 
+        /// If the first string value is <see cref="IString"/>, returns it as is.
+        /// If it's "String" parameter, then resolves preceding "StringFormat" parameter or <see cref="ILineStringFormat"/>, in order
+        /// to parse into <see cref="IString"/>. If string format is not found, uses the default string format <see cref="CSharpFormat.Default"/>.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="line">A line from <see cref="ILineTree.Values"/></param>
+        /// <param name="resolver"></param>
+        /// <param name="fallbackStringFormat">(optional) Fallback stringFormat to use, in case there is "String" parameter and no preceding StringFormat.</param>
+        /// <returns>string</returns>
+        public static IString GetString(this ILineTree node, ILine line, IResolver resolver, IStringFormat fallbackStringFormat = null)
+        {
+            for (ILine l = line; l!=null; GetPrevPart(ref node, ref line))
+            {
+                if (l is ILineString lineString && lineString.String != null) return lineString.String;
+                if (l is ILineParameterEnumerable lineParameters)
+                    foreach (ILineParameter lineParameter in lineParameters)
+                    {
+                        if (lineParameter.ParameterName == "String" && lineParameter.ParameterValue != null)
+                        {
+                            IStringFormat stringFormat;
+                            if (!TryGetStringFormat(node, line, resolver, out stringFormat)) stringFormat = fallbackStringFormat;
+                            return stringFormat.Parse(lineParameter.ParameterValue);
+                        }
+                    }
+                if (l is ILineParameter parameter)
+                    if (parameter.ParameterName == "String" && parameter.ParameterValue != null)
+                    {
+                        IStringFormat stringFormat;
+                        if (!TryGetStringFormat(node, line, resolver, out stringFormat)) stringFormat = fallbackStringFormat;
+                        return stringFormat.Parse(parameter.ParameterValue);
+                    }
+            }
+            return StatusString.Null;
+        }
+
+        static void GetPrevPart(ref ILineTree node, ref ILine linePart)
+        {
+            linePart = linePart.GetPreviousPart();
+            if (linePart == null)
+            {
+                node = node?.Parent;
+                linePart = node?.Key;
+            }
         }
 
         /// <summary>
@@ -220,7 +310,7 @@ namespace Lexical.Localization
 
             // Create child
             child = node.CreateChild();
-            child.Key = key.CloneKey();
+            child.Key = key;
             return child;
         }
 

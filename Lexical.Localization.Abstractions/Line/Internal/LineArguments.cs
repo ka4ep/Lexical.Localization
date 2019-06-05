@@ -9,7 +9,7 @@ namespace Lexical.Localization.Internal
     /// Line part arguments with no parameters
     /// </summary>
     /// <typeparam name="Intf"></typeparam>
-    public class LineArguments<Intf> : ILineArguments<Intf>
+    public class LineArguments<Intf> : LineArguments, ILineArguments<Intf>
     {
     }
 
@@ -18,7 +18,7 @@ namespace Lexical.Localization.Internal
     /// </summary>
     /// <typeparam name="Intf"></typeparam>
     /// <typeparam name="A0"></typeparam>
-    public class LineArguments<Intf, A0> : ILineArguments<Intf, A0>
+    public class LineArguments<Intf, A0> : LineArguments, ILineArguments<Intf, A0>
     {
         /// <summary>
         /// Value of first argument.
@@ -41,7 +41,7 @@ namespace Lexical.Localization.Internal
     /// <typeparam name="Intf"></typeparam>
     /// <typeparam name="A0"></typeparam>
     /// <typeparam name="A1"></typeparam>
-    public class LineArguments<Intf, A0, A1> : ILineArguments<Intf, A0, A1>
+    public class LineArguments<Intf, A0, A1> : LineArguments, ILineArguments<Intf, A0, A1>
     {
         /// <summary>
         /// Value of first argument.
@@ -72,7 +72,7 @@ namespace Lexical.Localization.Internal
     /// <typeparam name="A0"></typeparam>
     /// <typeparam name="A1"></typeparam>
     /// <typeparam name="A2"></typeparam>
-    public class LineArguments<Intf, A0, A1, A2> : ILineArguments<Intf, A0, A1, A2>
+    public class LineArguments<Intf, A0, A1, A2> : LineArguments, ILineArguments<Intf, A0, A1, A2>
     {
         /// <summary>
         /// Value of first argument.
