@@ -82,14 +82,14 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="assetBuilder"></param>
         /// <param name="filename"></param>
-        /// <param name="namePolicy">(optional)</param>
+        /// <param name="lineFormat">(optional)</param>
         /// <param name="fileFormat">(optional) overriding file format to use in case format cannot be infered from file extension</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">thrown if fileformat was not found</exception>
-        public static IAssetBuilder AddLocalizationFile(this IAssetBuilder assetBuilder, string filename, ILineFormat namePolicy = default, ILineFileFormat fileFormat = null)
+        public static IAssetBuilder AddLocalizationFile(this IAssetBuilder assetBuilder, string filename, ILineFormat lineFormat = default, ILineFileFormat fileFormat = null)
         {
             if (fileFormat == null) fileFormat = LineReaderMap.Default.GetFormatByFilename(filename);
-            assetBuilder.AddSource( fileFormat.FileAssetSource(filename, namePolicy) );
+            assetBuilder.AddSource( fileFormat.FileAssetSource(filename, lineFormat) );
             return assetBuilder;
         }
 
@@ -98,14 +98,14 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="assetBuilder"></param>
         /// <param name="resourceName"></param>
-        /// <param name="namePolicy">(optional)</param>
+        /// <param name="lineFormat">(optional)</param>
         /// <param name="fileFormat">(optional) overriding file format to use in case format cannot be infered from file extension</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">thrown if fileformat was not found</exception>
-        public static IAssetBuilder AddEmbeddedLocalizationFile(this IAssetBuilder assetBuilder, Assembly assembly, string resourceName, ILineFormat namePolicy = default, ILineFileFormat fileFormat = null)
+        public static IAssetBuilder AddEmbeddedLocalizationFile(this IAssetBuilder assetBuilder, Assembly assembly, string resourceName, ILineFormat lineFormat = default, ILineFileFormat fileFormat = null)
         {
             if (fileFormat == null) fileFormat = LineReaderMap.Default.GetFormatByFilename(resourceName);
-            assetBuilder.AddSource( fileFormat.EmbeddedAssetSource(assembly, resourceName, namePolicy) );
+            assetBuilder.AddSource( fileFormat.EmbeddedAssetSource(assembly, resourceName, lineFormat) );
             return assetBuilder;
         }
 

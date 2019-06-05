@@ -103,7 +103,7 @@ namespace docs
                     LineReaderMap.Default.EmbeddedReaderAsStringLines(
                         assembly: asm, 
                         resourceName: "docs.localization.ini", 
-                        namePolicy: LineFormat.Parameters,
+                        lineFormat: LineFormat.Parameters,
                         throwIfNotFound: true);
                 #endregion Snippet_3b
                 var lines = string_lines_reader.ToArray();
@@ -168,7 +168,7 @@ namespace docs
                 {
                     IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadStringLines(
                         stream: s,
-                        namePolicy: LineFormat.Parameters);
+                        lineFormat: LineFormat.Parameters);
                 }
                 #endregion Snippet_5b
             }
@@ -198,7 +198,7 @@ namespace docs
                 {
                     IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadStringLines(
                         srcText: tr,
-                        namePolicy: LineFormat.Parameters);
+                        lineFormat: LineFormat.Parameters);
                 }
                 #endregion Snippet_6b
             }
@@ -226,7 +226,7 @@ namespace docs
                 IEnumerable<KeyValuePair<string, IString>> string_lines = 
                     IniLinesReader.Default.ReadStringAsStringLines(
                         srcText: text,
-                        namePolicy: LineFormat.Parameters);
+                        lineFormat: LineFormat.Parameters);
                 #endregion Snippet_7b
             }
             {
@@ -374,7 +374,7 @@ namespace docs
 
         public IEnumerable<ILine> ReadLines(
             TextReader text, 
-            ILineFormat namePolicy = null)
+            ILineFormat lineFormat = null)
         {
             yield return LineAppender.Default.Section("MyClass").Key("HelloWorld").Culture("en").Format("Hello World!");
         }

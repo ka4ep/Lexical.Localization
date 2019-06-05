@@ -43,10 +43,10 @@ Non-canonical parts are typically hints, such as **.SetCulture(*string*)**.
 | Resource | canonical | ILineResourceAssignable | .Resource(*string*) | Hint to asset for an embedded resource path to search from. |
 | Section | canonical | ILinesectionAssignable | .Section(*string*) | Generic section for grouping assets. |
 | Key | canonical | ILineAssignable | .Key(*string*) | Leaf key |
-| Culture | non-canonical | ILocalizationKeyCultureAssignable | .Culture(*CultureInfo*) | Parameter to override current culture. |
-| N | non-canonical | ILocalizationKeyPluralityAssignable | .N(*Type*) | Key that specifies plurality |
-|  | non-canonical | ILocalizationKeyFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
-|  | non-canonical | ILocalizationKeyInlines | .Inline(*string*, *string*) | Hint for default culture specific string values. |
+| Culture | non-canonical | ILineCultureAssignable | .Culture(*CultureInfo*) | Parameter to override current culture. |
+| N | non-canonical | ILinePluralityAssignable | .N(*Type*) | Key that specifies plurality |
+|  | non-canonical | ILineFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
+|  | non-canonical | ILineInlines | .Inline(*string*, *string*) | Hint for default culture specific string values. |
 
 ## Type Section
 Type section is a key that narrows down the scope of localization to a specific class, interface or structure.
@@ -97,7 +97,7 @@ Caveat however, that inlining to specific cultures with <b>.Inline(<i>string</i>
 [!code-csharp[Snippet](Examples.cs#Snippet_7d)]
 
 ## Dynamic use
-Asset keys from LocalizationRoot and StringLocalizationRoot are dynamically usable.
+Asset keys from LineRoot and StringLineRoot are dynamically usable.
 [!code-csharp[Snippet](Examples.cs#Snippet_10)]
 
 ## Use in classes
@@ -106,5 +106,5 @@ take in argument *ILine&lt;T&gt;* and possibly *ILineRoot*. See more in [Best Pr
 Constructor argument **ILine&lt;T&gt;** helps the Dependency Injection to assign the localization so that it is scoped in to correct typesection.
 [!code-csharp[Snippet](Examples.cs#Snippet_11a)]
 
-If class is designed to use static instance and without dependency injection, localization reference can be acquired from **LocalizationRoot**.
+If class is designed to use static instance and without dependency injection, localization reference can be acquired from **LineRoot**.
 [!code-csharp[Snippet](Examples.cs#Snippet_11b)]

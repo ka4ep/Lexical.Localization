@@ -21,7 +21,7 @@ are automatically pulled as they are dependencies.
 In the Program.cs code, replace the "Console.WriteLine("Hello World!");" with following code.
 
 ```C#
-Console.WriteLine( LocalizationRoot.Global.Type<Program>().Key("Hello").Inline("Hello World!") );
+Console.WriteLine( LineRoot.Global.Type<Program>().Key("Hello").Inline("Hello World!") );
 Console.ReadKey();
 ```
 
@@ -37,14 +37,14 @@ namespace TutorialProject
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(LocalizationRoot.Global.Type<Program>().Key("Hello").Inline("Hello World!"));
+            Console.WriteLine(LineRoot.Global.Type<Program>().Key("Hello").Inline("Hello World!"));
             Console.ReadKey();
         }
     }
 }
 ```
 
-The singleton instance **LocalizationRoot.Global** is one of the ways get a reference to a ILineRoot. Localization keys are built from a root instance (ILine). 
+The singleton instance **LineRoot.Global** is one of the ways get a reference to a ILineRoot. Localization keys are built from a root instance (ILine). 
 
 The key in the exmaple is appended with two parts that contribute to key identity. 
 The first part **.Type&lt;Program&gt;()** creates a type section with value *"TutorialProject.Program"* which is derived from the class name. 

@@ -3,11 +3,11 @@ There are following file formats that are supported with the default class libra
 
 | Format | Reader Class |
 |:---------|:-------|
-| .ini | LocalizationIniReader |
-| .json | LocalizationJsonReader |
+| .ini | IniLinesWriter |
+| .json | JsonLinesReader |
 | .xml | LocalizationXmlReader |
 | .resx | LocalizationResxReader |
-| .resources | LocalizationResourcesReader |
+| .resources | ResourcesLineReader |
 
 **ILineFileFormat** instance can be acquired from **LineReaderMap** dictionary.
 
@@ -176,7 +176,7 @@ IEnumerable<KeyValuePair<string, IString>> string_lines_reader =
     LineReaderMap.Default.EmbeddedReaderAsStringLines(
         assembly: asm, 
         resourceName: "docs.localization.ini", 
-        namePolicy: LineFormat.Parameters,
+        lineFormat: LineFormat.Parameters,
         throwIfNotFound: true);
 ```
 And **.EmbeddedReaderAsLineTree()** reader of trees
@@ -237,7 +237,7 @@ using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.R
 {
     IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadStringLines(
         stream: s,
-        namePolicy: LineFormat.Parameters);
+        lineFormat: LineFormat.Parameters);
 }
 ```
 And into a tree.
@@ -266,7 +266,7 @@ using (TextReader tr = new StringReader(text))
 {
     IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadStringLines(
         srcText: tr,
-        namePolicy: LineFormat.Parameters);
+        lineFormat: LineFormat.Parameters);
 }
 ```
 And into tree.
@@ -293,7 +293,7 @@ Into string lines.
 IEnumerable<KeyValuePair<string, IString>> string_lines = 
     IniLinesReader.Default.ReadStringAsStringLines(
         srcText: text,
-        namePolicy: LineFormat.Parameters);
+        lineFormat: LineFormat.Parameters);
 ```
 And into a tree.
 

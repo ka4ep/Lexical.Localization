@@ -259,7 +259,7 @@ namespace Lexical.Localization.Asset
                 Collection c = collectionsLine.Value;
                 if (c.Type == CollectionType.StringLines)
                 {
-                    ILineFormatPrinter provider = c.namePolicy as ILineFormatPrinter;
+                    ILineFormatPrinter provider = c.lineFormat as ILineFormatPrinter;
                     if (provider == null) continue;
 
                     // Get-or-create dictionary
@@ -310,7 +310,7 @@ namespace Lexical.Localization.Asset
             HashSet<CultureInfo> cultures = null;
             foreach (var collectionLine in collections.ToArray())
             {
-                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is ILineFormatParser == false && collectionLine.Value.StringLines.Length>0) return null;
+                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.lineFormat is ILineFormatParser == false && collectionLine.Value.StringLines.Length>0) return null;
                 foreach (var line in collectionLine.Value.KeyLines)
                 {
                     if (cultures == null) cultures = new HashSet<CultureInfo>();
@@ -369,7 +369,7 @@ namespace Lexical.Localization.Asset
             foreach (var collectionLine in collections.ToArray())
             {
                 // Source is of string lines
-                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.namePolicy is ILineFormatPrinter nameProvider_ && collectionLine.Value.namePolicy is ILineFormatParser nameParser_)
+                if (collectionLine.Value.Type == CollectionType.StringLines && collectionLine.Value.lineFormat is ILineFormatPrinter nameProvider_ && collectionLine.Value.lineFormat is ILineFormatParser nameParser_)
                 {
                     // Parse to keys and then qualify
                     var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Qualify(line)).Select(line => new KeyValuePair<string, IString>(nameProvider_.Print(line), line.GetString()));
@@ -377,7 +377,7 @@ namespace Lexical.Localization.Asset
                     result.AddRange(__stringLines);
                 }
                 else
-                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.LineTree) && collectionLine.Value.namePolicy is ILineFormatPrinter nameProvider)
+                if ((collectionLine.Value.Type == CollectionType.KeyLines || collectionLine.Value.Type == CollectionType.LineTree) && collectionLine.Value.lineFormat is ILineFormatPrinter nameProvider)
                 {
                     var __stringLines = collectionLine.Value.KeyLines.Where(line => filter.Qualify(line)).Select(line => new KeyValuePair<string, IString>(nameProvider.Print(line), line.GetString()));
                     if (result == null) result = new List<KeyValuePair<string, IString>>();
@@ -403,13 +403,13 @@ namespace Lexical.Localization.Asset
             foreach (var collectionLine in collections.ToArray())
             {
                 Collection c = collectionLine.Value;
-                if (c.Type == CollectionType.StringLines && c.namePolicy is ILineFormatPrinter nameProvider_ && c.namePolicy is ILineFormatParser nameParser_)
+                if (c.Type == CollectionType.StringLines && c.lineFormat is ILineFormatPrinter nameProvider_ && c.lineFormat is ILineFormatParser nameParser_)
                 {
                     var __stringLines = c.KeyLines.Where(line => filter.Qualify(line)).Select(line => new KeyValuePair<string, IString>(nameProvider_.Print(line), line.GetString()));
                     if (result == null) result = new List<KeyValuePair<string, IString>>();
                     result.AddRange(__stringLines);
                 } else 
-                if ((c.Type == CollectionType.KeyLines || c.Type == CollectionType.LineTree) && c.namePolicy is ILineFormatPrinter nameProvider)
+                if ((c.Type == CollectionType.KeyLines || c.Type == CollectionType.LineTree) && c.lineFormat is ILineFormatPrinter nameProvider)
                 {
                     var __stringLines = c.KeyLines.Where(line => filter.Qualify(line)).Select(line => new KeyValuePair<string, IString>(nameProvider.Print(line), line.GetString()));
                     if (result == null) result = new List<KeyValuePair<string, IString>>();
@@ -626,7 +626,7 @@ namespace Lexical.Localization.Asset
         /// 
         /// If source is string lines the parses into strings into <see cref="ILine"/>.
         /// </summary>
-        protected internal ILineFormat namePolicy;
+        protected internal ILineFormat lineFormat;
 
         /// <summary>
         /// Handler that processes file load errors, and file monitoring errors.
@@ -655,15 +655,15 @@ namespace Lexical.Localization.Asset
         /// Create source
         /// </summary>
         /// <param name="reader"></param>
-        /// <param name="namePolicy">used if source is string line enumerable</param>
+        /// <param name="lineFormat">used if source is string line enumerable</param>
         /// <param name="errorHandler">(optional) handles file load and observe errors for logging and capturing exceptions. If <paramref name="errorHandler"/> returns true then exception is caught and not thrown</param>
         /// <param name="parent"></param>
         /// <param name="disposeReader"></param>
-        public Collection(IEnumerable reader, ILineFormat namePolicy, Func<Exception, bool> errorHandler, StringAsset parent, bool disposeReader)
+        public Collection(IEnumerable reader, ILineFormat lineFormat, Func<Exception, bool> errorHandler, StringAsset parent, bool disposeReader)
         {
             this.parent = parent;
             this.reader = reader;
-            this.namePolicy = namePolicy ?? LineFormat.Parameters;
+            this.lineFormat = lineFormat ?? LineFormat.Parameters;
             this.errorHandler = errorHandler;
             this.disposeReader = disposeReader;
 
@@ -798,10 +798,10 @@ namespace Lexical.Localization.Asset
                     {
                         // Convert from string lines
                         var _stringLines = StringLines;
-                        if (_stringLines != null && namePolicy is ILineFormatParser parser)
+                        if (_stringLines != null && lineFormat is ILineFormatParser parser)
                             lines.AddRange(_stringLines.ToLines(parser, parent.LineFactory));
                         else
-                            lines.AddRange(stringLinesReader.ToLines(namePolicy, parent.LineFactory));
+                            lines.AddRange(stringLinesReader.ToLines(lineFormat, parent.LineFactory));
                     }
                     // Read as key-lines
                     else if (reader is IEnumerable<KeyValuePair<ILine, string>> keyLinesReader_)
@@ -812,10 +812,10 @@ namespace Lexical.Localization.Asset
                     {
                         // Convert from string lines
                         var _stringLines = StringLines;
-                        if (_stringLines != null && namePolicy is ILineFormatParser parser)
+                        if (_stringLines != null && lineFormat is ILineFormatParser parser)
                             lines.AddRange(_stringLines.ToLines(parser, parent.LineFactory));
                         else
-                            lines.AddRange(stringLinesReader_.ToLines(namePolicy, CSharpFormat.Default));
+                            lines.AddRange(stringLinesReader_.ToLines(lineFormat, CSharpFormat.Default));
                     }
                     else throw new ArgumentException($"Cannot read {reader.GetType().FullName}: {reader}");
 
@@ -857,7 +857,7 @@ namespace Lexical.Localization.Asset
                     // Read as tree lines
                     else if (reader is IEnumerable<ILineTree> treesReader)
                     {
-                        lines.AddRange(treesReader.SelectMany(tree => tree.ToStringLines(namePolicy)));
+                        lines.AddRange(treesReader.SelectMany(tree => tree.ToStringLines(lineFormat)));
                     }
 
                     // Read as string lines
@@ -865,10 +865,10 @@ namespace Lexical.Localization.Asset
                     {
                         // Convert from string lines
                         var _keyLines = KeyLines;
-                        if (_keyLines != null && namePolicy is ILineFormatPrinter provider)
+                        if (_keyLines != null && lineFormat is ILineFormatPrinter provider)
                             lines.AddRange(_keyLines.ToStringLines(provider));
                         else
-                            lines.AddRange(keyLinesReader.ToStringLines(namePolicy));
+                            lines.AddRange(keyLinesReader.ToStringLines(lineFormat));
                     }
                     else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_)
                     {
@@ -878,10 +878,10 @@ namespace Lexical.Localization.Asset
                     {
                         // Convert from string lines
                         var _keyLines = KeyLines;
-                        if (_keyLines != null && namePolicy is ILineFormatPrinter provider)
+                        if (_keyLines != null && lineFormat is ILineFormatPrinter provider)
                             lines.AddRange(_keyLines.ToStringLines(provider));
                         else
-                            lines.AddRange(keyLinesReader_.ToStringLines(namePolicy, CSharpFormat.Default));
+                            lines.AddRange(keyLinesReader_.ToStringLines(lineFormat, CSharpFormat.Default));
                     }
                     else throw new ArgumentException($"Cannot read {reader.GetType().FullName}: {reader}");
 
@@ -992,11 +992,11 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="dictionary"></param>
-        /// <param name="namePolicy">instructions how to convert key to string</param>
+        /// <param name="lineFormat">instructions how to convert key to string</param>
         /// <returns></returns>
-        public static IAssetBuilder AddStrings(this IAssetBuilder builder, IReadOnlyDictionary<string, string> dictionary, ILineFormat namePolicy)
+        public static IAssetBuilder AddStrings(this IAssetBuilder builder, IReadOnlyDictionary<string, string> dictionary, ILineFormat lineFormat)
         {
-            builder.AddAsset(new StringAsset(dictionary, namePolicy));
+            builder.AddAsset(new StringAsset(dictionary, lineFormat));
             return builder;
         }
 
@@ -1005,11 +1005,11 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="composition"></param>
         /// <param name="dictionary"></param>
-        /// <param name="namePolicy">instructions how to convert key to string</param>
+        /// <param name="lineFormat">instructions how to convert key to string</param>
         /// <returns></returns>
-        public static IAssetComposition AddStrings(this IAssetComposition composition, IReadOnlyDictionary<string, string> dictionary, ILineFormat namePolicy)
+        public static IAssetComposition AddStrings(this IAssetComposition composition, IReadOnlyDictionary<string, string> dictionary, ILineFormat lineFormat)
         {
-            composition.Add(new StringAsset(dictionary, namePolicy));
+            composition.Add(new StringAsset(dictionary, lineFormat));
             return composition;
         }
     }

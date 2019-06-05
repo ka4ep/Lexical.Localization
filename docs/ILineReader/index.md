@@ -3,11 +3,11 @@ There are following file formats that are supported with the default class libra
 
 | Format | Reader Class |
 |:---------|:-------|
-| .ini | LocalizationIniReader |
-| .json | LocalizationJsonReader |
+| .ini | IniLinesWriter |
+| .json | JsonLinesReader |
 | .xml | LocalizationXmlReader |
 | .resx | LocalizationResxReader |
-| .resources | LocalizationResourcesReader |
+| .resources | ResourcesLineReader |
 
 **ILineFileFormat** instance can be acquired from **LineReaderMap** dictionary.
 [!code-csharp[Snippet](Examples.cs#Snippet_0a)]

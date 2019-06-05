@@ -8,7 +8,7 @@ Create new .NET Standard class library **TutorialLibrary**.
 There are three ways to add localization to class library.
 
 ## Method A: Static Instance
-Static instance **LocalizationRoot.Global** can be used in class libraries for localization
+Static instance **LineRoot.Global** can be used in class libraries for localization
 when the class library doesn't need to support Inversion of Control (IoC) and Dependency Injection (DI).
 
 Features:
@@ -20,7 +20,7 @@ Features:
 
 First, Add NuGet reference to **Lexical.Localization**.
 
-Then, write this example class **MyController1.cs** that uses the static instance **LocalizationRoot.Global**.
+Then, write this example class **MyController1.cs** that uses the static instance **LineRoot.Global**.
 
 [!code-csharp[snippet](ExampleA1.cs)]
 

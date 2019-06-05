@@ -2,7 +2,7 @@
 **ILineRoot** is an interface for root implementations. 
 Root is the place where asset (the localization provider) is tied to key (localization consumer).
 
-**LocalizationRoot** is the default implementation. It's constructed with an asset and a culture policy.
+**LineRoot** is the default implementation. It's constructed with an asset and a culture policy.
 [!code-csharp[Snippet](Examples.cs#Snippet_1a)]
 
 Further keys are constructed from root. 
@@ -19,7 +19,7 @@ These keys cannot be used as providers, only as references.
 **StringLocalizerRoot** is an alternative root implementation.
 Every key, that is constructed from this class, implements localization interfaces IStringLocalizer and IStringLocalizerFactory.
 
-StringLocalizerRoot is constructed with an asset and a culture policy, just as LocalizationRoot.
+StringLocalizerRoot is constructed with an asset and a culture policy, just as LineRoot.
 [!code-csharp[Snippet](Examples_StringLocalizer.cs#Snippet_1)]
 <br/>
 
@@ -43,30 +43,30 @@ And also after type casting to IStringLocalizer with **.WithCulture(*CultureInfo
 # Global static root
 Localized strings can be considered as constants because they are used the same way as regular strings. 
 
-Lexical.Localization introduces a global static root **LocalizationRoot.Global**.
+Lexical.Localization introduces a global static root **LineRoot.Global**.
 [!code-csharp[Snippet](Examples.cs#Snippet_2a)]
 
-Assets are added to the global root with **LocalizationRoot.Builder**.
+Assets are added to the global root with **LineRoot.Builder**.
 [!code-csharp[Snippet](Examples.cs#Snippet_2b)]
 
-If assets are initialized in concurrent environment then please lock with **LocalizationRoot.Builder**.
+If assets are initialized in concurrent environment then please lock with **LineRoot.Builder**.
 [!code-csharp[Snippet](Examples.cs#Snippet_2c)]
 
-**StringLocalizerRoot** is the same root as *LocalizationRoot*, but has extra feature of implementing IStringLocalizer and IStringLocalizerFactory.
+**StringLocalizerRoot** is the same root as *LineRoot*, but has extra feature of implementing IStringLocalizer and IStringLocalizerFactory.
 The calling assembly, however, needs to import NuGet **Microsoft.Extensions.Localization.Abstractions**.
 [!code-csharp[Snippet](Examples.cs#Snippet_2d)]
 
 They share the same assets, and the root instances are interchangeable. Assets can be added to either root.
 [!code-csharp[Snippet](Examples.cs#Snippet_2e)]
 
-**LocalizationRoot.GlobalDynamic** returns dynamic instance for the static root.
+**LineRoot.GlobalDynamic** returns dynamic instance for the static root.
 [!code-csharp[Snippet](Examples.cs#Snippet_2f)]
 
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [ILineRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Line/ILineRoot.cs)
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
- * [LocalizationRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationKey/LocalizationRoot.cs) ([Global](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationKey/LocalizationRoot_Global.cs))
+ * [LineRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationKey/LineRoot.cs) ([Global](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/LocalizationKey/LineRoot_Global.cs))
  * [StringLocalizerRoot](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringLocalizerRoot.cs) ([Global](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Ms.Extensions/Localization/StringLocalizerRoot_Global.cs))
 * [Microsoft.Extensions.Localization.Abstractions](https://github.com/aspnet/Extensions/tree/master/src/Localization/Abstractions/src) ([NuGet](https://www.nuget.org/packages/Microsoft.Extensions.Localization.Abstractions/))
  * [IStringLocalizer](https://github.com/aspnet/Extensions/blob/master/src/Localization/Abstractions/src/IStringLocalizer.cs) 

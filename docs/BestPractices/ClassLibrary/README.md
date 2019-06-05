@@ -189,7 +189,7 @@ namespace TutorialProject1
 ***
 
 ## Supplying Localizations
-Application that deploys the class library can supply additional localizations by adding *IAssetSource*s to the global static **LocalizationRoot.Builder**.
+Application that deploys the class library can supply additional localizations by adding *IAssetSource*s to the global static **LineRoot.Builder**.
 # [Snippet](#tab/snippet-3)
 
 ```csharp

@@ -103,7 +103,7 @@ namespace Lexical.Localization
             // ILineResolver
             serviceCollection.TryAdd(ServiceDescriptor.Singleton<IStringResolver>(StringResolver.Default));
 
-            // ILogger<ILocalizationKey>
+            // ILogger<ILine>
             if (addLogger) serviceCollection.AddLoggerAdapter();
 
             // IAssetBuilder

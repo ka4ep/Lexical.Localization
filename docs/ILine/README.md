@@ -100,10 +100,10 @@ string id2 = LineParameterPrinter.Colon_Colon_Colon.Print(key2);
 | Resource | canonical | ILineResourceAssignable | .Resource(*string*) | Hint to asset for an embedded resource path to search from. |
 | Section | canonical | ILinesectionAssignable | .Section(*string*) | Generic section for grouping assets. |
 | Key | canonical | ILineAssignable | .Key(*string*) | Leaf key |
-| Culture | non-canonical | ILocalizationKeyCultureAssignable | .Culture(*CultureInfo*) | Parameter to override current culture. |
-| N | non-canonical | ILocalizationKeyPluralityAssignable | .N(*Type*) | Key that specifies plurality |
-|  | non-canonical | ILocalizationKeyFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
-|  | non-canonical | ILocalizationKeyInlines | .Inline(*string*, *string*) | Hint for default culture specific string values. |
+| Culture | non-canonical | ILineCultureAssignable | .Culture(*CultureInfo*) | Parameter to override current culture. |
+| N | non-canonical | ILinePluralityAssignable | .N(*Type*) | Key that specifies plurality |
+|  | non-canonical | ILineFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
+|  | non-canonical | ILineInlines | .Inline(*string*, *string*) | Hint for default culture specific string values. |
 
 ## Type Section
 Type section is a key that narrows down the scope of localization to a specific class, interface or structure.
@@ -222,7 +222,7 @@ class MyController__
 ```
 
 ## Dynamic use
-Asset keys from LocalizationRoot and StringLocalizationRoot are dynamically usable.
+Asset keys from LineRoot and StringLineRoot are dynamically usable.
 
 ```csharp
 // Dynamic assignment
@@ -258,7 +258,7 @@ class MyController
 }
 ```
 
-If class is designed to use static instance and without dependency injection, localization reference can be acquired from **LocalizationRoot**.
+If class is designed to use static instance and without dependency injection, localization reference can be acquired from **LineRoot**.
 
 ```csharp
 class MyControllerB

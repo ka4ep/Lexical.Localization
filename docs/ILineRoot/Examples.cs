@@ -64,7 +64,7 @@ namespace docs
                 #endregion Snippet_2b
 
                 #region Snippet_2c
-                // If ran in multi-threaded initialization, lock to LocalizationRoot.Builder.
+                // If ran in multi-threaded initialization, lock to LineRoot.Builder.
                 lock (LineRoot.Builder) LineRoot.Builder.AddAsset(asset).Build();
                 #endregion Snippet_2c
 
@@ -74,13 +74,13 @@ namespace docs
                 #endregion Snippet_2d
 
                 #region Snippet_2e
-                // LocalizationRoot and StringLocalizerRoot are interchangeable. They share the same asset(s).
+                // LineRoot and StringLocalizerRoot are interchangeable. They share the same asset(s).
                 LineRoot.Builder.AddAsset(asset).Build();
                 IStringLocalizer<MyController> stringLocalizer = StringLocalizerRoot.Global.Type<MyController>().AsStringLocalizer<MyController>();
                 #endregion Snippet_2e
 
                 #region Snippet_2f
-                // Dynamic instance is acquired with LocalizationRoot.GlobalDynamic
+                // Dynamic instance is acquired with LineRoot.GlobalDynamic
                 dynamic key_ = LineRoot.GlobalDynamic.Section("Section").Key("Key");
                 #endregion Snippet_2f
             }

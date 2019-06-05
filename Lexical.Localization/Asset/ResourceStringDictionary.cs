@@ -176,11 +176,11 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="builder"></param>
         /// <param name="dictionary"></param>
-        /// <param name="namePolicy">instructions how to convert key to byte[]</param>
+        /// <param name="lineFormat">instructions how to convert key to byte[]</param>
         /// <returns></returns>
-        public static IAssetBuilder AddResources(this IAssetBuilder builder, IReadOnlyDictionary<String, byte[]> dictionary, ILineFormat namePolicy)
+        public static IAssetBuilder AddResources(this IAssetBuilder builder, IReadOnlyDictionary<String, byte[]> dictionary, ILineFormat lineFormat)
         {
-            builder.AddAsset(new ResourceStringDictionary(dictionary, namePolicy));
+            builder.AddAsset(new ResourceStringDictionary(dictionary, lineFormat));
             return builder;
         }
 
@@ -189,11 +189,11 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="composition"></param>
         /// <param name="dictionary"></param>
-        /// <param name="namePolicy">instructions how to convert key to byte[]</param>
+        /// <param name="lineFormat">instructions how to convert key to byte[]</param>
         /// <returns></returns>
-        public static IAssetComposition AddResources(this IAssetComposition composition, IReadOnlyDictionary<String, byte[]> dictionary, ILineFormat namePolicy)
+        public static IAssetComposition AddResources(this IAssetComposition composition, IReadOnlyDictionary<String, byte[]> dictionary, ILineFormat lineFormat)
         {
-            composition.Add(new ResourceStringDictionary(dictionary, namePolicy));
+            composition.Add(new ResourceStringDictionary(dictionary, lineFormat));
             return composition;
         }
     }

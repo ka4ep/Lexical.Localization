@@ -597,5 +597,20 @@ namespace Lexical.Localization
             }
         }
 
+        /// <summary>
+        /// Add value to <paramref name="tree"/>. Parses with <see cref="CSharpFormat.Default"/>.
+        /// </summary>
+        /// <param name="tree"></param>
+        /// <param name="csharpFormatValue"></param>
+        /// <returns></returns>
+        public static ILineTree AddValue(this ILineTree tree, string csharpFormatValue)
+        {
+            IString str = CSharpFormat.Default.Parse(csharpFormatValue);
+            ILine linePart = new LineStringPart(null, null, str);
+            tree.Values.Add( linePart );
+            return tree;
+        }
+
+
     }
 }

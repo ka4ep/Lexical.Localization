@@ -115,12 +115,12 @@ namespace Lexical.Localization.Asset
         /// 
         /// </summary>
         /// <param name="resourceManager">source of language strings and resource files</param>
-        /// <param name="namePolicy">policy that converts <see cref="ILine"/> into keys that correlate with keys in <paramref name="resourceManager"/>.</param>
+        /// <param name="lineFormat">policy that converts <see cref="ILine"/> into keys that correlate with keys in <paramref name="resourceManager"/>.</param>
         /// <param name="parser"></param>
-        public ResourceManagerAsset(ResourceManager resourceManager, ILineFormat namePolicy, IStringFormatParser parser = default)
+        public ResourceManagerAsset(ResourceManager resourceManager, ILineFormat lineFormat, IStringFormatParser parser = default)
         {
             this.ResourceManager = resourceManager ?? throw new ArgumentNullException(nameof(resourceManager));
-            this.namePolicy = namePolicy ?? throw new ArgumentNullException(nameof(namePolicy));
+            this.namePolicy = lineFormat ?? throw new ArgumentNullException(nameof(lineFormat));
             this.ValueParser = parser ?? CSharpFormat.Default;
         }
 
