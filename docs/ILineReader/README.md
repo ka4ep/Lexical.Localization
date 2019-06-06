@@ -424,7 +424,7 @@ class ExtFileFormatReader : ILineTextReader
 
     public IEnumerable<ILine> ReadLines(
         TextReader text, 
-        ILineFormat namePolicy = null)
+        ILineFormat lineFormat = null)
     {
         yield return LineAppender.Default.Section("MyClass").Key("HelloWorld").Culture("en").Format("Hello World!");
     }

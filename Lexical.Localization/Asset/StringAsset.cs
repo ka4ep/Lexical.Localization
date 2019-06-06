@@ -283,7 +283,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns>string or null</returns>
-        public virtual ILine GetString(ILine key)
+        public virtual ILine GetLine(ILine key)
         {
             ILine result = null;
             if (KeyLines.TryGetValue(key, out result)) return result;

@@ -22,6 +22,29 @@ namespace Lexical.Localization
             => str.Value;
 
         /// <summary>
+        /// Convert string to <see cref="LineString"/>.
+        /// </summary>
+        /// <param name="str"></param>
+        public static implicit operator LineString(string str)
+            => str == null ?
+            new LineString(null, LineStatus.StringFormatFailedNull) :
+            new LineString(null, str, LineStatus.StringFormatOkString);
+
+        /// <summary>
+        /// Return status.
+        /// </summary>
+        /// <param name="str"></param>
+        public static implicit operator LineStatus(LineString str)
+            => str.Status;
+
+        /// <summary>
+        /// Convert from status code.
+        /// </summary>
+        /// <param name="status"></param>
+        public static implicit operator LineString(LineStatus status)
+            => new LineString(null, status);
+
+        /// <summary>
         /// Status code
         /// </summary>
         public LineStatus Status;
@@ -115,6 +138,19 @@ namespace Lexical.Localization
             Line = line;
             Value = null;
             Exception = error;
+            Status = status;
+        }
+
+        /// <summary>
+        /// Create new localization string.
+        /// </summary>
+        /// <param name="line">(optional) source line</param>
+        /// <param name="status">resolve reslut</param>
+        public LineString(ILine line, LineStatus status)
+        {
+            Line = line;
+            Exception = null;
+            Value = null;
             Status = status;
         }
 

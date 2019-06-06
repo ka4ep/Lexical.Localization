@@ -8,12 +8,13 @@ Lexical.Localization is a localization class library for .NET.
 
 **Interoperability**
 * Microsoft.Extensions.Localization.Abstractions
+* Microsoft.Extensions.Logger.Abstractions
 * Microsoft.Extensions.DependencyInjection.Abstractions
 * ResourceManager
 
 **File types**
  * Language Strings
- * Localization of binary assets for gfx and audio
+ * Localization of binary assets for gfx and audio resources
 
 **File formats**
  * .ini
@@ -31,19 +32,14 @@ Lexical.Localization is a localization class library for .NET.
 * Formatting strings
 * Cache
 * Singletons
+* Loggers
 * File format conversion tools
 
-**Very Short Example**
-```C#
-ILine key = LineRoot.Global
-    .Logger(Console.Out, LineStatusSeverity.Ok)
-    .Key("hello")
-    .Format("Hello, {0}.")
-    .Inline("Culture:fi", "Hei, {0}")
-    .Inline("Culture:de", "Hallo, {0}");
-
-Console.WriteLine(key.Value("mr. anonymous"));
-```
+**Translator features**
+ * Live reloading of localization files
+ * Unicode CLDR Plural Rules
+ * Multiple pluralized arguments per string
+ * Optional pluralization cases
 
 **Links**
 * [Website](http://lexical.fi/Localization/index.html)

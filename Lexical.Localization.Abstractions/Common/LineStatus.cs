@@ -194,7 +194,7 @@ namespace Lexical.Localization
         StringFormatOkNoPlaceholders = 0x04UL << Shift.StringFormat,
         /// <summary>Request asked for the format string, without applying arguments to it.</summary>
         StringFormatOkNotApplied = 0x08UL << Shift.StringFormat,
-        /// <summary>Created string</summary>
+        /// <summary>Result contains a non-null string</summary>
         StringFormatOkString = 0x10UL << Shift.StringFormat,
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
         StringFormatWarning = 0x20UL << Shift.StringFormat,
@@ -228,16 +228,34 @@ namespace Lexical.Localization
         StringFormatMask = 0x7FUL << Shift.StringFormat,
 
         //// Resource - IResourceAsset error codes
-        /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
+        /// <summary>Ok, resource was read successfully.</summary>
         ResourceOk = 0x01UL << Shift.Resource,
-        /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
+        /// <summary>Ok, resource was read from a stream of specified .</summary>
+        ResourceOkFromStream = 0x04UL << Shift.Resource,
+        /// <summary>Ok, resource read from file</summary>
+        ResourceOkFromFile = 0x07UL << Shift.Resource,
+        /// <summary>Ok, resource read from embedded resource</summary>
+        ResourceOkFromEmbedded = 0x08UL << Shift.Resource,
+        /// <summary>Ok, resource read from file provider</summary>
+        ResourceOkFromFileProvider = 0x09UL << Shift.Resource,
+        /// <summary>Warning for unspecified reason. </summary>
         ResourceWarning = 0x20UL << Shift.Resource,
-        /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
+        /// <summary>Error for unspecified reason. </summary>
         ResourceError = 0x40UL << Shift.Resource,
-        /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
+        /// <summary>Failed for unspecified reason. </summary>
         ResourceFailed = 0x60UL << Shift.Resource,
+        /// <summary>Null value for unspecified reason</summary>
+        ResourceFailedNull = 0x63UL << Shift.Resource,
+        /// <summary>Failed to read to bytes, 2GB limit exceeded</summary>
+        ResourceFailed2GBLimit = 0x65UL << Shift.Resource,
+        /// <summary>Resource was searched, but file was not found</summary>
+        ResourceFailedNotFound = 0x66UL << Shift.Resource,
         /// <summary>Failed to convert resource format</summary>
         ResourceFailedConversionError = 0x6cUL << Shift.Resource,
+        /// <summary>IO error in resource asset</summary>
+        ResourceFailedIOException = 0x7CUL << Shift.Resource,
+        /// <summary>Unexpected error in resource asset</summary>
+        ResourceFailedException = 0x7DUL << Shift.Resource,
         /// <summary>Result has not been processed</summary>
         ResourceFailedNoResult = 0x7FUL << Shift.Resource,
         /// <summary>Mask for severity</summary>

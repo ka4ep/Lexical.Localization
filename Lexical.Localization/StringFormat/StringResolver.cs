@@ -435,7 +435,7 @@ namespace Lexical.Localization.StringFormat
                                     try
                                     {
                                         IAsset asset = features.Assets[i];
-                                        if ((line = asset.GetString(key)) != null)
+                                        if ((line = asset.GetLine(key)) != null)
                                         {
                                             features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
                                             features.Status.UpCulture(LineStatus.CultureOkMatchedKeyCulture);
@@ -509,7 +509,7 @@ namespace Lexical.Localization.StringFormat
                                             try
                                             {
                                                 IAsset asset = features.Assets[i];
-                                                if ((line = asset.GetString(key_with_culture)) != null)
+                                                if ((line = asset.GetLine(key_with_culture)) != null)
                                                 {
                                                     culture = c;
                                                     features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
@@ -584,7 +584,7 @@ namespace Lexical.Localization.StringFormat
                                     try
                                     {
                                         IAsset asset = features.Assets[i];
-                                        if ((line = asset.GetString(key)) != null)
+                                        if ((line = asset.GetLine(key)) != null)
                                         {
                                             features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
                                             features.Status.UpCulture(LineStatus.CultureOkMatchedNoCulture);

@@ -13,7 +13,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Interface to read localization strings.
     /// 
-    /// Consumers of this interface can use <see cref="IAssetExtensions.GetString(IAsset, ILine)"/> with uncasted <see cref="IAsset"/>.
+    /// Consumers of this interface can use <see cref="IAssetExtensions.GetLine(IAsset, ILine)"/> with uncasted <see cref="IAsset"/>.
     /// </summary>
     public interface IStringAsset : IAsset
     {
@@ -24,7 +24,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns>line that has a string value or null</returns>
-        ILine GetString(ILine key);
+        ILine GetLine(ILine key);
     }
 
     /// <summary>
@@ -118,18 +118,18 @@ namespace Lexical.Localization
         /// <param name="asset"></param>
         /// <param name="key"></param>
         /// <returns>line that has a string value or null</returns>
-        public static ILine GetString(this IAsset asset, ILine key)
+        public static ILine GetLine(this IAsset asset, ILine key)
         {
             if (asset is IStringAsset casted) 
             {
-                ILine result = casted.GetString(key);
+                ILine result = casted.GetLine(key);
                 if (result != null) return result;
             }
             if (asset is IAssetComposition composition)
             {
                 foreach (IStringAsset component in composition.GetComponents<IStringAsset>(true) ?? Enumerable.Empty<IStringAsset>())
                 {
-                    ILine result = component.GetString(key);
+                    ILine result = component.GetLine(key);
                     if (result != null) return result;
                 }
                 foreach (IAssetProvider component in composition.GetComponents<IAssetProvider>(true) ?? Enumerable.Empty<IAssetProvider>())
@@ -139,7 +139,7 @@ namespace Lexical.Localization
                     {
                         foreach (IAsset loaded_asset in assets)
                         {
-                            ILine result = loaded_asset.GetString(key);
+                            ILine result = loaded_asset.GetLine(key);
                             if (result != null) return result;
                         }
                     }
@@ -152,7 +152,7 @@ namespace Lexical.Localization
                 {
                     foreach (IAsset loaded_asset in assets)
                     {
-                        ILine result = loaded_asset.GetString(key);
+                        ILine result = loaded_asset.GetLine(key);
                         if (result != null) return result;
                     }
                 }

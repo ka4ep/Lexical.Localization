@@ -21,7 +21,7 @@ namespace docs
                 // Create key
                 ILine key = new LineRoot().Key("hello").Culture("en");
                 // Resolve string - Call to StringAssetExtensions.GetString()
-                IString str = asset.GetString(key).GetString();
+                IString str = asset.GetLine(key).GetString();
                 #endregion Snippet_2
 
             }

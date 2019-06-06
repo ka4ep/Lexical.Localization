@@ -44,7 +44,7 @@ namespace docs
                 // Create reference
                 ILine key = LineAppender.NonResolving.Section("Section").Key("Key");
                 // Retreieve with reference
-                IString str = asset.GetString(key).GetString();
+                IString str = asset.GetLine(key).GetString();
                 #endregion Snippet_5x
             }
 

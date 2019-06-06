@@ -171,7 +171,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public ILine GetString(ILine key)
+        public ILine GetLine(ILine key)
         {
             CultureInfo key_culture;
             if (key.TryGetCultureInfo(out key_culture))
@@ -181,7 +181,7 @@ namespace Lexical.Localization.Asset
                 {
                     var localizer = FindStringLocalizer(key, key_culture);
                     if (localizer == null) return null;
-                    if (localizer != this) return localizer.GetString(key);
+                    if (localizer != this) return localizer.GetLine(key);
                 }
 
                 // Culture mismatch

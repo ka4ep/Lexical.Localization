@@ -308,7 +308,7 @@ By default the maximum number of pluralized arguments is three arguments. This v
 ```
 
 ```csharp
-IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample2-en.xml");
+IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample2.xml");
 ILineRoot root = new LineRoot(asset);
 ILine key = root.Key("CatsDogs").Format("{0} cat(s) and {1} dog(s)");
 

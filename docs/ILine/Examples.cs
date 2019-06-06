@@ -46,7 +46,7 @@ namespace docs
                 ILine key = new LineRoot().Section("Section").Section("Section").Key("Key");
 
                 // Retrieve string with a reference
-                IString value = asset.GetString(key.Culture("en")).GetString();
+                IString value = asset.GetLine(key.Culture("en")).GetString();
 
                 // Retrieve binary resource with a reference
                 byte[] data = asset.GetResourceBytes(key.Culture("en")).Value;

@@ -4,10 +4,19 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 
+using Lexical.Localization.Resource;
+using Lexical.Localization.StringFormat;
+
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Localization logger
+    /// Localization logger.
+    /// 
+    /// See sub-interfaces
+    /// <list type="bullet">
+    ///     <item><see cref="IStringResolverLogger"/></item>
+    ///     <item><see cref="IResourceResolverLogger"/></item>
+    /// </list>
     /// </summary>
     public interface ILocalizationLogger
     {

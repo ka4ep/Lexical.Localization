@@ -38,7 +38,7 @@ These keys cannot be used as providers, only as references.
 // Create reference
 ILine key = LineAppender.NonResolving.Section("Section").Key("Key");
 // Retreieve with reference
-IString str = asset.GetString(key).GetString();
+IString str = asset.GetLine(key).GetString();
 ```
 
 # String Localizer

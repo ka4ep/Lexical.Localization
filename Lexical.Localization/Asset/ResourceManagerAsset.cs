@@ -129,7 +129,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public ILine GetString(ILine key)
+        public ILine GetLine(ILine key)
         {
             string id = namePolicy.Print(key);
             CultureInfo culture = null;

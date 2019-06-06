@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
 using System;
+using System.IO;
 using System.Text;
 
 namespace Lexical.Localization.Resource
@@ -14,6 +15,75 @@ namespace Lexical.Localization.Resource
     /// </summary>
     public struct LineResourceBytes
     {
+        /// <summary>
+        /// Converts to bytes by reading the stream and returning the position.
+        /// 
+        /// Does not dispose <paramref name="str"/>.
+        /// 
+        /// If position could not be returned, then leaves it were it is.
+        /// </summary>
+        /// <param name="str"></param>
+        public static implicit operator LineResourceBytes(LineResourceStream str)
+        {
+            if (str.Value == null) return new LineResourceStream(str.Line, str.Exception, str.Status);
+
+            try
+            {
+                // Get position.
+                long pos = str.Value.Position;
+                try
+                {
+                    return ReadFully(str);
+                } finally
+                {
+                    // Return position
+                    try
+                    {
+                        str.Value.Position = pos;
+                    } catch (IOException)
+                    {
+                        // Could not return position.
+                    }
+                }
+            }
+            catch(IOException)
+            {
+                // Cannot get position. 
+                return ReadFully(str);
+            }
+        }
+
+        /// <summary>
+        /// Return bytes.
+        /// </summary>
+        /// <param name="bytes"></param>
+        public static implicit operator byte[](LineResourceBytes bytes)
+            => bytes.Value;
+
+        /// <summary>
+        /// Convert bytes to <see cref="LineResourceBytes"/>.
+        /// </summary>
+        /// <param name="data"></param>
+        public static implicit operator LineResourceBytes(byte[] data)
+            => data == null ?
+                new LineResourceBytes(null, data, LineStatus.ResourceFailedNull) :
+                new LineResourceBytes(null, data, LineStatus.ResourceOk);
+
+        /// <summary>
+        /// Return status.
+        /// </summary>
+        /// <param name="str"></param>
+        public static implicit operator LineStatus(LineResourceBytes str)
+            => str.Status;
+
+        /// <summary>
+        /// Convert from status code.
+        /// </summary>
+        /// <param name="status"></param>
+        public static implicit operator LineResourceBytes(LineStatus status)
+            => new LineResourceBytes(null, status);
+
+
         /// <summary>
         /// Status code
         /// </summary>
@@ -169,6 +239,59 @@ namespace Lexical.Localization.Resource
 
                 // Compile string
                 return sb.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Read bytes from <paramref name="str"/>.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        static LineResourceBytes ReadFully(LineResourceStream str)
+        {
+            Stream s = str.Value;
+            if (s == null) return new LineResourceBytes(str.Line, str.Exception, str.Status.Up_(LineStatus.ResourceFailedNull));
+
+            try
+            {
+                // Get length
+                long length;
+                try
+                {
+                    length = s.Length;
+                }
+                catch (NotSupportedException)
+                {
+                    // Cannot get length
+                        MemoryStream ms = new MemoryStream();
+                        s.CopyTo(ms);
+                        return ms.ToArray();
+                }
+
+                if (length > int.MaxValue) return new LineResourceBytes(str.Line, str.Exception, str.Status.Up_(LineStatus.ResourceFailed2GBLimit));
+
+                int _len = (int)length;
+                byte[] data = new byte[_len];
+
+                // Read chunks
+                int ix = 0;
+                while (ix < _len)
+                {
+                    int count = s.Read(data, ix, _len - ix);
+
+                    // "returns zero (0) if the end of the stream has been reached."
+                    if (count == 0) break;
+
+                    ix += count;
+                }
+                if (ix == _len) return data;
+
+                // Failed to read stream fully
+                return new LineResourceBytes(str.Line, str.Exception, str.Status.Up_(LineStatus.ResourceFailedConversionError));
+            }
+            catch (IOException e)
+            {
+                return new LineResourceBytes(str.Line, e, str.Status.Up_(LineStatus.ResourceFailedException));
             }
         }
     }

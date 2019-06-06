@@ -373,7 +373,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public ILine GetString(ILine key)
+        public ILine GetLine(ILine key)
         {
             Cache _cache = this.cache;
 
@@ -390,7 +390,7 @@ namespace Lexical.Localization.Asset
             }
 
             // Read from backend and write to cache
-            value = Source.GetString(key);
+            value = Source.GetLine(key);
 
             // Write to cache, be that null or not
             ILine cacheKey = key.CloneKey(LineAppender.NonResolving);

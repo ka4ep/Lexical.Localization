@@ -19,7 +19,7 @@ Asset interfaces are not called directly but used instead by calling extension m
 // Create key
 ILine key = new LineRoot().Key("hello").Culture("en");
 // Resolve string - Call to StringAssetExtensions.GetString()
-IString str = asset.GetString(key).GetString();
+IString str = asset.GetLine(key).GetString();
 ```
 
 <details>
@@ -246,7 +246,7 @@ IAsset asset = builder.Build();
 // Create string key
 ILine key = new LineRoot().Key("hello").Culture("en");
 // Request value
-IString value = asset.GetString( key ).GetString();
+IString value = asset.GetLine( key ).GetString();
 // Print result
 Console.WriteLine(value);
 ```
@@ -292,7 +292,7 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     // Create string key
     ILine key = new LineRoot().Key("hello").Culture("en");
     // Request string
-    IString value = asset.GetString(key).GetString();
+    IString value = asset.GetLine(key).GetString();
     // Print result
     Console.WriteLine(value);
 }
@@ -324,7 +324,7 @@ using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())
     // Create string key
     ILine key = new LineRoot().Key("hello").Culture("en");
     // Request string
-    IString value = asset.GetString(key).GetString();
+    IString value = asset.GetLine(key).GetString();
     // Print result
     Console.WriteLine(value);
 }
@@ -519,7 +519,7 @@ asset = asset.CreateCache();
 
 // Issue a request which will be cached.
 ILine key = new LineRoot().Key("hello");
-IString value = asset.GetString( key.Culture("en") ).GetString();
+IString value = asset.GetLine( key.Culture("en") ).GetString();
 Console.WriteLine(value);
 
 // Clear cache

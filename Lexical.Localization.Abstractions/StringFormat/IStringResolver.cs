@@ -38,13 +38,6 @@ namespace Lexical.Localization.StringFormat
         LineString ResolveString(ILine line);
     }
 
-    /// <summary>
-    /// Logger that logs string resolving of <see cref="IStringResolver"/>.
-    /// </summary>
-    public interface IStringResolverLogger : ILocalizationLogger, IObserver<LineString>
-    {
-    }
-
 }
 
 namespace Lexical.Localization

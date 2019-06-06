@@ -31,7 +31,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public ILine GetString(ILine key) => ResolverFunc(key);
+        public ILine GetLine(ILine key) => ResolverFunc(key);
 
         /// <summary>
         /// 

@@ -13,8 +13,50 @@ namespace Lexical.Localization.Resource
     /// <summary>
     /// Result of an operation that resolves a <see cref="ILine"/> into a string within an executing context, such as one that includes current active culture.
     /// </summary>
-    public struct LineResourceStream
+    public struct LineResourceStream : IDisposable
     {
+        /// <summary>
+        /// Return stream.
+        /// </summary>
+        /// <param name="bytes"></param>
+        public static implicit operator LineResourceStream(LineResourceBytes bytes)
+            => new LineResourceStream(bytes.Line, bytes.Value == null ? null : new MemoryStream(bytes.Value), bytes.Exception, bytes.Status);
+
+        /// <summary>
+        /// Return stream.
+        /// </summary>
+        /// <param name="str"></param>
+        public static implicit operator Stream(LineResourceStream str)
+            => str.Value;
+
+        /// <summary>
+        /// Convert stream to <see cref="LineResourceStream"/>.
+        /// </summary>
+        /// <param name="str"></param>
+        public static implicit operator LineResourceStream(Stream str)
+            => new LineResourceStream(null, str, LineStatus.StringFormatOkString);
+
+        /// <summary>
+        /// Convert bytes to <see cref="LineResourceStream"/>.
+        /// </summary>
+        /// <param name="data"></param>
+        public static implicit operator LineResourceStream(byte[] data)
+            => new LineResourceStream(null, new MemoryStream(data), LineStatus.StringFormatOkString);
+
+        /// <summary>
+        /// Return status.
+        /// </summary>
+        /// <param name="str"></param>
+        public static implicit operator LineStatus(LineResourceStream str)
+            => str.Status;
+
+        /// <summary>
+        /// Convert from status code.
+        /// </summary>
+        /// <param name="status"></param>
+        public static implicit operator LineResourceStream(LineStatus status)
+            => new LineResourceStream(null, status);
+
         /// <summary>
         /// Status code
         /// </summary>
@@ -144,6 +186,14 @@ namespace Lexical.Localization.Resource
         /// <returns></returns>
         public override string ToString()
             => DebugInfo;
+
+        /// <summary>
+        /// Disposes stream.
+        /// </summary>
+        public void Dispose()
+        {
+            Value?.Dispose();
+        }
 
         /// <summary>
         /// Print debug information about the formatting result.

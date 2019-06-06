@@ -35,10 +35,10 @@ Key can be used as a *reference*.
 ILine key = new LineRoot().Section("Section").Section("Section").Key("Key");
 
 // Retrieve string with a reference
-IString value = asset.GetString(key.Culture("en")).GetString();
+IString value = asset.GetLine(key.Culture("en")).GetString();
 
 // Retrieve binary resource with a reference
-byte[] data = asset.GetResource(key.Culture("en"));
+byte[] data = asset.GetResourceBytes(key.Culture("en")).Value;
 ```
 
 And, as a *provider*.
@@ -61,7 +61,7 @@ ILine key = root.Section("Section").Key("Key");
 // Retieve string from provider
 string str = key.ToString();
 // Retrieve binary resoruce from provider
-byte[] data = key.GetResource();
+byte[] data = key.GetResourceBytes().Value;
 ```
 
 ## Canonical and non-canonical key parts
@@ -155,7 +155,7 @@ The parametrized key can be resolved to formatted string with **.ToString()** or
 
 ```csharp
 // Resolve to formulated string to "Error (Code=0xFEEDF00D)"
-Lexical.Localization.StringFormat.LineString str = key_formulated.ResolveString();
+LineString str = key_formulated.ResolveString();
 ```
 
 But, if needed an unformulated string can be resolved with **.ResolveString()**.

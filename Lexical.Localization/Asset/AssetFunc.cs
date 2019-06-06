@@ -37,8 +37,8 @@ namespace Lexical.Localization.Asset
         IEnumerable<string> IResourceAssetNamesEnumerable.GetResourceNames(ILine key)
             => (Func() as IResourceAssetNamesEnumerable)?.GetResourceNames(key);
 
-        ILine IStringAsset.GetString(ILine key)
-            => (Func() as IStringAsset)?.GetString(key);
+        ILine IStringAsset.GetLine(ILine key)
+            => (Func() as IStringAsset)?.GetLine(key);
 
         LineResourceStream IResourceAsset.GetResourceStream(ILine key)
             => Func() is IResourceAsset resourceAsset ? resourceAsset.GetResourceStream(key) : new LineResourceStream(key, (Exception)null, LineStatus.ResolveFailedNoResult);

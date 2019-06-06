@@ -23,32 +23,46 @@ namespace Lexical.Localization.Internal
         public static readonly Encoding Encoding = new UTF8Encoding(false);
 
         /// <summary>
-        /// Read bytes from <paramref name="stream"/>.
+        /// Read bytes from <paramref name="s"/>.
         /// </summary>
-        /// <param name="stream"></param>
+        /// <param name="s"></param>
         /// <returns></returns>
-        public static byte[] ReadFully(this Stream stream)
+        public static byte[] ReadFully(this Stream s)
         {
-            if (stream == null) return null;
+            if (s == null) return null;
 
-            // Try to read stream completely.
-            int len_ = (int)stream.Length;
-            if (len_ > 2147483647) throw new IOException("File size over 2GB");
-            byte[] data = new byte[len_];
+            // Get length
+            long length;
+            try
+            {
+                length = s.Length;
+            }
+            catch (NotSupportedException)
+            {
+                // Cannot get length
+                MemoryStream ms = new MemoryStream();
+                s.CopyTo(ms);
+                return ms.ToArray();
+            }
+
+            if (length > int.MaxValue) throw new IOException("File size over 2GB");
+
+            int _len = (int)length;
+            byte[] data = new byte[_len];
 
             // Read chunks
             int ix = 0;
-            while (ix < len_)
+            while (ix < _len)
             {
-                int count = stream.Read(data, ix, len_ - ix);
+                int count = s.Read(data, ix, _len - ix);
 
                 // "returns zero (0) if the end of the stream has been reached."
                 if (count == 0) break;
 
                 ix += count;
             }
-            if (ix == len_) return data;
-            throw new AssetException("Failed to read stream fully");
+            if (ix == _len) return data;
+            throw new IOException("Failed to read stream fully");
         }
 
         /// <summary>

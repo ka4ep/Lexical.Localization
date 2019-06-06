@@ -101,11 +101,11 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public ILine GetString(ILine key)
+        public ILine GetLine(ILine key)
         {
             var asset = GetHandlingAsset(key);
             if (asset == null) return null;
-            return asset.GetString(key);
+            return asset.GetLine(key);
         }
 
         /// <summary>
