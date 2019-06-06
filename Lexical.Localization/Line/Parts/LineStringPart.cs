@@ -160,7 +160,7 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILineString String(this ILine part, String value)
+        public static ILineString Text(this ILine part, String value)
             => part.Append<ILineString, IString>(TextFormat.Default.Parse(value));
 
         /// <summary>

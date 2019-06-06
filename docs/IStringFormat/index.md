@@ -36,7 +36,7 @@ It uses the following rules:
 **TextFormat.Default** is a string format that contains plain text without placeholders. It doesn't use escaping.
 [!code-csharp[Snippet](Examples.cs#Snippet_1a)]
 
-Extension method **.String(<i>string</i>)** appends an **ILineString** part that contains **TextFormat** based **IString**.
+Extension method **.Text(<i>string</i>)** appends an **ILineString** part that contains **TextFormat** based **IString**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1b)]
 
 # Escaping
