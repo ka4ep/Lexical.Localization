@@ -77,7 +77,7 @@ namespace Lexical.Localization
             // Get severity
             LineStatusSeverity severity = value.Severity;
             // Write status
-            if (_logger.IsEnabled(LogLevel.Trace) && severity == LineStatusSeverity.Ok) { _logger.LogError(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Trace) && severity == LineStatusSeverity.Ok) { _logger.LogInformation(value.DebugInfo); return; }
             if (_logger.IsEnabled(LogLevel.Warning) && severity == LineStatusSeverity.Warning) { _logger.LogWarning(value.DebugInfo); return; }
             if (_logger.IsEnabled(LogLevel.Error) && severity >= LineStatusSeverity.Error) { _logger.LogError(value.DebugInfo); return; }
         }
@@ -95,7 +95,7 @@ namespace Lexical.Localization
             // Get severity
             LineStatusSeverity severity = value.Severity;
             // Write status
-            if (_logger.IsEnabled(LogLevel.Trace) && severity == LineStatusSeverity.Ok) { _logger.LogError(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Trace) && severity == LineStatusSeverity.Ok) { _logger.LogInformation(value.DebugInfo); return; }
             if (_logger.IsEnabled(LogLevel.Warning) && severity == LineStatusSeverity.Warning) { _logger.LogWarning(value.DebugInfo); return; }
             if (_logger.IsEnabled(LogLevel.Error) && severity >= LineStatusSeverity.Error) { _logger.LogError(value.DebugInfo); return; }
         }
@@ -113,7 +113,7 @@ namespace Lexical.Localization
             // Get severity
             LineStatusSeverity severity = value.Severity;
             // Write status
-            if (_logger.IsEnabled(LogLevel.Trace) && severity == LineStatusSeverity.Ok) { _logger.LogError(value.DebugInfo); return; }
+            if (_logger.IsEnabled(LogLevel.Trace) && severity == LineStatusSeverity.Ok) { _logger.LogInformation(value.DebugInfo); return; }
             if (_logger.IsEnabled(LogLevel.Warning) && severity == LineStatusSeverity.Warning) { _logger.LogWarning(value.DebugInfo); return; }
             if (_logger.IsEnabled(LogLevel.Error) && severity >= LineStatusSeverity.Error) { _logger.LogError(value.DebugInfo); return; }
         }

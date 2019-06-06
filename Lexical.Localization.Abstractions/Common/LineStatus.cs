@@ -308,7 +308,7 @@ namespace Lexical.Localization
         Ok = 0,
         /// <summary>Warning, but produced a value.</summary>
         Warning = 1,
-        /// <summary>Error occured, but produced some kind of fallback value.</summary>
+        /// <summary>Error occured, but produced a fallback value.</summary>
         Error = 2,
         /// <summary>Failed, no value.</summary>
         Failed = 3
