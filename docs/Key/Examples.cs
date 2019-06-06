@@ -9,7 +9,7 @@ using Lexical.Localization.StringFormat;
 
 namespace docs
 {
-    public class ILine_Examples
+    public class Key_Examples
     {
         public static void Main(string[] args)
         {

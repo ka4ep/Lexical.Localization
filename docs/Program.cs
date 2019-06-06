@@ -6,6 +6,7 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            IStringFormat_Examples.Main(args);
             Tutorial_Examples.Main(args);
 
             StringAsset_Examples.Main(args);

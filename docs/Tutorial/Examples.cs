@@ -20,11 +20,12 @@ namespace docs
                     .Inline("Culture:fi", "Hei, {0}")
                     .Inline("Culture:de", "Hallo, {0}");
 
-                Console.WriteLine(key.Value("mr. anonymous"));
+                Console.WriteLine(key.Value("Corellia Melody"));
                 #endregion Snippet_1
             }
             {
                 #region Snippet_2
+
                 #endregion Snippet_2
             }
             {

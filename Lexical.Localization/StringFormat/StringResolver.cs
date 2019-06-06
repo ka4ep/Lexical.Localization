@@ -560,9 +560,6 @@ namespace Lexical.Localization.StringFormat
                                         break;
                                 }
                         }
-
-                        // No matching value was found for the requested key and the cultures that culture policy provided.
-                        features.Status.UpCulture(LineStatus.CultureErrorCulturePolicyNoMatch);
                     }
                     catch (Exception e)
                     {
@@ -633,11 +630,10 @@ namespace Lexical.Localization.StringFormat
                                 }
                                 break;
                         }
-
-                    // No matching value was found for the requested key and the explicit culture in the key.
-                    features.Status.UpCulture(LineStatus.CultureErrorCultureNoMatch);
                 }
 
+                // No matching value was found for the requested key and the explicit culture in the key.
+                features.Status.UpCulture(LineStatus.CultureErrorCultureNoMatch);
                 // No match
                 features.Status.UpResolve(LineStatus.ResolveErrorNoMatch);
                 culture = null;

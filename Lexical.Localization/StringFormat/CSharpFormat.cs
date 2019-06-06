@@ -27,7 +27,7 @@ namespace Lexical.Localization.StringFormat
     ///  3. On the right-side of argument are format specifiers:
     ///     "Hex value {0:X4}."
     /// 
-    ///  4. On the left-side there pluralCategory. Category start with a number, cannot contain unescaped colon ':'.
+    ///  4. "pluralCategory" is on the left-side before ":" colon.
     ///     "There are {cardinal:0} cats."
     /// 
     /// <see href="https://docs.microsoft.com/en-us/dotnet/api/system.string.format?view=netframework-4.7.2"/>
