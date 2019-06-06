@@ -164,7 +164,6 @@ Pluralization is applied only to the arguments that have "{<i>category</i>:<i>ar
 </pre>
 </details>
 
-
 # PluralRules Parameter
 To use plurality, the key must have "PluralRules" parameter configured.
 There are five ways to configure the plurality rule:
@@ -198,4 +197,4 @@ The class is derivate of CLDR35 and is licensed under [Unicode License agreement
 # Plural Rules Table
 [!include[Plural Rules Table](PluralRulesTable.html)]
 
-This table is derived from [Unicode CLDR Rules](https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html).
+This table is derived from rules of [Unicode CLDR](https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html) "Data files".
