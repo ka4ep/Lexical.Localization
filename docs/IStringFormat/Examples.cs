@@ -20,7 +20,6 @@ namespace docs
             }
             {
                 #region Snippet_0b
-                // Append CSharpFormat to ILine as "String" parameter
                 ILine line = LineRoot.Global.Key("").Format("Hello, {0}.");
                 #endregion Snippet_0b
             }
@@ -32,7 +31,6 @@ namespace docs
             }
             {
                 #region Snippet_1b
-                // Append TextFormat to ILine as "String" parameter
                 ILine line = LineRoot.Global.Key("").Text("{in braces}");
                 #endregion Snippet_1b
             }
@@ -43,7 +41,6 @@ namespace docs
                 IString str = stringFormat.Parse("Hello, {0}.");
                 #endregion Snippet_2a
                 #region Snippet_2b
-                // Append IString to ILine as "String" parameter
                 ILine line = LineRoot.Global.Key("Hello").String(str);
                 #endregion Snippet_2b
                 #region Snippet_2c
