@@ -1,5 +1,5 @@
 # Localization Reader
-There are following file formats that are supported with the default class libraries.
+There are following file formats are supported by the Lexical.Localization class library.
 
 | Format | Reader Class |
 |:---------|:-------|
@@ -30,11 +30,24 @@ IAsset asset = IniLinesReader.Default.FileAsset(
     throwIfNotFound: true);
 ```
 
+```csharp
+IAsset asset = LineReaderMap.Default.FileAsset(
+    filename: "localization.ini",
+    throwIfNotFound: true);
+```
+
 From embedded resource with **.EmbeddedAsset()** method.
 
 ```csharp
 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
 IAsset asset = IniLinesReader.Default.EmbeddedAsset(
+    assembly: asm,
+    resourceName: "docs.localization.ini",
+    throwIfNotFound: true);
+```
+
+```csharp
+asset = LineReaderMap.Default.EmbeddedAsset(
     assembly: asm,
     resourceName: "docs.localization.ini",
     throwIfNotFound: true);
@@ -50,33 +63,43 @@ IAsset asset = IniLinesReader.Default.FileProviderAsset(
     throwIfNotFound: true);
 ```
 
-The same extension methods are also available in the **LineReaderMap**, which selects the reader class by file extension.
-
 ```csharp
-IAsset asset = LineReaderMap.Default.FileAsset(
-    filename: "localization.ini",
+asset = LineReaderMap.Default.FileProviderAsset(
+    fileProvider: fileProvider,
+    filepath: "localization.ini",
     throwIfNotFound: true);
 ```
 
 # Read IAssetSource
-File can be read into an *IAssetSource* with **.FileAsset()** extension method. *IAssetSource* is a reference and a loader of asset.
+File can be read into an *IAssetSource* with **.FileAssetSource()** extension method. *IAssetSource* is a reference and a reader of asset.
 It is not read right away, but when the asset is built.
 
 ```csharp
-IAssetSource assetSource = 
-    IniLinesReader.Default.FileAssetSource(
+IAssetSource assetSource = IniLinesReader.Default.FileAssetSource(
         filename: "localization.ini",
         throwIfNotFound: true);
 IAssetBuilder assetBuilder = new AssetBuilder().AddSource(assetSource);
 IAsset asset = assetBuilder.Build();
 ```
 
+```csharp
+IAssetSource assetSource = LineReaderMap.Default.FileAssetSource(
+    filename: "localization.ini", 
+    throwIfNotFound: true);
+```
+
 Reference to embedded resource source with **.EmbeddedAssetSource()**.
 
 ```csharp
 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
-IAssetSource assetSource = 
-    IniLinesReader.Default.EmbeddedAssetSource(
+IAssetSource assetSource = IniLinesReader.Default.EmbeddedAssetSource(
+        assembly: asm,
+        resourceName: "docs.localization.ini",
+        throwIfNotFound: true);
+```
+
+```csharp
+IAssetSource assetSource = LineReaderMap.Default.EmbeddedAssetSource(
         assembly: asm,
         resourceName: "docs.localization.ini",
         throwIfNotFound: true);
@@ -86,28 +109,26 @@ And file provider with **.FileProviderAssetSource()**.
 
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-IAssetSource assetSource = 
-    IniLinesReader.Default.FileProviderAssetSource(
+IAssetSource assetSource = IniLinesReader.Default.FileProviderAssetSource(
         fileProvider: fileProvider,
         filepath: "localization.ini",
         throwIfNotFound: true);
 ```
 
-The same extension methods are also available in the **LineReaderMap**, which selects the reader class by file extension.
-
 ```csharp
-IAssetSource assetSource = LineReaderMap.Default.FileAssetSource(
-    filename: "localization.ini", 
-    throwIfNotFound: true);
+IAssetSource assetSource = LineReaderMap.Default.FileProviderAssetSource(
+        fileProvider: fileProvider,
+        filepath: "localization.ini",
+        throwIfNotFound: true);
 ```
 
 # Read File
 Different file formats have different intrinsic formats. 
-* Context free list formats are handled with **IEnumerable&lt;KeyValuePair&lt;ILine, string&gt;&gt;** class.
-* Context dependent list formats are held in **IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;**.
-* Structural file formats with context free keys are held in **ILineTree**.
+* String list formats are **IEnumerable&lt;ILine&gt;**.
+* Context dependent string list formats are **IEnumerable&lt;KeyValuePair&lt;string, IString&gt;&gt;**.
+* Structural tree formats are **ILineTree**.
 
-Localization file can be read right away into key lines with **.ReadKeyLines()**.
+Localization file can be read right away into key lines with **.ReadLines()**.
 
 ```csharp
 IEnumerable<ILine> key_lines = LineReaderMap.Default.ReadLines(
@@ -131,7 +152,7 @@ ILineTree tree = LineReaderMap.Default.ReadLineTree(
 ```
 
 # File Reader
-A file reader can be constructed with respective **.FileReaderAsKeyLines()**.
+A file reader can be constructed with respective **.FileReader()**.
 File reader reads the refered file when **.GetEnumerator()** is called, and will re-read the file again every time.
 
 ```csharp
@@ -159,7 +180,7 @@ IEnumerable<ILineTree> tree_reader =
 ```
 
 # Embedded Reader
-Embedded resource reader is created with **.EmbeddedReaderAsKeyLines()**.
+Embedded resource reader is created with **.EmbeddedReader()**.
 
 ```csharp
 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
@@ -190,7 +211,7 @@ IEnumerable<ILineTree> tree_reader =
 ```
 
 # IFileProvider Reader
-File provider reader is created with **.FileProviderReaderAsKeyLines()**.
+File provider reader is created with **.FileProviderReader()**.
 
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
@@ -222,7 +243,7 @@ IEnumerable<ILineTree> tree_reader =
 ```
 
 # Read Stream
-Content can be read from **Stream** into key lines.
+Text files can be read from **Stream** into key lines.
 
 ```csharp
 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
@@ -250,7 +271,7 @@ using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.R
 ```
 
 # Read TextReader
-Content can be read from **TextReader** into key lines.
+Text files can be read from **TextReader** into key lines.
 
 ```csharp
 string text = "Culture:en:Type:MyController:Key:Hello = Hello World!\n";

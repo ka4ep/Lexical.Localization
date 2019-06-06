@@ -264,17 +264,30 @@ namespace docs
                 #endregion Snippet_10c
             }
             {
-                #region Snippet_10d
+                Assembly asm = typeof(LocalizationReader_Examples).Assembly;
+                IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
+                #region Snippet_10a2
                 IAsset asset = LineReaderMap.Default.FileAsset(
                     filename: "localization.ini",
                     throwIfNotFound: true);
-                #endregion Snippet_10d
+                #endregion Snippet_10a2
+                #region Snippet_10b2
+                asset = LineReaderMap.Default.EmbeddedAsset(
+                    assembly: asm,
+                    resourceName: "docs.localization.ini",
+                    throwIfNotFound: true);
+                #endregion Snippet_10b2
+                #region Snippet_10c2
+                asset = LineReaderMap.Default.FileProviderAsset(
+                    fileProvider: fileProvider,
+                    filepath: "localization.ini",
+                    throwIfNotFound: true);
+                #endregion Snippet_10c2
             }
 
             {
                 #region Snippet_11a
-                IAssetSource assetSource = 
-                    IniLinesReader.Default.FileAssetSource(
+                IAssetSource assetSource = IniLinesReader.Default.FileAssetSource(
                         filename: "localization.ini",
                         throwIfNotFound: true);
                 IAssetBuilder assetBuilder = new AssetBuilder().AddSource(assetSource);
@@ -284,8 +297,7 @@ namespace docs
             {
                 #region Snippet_11b
                 Assembly asm = typeof(LocalizationReader_Examples).Assembly;
-                IAssetSource assetSource = 
-                    IniLinesReader.Default.EmbeddedAssetSource(
+                IAssetSource assetSource = IniLinesReader.Default.EmbeddedAssetSource(
                         assembly: asm,
                         resourceName: "docs.localization.ini",
                         throwIfNotFound: true);
@@ -294,19 +306,36 @@ namespace docs
             {
                 #region Snippet_11c
                 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
-                IAssetSource assetSource = 
-                    IniLinesReader.Default.FileProviderAssetSource(
+                IAssetSource assetSource = IniLinesReader.Default.FileProviderAssetSource(
                         fileProvider: fileProvider,
                         filepath: "localization.ini",
                         throwIfNotFound: true);
                 #endregion Snippet_11c
             }
             {
-                #region Snippet_11d
+                #region Snippet_11a2
                 IAssetSource assetSource = LineReaderMap.Default.FileAssetSource(
                     filename: "localization.ini", 
                     throwIfNotFound: true);
-                #endregion Snippet_11d
+                #endregion Snippet_11a2
+            }
+            {
+                Assembly asm = typeof(LocalizationReader_Examples).Assembly;
+                #region Snippet_11b2
+                IAssetSource assetSource = LineReaderMap.Default.EmbeddedAssetSource(
+                        assembly: asm,
+                        resourceName: "docs.localization.ini",
+                        throwIfNotFound: true);
+                #endregion Snippet_11b2
+            }
+            {
+                IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
+                #region Snippet_11c2
+                IAssetSource assetSource = LineReaderMap.Default.FileProviderAssetSource(
+                        fileProvider: fileProvider,
+                        filepath: "localization.ini",
+                        throwIfNotFound: true);
+                #endregion Snippet_11c2
             }
 
             {

@@ -175,7 +175,7 @@ namespace Lexical.Localization
         {
             this.Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
             this.parameterInfos = parameterInfos;
-            this.lineFactory = lineFactory;
+            this.lineFactory = lineFactory ?? LineAppender.NonResolving;
             System.Text.RegularExpressions.MatchCollection matches = regex.Matches(pattern);
             //if (matches.Count == 0) throw new ArgumentException($"Failed to parse filename pattern \"{pattern}\"");
 

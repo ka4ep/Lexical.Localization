@@ -86,7 +86,7 @@ namespace Lexical.Localization
                         }
                     }
                 }
-                if (resolver != null && part is ILineParameter lineParameter && lineParameter.ParameterName == "String" && lineParameter.ParameterValue != null)
+                if (part is ILineParameter lineParameter && lineParameter.ParameterName == "String" && lineParameter.ParameterValue != null)
                 {
                     IStringFormat stringFormat = line.FindStringFormat(resolver) ?? fallbackStringFormat;
                     return stringFormat.Parse(lineParameter.ParameterValue);
