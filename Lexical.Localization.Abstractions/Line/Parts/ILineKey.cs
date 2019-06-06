@@ -176,12 +176,14 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="line"></param>
         /// <param name="appender">(optional) appender to use for clone. If null uses the appender of <paramref name="line"/></param>
+        /// <param name="parameterInfos">(optional) for checking which parameters are keys</param>
         /// <returns>clone of key parts</returns>
         /// <exception cref="LineException">If cloning failed.</exception>
-        public static ILine CloneKey(this ILine line, ILineFactory appender = default)
+        public static ILine CloneKey(this ILine line, ILineFactory appender = default, IParameterInfos parameterInfos = null)
         {
             if (appender == null) appender = line.GetAppender();
             ILine result = null;
+            if (parameterInfos == null) appender.TryGetParameterInfos(out parameterInfos);
 
             StructList16<ILine> args = new StructList16<ILine>();
             for (ILine l = line; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
@@ -192,9 +194,18 @@ namespace Lexical.Localization
                 if (l is ILineParameterEnumerable lineParameters)
                 {
                     foreach (ILineParameter lineParameter in lineParameters)
-                        if (lineParameter is ILineKey && lineParameter is ILineArguments argsi) result = appender.Create(result, argsi);
+                        if (lineParameter.IsCanonicalKey(parameterInfos))
+                            result = appender.Create<ILineCanonicalKey, string, string>(result, lineParameter.ParameterName, lineParameter.ParameterValue);
+                        else if (lineParameter.IsNonCanonicalKey(parameterInfos))
+                            result = appender.Create<ILineNonCanonicalKey, string, string>(result, lineParameter.ParameterName, lineParameter.ParameterValue);
                 }
-                if (l is ILineKey && l is ILineArguments arg) result = appender.Create(result, arg);
+                if (l is ILineParameter parameter)
+                {
+                    if (parameter.IsCanonicalKey(parameterInfos))
+                        result = appender.Create<ILineCanonicalKey, string, string>(result, parameter.ParameterName, parameter.ParameterValue);
+                    else if (parameter.IsNonCanonicalKey(parameterInfos))
+                        result = appender.Create<ILineNonCanonicalKey, string, string>(result, parameter.ParameterName, parameter.ParameterValue);
+                }
             }
             return result ?? appender.Create<ILinePart>(null);
         }
@@ -316,7 +327,7 @@ namespace Lexical.Localization
                     foreach (var parameter in lineParameters)
                     {
                         string name = parameter.ParameterName, value = parameter.ParameterValue;
-                        if (parameter.IsNonCanonicalKey(parameterInfos) && name != null && value != null)
+                        if (parameter.IsNonCanonicalKey(parameterInfos) && name != null && value != null && value != "")
                         {
                             int ix = -1;
                             for (int i = 0; i < result.Count; i++) if (result[i].Key == name) { ix = i; break; }
@@ -328,7 +339,7 @@ namespace Lexical.Localization
                 if (l is ILineParameter lineParameter && l.IsNonCanonicalKey(parameterInfos))
                 {
                     string name = lineParameter.ParameterName, value = lineParameter.ParameterValue;
-                    if (lineParameter.IsNonCanonicalKey(parameterInfos) && name != null && value != null)
+                    if (lineParameter.IsNonCanonicalKey(parameterInfos) && name != null && value != null && value != "")
                     {
                         int ix = -1;
                         for (int i = 0; i < result.Count; i++) if (result[i].Key == name) { ix = i; break; }

@@ -70,7 +70,8 @@ namespace Lexical.Localization
         {
             StringBuilder sb = new StringBuilder();
             StructList12<ILineParameter> parameters = new StructList12<ILineParameter>();
-            key.GetParameterParts<StructList12<ILineParameter>>(ref parameters);
+            
+            key.GetEffectiveParameterParts<StructList12<ILineParameter>>(ref parameters);
             Print(parameters, sb);
             return sb.ToString();
         }
@@ -84,7 +85,7 @@ namespace Lexical.Localization
         public StringBuilder Print(ILine key, StringBuilder sb)
         {
             StructList12<ILineParameter> parameters = new StructList12<ILineParameter>();
-            key.GetParameterParts<StructList12<ILineParameter>>(ref parameters);
+            key.GetEffectiveParameterParts<StructList12<ILineParameter>>(ref parameters);
             Print(parameters, sb);
             return sb;
         }

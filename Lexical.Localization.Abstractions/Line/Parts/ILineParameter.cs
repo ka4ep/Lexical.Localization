@@ -278,6 +278,57 @@ namespace Lexical.Localization
             }           
         }
 
+
+        /// <summary>
+        /// Get effective parameters as array from tail to root.
+        /// 
+        /// This method ignores non-canonical parameters that occur more than once with non-null value.
+        /// </summary>
+        /// <param name="line">(optional) line to read parameters of</param>
+        /// <param name="list">list to add parts in order of from tail to root</param>
+        /// <param name="parameterInfos">(optional) for checking which parameters are keys</param>
+        public static void GetEffectiveParameterParts<LIST>(this ILine line, ref LIST list, IParameterInfos parameterInfos = null) where LIST : IList<ILineParameter>
+        {
+            ILineFactory f;
+            if (parameterInfos == null && line.TryGetAppender(out f)) f.TryGetParameterInfos(out parameterInfos);
+
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
+            {
+                if (l is ILineParameterEnumerable lineParameters)
+                {
+                    foreach (var parameter in lineParameters)
+                    {
+                        if (parameter.IsNonCanonicalKey(parameterInfos))
+                        {
+                            // Test if parameter already exists
+                            int prevIx = -1;
+                            for (int i = 0; i < list.Count; i++) if (list[i].ParameterName == parameter.ParameterName) { prevIx = i; break; }
+                            if (prevIx >= 0) list[prevIx] = parameter; else list.Add(parameter);
+                        } else 
+                        {
+                            list.Add(parameter);
+                        }
+                    }
+                }
+
+                {
+                    if (l is ILineParameter parameter)
+                    {
+                        if (parameter.IsNonCanonicalKey(parameterInfos))
+                        {
+                            // Test if parameter already exists
+                            int prevIx = -1;
+                            for (int i = 0; i<list.Count; i++) if (list[i].ParameterName == parameter.ParameterName) { prevIx = i; break; }
+                            if (prevIx >= 0) list[prevIx] = parameter; else list.Add(parameter);
+                        } else 
+                        {
+                            list.Add(parameter);
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Get all parameters as parameterName,parameterValue as array with value from tail to root.
         /// 

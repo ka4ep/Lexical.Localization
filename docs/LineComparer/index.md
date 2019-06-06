@@ -24,3 +24,10 @@ There is a difference though, for a non-canonical parameter such as "Culture" ca
 A canonical parameter with empty value "" is considered meaningful for hash-equals comparison.
 [!code-csharp[Snippet](Examples.cs#Snippet_6)]
 
+Table of comparers:
+| Comparer | Description 
+|:-------|:-------|
+| LineComparer.Key | Key comparison |
+| LineComparer.IgnoreCulture | Key comparison but ignores any "Culture" parameters |
+| LineComparer.KeyValue | Key and String-value comparison. |
+| LineComparer.Parameter | Compares parameters in order of occurance.   |

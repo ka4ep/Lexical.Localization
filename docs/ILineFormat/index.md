@@ -18,7 +18,7 @@
 
 | Class | ILineFormatPrinter | ILineFormatParser |
 |:-------|:-------|:--------|
-| LineFormat.| &#9745; | &#9745; |
+| LineFormat | &#9745; | &#9745; |
 | LinePattern | &#9745;  | &#9745; |
 | LineParameterPrinter | &#9745; | &#9744; |
 
