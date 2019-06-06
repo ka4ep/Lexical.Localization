@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
-using Lexical.Localization;
+﻿using Lexical.Localization;
 using Lexical.Localization.Asset;
-#region Snippet_7b1
-using Lexical.Localization.Inlines;
-using Lexical.Localization.StringFormat;
-#endregion Snippet_7b1
+using Lexical.Localization.Utils;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace docs
 {
-    public class ILine_Examples
+    public class IStringFormat_Examples
     {
         public static void Main(string[] args)
         {
@@ -49,26 +46,7 @@ namespace docs
                 #region Snippet_8
                 #endregion Snippet_8
             }
-            {
-                #region Snippet_9
-                #endregion Snippet_9
-            }
-            {
-                #region Snippet_10
-                #endregion Snippet_10
-            }
-            {
-                #region Snippet_11
-                #endregion Snippet_11
-            }
-            {
-                #region Snippet_12
-                #endregion Snippet_12
-            }
-            {
-                #region Snippet_13
-                #endregion Snippet_13
-            }
         }
     }
+
 }

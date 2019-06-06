@@ -1,35 +1,6 @@
 ﻿# Plurality
 Language strings with numeric arguments can be customized for declination of pluralized nouns.
 
-To use plurality, the key must have "PluralRules" parameter configured.
-There are five ways to configure the plurality rule:
-
-1. Add class name of plural rules into the localization file (*recommended way*). The value "Lexical.Localization.CLDR35" uses [Unicode CLDR35 plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules). 
-The class is derivate of CLDR35 and is licensed under [Unicode License agreement](https://www.unicode.org/license.html) as "Data Files".
-<details>
-  <summary>PluralRules="Lexical.Localization.CLDR35" (<u>click here</u>)</summary>
-[!code-xml[Snippet](../PluralityExample0a.xml)]
-</details>
-<br/>
-
-2. Add plural rules expression to localization file. See [Unicode CLDR Plural Rule Syntax](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
-<details>
-  <summary>PluralRules="[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true" (<u>click here</u>)</summary> 
-[!code-xml[Snippet](../PluralityExample5.xml)]
-</details>
-<br/>
-
-3. Add instance of **IPluralRules** to line.
-[!code-csharp[Snippet](Examples.cs#Snippet_A1)]
-
-4. Add *class name* of "PluralRules" to line.
-[!code-csharp[Snippet](Examples.cs#Snippet_A2)]
-
-5. Add unicode plural rules expression to line. ([Unicode CLDR Plural Rule Syntax](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules))
-[!code-csharp[Snippet](Examples.cs#Snippet_A3)]
-<br/>
-<br/>
-
 Plural *category* is placed into argument placeholder, for example "There are {cardinal:0} cats.".
 The available cases depend on the culture and the *category*. 
 For root culture "" the category "cardinal" has cases "zero", "one" and "other".
@@ -194,4 +165,32 @@ Pluralization is applied only to the arguments that have "{<i>category</i>:<i>ar
 </details>
 
 
+# PluralRules
+To use plurality, the key must have "PluralRules" parameter configured.
+There are five ways to configure the plurality rule:
 
+1. Add class name of plural rules into the localization file (*recommended way*). The value "Lexical.Localization.CLDR35" uses [Unicode CLDR35 plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules). 
+The class is derivate of CLDR35 and is licensed under [Unicode License agreement](https://www.unicode.org/license.html) as "Data Files".
+<details>
+  <summary>PluralRules="Lexical.Localization.CLDR35" (<u>click here</u>)</summary>
+[!code-xml[Snippet](../PluralityExample0a.xml)]
+</details>
+<br/>
+
+2. Add plural rules expression to localization file. See [Unicode CLDR Plural Rule Syntax](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
+<details>
+  <summary>PluralRules="[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true" (<u>click here</u>)</summary> 
+[!code-xml[Snippet](../PluralityExample5.xml)]
+</details>
+<br/>
+
+3. Add instance of **IPluralRules** to line.
+[!code-csharp[Snippet](Examples.cs#Snippet_A1)]
+
+4. Add *class name* of "PluralRules" to line.
+[!code-csharp[Snippet](Examples.cs#Snippet_A2)]
+
+5. Add unicode plural rules expression to line. ([Unicode CLDR Plural Rule Syntax](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules))
+[!code-csharp[Snippet](Examples.cs#Snippet_A3)]
+<br/>
+<br/>

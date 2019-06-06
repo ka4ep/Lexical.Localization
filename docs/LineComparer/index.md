@@ -27,7 +27,7 @@ A canonical parameter with empty value "" is considered meaningful for hash-equa
 Table of comparers:
 | Comparer | Description 
 |:-------|:-------|
-| LineComparer.Key | Key comparison |
-| LineComparer.IgnoreCulture | Key comparison but ignores any "Culture" parameters |
+| LineComparer.Default | Makes key comparisons |
+| LineComparer.IgnoreCulture | Key comparer but ignores "Culture" parameters |
 | LineComparer.KeyValue | Key and String-value comparison. |
 | LineComparer.Parameter | Compares parameters in order of occurance.   |
