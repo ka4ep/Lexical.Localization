@@ -4,7 +4,7 @@ Language strings with numeric arguments can be customized for declination of plu
 Plural *category* is placed into argument placeholder, for example "There are {cardinal:0} cats.".
 The available cases depend on the culture and the *category*. 
 For root culture "" the category "cardinal" has cases "zero", "one" and "other".
-See [full table of cases for each culture and category](https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html).
+See [table of case for each culture and category](#plural-rules-table).
 Each case must be matched with a subkey **N:<i>case</i>**.
 [!code-xml[Snippet](../PluralityExample0b.xml)]
 
@@ -165,7 +165,7 @@ Pluralization is applied only to the arguments that have "{<i>category</i>:<i>ar
 </details>
 
 
-# PluralRules
+# PluralRules Parameter
 To use plurality, the key must have "PluralRules" parameter configured.
 There are five ways to configure the plurality rule:
 
@@ -194,3 +194,8 @@ The class is derivate of CLDR35 and is licensed under [Unicode License agreement
 [!code-csharp[Snippet](Examples.cs#Snippet_A3)]
 <br/>
 <br/>
+
+# Plural Rules Table
+[!include[Plural Rules Table](PluralRulesTable.html)]
+
+This table is derived from [Unicode CLDR Rules](https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html).
