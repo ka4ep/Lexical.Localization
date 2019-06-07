@@ -46,6 +46,8 @@ ILine line = LineRoot.Global.CulturePolicy(culturePolicy);
 ```
 
 # Hints
+Hints are line parts that can be appended from localization file as well as from *ILine*.
+
 <b>.StringFormat(<i>IStringFormat</i>)</b> and <b>.StringFormat(<i>string</i>)</b> add a string format, that determines the way the consequtive "String" parameters are parsed.
 
 ```csharp
@@ -62,10 +64,29 @@ ILine line1 = LineRoot.Global.PluralRules(pluralRules);
 ILine line2 = LineRoot.Global.PluralRules("Unicode.CLDR35");
 ```
 
+<b>.FormatProvider(<i>IFormatProvider</i>)</b> and <b>.FormatProvider(<i>string</i>)</b> add a custom format provider that provide special format handling.
+
 ```csharp
 IFormatProvider customFormat = new CustomFormat();
 ILine line1 = LineRoot.Global.FormatProvider(customFormat).Format("{0:DATE}").Value(DateTime.Now);
 ILine line2 = LineRoot.Global.FormatProvider("docs.CustomFormat,docs").Format("{0:DATE}").Value(DateTime.Now);
+```
+
+```csharp
+public class CustomFormat : IFormatProvider, ICustomFormatter
+{
+    public string Format(string format, object arg, IFormatProvider formatProvider)
+    {
+        if (format == "DATE" && arg is DateTime time)
+        {
+            return time.Date.ToString();
+        }
+        return null;
+    }
+
+    public object GetFormat(Type formatType)
+        => formatType == typeof(ICustomFormatter) ? this : default;
+}
 ```
 
 <b>.StringResolver(<i>IStringResolver</i>)</b> adds *IStringResolver* as line part.

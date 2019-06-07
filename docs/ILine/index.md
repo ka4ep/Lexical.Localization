@@ -21,12 +21,17 @@ Or constructed to span a tree structure (trie).
 [!code-csharp[Snippet](Examples.cs#Snippet_2c)]
 
 # Hints
+Hints are line parts that can be appended from localization file as well as from *ILine*.
+
 <b>.StringFormat(<i>IStringFormat</i>)</b> and <b>.StringFormat(<i>string</i>)</b> add a string format, that determines the way the consequtive "String" parameters are parsed.
 [!code-csharp[Snippet](Examples.cs#Snippet_3a)]
 
 <b>.PluralRules(<i>IPluralRules</i>)</b> and <b>.PluralRules(<i>string</i>)</b> add plural rules that determine how plurality are used in further line parts.
 [!code-csharp[Snippet](Examples.cs#Snippet_3b)]
+
+<b>.FormatProvider(<i>IFormatProvider</i>)</b> and <b>.FormatProvider(<i>string</i>)</b> add a custom format provider that provide special format handling.
 [!code-csharp[Snippet](Examples.cs#Snippet_3c)]
+[!code-csharp[Snippet](Examples.cs#Snippet_3d)]
 
 <b>.StringResolver(<i>IStringResolver</i>)</b> adds *IStringResolver* as line part.
 [!code-csharp[Snippet](Examples.cs#Snippet_3e)]
