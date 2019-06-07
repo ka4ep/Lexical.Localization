@@ -1,6 +1,6 @@
 ﻿# Introduction
 <details>
-  <summary><b>ILineFactory</b> is interface for printers and parsers of string formats. (<u>Click here</u>)</summary>
+  <summary><b>ILineFactory</b> constructs ILine parts. (<u>Click here</u>)</summary>
 [!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/ILineFactory.cs#Interface)]
 </details>
 <details>
