@@ -2,6 +2,7 @@
 using Lexical.Localization.Asset;
 using Lexical.Localization.StringFormat;
 using Lexical.Localization.Utils;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -23,6 +24,10 @@ namespace docs
                 Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateTime.Now));
                 Console.WriteLine(String.Format("It is now {0:d} at {0:t}", DateTime.Now));
                 #endregion Snippet_1c
+                #region Snippet_1c2
+                Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Culture("sv").Value(DateTime.Now));
+                Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Culture("de").Value(DateTime.Now));
+                #endregion Snippet_1c2
                 #region Snippet_1d
                 LineString resolved_string = line.Value("Corellia Melody").ResolveString();
                 Console.WriteLine(resolved_string.Status);
@@ -70,14 +75,24 @@ namespace docs
                 #endregion Snippet_4
             }
             {
-                #region Snippet_5
+                #region Snippet_5a
                 IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample0a.xml");
-                ILineRoot root = new LineRoot(asset, new CulturePolicy());
-                ILine line = root.Key("Cats").Format("{0} cat(s)");
+                LineRoot.Builder.AddAsset(asset).Build();
+                ILine line = LineRoot.Global.Key("Cats").Format("{0} cat(s)");
                 // Print with plurality
                 for (int cats = 0; cats <= 2; cats++)
                     Console.WriteLine(line.Culture("fi").Value(cats));
-                #endregion Snippet_5
+                #endregion Snippet_5a
+            }
+            {
+                #region Snippet_5b
+                IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample0a.xml");
+                ILineRoot root = new LineRoot(asset, new CulturePolicy());
+                ILine line = root.Key("Cats").Format("{0} cat(s)");
+                #endregion Snippet_5b
+                // Print with plurality
+                for (int cats = 0; cats <= 2; cats++)
+                    Console.WriteLine(line.Culture("fi").Value(cats));
             }
             {
                 #region Snippet_6
@@ -118,15 +133,41 @@ namespace docs
             }
             {
                 #region Snippet_10
+                ILine line = StringLocalizerRoot.Global.Type("MyClass").Key("hello").Format("Hello, {0}.");
+                IStringLocalizer localizer = line.AsStringLocalizer();
+                IStringLocalizerFactory localizerFactory = line.AsStringLocalizerFactory();
                 #endregion Snippet_10
             }
             {
                 #region Snippet_11
+                ILineRoot root = new StringLocalizerRoot(null, new CulturePolicy());
+                ILine line = root.Type("MyClass").Key("hello").Format("Hello, {0}.");
+                IStringLocalizer localizer = line.AsStringLocalizer();
+                IStringLocalizerFactory localizerFactory = line.AsStringLocalizerFactory();
                 #endregion Snippet_11
             }
             {
                 #region Snippet_12
+                ILine line = LineRoot.Global.Type("MyClass").Key("hello").Format("Hello, {0}.");
+                IStringLocalizer localizer = line.AsStringLocalizer();
+                IStringLocalizerFactory localizerFactory = line.AsStringLocalizerFactory();
                 #endregion Snippet_12
+            }
+            {
+                #region Snippet_13
+                #endregion Snippet_13
+            }
+            {
+                #region Snippet_14
+                #endregion Snippet_14
+            }
+            {
+                #region Snippet_15
+                #endregion Snippet_15
+            }
+            {
+                #region Snippet_16
+                #endregion Snippet_16
             }
 
         }

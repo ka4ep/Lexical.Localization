@@ -51,19 +51,19 @@ namespace docs
                 #region Snippet_0a2
                 IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample0a.json");
                 ILineRoot root = new LineRoot(asset);
-                ILine key = root.Key("Cats").Format("{0} cat(s)");
+                ILine line = root.Key("Cats").Format("{0} cat(s)");
 
                 // Print with the default string (without culture policy)
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(key.Value(cats));
+                    Console.WriteLine(line.Value(cats));
 
                 // Print Culture "en"
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(key.Culture("en").Value(cats));
+                    Console.WriteLine(line.Culture("en").Value(cats));
 
                 // Print Culture "fi"
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(key.Culture("fi").Value(cats));
+                    Console.WriteLine(line.Culture("fi").Value(cats));
                 #endregion Snippet_0a2
             }
             {
@@ -89,7 +89,7 @@ namespace docs
             {
                 #region Snippet_0b
                 ILineRoot root = new LineRoot();
-                ILine key = root.Key("Cats")
+                ILine line = root.Key("Cats")
                         .PluralRules("Unicode.CLDR35")
                         .Format("{cardinal:0} cat(s)")  // Default string
                         .Inline("N:zero", "no cats")
@@ -97,13 +97,13 @@ namespace docs
                         .Inline("N:other", "{0} cats");
                 #endregion Snippet_0b
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(key.Value(cats));
+                    Console.WriteLine(line.Value(cats));
             }
 
             {
                 #region Snippet_0c
                 ILineRoot root = new LineRoot();
-                ILine key = root.Key("Cats")
+                ILine line = root.Key("Cats")
                         .PluralRules("Unicode.CLDR35")
                         .Format("{0} cat(s)")   // Default string
                         .Inline("Culture:en", "{cardinal:0} cat(s)")
@@ -116,7 +116,7 @@ namespace docs
                         .Inline("Culture:fi:N:other", "{0} kissaa");
 
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(key.Culture("en").Value(cats));
+                    Console.WriteLine(line.Culture("en").Value(cats));
                 #endregion Snippet_0c
             }
 
@@ -135,7 +135,7 @@ namespace docs
             {
                 // Plurality permutations for argument 0
                 #region Snippet_2
-                ILine key = LineRoot.Global.Key("CatsDogs")
+                ILine line = LineRoot.Global.Key("CatsDogs")
                         .PluralRules("Unicode.CLDR35")
                         .Format("{cardinal:0} cat(s) and {1} dog(s)")
                         .Inline("N:zero", "no cats and {1} dog(s)")
@@ -144,7 +144,7 @@ namespace docs
 
                 for (int cats = 0; cats <= 2; cats++)
                     for (int dogs = 0; dogs <= 2; dogs++)
-                        Console.WriteLine(key.Value(cats, dogs));
+                        Console.WriteLine(line.Value(cats, dogs));
                 #endregion Snippet_2
             }
 

@@ -8,6 +8,9 @@ Values are provided with <b>.Value(<i>object[]</i>)</b>.
 Providing **.Format()** and **.Value()** is equivalent to **String.Format()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c)]
 
+The format culture can be enforced with <b>.Culture(<i>CultureInfo</i>)</b>, without changing the thread-local culture variable.
+[!code-csharp[Snippet](Examples.cs#Snippet_1c2)]
+
 Default strings can be *inlined* for multiple cultures.
 [!code-csharp[Snippet](Examples.cs#Snippet_2)]
 
@@ -17,13 +20,16 @@ And *inlined* with different plurality cases.
 And with permutations of different cultures and plurality cases.
 [!code-csharp[Snippet](Examples.cs#Snippet_4)]
 
-Localization assets can be read from files.
-[!code-csharp[Snippet](Examples.cs#Snippet_5)]
+Localization assets can be read from files and placed into the global **LineRoot.Global**.
+[!code-csharp[Snippet](Examples.cs#Snippet_5a)]
 <details>
   <summary>PluralityExample0a.xml (<u>click here</u>)</summary>
 [!code-xml[Snippet](../PluralityExample0a.xml)]
 </details>
 <br/>
+
+Or, assets can be loaded and placed into a new ILineRoot.
+[!code-csharp[Snippet](Examples.cs#Snippet_5b)]
 
 **IAsset** is an abstraction to localization lines and localized resources. 
 Implementing classes can be provided within code.
@@ -40,6 +46,15 @@ Different string formats, such as C#'s *String.Format*, are supported. **IString
 
 *ILine.ToString()* is a shortcut to <b><i>ILine</i>.ResolveString()</b>, which returns with additional information about the resolve process. 
 [!code-csharp[Snippet](Examples.cs#Snippet_1d)]
+
+**StringLocalizerRoot.Global** is same root as **LineRoot.Global** with the difference, that parts derived from it implement *IStringLocalizer* and *IStringLocalizerFactory*.
+[!code-csharp[Snippet](Examples.cs#Snippet_10)]
+
+New **StringLocalizerRoot** can also be constructed.
+[!code-csharp[Snippet](Examples.cs#Snippet_11)]
+
+*IStringLocalizer* reference can be adapted from regular **LineRoot** as well, but causes an additional heap object to be instantiated.
+[!code-csharp[Snippet](Examples.cs#Snippet_12)]
 
 **Links**
 * [Website](http://lexical.fi/Localization/index.html)

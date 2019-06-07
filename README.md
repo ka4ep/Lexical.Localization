@@ -18,6 +18,13 @@ Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateT
 Console.WriteLine(String.Format("It is now {0:d} at {0:t}", DateTime.Now));
 ```
 
+The format culture can be enforced with <b>.Culture(<i>CultureInfo</i>)</b>, without changing the thread-local culture variable.
+
+```csharp
+Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Culture("sv").Value(DateTime.Now));
+Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Culture("de").Value(DateTime.Now));
+```
+
 Default strings can be *inlined* for multiple cultures.
 
 ```csharp
@@ -62,12 +69,12 @@ for (int cats = 0; cats <= 2; cats++)
     Console.WriteLine(line.Culture("en").Value(cats));
 ```
 
-Localization assets can be read from files.
+Localization assets can be read from files and placed into the global **LineRoot.Global**.
 
 ```csharp
 IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample0a.xml");
-ILineRoot root = new LineRoot(asset, new CulturePolicy());
-ILine line = root.Key("Cats").Format("{0} cat(s)");
+LineRoot.Builder.AddAsset(asset).Build();
+ILine line = LineRoot.Global.Key("Cats").Format("{0} cat(s)");
 // Print with plurality
 for (int cats = 0; cats <= 2; cats++)
     Console.WriteLine(line.Culture("fi").Value(cats));
@@ -107,6 +114,14 @@ for (int cats = 0; cats <= 2; cats++)
 ```
 </details>
 <br/>
+
+Or, assets can be loaded and placed into a new ILineRoot.
+
+```csharp
+IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample0a.xml");
+ILineRoot root = new LineRoot(asset, new CulturePolicy());
+ILine line = root.Key("Cats").Format("{0} cat(s)");
+```
 
 **IAsset** is an abstraction to localization lines and localized resources. 
 Implementing classes can be provided within code.
@@ -155,6 +170,31 @@ ILine root = new LineRoot(null, culturePolicy: culturePolicy);
 ```csharp
 LineString resolved_string = line.Value("Corellia Melody").ResolveString();
 Console.WriteLine(resolved_string.Status);
+```
+
+**StringLocalizerRoot.Global** is same root as **LineRoot.Global** with the difference, that parts derived from it implement *IStringLocalizer* and *IStringLocalizerFactory*.
+
+```csharp
+ILine line = StringLocalizerRoot.Global.Type("MyClass").Key("hello").Format("Hello, {0}.");
+IStringLocalizer localizer = line.AsStringLocalizer();
+IStringLocalizerFactory localizerFactory = line.AsStringLocalizerFactory();
+```
+
+New **StringLocalizerRoot** can also be constructed.
+
+```csharp
+ILineRoot root = new StringLocalizerRoot(null, new CulturePolicy());
+ILine line = root.Type("MyClass").Key("hello").Format("Hello, {0}.");
+IStringLocalizer localizer = line.AsStringLocalizer();
+IStringLocalizerFactory localizerFactory = line.AsStringLocalizerFactory();
+```
+
+*IStringLocalizer* reference can be adapted from regular **LineRoot** as well, but causes an additional heap object to be instantiated.
+
+```csharp
+ILine line = LineRoot.Global.Type("MyClass").Key("hello").Format("Hello, {0}.");
+IStringLocalizer localizer = line.AsStringLocalizer();
+IStringLocalizerFactory localizerFactory = line.AsStringLocalizerFactory();
 ```
 
 **Links**

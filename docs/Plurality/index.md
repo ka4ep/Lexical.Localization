@@ -173,14 +173,19 @@ Pluralization is applied only to the arguments that have "{<i>category</i>:<i>ar
 # Plural Rules Table
 [!include[Plural Rules Table](PluralRulesTable.html)]
 
-This table is derived from rules of [Unicode CLDR](https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html) "Data files".
+This table is derived from plurals.xml and ordinals.xml of [Unicode CLDR](https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html), and licensed as "Data files".
+Unicode CLDR is copyright of Unicode, Inc. 
+
+<details>
+  <summary>unicode-license.txt (<u>click here</u>)</summary>
+[!code-text[Snippet](unicode-license.txt)]</details>
+<br/>
 
 # PluralRules Parameter
 To use plurality, the key must have "PluralRules" parameter either in the ILine or in the localization file.
 There are five ways to configure the plurality rule:
 
 1. Add class name of plural rules into the localization file (*recommended way*). The value "Unicode.CLDR35" uses [Unicode CLDR35 plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules). 
-The class is derivate of CLDR35 and is licensed under [Unicode License agreement](https://www.unicode.org/license.html) as "Data Files".
 <details>
   <summary>PluralRules="Unicode.CLDR35" (<u>click here</u>)</summary>
 [!code-xml[Snippet](../PluralityExample0a.xml)]
