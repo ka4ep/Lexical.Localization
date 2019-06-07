@@ -18,12 +18,17 @@
 		string dstText = ConvertDocument(Path.GetDirectoryName(srcFilename), srcTxt);
 		File.WriteAllText(dstFilename, dstText);
 
-        // Root index.md
+        // Tutoial\index.md
+        if (srcFilename == srcDir+"\\Tutorial\\index.md")
+        {
+            content = dstText;
+	        File.WriteAllText($"{srcDir}/../README.md", content);
+        }
+        // index.md
         if (srcFilename == srcDir+"\\index.md")
         {
             content = dstText;
             File.WriteAllText($"{srcDir}/../index.md", srcTxt);
-	        File.WriteAllText($"{srcDir}/../README.md", content);
         }
 	}
 

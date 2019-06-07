@@ -6,6 +6,7 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            Tutorial_Examples.Main(args);
             ILocalizationLogger_Examples.Main(args);
 
             IStringFormat_Examples.Main(args);

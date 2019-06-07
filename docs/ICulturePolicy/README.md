@@ -1,4 +1,43 @@
 # Culture Policy
+<details>
+  <summary><b>ICulturePolicy</b> is an interface for controlling the active culture and the fallback culture(s). (<u>click here</u>)</summary>
+
+```csharp
+/// <summary>
+/// Interface for policy that returns active culture policy, and fallback cultures.
+/// </summary>
+public interface ICulturePolicy
+{
+    /// <summary>
+    /// Enumerable that returns first the active culture, and then fallback cultures.
+    /// 
+    /// For example: "en-UK", "en", "".
+    /// </summary>
+    CultureInfo[] Cultures { get; }
+}
+```
+</details>
+
+<details>
+  <summary><b>ICulturePolicyAssignable</b> is interface for classes where policy can be modified. (<u>click here</u>)</summary>
+
+```csharp
+/// <summary>
+/// Interface for culture policy where culture is assignable.
+/// </summary>
+public interface ICulturePolicyAssignable : ICulturePolicy
+{
+    /// <summary>
+    /// Set source of cultures. The first element is active culture, others fallback cultures.
+    /// </summary>
+    /// <param name="cultureSource"></param>
+    /// <returns></returns>
+    ICulturePolicyAssignable SetSource(ICulturePolicy cultureSource);
+}
+```
+</details>
+<br/>
+
 The default implementation is **CulturePolicy**. 
 
 ```csharp
@@ -109,44 +148,31 @@ ICulturePolicy culturePolicy = new CulturePolicy()
     .AsReadonly();
 ```
 
-<br/>
-<details>
-  <summary><b>ICulturePolicy</b> is an interface for controlling the active culture and the fallback culture(s). (<u>click here</u>)</summary>
+# Resolve Examples
+**LineRoot.Global** has a default CulturePolicy that uses the current thread's culture.
 
 ```csharp
-/// <summary>
-/// Interface for policy that returns active culture policy, and fallback cultures.
-/// </summary>
-public interface ICulturePolicy
-{
-    /// <summary>
-    /// Enumerable that returns first the active culture, and then fallback cultures.
-    /// 
-    /// For example: "en-UK", "en", "".
-    /// </summary>
-    CultureInfo[] Cultures { get; }
-}
+// Default CulturePolicy
+Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateTime.Now));
 ```
-</details>
 
-<details>
-  <summary><b>ICulturePolicyAssignable</b> is interface for classes where policy can be modified. (<u>click here</u>)</summary>
+This is similiar to C#'s **String.Format**.
 
 ```csharp
-/// <summary>
-/// Interface for culture policy where culture is assignable.
-/// </summary>
-public interface ICulturePolicyAssignable : ICulturePolicy
-{
-    /// <summary>
-    /// Set source of cultures. The first element is active culture, others fallback cultures.
-    /// </summary>
-    /// <param name="cultureSource"></param>
-    /// <returns></returns>
-    ICulturePolicyAssignable SetSource(ICulturePolicy cultureSource);
-}
+// C#'s String.Format uses Thread.CurrentCulture
+Console.WriteLine(String.Format("It is now {0:d} at {0:t}", DateTime.Now));
 ```
-</details>
+
+When explicit culture is appended to the ILine, then it overrides the culture in the ICulturePolicy.
+
+```csharp
+// Format uses explicit CultureInfo "fi"
+Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateTime.Now).Culture("fi"));
+// Format uses explicit CultureInfo "sv"
+Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateTime.Now).Culture("sv"));
+// Format uses explicit CultureInfo "en"
+Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateTime.Now).Culture("en"));
+```
 
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))

@@ -14,16 +14,16 @@ namespace docs
             }
             {
                 #region Snippet_1
-                ILine key = LineAppender.NonResolving.Culture("en").Type("MyClass").Key("OK");
+                ILine key = LineAppender.NonResolving.Culture("en").Key("OK");
                 int hash = LineComparer.Default.GetHashCode(key);
                 #endregion Snippet_1
             }
             {
                 #region Snippet_2
-                ILine key1 = new LineRoot().Type("MyClass").Key("OK");
-                ILine key2 = LineAppender.NonResolving.Type("MyClass").Key("OK");
-                ILine key3 = LineRoot.Global.Type("MyClass").Key("OK");
-                ILine key4 = StringLocalizerRoot.Global.Type("MyClass").Key("OK");
+                ILine key1 = new LineRoot().Key("OK");
+                ILine key2 = LineAppender.NonResolving.Key("OK");
+                ILine key3 = LineRoot.Global.Key("OK");
+                ILine key4 = StringLocalizerRoot.Global.Key("OK");
 
                 bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
                 bool equals23 = LineComparer.Default.Equals(key2, key3); // Are equal
@@ -36,8 +36,8 @@ namespace docs
             }
             {
                 #region Snippet_3
-                ILine key1 = LineAppender.NonResolving.Culture("en").Type("MyClass").Key("OK");
-                ILine key2 = LineAppender.NonResolving.Type("MyClass").Key("OK").Culture("en");
+                ILine key1 = LineAppender.NonResolving.Culture("en").Key("OK");
+                ILine key2 = LineAppender.NonResolving.Key("OK").Culture("en");
 
                 bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
                 #endregion Snippet_3
@@ -46,8 +46,8 @@ namespace docs
             }
             {
                 #region Snippet_4
-                ILine key1 = LineAppender.NonResolving.Culture("en").Type("MyClass").Key("OK");
-                ILine key2 = LineAppender.NonResolving.Culture("en").Type("MyClass").Key("OK").Culture("de");
+                ILine key1 = LineAppender.NonResolving.Culture("en").Key("OK");
+                ILine key2 = LineAppender.NonResolving.Culture("en").Key("OK").Culture("de");
 
                 bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
                 #endregion Snippet_4
@@ -56,8 +56,8 @@ namespace docs
             }
             {
                 #region Snippet_5
-                ILine key1 = LineAppender.NonResolving.Type("MyClass").Key("OK");
-                ILine key2 = LineAppender.NonResolving.Type("MyClass").Key("OK").Culture("");
+                ILine key1 = LineAppender.NonResolving.Key("OK");
+                ILine key2 = LineAppender.NonResolving.Key("OK").Culture("");
 
                 bool equals12 = LineComparer.Default.Equals(key1, key2); // Are equal
                 int hash1 = LineComparer.Default.GetHashCode(key1);

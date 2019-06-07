@@ -12,23 +12,23 @@ namespace docs
         {
             {
                 #region Snippet_A1
-                ILine root = new LineRoot().PluralRules(CLDR35.Instance);
+                ILine root = LineRoot.Global.PluralRules(CLDR35.Instance);
                 #endregion Snippet_A1
             }
             {
                 #region Snippet_A2
-                ILine root = new LineRoot().PluralRules("Lexical.Localization.CLDR35");
+                ILine root = LineRoot.Global.PluralRules("Lexical.Localization.CLDR35");
                 #endregion Snippet_A2
             }
             {
                 #region Snippet_A3
-                ILine root = new LineRoot().PluralRules("[Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true");
+                ILine root = LineRoot.Global.PluralRules("[Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true");
                 #endregion Snippet_A3
             }
 
             {
                 #region Snippet_0a
-                IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample0a.xml");
+                IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample0a.xml");
                 ILineRoot root = new LineRoot(asset);
                 ILine key = root.Key("Cats").Format("{0} cat(s)");
 
@@ -44,6 +44,44 @@ namespace docs
                 for (int cats = 0; cats <= 2; cats++)
                     Console.WriteLine(key.Culture("fi").Value(cats));
                 #endregion Snippet_0a
+            }
+            {
+                #region Snippet_0a2
+                IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample0a.json");
+                ILineRoot root = new LineRoot(asset);
+                ILine key = root.Key("Cats").Format("{0} cat(s)");
+
+                // Print with the default string (without culture policy)
+                for (int cats = 0; cats <= 2; cats++)
+                    Console.WriteLine(key.Value(cats));
+
+                // Print Culture "en"
+                for (int cats = 0; cats <= 2; cats++)
+                    Console.WriteLine(key.Culture("en").Value(cats));
+
+                // Print Culture "fi"
+                for (int cats = 0; cats <= 2; cats++)
+                    Console.WriteLine(key.Culture("fi").Value(cats));
+                #endregion Snippet_0a2
+            }
+            {
+                #region Snippet_0a3
+                IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample0a.ini");
+                ILineRoot root = new LineRoot(asset);
+                ILine key = root.Key("Cats").Format("{0} cat(s)");
+
+                // Print with the default string (without culture policy)
+                for (int cats = 0; cats <= 2; cats++)
+                    Console.WriteLine(key.Value(cats));
+
+                // Print Culture "en"
+                for (int cats = 0; cats <= 2; cats++)
+                    Console.WriteLine(key.Culture("en").Value(cats));
+
+                // Print Culture "fi"
+                for (int cats = 0; cats <= 2; cats++)
+                    Console.WriteLine(key.Culture("fi").Value(cats));
+                #endregion Snippet_0a3
             }
 
             {
@@ -83,7 +121,7 @@ namespace docs
             {
                 // CLDR35 has rules for "" culture
                 #region Snippet_1a
-                IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample0b.xml");
+                IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample0b.xml");
                 ILine key = new LineRoot(asset).Key("Cats");
 
                 for (int cats = 0; cats<=2; cats++)
@@ -111,7 +149,7 @@ namespace docs
             {
                 // Plurality permutations for argument 0
                 #region Snippet_3
-                IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample1.xml");
+                IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample1.xml");
                 ILine key = new LineRoot(asset).Key("CatsDogs");
 
                 for (int cats = 0; cats <= 2; cats++)
@@ -123,7 +161,7 @@ namespace docs
             {
                 // Plurality permutations for argument 0 and argument 1
                 #region Snippet_5
-                IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample2.xml");
+                IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample2.xml");
                 ILineRoot root = new LineRoot(asset);
                 ILine key = root.Key("CatsDogs").Format("{0} cat(s) and {1} dog(s)");
 
@@ -135,7 +173,7 @@ namespace docs
             {
                 // Plurality for 4 arguments
                 #region Snippet_6
-                IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample4.xml");
+                IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample4.xml");
                 ILine key = new LineRoot(asset).Key("CatsDogsPoniesHorses");
 
                 for (int cats = 0; cats <= 2; cats++)
@@ -149,7 +187,7 @@ namespace docs
                 // Plural expression in localization file
                 // [Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true
                 #region Snippet_7
-                IAsset asset = XmlLinesReader.Default.FileAsset("PluralityExample5.xml");
+                IAsset asset = LineReaderMap.Default.FileAsset("PluralityExample5.xml");
                 ILine key = new LineRoot(asset).Key("CatsDogs");
 
                 for (int cats = 0; cats <= 2; cats++)

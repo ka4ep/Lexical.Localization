@@ -5,7 +5,7 @@
               xmlns="urn:lexical.fi"
               PluralRules="Lexical.Localization.CLDR35">
 
-  <!-- Default string from Inline scanned by Lexical.Localization.Tool -->
+  <!-- Fallback string, for "" culture -->
   <Key:Cats>{0} cat(s)</Key:Cats>
 
   <!-- Translator added strings for "en" -->

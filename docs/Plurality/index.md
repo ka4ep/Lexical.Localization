@@ -28,7 +28,13 @@ For example, "N:one" is provided, and for values other than "1", the rules rever
 Translator adds localized strings for different cultures.
 The decision whether to use pluralization is left for the translator.
 [!code-csharp[Snippet](Examples.cs#Snippet_0a)]
+# [xml](#tab/xml)
 [!code-xml[Snippet](../PluralityExample0a.xml)]
+# [json](#tab/json)
+[!code-json[Snippet](../PluralityExample0a.json)]
+# [ini](#tab/ini)
+[!code-ini[Snippet](../PluralityExample0a.ini)]
+***
 <details>
   <summary>The result (<u>click here</u>)</summary>
 <pre>
@@ -165,7 +171,7 @@ Pluralization is applied only to the arguments that have "{<i>category</i>:<i>ar
 </details>
 
 # PluralRules Parameter
-To use plurality, the key must have "PluralRules" parameter configured.
+To use plurality, the key must have "PluralRules" parameter either in the ILine or in the localization file.
 There are five ways to configure the plurality rule:
 
 1. Add class name of plural rules into the localization file (*recommended way*). The value "Lexical.Localization.CLDR35" uses [Unicode CLDR35 plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules). 

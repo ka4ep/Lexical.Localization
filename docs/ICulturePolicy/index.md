@@ -1,4 +1,15 @@
 ﻿# Culture Policy
+<details>
+  <summary><b>ICulturePolicy</b> is an interface for controlling the active culture and the fallback culture(s). (<u>click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/CulturePolicy/ICulturePolicy.cs#ICulturePolicy)]
+</details>
+
+<details>
+  <summary><b>ICulturePolicyAssignable</b> is interface for classes where policy can be modified. (<u>click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/CulturePolicy/ICulturePolicy.cs#ICulturePolicyAssignable)]
+</details>
+<br/>
+
 The default implementation is **CulturePolicy**. 
 [!code-csharp[Snippet](Examples.cs#Snippet_0)]
 
@@ -36,16 +47,15 @@ And also current thread's culture.
 Together these two make an immutable policy.
 [!code-csharp[Snippet](Examples.cs#Snippet_7)]
 
-<br/>
-<details>
-  <summary><b>ICulturePolicy</b> is an interface for controlling the active culture and the fallback culture(s). (<u>click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/CulturePolicy/ICulturePolicy.cs#ICulturePolicy)]
-</details>
+# Resolve Examples
+**LineRoot.Global** has a default CulturePolicy that uses the current thread's culture.
+[!code-csharp[Snippet](Examples.cs#Snippet_8a)]
 
-<details>
-  <summary><b>ICulturePolicyAssignable</b> is interface for classes where policy can be modified. (<u>click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/CulturePolicy/ICulturePolicy.cs#ICulturePolicyAssignable)]
-</details>
+This is similiar to C#'s **String.Format**.
+[!code-csharp[Snippet](Examples.cs#Snippet_8c)]
+
+When explicit culture is appended to the ILine, then it overrides the culture in the ICulturePolicy.
+[!code-csharp[Snippet](Examples.cs#Snippet_8b)]
 
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))

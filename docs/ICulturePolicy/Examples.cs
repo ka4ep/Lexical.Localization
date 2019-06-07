@@ -1,5 +1,6 @@
 ﻿using Lexical.Localization;
 using Lexical.Localization.Asset;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
@@ -108,6 +109,25 @@ namespace docs
                     .ToSnapshot()
                     .AsReadonly();
                 #endregion Snippet_7
+            }
+
+            {
+                #region Snippet_8a
+                // Default CulturePolicy
+                Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateTime.Now));
+                #endregion Snippet_8a
+                #region Snippet_8b
+                // Format uses explicit CultureInfo "fi"
+                Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateTime.Now).Culture("fi"));
+                // Format uses explicit CultureInfo "sv"
+                Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateTime.Now).Culture("sv"));
+                // Format uses explicit CultureInfo "en"
+                Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateTime.Now).Culture("en"));
+                #endregion Snippet_8b
+                #region Snippet_8c
+                // C#'s String.Format uses Thread.CurrentCulture
+                Console.WriteLine(String.Format("It is now {0:d} at {0:t}", DateTime.Now));
+                #endregion Snippet_8c
             }
         }
     }
