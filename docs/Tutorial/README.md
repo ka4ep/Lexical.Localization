@@ -1,4 +1,4 @@
-# Tutorial
+# Format and Values
 **ILine** is a localization line. It can be embedded with a default string.
 
 ```csharp
@@ -18,6 +18,7 @@ Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateT
 Console.WriteLine(String.Format("It is now {0:d} at {0:t}", DateTime.Now));
 ```
 
+# Culture
 The format culture can be enforced with <b>.Culture(<i>CultureInfo</i>)</b>, without changing the thread-local culture variable.
 
 ```csharp
@@ -25,6 +26,7 @@ Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Culture("sv
 Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Culture("de").Value(DateTime.Now));
 ```
 
+# Inlining
 Default strings can be *inlined* for multiple cultures.
 
 ```csharp
@@ -69,6 +71,7 @@ for (int cats = 0; cats <= 2; cats++)
     Console.WriteLine(line.Culture("en").Value(cats));
 ```
 
+# Files
 Localization assets can be read from files and placed into the global **LineRoot.Global**.
 
 ```csharp
@@ -138,6 +141,7 @@ ILine line = root.Type("MyClass").Key("Hello");
 Console.WriteLine(line.Value("Corellia Melody"));
 ```
 
+# Logging
 Loggers can be appended to *ILine* for debugging purposes.
 
 ```csharp
@@ -146,6 +150,7 @@ ILine line = root.Type("MyClass").Key("hello").Format("Hello, {0}.");
 Console.WriteLine(line.Value("Corellia Melody"));
 ```
 
+# StringFormat
 Different string formats, such as C#'s *String.Format*, are supported. **IStringFormat** is an abstraction to string formats.
 
 ```csharp
@@ -158,6 +163,7 @@ IString string2 = TextFormat.Default.Parse("{in braces}");
 ILine line2b = LineRoot.Global.Key("Ok").String(string2);
 ```
 
+# Culture Policy
 **ICulturePolicy** determines which culture to apply.
 
 ```csharp
@@ -165,6 +171,7 @@ ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentThreadUICulture()
 ILine root = new LineRoot(null, culturePolicy: culturePolicy);
 ```
 
+# Resolving string
 *ILine.ToString()* is a shortcut to <b><i>ILine</i>.ResolveString()</b>, which returns with additional information about the resolve process. 
 
 ```csharp
@@ -172,6 +179,7 @@ LineString resolved_string = line.Value("Corellia Melody").ResolveString();
 Console.WriteLine(resolved_string.Status);
 ```
 
+# String Localizer
 **StringLocalizerRoot.Global** is same root as **LineRoot.Global** with the difference, that parts derived from it implement *IStringLocalizer* and *IStringLocalizerFactory*.
 
 ```csharp
@@ -197,7 +205,7 @@ IStringLocalizer localizer = line.AsStringLocalizer();
 IStringLocalizerFactory localizerFactory = line.AsStringLocalizerFactory();
 ```
 
-**Links**
+# Links
 * [Website](http://lexical.fi/Localization/index.html)
 * [Github](https://github.com/tagcode/Lexical.Localization)
 * [Nuget](https://www.nuget.org/packages/Lexical.Localization/)
