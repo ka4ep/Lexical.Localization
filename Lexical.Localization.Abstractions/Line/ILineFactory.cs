@@ -13,6 +13,7 @@ using System.Collections.Generic;
 
 namespace Lexical.Localization
 {
+    #region Interface
     /// <summary>
     /// Line factory can append new parts to <see cref="ILine"/>s. 
     /// Appended parts are typically immutable, and form a linked list or a trie.
@@ -220,6 +221,7 @@ namespace Lexical.Localization
         /// </summary>
         IParameterInfos ParameterInfos { get; set; }
     }
+    #endregion Interface
 
     /// <summary></summary>
     public static partial class ILineFactoryExtensions

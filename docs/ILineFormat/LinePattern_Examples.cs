@@ -12,12 +12,12 @@ namespace docs
             {
                 #region Snippet_1
                 // Let's create an example key
-                ILine key = new LineRoot()
-                        .Location("Patches")
-                        .Type("MyController")
-                        .Section("Errors")
-                        .Key("InvalidState")
-                        .Culture("en");
+                ILine key = LineAppender.NonResolving
+                    .Location("Patches")
+                    .Type("MyController")
+                    .Section("Errors")
+                    .Key("InvalidState")
+                    .Culture("en");
                 #endregion Snippet_1
 
                 {
@@ -42,7 +42,8 @@ namespace docs
                     // Create pattern
                     ILineFormat myPolicy = new LinePattern("{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
-                    ILine key2 = new LineRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILine key2 = LineAppender.NonResolving
+                        .Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/icons-ok-de.png"
                     string str = myPolicy.Print(key2);
                     #endregion Snippet_4a
@@ -52,7 +53,8 @@ namespace docs
                     // Create pattern
                     ILineFormat myPolicy = new LinePattern("{Location/}{Location/}{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
-                    ILine key2 = new LineRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILine key2 = LineAppender.NonResolving
+                        .Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
                     string str = myPolicy.Print(key2);
                     #endregion Snippet_4b
@@ -62,7 +64,8 @@ namespace docs
                     // "[Location_n/]" translates to "[Location_0/]{Location_1/}{Location_2/}{Location_3/}{Location_4/}"
                     ILineFormat myPolicy = new LinePattern("[Location_n/]{Section}{-Key}{-Culture}.png");
                     // Create key
-                    ILine key2 = new LineRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILine key2 = LineAppender.NonResolving
+                        .Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "Patches/20181130/icons-ok-de.png"
                     string str = myPolicy.Print(key2);
                     #endregion Snippet_4c
@@ -72,7 +75,8 @@ namespace docs
                     // Create pattern
                     ILineFormat myPolicy = new LinePattern("{Location_3}{Location_2/}{Location_1/}{Location/}{Section}{-Key}{-Culture}.png");
                     // Create key
-                    ILine key2 = new LineRoot().Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
+                    ILine key2 = LineAppender.NonResolving
+                        .Location("Patches").Location("20181130").Section("icons").Key("ok").Culture("de");
                     // Converts to "20181130/Patches/icons-ok-de.png"
                     string str = myPolicy.Print(key2);
                     #endregion Snippet_4d

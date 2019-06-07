@@ -36,7 +36,7 @@ namespace docs
             {
                 #region Snippet_1
                 // Let's create an example key
-                ILine key = new LineRoot()
+                ILine key = LineAppender.NonResolving
                         .Location("Patches")
                         .Section("Controllers")
                         .Type("MyController")

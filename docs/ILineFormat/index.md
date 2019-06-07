@@ -1,16 +1,16 @@
 ﻿# ILineFormat
 <details>
-  <summary><b>ILineFormat</b> is root interface for *ILine* name converter. (<u>Click here</u>)</summary>
+  <summary><b>ILineFormat</b> is root interface for *ILine* and *String* converters. (<u>Click here</u>)</summary>
 [!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs#ILineFormat)]
 </details>
 
 <details>
-  <summary><b>ILineFormatPrinter</b> is sub-interface that prints *ILines* as *Strings*. (<u>Click here</u>)</summary>
+  <summary><b>ILineFormatPrinter</b> prints *ILine*s as *Strings*. (<u>Click here</u>)</summary>
 [!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs#ILineFormatPrinter)]
 </details>
 
 <details>
-  <summary><b>ILineFormatParser</b> is sub-interface that parses *Strings* into *ILine*. (<u>Click here</u>)</summary>
+  <summary><b>ILineFormatParser</b> parses *Strings* into *ILine*. (<u>Click here</u>)</summary>
 [!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILineFormat.cs#ILineFormatParser)]
 </details>
 
@@ -23,7 +23,7 @@
 | LineParameterPrinter | &#9745; | &#9744; |
 
 # LineFormat
-**LineFormat* is an *ILineFormat* class that prints and parses keys into strings using the following notation.
+**LineFormat** is an *ILineFormat* class that prints and parses keys into strings using the following notation.
 ```none
 parameterName:parameterValue:parameterName:parameterValue:...
 ```
@@ -52,6 +52,13 @@ Policy uses the following escape rules.
 Example of escaped key "Success\\:Plural".
 [!code-csharp[Snippet](LineFormat_Examples.cs#Snippet_1)]
 
+| Instance | Description |
+|:-------|:-------|
+| LineFormat.Key | Prints and parses effective key of *ILine*. |
+| LineFormat.Line | Prints and parses whole *ILine*. |
+| LineFormat.Parameters | Prints and parses the parameters of *ILine*, excluding "String" parameter |
+| LineFormat.ParametersInclString | Prints and parses every parameter of *ILine* |
+
 # LinePattern
 <details>
   <summary><b>ILinePattern</b> is interface for name patterns. (<u>Click here</u>)</summary>
@@ -79,21 +86,6 @@ Parameters need to be added in non-consecutive order, then "_#" can be used to r
 
 Regular expression can be written inside angle brackets "{parameter&lt;*regexp*&gt;/}", which gives more control over matching.
 [!code-csharp[Snippet](LinePattern_Examples.cs#Snippet_5)]
-
-## Parameters
-Reserved parameter names and respective extension methods.
-
-| Parameter | Key Method  | Description |
-|----------|:--------|:------------|
-| Assembly | .Assembly(*string*) | Assembly name |
-| Location | .Location(*string*) | Subdirectory in local files |
-| Resource | .Resource(*string*) | Subdirectory in embedded resources |
-| Type | .Type(*string*) | Class name |
-| Section | .Section(*string*) | Generic section, used for grouping |
-| anysection | *all above* | Matches to any section above. |
-| Culture  | .Culture(*string*) | Culture |
-| Key | .Key(*string*) | Key name |
-| N | .N(*Type*) | Plurality key |
 
 # LineParameterPrinter
 **LineParameterPrinter** is a generic class that prints key parts into strings by applying configured rules.
