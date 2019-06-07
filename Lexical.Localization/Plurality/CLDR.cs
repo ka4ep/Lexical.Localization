@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Lexical.Localization.Exp;
 using Lexical.Localization.Plurality;
 
-namespace Lexical.Localization
+namespace Unicode
 {
     /// <summary>
     /// Unicode CLDR v35 Plurality Rules generic expressions.
@@ -65,7 +65,7 @@ namespace Lexical.Localization
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class CLDR35 : PluralRulesEvaluatable
+    internal class CLDR35 : PluralRulesEvaluatable
     {
         /// <summary>
         /// Lazy loader.
@@ -90,12 +90,12 @@ namespace Lexical.Localization
         /// <summary>
         /// Queryable and enumerable, but not cached.
         /// </summary>
-        public class Queryable : CLDR, IPluralRulesQueryable, IPluralRulesEnumerable
+        internal class Queryable : CLDR, IPluralRulesQueryable, IPluralRulesEnumerable
         {
             /// <summary>
             /// Rule set
             /// </summary>
-            public readonly string RuleSet = "Lexical.Localization.CLDR35";
+            public readonly string RuleSet = "Unicode.CLDR35";
 
             /// <summary>
             /// 
@@ -653,7 +653,7 @@ namespace Lexical.Localization
     /// <see href="http://cldr.unicode.org/index/cldr-spec/plural-rules"/>
     /// <see href="https://unicode.org/Public/cldr/35/cldr-common-35.0.zip"/>  
     /// </summary>
-    public class CLDR : IPluralRules
+    internal class CLDR : IPluralRules
     {
         /// <summary>
         /// Create abstract CLDR ruleset.

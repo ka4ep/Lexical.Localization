@@ -22,7 +22,7 @@ namespace Lexical.Localization.Plurality
         /// <summary>
         /// Name of ruleset as assembly qualified type name.
         ///
-        /// e.g. "Lexical.Localization.CLDR35".
+        /// e.g. "Unicode.CLDR35".
         /// 
         /// If null, then info is used for querying for a set of rules, and RuleSet is left open.
         /// </summary>

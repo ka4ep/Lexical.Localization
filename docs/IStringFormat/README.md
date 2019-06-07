@@ -104,7 +104,7 @@ It uses the following rules:
 4. <i>PluralCategory</i> is before <b>:</b> colon.
 
 # TextFormat
-**TextFormat.Default** is a string format that contains plain text without placeholders. It doesn't use escaping.
+**TextFormat.Default** is a string format that contains plain text without placeholders. It doesn't need or use escaping.
 
 ```csharp
 IStringFormat stringFormat = TextFormat.Default;
@@ -151,7 +151,7 @@ An argument is applied to placeholder {0} and resolved string is returned in a *
 LineString lineString = line.Value("Corellia Melody").ResolveString();
 ```
 
-If it resolved to an OK result, then the *.Value* can be used.
+If it resolved to an OK or non-Failed result, then the *.Value* can be used.
 
 ```csharp
 if (!lineString.Failed) Console.WriteLine(lineString.Value);

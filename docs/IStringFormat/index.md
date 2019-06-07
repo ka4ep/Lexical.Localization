@@ -34,7 +34,7 @@ It uses the following rules:
 4. <i>PluralCategory</i> is before <b>:</b> colon.
 
 # TextFormat
-**TextFormat.Default** is a string format that contains plain text without placeholders. It doesn't use escaping.
+**TextFormat.Default** is a string format that contains plain text without placeholders. It doesn't need or use escaping.
 [!code-csharp[Snippet](Examples.cs#Snippet_1a)]
 
 Extension method **.Text(<i>string</i>)** appends TextFormat string to ILine as "String" parameter.
@@ -54,6 +54,6 @@ String is parsed into *IString* that contains placeholders and texts.
 An argument is applied to placeholder {0} and resolved string is returned in a **LineString** record.
 [!code-csharp[Snippet](Examples.cs#Snippet_2c)]
 
-If it resolved to an OK result, then the *.Value* can be used.
+If it resolved to an OK or non-Failed result, then the *.Value* can be used.
 [!code-csharp[Snippet](Examples.cs#Snippet_2d)]
 

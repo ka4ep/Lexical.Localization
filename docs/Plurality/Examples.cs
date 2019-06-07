@@ -1,5 +1,6 @@
 ﻿using Lexical.Localization;
 using Lexical.Localization.Asset;
+using Lexical.Localization.Plurality;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,12 +13,13 @@ namespace docs
         {
             {
                 #region Snippet_A1
-                ILine root = LineRoot.Global.PluralRules(CLDR35.Instance);
+                IPluralRules rules = PluralRulesResolver.Default.Resolve("Unicode.CLDR35");
+                ILine root = LineRoot.Global.PluralRules(rules);
                 #endregion Snippet_A1
             }
             {
                 #region Snippet_A2
-                ILine root = LineRoot.Global.PluralRules("Lexical.Localization.CLDR35");
+                ILine root = LineRoot.Global.PluralRules("Unicode.CLDR35");
                 #endregion Snippet_A2
             }
             {
@@ -88,7 +90,7 @@ namespace docs
                 #region Snippet_0b
                 ILineRoot root = new LineRoot();
                 ILine key = root.Key("Cats")
-                        .PluralRules(CLDR35.Instance)
+                        .PluralRules("Unicode.CLDR35")
                         .Format("{cardinal:0} cat(s)")  // Default string
                         .Inline("N:zero", "no cats")
                         .Inline("N:one", "a cat")
@@ -102,7 +104,7 @@ namespace docs
                 #region Snippet_0c
                 ILineRoot root = new LineRoot();
                 ILine key = root.Key("Cats")
-                        .PluralRules(CLDR35.Instance)
+                        .PluralRules("Unicode.CLDR35")
                         .Format("{0} cat(s)")   // Default string
                         .Inline("Culture:en", "{cardinal:0} cat(s)")
                         .Inline("Culture:en:N:zero", "no cats")
@@ -134,7 +136,7 @@ namespace docs
                 // Plurality permutations for argument 0
                 #region Snippet_2
                 ILine key = LineRoot.Global.Key("CatsDogs")
-                        .PluralRules(CLDR35.Instance)
+                        .PluralRules("Unicode.CLDR35")
                         .Format("{cardinal:0} cat(s) and {1} dog(s)")
                         .Inline("N:zero", "no cats and {1} dog(s)")
                         .Inline("N:one", "a cat and {1} dog(s)")

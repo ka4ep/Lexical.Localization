@@ -1,5 +1,5 @@
 ﻿{
-  "PluralRules:Lexical.Localization.CLDR35": {
+  "PluralRules:Unicode.CLDR35": {
     /* Fallback string, for "" culture */
     "Key:Cats": "{0} cat(s)",
 

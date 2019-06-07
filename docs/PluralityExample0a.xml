@@ -3,7 +3,7 @@
               xmlns:Key="urn:lexical.fi:Key"
               xmlns:N="urn:lexical.fi:N"
               xmlns="urn:lexical.fi"
-              PluralRules="Lexical.Localization.CLDR35">
+              PluralRules="Unicode.CLDR35">
 
   <!-- Fallback string, for "" culture -->
   <Key:Cats>{0} cat(s)</Key:Cats>

@@ -32,7 +32,7 @@ Console.WriteLine(line.Value("Corellia Melody"));
 And *inlined* with different plurality cases.
 
 ```csharp
-ILine line = LineRoot.Global.PluralRules(CLDR35.Instance)
+ILine line = LineRoot.Global.PluralRules("Unicode.CLDR35")
         .Type("MyClass").Key("Cats")
         .Format("{cardinal:0} cat(s)")
         .Inline("N:zero", "no cats")
@@ -45,7 +45,7 @@ for (int cats = 0; cats <= 2; cats++)
 And with permutations of different cultures and plurality cases.
 
 ```csharp
-ILine line = LineRoot.Global.PluralRules(CLDR35.Instance)
+ILine line = LineRoot.Global.PluralRules("Unicode.CLDR35")
         .Type("MyClass").Key("Cats")
         .Format("{0} cat(s)")
         .Inline("Culture:en", "{cardinal:0} cat(s)")
@@ -70,7 +70,7 @@ ILineRoot root = new LineRoot(asset, new CulturePolicy());
 ILine line = root.Key("Cats").Format("{0} cat(s)");
 // Print with plurality
 for (int cats = 0; cats <= 2; cats++)
-    Console.WriteLine(line.Value(cats));
+    Console.WriteLine(line.Culture("fi").Value(cats));
 ```
 <details>
   <summary>PluralityExample0a.xml (<u>click here</u>)</summary>
@@ -81,7 +81,7 @@ for (int cats = 0; cats <= 2; cats++)
               xmlns:Key="urn:lexical.fi:Key"
               xmlns:N="urn:lexical.fi:N"
               xmlns="urn:lexical.fi"
-              PluralRules="Lexical.Localization.CLDR35">
+              PluralRules="Unicode.CLDR35">
 
   <!-- Fallback string, for "" culture -->
   <Key:Cats>{0} cat(s)</Key:Cats>

@@ -3,7 +3,7 @@
               xmlns:Key="urn:lexical.fi:Key"
               xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1"
               xmlns="urn:lexical.fi"
-              PluralRules="Lexical.Localization.CLDR35">
+              PluralRules="Unicode.CLDR35">
 
   <!-- Example: Plurality for numeric argument {0} only -->
   <Key:CatsDogs>

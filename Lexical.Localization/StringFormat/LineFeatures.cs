@@ -143,7 +143,7 @@ namespace Lexical.Localization.StringFormat
                         else if (name == "PluralRules" && !(l is ILinePluralRules pluralRules_ && pluralRules_.PluralRules != null /*to not add second time*/))
                         {
                             IPluralRules _rules;
-                            if (Resolvers.TryResolve<IPluralRules>(name, out _rules)) PluralRules = _rules; else Status.UpPlurality(LineStatus.ResolveErrorPluralRulesResolveFailed);
+                            if (Resolvers.TryResolve<IPluralRules>(value, out _rules)) PluralRules = _rules; else Status.UpPlurality(LineStatus.ResolveErrorPluralRulesResolveFailed);
                         }
 
                         else if (name == "StringFormat" && !(l is ILineStringFormat stringFormat_ && stringFormat_.StringFormat != null /*to not add second time*/))
@@ -182,7 +182,7 @@ namespace Lexical.Localization.StringFormat
                     else if (name == "PluralRules" && !(l is ILinePluralRules pluralRules_ && pluralRules_.PluralRules != null /*to not add second time*/))
                     {
                         IPluralRules _rules;
-                        if (Resolvers.TryResolve<IPluralRules>(name, out _rules)) PluralRules = _rules; else Status.UpPlurality(LineStatus.ResolveErrorPluralRulesResolveFailed);
+                        if (Resolvers.TryResolve<IPluralRules>(value, out _rules)) PluralRules = _rules; else Status.UpPlurality(LineStatus.ResolveErrorPluralRulesResolveFailed);
                     }
 
                     else if (name == "StringFormat" && !(l is ILineStringFormat stringFormat_ && stringFormat_.StringFormat != null /*to not add second time*/))

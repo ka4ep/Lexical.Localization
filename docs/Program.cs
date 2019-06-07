@@ -7,13 +7,14 @@ namespace docs
         static void Main(string[] args)
         {
             Tutorial_Examples.Main(args);
+            Plurality_Examples.Main(args);
+
             ILocalizationLogger_Examples.Main(args);
 
             IStringFormat_Examples.Main(args);
             Tutorial_Examples.Main(args);
 
             StringAsset_Examples.Main(args);
-            Plurality_Examples.Main(args);
             TutorialProject.ExampleB.Main(args);
             TutorialProject.ExampleC.Main(args);
             LineFormatExamples.Main(args);

@@ -40,7 +40,7 @@ namespace docs
             }
             {
                 #region Snippet_3
-                ILine line = LineRoot.Global.PluralRules(CLDR35.Instance)
+                ILine line = LineRoot.Global.PluralRules("Unicode.CLDR35")
                         .Type("MyClass").Key("Cats")
                         .Format("{cardinal:0} cat(s)")
                         .Inline("N:zero", "no cats")
@@ -52,7 +52,7 @@ namespace docs
             }
             {
                 #region Snippet_4
-                ILine line = LineRoot.Global.PluralRules(CLDR35.Instance)
+                ILine line = LineRoot.Global.PluralRules("Unicode.CLDR35")
                         .Type("MyClass").Key("Cats")
                         .Format("{0} cat(s)")
                         .Inline("Culture:en", "{cardinal:0} cat(s)")
@@ -76,7 +76,7 @@ namespace docs
                 ILine line = root.Key("Cats").Format("{0} cat(s)");
                 // Print with plurality
                 for (int cats = 0; cats <= 2; cats++)
-                    Console.WriteLine(line.Value(cats));
+                    Console.WriteLine(line.Culture("fi").Value(cats));
                 #endregion Snippet_5
             }
             {

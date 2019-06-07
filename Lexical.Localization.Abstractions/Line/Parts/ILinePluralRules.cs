@@ -37,7 +37,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Assign plurality rules as 
         /// <list type="bullet">
-        /// <item>Assign assembly qualified type name of <see cref="IPluralRules"/>, e.g. "Lexical.Localization.CLDR35"</item>
+        /// <item>Assign assembly qualified type name of <see cref="IPluralRules"/>, e.g. "Unicode.CLDR35"</item>
         /// <item>Plural rules expression (starts with '['), e.g. "[Category=cardinal,Case=One,Optional=1]n=0[Category=cardinal,Case=One]n=1[Category=cardinal,Case=Other]true"</item>
         /// </list>
         /// </summary>
@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Assign plurality rules as 
         /// <list type="bullet">
-        /// <item>Assign assembly qualified type name of <see cref="IPluralRules"/>, e.g. "Lexical.Localization.CLDR35"</item>
+        /// <item>Assign assembly qualified type name of <see cref="IPluralRules"/>, e.g. "Unicode.CLDR35"</item>
         /// <item>Plural rules expression (starts with '['), e.g. "[Category=cardinal,Case=One,Optional=1]n=0[Category=cardinal,Case=One]n=1[Category=cardinal,Case=Other]true"</item>
         /// </list>
         /// </summary>

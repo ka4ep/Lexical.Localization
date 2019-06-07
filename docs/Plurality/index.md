@@ -179,10 +179,10 @@ This table is derived from rules of [Unicode CLDR](https://www.unicode.org/cldr/
 To use plurality, the key must have "PluralRules" parameter either in the ILine or in the localization file.
 There are five ways to configure the plurality rule:
 
-1. Add class name of plural rules into the localization file (*recommended way*). The value "Lexical.Localization.CLDR35" uses [Unicode CLDR35 plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules). 
+1. Add class name of plural rules into the localization file (*recommended way*). The value "Unicode.CLDR35" uses [Unicode CLDR35 plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules). 
 The class is derivate of CLDR35 and is licensed under [Unicode License agreement](https://www.unicode.org/license.html) as "Data Files".
 <details>
-  <summary>PluralRules="Lexical.Localization.CLDR35" (<u>click here</u>)</summary>
+  <summary>PluralRules="Unicode.CLDR35" (<u>click here</u>)</summary>
 [!code-xml[Snippet](../PluralityExample0a.xml)]
 </details>
 <br/>
