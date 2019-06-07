@@ -21,13 +21,13 @@
         // Tutoial\index.md
         if (srcFilename == srcDir+"\\Tutorial\\index.md")
         {
-	        File.WriteAllText($"{srcDir}/../README.md", content);
+	        File.WriteAllText($"{srcDir}/../README.md", dstText);
         }
         // index.md
         if (srcFilename == srcDir+"\\index.md")
         {
             content = dstText;
-            File.WriteAllText($"{srcDir}/../index.md", srcTxt);
+            File.WriteAllText($"{srcDir}/../index.md", dstText);
         }
 	}
 
