@@ -34,6 +34,7 @@ public interface IResourceResolverLogger : ILocalizationLogger, IObserver<LineRe
 <br />
 
 **LineStatusSeverity** four severity levels.
+
 | Level | Description |
 |:-------|:-------|
 | **Ok** | OK value. |

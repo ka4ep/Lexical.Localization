@@ -69,6 +69,7 @@ public interface IStringFormatPrinter : IStringFormat
 <br />
 
 Implementations
+
 | Class | Description | Extension Method |
 |:-------|:-------|:-------|
 | CSharpFormat | Uses C# String.Format() notation. | <i>ILine</i>.Format(string) |

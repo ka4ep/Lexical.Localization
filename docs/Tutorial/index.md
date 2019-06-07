@@ -1,5 +1,5 @@
 ﻿# Tutorial
-**ILine** is a key to localization asset. It can also be embedded with a default string.
+**ILine** is a localization line. It can be embedded with a default string.
 [!code-csharp[Snippet](Examples.cs#Snippet_1a)]
 
 Values are provided with <b>.Value(<i>object[]</i>)</b>.
@@ -8,7 +8,7 @@ Values are provided with <b>.Value(<i>object[]</i>)</b>.
 Providing **.Format()** and **.Value()** is equivalent to **String.Format()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c)]
 
-Default strings can be *inlined* to multiple cultures.
+Default strings can be *inlined* for multiple cultures.
 [!code-csharp[Snippet](Examples.cs#Snippet_2)]
 
 And *inlined* with different plurality cases.

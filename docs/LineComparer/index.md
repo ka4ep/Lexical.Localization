@@ -3,6 +3,7 @@
 [!code-csharp[Snippet](Examples.cs#Snippet_0)]
 
 Table of comparers:
+
 | Comparer | Description 
 |:-------|:-------|
 | LineComparer.Default | Makes key comparisons |

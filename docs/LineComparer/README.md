@@ -6,6 +6,7 @@ IEqualityComparer<ILine> comparer = LineComparer.Default;
 ```
 
 Table of comparers:
+
 | Comparer | Description 
 |:-------|:-------|
 | LineComparer.Default | Makes key comparisons |

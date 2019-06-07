@@ -3,7 +3,7 @@ Language strings with numeric arguments can be customized for declination of plu
 
 Plural *category* is placed into argument placeholder, for example "There are {cardinal:0} cats.".
 The available cases depend on the culture and the *category*. 
-For root culture "" the category "cardinal" has cases "zero", "one" and "other".
+The root culture "" has category "cardinal" and "ordinal", and the former has three possible cases "zero", "one" and "other".
 See [table of case for each culture and category](#plural-rules-table).
 Each case must be matched with a subkey **N:<i>case</i>**.
 
@@ -46,7 +46,7 @@ a cat
 
 <br/>
 
-If all cases are not used, then then **StringResolver** will to default string.
+If all cases are not used, then then **StringResolver** will revert to default string.
 For example, "N:one" is provided, and for values other than "1", the rules revert to default string.
 
 ```xml
@@ -402,109 +402,6 @@ for (int cats = 0; cats <= 2; cats++)
 2 cat(s), 2 dog(s), 2 ponies and 2 horse(s)
 </pre>
 </details>
-
-# PluralRules Parameter
-To use plurality, the key must have "PluralRules" parameter either in the ILine or in the localization file.
-There are five ways to configure the plurality rule:
-
-1. Add class name of plural rules into the localization file (*recommended way*). The value "Lexical.Localization.CLDR35" uses [Unicode CLDR35 plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules). 
-The class is derivate of CLDR35 and is licensed under [Unicode License agreement](https://www.unicode.org/license.html) as "Data Files".
-<details>
-  <summary>PluralRules="Lexical.Localization.CLDR35" (<u>click here</u>)</summary>
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Localization xmlns:Culture="urn:lexical.fi:Culture"
-              xmlns:Key="urn:lexical.fi:Key"
-              xmlns:N="urn:lexical.fi:N"
-              xmlns="urn:lexical.fi"
-              PluralRules="Lexical.Localization.CLDR35">
-
-  <!-- Fallback string, for "" culture -->
-  <Key:Cats>{0} cat(s)</Key:Cats>
-
-  <!-- Translator added strings for "en" -->
-  <Key:Cats Culture="en">
-    {cardinal:0} cat(s)
-    <N:zero>no cats</N:zero>
-    <N:one>a cat</N:one>
-    <N:other>{0} cats</N:other>
-  </Key:Cats>
-  
-  <!-- Translator added strings for "fi" -->
-  <Key:Cats Culture="fi">
-    {cardinal:0} kissa(a)
-    <N:zero>ei kissoja</N:zero>
-    <N:one>yksi kissa</N:one>
-    <N:other>{0} kissaa</N:other>
-  </Key:Cats>
-
-</Localization>
-
-```
-</details>
-<br/>
-
-2. Add plural rules expression to localization file. See [Unicode CLDR Plural Rule Syntax](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
-<details>
-  <summary>PluralRules="[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true" (<u>click here</u>)</summary> 
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Localization xmlns:Culture="urn:lexical.fi:Culture"
-              xmlns:Key="urn:lexical.fi:Key"
-              xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1" 
-              xmlns:N2="urn:lexical.fi:N2" xmlns:N3="urn:lexical.fi:N3"
-              xmlns="urn:lexical.fi"
-              PluralRules="[Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true">
-  <!-- Example: Plurality expression in the localization file ^^^ -->
-
-  <Key:CatsDogs>
-    {cardinal:0} cat(s) and {cardinal:1} dog(s)
-    <N:zero>
-      <N1:zero>no cats and no dogs</N1:zero>
-      <N1:one>no cats but one dog</N1:one>
-      <N1:other>no cats but {1} dogs</N1:other>
-    </N:zero>
-    <N:one>
-      <N1:zero>one cat but no dogs</N1:zero>
-      <N1:one>a cat and a dog</N1:one>
-      <N1:other>a cat and {1} dogs</N1:other>
-    </N:one>
-    <N:other>
-      <N1:zero>{0} cats but no dogs</N1:zero>
-      <N1:one>{0} cats and a dog</N1:one>
-      <N1:other>{0} cats and {1} dogs</N1:other>
-    </N:other>
-
-  </Key:CatsDogs>
-
-
-</Localization>
-
-```
-</details>
-<br/>
-
-3. Add instance of **IPluralRules** to line.
-
-```csharp
-ILine root = LineRoot.Global.PluralRules(CLDR35.Instance);
-```
-
-4. Add *class name* of "PluralRules" to line.
-
-```csharp
-ILine root = LineRoot.Global.PluralRules("Lexical.Localization.CLDR35");
-```
-
-5. Add unicode plural rules expression to line. ([Unicode CLDR Plural Rule Syntax](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules))
-
-```csharp
-ILine root = LineRoot.Global.PluralRules("[Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true");
-```
-<br/>
-<br/>
 
 # Plural Rules Table
 
@@ -1444,3 +1341,106 @@ ILine root = LineRoot.Global.PluralRules("[Category=cardinal,Case=zero,Optional=
 
 
 This table is derived from rules of [Unicode CLDR](https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html) "Data files".
+
+# PluralRules Parameter
+To use plurality, the key must have "PluralRules" parameter either in the ILine or in the localization file.
+There are five ways to configure the plurality rule:
+
+1. Add class name of plural rules into the localization file (*recommended way*). The value "Lexical.Localization.CLDR35" uses [Unicode CLDR35 plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules). 
+The class is derivate of CLDR35 and is licensed under [Unicode License agreement](https://www.unicode.org/license.html) as "Data Files".
+<details>
+  <summary>PluralRules="Lexical.Localization.CLDR35" (<u>click here</u>)</summary>
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Key="urn:lexical.fi:Key"
+              xmlns:N="urn:lexical.fi:N"
+              xmlns="urn:lexical.fi"
+              PluralRules="Lexical.Localization.CLDR35">
+
+  <!-- Fallback string, for "" culture -->
+  <Key:Cats>{0} cat(s)</Key:Cats>
+
+  <!-- Translator added strings for "en" -->
+  <Key:Cats Culture="en">
+    {cardinal:0} cat(s)
+    <N:zero>no cats</N:zero>
+    <N:one>a cat</N:one>
+    <N:other>{0} cats</N:other>
+  </Key:Cats>
+  
+  <!-- Translator added strings for "fi" -->
+  <Key:Cats Culture="fi">
+    {cardinal:0} kissa(a)
+    <N:zero>ei kissoja</N:zero>
+    <N:one>yksi kissa</N:one>
+    <N:other>{0} kissaa</N:other>
+  </Key:Cats>
+
+</Localization>
+
+```
+</details>
+<br/>
+
+2. Add plural rules expression to localization file. See [Unicode CLDR Plural Rule Syntax](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules).
+<details>
+  <summary>PluralRules="[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true" (<u>click here</u>)</summary> 
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Key="urn:lexical.fi:Key"
+              xmlns:N="urn:lexical.fi:N" xmlns:N1="urn:lexical.fi:N1" 
+              xmlns:N2="urn:lexical.fi:N2" xmlns:N3="urn:lexical.fi:N3"
+              xmlns="urn:lexical.fi"
+              PluralRules="[Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true">
+  <!-- Example: Plurality expression in the localization file ^^^ -->
+
+  <Key:CatsDogs>
+    {cardinal:0} cat(s) and {cardinal:1} dog(s)
+    <N:zero>
+      <N1:zero>no cats and no dogs</N1:zero>
+      <N1:one>no cats but one dog</N1:one>
+      <N1:other>no cats but {1} dogs</N1:other>
+    </N:zero>
+    <N:one>
+      <N1:zero>one cat but no dogs</N1:zero>
+      <N1:one>a cat and a dog</N1:one>
+      <N1:other>a cat and {1} dogs</N1:other>
+    </N:one>
+    <N:other>
+      <N1:zero>{0} cats but no dogs</N1:zero>
+      <N1:one>{0} cats and a dog</N1:one>
+      <N1:other>{0} cats and {1} dogs</N1:other>
+    </N:other>
+
+  </Key:CatsDogs>
+
+
+</Localization>
+
+```
+</details>
+<br/>
+
+3. Add instance of **IPluralRules** to line.
+
+```csharp
+ILine root = LineRoot.Global.PluralRules(CLDR35.Instance);
+```
+
+4. Add *class name* of **IPluralRules** to line.
+
+```csharp
+ILine root = LineRoot.Global.PluralRules("Lexical.Localization.CLDR35");
+```
+
+5. Add unicode plural rules expression to line. ([Unicode CLDR Plural Rule Syntax](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules))
+
+```csharp
+ILine root = LineRoot.Global.PluralRules("[Category=cardinal,Case=zero,Optional=1]n=0[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true");
+```
+<br/>
+<br/>

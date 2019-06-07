@@ -1,5 +1,5 @@
 # Tutorial
-**ILine** is a key to localization asset. It can also be embedded with a default string.
+**ILine** is a localization line. It can be embedded with a default string.
 
 ```csharp
 ILine line = LineRoot.Global.Type("MyClass").Key("hello").Format("Hello, {0}.");
@@ -18,7 +18,7 @@ Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateT
 Console.WriteLine(String.Format("It is now {0:d} at {0:t}", DateTime.Now));
 ```
 
-Default strings can be *inlined* to multiple cultures.
+Default strings can be *inlined* for multiple cultures.
 
 ```csharp
 ILine line = LineRoot.Global

@@ -3,7 +3,7 @@ Language strings with numeric arguments can be customized for declination of plu
 
 Plural *category* is placed into argument placeholder, for example "There are {cardinal:0} cats.".
 The available cases depend on the culture and the *category*. 
-For root culture "" the category "cardinal" has cases "zero", "one" and "other".
+The root culture "" has category "cardinal" and "ordinal", and the former has three possible cases "zero", "one" and "other".
 See [table of case for each culture and category](#plural-rules-table).
 Each case must be matched with a subkey **N:<i>case</i>**.
 [!code-xml[Snippet](../PluralityExample0b.xml)]
@@ -20,7 +20,7 @@ a cat
 
 <br/>
 
-If all cases are not used, then then **StringResolver** will to default string.
+If all cases are not used, then then **StringResolver** will revert to default string.
 For example, "N:one" is provided, and for values other than "1", the rules revert to default string.
 [!code-xml[Snippet](../PluralityExample0c.xml)]
 
@@ -170,6 +170,11 @@ Pluralization is applied only to the arguments that have "{<i>category</i>:<i>ar
 </pre>
 </details>
 
+# Plural Rules Table
+[!include[Plural Rules Table](PluralRulesTable.html)]
+
+This table is derived from rules of [Unicode CLDR](https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html) "Data files".
+
 # PluralRules Parameter
 To use plurality, the key must have "PluralRules" parameter either in the ILine or in the localization file.
 There are five ways to configure the plurality rule:
@@ -192,15 +197,10 @@ The class is derivate of CLDR35 and is licensed under [Unicode License agreement
 3. Add instance of **IPluralRules** to line.
 [!code-csharp[Snippet](Examples.cs#Snippet_A1)]
 
-4. Add *class name* of "PluralRules" to line.
+4. Add *class name* of **IPluralRules** to line.
 [!code-csharp[Snippet](Examples.cs#Snippet_A2)]
 
 5. Add unicode plural rules expression to line. ([Unicode CLDR Plural Rule Syntax](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules))
 [!code-csharp[Snippet](Examples.cs#Snippet_A3)]
 <br/>
 <br/>
-
-# Plural Rules Table
-[!include[Plural Rules Table](PluralRulesTable.html)]
-
-This table is derived from rules of [Unicode CLDR](https://www.unicode.org/cldr/charts/33/supplemental/language_plural_rules.html) "Data files".
