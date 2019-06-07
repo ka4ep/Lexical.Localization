@@ -21,7 +21,6 @@
         // Tutoial\index.md
         if (srcFilename == srcDir+"\\Tutorial\\index.md")
         {
-            content = dstText;
 	        File.WriteAllText($"{srcDir}/../README.md", content);
         }
         // index.md
