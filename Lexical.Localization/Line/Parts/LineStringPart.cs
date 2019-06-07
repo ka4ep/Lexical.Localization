@@ -169,7 +169,43 @@ namespace Lexical.Localization
         /// <param name="lineFactory"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILineString String(this ILineFactory lineFactory, String value)
+        public static ILineString Text(this ILineFactory lineFactory, String value)
             => lineFactory.Create<ILineString, IString>(null, TextFormat.Default.Parse(value));
+
+        /// <summary>
+        /// Append formulation string that uses C# string format <see cref="CSharpFormat"/>.
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILineString Format(this ILine part, String value)
+            => part.Append<ILineString, IString>(CSharpFormat.Default.Parse(value));
+
+        /// <summary>
+        /// Append formulation string that uses C# string format <see cref="CSharpFormat"/>.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILineString Format(this ILineFactory lineFactory, String value)
+            => lineFactory.Create<ILineString, IString>(null, CSharpFormat.Default.Parse(value));
+
+        /// <summary>
+        /// Append string of current selected "StringFormat"
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILineHint String(this ILine part, string value)
+            => part.Append<ILineHint, string, string>("String", value);
+
+        /// <summary>
+        /// Create raw non-formulated, non-placeholder string.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILineHint String(this ILineFactory lineFactory, string value)
+            => lineFactory.Create<ILineHint, string, string>(null, "String", value);
     }
 }

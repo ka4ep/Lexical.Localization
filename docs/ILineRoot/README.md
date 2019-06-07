@@ -6,7 +6,9 @@ Root is the place where asset (the localization provider) is tied to key (locali
 
 ```csharp
 // Create localization source
-var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
+var source = new Dictionary<string, string> {
+    { "Culture:en:Type:MyController:Key:hello", "Hello World!" }
+};
 // Create asset
 IAsset asset = new StringAsset(source, LineFormat.Parameters);
 // Create culture policy
@@ -49,7 +51,9 @@ StringLocalizerRoot is constructed with an asset and a culture policy, just as L
 
 ```csharp
 // Create localization source
-var source = new List<ILine> { LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello").Format("Hello World!") };
+var source = new List<ILine> {
+    LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello").Format("Hello World!")
+};
 // Create asset
 IAsset asset = new StringAsset(source);
 // Create culture policy
@@ -126,7 +130,9 @@ Assets are added to the global root with **LineRoot.Builder**.
 
 ```csharp
 // Create localization source
-var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
+var source = new Dictionary<string, string> {
+    { "Culture:en:Type:MyController:Key:hello", "Hello World!" }
+};
 // Create asset
 IAsset asset = new StringAsset(source, LineFormat.Parameters);
 // Assets are added to global static builder. It must be (re-)built after adding.

@@ -212,20 +212,99 @@ public interface ILineFactoryParameterInfos : ILineFactory
 }
 ```
 </details>
-<br />
+<details>
+  <summary><b>ILineAppendable</b> is interface ILine parts that can be appended. (<u>Click here</u>)</summary>
 
-Implementations
+```csharp
+/// <summary>
+/// A line where new <see cref="ILine"/> can be appended.
+/// </summary>
+public interface ILineAppendable : ILine
+{
+    /// <summary>
+    /// (Optional) part constructor. If null, the caller should follow to <see cref="ILinePart.PreviousPart"/> for appender.
+    /// </summary>
+    ILineFactory Appender { get; set; }
+}
+```
+</details>
+<br />
 
 | Implementation | Description |
 |:-------|:-------|
 | LineAppender.Default | Resolves parameter values into instances. |
-| LineAppender.NonResolving | Doesn't resolve parameter values into instances, but keeps references as strings. |
-| StringLocalizerAppender.Default | Resolves parameter values into instances. Constructed parts implement *IStringLocalizer* and *IStringLocalizerFactory* |
-| StringLocalizerAppender.NonResolving | Doesn't resolve parameter values into instances, but keeps references as strings. |
+| LineAppender.NonResolving | Doesn't resolve parameter values into instances. |
+| StringLocalizerAppender.Default | Resolves parameter values into instances. |
+| StringLocalizerAppender.NonResolving | Doesn't resolve parameter values into instances. |
 | LineFactoryComposition | Collection of component *ILineFactory* parts. |
 
+<br/>
+**ILineFactory** is used for appending and constructing *ILine* parts.
+The two main factories are **LineAppender.NonResolving** and **LineAppender.Default**. 
+They produce lines that are equally usable, but with differences in terms of performance at 
+usage-time and at construction-time.
+<br/>
+
+**LineAppender.NonResolving** appends parts to ILine as string based parameters. 
+It doesn't resolve parameters into respective instances at instantion time.
+The user of the ILine, must evaluate the parameters into respective instances.
+This is most suitable for constructing hash-equals compatible keys. 
 
 ```csharp
+ILine key = LineAppender.NonResolving.Type("ILineFactory_Examples").Key("Hello");
+IString str = asset.GetLine(key).GetString();
+```
+<br/>
 
+**LineAppender.Default** appends parts to ILine and resolves values into respective instances.
+For example, calling <b>.PluralRules(<i>string</i>)</b> causes the rules to be constructed and cached into the **IResolver** 
+that is associated with the *ILineFactory*. This is most suitable for constructing lines that are used
+by assets, as the referenced instances are already available.
+
+```csharp
+ILine localization = LineAppender.Default
+    .PluralRules("[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true")
+    .Assembly("docs")
+    .Culture("en")
+    .Type<ILineFactory_Examples>();
+
+List<ILine> lines = new List<ILine>
+{
+    localization.Key("OK").Text("Successful"),
+    localization.Key("Error").Format("Failed (ErrorCode={0})")
+};
+
+IAsset asset = new StringAsset().Add(lines);
+```
+<br/>
+
+*ILine*s are associated with an *ILineFactory*. This factory can be replaced in middle of line with <b>.SetAppender(<i>ILineFactory</i>)</b>.
+
+```csharp
+IStringLocalizer localizer = 
+    LineRoot.Global.Type("Hello").SetAppender(StringLocalizerAppender.Default).Key("Ok") 
+    as IStringLocalizer;
+```
+<br/>
+
+New custom appenders can be added to line with <b>.AddAppender(<i>ILineFactory</i>)</b>. Note that this makes a whole new copy of the previous *ILineFactory*.
+
+```csharp
+ILine line = LineRoot.Global.AddAppender(new MyAppender()).Key("Ok");
 ```
 
+```csharp
+class MyAppender : ILineFactory<ILineCanonicalKey, string, string>
+{
+    public bool TryCreate(
+        ILineFactory factory, 
+        ILine previous, 
+        string parameterName, 
+        string parameterValue, 
+        out ILineCanonicalKey line)
+    {
+        line = new LineCanonicalKey(factory, previous, parameterName, parameterValue);
+        return true;
+    }
+}
+```

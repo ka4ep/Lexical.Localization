@@ -6,6 +6,8 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            ILine_Examples.Main(args);
+            ILineFactory_Examples.Main(args);
             Tutorial_Examples.Main(args);
             Plurality_Examples.Main(args);
 

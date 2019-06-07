@@ -12,7 +12,9 @@ namespace docs
         {
             #region Snippet_1
             // Create localization source
-            var source = new List<ILine> { LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello").Format("Hello World!") };
+            var source = new List<ILine> {
+                LineFormat.Parameters.Parse("Culture:en:Type:MyController:Key:hello").Format("Hello World!")
+            };
             // Create asset
             IAsset asset = new StringAsset(source);
             // Create culture policy

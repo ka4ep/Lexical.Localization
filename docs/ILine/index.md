@@ -1,124 +1,118 @@
 ﻿# Line
-**ILine** is an object that can carry hints, key reference and strings.
-
-It can be implemented with one class, but it is typically composed of line parts that form
-a linked list.
-[!code-csharp[Snippet](Examples.cs#Snippet_1)]
+**ILine** is interface for implementations that address broad variety of features.
+Lines can carry hints, key reference and strings. They can be implemented with one class, but are compositions of smaller classes that are used to form linked lists.
+[!code-csharp[Snippet](Examples.cs#Snippet_1a)]
 ![linked list](linkedlist.svg)
 <br/>
 
 Or constructed to span a tree structure (trie).
-[!code-csharp[Snippet](Examples.cs#Snippet_2)]
+[!code-csharp[Snippet](Examples.cs#Snippet_1b)]
 ![tree](tree.svg)
 <br/>
 
-# Asset Keys
-Asset key serves a couple of functions. 
-Mainly, it is a reference and a provider of localization resources and language strings.
-It also mediates parameters and hints from the localization consumer to the producer.
-<p/>
+# Parts
+<b>.Asset(<i>IAsset</i>)</b> adds extra asset as line part.
+[!code-csharp[Snippet](Examples.cs#Snippet_2a)]
 
-Asset key is constructed by appending parts from root key towards tail. 
-The constructed result is, however, a linked list from tail to root,
-as each link has a directed reference only towards its parent.
-[!code-csharp[Snippet](Examples.cs#Snippet_1)]
-![linked list](linkedlist.svg)
-<p/>
-Nodes can also be constructed to span a tree structure.
-[!code-csharp[Snippet](Examples.cs#Snippet_2)]
-![tree](tree.svg)
-<p/>
+<b>.Logger(<i>ILocalizationLogger</i>)</b> adds logger as line part.
+[!code-csharp[Snippet](Examples.cs#Snippet_2b)]
 
-## Reference and Provider
-Key can be used as a *reference*. 
+<b>.CulturePolicy(<i>ICulturePolicy</i>)</b> adds culture policy that determines the active culture in current execution context.	
+[!code-csharp[Snippet](Examples.cs#Snippet_2c)]
+
+# Hints
+<b>.StringFormat(<i>IStringFormat</i>)</b> and <b>.StringFormat(<i>string</i>)</b> add a string format, that determines the way the consequtive "String" parameters are parsed.
 [!code-csharp[Snippet](Examples.cs#Snippet_3a)]
 
-And, as a *provider*.
-Provider key needs to have a root, which must be associated with an asset and a culture policy.
-Extension methods can be used for retrieving strings and binary resources.
+<b>.PluralRules(<i>IPluralRules</i>)</b> and <b>.PluralRules(<i>string</i>)</b> add plural rules that determine how plurality are used in further line parts.
 [!code-csharp[Snippet](Examples.cs#Snippet_3b)]
+[!code-csharp[Snippet](Examples.cs#Snippet_3c)]
 
-## Canonical and non-canonical key parts
-*Canonical* key parts are parts whose position in the linked list matters for the consumer of the localization content.
-Canonical parts typically add to the identity of the key. 
-[!code-csharp[Snippet](Examples.cs#Snippet_4a)]
+<b>.StringResolver(<i>IStringResolver</i>)</b> adds *IStringResolver* as line part.
+[!code-csharp[Snippet](Examples.cs#Snippet_3e)]
 
-For parts that are *non-canonical* the position doesn't matter.
-Non-canonical parts are typically hints, such as **.SetCulture(*string*)**.
-[!code-csharp[Snippet](Examples.cs#Snippet_4b)]
+<b>.StringResolver(<i>string</i>)</b> adds assembly qualified class name to *IStringResolver*.
+[!code-csharp[Snippet](Examples.cs#Snippet_3f)]
 
-## Key Parts
-| Parameter | Canonical | Interface | Extension Method | Description |
-|:---------|:-------|:--------|:---------|:---------|
-| Root | canonical | ILineRoot |  | Contains asset and culture policy. Keys are constructed from here. |
-| Type | non-canonical | ILineTypeAssignable | .Type(*Type*) | Type section for grouping by classes and interfaces. |
-| Location | canonical | IAsseyKeyLocationAssignable | .Location(*string*) | Hint to asset for a directory to search from. |
-| Assembly | non-canonical | ILineAssemblyAssignable | .Assembly(*Assembly*) | Hint to asset for an assembly to search from. |
-| Resource | canonical | ILineResourceAssignable | .Resource(*string*) | Hint to asset for an embedded resource path to search from. |
-| Section | canonical | ILinesectionAssignable | .Section(*string*) | Generic section for grouping assets. |
-| Key | canonical | ILineAssignable | .Key(*string*) | Leaf key |
-| Culture | non-canonical | ILineCultureAssignable | .Culture(*CultureInfo*) | Parameter to override current culture. |
-| N | non-canonical | ILinePluralityAssignable | .N(*Type*) | Key that specifies plurality |
-|  | non-canonical | ILineFormatArgs | .Format(*Object[]*) | Format arguments parameter. |
-|  | non-canonical | ILineInlines | .Inline(*string*, *string*) | Hint for default culture specific string values. |
+<b>.ResourceResolver(<i>IResourceResolver</i>)</b> adds *IResourceResolver* as line part.
+[!code-csharp[Snippet](Examples.cs#Snippet_3g)]
 
-## Type Section
-Type section is a key that narrows down the scope of localization to a specific class, interface or structure.
-[!code-csharp[Snippet](Examples.cs#Snippet_8a)]
+<b>.ResourceResolver(<i>string</i>)</b> adds assembly qualified class name to *IResourceResolver*.
+[!code-csharp[Snippet](Examples.cs#Snippet_3h)]
 
-There is another way with the generic method **.Type&lt;T&gt;()**. 
-[!code-csharp[Snippet](Examples.cs#Snippet_8b)]
+# Canonically compared keys
+Key parts determine how *ILine*s are hash-equally compared.
 
-## Culture Key
-Key can be forced to ignore culture policy, possibly due to lack of policy assignment, and to use an explicit culture info.
-[!code-csharp[Snippet](Examples.cs#Snippet_9a)]
+Canonically compared key parts are compared so that the occurance position of the key parts are relevant.
 
-## Formatting Args
-Formattable language strings are written in format of "**{#}**", where # is replaced with argument index ([Format Syntax](https://docs.microsoft.com/en-us/dotnet/standard/base-types/composite-formatting#format-item-syntax)).
+<b>.Assembly(<i>Assembly</i>)</b> and <b>.Assembly(<i>string</i>)</b> append "Assembly" key. 
+[!code-csharp[Snippet](Examples.cs#Snippet_5a)]
 
-Let's have an example file *localization.ini*.
-```None
-[Culture:en]
-Type:ConsoleApp1.MyController:Key:Success      = Success
-Type:ConsoleApp1.MyController:Key:Error        = Error (Code=0x{0:X8})
-```
+<b>.Culture(<i>CultureInfo</i>)</b> and <b>.Culture(<i>string</i>)</b> append "Culture" key.
+[!code-csharp[Snippet](Examples.cs#Snippet_5b)]
 
-The key assigned with a format argument by **.Format(*Object[]* args)** call.
+<b>.Type&lt;T&gt;(<i></i>)</b>, <b>.Type(<i>Type</i>)</b> and <b>.Type(<i>string</i>)</b> append "Type" key.
+[!code-csharp[Snippet](Examples.cs#Snippet_5c)]
+
+# Non-canonically compared keys
+Non-canonically compared key parts are compared so that the position doesn't matter. The first occurance of each type is considered effective, rest are ignored.
+
+<b>.Key(<i>string</i>)</b> appends "Key" key part.
+[!code-csharp[Snippet](Examples.cs#Snippet_6a)]
+
+<b>.Section(<i>string</i>)</b> appends "Section" key part.
 [!code-csharp[Snippet](Examples.cs#Snippet_6b)]
 
-The parametrized key can be resolved to formatted string with **.ToString()** or **.ResolveFormulatedString()**.
-[!code-csharp[Snippet](Examples.cs#Snippet_6d)]
-
-But, if needed an unformulated string can be resolved with **.ResolveString()**.
+<b>.Location(<i>string</i>)</b> appends "Location" key part.
 [!code-csharp[Snippet](Examples.cs#Snippet_6c)]
 
-## Inlining
+<b>.BaseName(<i>string</i>)</b> appends "BaseName" key part.
+[!code-csharp[Snippet](Examples.cs#Snippet_6d)]
+
+# Strings
+<b>.String(<i>IString</i>)</b> appends preparsed default string value.
+[!code-csharp[Snippet](Examples.cs#Snippet_7a)]
+
+<b>.String(<i>string</i>)</b> appends "String" hint. This needs preceding "StringFormat" part in order to determine the way to parse.
+If "StringFormat" is not provided, then C# format is used as default.
+[!code-csharp[Snippet](Examples.cs#Snippet_7b)]
+
+<b>.Format(<i>string</i>)</b> appends C# String formulation value.
+[!code-csharp[Snippet](Examples.cs#Snippet_7c)]
+
+<b>.Text(<i>string</i>)</b> appends plain text "String" value.
+[!code-csharp[Snippet](Examples.cs#Snippet_7d)]
+
+<b>.ResolveString()</b> resolves the string in current executing context. The result struct is <b>LineString</b>.
+[!code-csharp[Snippet](Examples.cs#Snippet_8a)]
+
+# Inlining
 Code can be [automatically scanned](http://lexical.fi/sdk/Localization/docs/InlineScanner/index.html) for inlined strings and exported to localization files.
 They can be used as templates for further translation process. 
 This way the templates don't need to be manually updated as the code evolves.
+<br/>
 
-Default language strings can be written right into the code with 
-<b>.Inline(<i>string</i>)</b> which sets string for the root culture "".
-[!code-csharp[Snippet](Examples.cs#Snippet_7a)]
+<b>.Inline(<i>string</i> subkey, <i>string</i> text)</b> appends an inlined sub-line.
+[!code-csharp[Snippet](Examples.cs#Snippet_7e)]
 
-Inlining can be provided for specific cultures with <b>.Inline(<i>string</i>, <i>string</i>)</b>.
-[!code-csharp[Snippet](Examples.cs#Snippet_7b)]
+<b>.en(<i>string</i>)</b> appends inlined value for that culture "en".
+[!code-csharp[Snippet](Examples.cs#Snippet_7f)]
 
-There are shorter extension methods for every language in namespace **Lexical.Localization.Inlines**. 
-[!code-csharp[Snippet](Examples.cs#Snippet_7c)]
+It's recommended to put inlined lines to variables for better performance. Inline allocates a Dictionary internally.
+[!code-csharp[Snippet](Examples.cs#Snippet_7h)]
 
-Caveat however, that inlining to specific cultures with <b>.Inline(<i>string</i>, <i>string</i>)</b> allocates a dictionary internally, so it might be good idea to put the key into a static reference.
-[!code-csharp[Snippet](Examples.cs#Snippet_7d)]
+# Resources
+<b>.ResolveBytes()</b> resolves the line to bytes in the current executing context. The result struct is <b>LineResourceBytes</b>.
+[!code-csharp[Snippet](Examples.cs#Snippet_10a)]
 
-## Dynamic use
-Asset keys from LineRoot and StringLineRoot are dynamically usable.
-[!code-csharp[Snippet](Examples.cs#Snippet_10)]
+<b>.ResolveStream()</b> resolves the line to string in the current executing context. The result struct is <b>LineResourceStream</b>.
+[!code-csharp[Snippet](Examples.cs#Snippet_10b)]
 
-## Use in classes
+# Use in classes
 If class is designed to support dependency injection without string localizers, the constructors should 
-take in argument *ILine&lt;T&gt;* and possibly *ILineRoot*. See more in [Best Practices](../BestPractices/).
+take in argument *ILine&lt;T&gt;* and possibly *ILineRoot*. See more in [Best Practices](../BestPractices/ClassLibrary/index.md).
 Constructor argument **ILine&lt;T&gt;** helps the Dependency Injection to assign the localization so that it is scoped in to correct typesection.
-[!code-csharp[Snippet](Examples.cs#Snippet_11a)]
+[!code-csharp[Snippet](Examples.cs#Snippet_9a)]
 
 If class is designed to use static instance and without dependency injection, localization reference can be acquired from **LineRoot**.
-[!code-csharp[Snippet](Examples.cs#Snippet_11b)]
+[!code-csharp[Snippet](Examples.cs#Snippet_9b)]

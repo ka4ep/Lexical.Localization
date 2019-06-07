@@ -151,7 +151,7 @@ namespace Lexical.Localization.Resolver
                     // Assert type was loaded
                     if (type == null) throw new TypeLoadException($"Could not resolve Type {typeName}.");
                     // Assert type is assignable
-                    if (!typeof(IEnumerable<T>).IsAssignableFrom(type)) throw new InvalidCastException($"{typeName} doesn't implement {nameof(T)}");
+                    if (!typeof(T).IsAssignableFrom(type)) throw new InvalidCastException($"{typeName} doesn't implement {nameof(T)}");
                     // Instantiate type
                     object obj = Activator.CreateInstance(type);
                     // Cast

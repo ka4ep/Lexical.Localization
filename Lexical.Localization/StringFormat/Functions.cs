@@ -65,6 +65,17 @@ namespace Lexical.Localization.StringFormat
         {
             if (argument == null) { result = null; return false; }
             string formatStr = format?.ToString();
+
+            // Try custom format provider
+            if (ctx.FormatProvider != null) {
+                ICustomFormatter customFormatter__ = ctx.FormatProvider.GetFormat(typeof(ICustomFormatter)) as ICustomFormatter;
+                if (customFormatter__ != null)
+                {
+                    string custom_formatter_result = customFormatter__.Format(formatStr, argument, ctx.Culture);
+                    if (custom_formatter_result != null) { result = custom_formatter_result; return true; }
+                }
+            }
+
             if (formatStr != null && argument is IFormattable formattable) { result = formattable.ToString(formatStr, ctx.Culture); return true; }
             if (ctx.Culture.GetFormat(typeof(ICustomFormatter)) is ICustomFormatter customFormatter_) { result = customFormatter_.Format(formatStr, argument, ctx.Culture); return true; }
             result = ctx.Culture == null ? String.Format("{0:" + formatStr + "}", argument) : String.Format(ctx.Culture, "{0:" + formatStr + "}", argument);

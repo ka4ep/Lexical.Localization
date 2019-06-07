@@ -49,6 +49,15 @@ namespace Lexical.Localization
         }
 
         /// <summary>
+        /// Create new culture policy with initial cultures <paramref name="initialCultures"/>.
+        /// </summary>
+        /// <param name="initialCultures"></param>
+        public CulturePolicy(params CultureInfo[] initialCultures)
+        {
+            source = new CulturePolicyArray(initialCultures ?? NO_CULTURES);
+        }
+
+        /// <summary>
         /// Assign new enumerable
         /// </summary>
         /// <param name="culturePolicy"></param>

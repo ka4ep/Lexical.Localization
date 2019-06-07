@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.27.0-rc</Version>
+    <Version>0.27.0</Version>
     <Authors>Toni Kalajainen</Authors>
     <Company>Lexical</Company>
     <Description>Proper localization class library for C#.</Description>

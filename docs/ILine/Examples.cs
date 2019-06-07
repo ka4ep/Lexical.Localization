@@ -1,209 +1,385 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Reflection;
 using Lexical.Localization;
 using Lexical.Localization.Asset;
 #region Snippet_7b1
 using Lexical.Localization.Inlines;
+using Lexical.Localization.Plurality;
+using Lexical.Localization.Resolver;
+using Lexical.Localization.Resource;
 using Lexical.Localization.StringFormat;
 #endregion Snippet_7b1
 
 namespace docs
 {
-    public class Key_Examples
+    public class ILine_Examples
     {
         public static void Main(string[] args)
         {
+            // 1. Line
             {
-                IAsset asset = new StringAsset(new Dictionary<string, string> { { "Culture:en:Key:hello", "Hello World!" } }, LineFormat.Parameters);
-                // Assign the composition to root
-                ILineRoot root = new LineRoot(asset, new CulturePolicy());
-                #region Snippet_0
-                #endregion Snippet_0
-            }
-
-            {
-                #region Snippet_1
+                #region Snippet_1a
                 ILine key = LineRoot.Global.PluralRules("Unicode.CLDR35").Key("Key").Format("Hello, {0}");
-                #endregion Snippet_1
+                #endregion Snippet_1a
             }
 
             {
-                #region Snippet_2
+                #region Snippet_1b
                 ILineRoot root = new LineRoot();
 
-                ILine section1 = root.Section("Section1");
-                ILine section2 = section1.Section("Section2");
-                ILine section1_1 = section1.Section("Section1.1");
+                ILine hint1 = root.PluralRules("Unicode.CLDR35");
+                ILine section1 = hint1.Section("Section2");
+                ILine section1_1 = hint1.Section("Section1.1");
                 ILine key1_1_1 = section1_1.Key("Key1");
                 ILine key1_1_2 = section1_1.Key("Key2");
+                ILine value1_1_1 = key1_1_1.Format("Hello, {0}");
                 // ...
-                #endregion Snippet_2
+                #endregion Snippet_1b
             }
 
+            // 2. Parts
             {
-                IAsset asset = null;
+                #region Snippet_2a
+                IAsset resourceAsset = new ResourceDictionary( new Dictionary<ILine, byte[]>() );
+                ILine line = LineRoot.Global.Asset(resourceAsset);
+                #endregion Snippet_2a
+            }
+            {
+                #region Snippet_2b
+                ILine line = LineRoot.Global.Logger(Console.Out, LineStatusSeverity.Ok);
+                #endregion Snippet_2b
+            }
+            {
+                #region Snippet_2c
+                ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentCulture();
+                ILine line = LineRoot.Global.CulturePolicy(culturePolicy);
+                #endregion Snippet_2c
+            }
+            {
+                #region Snippet_2d
+                #endregion Snippet_2d
+            }
+            {
+                #region Snippet_2e
+                #endregion Snippet_2e
+            }
+            {
+                #region Snippet_2f
+                #endregion Snippet_2f
+            }
+            {
+                #region Snippet_2g
+                #endregion Snippet_2g
+            }
+            {
+                #region Snippet_2h
+                #endregion Snippet_2h
+            }
+
+            // 3. Hints
+            {
                 #region Snippet_3a
-                // Create localization reference
-                ILine key = new LineRoot().Section("Section").Section("Section").Key("Key");
-
-                // Retrieve string with a reference
-                IString value = asset.GetLine(key.Culture("en")).GetString();
-
-                // Retrieve binary resource with a reference
-                byte[] data = asset.GetResourceBytes(key.Culture("en")).Value;
+                ILine line1 = LineRoot.Global.StringFormat(TextFormat.Default).String("Text");
+                ILine line2 = LineRoot.Global.StringFormat("Lexical.Localization.StringFormat.TextFormat,Lexical.Localization")
+                    .String("Text");
                 #endregion Snippet_3a
+                Console.WriteLine(line2);
             }
             {
                 #region Snippet_3b
-                // Language string source
-                Dictionary<string, string> src = new Dictionary<string, string> { { "en:Section:Key", "Hello World!" } };
-                // Create Asset
-                IAsset asset = new StringAsset(src, LineParameterPrinter.Colon_Colon_Colon);
-                // Create culture policy
-                ICulturePolicy culturePolicy = new CulturePolicy();
-                // Create root
-                ILineRoot root = new LineRoot(asset, culturePolicy);
-                // Set Current Culture
-                CultureInfo.CurrentCulture = new CultureInfo("en");
-                // Create key specific provider
-                ILine key = root.Section("Section").Key("Key");
-                // Retieve string from provider
-                string str = key.ToString();
-                // Retrieve binary resoruce from provider
-                byte[] data = key.GetResourceBytes().Value;
+                IPluralRules pluralRules = PluralRulesResolver.Default.Resolve("Unicode.CLDR35");
+                ILine line1 = LineRoot.Global.PluralRules(pluralRules);
+                ILine line2 = LineRoot.Global.PluralRules("Unicode.CLDR35");
                 #endregion Snippet_3b
+                Console.WriteLine(line2);
+            }
+            {
+                #region Snippet_3c
+                IFormatProvider customFormat = new CustomFormat();
+                ILine line1 = LineRoot.Global.FormatProvider(customFormat).Format("{0:DATE}").Value(DateTime.Now);
+                ILine line2 = LineRoot.Global.FormatProvider("docs.CustomFormat,docs").Format("{0:DATE}").Value(DateTime.Now);
+                #endregion Snippet_3c
+                Console.WriteLine(line1);
+                Console.WriteLine(line2);
+            }
+            {
+                #region Snippet_3e
+                ResolveSource[] resolveSequence = 
+                    new ResolveSource[] { ResolveSource.Inlines, ResolveSource.Asset, ResolveSource.Key };
+
+                IStringResolver stringResolver = new StringResolver(Resolvers.Default, resolveSequence);
+                ILine line = LineRoot.Global.StringResolver(stringResolver);
+                #endregion Snippet_3e
+                Console.WriteLine(line);
+            }
+            {
+                #region Snippet_3f
+                ILine line = LineRoot.Global.StringResolver("Lexical.Localization.StringFormat.StringResolver");
+                #endregion Snippet_3f
+                Console.WriteLine(line);
+            }
+            {
+                #region Snippet_3g
+                ResolveSource[] resolveSequence = 
+                    new ResolveSource[] { ResolveSource.Inlines, ResolveSource.Asset, ResolveSource.Key };
+
+                IResourceResolver resourceResolver = new ResourceResolver(Resolvers.Default, resolveSequence);
+                ILine line = LineRoot.Global.ResourceResolver(resourceResolver);
+                #endregion Snippet_3g
+                Console.WriteLine(line);
+            }
+            {
+                #region Snippet_3h
+                ILine line = LineRoot.Global.ResourceResolver("Lexical.Localization.Resource.ResourceResolver");
+                #endregion Snippet_3h
+                Console.WriteLine(line);
             }
 
+            // 4. Keys
             {
                 #region Snippet_4a
-                // Add canonical parts
-                ILine key = new LineRoot().Section("Section1").Section("Section2").Key("Key");
-
-                // "Section1:Section2:Key"
-                string id = LineParameterPrinter.Colon_Colon_Colon.Print(key);
                 #endregion Snippet_4a
             }
             {
                 #region Snippet_4b
-                // Add canonical parts, and non-canonical culture
-                ILine key1 = new LineRoot().Section("Section").Key("Key").Culture("en");
-                ILine key2 = new LineRoot().Culture("en").Section("Section").Key("Key");
-
-                // "en:Section1:Section2:Key"
-                string id1 = LineParameterPrinter.Colon_Colon_Colon.Print(key1);
-                // "en:Section1:Section2:Key"
-                string id2 = LineParameterPrinter.Colon_Colon_Colon.Print(key2);
                 #endregion Snippet_4b
             }
+            {
+                #region Snippet_4c
+                #endregion Snippet_4c
+            }
+            {
+                #region Snippet_4d
+                #endregion Snippet_4d
+            }
+            {
+                #region Snippet_4e
+                #endregion Snippet_4e
+            }
+            {
+                #region Snippet_4f
+                #endregion Snippet_4f
+            }
+            {
+                #region Snippet_4g
+                #endregion Snippet_4g
+            }
+            {
+                #region Snippet_4h
+                #endregion Snippet_4h
+            }
 
+            // 5. Non-canonicals
+            {
+                #region Snippet_5a
+                Assembly asm = typeof(ILine_Examples).Assembly;
+                ILine line1 = LineRoot.Global.Assembly(asm);
+                ILine line2 = LineRoot.Global.Assembly("docs");
+                #endregion Snippet_5a
+            }
+            {
+                #region Snippet_5b
+                CultureInfo culture = CultureInfo.GetCultureInfo("en");
+                ILine line1 = LineRoot.Global.Culture(culture);
+                ILine line2 = LineRoot.Global.Culture("en");
+                #endregion Snippet_5b
+            }
+            {
+                #region Snippet_5c
+                ILine line1 = LineRoot.Global.Type<ILine_Examples>();
+                ILine line2 = LineRoot.Global.Type(typeof(ILine_Examples));
+                #endregion Snippet_5c
+            }
+            {
+                #region Snippet_5d
+                #endregion Snippet_5d
+            }
+            {
+                #region Snippet_5e
+                #endregion Snippet_5e
+            }
+            {
+                #region Snippet_5f
+                #endregion Snippet_5f
+            }
+            {
+                #region Snippet_5g
+                #endregion Snippet_5g
+            }
+            {
+                #region Snippet_5h
+                #endregion Snippet_5h
+            }
 
+            // 6. Canonicals
             {
                 #region Snippet_6a
-                // Create language strings
-                Dictionary<string, string> strs = new Dictionary<string, string>();
-                strs["ConsoleApp1.MyController:Error"] = "Error (Code=0x{0:X8})";
-                // Create asset
-                IAsset asset = new StringAsset(strs, LineParameterPrinter.Default);
-                // Create root
-                ILineRoot root = new LineRoot(asset);
+                ILine line = LineRoot.Global.Key("Ok");
                 #endregion Snippet_6a
-
+            }
+            {
                 #region Snippet_6b
-                // Create key "Error"
-                ILine key = root.Type("ConsoleApp1.MyController").Key("Error");
-                // Formulate key
-                ILine key_formulated = key.Value(0xFeedF00d);
+                ILine line = LineRoot.Global.Section("Resources").Key("Ok");
                 #endregion Snippet_6b
-                {
-                    #region Snippet_6c
-                    // Resolve to localized string "Error (Code=0x{0:X8})", but does not append arguments
-                    IString str = key_formulated.ResolveFormatString();
+            }
+            {
+                #region Snippet_6c
+                ILine line = LineRoot.Global.Location(@"c:\dir");
                 #endregion Snippet_6c
-                }
-                {
-                    #region Snippet_6d
-                    // Resolve to formulated string to "Error (Code=0xFEEDF00D)"
-                    LineString str = key_formulated.ResolveString();
-                    #endregion Snippet_6d
-                }
+            }
+            {
+                #region Snippet_6d
+                ILine line = LineRoot.Global.BaseName("docs.Resources");
+                #endregion Snippet_6d
+            }
+            {
+                #region Snippet_6e
+                #endregion Snippet_6e
+            }
+            {
+                #region Snippet_6f
+                #endregion Snippet_6f
+            }
+            {
+                #region Snippet_6g
+                #endregion Snippet_6g
+            }
+            {
+                #region Snippet_6h
+                #endregion Snippet_6h
             }
 
-
+            // 7. Strings
             {
                 #region Snippet_7a
-                // Create root
-                ILineRoot root = new LineRoot();
-                // Create key and add default value
-                ILine key = root.Section("Section").Key("Success").Format("Success");
-                // Resolve string from inlined key "Success"
-                string str = key.ToString();
+                IString str = CSharpFormat.Default.Parse("ErrorCode={0}");
+                ILine line = LineRoot.Global.Key("Error").String(str);
                 #endregion Snippet_7a
             }
-
             {
-                // Create root
-                ILineRoot root = new LineRoot();
                 #region Snippet_7b
-                // Create key and add default strings
-                ILine key = root.Section("Section").Key("Success")
+                ILine line = LineRoot.Global.Key("Error").StringFormat(CSharpFormat.Default).String("ErrorCode={0}");
+                #endregion Snippet_7b
+            }
+            {
+                #region Snippet_7c
+                ILine line = LineRoot.Global.Key("Error").Format("ErrorCode={0}");
+                #endregion Snippet_7c
+            }
+            {
+                #region Snippet_7d
+                ILine line = LineRoot.Global.Key("Hello").Text("Hello World");
+                #endregion Snippet_7d
+            }
+            {
+                #region Snippet_7e
+                ILine line = LineRoot.Global.Section("Section").Key("Success")
                     .Format("Success")                                  // Add inlining to the root culture ""
                     .Inline("Culture:en", "Success")                   // Add inlining to culture "en"
                     .Inline("Culture:fi", "Onnistui")                  // Add inlining to culture "fi"
                     .Inline("Culture:sv", "Det funkar");               // Add inlining to culture "sv"
-                // Resolve string from inlined key "Success"
-                string str = key.Culture("en").ToString();
-                #endregion Snippet_7b
+                #endregion Snippet_7e
             }
-
             {
-                // Create root
-                ILineRoot root = new LineRoot();
-                #region Snippet_7c
-                // Create key and add default strings
-                ILine key = root.Section("Section").Key("Success")
+                #region Snippet_7f
+                ILine line = LineRoot.Global.Section("Section").Key("Success")
                     .Format("Success")                                  // Add inlining to the root culture ""
-                    .en("Success")                                     // Add inlining to culture "en"
-                    .fi("Onnistui")                                    // Add inlining to culture "fi"
-                    .sv("Det funkar");                                 // Add inlining to culture "sv"
-                #endregion Snippet_7c
+                    .en("Success")                                      // Add inlining to culture "en"
+                    .fi("Onnistui")                                     // Add inlining to culture "fi"
+                    .sv("Det funkar");                                  // Add inlining to culture "sv"
+                #endregion Snippet_7f
+            }
+            {
+                #region Snippet_7g
+                #endregion Snippet_7g
+            }
+            {
+                #region Snippet_7i
+                #endregion Snippet_7i
             }
 
+            // 8. Values
             {
                 #region Snippet_8a
-                // Assign key to localization of type "MyController"
-                ILine key = new LineRoot().Type(typeof(MyController));
-                // Search "MyController:Success"
-                string str = key.Key("Success").ToString();
+                ILine line = LineRoot.Global.Key("Error").Format("ErrorCode={0}").Value(0x100);
+                LineString result = line.ResolveString();
                 #endregion Snippet_8a
             }
-
             {
                 #region Snippet_8b
-                // Assign key to localization of type "MyController"
-                ILine<MyController> key = new LineRoot().Type<MyController>();
                 #endregion Snippet_8b
             }
-
             {
-                #region Snippet_9a
-                // Create root that matches only to english strings
-                ILine root_en = new LineRoot().Culture("en");
-                // Create key
-                ILine key = root_en.Section("Section").Key("Key");
-                #endregion Snippet_9a
+                #region Snippet_8c
+                #endregion Snippet_8c
+            }
+            {
+                #region Snippet_8d
+                #endregion Snippet_8d
+            }
+            {
+                #region Snippet_8e
+                #endregion Snippet_8e
+            }
+            {
+                #region Snippet_8f
+                #endregion Snippet_8f
+            }
+            {
+                #region Snippet_8g
+                #endregion Snippet_8g
+            }
+            {
+                #region Snippet_8h
+                #endregion Snippet_8h
             }
 
+            // 10. Resources
             {
-                #region Snippet_10
-                // Dynamic assignment
-                dynamic root = new LineRoot();
-                // Provides to string on typecast
-                string str = root.Section("Section").Key("Hello");
-                #endregion Snippet_10
+                #region Snippet_10a
+                ILine line = LineRoot.Global.Key("Error").Resource(new byte[] { 1, 2, 3 });
+                LineResourceBytes result = line.ResolveBytes();
+                #endregion Snippet_10a
+            }
+            {
+                #region Snippet_10b
+                ILine line = LineRoot.Global.Key("Error").Resource(new byte[] { 1, 2, 3 });
+                using (LineResourceStream result = line.ResolveStream())
+                {
+
+                }
+                #endregion Snippet_10b
+            }
+            {
+                #region Snippet_10c
+                #endregion Snippet_10c
+            }
+            {
+                #region Snippet_10d
+                #endregion Snippet_10d
+            }
+            {
+                #region Snippet_10e
+                #endregion Snippet_10e
+            }
+            {
+                #region Snippet_10f
+                #endregion Snippet_10f
+            }
+            {
+                #region Snippet_10g
+                #endregion Snippet_10g
+            }
+            {
+                #region Snippet_10h
+                #endregion Snippet_10h
             }
         }
 
-        #region Snippet_11a
+        // 9. Use in classes
+        #region Snippet_9a
         class MyController
         {
             ILine localization;
@@ -223,9 +399,9 @@ namespace docs
                 string str = localization.Key("Success").en("Success").fi("Onnistui").ToString();
             }
         }
-        #endregion Snippet_11a
+        #endregion Snippet_9a
 
-        #region Snippet_11b
+        #region Snippet_9b
         class MyControllerB
         {
             static ILine localization = LineRoot.Global.Type<MyControllerB>();
@@ -235,9 +411,9 @@ namespace docs
                 string str = localization.Key("Success").en("Success").fi("Onnistui").ToString();
             }
         }
-        #endregion Snippet_11b
+        #endregion Snippet_9b
 
-        #region Snippet_7d
+        #region Snippet_7h
         class MyController__
         {
             static ILine localization = LineRoot.Global.Type<MyControllerB>();
@@ -248,8 +424,25 @@ namespace docs
                 return Success.ToString();
             }
         }
-        #endregion Snippet_7d
-
+        #endregion Snippet_7h
     }
+
+    #region Snippet_3d
+    public class CustomFormat : IFormatProvider, ICustomFormatter
+    {
+        public string Format(string format, object arg, IFormatProvider formatProvider)
+        {
+            if (format == "DATE" && arg is DateTime time)
+            {
+                return time.Date.ToString();
+            }
+            return null;
+        }
+
+        public object GetFormat(Type formatType)
+            => formatType == typeof(ICustomFormatter) ? this : default;
+    }
+    #endregion Snippet_3d
+
 
 }

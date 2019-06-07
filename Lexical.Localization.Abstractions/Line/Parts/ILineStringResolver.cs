@@ -24,20 +24,41 @@ namespace Lexical.Localization
         /// Append localization resolver.
         /// </summary>
         /// <param name="line"></param>
-        /// <param name="resolver"></param>
+        /// <param name="stringResolver"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If part append fails</exception>
-        public static ILineStringResolver Resolver(this ILine line, IStringResolver resolver)
-            => line.Append<ILineStringResolver, IStringResolver>(resolver);
+        public static ILineStringResolver StringResolver(this ILine line, IStringResolver stringResolver)
+            => line.Append<ILineStringResolver, IStringResolver>(stringResolver);
 
         /// <summary>
         /// Create localization resolver.
         /// </summary>
         /// <param name="lineFactory"></param>
-        /// <param name="resolver"></param>
+        /// <param name="stringResolver"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">If part append fails</exception>
-        public static ILineStringResolver Resolver(this ILineFactory lineFactory, IStringResolver resolver)
-            => lineFactory.Create<ILineStringResolver, IStringResolver>(null, resolver);
+        public static ILineStringResolver StringResolver(this ILineFactory lineFactory, IStringResolver stringResolver)
+            => lineFactory.Create<ILineStringResolver, IStringResolver>(null, stringResolver);
+
+        /// <summary>
+        /// Append localization resolver.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="stringResolver">Assembly qualified class name to <see cref="IStringResolver"/></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If part append fails</exception>
+        public static ILineHint StringResolver(this ILine line, string stringResolver)
+            => line.Append<ILineHint, string, string>("StringResolver", stringResolver);
+
+        /// <summary>
+        /// Create localization resolver.
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="stringResolver">Assembly qualified class name to <see cref="IStringResolver"/></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If part append fails</exception>
+        public static ILineHint StringResolver(this ILineFactory lineFactory, string stringResolver)
+            => lineFactory.Create<ILineHint, string, string>(null, "StringResolver", stringResolver);
+
     }
 }

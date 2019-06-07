@@ -50,5 +50,36 @@ namespace Lexical.Localization
         /// <exception cref="LineException">If <see cref="ILineFormatProvider"/> could not be appended</exception>
         public static ILineFormatProvider FormatProvider(this ILineFactory lineFactory, IFormatProvider formatProvider)
             => lineFactory.Create<ILineFormatProvider, IFormatProvider>(null, formatProvider);
+
+        /// <summary>
+        /// Append format provider key.
+        /// 
+        /// Format provider is requested for following interfaces:
+        /// <list type="bullet">
+        /// <item><see cref="ICustomFormatter"/></item>
+        /// </list>        
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="formatProvider">assembly qualified class name to <see cref="IFormatProvider"/></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If <see cref="ILineFormatProvider"/> could not be appended</exception>
+        public static ILineHint FormatProvider(this ILine line, string formatProvider)
+            => line.Append<ILineHint, string, string>("FormatProvider", formatProvider);
+
+        /// <summary>
+        /// Append format provider key.
+        /// 
+        /// Format provider is requested for following interfaces:
+        /// <list type="bullet">
+        /// <item><see cref="ICustomFormatter"/></item>
+        /// </list>        
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="formatProvider">assembly qualified class name to <see cref="IFormatProvider"/></param>
+        /// <returns>new key</returns>
+        /// <exception cref="LineException">If <see cref="ILineFormatProvider"/> could not be appended</exception>
+        public static ILineHint FormatProvider(this ILineFactory lineFactory, string formatProvider)
+            => lineFactory.Create<ILineHint, string, string>(null, "FormatProvider", formatProvider);
+
     }
 }

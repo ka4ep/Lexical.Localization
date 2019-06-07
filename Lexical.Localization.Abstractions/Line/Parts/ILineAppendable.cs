@@ -7,6 +7,7 @@ using System;
 
 namespace Lexical.Localization
 {
+    #region Interface
     /// <summary>
     /// A line where new <see cref="ILine"/> can be appended.
     /// </summary>
@@ -17,6 +18,7 @@ namespace Lexical.Localization
         /// </summary>
         ILineFactory Appender { get; set; }
     }
+    #endregion Interface
 
     /// <summary></summary>
     public static partial class ILineExtensions

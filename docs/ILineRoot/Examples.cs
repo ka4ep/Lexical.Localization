@@ -13,7 +13,9 @@ namespace docs
             {
                 #region Snippet_1a
                 // Create localization source
-                var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
+                var source = new Dictionary<string, string> {
+                    { "Culture:en:Type:MyController:Key:hello", "Hello World!" }
+                };
                 // Create asset
                 IAsset asset = new StringAsset(source, LineFormat.Parameters);
                 // Create culture policy
@@ -37,7 +39,9 @@ namespace docs
 
             {
                 // Create localization source
-                var source = new Dictionary<string, string> { { "Culture:en:Section:Section:Key:Key", "Hello World!" } };
+                var source = new Dictionary<string, string> {
+                    { "Culture:en:Section:Section:Key:Key", "Hello World!" }
+                };
                 // Create asset
                 IAsset asset = new StringAsset(source, LineFormat.Parameters);
                 #region Snippet_5x
@@ -56,7 +60,9 @@ namespace docs
 
                 #region Snippet_2b
                 // Create localization source
-                var source = new Dictionary<string, string> { { "Culture:en:Type:MyController:Key:hello", "Hello World!" } };
+                var source = new Dictionary<string, string> {
+                    { "Culture:en:Type:MyController:Key:hello", "Hello World!" }
+                };
                 // Create asset
                 IAsset asset = new StringAsset(source, LineFormat.Parameters);
                 // Assets are added to global static builder. It must be (re-)built after adding.
