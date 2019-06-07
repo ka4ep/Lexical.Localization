@@ -23,6 +23,10 @@ namespace docs
                 Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateTime.Now));
                 Console.WriteLine(String.Format("It is now {0:d} at {0:t}", DateTime.Now));
                 #endregion Snippet_1c
+                #region Snippet_1d
+                LineString resolved_string = line.Value("Corellia Melody").ResolveString();
+                Console.WriteLine(resolved_string.Status);
+                #endregion Snippet_1d
             }
             {
                 #region Snippet_2
@@ -98,9 +102,12 @@ namespace docs
             {
                 #region Snippet_8
                 ILine line1a = LineRoot.Global.Key("Cats").Format("{0} cat(s)");
-                ILine line1b = LineRoot.Global.Key("Cats").String(CSharpFormat.Default.Parse("{0} cat(s)"));
+                IString string1 = CSharpFormat.Default.Parse("{0} cat(s)");
+                ILine line1b = LineRoot.Global.Key("Cats").String(string1);
+
                 ILine line2a = LineRoot.Global.Key("Ok").Text("{in braces}");
-                ILine line2b = LineRoot.Global.Key("Ok").String(TextFormat.Default.Parse("{in braces}"));
+                IString string2 = TextFormat.Default.Parse("{in braces}");
+                ILine line2b = LineRoot.Global.Key("Ok").String(string2);
                 #endregion Snippet_8
             }
             {

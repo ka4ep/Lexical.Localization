@@ -29,14 +29,17 @@ Localization assets can be read from files.
 Implementing classes can be provided within code.
 [!code-csharp[Snippet](Examples.cs#Snippet_6)]
 
-Localization can be logged with various kinds of loggers.
+Loggers can be appended to *ILine* for debugging purposes.
 [!code-csharp[Snippet](Examples.cs#Snippet_7)]
 
-Different string formats, such as C#'s *String.Format*, are supported. 
+Different string formats, such as C#'s *String.Format*, are supported. **IStringFormat** is an abstraction to string formats.
 [!code-csharp[Snippet](Examples.cs#Snippet_8)]
 
 **ICulturePolicy** determines which culture to apply.
 [!code-csharp[Snippet](Examples.cs#Snippet_9)]
+
+*ILine.ToString()* is a shortcut to <b><i>ILine</i>.ResolveString()</b>, which returns with additional information about the resolve process. 
+[!code-csharp[Snippet](Examples.cs#Snippet_1d)]
 
 **Links**
 * [Website](http://lexical.fi/Localization/index.html)
