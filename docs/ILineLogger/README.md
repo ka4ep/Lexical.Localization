@@ -1,6 +1,6 @@
 # Introduction
 <details>
-  <summary><b>ILogger</b> is interface for logging string and resource resolve results. (<u>Click here</u>)</summary>
+  <summary><b>Lexical.Localization.Common.ILogger</b> is interface for logging string and resource resolve results. (<u>Click here</u>)</summary>
 
 ```csharp
 namespace Lexical.Localization.Common

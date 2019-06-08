@@ -32,7 +32,7 @@ IAsset resourceAsset = new ResourceDictionary( new Dictionary<ILine, byte[]>() )
 ILine line = LineRoot.Global.Asset(resourceAsset);
 ```
 
-<b>.Logger(<i>ILocalizationLogger</i>)</b> adds logger as line part.
+<b>.Logger(<i>ILogger</i>)</b> adds logger as line part.
 
 ```csharp
 ILine line = LineRoot.Global.Logger(Console.Out, LineStatusSeverity.Ok);
@@ -269,6 +269,85 @@ class MyController__
         return Success.ToString();
     }
 }
+```
+
+# Enumerations
+Enumerables can be localized just as any other type. 
+
+```csharp
+[Flags]
+enum CarFeature
+{
+    // Fuel Type
+    Electric = 0x0001,
+    Petrol = 0x0002,
+    NaturalGas = 0x0004,
+
+    // Door count
+    TwoDoors = 0x0010,
+    FourDoors = 0x0020,
+    FiveDoors = 0x0040,
+
+    // Color
+    Red = 0x0100,
+    Black = 0x0200,
+    White = 0x0400,
+}
+```
+
+<b>.Type&lt;T&gt;()</b> appends "Type" key.
+
+```csharp
+ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>();
+```
+
+<b>.InlineEnum&lt;T&gt;()</b> adds every case of enum as-is to default culture "" inlines.
+
+```csharp
+ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>();
+```
+
+<b>.Enum(<i>enum</i>)</b> appends a "Key" parameter. Together <b>.Type()</b> and <b>.Enum()</b> create a key "Type:enumType:Key:enumCase", which can matched with culture specific descriptions in localization files.
+
+```csharp
+Console.WriteLine( carFeature.Enum(CarFeature.Petrol) );
+Console.WriteLine( carFeature.Enum(CarFeature.Petrol).Culture("fi") );
+```
+
+The result of the example above.
+```none
+Petrol
+Bensiini
+```
+
+<b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inline a culture specific text.
+
+```csharp
+ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>()
+    .InlineEnum<CarFeature>()
+    .InlineEnum(CarFeature.Electric, "fi", "Sähkö")
+    .InlineEnum(CarFeature.Petrol, "fi", "Bensiini")
+    .InlineEnum(CarFeature.NaturalGas, "fi", "Maakaasu")
+    .InlineEnum(CarFeature.TwoDoors, "fi", "Kaksiovinen")
+    .InlineEnum(CarFeature.FourDoors, "fi", "Neliovinen")
+    .InlineEnum(CarFeature.FiveDoors, "fi", "Viisiovinen")
+    .InlineEnum(CarFeature.Red, "fi", "Punainen")
+    .InlineEnum(CarFeature.Black, "fi", "Musta")
+    .InlineEnum(CarFeature.White, "fi", "Valkoinen");
+```
+
+<b>.ResolveEnumFlags(<i>enum</i>, <i>separator</i>)</b> resolves each flag separately and puts together a string.
+
+```csharp
+CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
+Console.WriteLine( carFeature.ResolveEnumFlags(features, " | ") );
+Console.WriteLine( carFeature.Culture("fi").ResolveEnumFlags(features, " | ") );
+```
+
+The result of the example above.
+```none
+Petrol | FiveDoors | Black
+Bensiini | Viisiovinen | Musta
 ```
 
 # Resources

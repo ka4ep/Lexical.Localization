@@ -116,6 +116,37 @@ This way the templates don't need to be manually updated as the code evolves.
 It's recommended to put inlined lines to variables for better performance. Inline allocates a Dictionary internally.
 [!code-csharp[Snippet](Examples.cs#Snippet_7h)]
 
+# Enumerations
+Enumerables can be localized just as any other type. 
+[!code-csharp[Snippet](Examples.cs#Snippet_7i)]
+
+<b>.Type&lt;T&gt;()</b> appends "Type" key.
+[!code-csharp[Snippet](Examples.cs#Snippet_7l)]
+
+<b>.InlineEnum&lt;T&gt;()</b> adds every case of enum as-is to default culture "" inlines.
+[!code-csharp[Snippet](Examples.cs#Snippet_7l2)]
+
+<b>.Enum(<i>enum</i>)</b> appends a "Key" parameter. Together <b>.Type()</b> and <b>.Enum()</b> create a key "Type:enumType:Key:enumCase", which can matched with culture specific descriptions in localization files.
+[!code-csharp[Snippet](Examples.cs#Snippet_7m2)]
+
+The result of the example above.
+```none
+Petrol
+Bensiini
+```
+
+<b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inline a culture specific text.
+[!code-csharp[Snippet](Examples.cs#Snippet_7m)]
+
+<b>.ResolveEnumFlags(<i>enum</i>, <i>separator</i>)</b> resolves each flag separately and puts together a string.
+[!code-csharp[Snippet](Examples.cs#Snippet_7m3)]
+
+The result of the example above.
+```none
+Petrol | FiveDoors | Black
+Bensiini | Viisiovinen | Musta
+```
+
 # Resources
 <b>.ResolveBytes()</b> resolves the line to bytes in the current executing context. The result struct is <b>LineResourceBytes</b>.
 [!code-csharp[Snippet](Examples.cs#Snippet_10a)]

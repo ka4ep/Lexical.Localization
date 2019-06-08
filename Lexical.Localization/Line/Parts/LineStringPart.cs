@@ -219,22 +219,5 @@ namespace Lexical.Localization
             return line;
         }
 
-        /// <summary>
-        /// Append string of current selected "StringFormat"
-        /// </summary>
-        /// <param name="part"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static ILineHint String(this ILine part, string value)
-            => part.Append<ILineHint, string, string>("String", value);
-
-        /// <summary>
-        /// Create raw non-formulated, non-placeholder string.
-        /// </summary>
-        /// <param name="lineFactory"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static ILineHint String(this ILineFactory lineFactory, string value)
-            => lineFactory.Create<ILineHint, string, string>(null, "String", value);
     }
 }

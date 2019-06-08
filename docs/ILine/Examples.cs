@@ -306,13 +306,42 @@ namespace docs
                     .sv("Det funkar");                                  // Add inlining to culture "sv"
                 #endregion Snippet_7f
             }
+
+            // Enumerations
             {
-                #region Snippet_7g
-                #endregion Snippet_7g
+                #region Snippet_7l
+                ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>();
+                #endregion Snippet_7l
             }
             {
-                #region Snippet_7i
-                #endregion Snippet_7i
+                #region Snippet_7l2
+                ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>();
+                #endregion Snippet_7l2
+            }
+            {
+                #region Snippet_7m
+                ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>()
+                    .InlineEnum<CarFeature>()
+                    .InlineEnum(CarFeature.Electric, "fi", "Sähkö")
+                    .InlineEnum(CarFeature.Petrol, "fi", "Bensiini")
+                    .InlineEnum(CarFeature.NaturalGas, "fi", "Maakaasu")
+                    .InlineEnum(CarFeature.TwoDoors, "fi", "Kaksiovinen")
+                    .InlineEnum(CarFeature.FourDoors, "fi", "Neliovinen")
+                    .InlineEnum(CarFeature.FiveDoors, "fi", "Viisiovinen")
+                    .InlineEnum(CarFeature.Red, "fi", "Punainen")
+                    .InlineEnum(CarFeature.Black, "fi", "Musta")
+                    .InlineEnum(CarFeature.White, "fi", "Valkoinen");
+                #endregion Snippet_7m
+                CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("");
+                #region Snippet_7m2
+                Console.WriteLine( carFeature.Enum(CarFeature.Petrol) );
+                Console.WriteLine( carFeature.Enum(CarFeature.Petrol).Culture("fi") );
+                #endregion Snippet_7m2
+                #region Snippet_7m3
+                CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
+                Console.WriteLine( carFeature.ResolveEnumFlags(features, " | ") );
+                Console.WriteLine( carFeature.Culture("fi").ResolveEnumFlags(features, " | ") );
+                #endregion Snippet_7m3
             }
 
             // 8. Values
@@ -458,6 +487,27 @@ namespace docs
             => formatType == typeof(ICustomFormatter) ? this : default;
     }
     #endregion Snippet_3d
+
+    #region Snippet_7i
+    [Flags]
+    enum CarFeature
+    {
+        // Fuel Type
+        Electric = 0x0001,
+        Petrol = 0x0002,
+        NaturalGas = 0x0004,
+
+        // Door count
+        TwoDoors = 0x0010,
+        FourDoors = 0x0020,
+        FiveDoors = 0x0040,
+
+        // Color
+        Red = 0x0100,
+        Black = 0x0200,
+        White = 0x0400,
+    }
+    #endregion Snippet_7i
 
 
 }

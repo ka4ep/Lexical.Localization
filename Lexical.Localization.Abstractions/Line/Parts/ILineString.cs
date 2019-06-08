@@ -42,6 +42,30 @@ namespace Lexical.Localization
             => lineFactory.Create<ILineString, IString>(null, value);
 
         /// <summary>
+        /// Append "String" hint. 
+        /// 
+        /// StringResolver will parse the hint using the active StringFormat.
+        /// If there is no active string format, then CSharp format is used
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILineHint String(this ILine part, String value)
+            => part.Append<ILineHint, string, string>("String", value);
+
+        /// <summary>
+        /// Create "String" hint.
+        /// 
+        /// StringResolver will parse the hint using the active StringFormat.
+        /// If there is no active string format, then CSharp format is used
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILineHint String(this ILineFactory lineFactory, String value)
+            => lineFactory.Create<ILineHint, string, string>(null, "String", value);
+
+        /// <summary>
         /// Get the <see cref="IString"/> of a <see cref="ILineString"/>.
         /// 
         /// If parameter "String" exists and <paramref name="resolver"/> is provided then value is resolved using
