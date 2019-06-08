@@ -30,6 +30,7 @@
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="2.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="12.*" PrivateAssets="all" />
+    <PackageReference Include="NLog" Version="4.0.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,10 +54,6 @@
       <LastGenOutput>InlineExtensions.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Common\" />
   </ItemGroup>
 
 </Project>

@@ -83,7 +83,7 @@ docs Information: 0 : ResolveOkFromKey|CultureOkMatchedNoCulture|PluralityOkNotU
 ```
 
 # ILogger
-**Microsoft.Extensions.Logger.ILogger** can be appended with **.ILogger**.
+**Microsoft.Extensions.Logger.ILogger** can be appended with <b>.ILogger(<i>ILogger</i>)<b>.
 
 ```csharp
 LoggerFactory loggerFactory = new LoggerFactory();
@@ -102,6 +102,70 @@ The logger output.
 ```none
 info: MyClass[0]
 ResolveOkFromKey | CultureOkMatchedNoCulture | PluralityOkNotUsed | StringFormatOkString Type: MyClass: Key: OK = "OK"
+```
+
+**Microsoft.Extensions.Logger.ILoggerFactory** can be appended with <b>.ILogger(<i>ILoggerFactory</i>)<b>.
+This applies the *Type* from the key, making the type specific log rules effective to localization events.
+
+```csharp
+LoggerFactory loggerFactory = new LoggerFactory();
+loggerFactory.AddConsole(LogLevel.Trace);
+ILine root = LineRoot.Global.ILogger(loggerFactory);
+```
+
+Resolving a string causes logger to print the resolved result.
+
+```csharp
+Console.WriteLine(root.Type("MyClass").Key("OK").Text("OK"));
+```
+
+The logger output.
+```none
+info: MyClass[0]
+ResolveOkFromKey | CultureOkMatchedNoCulture | PluralityOkNotUsed | StringFormatOkString Type: MyClass: Key: OK = "OK"
+```
+
+# NLog
+**NLog.ILogger** can be appended with <b>.NLog(<i>NLog.ILogger</i>)<b>.
+
+```csharp
+LoggerFactory loggerFactory = new LoggerFactory();
+loggerFactory.AddConsole(LogLevel.Trace);
+ILogger logger = loggerFactory.CreateLogger("MyClass");
+ILine root = LineRoot.Global.ILogger(logger);
+```
+
+Resolving a string causes logger to print the resolved result.
+
+```csharp
+Console.WriteLine(root.Type("MyClass").Key("OK").Text("OK"));
+```
+
+The logger output.
+```none
+2019-06-08 14:10:46.4939|INFO|MyClass|ResolveOkFromKey|CultureOkMatchedNoCulture|PluralityOkNotUsed|StringFormatOkString Type:MyClass:Key:OK = "OK"
+OK
+```
+
+**NLog.LoggerFactory** can be appended with <b>.NLog(<i>NLog.LoggerFactory</i>)<b>.
+This applies the *Type* from the key, making the type specific log rules effective to localization events.
+
+```csharp
+LoggerFactory loggerFactory = new LoggerFactory();
+loggerFactory.AddConsole(LogLevel.Trace);
+ILine root = LineRoot.Global.ILogger(loggerFactory);
+```
+
+Resolving a string causes logger to print the resolved result.
+
+```csharp
+Console.WriteLine(root.Type("MyClass").Key("OK").Text("OK"));
+```
+
+The logger output.
+```none
+2019-06-08 14:10:46.4939|INFO|MyClass|ResolveOkFromKey|CultureOkMatchedNoCulture|PluralityOkNotUsed|StringFormatOkString Type:MyClass:Key:OK = "OK"
+OK
 ```
 
 #LineRoot

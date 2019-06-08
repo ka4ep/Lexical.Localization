@@ -228,7 +228,7 @@ namespace Lexical.Localization
         StringFormatMask = 0x7FUL << Shift.StringFormat,
 
         //// Resource - IResourceAsset error codes
-        /// <summary>Ok, resource was read successfully.</summary>
+        /// <summary>Ok, resource was read successfully from unspecified source.</summary>
         ResourceOk = 0x01UL << Shift.Resource,
         /// <summary>Ok, resource was read from a stream of specified .</summary>
         ResourceOkFromStream = 0x04UL << Shift.Resource,
@@ -238,6 +238,8 @@ namespace Lexical.Localization
         ResourceOkFromEmbedded = 0x08UL << Shift.Resource,
         /// <summary>Ok, resource read from file provider</summary>
         ResourceOkFromFileProvider = 0x09UL << Shift.Resource,
+        /// <summary>Ok, resource read from database</summary>
+        ResourceOkFromDB = 0x0AUL << Shift.Resource,
         /// <summary>Warning for unspecified reason. </summary>
         ResourceWarning = 0x20UL << Shift.Resource,
         /// <summary>Error for unspecified reason. </summary>
@@ -246,15 +248,23 @@ namespace Lexical.Localization
         ResourceFailed = 0x60UL << Shift.Resource,
         /// <summary>Null value for unspecified reason</summary>
         ResourceFailedNull = 0x63UL << Shift.Resource,
-        /// <summary>Failed to read to bytes, 2GB limit exceeded</summary>
-        ResourceFailed2GBLimit = 0x65UL << Shift.Resource,
-        /// <summary>Resource was searched, but file was not found</summary>
-        ResourceFailedNotFound = 0x66UL << Shift.Resource,
+        /// <summary>Resource was not found</summary>
+        ResourceFailedNotFound = 0x66L << Shift.Resource,
+        /// <summary>Resource source is not available for unspecified reason.</summary>
+        ResourceFailedNotAvailable = 0x69UL << Shift.Resource,
+        /// <summary>IO error in resource asset</summary>
+        ResourceFailedIOException = 0x6AUL << Shift.Resource,
+        /// <summary>Resource source is busy, or has too many operations</summary>
+        ResourceFailedBusy = 0x6DUL << Shift.Resource,
+        /// <summary>Request to resource timeouted</summary>
+        ResourceFailedTimeout = 0x6EUL << Shift.Resource,
+        /// <summary>Connection or handle to resource source is closed.</summary>
+        ResourceFailedClosed = 0x6FUL << Shift.Resource,
         /// <summary>Failed to convert resource format</summary>
         ResourceFailedConversionError = 0x6cUL << Shift.Resource,
-        /// <summary>IO error in resource asset</summary>
-        ResourceFailedIOException = 0x7CUL << Shift.Resource,
-        /// <summary>Unexpected error in resource asset</summary>
+        /// <summary>Failed to read to bytes, 2GB limit exceeded</summary>
+        ResourceFailed2GBLimit = 0x71UL << Shift.Resource,
+        /// <summary>Unexpected exception in resource asset</summary>
         ResourceFailedException = 0x7DUL << Shift.Resource,
         /// <summary>Result has not been processed</summary>
         ResourceFailedNoResult = 0x7FUL << Shift.Resource,

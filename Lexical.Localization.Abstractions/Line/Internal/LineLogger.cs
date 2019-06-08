@@ -4,7 +4,6 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Resource;
-using Lexical.Localization.StringFormat;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -62,8 +61,10 @@ namespace Lexical.Localization.Internal
             var _logger = logger;
             // Is disposed?
             if (_logger == null) return;
-            if (LineStatusSeverity.Error >= this.severity)
-                _logger.WriteLine($"{error.GetType().Name}: {error.Message}");
+            // Severity under threshold?
+            if (error == null || severity < LineStatusSeverity.Error) return;
+            // Write exception
+            _logger.WriteLine("{0}: {1}", error.GetType().Name, error.Message);
         }
 
         /// <summary>
@@ -78,9 +79,13 @@ namespace Lexical.Localization.Internal
             if (_logger == null) return;
             // Get severity
             LineStatusSeverity severity = value.Severity;
+            // Severity under threshold?
+            if (severity < this.severity) return;
             // Write status
-            if (severity >= this.severity)
+            if (value.Exception==null)
                 _logger.WriteLine(value.DebugInfo);
+            else
+                _logger.WriteLine("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception.Message);
         }
 
         /// <summary>
@@ -95,9 +100,13 @@ namespace Lexical.Localization.Internal
             if (_logger == null) return;
             // Get severity
             LineStatusSeverity severity = value.Severity;
+            // Severity under threshold?
+            if (severity < this.severity) return;
             // Write status
-            if (severity >= this.severity)
+            if (value.Exception == null)
                 _logger.WriteLine(value.DebugInfo);
+            else
+                _logger.WriteLine("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception.Message);
         }
 
         /// <summary>
@@ -112,9 +121,13 @@ namespace Lexical.Localization.Internal
             if (_logger == null) return;
             // Get severity
             LineStatusSeverity severity = value.Severity;
+            // Severity under threshold?
+            if (severity < this.severity) return;
             // Write status
-            if (severity >= this.severity)
+            if (value.Exception == null)
                 _logger.WriteLine(value.DebugInfo);
+            else
+                _logger.WriteLine("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception.Message);
         }
     }
 
@@ -178,18 +191,39 @@ namespace Lexical.Localization.Internal
             // Threshold
             if (severity < this.severity) return;
             // Write status
-            switch (severity)
+            if (value.Exception == null)
             {
-                case LineStatusSeverity.Ok:
-                    Trace.TraceInformation(value.DebugInfo);
-                    return;
-                case LineStatusSeverity.Warning:
-                    Trace.TraceWarning(value.DebugInfo);
-                    return;
-                case LineStatusSeverity.Error:
-                case LineStatusSeverity.Failed:
-                    Trace.TraceError(value.DebugInfo);
-                    return;
+                // No exception
+                switch (severity)
+                {
+                    case LineStatusSeverity.Ok:
+                        Trace.TraceInformation(value.DebugInfo);
+                        return;
+                    case LineStatusSeverity.Warning:
+                        Trace.TraceWarning(value.DebugInfo);
+                        return;
+                    case LineStatusSeverity.Error:
+                    case LineStatusSeverity.Failed:
+                        Trace.TraceError(value.DebugInfo);
+                        return;
+                }
+            }
+            else
+            {
+                // With exception
+                switch (severity)
+                {
+                    case LineStatusSeverity.Ok:
+                        Trace.TraceInformation("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception);
+                        return;
+                    case LineStatusSeverity.Warning:
+                        Trace.TraceWarning("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception);
+                        return;
+                    case LineStatusSeverity.Error:
+                    case LineStatusSeverity.Failed:
+                        Trace.TraceError("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception);
+                        return;
+                }
             }
         }
 
@@ -205,18 +239,39 @@ namespace Lexical.Localization.Internal
             // Threshold
             if (severity < this.severity) return;
             // Write status
-            switch (severity)
+            if (value.Exception == null)
             {
-                case LineStatusSeverity.Ok:
-                    Trace.TraceInformation(value.DebugInfo);
-                    return;
-                case LineStatusSeverity.Warning:
-                    Trace.TraceWarning(value.DebugInfo);
-                    return;
-                case LineStatusSeverity.Error:
-                case LineStatusSeverity.Failed:
-                    Trace.TraceError(value.DebugInfo);
-                    return;
+                // No exception
+                switch (severity)
+                {
+                    case LineStatusSeverity.Ok:
+                        Trace.TraceInformation(value.DebugInfo);
+                        return;
+                    case LineStatusSeverity.Warning:
+                        Trace.TraceWarning(value.DebugInfo);
+                        return;
+                    case LineStatusSeverity.Error:
+                    case LineStatusSeverity.Failed:
+                        Trace.TraceError(value.DebugInfo);
+                        return;
+                }
+            }
+            else
+            {
+                // With exception
+                switch (severity)
+                {
+                    case LineStatusSeverity.Ok:
+                        Trace.TraceInformation("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception);
+                        return;
+                    case LineStatusSeverity.Warning:
+                        Trace.TraceWarning("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception);
+                        return;
+                    case LineStatusSeverity.Error:
+                    case LineStatusSeverity.Failed:
+                        Trace.TraceError("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception);
+                        return;
+                }
             }
         }
 
@@ -232,18 +287,39 @@ namespace Lexical.Localization.Internal
             // Threshold
             if (severity < this.severity) return;
             // Write status
-            switch (severity)
+            if (value.Exception == null)
             {
-                case LineStatusSeverity.Ok:
-                    Trace.TraceInformation(value.DebugInfo);
-                    return;
-                case LineStatusSeverity.Warning:
-                    Trace.TraceWarning(value.DebugInfo);
-                    return;
-                case LineStatusSeverity.Error:
-                case LineStatusSeverity.Failed:
-                    Trace.TraceError(value.DebugInfo);
-                    return;
+                // No exception
+                switch (severity)
+                {
+                    case LineStatusSeverity.Ok:
+                        Trace.TraceInformation(value.DebugInfo);
+                        return;
+                    case LineStatusSeverity.Warning:
+                        Trace.TraceWarning(value.DebugInfo);
+                        return;
+                    case LineStatusSeverity.Error:
+                    case LineStatusSeverity.Failed:
+                        Trace.TraceError(value.DebugInfo);
+                        return;
+                }
+            }
+            else
+            {
+                // With exception
+                switch (severity)
+                {
+                    case LineStatusSeverity.Ok:
+                        Trace.TraceInformation("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception);
+                        return;
+                    case LineStatusSeverity.Warning:
+                        Trace.TraceWarning("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception);
+                        return;
+                    case LineStatusSeverity.Error:
+                    case LineStatusSeverity.Failed:
+                        Trace.TraceError("{0} {1}: {2}", value.DebugInfo, value.Exception.GetType().Name, value.Exception);
+                        return;
+                }
             }
         }
     }

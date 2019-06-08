@@ -61,16 +61,35 @@ namespace docs
                 //ResolveOkFromKey | CultureOkMatchedNoCulture | PluralityOkNotUsed | StringFormatOkString Type: MyClass: Key: OK = "OK"
             }
             {
-                #region Snippet_4
-                #endregion Snippet_4
+                #region Snippet_4a
+                LoggerFactory loggerFactory = new LoggerFactory();
+                loggerFactory.AddConsole(LogLevel.Trace);
+                ILine root = LineRoot.Global.ILogger(loggerFactory);
+                #endregion Snippet_4a
+                #region Snippet_4b
+                Console.WriteLine(root.Type("MyClass").Key("OK").Text("OK"));
+                #endregion Snippet_4b
+                //info: MyClass[0]
+                //ResolveOkFromKey | CultureOkMatchedNoCulture | PluralityOkNotUsed | StringFormatOkString Type: MyClass: Key: OK = "OK"
             }
             {
-                #region Snippet_5
-                #endregion Snippet_5
+                #region Snippet_5a
+                NLog.ILogger nlog = NLog.LogManager.GetLogger("MyClass");
+                ILine root = LineRoot.Global.NLog(nlog);
+                #endregion Snippet_5a
+                #region Snippet_5b
+                Console.WriteLine(root.Type("MyClass").Key("OK").Text("OK"));
+                #endregion Snippet_5b
+                // 2019-06-08 14:10:46.4939|INFO|MyClass|ResolveOkFromKey|CultureOkMatchedNoCulture|PluralityOkNotUsed|StringFormatOkString Type:MyClass:Key:OK = "OK"
             }
             {
-                #region Snippet_6
-                #endregion Snippet_6
+                #region Snippet_6a
+                ILine root = LineRoot.Global.NLog(NLog.LogManager.LogFactory);
+                #endregion Snippet_6a
+                #region Snippet_6b
+                Console.WriteLine(root.Type("MyClass").Key("OK").Text("OK"));
+                #endregion Snippet_6b
+                // 2019-06-08 14:10:58.9517|INFO|MyClass|ResolveOkFromKey|CultureOkMatchedNoCulture|PluralityOkNotUsed|StringFormatOkString Type:MyClass:Key:OK = "OK"
             }
             {
                 #region Snippet_7

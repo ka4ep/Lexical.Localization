@@ -97,16 +97,16 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="line"></param>
         /// <returns>key or null</returns>
-        public static ILine GetTypeKey(this ILine line)
+        public static ILine FindTypeKey(this ILine line)
         {
             ILine result = null;
-            for (ILine part = line; line != null; line = line.GetPreviousPart())
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                if (part is ILineType asmKey && asmKey.Type != null) result = asmKey;
-                if (part is ILineParameter parameterKey && parameterKey.ParameterName == "Type" && parameterKey.ParameterValue != null) result = part;
-                if (part is ILineParameterEnumerable lineParameters)
+                if (l is ILineType asmKey && asmKey.Type != null) result = asmKey;
+                if (l is ILineParameter parameterKey && parameterKey.ParameterName == "Type" && parameterKey.ParameterValue != null) result = l;
+                if (l is ILineParameterEnumerable lineParameters)
                     foreach (var lineParameter in lineParameters)
-                        if (lineParameter.ParameterName == "Type" && lineParameter.ParameterValue != null) { result = part; break; }
+                        if (lineParameter.ParameterName == "Type" && lineParameter.ParameterValue != null) { result = l; break; }
             }
             return result;
         }
@@ -158,15 +158,15 @@ namespace Lexical.Localization
         public static string GetTypeName(this ILine line)
         {
             string result = null;
-            for (ILine part = line; part != null; part = part.GetPreviousPart())
+            for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
-                if (part is ILineParameterEnumerable lineParameters)
+                if (l is ILineParameterEnumerable lineParameters)
                 {
                     foreach (ILineParameter lineParameter in lineParameters)
                         if (lineParameter.ParameterName == "Type" && lineParameter.ParameterValue != null) { result = lineParameter.ParameterValue; break; }
                 }
-                else if (part is ILineParameter parameter && parameter.ParameterName == "Type" && parameter.ParameterValue != null) result = parameter.ParameterValue;
-                else if (part is ILineType key && key.Type != null) result = key.Type.FullName;
+                else if (l is ILineParameter parameter && parameter.ParameterName == "Type" && parameter.ParameterValue != null) result = parameter.ParameterValue;
+                else if (l is ILineType key && key.Type != null) result = key.Type.FullName;
             }
             return result;
         }
