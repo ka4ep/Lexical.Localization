@@ -262,19 +262,26 @@ namespace docs
             // 7. Strings
             {
                 #region Snippet_7a
-                IString str = CSharpFormat.Default.Parse("ErrorCode={0}");
+                IString str = CSharpFormat.Default.Parse("ErrorCode = 0x{0:X8}");
                 ILine line = LineRoot.Global.Key("Error").String(str);
                 #endregion Snippet_7a
             }
             {
                 #region Snippet_7b
-                ILine line = LineRoot.Global.Key("Error").StringFormat(CSharpFormat.Default).String("ErrorCode={0}");
+                ILine line = LineRoot.Global.Key("Error").StringFormat(CSharpFormat.Default).String("ErrorCode = 0x{0:X8}");
                 #endregion Snippet_7b
             }
             {
                 #region Snippet_7c
-                ILine line = LineRoot.Global.Key("Error").Format("ErrorCode={0}");
+                ILine line = LineRoot.Global.Key("Error").Format("ErrorCode = 0x{0:X8}");
                 #endregion Snippet_7c
+            }
+            {
+                #region Snippet_7c2
+                int code = 0x100;
+                ILine line = LineRoot.Global.Key("Error").Format($"ErrorCode = 0x{code:X8}");
+                #endregion Snippet_7c2
+                Console.WriteLine(line);
             }
             {
                 #region Snippet_7d

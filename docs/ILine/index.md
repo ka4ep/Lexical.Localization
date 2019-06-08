@@ -87,6 +87,9 @@ If "StringFormat" is not provided, then C# format is used as default.
 <b>.Format(<i>string</i>)</b> appends C# String formulation value.
 [!code-csharp[Snippet](Examples.cs#Snippet_7c)]
 
+<b>.Format(<i>$interpolated_string</i>)</b> appends formulation and value using string interpolation.
+[!code-csharp[Snippet](Examples.cs#Snippet_7c2)]
+
 <b>.Text(<i>string</i>)</b> appends plain text "String" value.
 [!code-csharp[Snippet](Examples.cs#Snippet_7d)]
 

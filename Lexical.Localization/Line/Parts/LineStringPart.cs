@@ -190,6 +190,35 @@ namespace Lexical.Localization
         public static ILineString Format(this ILineFactory lineFactory, String value)
             => lineFactory.Create<ILineString, IString>(null, CSharpFormat.Default.Parse(value));
 
+
+        /// <summary>
+        /// Append <see cref="ILineString"/> and <see cref="ILineValue"/> using string interpolation, e.g. $"Hello, {user}".
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILine Format(this ILine part, FormattableString value)
+        {
+            ILine line = part;
+            if (value.Format != null) line = line.Append<ILineString, IString>(CSharpFormat.Default.Parse(value.Format));
+            if (value.ArgumentCount > 0) line = line.Append<ILineValue, object[]>(value.GetArguments());
+            return line;
+        }
+
+        /// <summary>
+        /// Create <see cref="ILineString"/> and <see cref="ILineValue"/> using string interpolation, e.g. $"Hello, {user}".
+        /// </summary>
+        /// <param name="lineFactory"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static ILine Format(this ILineFactory lineFactory, FormattableString value)
+        {
+            ILine line = null;
+            if (value.Format != null) line = lineFactory.Create<ILineString, IString>(line, CSharpFormat.Default.Parse(value.Format));
+            if (value.ArgumentCount > 0) line = lineFactory.Create<ILineValue, object[]>(line, value.GetArguments());
+            return line;
+        }
+
         /// <summary>
         /// Append string of current selected "StringFormat"
         /// </summary>
