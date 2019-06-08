@@ -1,33 +1,42 @@
 # Introduction
 <details>
-  <summary><b>ILocalizationLogger</b> is interface for logging string and resource resolve results. (<u>Click here</u>)</summary>
+  <summary><b>ILogger</b> is interface for logging string and resource resolve results. (<u>Click here</u>)</summary>
 
 ```csharp
-/// <summary>
-/// Localization logger.
-/// 
-/// See sub-interfaces
-/// <list type="bullet">
-///     <item><see cref="IStringResolverLogger"/></item>
-///     <item><see cref="IResourceResolverLogger"/></item>
-/// </list>
-/// </summary>
-public interface ILocalizationLogger
+namespace Lexical.Localization.Common
 {
+    /// <summary>
+    /// Localization logger.
+    /// 
+    /// See sub-interfaces
+    /// <list type="bullet">
+    ///     <item><see cref="Lexical.Localization.StringFormat.IStringResolverLogger"/></item>
+    ///     <item><see cref="Lexical.Localization.Resource.IResourceResolverLogger"/></item>
+    /// </list>
+    /// </summary>
+    public interface ILogger
+    {
+    }
 }
 
-/// <summary>
-/// Logger that logs string resolving of <see cref="IStringResolver"/>.
-/// </summary>
-public interface IStringResolverLogger : ILocalizationLogger, IObserver<LineString>
+namespace Lexical.Localization.StringFormat
 {
+    /// <summary>
+    /// Logger that logs string resolving of <see cref="IStringResolver"/>.
+    /// </summary>
+    public interface IStringResolverLogger : Lexical.Localization.Common.ILogger, IObserver<LineString>
+    {
+    }
 }
 
-/// <summary>
-/// Logger that logs resource resolving of <see cref="IResourceResolver"/>.
-/// </summary>
-public interface IResourceResolverLogger : ILocalizationLogger, IObserver<LineResourceBytes>, IObserver<LineResourceStream>
+namespace Lexical.Localization.Resource
 {
+    /// <summary>
+    /// Logger that logs resource resolving of <see cref="IResourceResolver"/>.
+    /// </summary>
+    public interface IResourceResolverLogger : Lexical.Localization.Common.ILogger, IObserver<LineResourceBytes>, IObserver<LineResourceStream>
+    {
+    }
 }
 ```
 </details>

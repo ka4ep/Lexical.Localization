@@ -3,6 +3,7 @@
 // Date:           9.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using Lexical.Localization.Resource;
 using Lexical.Localization.StringFormat;
 using Microsoft.Extensions.Logging;
@@ -21,8 +22,8 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <param name="logger"></param>
         /// <returns>disposable subscription handle, or null if <paramref name="line"/> cannot be observed</returns>
-        public static ILineLogger ILogger(this ILine line, ILogger logger)
-            => line.Logger(new LineILogger(logger));
+        public static ILineLogger ILogger(this ILine line, Microsoft.Extensions.Logging.ILogger logger)
+            => line.Logger(new MSLogger(logger));
 
         /// <summary>
         /// Append <paramref name="loggerFactory"/> to <paramref name="line"/>.
@@ -34,21 +35,24 @@ namespace Lexical.Localization
         /// <param name="fallbackCategory">(optional) logger name to use when Type cannot be derived</param>
         /// <returns>disposable subscription handle, or null if <paramref name="line"/> cannot be observed</returns>
         public static ILineLogger ILogger(this ILine line, ILoggerFactory loggerFactory, string fallbackCategory = "Lexical.Localization")
-            => line.Logger(new LineILoggerFactory(loggerFactory, fallbackCategory));
+            => line.Logger(new MSLoggerFactory(loggerFactory, fallbackCategory));
     }
+}
 
+namespace Lexical.Localization.Internal
+{
     /// <summary>
-    /// Observes resolved localization strings and logs into <see cref="ILogger"/>.
+    /// Observes resolved localization strings and logs into <see cref="Microsoft.Extensions.Logging.ILogger"/>.
     /// </summary>
-    public class LineILogger : ILocalizationLogger, IStringResolverLogger, IResourceResolverLogger
+    public class MSLogger : Common.ILogger, IStringResolverLogger, IResourceResolverLogger
     {
-        ILogger logger;
+        Microsoft.Extensions.Logging.ILogger logger;
 
         /// <summary>
         /// Create logger
         /// </summary>
         /// <param name="logger"></param>
-        public LineILogger(ILogger logger)
+        public MSLogger(Microsoft.Extensions.Logging.ILogger logger)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -133,21 +137,21 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Observes resolved localization strings and logs into <see cref="ILogger"/>.
+    /// Observes resolved localization strings and logs into <see cref="Microsoft.Extensions.Logging.ILogger"/>.
     /// 
     /// Uses type specific <see cref="ILogger{TCategoryName}"/>.
     /// </summary>
-    public class LineILoggerFactory : ILocalizationLogger, IStringResolverLogger, IResourceResolverLogger
+    public class MSLoggerFactory : Common.ILogger, IStringResolverLogger, IResourceResolverLogger
     {
-        ILoggerFactory loggerFactory;
-        ILogger fallbackLogger;
+        Microsoft.Extensions.Logging.ILoggerFactory loggerFactory;
+        Microsoft.Extensions.Logging.ILogger fallbackLogger;
 
         /// <summary>
         /// Create logger
         /// </summary>
         /// <param name="loggerFactory"></param>
         /// <param name="fallbackCategory">(optional) category to use if Type is not found in key</param>
-        public LineILoggerFactory(ILoggerFactory loggerFactory, string fallbackCategory = "Lexical.Localization")
+        public MSLoggerFactory(Microsoft.Extensions.Logging.ILoggerFactory loggerFactory, string fallbackCategory = "Lexical.Localization")
         {
             this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
             this.fallbackLogger = loggerFactory.CreateLogger(fallbackCategory);
@@ -167,7 +171,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="line"></param>
         /// <returns>logger or null if has been disposed</returns>
-        ILogger Logger(ILine line)
+        Microsoft.Extensions.Logging.ILogger Logger(ILine line)
         {
             ILoggerFactory _loggerFactory = loggerFactory;
             if (_loggerFactory == null) return null;

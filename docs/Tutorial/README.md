@@ -18,6 +18,13 @@ Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateT
 Console.WriteLine(String.Format("It is now {0:d} at {0:t}", DateTime.Now));
 ```
 
+<b>.Format(<i>$interpolated_string</i>)</b> also creates **.Format()** and **.Value()** parts.
+
+```csharp
+DateTime time = DateTime.Now;
+Console.WriteLine(LineRoot.Global.Key("Time").Format($"It is now {time:d} at {time:t}"));
+```
+
 # Culture
 The format culture can be enforced with <b>.Culture(<i>CultureInfo</i>)</b>, without changing the thread-local culture variable.
 
@@ -203,6 +210,45 @@ IStringLocalizerFactory localizerFactory = line.AsStringLocalizerFactory();
 ILine line = LineRoot.Global.Type("MyClass").Key("hello").Format("Hello, {0}.");
 IStringLocalizer localizer = line.AsStringLocalizer();
 IStringLocalizerFactory localizerFactory = line.AsStringLocalizerFactory();
+```
+
+# Example Class
+Keys can be placed in static references if the singleton **LineRoot.Global** is used.
+
+```csharp
+public class MyClass
+{
+    /// <summary>
+    /// Localization root for this class.
+    /// </summary>
+    static ILine localization = LineRoot.Global.Assembly("MyLibrary").Type<MyClass>();
+
+    /// <summary>
+    /// Localization key "Ok" with a default string, and couple of inlined strings for two cultures.
+    /// </summary>
+    static ILine ok = localization.Key("Success")
+            .Text("Success")
+            .fi("Onnistui")
+            .sv("Det funkar");
+
+    /// <summary>
+    /// Localization key "Error" with a default string, and couple of inlined ones for two cultures.
+    /// </summary>
+    static ILine error = localization.Key("Error")
+            .Format("Error (Code=0x{0:X8})")
+            .fi("Virhe (Koodi=0x{0:X8})")
+            .sv("Sönder (Kod=0x{0:X8})");
+
+    public void DoOk()
+    {
+        Console.WriteLine(ok);
+    }
+
+    public void DoError()
+    {
+        Console.WriteLine(error.Value(0x100));
+    }
+}
 ```
 
 # Links

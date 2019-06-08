@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Asset;
+using Lexical.Localization.Common;
 using Lexical.Localization.Internal;
 using Lexical.Localization.Plurality;
 using Lexical.Localization.Resolver;
@@ -56,7 +57,7 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Configured loggers
         /// </summary>
-        public StructList2<ILocalizationLogger> Loggers;
+        public StructList2<IStringResolverLogger> Loggers;
 
         /// <summary>
         /// Effective plural rules
@@ -114,7 +115,7 @@ namespace Lexical.Localization.StringFormat
                 if (l is ILineFormatProvider fp && fp.FormatProvider != null) FormatProviders.AddIfNew(fp.FormatProvider);
                 if (l is ILineFunctions funcs && funcs.Functions != null) Functions.AddIfNew(funcs.Functions);
                 if (l is ILineInlines inlines) Inlines.AddIfNew(inlines);
-                if (l is ILineLogger ll && ll.Logger != null) Loggers.AddIfNew(ll.Logger);
+                if (l is ILineLogger ll && ll.Logger is IStringResolverLogger logger) Loggers.AddIfNew(logger);
                 if (l is ILinePluralRules pl && pl.PluralRules != null) PluralRules = pl.PluralRules;
                 if (l is ILineStringFormat sf && sf.StringFormat != null) StringFormat = sf.StringFormat;
                 if (!valueSet && l is ILineString lv && lv.String != null) { String = lv.String; StringText = null; valueSet = true; }
@@ -264,8 +265,10 @@ namespace Lexical.Localization.StringFormat
         public void Log(Exception e)
         {
             for (int i = 0; i < Loggers.Count; i++)
-                if (Loggers[i] is IObserver<LineString> logger)
-                    logger.OnError(e);
+            {
+                var logger = Loggers[i];
+                logger.OnError(e);
+            }
         }
 
         /// <summary>
@@ -275,8 +278,10 @@ namespace Lexical.Localization.StringFormat
         public void Log(LineString str)
         {
             for (int i = 0; i < Loggers.Count; i++)
-                if (Loggers[i] is IObserver<LineString> logger)
-                    logger.OnNext(str);
+            {
+                var logger = Loggers[i];
+                logger.OnNext(str);
+            }
         }
 
         /// <summary>
@@ -288,11 +293,9 @@ namespace Lexical.Localization.StringFormat
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
-                if (Loggers[i] is IObserver<LineString> logger)
-                {
-                    logger.OnNext(str);
-                    logger.OnError(e);
-                }
+                var logger = Loggers[i];
+                logger.OnNext(str);
+                logger.OnError(e);
             }
         }
 

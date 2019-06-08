@@ -166,7 +166,7 @@ namespace Lexical.Localization.Resource
                                 break;
 
                             // Try inlines
-                            case ResolveSource.Inlines:
+                            case ResolveSource.Inline:
                                 for (int i = 0; i < features.Inlines.Count; i++)
                                 {
                                     try
@@ -195,7 +195,7 @@ namespace Lexical.Localization.Resource
                                 }
                                 break;
 
-                            case ResolveSource.Key:
+                            case ResolveSource.Line:
                                 // Key has explicit culture and resource, use the resource
                                 if (features.Resource != null)
                                 {
@@ -256,7 +256,7 @@ namespace Lexical.Localization.Resource
                                         break;
 
                                     // Try inlines
-                                    case ResolveSource.Inlines:
+                                    case ResolveSource.Inline:
                                         for (int i = 0; i < features.Inlines.Count; i++)
                                         {
                                             try
@@ -287,7 +287,7 @@ namespace Lexical.Localization.Resource
                                         }
                                         break;
 
-                                    case ResolveSource.Key:
+                                    case ResolveSource.Line:
                                         // Key has explicit culture and resource, use the resource
                                         if (features.Resource != null && c.Equals(features.Culture))
                                         {
@@ -344,7 +344,7 @@ namespace Lexical.Localization.Resource
                                 break;
 
                             // Try inlines
-                            case ResolveSource.Inlines:
+                            case ResolveSource.Inline:
                                 for (int i = 0; i < features.Inlines.Count; i++)
                                 {
                                     try
@@ -374,7 +374,7 @@ namespace Lexical.Localization.Resource
                                 }
                                 break;
 
-                            case ResolveSource.Key:
+                            case ResolveSource.Line:
                                 // Key has explicit culture and value, use the value
                                 if (features.Resource != null)
                                 {
@@ -516,7 +516,7 @@ namespace Lexical.Localization.Resource
                                 break;
 
                             // Try inlines
-                            case ResolveSource.Inlines:
+                            case ResolveSource.Inline:
                                 for (int i = 0; i < features.Inlines.Count; i++)
                                 {
                                     try
@@ -546,7 +546,7 @@ namespace Lexical.Localization.Resource
                                 }
                                 break;
 
-                            case ResolveSource.Key:
+                            case ResolveSource.Line:
                                 // Key has explicit culture and resource, use the resource
                                 if (features.Resource != null)
                                 {
@@ -607,7 +607,7 @@ namespace Lexical.Localization.Resource
                                         break;
 
                                     // Try inlines
-                                    case ResolveSource.Inlines:
+                                    case ResolveSource.Inline:
                                         for (int i = 0; i < features.Inlines.Count; i++)
                                         {
                                             try
@@ -638,7 +638,7 @@ namespace Lexical.Localization.Resource
                                         }
                                         break;
 
-                                    case ResolveSource.Key:
+                                    case ResolveSource.Line:
                                         // Key has explicit culture and resource, use the resource
                                         if (features.Resource != null && c.Equals(features.Culture))
                                         {
@@ -695,7 +695,7 @@ namespace Lexical.Localization.Resource
                                 break;
 
                             // Try inlines
-                            case ResolveSource.Inlines:
+                            case ResolveSource.Inline:
                                 for (int i = 0; i < features.Inlines.Count; i++)
                                 {
                                     try
@@ -725,7 +725,7 @@ namespace Lexical.Localization.Resource
                                 }
                                 break;
 
-                            case ResolveSource.Key:
+                            case ResolveSource.Line:
                                 // Key has explicit culture and value, use the value
                                 if (features.Resource != null)
                                 {

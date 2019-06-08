@@ -1,7 +1,7 @@
 ﻿# Introduction
 <details>
-  <summary><b>ILocalizationLogger</b> is interface for logging string and resource resolve results. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Common/ILocalizationLogger.cs#Interface)]
+  <summary><b>Lexical.Localization.Common.ILogger</b> is interface for logging string and resource resolve results. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Common/ILogger.cs#Interface)]
 </details>
 <br />
 

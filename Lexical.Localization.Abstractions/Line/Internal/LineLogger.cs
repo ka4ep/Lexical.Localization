@@ -3,7 +3,9 @@
 // Date:           3.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Common;
 using Lexical.Localization.Resource;
+using Lexical.Localization.StringFormat;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -13,7 +15,7 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Observes resolved keys and writes log lines to <see cref="TextWriter"/>.
     /// </summary>
-    public class LineTextLogger : IStringResolverLogger, IResourceResolverLogger
+    public class LineTextLogger : ILogger, IStringResolverLogger, IResourceResolverLogger
     {
         /// <summary>
         /// Text output stream.

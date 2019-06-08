@@ -3,6 +3,7 @@
 // Date:           9.4.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Common;
 using Lexical.Localization.Internal;
 using Lexical.Localization.StringFormat;
 using System.IO;
@@ -17,7 +18,7 @@ namespace Lexical.Localization
         /// <summary>
         /// (Optional) The assigned logger.
         /// </summary>
-        ILocalizationLogger Logger { get; set; }
+        ILogger Logger { get; set; }
     }
 
     public static partial class ILineExtensions
@@ -29,8 +30,8 @@ namespace Lexical.Localization
         /// <param name="logger"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">Append logger</exception>
-        public static ILineLogger Logger(this ILine line, ILocalizationLogger logger)
-            => line.Append<ILineLogger, ILocalizationLogger>(logger);
+        public static ILineLogger Logger(this ILine line, ILogger logger)
+            => line.Append<ILineLogger, ILogger>(logger);
 
         /// <summary>
         /// Append observer that monitors resolving of localization strings.
@@ -39,8 +40,8 @@ namespace Lexical.Localization
         /// <param name="logger"></param>
         /// <returns>new key</returns>
         /// <exception cref="LineException">Append logger</exception>
-        public static ILineLogger Logger(this ILineFactory lineFactory, ILocalizationLogger logger)
-            => lineFactory.Create<ILineLogger, ILocalizationLogger>(null, logger);
+        public static ILineLogger Logger(this ILineFactory lineFactory, ILogger logger)
+            => lineFactory.Create<ILineLogger, ILogger>(null, logger);
 
         /// <summary>
         /// Try to add a <paramref name="logger"/> to <paramref name="line"/>.

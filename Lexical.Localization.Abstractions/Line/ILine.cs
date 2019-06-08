@@ -8,6 +8,8 @@ namespace Lexical.Localization
 {
     /// <summary>
     /// Line that can contain resolve hints, be comparable as key, and have a string value.
+    /// 
+    /// The implementing class should implement ToString() to return the value of <see cref="ILineExtensions.ResolveString(ILine)"/>.Value.
     /// </summary>
     public interface ILine
     {

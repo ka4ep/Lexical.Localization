@@ -15,7 +15,7 @@ Or constructed to span a tree structure (trie).
 <b>.Asset(<i>IAsset</i>)</b> adds extra asset as line part.
 [!code-csharp[Snippet](Examples.cs#Snippet_2a)]
 
-<b>.Logger(<i>ILocalizationLogger</i>)</b> adds logger as line part.
+<b>.Logger(<i>ILogger</i>)</b> adds logger as line part.
 [!code-csharp[Snippet](Examples.cs#Snippet_2b)]
 
 <b>.CulturePolicy(<i>ICulturePolicy</i>)</b> adds a culture policy that determines which culture is active in a given execution context.	
@@ -23,6 +23,9 @@ Or constructed to span a tree structure (trie).
 
 # Hints
 Hints are line parts that can be appended from localization file as well as from *ILine*.
+
+**Hints.ini**
+ 
 [!code-ini[Snippet](Hints.ini)]
 
 <b>.StringFormat(<i>IStringFormat</i>)</b> and <b>.StringFormat(<i>string</i>)</b> add a string format, that determines the way the consequtive "String" parameters are parsed.
@@ -48,21 +51,10 @@ Hints are line parts that can be appended from localization file as well as from
 [!code-csharp[Snippet](Examples.cs#Snippet_3h)]
 
 # Canonically compared keys
-Key parts determine how *ILine*s are hash-equally compared.
+Key parts give *ILine*s hash-equal comparison information. Key parts are used to match the line to a corresponding line of another culture in
+localization files.
 
-Canonically compared key parts are compared so that the occurance position of the key parts are relevant.
-
-<b>.Assembly(<i>Assembly</i>)</b> and <b>.Assembly(<i>string</i>)</b> append "Assembly" key. 
-[!code-csharp[Snippet](Examples.cs#Snippet_5a)]
-
-<b>.Culture(<i>CultureInfo</i>)</b> and <b>.Culture(<i>string</i>)</b> append "Culture" key.
-[!code-csharp[Snippet](Examples.cs#Snippet_5b)]
-
-<b>.Type&lt;T&gt;(<i></i>)</b>, <b>.Type(<i>Type</i>)</b> and <b>.Type(<i>string</i>)</b> append "Type" key.
-[!code-csharp[Snippet](Examples.cs#Snippet_5c)]
-
-# Non-canonically compared keys
-Non-canonically compared key parts are compared so that the position doesn't matter. The first occurance of each type is considered effective, rest are ignored.
+Canonically compared key parts are compared so that the position of occurance is relevant.
 
 <b>.Key(<i>string</i>)</b> appends "Key" key part.
 [!code-csharp[Snippet](Examples.cs#Snippet_6a)]
@@ -75,6 +67,19 @@ Non-canonically compared key parts are compared so that the position doesn't mat
 
 <b>.BaseName(<i>string</i>)</b> appends "BaseName" key part.
 [!code-csharp[Snippet](Examples.cs#Snippet_6d)]
+
+
+# Non-canonically compared keys
+Non-canonically compared key parts are compared so that the position doesn't matter. The first occurance of each type is considered effective, rest are ignored.
+
+<b>.Assembly(<i>Assembly</i>)</b> and <b>.Assembly(<i>string</i>)</b> append "Assembly" key. 
+[!code-csharp[Snippet](Examples.cs#Snippet_5a)]
+
+<b>.Culture(<i>CultureInfo</i>)</b> and <b>.Culture(<i>string</i>)</b> append "Culture" key.
+[!code-csharp[Snippet](Examples.cs#Snippet_5b)]
+
+<b>.Type&lt;T&gt;(<i></i>)</b>, <b>.Type(<i>Type</i>)</b> and <b>.Type(<i>string</i>)</b> append "Type" key.
+[!code-csharp[Snippet](Examples.cs#Snippet_5c)]
 
 # Strings
 <b>.String(<i>IString</i>)</b> appends preparsed default string value.

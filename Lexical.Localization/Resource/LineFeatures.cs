@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Asset;
+using Lexical.Localization.Common;
 using Lexical.Localization.Internal;
 using Lexical.Localization.Resolver;
 using System;
@@ -40,7 +41,7 @@ namespace Lexical.Localization.Resource
         /// <summary>
         /// Configured loggers
         /// </summary>
-        public StructList2<ILocalizationLogger> Loggers;
+        public StructList2<ILogger> Loggers;
 
         /// <summary>
         /// Assets

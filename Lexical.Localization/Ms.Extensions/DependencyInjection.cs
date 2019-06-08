@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Asset;
+using Lexical.Localization.Internal;
 using Lexical.Localization.StringFormat;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -184,7 +185,7 @@ namespace Lexical.Localization
             serviceCollection.TryAdd(ServiceDescriptor.Singleton(typeof(IObserver<LineString>), s =>
             {
                 ILogger<ILine> logger = s.GetService<ILogger<ILine>>();
-                IObserver<LineString> adapter = logger == null ? null : new LineILogger(logger);
+                IObserver<LineString> adapter = logger == null ? null : new MSLogger(logger);
                 return adapter;
             }));
             return serviceCollection;

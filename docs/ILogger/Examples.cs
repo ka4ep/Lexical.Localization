@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace docs
 {
-    public class ILocalizationLogger_Examples
+    public class ILogger_Examples
     {
         public static void Main(string[] args)
         {

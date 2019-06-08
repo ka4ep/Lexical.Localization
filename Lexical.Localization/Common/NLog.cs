@@ -9,7 +9,6 @@ using System.Text;
 
 namespace Lexical.Localization
 {
-    using NLog;
     using Lexical.Localization.Internal;
 
     /// <summary>
@@ -23,7 +22,7 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <param name="nlog">NLog Logger</param>
         /// <returns>disposable subscription handle, or null if <paramref name="line"/> cannot be observed</returns>
-        public static ILineLogger NLog(this ILine line, ILogger nlog)
+        public static ILineLogger NLog(this ILine line, NLog.ILogger nlog)
             => line.Logger(new NLogLocalizationLogger(nlog));
 
         /// <summary>
@@ -36,7 +35,7 @@ namespace Lexical.Localization
         /// <param name="nlogfactory">NLog Logger</param>
         /// <param name="fallbackCategory">(optional) logger name to use when Type cannot be derived</param>
         /// <returns>disposable subscription handle, or null if <paramref name="line"/> cannot be observed</returns>
-        public static ILineLogger NLog(this ILine line, LogFactory nlogfactory, string fallbackCategory = "Lexical.Localization")
+        public static ILineLogger NLog(this ILine line, NLog.LogFactory nlogfactory, string fallbackCategory = "Lexical.Localization")
             => line.Logger(new NLogFactoryLocalizationLogger(nlogfactory, fallbackCategory));
     }
 
@@ -44,21 +43,22 @@ namespace Lexical.Localization
 
 namespace Lexical.Localization.Internal
 {
+    using Lexical.Localization.Common;
     using Lexical.Localization.Resource;
-    using NLog;
+    using Lexical.Localization.StringFormat;
 
     /// <summary>
     /// Adapts localization log messages to NLog.
     /// </summary>
-    public class NLogLocalizationLogger : IStringResolverLogger, IResourceResolverLogger
+    public class NLogLocalizationLogger : ILogger, IStringResolverLogger, IResourceResolverLogger
     {
-        private ILogger logger;
+        private NLog.ILogger logger;
 
         /// <summary>
         /// Create logger
         /// </summary>
         /// <param name="logger"></param>
-        public NLogLocalizationLogger(ILogger logger)
+        public NLogLocalizationLogger(NLog.ILogger logger)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -148,20 +148,23 @@ namespace Lexical.Localization.Internal
     /// </summary>
     public class NLogFactoryLocalizationLogger : IStringResolverLogger, IResourceResolverLogger
     {
-        LogFactory logFactory;
-        ILogger fallbackLogger;
+        NLog.LogFactory logFactory;
+        NLog.ILogger fallbackLogger;
 
         /// <summary>
         /// Create logger
         /// </summary>
         /// <param name="logFactory"></param>
         /// <param name="fallbackCategory"></param>
-        public NLogFactoryLocalizationLogger(LogFactory logFactory, string fallbackCategory = "Lexical.Localization")
+        public NLogFactoryLocalizationLogger(NLog.LogFactory logFactory, string fallbackCategory = "Lexical.Localization")
         {
             this.logFactory = logFactory ?? throw new ArgumentNullException(nameof(logFactory));
             this.fallbackLogger = logFactory.GetLogger(fallbackCategory);
         }
 
+        /// <summary>
+        /// Logging is closed.
+        /// </summary>
         public void OnCompleted()
         {
             logFactory = null;
@@ -173,9 +176,9 @@ namespace Lexical.Localization.Internal
         /// </summary>
         /// <param name="line"></param>
         /// <returns>logger or null if has been disposed</returns>
-        ILogger Logger(ILine line)
+        NLog.ILogger Logger(ILine line)
         {
-            LogFactory _logFactory = logFactory;
+            NLog.LogFactory _logFactory = logFactory;
             if (_logFactory == null) return null;
             ILine type = line.FindTypeKey();
             if (type is ILineType lineType && lineType.Type != null) return _logFactory.GetLogger(lineType.Type.FullName, lineType.Type);

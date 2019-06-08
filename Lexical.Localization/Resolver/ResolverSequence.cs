@@ -22,9 +22,9 @@ namespace Lexical.Localization.Resolver
         /// <summary>Resolve from <see cref="ILineAsset"/></summary>
         Asset,
         /// <summary>Resolve from <see cref="ILineInlines"/></summary>
-        Inlines,
-        /// <summary>Resolve from the Value part of Key itself</summary>
-        Key
+        Inline,
+        /// <summary>Resolve the value from the <see cref="ILine"/> itself</summary>
+        Line
     };
 
     /// <summary>
@@ -35,6 +35,6 @@ namespace Lexical.Localization.Resolver
         /// <summary>
         /// Default resolver sequence.
         /// </summary>
-        public static readonly ResolveSource[] Default = new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inlines, ResolveSource.Key };
+        public static readonly ResolveSource[] Default = new ResolveSource[] { ResolveSource.Asset, ResolveSource.Inline, ResolveSource.Line };
     }
 }

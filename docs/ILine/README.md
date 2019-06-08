@@ -48,6 +48,9 @@ ILine line = LineRoot.Global.CulturePolicy(culturePolicy);
 # Hints
 Hints are line parts that can be appended from localization file as well as from *ILine*.
 
+**Hints.ini**
+ 
+
 ```ini
 [PluralRules:Unicode.CLDR35]
 Key:Error:FormatProvider:docs.CustomFormat,docs = Error, (Date = {0:DATE})
@@ -101,7 +104,7 @@ public class CustomFormat : IFormatProvider, ICustomFormatter
 
 ```csharp
 ResolveSource[] resolveSequence = 
-    new ResolveSource[] { ResolveSource.Inlines, ResolveSource.Asset, ResolveSource.Key };
+    new ResolveSource[] { ResolveSource.Inline, ResolveSource.Asset, ResolveSource.Line };
 
 IStringResolver stringResolver = new StringResolver(Resolvers.Default, resolveSequence);
 ILine line = LineRoot.Global.StringResolver(stringResolver);
@@ -117,7 +120,7 @@ ILine line = LineRoot.Global.StringResolver("Lexical.Localization.StringFormat.S
 
 ```csharp
 ResolveSource[] resolveSequence = 
-    new ResolveSource[] { ResolveSource.Inlines, ResolveSource.Asset, ResolveSource.Key };
+    new ResolveSource[] { ResolveSource.Inline, ResolveSource.Asset, ResolveSource.Line };
 
 IResourceResolver resourceResolver = new ResourceResolver(Resolvers.Default, resolveSequence);
 ILine line = LineRoot.Global.ResourceResolver(resourceResolver);
@@ -130,35 +133,10 @@ ILine line = LineRoot.Global.ResourceResolver("Lexical.Localization.Resource.Res
 ```
 
 # Canonically compared keys
-Key parts determine how *ILine*s are hash-equally compared.
+Key parts give *ILine*s hash-equal comparison information. Key parts are used to match the line to a corresponding line of another culture in
+localization files.
 
-Canonically compared key parts are compared so that the occurance position of the key parts are relevant.
-
-<b>.Assembly(<i>Assembly</i>)</b> and <b>.Assembly(<i>string</i>)</b> append "Assembly" key. 
-
-```csharp
-Assembly asm = typeof(ILine_Examples).Assembly;
-ILine line1 = LineRoot.Global.Assembly(asm);
-ILine line2 = LineRoot.Global.Assembly("docs");
-```
-
-<b>.Culture(<i>CultureInfo</i>)</b> and <b>.Culture(<i>string</i>)</b> append "Culture" key.
-
-```csharp
-CultureInfo culture = CultureInfo.GetCultureInfo("en");
-ILine line1 = LineRoot.Global.Culture(culture);
-ILine line2 = LineRoot.Global.Culture("en");
-```
-
-<b>.Type&lt;T&gt;(<i></i>)</b>, <b>.Type(<i>Type</i>)</b> and <b>.Type(<i>string</i>)</b> append "Type" key.
-
-```csharp
-ILine line1 = LineRoot.Global.Type<ILine_Examples>();
-ILine line2 = LineRoot.Global.Type(typeof(ILine_Examples));
-```
-
-# Non-canonically compared keys
-Non-canonically compared key parts are compared so that the position doesn't matter. The first occurance of each type is considered effective, rest are ignored.
+Canonically compared key parts are compared so that the position of occurance is relevant.
 
 <b>.Key(<i>string</i>)</b> appends "Key" key part.
 
@@ -184,11 +162,38 @@ ILine line = LineRoot.Global.Location(@"c:\dir");
 ILine line = LineRoot.Global.BaseName("docs.Resources");
 ```
 
+
+# Non-canonically compared keys
+Non-canonically compared key parts are compared so that the position doesn't matter. The first occurance of each type is considered effective, rest are ignored.
+
+<b>.Assembly(<i>Assembly</i>)</b> and <b>.Assembly(<i>string</i>)</b> append "Assembly" key. 
+
+```csharp
+Assembly asm = typeof(ILine_Examples).Assembly;
+ILine line1 = LineRoot.Global.Assembly(asm);
+ILine line2 = LineRoot.Global.Assembly("docs");
+```
+
+<b>.Culture(<i>CultureInfo</i>)</b> and <b>.Culture(<i>string</i>)</b> append "Culture" key.
+
+```csharp
+CultureInfo culture = CultureInfo.GetCultureInfo("en");
+ILine line1 = LineRoot.Global.Culture(culture);
+ILine line2 = LineRoot.Global.Culture("en");
+```
+
+<b>.Type&lt;T&gt;(<i></i>)</b>, <b>.Type(<i>Type</i>)</b> and <b>.Type(<i>string</i>)</b> append "Type" key.
+
+```csharp
+ILine line1 = LineRoot.Global.Type<ILine_Examples>();
+ILine line2 = LineRoot.Global.Type(typeof(ILine_Examples));
+```
+
 # Strings
 <b>.String(<i>IString</i>)</b> appends preparsed default string value.
 
 ```csharp
-IString str = CSharpFormat.Default.Parse("ErrorCode={0}");
+IString str = CSharpFormat.Default.Parse("ErrorCode = 0x{0:X8}");
 ILine line = LineRoot.Global.Key("Error").String(str);
 ```
 
@@ -196,13 +201,20 @@ ILine line = LineRoot.Global.Key("Error").String(str);
 If "StringFormat" is not provided, then C# format is used as default.
 
 ```csharp
-ILine line = LineRoot.Global.Key("Error").StringFormat(CSharpFormat.Default).String("ErrorCode={0}");
+ILine line = LineRoot.Global.Key("Error").StringFormat(CSharpFormat.Default).String("ErrorCode = 0x{0:X8}");
 ```
 
 <b>.Format(<i>string</i>)</b> appends C# String formulation value.
 
 ```csharp
-ILine line = LineRoot.Global.Key("Error").Format("ErrorCode={0}");
+ILine line = LineRoot.Global.Key("Error").Format("ErrorCode = 0x{0:X8}");
+```
+
+<b>.Format(<i>$interpolated_string</i>)</b> appends formulation and value using string interpolation.
+
+```csharp
+int code = 0x100;
+ILine line = LineRoot.Global.Key("Error").Format($"ErrorCode = 0x{code:X8}");
 ```
 
 <b>.Text(<i>string</i>)</b> appends plain text "String" value.

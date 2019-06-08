@@ -8,6 +8,9 @@ Values are provided with <b>.Value(<i>object[]</i>)</b>.
 Providing **.Format()** and **.Value()** is equivalent to **String.Format()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c)]
 
+<b>.Format(<i>$interpolated_string</i>)</b> also creates **.Format()** and **.Value()** parts.
+[!code-csharp[Snippet](Examples.cs#Snippet_1c1)]
+
 # Culture
 The format culture can be enforced with <b>.Culture(<i>CultureInfo</i>)</b>, without changing the thread-local culture variable.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c2)]
@@ -63,6 +66,10 @@ New **StringLocalizerRoot** can also be constructed.
 
 *IStringLocalizer* reference can be adapted from regular **LineRoot** as well, but causes an additional heap object to be instantiated.
 [!code-csharp[Snippet](Examples.cs#Snippet_12)]
+
+# Example Class
+Keys can be placed in static references if the singleton **LineRoot.Global** is used.
+[!code-csharp[Snippet](ExampleClass.cs#Snippet)]
 
 # Links
 * [Website](http://lexical.fi/Localization/index.html)

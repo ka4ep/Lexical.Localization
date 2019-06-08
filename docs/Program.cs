@@ -11,7 +11,7 @@ namespace docs
             Tutorial_Examples.Main(args);
             Plurality_Examples.Main(args);
 
-            ILocalizationLogger_Examples.Main(args);
+            ILogger_Examples.Main(args);
 
             IStringFormat_Examples.Main(args);
             Tutorial_Examples.Main(args);

@@ -115,7 +115,7 @@ namespace docs
             {
                 #region Snippet_3e
                 ResolveSource[] resolveSequence = 
-                    new ResolveSource[] { ResolveSource.Inlines, ResolveSource.Asset, ResolveSource.Key };
+                    new ResolveSource[] { ResolveSource.Inline, ResolveSource.Asset, ResolveSource.Line };
 
                 IStringResolver stringResolver = new StringResolver(Resolvers.Default, resolveSequence);
                 ILine line = LineRoot.Global.StringResolver(stringResolver);
@@ -131,7 +131,7 @@ namespace docs
             {
                 #region Snippet_3g
                 ResolveSource[] resolveSequence = 
-                    new ResolveSource[] { ResolveSource.Inlines, ResolveSource.Asset, ResolveSource.Key };
+                    new ResolveSource[] { ResolveSource.Inline, ResolveSource.Asset, ResolveSource.Line };
 
                 IResourceResolver resourceResolver = new ResourceResolver(Resolvers.Default, resolveSequence);
                 ILine line = LineRoot.Global.ResourceResolver(resourceResolver);

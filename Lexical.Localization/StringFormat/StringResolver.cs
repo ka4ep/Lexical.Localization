@@ -452,7 +452,7 @@ namespace Lexical.Localization.StringFormat
                                 break;
 
                             // Try inlines
-                            case ResolveSource.Inlines:
+                            case ResolveSource.Inline:
                                 for (int i = 0; i < features.Inlines.Count; i++)
                                 {
                                     try
@@ -473,7 +473,7 @@ namespace Lexical.Localization.StringFormat
                                 }
                                 break;
 
-                            case ResolveSource.Key:
+                            case ResolveSource.Line:
                                 // Key has explicit culture and value, use the value
                                 if (features.String != null || features.StringText != null)
                                 {
@@ -527,7 +527,7 @@ namespace Lexical.Localization.StringFormat
                                         break;
 
                                     // Try inlines
-                                    case ResolveSource.Inlines:
+                                    case ResolveSource.Inline:
                                         for (int i = 0; i < features.Inlines.Count; i++)
                                         {
                                             try
@@ -549,7 +549,7 @@ namespace Lexical.Localization.StringFormat
                                         }
                                         break;
 
-                                    case ResolveSource.Key:
+                                    case ResolveSource.Line:
                                         if ((features.String != null || features.StringText != null) && c.Equals(features.Culture))
                                         {
                                             if (culture == null) culture = c;
@@ -598,7 +598,7 @@ namespace Lexical.Localization.StringFormat
                                 break;
 
                             // Try inlines
-                            case ResolveSource.Inlines:
+                            case ResolveSource.Inline:
                                 for (int i = 0; i < features.Inlines.Count; i++)
                                 {
                                     try
@@ -619,7 +619,7 @@ namespace Lexical.Localization.StringFormat
                                 }
                                 break;
 
-                            case ResolveSource.Key:
+                            case ResolveSource.Line:
                                 // Key has explicit culture and value, use the value
                                 if (features.String != null || features.StringText != null)
                                 {
