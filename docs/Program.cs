@@ -6,6 +6,7 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            ILineQualifier_Examples.Main(args);
             ILine_Examples.Main(args);
             ILineFactory_Examples.Main(args);
             Tutorial_Examples.Main(args);

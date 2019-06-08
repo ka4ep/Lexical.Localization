@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 namespace Lexical.Localization
 {
+    #region Interface
     /// <summary>
     /// Measures qualities of <see cref="ILine"/>s and <see cref="ILineParameter"/>.
     /// </summary>
@@ -91,6 +92,7 @@ namespace Lexical.Localization
         /// <param name="qualifierRule"></param>
         void Add(ILineQualifier qualifierRule);
     }
+    #endregion Interface
 
     /// <summary></summary>
     public static class ILineQualifierExtensions
