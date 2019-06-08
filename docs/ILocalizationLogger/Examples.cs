@@ -90,6 +90,7 @@ namespace docs
                 Console.WriteLine(root.Type("MyClass").Key("OK").Text("OK"));
                 #endregion Snippet_6b
                 // 2019-06-08 14:10:58.9517|INFO|MyClass|ResolveOkFromKey|CultureOkMatchedNoCulture|PluralityOkNotUsed|StringFormatOkString Type:MyClass:Key:OK = "OK"
+                Console.WriteLine(root.Key("OK").Text("OK"));
             }
             {
                 #region Snippet_7

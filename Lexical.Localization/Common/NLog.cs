@@ -34,9 +34,10 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="line"></param>
         /// <param name="nlogfactory">NLog Logger</param>
+        /// <param name="fallbackCategory">(optional) logger name to use when Type cannot be derived</param>
         /// <returns>disposable subscription handle, or null if <paramref name="line"/> cannot be observed</returns>
-        public static ILineLogger NLog(this ILine line, LogFactory nlogfactory)
-            => line.Logger(new NLogFactoryLocalizationLogger(nlogfactory));
+        public static ILineLogger NLog(this ILine line, LogFactory nlogfactory, string fallbackCategory = "Lexical.Localization")
+            => line.Logger(new NLogFactoryLocalizationLogger(nlogfactory, fallbackCategory));
     }
 
 }
