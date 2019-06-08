@@ -13,7 +13,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves function class name to <see cref="IStringResolver"/>.
     /// </summary>
-    public class StringResolverResolver : ParameterResolver<IStringResolver>, IResolver<IStringResolver>
+    public class StringResolverResolver : ParameterResolver<ILineStringResolver, IStringResolver>, IResolver<IStringResolver>
     {
         /// <summary>
         /// Default instance.

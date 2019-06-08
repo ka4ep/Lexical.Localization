@@ -51,7 +51,7 @@ Different string formats, such as C#'s *String.Format*, are supported. **IString
 [!code-csharp[Snippet](Examples.cs#Snippet_9)]
 
 # Resolving string
-*ILine.ToString()* is a shortcut to <b><i>ILine</i>.ResolveString()</b>, which returns with additional information about the resolve process. 
+<b><i>ILine</i>.ResolveString()</b> returns more information about the string resolve process than *ILine.ToString()*.
 [!code-csharp[Snippet](Examples.cs#Snippet_1d)]
 
 # String Localizer

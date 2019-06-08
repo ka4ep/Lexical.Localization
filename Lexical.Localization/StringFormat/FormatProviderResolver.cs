@@ -13,7 +13,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves function class name to <see cref="IFormatProvider"/>.
     /// </summary>
-    public class FormatProviderResolver : ParameterResolver<IFormatProvider>, IResolver<IFormatProvider>
+    public class FormatProviderResolver : ParameterResolver<ILineFormatProvider, IFormatProvider>, IResolver<IFormatProvider>
     {
         /// <summary>
         /// Default instance.

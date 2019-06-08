@@ -240,8 +240,9 @@ namespace Lexical.Localization.Resolver
     /// Resolves class name to instance of the class. Also resolves parameter values into instances of class.
     /// Caches the instances.
     /// </summary>
+    /// <typeparam name="LineT"></typeparam>
     /// <typeparam name="T"></typeparam>
-    public class ParameterResolver<T> : BaseResolver<T>, IParameterResolver
+    public class ParameterResolver<LineT, T> : BaseResolver<T>, IParameterResolver
     {
         /// <summary>
         /// The parameter this resolver is capable of resolving.
@@ -278,7 +279,7 @@ namespace Lexical.Localization.Resolver
         }
 
         /// <summary>
-        /// Resolve "FormatProvider" parameter into arguments.
+        /// Resolve <see cref="ParameterName"/> parameter into arguments.
         /// </summary>
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
@@ -290,7 +291,7 @@ namespace Lexical.Localization.Resolver
             T value;
             if (parameterValue != null && parameterValue != "" && parameterName == ParameterName && TryResolve(parameterValue, out value))
             {
-                resolvedLineArguments = new LineArguments<ILineCulture, T>(value);
+                resolvedLineArguments = new LineArguments<LineT, T>(value);
                 return true;
             }
 

@@ -28,7 +28,6 @@ namespace docs
             {
                 #region Snippet_1b
                 ILineRoot root = new LineRoot();
-
                 ILine hint1 = root.PluralRules("Unicode.CLDR35");
                 ILine section1 = hint1.Section("Section2");
                 ILine section1_1 = hint1.Section("Section1.1");
@@ -80,6 +79,14 @@ namespace docs
 
             // 3. Hints
             {
+                #region Snippet_3_
+                IAsset asset = LineReaderMap.Default.FileAsset("ILine\\Hints.ini");
+                ILineRoot root = new LineRoot(asset);
+                Console.WriteLine(root.Key("Error").Value(DateTime.Now));
+                Console.WriteLine(root.Key("Ok"));
+                #endregion Snippet_3_
+            }
+            {
                 #region Snippet_3a
                 ILine line1 = LineRoot.Global.StringFormat(TextFormat.Default).String("Text");
                 ILine line2 = LineRoot.Global.StringFormat("Lexical.Localization.StringFormat.TextFormat,Lexical.Localization")
@@ -92,6 +99,7 @@ namespace docs
                 IPluralRules pluralRules = PluralRulesResolver.Default.Resolve("Unicode.CLDR35");
                 ILine line1 = LineRoot.Global.PluralRules(pluralRules);
                 ILine line2 = LineRoot.Global.PluralRules("Unicode.CLDR35");
+                ILine line3 = LineRoot.Global.PluralRules("[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true");
                 #endregion Snippet_3b
                 Console.WriteLine(line2);
             }

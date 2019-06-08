@@ -1,6 +1,7 @@
 # Line
-**ILine** is interface for implementations that address broad variety of features.
-Lines can carry hints, key reference and strings. They can be implemented with one class, but are compositions of smaller classes that are used to form linked lists.
+**ILine** is a set of interfaces for broad variety of features.
+Lines can carry hints, key references and strings and binary resources. 
+They can be implemented with one class, but are are typically used as compositions of smaller classes that form linked lists.
 
 ```csharp
 ILine key = LineRoot.Global.PluralRules("Unicode.CLDR35").Key("Key").Format("Hello, {0}");
@@ -12,7 +13,6 @@ Or constructed to span a tree structure (trie).
 
 ```csharp
 ILineRoot root = new LineRoot();
-
 ILine hint1 = root.PluralRules("Unicode.CLDR35");
 ILine section1 = hint1.Section("Section2");
 ILine section1_1 = hint1.Section("Section1.1");
@@ -38,7 +38,7 @@ ILine line = LineRoot.Global.Asset(resourceAsset);
 ILine line = LineRoot.Global.Logger(Console.Out, LineStatusSeverity.Ok);
 ```
 
-<b>.CulturePolicy(<i>ICulturePolicy</i>)</b> adds culture policy that determines the active culture in current execution context.	
+<b>.CulturePolicy(<i>ICulturePolicy</i>)</b> adds a culture policy that determines which culture is active in a given execution context.	
 
 ```csharp
 ICulturePolicy culturePolicy = new CulturePolicy().SetToCurrentCulture();
@@ -47,6 +47,13 @@ ILine line = LineRoot.Global.CulturePolicy(culturePolicy);
 
 # Hints
 Hints are line parts that can be appended from localization file as well as from *ILine*.
+
+```ini
+[PluralRules:Unicode.CLDR35]
+Key:Error:FormatProvider:docs.CustomFormat,docs = Error, (Date = {0:DATE})
+Key:Ok:StringFormat:Lexical.Localization.StringFormat.TextFormat,Lexical.Localization = OK {C# format is not in use here}.
+
+```
 
 <b>.StringFormat(<i>IStringFormat</i>)</b> and <b>.StringFormat(<i>string</i>)</b> add a string format, that determines the way the consequtive "String" parameters are parsed.
 
@@ -62,9 +69,10 @@ ILine line2 = LineRoot.Global.StringFormat("Lexical.Localization.StringFormat.Te
 IPluralRules pluralRules = PluralRulesResolver.Default.Resolve("Unicode.CLDR35");
 ILine line1 = LineRoot.Global.PluralRules(pluralRules);
 ILine line2 = LineRoot.Global.PluralRules("Unicode.CLDR35");
+ILine line3 = LineRoot.Global.PluralRules("[Category=cardinal,Case=one]n=1[Category=cardinal,Case=other]true");
 ```
 
-<b>.FormatProvider(<i>IFormatProvider</i>)</b> and <b>.FormatProvider(<i>string</i>)</b> add a custom format provider that provide special format handling.
+<b>.FormatProvider(<i>IFormatProvider</i>)</b> and <b>.FormatProvider(<i>string</i>)</b> add a custom format provider that provides special format handling.
 
 ```csharp
 IFormatProvider customFormat = new CustomFormat();

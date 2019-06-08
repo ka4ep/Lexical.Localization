@@ -12,7 +12,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves parameter "Type" to <see cref="Type"/>.
     /// </summary>
-    public class TypeResolver : ParameterResolver<Type>
+    public class TypeResolver : ParameterResolver<ILineType, Type>
     {
         /// <summary>
         /// Default instance.

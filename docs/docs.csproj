@@ -119,6 +119,9 @@
     <None Update="HelloWorld.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="ILine\Hints.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="localization.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

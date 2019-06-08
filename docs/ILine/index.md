@@ -1,6 +1,7 @@
 ﻿# Line
-**ILine** is interface for implementations that address broad variety of features.
-Lines can carry hints, key reference and strings. They can be implemented with one class, but are compositions of smaller classes that are used to form linked lists.
+**ILine** is a set of interfaces for broad variety of features.
+Lines can carry hints, key references and strings and binary resources. 
+They can be implemented with one class, but are are typically used as compositions of smaller classes that form linked lists.
 [!code-csharp[Snippet](Examples.cs#Snippet_1a)]
 ![linked list](linkedlist.svg)
 <br/>
@@ -17,11 +18,12 @@ Or constructed to span a tree structure (trie).
 <b>.Logger(<i>ILocalizationLogger</i>)</b> adds logger as line part.
 [!code-csharp[Snippet](Examples.cs#Snippet_2b)]
 
-<b>.CulturePolicy(<i>ICulturePolicy</i>)</b> adds culture policy that determines the active culture in current execution context.	
+<b>.CulturePolicy(<i>ICulturePolicy</i>)</b> adds a culture policy that determines which culture is active in a given execution context.	
 [!code-csharp[Snippet](Examples.cs#Snippet_2c)]
 
 # Hints
 Hints are line parts that can be appended from localization file as well as from *ILine*.
+[!code-ini[Snippet](Hints.ini)]
 
 <b>.StringFormat(<i>IStringFormat</i>)</b> and <b>.StringFormat(<i>string</i>)</b> add a string format, that determines the way the consequtive "String" parameters are parsed.
 [!code-csharp[Snippet](Examples.cs#Snippet_3a)]
@@ -29,7 +31,7 @@ Hints are line parts that can be appended from localization file as well as from
 <b>.PluralRules(<i>IPluralRules</i>)</b> and <b>.PluralRules(<i>string</i>)</b> add plural rules that determine how plurality are used in further line parts.
 [!code-csharp[Snippet](Examples.cs#Snippet_3b)]
 
-<b>.FormatProvider(<i>IFormatProvider</i>)</b> and <b>.FormatProvider(<i>string</i>)</b> add a custom format provider that provide special format handling.
+<b>.FormatProvider(<i>IFormatProvider</i>)</b> and <b>.FormatProvider(<i>string</i>)</b> add a custom format provider that provides special format handling.
 [!code-csharp[Snippet](Examples.cs#Snippet_3c)]
 [!code-csharp[Snippet](Examples.cs#Snippet_3d)]
 

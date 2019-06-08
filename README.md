@@ -172,7 +172,7 @@ ILine root = new LineRoot(null, culturePolicy: culturePolicy);
 ```
 
 # Resolving string
-*ILine.ToString()* is a shortcut to <b><i>ILine</i>.ResolveString()</b>, which returns with additional information about the resolve process. 
+<b><i>ILine</i>.ResolveString()</b> returns more information about the string resolve process than *ILine.ToString()*.
 
 ```csharp
 LineString resolved_string = line.Value("Corellia Melody").ResolveString();

@@ -13,7 +13,7 @@ namespace Lexical.Localization.StringFormat
     /// <summary>
     /// Resolves function class name to <see cref="IFunctions"/>.
     /// </summary>
-    public class FunctionsResolver : ParameterResolver<IFunctions>
+    public class FunctionsResolver : ParameterResolver<ILineFunctions, IFunctions>
     {
         /// <summary>
         /// Default instance.

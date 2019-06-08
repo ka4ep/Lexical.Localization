@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Resolves function class name to <see cref="ICulturePolicy"/>.
     /// </summary>
-    public class CulturePolicyResolver : ParameterResolver<ICulturePolicy>, IResolver<ICulturePolicy>
+    public class CulturePolicyResolver : ParameterResolver<ILineCulturePolicy, ICulturePolicy>, IResolver<ICulturePolicy>
     {
         /// <summary>
         /// Default instance.

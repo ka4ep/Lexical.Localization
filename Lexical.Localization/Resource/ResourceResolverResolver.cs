@@ -13,7 +13,7 @@ namespace Lexical.Localization.Resource
     /// <summary>
     /// Resolves function class name to <see cref="IResourceResolver"/>.
     /// </summary>
-    public class ResourceResolverResolver : ParameterResolver<IResourceResolver>, IResolver<IResourceResolver>
+    public class ResourceResolverResolver : ParameterResolver<ILineResourceResolver, IResourceResolver>, IResolver<IResourceResolver>
     {
         /// <summary>
         /// Default instance.
