@@ -144,6 +144,8 @@ namespace Lexical.Localization
         //// Placeholder - Step that evaluates placeholder expression
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PlaceholderOk = 0x01UL << Shift.Placeholder,
+        /// <summary>Ok, one of the arguments was enum</summary>
+        PlaceholderOkEnum = 0x02UL << Shift.Placeholder,
         /// <summary>One of the argument was null, or custom formatter resulted into null.</summary>
         PlaceholderOkNull = 0x04UL << Shift.Placeholder,
         /// <summary>Request asked for the format string, without applying arguments to it.</summary>
@@ -154,6 +156,10 @@ namespace Lexical.Localization
         PlaceholderWarningArgumentValuesNotSupplied = 0x23UL << Shift.Placeholder,
         /// <summary>No IFormattable implementation or ICustomFormatter was found, or they returned null, ToString was applied</summary>
         PlaceholderWarningToStringUsed = 0x26UL << Shift.Placeholder,
+        /// <summary>Enum evaluation caused warning, unspecified reason</summary>
+        PlaceholderWarningEnum = 0x31UL << Shift.Placeholder,
+        /// <summary>Enum evaluation caused warning, case was not matched</summary>
+        PlaceholderWarningEnumCaseNotMatched = 0x32UL << Shift.Placeholder,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PlaceholderError = 0x40UL << Shift.Placeholder,
         /// <summary>The argument object did not match the type in format string</summary>
@@ -176,10 +182,14 @@ namespace Lexical.Localization
         PlaceholderErrorFloatingOpError = 0x4FUL << Shift.Placeholder,
         /// <summary>Error in evaluation of inequality operation</summary>
         PlaceholderErrorInequalityOpError = 0x50UL << Shift.Placeholder,
-        /// <summary>Error in evaluation of expression</summary>
+        /// <summary>Error in expression evaluation</summary>
         PlaceholderErrorExpressionEvaluation = 0x51UL << Shift.Placeholder,
+        /// <summary>Error in enum evaluation</summary>
+        PlaceholderErrorEnum = 0x52UL << Shift.Placeholder,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PlaceholderFailed = 0x60UL << Shift.Placeholder,
+        /// <summary>Failed in enum evaluation</summary>
+        PlaceholderFailedEnum = 0x72UL << Shift.Placeholder,
         /// <summary>Result has not been processed</summary>
         PlaceholderFailedNoResult = 0x7FUL << Shift.Placeholder,
         /// <summary>Mask for severity</summary>

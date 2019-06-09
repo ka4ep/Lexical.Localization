@@ -197,7 +197,7 @@ namespace Lexical.Localization
         /// <param name="part"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILine Format(this ILine part, FormattableString value)
+        public static ILine Formulate(this ILine part, FormattableString value)
         {
             ILine line = part;
             if (value.Format != null) line = line.Append<ILineString, IString>(CSharpFormat.Default.Parse(value.Format));
@@ -211,7 +211,7 @@ namespace Lexical.Localization
         /// <param name="lineFactory"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static ILine Format(this ILineFactory lineFactory, FormattableString value)
+        public static ILine Formulate(this ILineFactory lineFactory, FormattableString value)
         {
             ILine line = null;
             if (value.Format != null) line = lineFactory.Create<ILineString, IString>(line, CSharpFormat.Default.Parse(value.Format));

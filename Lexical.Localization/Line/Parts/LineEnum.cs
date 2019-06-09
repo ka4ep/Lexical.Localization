@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 
+using Lexical.Localization.Internal;
 using Lexical.Localization.StringFormat;
 using System;
 using System.Collections.Generic;
@@ -14,114 +15,6 @@ namespace Lexical.Localization
     /// <summary></summary>
     public static partial class LineExtensions
     {
-        /// <summary>
-        /// Resolve each flag of enum type and compose into a string.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="line"></param>
-        /// <param name="enumFlags"></param>
-        /// <param name="separator"></param>
-        /// <returns></returns>
-        public static string ResolveEnumFlags<T>(this ILine line, T enumFlags, string separator)
-        {
-            StringBuilder sb = new StringBuilder();
-            int count = 0;
-            foreach (LineString str in ResolveEnumFlags(line, enumFlags))
-            {
-                if (count++ > 0) sb.Append(separator);
-                sb.Append(str.Value);
-            }
-            return sb.ToString();
-        }
-
-        /// <summary>
-        /// Resolve each flag of enum type.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="line"></param>
-        /// <param name="enumFlags"></param>
-        /// <returns></returns>
-        public static IEnumerable<LineString> ResolveEnumFlags<T>(this ILine line, T enumFlags)
-        {
-            Type enumType = typeof(T);
-            Type underlyingType = System.Enum.GetUnderlyingType(enumType);
-            if (typeof(Int32).Equals(underlyingType) || typeof(Int64).Equals(underlyingType) || typeof(Int16).Equals(underlyingType) || typeof(SByte).Equals(underlyingType))
-                return resolveEnumFlagsSigned(line, enumType, ((IConvertible)enumFlags).ToInt64(null));
-            if (typeof(UInt32).Equals(underlyingType) || typeof(UInt64).Equals(underlyingType) || typeof(UInt16).Equals(underlyingType) || typeof(Byte).Equals(underlyingType))
-                return resolveEnumFlagsUnsigned(line, enumType, ((IConvertible)enumFlags).ToUInt64(null));
-            throw new ArgumentException(nameof(T));
-        }
-
-        static IEnumerable<LineString> resolveEnumFlagsSigned(this ILine line, Type enumType, long enumFlags)
-        {
-            string[] keys = System.Enum.GetNames(enumType);
-            Array valueArray = System.Enum.GetValues(enumType);
-            int count = valueArray.Length;
-            long[] values = new long[count];
-
-            // TODO: Optimize this. Store the array in ILineEnum?
-            for (int i = 0; i < count; i++) values[i] = ((IConvertible)valueArray.GetValue(i)).ToInt64(null);
-
-            while (enumFlags != default)
-            {
-                bool foundCase = false;
-                for (int i = 0; i < valueArray.Length; i++)
-                {
-                    long value = values[i];
-                    if ((enumFlags & value) != 0)
-                    {
-                        foundCase = true;
-                        LineString str = line.Key(keys[i]).ResolveString();
-                        if (str.Value == null) str = new LineString(line, keys[i], LineStatus.ResolveErrorNoMatch);
-                        yield return str;
-                        enumFlags &= ~value;
-                        break;
-                    }
-                }
-
-                if (!foundCase)
-                {
-
-                    yield return new LineString(line, enumFlags.ToString(), LineStatus.ResolveErrorNoMatch);
-                    yield break;
-                }
-            }
-        }
-
-        static IEnumerable<LineString> resolveEnumFlagsUnsigned(this ILine line, Type enumType, ulong enumFlags)
-        {
-            string[] keys = System.Enum.GetNames(enumType);
-            Array valueArray = System.Enum.GetValues(enumType);
-            int count = valueArray.Length;
-            ulong[] values = new ulong[count];
-            // TODO: Optimize this. Store the array in ILineEnum?
-            for (int i = 0; i < count; i++) values[i] = ((IConvertible)valueArray.GetValue(i)).ToUInt64(null);
-
-            while (enumFlags != default)
-            {
-                bool foundCase = false;
-                for (int i = 0; i < valueArray.Length; i++)
-                {
-                    ulong value = values[i];
-                    if ((enumFlags & value) != 0)
-                    {
-                        foundCase = true;
-                        LineString str = line.Key(keys[i]).ResolveString();
-                        if (str.Value == null) str = new LineString(line, keys[i], LineStatus.ResolveErrorNoMatch);
-                        enumFlags &= ~value;
-                        break;
-                    }
-                }
-
-                if (!foundCase)
-                {
-
-                    yield return new LineString(line, enumFlags.ToString(), LineStatus.ResolveErrorNoMatch);
-                    yield break;
-                }
-            }
-        }
-
         /// <summary>
         /// Inline string value to an enum case. 
         /// </summary>
@@ -166,10 +59,12 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             ILine result = line.GetOrCreateInlines(out inlines);
-            foreach (string name in System.Enum.GetNames(typeof(T)))
+            ILine subline = line == inlines ? line.GetPreviousPart() : line;
+            EnumInfo enumInfo = new EnumInfo(typeof(T));
+            foreach (IEnumCase @case in enumInfo.Cases)
             {
-                ILine key = line.Key(name);
-                inlines[key] = key.Text(name);
+                ILine key = subline.Key(@case.Name);
+                inlines[key] = key.Text(@case.Description ?? @case.Name);
             }
             return result;
         }
@@ -184,10 +79,12 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             ILine result = line.GetOrCreateInlines(out inlines);
-            foreach (string name in System.Enum.GetNames(enumType))
+            ILine subline = line == inlines ? line.GetPreviousPart() : line;
+            EnumInfo enumInfo = new EnumInfo(enumType);
+            foreach (IEnumCase @case in enumInfo.Cases)
             {
-                ILine key = line.Key(name);
-                inlines[key] = key.Text(name);
+                ILine key = subline.Key(@case.Name);
+                inlines[key] = key.Text(@case.Description ?? @case.Name);
             }
             return result;
         }
@@ -205,9 +102,10 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             ILine result = line.GetOrCreateInlines(out inlines);
-            ILine key = line.Key(enumCase.ToString());
-            if (culture != null) key = key.Culture(culture);
-            inlines[key] = key.Text(text);
+            ILine subline = line == inlines ? line.GetPreviousPart() : line;
+            subline = subline.Key(enumCase.ToString());
+            if (culture != null) subline = subline.Culture(culture);
+            inlines[subline] = subline.Text(text);
             return result;
         }
 

@@ -8,7 +8,7 @@ Values are provided with <b>.Value(<i>object[]</i>)</b>.
 Providing **.Format()** and **.Value()** is equivalent to **String.Format()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c)]
 
-<b>.Format(<i>$interpolated_string</i>)</b> also creates **.Format()** and **.Value()** parts.
+<b>.Formulate(<i>$interpolated_string</i>)</b> uses interpolated strings. It simply appends **.Format()** and **.Value()** parts.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c1)]
 
 # Culture

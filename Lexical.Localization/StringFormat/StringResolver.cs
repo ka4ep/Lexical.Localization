@@ -412,7 +412,7 @@ namespace Lexical.Localization.StringFormat
                 features.Log(lineString);
                 return lineString;
             }
-        }
+        }        
 
         /// <summary>
         /// Resolve keys into a line. Searches from asset, inlines and key itself.
@@ -706,9 +706,9 @@ namespace Lexical.Localization.StringFormat
                     // Get placeholder
                     IPlaceholder ph = placeholders[i];
                     // Evaluate value
-                    object ph_value = placeholder_evaluator.Evaluate(ph.Expression);
+                    string ph_value = placeholder_evaluator.toString( placeholder_evaluator.Evaluate(ph.Expression) );
                     // Add to array
-                    placeholder_values.Add(ph_value?.ToString());
+                    placeholder_values.Add(ph_value);
                     // Update code
                     features.Status.UpPlaceholder(placeholder_evaluator.Status);
                 }

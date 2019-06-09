@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// Line part that carries <see cref="ILineInlines"/>. 
     /// </summary>
     [Serializable]
-    public class LineInlines : LineBase, ILineInlines, ILineArguments<IDictionary<ILine, ILine>>
+    public class LineInlines : LineBase, ILineInlines, ILineArguments<ILineInlines, IDictionary<ILine, ILine>>
     {
         /// <summary>
         /// Inlines.
@@ -117,7 +117,7 @@ namespace Lexical.Localization
     /// StringLocalizer part that carries <see cref="ILineInlines"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerInlines : StringLocalizerBase, ILineInlines, ILineArguments<IDictionary<ILine, ILine>>
+    public class StringLocalizerInlines : StringLocalizerBase, ILineInlines, ILineArguments<ILineInlines, IDictionary<ILine, ILine>>
     {
         /// <summary>
         /// Inlines.
@@ -229,7 +229,8 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = line.Concat(subKey);
+            ILine subline = line == inlines ? line.GetPreviousPart() : line;
+            subline = subline.Concat(subKey);
             if (valueText == null)
             {
                 inlines.Remove(subline);
@@ -256,11 +257,11 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = line.Culture(culture);
+            ILine subline = line == inlines ? line.GetPreviousPart() : line;
+            subline = subline.Culture(culture);
             IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Default;
             IString format = stringFormat.Parse(valueText);
-            ILine value = subline.String(format);
-            inlines[subline] = value;
+            inlines[subline] = subline.String(format);
             return line;
         }
 
@@ -276,7 +277,8 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = LineFormat.Parameters.Parse(subKeyText, line?.GetPreviousPart());
+            ILine subline = line == inlines ? line.GetPreviousPart() : line;
+            subline = LineFormat.Parameters.Parse(subKeyText, subline);
             if (valueText == null)
             {
                 inlines.Remove(subline);
@@ -285,8 +287,7 @@ namespace Lexical.Localization
             {
                 IStringFormat stringFormat = subline.FindStringFormat(StringFormatResolver.Default) ?? CSharpFormat.Default;
                 IString format = stringFormat.Parse(valueText);
-                ILine value = subline.String(format);
-                inlines[subline] = value;
+                inlines[subline] = subline.String(format);
             }
             return line;
         }
@@ -303,7 +304,8 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = LineFormat.ParametersInclString.Parse(subKeyText, line);
+            ILine subline = line == inlines ? line.GetPreviousPart() : line;
+            subline = LineFormat.ParametersInclString.Parse(subKeyText, subline);
             if (value == null)
             {
                 inlines.Remove(subline);

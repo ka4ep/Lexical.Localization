@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
 using Lexical.Localization;
@@ -319,6 +320,11 @@ namespace docs
                 #endregion Snippet_7l2
             }
             {
+                #region Snippet_7l3
+                LineRoot.Builder.AddSource(LineReaderMap.Default.FileAssetSource("ILine\\CarFeature.ini")).Build();
+                #endregion Snippet_7l3
+            }
+            {
                 #region Snippet_7m
                 ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>()
                     .InlineEnum<CarFeature>()
@@ -332,16 +338,28 @@ namespace docs
                     .InlineEnum(CarFeature.Black, "fi", "Musta")
                     .InlineEnum(CarFeature.White, "fi", "Valkoinen");
                 #endregion Snippet_7m
+
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("");
                 #region Snippet_7m2
                 Console.WriteLine( carFeature.Key(CarFeature.Petrol) );
-                Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("fi") );
+                Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("fi"));
+                Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("sv"));
                 #endregion Snippet_7m2
                 #region Snippet_7m3
                 CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
-                Console.WriteLine( carFeature.ResolveEnumFlags(features, " | ") );
-                Console.WriteLine( carFeature.Culture("fi").ResolveEnumFlags(features, " | ") );
+                Console.WriteLine( carFeature.Formulate($"{features}") );
+                Console.WriteLine( carFeature.Formulate($"{features}").Culture("fi") );
+                Console.WriteLine( carFeature.Formulate($"{features}").Culture("sv") );
                 #endregion Snippet_7m3
+
+                Console.WriteLine(carFeature.Formulate($"{features:g}").Culture("fi"));
+                Console.WriteLine(carFeature.Formulate($"{features:G}").Culture("fi"));
+                Console.WriteLine(carFeature.Formulate($"{features:f}").Culture("fi"));
+                Console.WriteLine(carFeature.Formulate($"{features:F}").Culture("fi"));
+                Console.WriteLine(carFeature.Formulate($"{features:d}").Culture("fi"));
+                Console.WriteLine(carFeature.Formulate($"{features:D}").Culture("fi"));
+                Console.WriteLine(carFeature.Formulate($"{features:x}").Culture("fi"));
+                Console.WriteLine(carFeature.Formulate($"{features:X}").Culture("fi"));
             }
 
             // 8. Values
@@ -495,17 +513,22 @@ namespace docs
         // Fuel Type
         Electric = 0x0001,
         Petrol = 0x0002,
-        NaturalGas = 0x0004,
+
+        [Description("Natural gas")]
+        NaturalGas = 0x0003,
 
         // Door count
+        [Description("Two doors")]
         TwoDoors = 0x0010,
+        [Description("Four doors")]
         FourDoors = 0x0020,
-        FiveDoors = 0x0040,
+        [Description("Five doors")]
+        FiveDoors = 0x0030,
 
         // Color
         Red = 0x0100,
         Black = 0x0200,
-        White = 0x0400,
+        White = 0x0300,
     }
     #endregion Snippet_7i
 

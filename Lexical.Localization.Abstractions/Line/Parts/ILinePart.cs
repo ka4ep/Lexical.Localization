@@ -3,6 +3,7 @@
 // Date:           2.5.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
 
@@ -158,6 +159,117 @@ namespace Lexical.Localization
             if (tail == null) throw new IndexOutOfRangeException();
             return tail;
         }
+
+        /// <summary>
+        /// Prune parameters that are disqualified by <paramref name="qualifier"/>.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="qualifier">Parameter qualifier that is used for determining which parts to keep in the line</param>
+        /// <param name="lineFactory">(optional) extra line factory</param>
+        /// <returns>a modified <paramref name="line"/></returns>
+        /// <exception cref="LineException"></exception>
+        public static ILine Prune(this ILine line, ILineQualifier qualifier, ILineFactory lineFactory = null)
+        {
+            ILineFactory appender1 = null;
+            line.TryGetAppender(out appender1);
+
+            // Earliest qualified line part. The start tail, where to start appending qualified parts
+            ILine startTail = line;
+
+            // Qualified parts to append (to append in order of from appendIx to 0)
+            StructList12<ILineArguments> argsToAppend = new StructList12<ILineArguments>();
+            // Index up until to append
+            int appendIx = -1;
+
+            if (qualifier.NeedsOccuranceIndex())
+            {
+                StructList12<(ILineParameter, int occurance)> list = new StructList12<(ILineParameter, int occurance)>();
+                line.GetParameterPartsWithOccurance(ref list);
+
+                for (ILine l = line; l != null; l = l.GetPreviousPart())
+                {
+                    bool qualifies = true;
+                    if (l is ILineParameterEnumerable lineParameters)
+                    {
+                        foreach (ILineParameter lineParameter in lineParameters)
+                        {
+                            int ix = -1;
+                            for (int i = 0; i < list.Count; i++) if (list[i].Item1 == lineParameter) { ix = list[i].occurance; break; }
+                            qualifies &= qualifier.QualifyParameter(lineParameter, ix);
+                            if (!qualifies) break;
+                        }
+                    }
+                    {
+                        if (l is ILineParameter lineParameter)
+                        {
+                            int ix = -1;
+                            for (int i = 0; i < list.Count; i++) if (list[i].Item1 == lineParameter) { ix = list[i].occurance; break; }
+                            qualifies &= qualifier.QualifyParameter(lineParameter, ix);
+                        }
+                    }
+                    if (!qualifies)
+                    {
+                        startTail = l.GetPreviousPart();
+                        appendIx = argsToAppend.Count - 1;
+                    }
+                    else
+                    {
+                        if (l is ILineArgumentsEnumerable argses)
+                            foreach(ILineArguments _args in argses)
+                                argsToAppend.Add(_args);
+                        if (l is ILineArguments args)
+                            argsToAppend.Add(args);
+                    }
+                }
+
+            }
+            else {
+                for (ILine l = line; l != null; l = l.GetPreviousPart())
+                {
+                    bool qualifies = true;
+                    if (l is ILineParameterEnumerable lineParameters)
+                    {
+                        foreach (ILineParameter lineParameter in lineParameters)
+                        {
+                            qualifies &= qualifier.QualifyParameter(lineParameter, -1);
+                            if (!qualifies) break;
+                        }
+                    }
+                    {
+                        if (l is ILineParameter lineParameter)
+                        {
+                            qualifies &= qualifier.QualifyParameter(lineParameter, -1);
+                        }
+                    }
+                    if (!qualifies)
+                    {
+                        startTail = l.GetPreviousPart();
+                        appendIx = argsToAppend.Count - 1;
+                    }
+                    else
+                    {
+                        if (l is ILineArgumentsEnumerable argses)
+                            foreach (ILineArguments _args in argses)
+                                argsToAppend.Add(_args);
+                        if (l is ILineArguments args)
+                            argsToAppend.Add(args);
+                    }
+                }
+            }
+
+            // Append qualified parts.
+            ILine result = startTail;
+            for (int i = appendIx; i >= 0; i--)
+            {
+                ILineArguments arg = argsToAppend[i];
+                if (lineFactory == null || !lineFactory.TryCreate(result, arg, out result))
+                    if (appender1 == null || !appender1.TryCreate(result, arg, out result))
+                        throw new LineException(line, $"LineFactory doesn't have capability to concat {arg}");
+            }
+
+            return result;
+        }
+
 
     }
 }

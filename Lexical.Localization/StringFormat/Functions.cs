@@ -76,6 +76,15 @@ namespace Lexical.Localization.StringFormat
                 }
             }
 
+            if (argument is Enum @enum)
+            {
+                if (format == null || "".Equals(format) || "g".Equals(format) || "G".Equals(format) || "f".Equals(format) || "F".Equals(format))
+                {
+                    LineString enum_string = ctx.EvaluateEnum(@enum);
+                    if (enum_string.Value != null) { result = enum_string.Value; return true; }
+                }
+            }
+
             if (formatStr != null && argument is IFormattable formattable) { result = formattable.ToString(formatStr, ctx.Culture); return true; }
             if (ctx.Culture.GetFormat(typeof(ICustomFormatter)) is ICustomFormatter customFormatter_) { result = customFormatter_.Format(formatStr, argument, ctx.Culture); return true; }
             result = ctx.Culture == null ? String.Format("{0:" + formatStr + "}", argument) : String.Format(ctx.Culture, "{0:" + formatStr + "}", argument);

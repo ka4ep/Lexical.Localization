@@ -104,8 +104,15 @@ namespace Lexical.Localization.Internal
             // Create result
             IEnumCase[] result = new IEnumCase[c];
             for (int i = 0; i < c; i++) result[i] = list[i].Item1;
-            return cases;
+            return result;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            => Name;
 
         /// <summary>
         /// (case, bits, index)
@@ -116,11 +123,11 @@ namespace Lexical.Localization.Internal
             public int Compare((IEnumCase, int, int) x, (IEnumCase, int, int) y)
             {
                 // Compare by bits
-                int d = x.Item2 - y.Item2;
+                int d = y.Item2 - x.Item2;
                 if (d != 0) return d;
 
                 // Compare by index
-                d = y.Item3 - x.Item3;
+                d = x.Item3 - y.Item3;
                 return d;
             }
         }
@@ -225,6 +232,13 @@ namespace Lexical.Localization.Internal
             }
             return bits;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            => Name;
     }
 
 

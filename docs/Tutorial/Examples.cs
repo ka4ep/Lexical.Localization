@@ -26,7 +26,7 @@ namespace docs
                 #endregion Snippet_1c
                 #region Snippet_1c1
                 DateTime time = DateTime.Now;
-                Console.WriteLine(LineRoot.Global.Key("Time").Format($"It is now {time:d} at {time:t}"));
+                Console.WriteLine(LineRoot.Global.Key("Time").Formulate($"It is now {time:d} at {time:t}"));
                 #endregion Snippet_1c1
                 #region Snippet_1c2
                 Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Culture("sv").Value(DateTime.Now));

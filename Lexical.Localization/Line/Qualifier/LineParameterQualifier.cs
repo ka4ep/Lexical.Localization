@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
 
@@ -396,6 +397,68 @@ namespace Lexical.Localization
             public override string ToString()
                 => $"{GetType().Name}({nameof(ParameterName)}={ParameterName}, {nameof(OccuranceIndex)}={OccuranceIndex})";
         }
+
+        /// <summary>
+        /// Filter rule that asserts that the parameter is not a key.
+        /// </summary>
+        public class NonKey : ILineParameterQualifier
+        {
+            private static NonKey instance = new NonKey();
+
+            /// <summary>
+            /// Default singleton instance.
+            /// </summary>
+            public static NonKey Default => instance;
+
+            /// <summary></summary>
+            public bool NeedsOccuranceIndex => false;
+
+            /// <summary>
+            /// Table of parameter infos.
+            /// Used when parameter is non-resolved.
+            /// </summary>
+            public readonly IParameterInfos ParameterInfos;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            public NonKey()
+            {
+                ParameterInfos = Utils.ParameterInfos.Default;
+            }
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="paramterInfos"></param>
+            public NonKey(IParameterInfos paramterInfos)
+            {
+                ParameterInfos = paramterInfos;
+            }
+
+            /// <summary>
+            /// Test if parameter is a key.
+            /// </summary>
+            /// <param name="parameter"></param>
+            /// <param name="occuranceIndex"></param>
+            /// <returns>false if <paramref name="parameter"/> is a key</returns>
+            public bool QualifyParameter(ILineParameter parameter, int occuranceIndex)
+            {
+                if (parameter == null) return true;
+                if (parameter is ILineKey) return false;
+                if (parameter is ILineHint) return true;
+
+                IParameterInfo pi;
+                if (ParameterInfos.TryGetValue(parameter.ParameterName, out pi))
+                {
+                    if (typeof(ILineKey).Equals(pi.InterfaceType) || typeof(ILineCanonicalKey).Equals(pi.InterfaceType) || typeof(ILineNonCanonicalKey).Equals(pi.InterfaceType)) return false;
+                }
+
+                return true;
+            }
+        }
+
+
 
     }
 

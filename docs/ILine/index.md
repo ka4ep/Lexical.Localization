@@ -120,31 +120,39 @@ It's recommended to put inlined lines to variables for better performance. Inlin
 Enumerables can be localized just as any other type. 
 [!code-csharp[Snippet](Examples.cs#Snippet_7i)]
 
-<b>.Type&lt;T&gt;()</b> appends "Type" key.
+<b>.Assembly&lt;T&gt;()</b> and <b>.Type&lt;T&gt;()</b> append "Assembly" and "Type" keys to refer to enumeration type.
 [!code-csharp[Snippet](Examples.cs#Snippet_7l)]
 
-<b>.InlineEnum&lt;T&gt;()</b> adds every case of enum as-is to default culture "" inlines.
+<b>.InlineEnum&lt;T&gt;()</b> adds every case of enum as-is to inlines for culture "". It applies *[Description]* attribute when available.
 [!code-csharp[Snippet](Examples.cs#Snippet_7l2)]
 
-<b>.Enum(<i>enum</i>)</b> appends a "Key" parameter. Together <b>.Type()</b> and <b>.Enum()</b> create a key "Type:enumType:Key:enumCase", which can matched with culture specific descriptions in localization files.
-[!code-csharp[Snippet](Examples.cs#Snippet_7m2)]
+Enum localization can be supplied from files.
+[!code-csharp[Snippet](Examples.cs#Snippet_7l3)]
+
+Keys should have reference of "Assembly:asm:Type:enumType:Key:case". The file **CarFeature.ini**.
+ 
+[!code-ini[Snippet](CarFeature.ini)]
+
+A single case can be matched with the "Assembly:asm:Type:enumType:Key:case" keys.
 
 The result of the example above.
 ```none
 Petrol
 Bensiini
+Bensin
 ```
 
-<b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inline a culture specific text.
+<b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
 [!code-csharp[Snippet](Examples.cs#Snippet_7m)]
 
-<b>.ResolveEnumFlags(<i>enum</i>, <i>separator</i>)</b> resolves each flag separately and puts together a string.
+When enumerations used in formatted string or <i>$string_interpolations</i>, the labels are searches with "Assembly:asm:Type:enumType:Key:case" keys.
 [!code-csharp[Snippet](Examples.cs#Snippet_7m3)]
 
 The result of the example above.
 ```none
-Petrol | FiveDoors | Black
-Bensiini | Viisiovinen | Musta
+Five doors, Petrol, Black
+Viisiovinen, Bensiini, Musta
+Femdörras, Bensin, Svart
 ```
 
 # Resources

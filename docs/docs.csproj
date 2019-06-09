@@ -120,6 +120,9 @@
     <None Update="HelloWorld.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="ILine\CarFeature.ini">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ILine\Hints.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

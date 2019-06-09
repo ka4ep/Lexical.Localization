@@ -198,7 +198,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="a"></param>
         /// <returns></returns>
-        string toString(object a) {
+        public string toString(object a) {
             if (a == null) return "";
 
             // Return string as is
@@ -218,47 +218,14 @@ namespace Lexical.Localization.StringFormat
             // Handle enumeration
             if (a is Enum @enum && FunctionEvaluationCtx.EnumResolver != null)
             {
-                // Get enum info
-                IEnumInfo enumInfo = FunctionEvaluationCtx.EnumResolver.GetEnumInfo(a.GetType());
-                // Get value
-                ulong value = EnumCase.ToUInt64(@enum);
-                // Create string
-                StringBuilder sb = new StringBuilder();
-                // Separator between cases
-                String separator = ", ";
-                // root for search keys
-                ILine keyBase = FunctionEvaluationCtx.Line.Clone();
-                if (FunctionEvaluationCtx.Culture != null) keyBase = keyBase.Culture(FunctionEvaluationCtx.Culture);
-                // Split into cases
-                while (value != 0UL)
+                // Evaluate enum
+                LineString enum_str = FunctionEvaluationCtx.EvaluateEnum(@enum);
+                // Return value
+                if (enum_str.Value != null)
                 {
-                    string caseStr = null;
-                    foreach (IEnumCase @case in enumInfo.EvalCases)
-                    {
-                        // Is applicable
-                        if ((value & @case.Value) != @case.Value) continue;
-                        // Remove flag
-                        value &=~ @case.Value;
-                        // Create search key
-                        ILine key = keyBase.Concat(@case.Key);
-                        // Resolve
-                        caseStr = FunctionEvaluationCtx.StringResolver.ResolveString(key).Value;
-                        // Was localization string found?
-                        if (caseStr != null) break;
-                    }
-
-                    // Fallback as number
-                    if (caseStr == null)
-                    {
-                        caseStr = value.ToString(FunctionEvaluationCtx.Culture);
-                        value = 0UL;
-                    }
-
-                    // Append to sb
-                    if (sb.Length > 0) sb.Append(separator);
-                    sb.Append(caseStr);
+                    Status.Up(enum_str.Status);
+                    return enum_str.Value;
                 }
-                return sb.ToString();
             }
 
             // Call culture specific formattable 

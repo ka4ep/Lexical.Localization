@@ -254,7 +254,7 @@ namespace Lexical.Localization
         /// <exception cref="LineException">If append failed due to unexpected reason</exception>
         public static bool TryCreate(this ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line)
         {
-            if (factory == null) throw new LineException(previous, "Appender is not found.");
+            if (factory == null) { line = previous; return false; }
             if (factory is ILineFactoryByArgument argFactory && argFactory.TryCreate(factory, previous, arguments, out line)) return true;
             ILineFactoryByArgument argumentAdapter;
             if (LineFactoryByArgumentAdapter.Default.TryGet(arguments.GetType(), out argumentAdapter) && argumentAdapter.TryCreate(factory, previous, arguments, out line)) return true;
@@ -292,7 +292,7 @@ namespace Lexical.Localization
         /// <returns>true if succeeded</returns>
         public static bool TryCreate<Intf>(this ILineFactory factory, ILine previous, out Intf line) where Intf : ILine
         {
-            if (factory == null) throw new LineException(previous, "Appender is not found.");
+            if (factory == null) { line = default; return false; }
             Intf result = default;
             if (factory is ILineFactory<Intf> _casted && _casted.TryCreate(factory, previous, out result)) { line = result; return true; }
             ILineFactory<Intf> casted;
@@ -337,7 +337,7 @@ namespace Lexical.Localization
         /// <returns>true if succeeded</returns>
         public static bool TryCreate<Intf, A0>(this ILineFactory factory, ILine previous, A0 a0, out Intf line) where Intf : ILine
         {
-            if (factory == null) throw new LineException(previous, "Appender is not found.");
+            if (factory == null) { line = default; return false; }
             Intf result = default;
             if (factory is ILineFactory<Intf, A0> _casted && _casted.TryCreate(factory, previous, a0, out result)) { line = result; return true; }
             ILineFactory<Intf, A0> casted;
@@ -386,7 +386,7 @@ namespace Lexical.Localization
         /// <returns>true if succeeded</returns>
         public static bool TryCreate<Intf, A0, A1>(this ILineFactory factory, ILine previous, A0 a0, A1 a1, out Intf line) where Intf : ILine
         {
-            if (factory == null) throw new LineException(previous, "Appender is not found.");
+            if (factory == null) { line = default; return false; }
             Intf result = default;
             if (factory is ILineFactory<Intf, A0, A1> _casted && _casted.TryCreate(factory, previous, a0, a1, out result)) { line = result; return true; }
             ILineFactory<Intf, A0, A1> casted;
@@ -439,7 +439,7 @@ namespace Lexical.Localization
         /// <returns>true if succeeded</returns>
         public static bool TryCreate<Intf, A0, A1, A2>(this ILineFactory factory, ILine previous, A0 a0, A1 a1, A2 a2, out Intf line) where Intf : ILine
         {
-            if (factory == null) throw new LineException(previous, "Appender is not found.");
+            if (factory == null) { line = default; return false; }
             Intf result = default;
             if (factory is ILineFactory<Intf, A0, A1, A2> _casted && _casted.TryCreate(factory, previous, a0, a1, a2, out result)) { line = result; return true; }
             ILineFactory<Intf, A0, A1, A2> casted;
@@ -561,7 +561,7 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static bool TryClone(this ILineFactory factory, ILine line, out ILine clone)
         {
-            if (factory == null) { clone = default; return false; }
+            if (factory == null) { clone = line; return false; }
             ILine result = null;
             StructList16<ILine> args = new StructList16<ILine>();
             for (ILine l = line; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
@@ -590,6 +590,7 @@ namespace Lexical.Localization
         /// <exception cref="LineException">on append error</exception>
         public static bool TryConcat(this ILineFactory factory, ILine left, ILine right, out ILine result)
         {
+            if (factory == null) { result = left; return false; }
             ILine _result = left;
             StructList16<ILine> _args = new StructList16<ILine>();
             for (ILine l = right; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) _args.Add(l);

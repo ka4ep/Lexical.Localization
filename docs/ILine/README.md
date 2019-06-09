@@ -281,46 +281,76 @@ enum CarFeature
     // Fuel Type
     Electric = 0x0001,
     Petrol = 0x0002,
-    NaturalGas = 0x0004,
+
+    [Description("Natural gas")]
+    NaturalGas = 0x0003,
 
     // Door count
+    [Description("Two doors")]
     TwoDoors = 0x0010,
+    [Description("Four doors")]
     FourDoors = 0x0020,
-    FiveDoors = 0x0040,
+    [Description("Five doors")]
+    FiveDoors = 0x0030,
 
     // Color
     Red = 0x0100,
     Black = 0x0200,
-    White = 0x0400,
+    White = 0x0300,
 }
 ```
 
-<b>.Type&lt;T&gt;()</b> appends "Type" key.
+<b>.Assembly&lt;T&gt;()</b> and <b>.Type&lt;T&gt;()</b> append "Assembly" and "Type" keys to refer to enumeration type.
 
 ```csharp
 ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>();
 ```
 
-<b>.InlineEnum&lt;T&gt;()</b> adds every case of enum as-is to default culture "" inlines.
+<b>.InlineEnum&lt;T&gt;()</b> adds every case of enum as-is to inlines for culture "". It applies *[Description]* attribute when available.
 
 ```csharp
 ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>();
 ```
 
-<b>.Enum(<i>enum</i>)</b> appends a "Key" parameter. Together <b>.Type()</b> and <b>.Enum()</b> create a key "Type:enumType:Key:enumCase", which can matched with culture specific descriptions in localization files.
+Enum localization can be supplied from files.
 
 ```csharp
-Console.WriteLine( carFeature.Enum(CarFeature.Petrol) );
-Console.WriteLine( carFeature.Enum(CarFeature.Petrol).Culture("fi") );
+LineRoot.Builder.AddSource(LineReaderMap.Default.FileAssetSource("ILine\\CarFeature.ini")).Build();
 ```
+
+Keys should have reference of "Assembly:asm:Type:enumType:Key:case". The file **CarFeature.ini**.
+ 
+
+```ini
+[Assembly:docs:Type:docs.CarFeature:Culture:sv]
+// Fuel Type
+Key:Electric = El
+Key:Petrol = Bensin
+Key:NaturalGas = Naturgas
+
+// Door count
+Key:TwoDoors = Tvådörras
+Key:FourDoors = Fyrdörras
+Key:FiveDoors = Femdörras
+
+// Color
+Key:Red = Röd
+Key:Black = Svart
+Key:White = Vit
+
+
+```
+
+A single case can be matched with the "Assembly:asm:Type:enumType:Key:case" keys.
 
 The result of the example above.
 ```none
 Petrol
 Bensiini
+Bensin
 ```
 
-<b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inline a culture specific text.
+<b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
 
 ```csharp
 ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>()
@@ -336,18 +366,20 @@ ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>()
     .InlineEnum(CarFeature.White, "fi", "Valkoinen");
 ```
 
-<b>.ResolveEnumFlags(<i>enum</i>, <i>separator</i>)</b> resolves each flag separately and puts together a string.
+When enumerations used in formatted string or <i>$string_interpolations</i>, the labels are searches with "Assembly:asm:Type:enumType:Key:case" keys.
 
 ```csharp
 CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
-Console.WriteLine( carFeature.ResolveEnumFlags(features, " | ") );
-Console.WriteLine( carFeature.Culture("fi").ResolveEnumFlags(features, " | ") );
+Console.WriteLine( carFeature.Formulate($"{features}") );
+Console.WriteLine( carFeature.Formulate($"{features}").Culture("fi") );
+Console.WriteLine( carFeature.Formulate($"{features}").Culture("sv") );
 ```
 
 The result of the example above.
 ```none
-Petrol | FiveDoors | Black
-Bensiini | Viisiovinen | Musta
+Five doors, Petrol, Black
+Viisiovinen, Bensiini, Musta
+Femdörras, Bensin, Svart
 ```
 
 # Resources

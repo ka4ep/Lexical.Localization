@@ -18,11 +18,11 @@ Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateT
 Console.WriteLine(String.Format("It is now {0:d} at {0:t}", DateTime.Now));
 ```
 
-<b>.Format(<i>$interpolated_string</i>)</b> also creates **.Format()** and **.Value()** parts.
+<b>.Formulate(<i>$interpolated_string</i>)</b> uses interpolated strings. It simply appends **.Format()** and **.Value()** parts.
 
 ```csharp
 DateTime time = DateTime.Now;
-Console.WriteLine(LineRoot.Global.Key("Time").Format($"It is now {time:d} at {time:t}"));
+Console.WriteLine(LineRoot.Global.Key("Time").Formulate($"It is now {time:d} at {time:t}"));
 ```
 
 # Culture

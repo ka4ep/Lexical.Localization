@@ -33,7 +33,8 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = line.Concat(subKey);
+            ILine subline = line == inlines ? line.GetPreviousPart() : line;
+            subline = subline.Concat(subKey);
             if (value == null)
             {
                 inlines.Remove(subline);
@@ -57,7 +58,8 @@ namespace Lexical.Localization
         {
             ILineInlines inlines;
             line = line.GetOrCreateInlines(out inlines);
-            ILine subline = line.Culture(culture);
+            ILine subline = line == inlines ? line.GetPreviousPart() : line;
+            subline = subline.Culture(culture);
             inlines[subline] = subline.String(value);
             return line;
         }
