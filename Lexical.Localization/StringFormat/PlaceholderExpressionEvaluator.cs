@@ -4,10 +4,12 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Exp;
+using Lexical.Localization.Internal;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 
 namespace Lexical.Localization.StringFormat
 {
@@ -190,29 +192,83 @@ namespace Lexical.Localization.StringFormat
         }
         bool isInteger(object a) => a is int || a is uint || a is long || a is ulong;
         bool isFloat(object a) => a is float || a is double;
+
+        /// <summary>
+        /// Formulate object <paramref name="a"/> when format is "".
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
         string toString(object a) {
             if (a == null) return "";
-            if (a is string str) return str;
-            CultureInfo culture = FunctionEvaluationCtx.Culture;
 
-            if (culture != null)
+            // Return string as is
+            if (a is string str) return str;
+
+            // Use custom formatter
+            if (FunctionEvaluationCtx.FormatProvider != null)
             {
-                if (FunctionEvaluationCtx.FormatProvider != null)
+                ICustomFormatter customFormatter = FunctionEvaluationCtx.FormatProvider.GetFormat(typeof(ICustomFormatter)) as ICustomFormatter;
+                if (customFormatter != null)
                 {
-                    ICustomFormatter customFormatter = FunctionEvaluationCtx.FormatProvider.GetFormat(typeof(ICustomFormatter)) as ICustomFormatter;
-                    if (customFormatter != null)
-                    {
-                        string formatted = customFormatter.Format("", a, culture);
-                        if (formatted != null) return formatted;
-                    }
-                }
-                if (a is IFormattable formattable)
-                {
-                    string formatted = formattable.ToString("", culture);
+                    string formatted = customFormatter.Format("", a, FunctionEvaluationCtx.Culture);
                     if (formatted != null) return formatted;
                 }
             }
 
+            // Handle enumeration
+            if (a is Enum @enum && FunctionEvaluationCtx.EnumResolver != null)
+            {
+                // Get enum info
+                IEnumInfo enumInfo = FunctionEvaluationCtx.EnumResolver.GetEnumInfo(a.GetType());
+                // Get value
+                ulong value = EnumCase.ToUInt64(@enum);
+                // Create string
+                StringBuilder sb = new StringBuilder();
+                // Separator between cases
+                String separator = ", ";
+                // root for search keys
+                ILine keyBase = FunctionEvaluationCtx.Line.Clone();
+                if (FunctionEvaluationCtx.Culture != null) keyBase = keyBase.Culture(FunctionEvaluationCtx.Culture);
+                // Split into cases
+                while (value != 0UL)
+                {
+                    string caseStr = null;
+                    foreach (IEnumCase @case in enumInfo.EvalCases)
+                    {
+                        // Is applicable
+                        if ((value & @case.Value) != @case.Value) continue;
+                        // Remove flag
+                        value &=~ @case.Value;
+                        // Create search key
+                        ILine key = keyBase.Concat(@case.Key);
+                        // Resolve
+                        caseStr = FunctionEvaluationCtx.StringResolver.ResolveString(key).Value;
+                        // Was localization string found?
+                        if (caseStr != null) break;
+                    }
+
+                    // Fallback as number
+                    if (caseStr == null)
+                    {
+                        caseStr = value.ToString(FunctionEvaluationCtx.Culture);
+                        value = 0UL;
+                    }
+
+                    // Append to sb
+                    if (sb.Length > 0) sb.Append(separator);
+                    sb.Append(caseStr);
+                }
+                return sb.ToString();
+            }
+
+            // Call culture specific formattable 
+            if (FunctionEvaluationCtx.Culture != null && a is IFormattable formattable)
+            {
+                string formatted = formattable.ToString("", FunctionEvaluationCtx.Culture);
+                if (formatted != null) return formatted;
+            }
+
+            // ToString()
             return a.ToString();
         }
         double toFloat(object a) => a switch { float f => f, double d => d, _ => Double.Parse(toString(a)) };

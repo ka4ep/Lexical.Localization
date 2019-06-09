@@ -334,8 +334,8 @@ namespace docs
                 #endregion Snippet_7m
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("");
                 #region Snippet_7m2
-                Console.WriteLine( carFeature.Enum(CarFeature.Petrol) );
-                Console.WriteLine( carFeature.Enum(CarFeature.Petrol).Culture("fi") );
+                Console.WriteLine( carFeature.Key(CarFeature.Petrol) );
+                Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("fi") );
                 #endregion Snippet_7m2
                 #region Snippet_7m3
                 CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;

@@ -50,6 +50,11 @@ namespace Lexical.Localization.StringFormat
         protected int maxPluralArguments;
 
         /// <summary>
+        /// Enumeration resolver
+        /// </summary>
+        public IEnumInfoResolver EnumResolver { get; protected set; }
+
+        /// <summary>
         /// Create string resolver 
         /// </summary>
         public StringResolver()
@@ -57,6 +62,7 @@ namespace Lexical.Localization.StringFormat
             this.Resolvers = Lexical.Localization.Resolver.Resolvers.Default;
             this.ResolveSequence = ResolverSequence.Default;
             this.maxPluralArguments = 3;
+            this.EnumResolver = new Lexical.Localization.Internal.EnumInfoResolver();
         }
 
         /// <summary>
@@ -65,11 +71,13 @@ namespace Lexical.Localization.StringFormat
         /// <param name="resolvers"></param>
         /// <param name="resolveSequence"></param>
         /// <param name="maxPluralArguments">maximum plural arguments. The higher the number, the more permutation overhead can occur</param>
-        public StringResolver(IResolver resolvers, ResolveSource[] resolveSequence = default, int maxPluralArguments = 3)
+        /// <param name="enumResolver">(optional) enumeration information resolver. Determines the search key.</param>
+        public StringResolver(IResolver resolvers, ResolveSource[] resolveSequence = default, int maxPluralArguments = 3, IEnumInfoResolver enumResolver = default)
         {
             this.Resolvers = resolvers ?? throw new ArgumentNullException(nameof(resolvers));
             this.ResolveSequence = resolveSequence ?? ResolverSequence.Default;
             this.maxPluralArguments = maxPluralArguments;
+            this.EnumResolver = enumResolver ?? new Lexical.Localization.Internal.EnumInfoResolver();
         }
 
         /// <summary>
@@ -131,7 +139,7 @@ namespace Lexical.Localization.StringFormat
                     CultureInfo culture_for_format = features.Culture;
                     if (culture_for_format == null && features.CulturePolicy != null) { CultureInfo[] cultures = features.CulturePolicy.Cultures; if (cultures != null && cultures.Length > 0) culture_for_format = cultures[0]; }
                     if (culture_for_format == null) culture_for_format = RootCulture;
-                    EvaluatePlaceholderValues(line, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
+                    EvaluatePlaceholderValues(line, null, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
 
                     // Create permutation configuration
                     PluralCasePermutations permutations = new PluralCasePermutations(line);
@@ -251,7 +259,7 @@ namespace Lexical.Localization.StringFormat
                 CultureInfo culture_for_format = features.Culture;
                 if (culture_for_format == null && features.CulturePolicy != null) { CultureInfo[] cultures = features.CulturePolicy.Cultures; if (cultures != null && cultures.Length > 0) culture_for_format = cultures[0]; }
                 if (culture_for_format == null) culture_for_format = RootCulture;
-                EvaluatePlaceholderValues(line, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
+                EvaluatePlaceholderValues(line, null, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
 
                 // Plural Rules
                 if (value.HasPluralRules())
@@ -313,7 +321,7 @@ namespace Lexical.Localization.StringFormat
                                 // Return with match
                                 features.Status.UpPlurality(LineStatus.PluralityOkMatched);
                                 // Evaluate placeholders again
-                                if (!EqualPlaceholders(value, value_for_plurality)) { placeholder_values.Clear(); EvaluatePlaceholderValues(line, value_for_plurality.Placeholders, ref features, ref placeholder_values, culture); }
+                                if (!EqualPlaceholders(value, value_for_plurality)) { placeholder_values.Clear(); EvaluatePlaceholderValues(line, line_for_plurality_arguments, value_for_plurality.Placeholders, ref features, ref placeholder_values, culture); }
                                 // Update status codes
                                 features.Status.Up(value_for_plurality.Status);
                                 // Return values
@@ -675,16 +683,20 @@ namespace Lexical.Localization.StringFormat
         /// Evaluate placeholders into string values.
         /// </summary>
         /// <param name="line"></param>
+        /// <param name="pluralLine">(optional)</param>
         /// <param name="placeholders"></param>
         /// <param name="features">contextual data</param>
         /// <param name="placeholder_values">collection where strings are placed, one for each placeholder</param>
         /// <param name="culture">the culture in which to evaluate</param>
-        void EvaluatePlaceholderValues(ILine line, IPlaceholder[] placeholders, ref LineFeatures features, ref StructList12<string> placeholder_values, CultureInfo culture)
+        void EvaluatePlaceholderValues(ILine line, ILine pluralLine, IPlaceholder[] placeholders, ref LineFeatures features, ref StructList12<string> placeholder_values, CultureInfo culture)
         {
             PlaceholderExpressionEvaluator placeholder_evaluator = new PlaceholderExpressionEvaluator();
             placeholder_evaluator.Args = features.ValueArgs;
             placeholder_evaluator.FunctionEvaluationCtx.Culture = culture;
             placeholder_evaluator.FunctionEvaluationCtx.Line = line;
+            placeholder_evaluator.FunctionEvaluationCtx.PluralLine = pluralLine;
+            placeholder_evaluator.FunctionEvaluationCtx.StringResolver = this;
+            placeholder_evaluator.FunctionEvaluationCtx.EnumResolver = EnumResolver;
             if (features.FormatProviders.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = features.FormatProviders[0]; else if (features.FormatProviders.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.FormatProvider = new FormatProviderComposition(features.FormatProviders.ToArray());
             if (features.Functions.Count == 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = features.Functions[0]; else if (features.Functions.Count > 1) placeholder_evaluator.FunctionEvaluationCtx.Functions = new FunctionsMap(features.Functions);
             for (int i = 0; i < placeholders.Length; i++)

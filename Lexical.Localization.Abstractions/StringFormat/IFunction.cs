@@ -146,6 +146,21 @@ namespace Lexical.Localization.StringFormat
         /// (optional) The <see cref="ILine"/> that is being evaluated.
         /// </summary>
         public ILine Line;
+
+        /// <summary>
+        /// (optional) The plural line <see cref="ILine"/> that is being evaluated.
+        /// </summary>
+        public ILine PluralLine;
+
+        /// <summary>
+        /// (optional) String resolver for subsequent requests
+        /// </summary>
+        public IStringResolver StringResolver;
+
+        /// <summary>
+        /// (optional) Enumeration info resolver.
+        /// </summary>
+        public IEnumInfoResolver EnumResolver;
     }
 
     /// <summary></summary>

@@ -51,6 +51,16 @@ namespace Lexical.Localization
             => line.Append<ILineCanonicalKey, string, string>("Key", key);
 
         /// <summary>
+        /// Append "Key" non-canonical key.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        /// <exception cref="LineException"></exception>
+        public static ILine Key<T>(this ILine line, T key)
+            => line.Append<ILineCanonicalKey, string, string>("Key", key.ToString());
+
+        /// <summary>
         /// Append "Section" key.
         /// 
         /// Section is a key that points to a folder is used when loading assets from files, embedded resources, and withint language string dictionaries.

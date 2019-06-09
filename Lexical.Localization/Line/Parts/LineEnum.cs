@@ -15,18 +15,6 @@ namespace Lexical.Localization
     public static partial class LineExtensions
     {
         /// <summary>
-        /// Append single enum case as "Key" parameter. 
-        /// 
-        /// Don't use this if the enum is flags.
-        /// </summary>
-        /// <typeparam name="T">Enum type</typeparam>
-        /// <param name="line"></param>
-        /// <param name="enumCase"></param>
-        /// <returns></returns>
-        public static ILine Enum<T>(this ILine line, T enumCase)
-            => line.Key(enumCase.ToString());
-
-        /// <summary>
         /// Resolve each flag of enum type and compose into a string.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -45,7 +33,6 @@ namespace Lexical.Localization
             }
             return sb.ToString();
         }
-
 
         /// <summary>
         /// Resolve each flag of enum type.
