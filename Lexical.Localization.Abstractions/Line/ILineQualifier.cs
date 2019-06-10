@@ -44,15 +44,15 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Measures qualifications of <see cref="ILineParameter"/>s.
+    /// Measures qualifications of <see cref="ILineArgument"/>.
     /// </summary>
-    public interface ILineParameterQualifier : ILineQualifier
+    public interface ILineArgumentQualifier : ILineQualifier
     {
         /// <summary>
-        /// Policy whether occuranceIndex is needed for qualifying parameter.
+        /// Policy whether occuranceIndex needs to be supplied when providing <see cref="ILineParameter"/>, <see cref="ILineHint"/>, <see cref="ILineCanonicalKey"/>, <see cref="ILineNonCanonicalKey"/> arguments.
         /// 
-        /// If true, <see cref="QualifyParameter(ILineParameter, int)"/> caller must have occurance index.
-        /// If false, caller can use -1 for unknown.
+        /// If true, <see cref="QualifyArgument(ILineArgument, int)"/> caller must supply occurance index.
+        /// If false, caller can use -1 for unspecified.
         /// 
         /// Occurance describes the position of parameter of same parameter name.
         /// For example, "Section:A:Section:B:Section:C" has parameter "Section" with three 
@@ -61,25 +61,12 @@ namespace Lexical.Localization
         bool NeedsOccuranceIndex { get; }
 
         /// <summary>
-        /// Qualify <paramref name="parameter"/>.
+        /// Qualify <paramref name="argument"/>.
         /// </summary>
-        /// <param name="parameter">parameter part of a compared line (note ParameterName="" for empty), or null if value did not occur</param>
-        /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc. Use -1 if occurance is unknown</param>
+        /// <param name="argument">argument</param>
+        /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc. Use -1 if occurance is unspecified</param>
         /// <returns>true if parameter is qualified, false if disqualified</returns>
-        bool QualifyParameter(ILineParameter parameter, int occuranceIndex);
-    }
-
-    /// <summary>
-    /// Measures qualifications of <see cref="ILineArgument"/>s.
-    /// </summary>
-    public interface ILineArgumentQualifier : ILineQualifier
-    {
-        /// <summary>
-        /// Qualify <paramref name="arguments"/>.
-        /// </summary>
-        /// <param name="arguments"></param>
-        /// <returns>true if argument is qualified, false if disqualified</returns>
-        bool QualifyArguments(ILineArgument arguments);
+        bool QualifyArgument(ILineArgument argument, int occuranceIndex = -1);
     }
 
     /// <summary>
@@ -121,24 +108,24 @@ namespace Lexical.Localization
             // Evaluate whole line
             if (qualifier is ILineQualifierEvaluatable eval) return eval.Qualify(line);
 
-            // Evaluate parameter
-            if (qualifier is ILineParameterQualifier parameterQualifier)
+            // Evaluate argument
+            if (qualifier is ILineArgumentQualifier argumentQualifier)
             {
-                if (parameterQualifier.NeedsOccuranceIndex)
+                if (argumentQualifier.NeedsOccuranceIndex)
                 {
                     // Break key into effective parameters with occurance index
-                    StructList12<(ILineParameter, int)> list1 = new StructList12<(ILineParameter, int)>();
-                    line.GetParameterPartsWithOccurance(ref list1);
+                    StructList12<(ILineArgument, int)> list1 = new StructList12<(ILineArgument, int)>();
+                    line.GetArgumentPartsWithOccurance(ref list1);
                     for (int i = 0; i < list1.Count; i++)
-                        if (!parameterQualifier.QualifyParameter(list1[i].Item1, list1[i].Item2)) return false;
+                        if (!argumentQualifier.QualifyArgument(list1[i].Item1, list1[i].Item2)) return false;
                 }
                 else
                 {
                     // Break key into parameters
-                    StructList12<ILineParameter> list2 = new StructList12<ILineParameter>();
-                    line.GetParameterParts(ref list2);
+                    StructList12<ILineArgument> list2 = new StructList12<ILineArgument>();
+                    line.GetArgumentParts(ref list2);
                     for (int i = 0; i < list2.Count; i++)
-                        if (!parameterQualifier.QualifyParameter(list2[i], -1)) return false;
+                        if (!argumentQualifier.QualifyArgument(list2[i], -1)) return false;
                 }
             }
 
@@ -171,14 +158,14 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Qualify parameter <paramref name="parameter"/>.
+        /// Qualify parameter <paramref name="argument"/>.
         /// </summary>
         /// <param name="qualifier">(optional) qualifier</param>
-        /// <param name="parameter">parameter part of a compared line (note ParameterName="" for empty), or null if value did not occur</param>
+        /// <param name="argument">argument</param>
         /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc</param>
         /// <returns>true if line is qualified, false if disqualified</returns>
-        public static bool QualifyParameter(this ILineQualifier qualifier, ILineParameter parameter, int occuranceIndex)
-            => qualifier is ILineParameterQualifier parameterQualifier ? parameterQualifier.QualifyParameter(parameter, occuranceIndex) : /*no parameter criteria, accept all*/ true;
+        public static bool QualifyArgument(this ILineQualifier qualifier, ILineArgument argument, int occuranceIndex = -1)
+            => qualifier is ILineArgumentQualifier argumentQualifier ? argumentQualifier.QualifyArgument(argument, occuranceIndex) : /*no parameter criteria, accept all*/ true;
 
         /// <summary>
         /// Does evaluation need parameter occurances.
@@ -186,7 +173,7 @@ namespace Lexical.Localization
         /// <param name="qualifier"></param>
         /// <returns>true if needs parameter occurance, if false can use -1</returns>
         public static bool NeedsOccuranceIndex(this ILineQualifier qualifier)
-            => qualifier is ILineParameterQualifier parameterQualifier ? parameterQualifier.NeedsOccuranceIndex : false;
+            => qualifier is ILineArgumentQualifier argumentQualifier ? argumentQualifier.NeedsOccuranceIndex : false;
 
         /// <summary>
         /// Set line qualifier as read-only.

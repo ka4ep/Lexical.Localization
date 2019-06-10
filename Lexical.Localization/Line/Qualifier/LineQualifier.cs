@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Measures qualification of <see cref="ILine"/>s according to configured rules.
     /// </summary>
-    public class LineQualifier : ILineQualifier, ILineParameterQualifier, ILineQualifierComposition, ILineQualifierEnumerable, ILineQualifierEvaluatable, ILineQualifierLinesEvaluatable
+    public class LineQualifier : ILineQualifier, ILineArgumentQualifier, ILineQualifierComposition, ILineQualifierEnumerable, ILineQualifierEvaluatable, ILineQualifierLinesEvaluatable
     {
         /// <summary>
         /// Is in read-only state.
@@ -42,12 +42,12 @@ namespace Lexical.Localization
 
 
         /// <summary>
-        /// List of parameter qualifiers. Null if none are assigned.
+        /// List of argument qualifiers. Null if none are assigned.
         /// </summary>
-        protected List<ILineParameterQualifier> parameterQualifiers;
+        protected List<ILineArgumentQualifier> argumentQualifiers;
 
         /// <summary>
-        /// If true, <see cref="QualifyParameter(ILineParameter, int)"/> caller must have occurance index.
+        /// If true, <see cref="QualifyArgument(ILineArgument, int)"/> caller must have occurance index.
         /// If false, caller can use -1 for unknown.
         /// </summary>
         public bool NeedsOccuranceIndex { get; protected set; }
@@ -86,11 +86,11 @@ namespace Lexical.Localization
         public void Add(ILineQualifier qualifier)
         {
             if (qualifier == null) throw new ArgumentNullException(nameof(qualifier));
-            if (qualifier is ILineParameterQualifier parameterQualifier && qualifier is ILineQualifierEvaluatable == false /*Don't run twice*/)
+            if (qualifier is ILineArgumentQualifier argumentQualifier && qualifier is ILineQualifierEvaluatable == false /*Don't run twice*/)
             {
-                if (parameterQualifiers == null) parameterQualifiers = new List<ILineParameterQualifier>();
-                parameterQualifiers.Add(parameterQualifier);
-                NeedsOccuranceIndex |= parameterQualifier.NeedsOccuranceIndex;
+                if (argumentQualifiers == null) argumentQualifiers = new List<ILineArgumentQualifier>();
+                argumentQualifiers.Add(argumentQualifier);
+                NeedsOccuranceIndex |= argumentQualifier.NeedsOccuranceIndex;
             }
             if (qualifier is ILineQualifierEvaluatable lineQualifier)
             {
@@ -125,26 +125,26 @@ namespace Lexical.Localization
                     if (!qualifier.Qualify(line)) return false;
             }
 
-            // Apply parameter qualifieres
-            if (parameterQualifiers != null)
+            // Apply argument qualifieres
+            if (argumentQualifiers != null)
             {
                 if (NeedsOccuranceIndex)
                 {
                     // Break key into effective parameters with occurance index
-                    StructList12<(ILineParameter, int)> list1 = new StructList12<(ILineParameter, int)>();
-                    line.GetParameterPartsWithOccurance(ref list1);
-                    foreach (ILineParameterQualifier parameterQualifier in parameterQualifiers)
+                    StructList12<(ILineArgument, int)> list1 = new StructList12<(ILineArgument, int)>();
+                    line.GetArgumentPartsWithOccurance(ref list1);
+                    foreach (ILineArgumentQualifier argumentQualifier in argumentQualifiers)
                         for (int i = 0; i < list1.Count; i++)
-                            if (!parameterQualifier.QualifyParameter(list1[i].Item1, list1[i].Item2)) return false;                    
+                            if (!argumentQualifier.QualifyArgument(list1[i].Item1, list1[i].Item2)) return false;                    
                 }
                 else
                 {
                     // Break key into parameters
-                    StructList12<ILineParameter> list2 = new StructList12<ILineParameter>();
-                    line.GetParameterParts(ref list2);
-                    foreach (ILineParameterQualifier parameterQualifier in parameterQualifiers)
+                    StructList12<ILineArgument> list2 = new StructList12<ILineArgument>();
+                    line.GetArgumentParts(ref list2, null, false, null);
+                    foreach (ILineArgumentQualifier argumentQualifier in argumentQualifiers)
                         for (int i = 0; i < list2.Count; i++)
-                            if (!parameterQualifier.QualifyParameter(list2[i], -1)) return false;
+                            if (!argumentQualifier.QualifyArgument(list2[i], -1)) return false;
                 }
             }
 
@@ -165,8 +165,8 @@ namespace Lexical.Localization
         /// <returns></returns>
         public virtual IEnumerable<ILine> Qualify(IEnumerable<ILine> lines)
         {
-            StructList12<(ILineParameter, int)> list1 = new StructList12<(ILineParameter, int)>();
-            StructList12<ILineParameter> list2 = new StructList12<ILineParameter>();
+            StructList12<(ILineArgument, int)> list1 = new StructList12<(ILineArgument, int)>();
+            StructList12<ILineArgument> list2 = new StructList12<ILineArgument>();
 
             foreach (ILine line in lines)
             {
@@ -183,18 +183,18 @@ namespace Lexical.Localization
                 }
 
                 // Apply parameter qualifieres
-                if (parameterQualifiers != null)
+                if (argumentQualifiers != null)
                 {
                     if (NeedsOccuranceIndex)
                     {
                         list1.Clear();
                         // Break key into effective parameters with occurance index
-                        line.GetParameterPartsWithOccurance(ref list1);
-                        foreach (ILineParameterQualifier parameterQualifier in parameterQualifiers)
+                        line.GetArgumentPartsWithOccurance(ref list1);
+                        foreach (ILineArgumentQualifier argumentQualifier in argumentQualifiers)
                         {
                             for (int i = 0; i < list1.Count; i++)
                             {
-                                ok &= parameterQualifier.QualifyParameter(list1[i].Item1, list1[i].Item2);
+                                ok &= argumentQualifier.QualifyArgument(list1[i].Item1, list1[i].Item2);
                                 if (!ok) break;
                             }
                             if (!ok) break;
@@ -204,12 +204,12 @@ namespace Lexical.Localization
                     {
                         list2.Clear();
                         // Break key into parameters
-                        line.GetParameterParts(ref list2);
-                        foreach (ILineParameterQualifier parameterQualifier in parameterQualifiers)
+                        line.GetArgumentParts(ref list2);
+                        foreach (ILineArgumentQualifier argumentQualifier in argumentQualifiers)
                         {
                             for (int i = 0; i < list2.Count; i++)
                             {
-                                ok &= parameterQualifier.QualifyParameter(list2[i], -1);
+                                ok &= argumentQualifier.QualifyArgument(list2[i], -1);
                                 if (!ok) break;
                             }
                             if (!ok) break;
@@ -223,18 +223,18 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Test rule with <paramref name="parameter"/>.
+        /// Test rule with <paramref name="argument"/>.
         /// </summary>
-        /// <param name="parameter">parameter part of a compared key (note ParameterName="" for empty), or null if value did not occur</param>
+        /// <param name="argument">parameter part of a compared key (note ParameterName="" for empty), or null if value did not occur</param>
         /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc. Use -1 if occurance is unknown</param>
         /// <returns>true if line is qualified, false if disqualified</returns>
-        public bool QualifyParameter(ILineParameter parameter, int occuranceIndex)
+        public bool QualifyArgument(ILineArgument argument, int occuranceIndex)
         {
-            if (parameterQualifiers != null)
+            if (argumentQualifiers != null)
             {
-                foreach(ILineParameterQualifier parameterQualifier in parameterQualifiers)
+                foreach(ILineArgumentQualifier argumentQualifier in argumentQualifiers)
                 {
-                    if (!parameterQualifier.QualifyParameter(parameter, occuranceIndex)) return false;
+                    if (!argumentQualifier.QualifyArgument(argument, occuranceIndex)) return false;
                 }
             }
             return true;

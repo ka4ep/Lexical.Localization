@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Filter rules.
     /// </summary>
-    public abstract class LineParameterQualifier : ILineParameterQualifier
+    public abstract class LineParameterQualifier : ILineArgumentQualifier
     {
         /// <summary>
         /// Parameter name to apply rule to.
@@ -54,12 +54,29 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Apply rule to <paramref name="parameter"/>.
+        /// Qualify argument
         /// </summary>
-        /// <param name="parameter">value that occured in the compared key (note "" for empty)</param>
+        /// <param name="argument"></param>
         /// <param name="occuranceIndex"></param>
         /// <returns></returns>
-        public abstract bool QualifyParameter(ILineParameter parameter, int occuranceIndex);
+        public bool QualifyArgument(ILineArgument argument, int occuranceIndex = -1)
+        {
+            if (argument is ILineArgument<ILineParameter, string, string> lineParameter) return QualifyParameter(lineParameter.Argument0, lineParameter.Argument1, occuranceIndex, typeof(ILineParameter));
+            else if (argument is ILineArgument<ILineHint, string, string> lineHint) return QualifyParameter(lineHint.Argument0, lineHint.Argument1, occuranceIndex, typeof(ILineHint));
+            else if (argument is ILineArgument<ILineCanonicalKey, string, string> lineCanonicalKey) return QualifyParameter(lineCanonicalKey.Argument0, lineCanonicalKey.Argument1, occuranceIndex, typeof(ILineCanonicalKey));
+            else if (argument is ILineArgument<ILineNonCanonicalKey, string, string> lineNonCanonicalKey) return QualifyParameter(lineNonCanonicalKey.Argument0, lineNonCanonicalKey.Argument1, occuranceIndex, typeof(ILineNonCanonicalKey));
+            return true;
+        }
+
+        /// <summary>
+        /// Apply rule to parameter.
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="parameterValue">value that occured in the compared key (note "" for empty)</param>
+        /// <param name="occuranceIndex"></param>
+        /// <param name="intf"></param>
+        /// <returns></returns>
+        public abstract bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex, Type intf);
 
         /// <summary>
         /// Print rule
@@ -92,19 +109,21 @@ namespace Lexical.Localization
             /// <summary>
             /// Filter parameter from compared key.
             /// </summary>
-            /// <param name="parameter"></param>
+            /// <param name="parameterName"></param>
+            /// <param name="parameterValue"></param>
             /// <param name="occuranceIndex"></param>
+            /// <param name="intf"></param>
             /// <returns></returns>
-            public override bool QualifyParameter(ILineParameter parameter, int occuranceIndex)
+            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex, Type intf)
             {
                 // This filter doesn't apply
                 if (OccuranceIndex >= 0 && OccuranceIndex != occuranceIndex) return true;
                 // This filter doesn't apply
-                if (parameter.ParameterName != ParameterName) return true;
+                if (parameterName != ParameterName) return true;
                 // This parameter doesn't apply
-                if (parameter.ParameterValue == null) return true;
+                if (parameterValue == null) return true;
                 // This filter applies
-                return QualifyValue(parameter.ParameterValue);
+                return QualifyValue(parameterValue);
             }
 
             /// <summary>
@@ -186,19 +205,21 @@ namespace Lexical.Localization
             /// <summary>
             /// Filter parameter from compared key.
             /// </summary>
-            /// <param name="parameter"></param>
+            /// <param name="parameterName"></param>
+            /// <param name="parameterValue"></param>
             /// <param name="occuranceIndex"></param>
+            /// <param name="intf"></param>
             /// <returns>true if line is passed by the filter, false if rejected</returns>
-            public override bool QualifyParameter(ILineParameter parameter, int occuranceIndex)
+            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex, Type intf)
             {
                 // This filter doesn't apply
                 if (OccuranceIndex >= 0 && OccuranceIndex != occuranceIndex) return true;
                 // This filter doesn't apply
-                if (parameter.ParameterName != ParameterName) return true;
+                if (parameterName != ParameterName) return true;
                 // This parameter doesn't apply
-                if (parameter.ParameterValue == null) return true;
+                if (parameterValue == null) return true;
                 // This filter applies
-                return QualifyValue(parameter.ParameterValue);
+                return QualifyValue(parameterValue);
             }
 
             /// <summary>
@@ -291,17 +312,19 @@ namespace Lexical.Localization
             /// <summary>
             /// Filter parameter from compared key.
             /// </summary>
-            /// <param name="parameter"></param>
+            /// <param name="parameterName"></param>
+            /// <param name="parameterValue"></param>
             /// <param name="occuranceIndex"></param>
+            /// <param name="intf"></param>
             /// <returns></returns>
-            public override bool QualifyParameter(ILineParameter parameter, int occuranceIndex)
+            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex, Type intf)
             {
                 // This filter doesn't apply
                 if (OccuranceIndex >= 0 && OccuranceIndex != occuranceIndex) return true;
                 // This filter doesn't apply
-                if (parameter.ParameterName != ParameterName) return true;
+                if (parameterName != ParameterName) return true;
                 // This filter applies
-                return QualifyValue(parameter.ParameterValue);
+                return QualifyValue(parameterValue);
             }
 
             /// <summary>
@@ -377,17 +400,19 @@ namespace Lexical.Localization
             /// <summary>
             /// Filter parameter from compared key.
             /// </summary>
-            /// <param name="parameter"></param>
+            /// <param name="parameterName"></param>
+            /// <param name="parameterValue"></param>
             /// <param name="occuranceIndex"></param>
+            /// <param name="intf"></param>
             /// <returns></returns>
-            public override bool QualifyParameter(ILineParameter parameter, int occuranceIndex)
+            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex, Type intf)
             {
                 // This filter doesn't apply
                 if (OccuranceIndex >= 0 && OccuranceIndex != occuranceIndex) return true;
                 // This filter doesn't apply
-                if (parameter.ParameterName != ParameterName) return true;
+                if (parameterName != ParameterName) return true;
                 // This filter applies
-                return parameter.ParameterValue == null || parameter.ParameterValue == "";
+                return parameterValue == null || parameterValue == "";
             }
 
             /// <summary>
@@ -401,7 +426,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Filter rule that asserts that the parameter is not a key.
         /// </summary>
-        public class NonKey : ILineParameterQualifier
+        public class NonKey : ILineArgumentQualifier
         {
             private static NonKey instance = new NonKey();
 
@@ -439,19 +464,21 @@ namespace Lexical.Localization
             /// <summary>
             /// Test if parameter is a key.
             /// </summary>
-            /// <param name="parameter"></param>
+            /// <param name="argument"></param>
             /// <param name="occuranceIndex"></param>
-            /// <returns>false if <paramref name="parameter"/> is a key</returns>
-            public bool QualifyParameter(ILineParameter parameter, int occuranceIndex)
+            /// <returns>false if <paramref name="argument"/> is a key</returns>
+            public bool QualifyArgument(ILineArgument argument, int occuranceIndex)
             {
-                if (parameter == null) return true;
-                if (parameter is ILineKey) return false;
-                if (parameter is ILineHint) return true;
-
-                IParameterInfo pi;
-                if (ParameterInfos.TryGetValue(parameter.ParameterName, out pi))
+                if (argument is ILineArgument<ILineHint, string, string> lineHint) return true;
+                if (argument is ILineArgument<ILineCanonicalKey, string, string> lineCanonicalKey) return false;
+                if (argument is ILineArgument<ILineNonCanonicalKey, string, string> lineNonCanonicalKey) return false;
+                if (argument is ILineArgument<ILineParameter, string, string> lineParameter)
                 {
-                    if (typeof(ILineKey).Equals(pi.InterfaceType) || typeof(ILineCanonicalKey).Equals(pi.InterfaceType) || typeof(ILineNonCanonicalKey).Equals(pi.InterfaceType)) return false;
+                    IParameterInfo pi;
+                    if (ParameterInfos.TryGetValue(lineParameter.Argument0, out pi))
+                    {
+                        if (typeof(ILineKey).Equals(pi.InterfaceType) || typeof(ILineCanonicalKey).Equals(pi.InterfaceType) || typeof(ILineNonCanonicalKey).Equals(pi.InterfaceType)) return false;
+                    }
                 }
 
                 return true;

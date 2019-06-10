@@ -115,8 +115,8 @@ namespace Lexical.Localization
                 foreach (var parameter in keyParameters)
                 {
                     int occ = AddOccurance(ref occurances, parameter.Key);
-                    ILineParameter lineParameter = new ParameterArgument(parameter.Key, parameter.Value);
-                    if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
+                    ParameterArgument lineParameter = new ParameterArgument(parameter.Key, parameter.Value);
+                    if (!Qualifier.QualifyArgument(lineParameter, occ)) continue;
                     parameters.Add(lineParameter);
                 }
             }
@@ -124,8 +124,8 @@ namespace Lexical.Localization
             {
                 foreach (var parameter in keyParameters)
                 {
-                    ILineParameter lineParameter = new ParameterArgument(parameter.Key, parameter.Value);
-                    if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
+                    ParameterArgument lineParameter = new ParameterArgument(parameter.Key, parameter.Value);
+                    if (!Qualifier.QualifyArgument(lineParameter, -1)) continue;
                     parameters.Add(lineParameter);
                 }
             }
@@ -215,7 +215,7 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = Append(ref appenders, prevPart, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref occuranceList, parameter.Key);
-                    if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
+                    if (!Qualifier.QualifyArgument(LineArgument.ToArgument(lineParameter), occ)) continue;
                     prevPart = lineParameter;
                 }
             }
@@ -226,7 +226,7 @@ namespace Lexical.Localization
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = Append(ref appenders, prevPart, parameter.Key, parameter.Value);
-                    if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
+                    if (!Qualifier.QualifyArgument(LineArgument.ToArgument(lineParameter), -1)) continue;
                     prevPart = lineParameter;
                 }
             }
@@ -253,7 +253,7 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref list, parameter.Key);
-                    if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
+                    if (!Qualifier.QualifyArgument(LineArgument.ToArgument(lineParameter), occ)) continue;
                     result.Add(LineArgument.ToArgument(lineParameter));
                     prev = lineParameter;
                 }
@@ -267,7 +267,7 @@ namespace Lexical.Localization
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
-                    if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
+                    if (!Qualifier.QualifyArgument(LineArgument.ToArgument(lineParameter), -1)) continue;
                     result[i] = LineArgument.ToArgument(lineParameter);
                     prev = lineParameter;
                 }
@@ -305,7 +305,7 @@ namespace Lexical.Localization
                     ILineParameter lineParameter;
                     if (!TryAppend(ref appenders, prevPart, parameter.Key, parameter.Value, out lineParameter)) { result = default; return false; }
                     int occ = AddOccurance(ref occuranceList, parameter.Key);
-                    if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
+                    if (!Qualifier.QualifyArgument(LineArgument.ToArgument(lineParameter), occ)) continue;
                     prevPart = lineParameter;
                 }
             }
@@ -317,7 +317,7 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter;
                     if (!TryAppend(ref appenders, prevPart, parameter.Key, parameter.Value, out lineParameter)) { result = default; return false; }
-                    if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
+                    if (!Qualifier.QualifyArgument(LineArgument.ToArgument(lineParameter), -1)) continue;
                     prevPart = lineParameter;
                 }
             }
@@ -347,8 +347,9 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref list, parameter.Key);
-                    if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
-                    result.Add(LineArgument.ToArgument(lineParameter));
+                    ILineArgument arg = LineArgument.ToArgument(lineParameter);
+                    if (!Qualifier.QualifyArgument(arg, occ)) continue;
+                    result.Add(arg);
                     prev = lineParameter;
                 }
                 args = result.ToArray();
@@ -362,8 +363,9 @@ namespace Lexical.Localization
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
-                    if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
-                    result[i] = LineArgument.ToArgument(lineParameter);
+                    ILineArgument arg = LineArgument.ToArgument(lineParameter);
+                    if (!Qualifier.QualifyArgument(arg, -1)) continue;
+                    result[i] = arg;
                     prev = lineParameter;
                 }
                 args = result;
@@ -392,9 +394,9 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref occuranceList, parameter.Key);
-                    if (Qualifier.QualifyParameter(lineParameter, occ)) { i++; prevPart = lineParameter; } else parameters.RemoveAt(i);
+                    if (Qualifier.QualifyArgument(LineArgument.ToArgument(lineParameter), occ)) { i++; prevPart = lineParameter; } else parameters.RemoveAt(i);
                 }
-            } else if (Qualifier is ILineParameterQualifier)
+            } else if (Qualifier is ILineArgumentQualifier)
             {
                 ILine prevPart = null;
                 int i = 0;
@@ -402,7 +404,7 @@ namespace Lexical.Localization
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
-                    if (Qualifier.QualifyParameter(lineParameter, -1)) { i++; prevPart = lineParameter; } else parameters.RemoveAt(i);
+                    if (Qualifier.QualifyArgument(LineArgument.ToArgument(lineParameter), -1)) { i++; prevPart = lineParameter; } else parameters.RemoveAt(i);
                 }
             }
 
@@ -431,17 +433,17 @@ namespace Lexical.Localization
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref occuranceList, parameter.Key);
-                    if (Qualifier.QualifyParameter(lineParameter, occ)) { result.Add(parameter); prevPart = lineParameter; } else parameters.RemoveAt(i);
+                    if (Qualifier.QualifyArgument(LineArgument.ToArgument(lineParameter), occ)) { result.Add(parameter); prevPart = lineParameter; } else parameters.RemoveAt(i);
                 }
             }
-            else if (Qualifier is ILineParameterQualifier)
+            else if (Qualifier is ILineArgumentQualifier)
             {
                 ILine prevPart = null;
                 for (int i = 0; i < parameters.Count; i++)
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prevPart, parameter.Key, parameter.Value);
-                    if (Qualifier.QualifyParameter(lineParameter, -1)) { result.Add(parameter); prevPart = lineParameter; } else parameters.RemoveAt(i);
+                    if (Qualifier.QualifyArgument(LineArgument.ToArgument(lineParameter), -1)) { result.Add(parameter); prevPart = lineParameter; } else parameters.RemoveAt(i);
                 }
             }
             else

@@ -293,7 +293,7 @@ namespace Lexical.Localization
             ILineFactory f;
             if (parameterInfos == null && line.TryGetAppender(out f)) f.TryGetParameterInfos(out parameterInfos);
 
-            ILineParameterQualifier parameterQualifier1 = parameterQualifier as ILineParameterQualifier;
+            ILineArgumentQualifier parameterQualifier1 = parameterQualifier as ILineArgumentQualifier;
             bool checkQualifier = parameterQualifier1 != null && !parameterQualifier1.NeedsOccuranceIndex;
 
             for (ILine l = line; l != null; l = l.GetPreviousPart())
@@ -302,7 +302,7 @@ namespace Lexical.Localization
                 {
                     foreach (var parameter in lineParameters)
                     {
-                        if (checkQualifier) if (!parameterQualifier1.QualifyParameter(parameter, -1)) continue;
+                        if (checkQualifier) if (!parameterQualifier1.QualifyArgument(LineArgument.ToArgument(parameter), -1)) continue;
                         if (parameter.IsNonCanonicalKey(parameterInfos))
                         {
                             // Test if parameter already exists
@@ -319,7 +319,7 @@ namespace Lexical.Localization
                 {
                     if (l is ILineParameter parameter)
                     {
-                        if (checkQualifier) if (!parameterQualifier1.QualifyParameter(parameter, -1)) continue;
+                        if (checkQualifier) if (!parameterQualifier1.QualifyArgument(LineArgument.ToArgument(parameter), -1)) continue;
                         if (parameter.IsNonCanonicalKey(parameterInfos))
                         {
                             // Test if parameter already exists
@@ -349,7 +349,7 @@ namespace Lexical.Localization
                         if (p.ParameterValue!=null && p.ParameterName == parameter.ParameterName) occIx++;
                     }
 
-                    if (!parameterQualifier1.QualifyParameter(parameter, occIx)) list.RemoveAt(i);
+                    if (!parameterQualifier1.QualifyArgument(LineArgument.ToArgument(parameter), occIx)) list.RemoveAt(i);
                 }
             }
         }
@@ -383,7 +383,7 @@ namespace Lexical.Localization
                     for (int j = i + 1; j < list.Count - 1; j++) if (list[j].ParameterName == parameterName) occ++;
 
                     // Qualify parameter, and remove if unqualified
-                    if (!parameterQualifier.QualifyParameter(parameter, occ)) list.RemoveAt(i);
+                    if (!parameterQualifier.QualifyArgument(LineArgument.ToArgument(parameter), occ)) list.RemoveAt(i);
                 }
             }
         }
