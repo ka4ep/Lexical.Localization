@@ -13,10 +13,10 @@ namespace Lexical.Localization
     /// Line part that represents a parameter key-value pair.
     /// </summary>
     [Serializable]
-    public class LineHint : LineParameterBase, ILineArguments<ILineHint, string, string>, ILineHint
+    public class LineHint : LineParameterBase, ILineArgument<ILineHint, string, string>, ILineHint
     {
-        string ILineArguments<ILineHint, string, string>.Argument0 => ParameterName;
-        string ILineArguments<ILineHint, string, string>.Argument1 => ParameterValue;
+        string ILineArgument<ILineHint, string, string>.Argument0 => ParameterName;
+        string ILineArgument<ILineHint, string, string>.Argument1 => ParameterValue;
 
         /// <summary>
         /// Create parameter part.
@@ -53,7 +53,7 @@ namespace Lexical.Localization
         public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineHint result)
         {
             // Try resolve
-            ILineArguments args;
+            ILineArgument args;
             ILine resolved;
             if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineHint castedResolved)
             {
@@ -72,10 +72,10 @@ namespace Lexical.Localization
     /// StringLocalizer part that represents a parameter key-value pair.
     /// </summary>
     [Serializable]
-    public class StringLocalizerHint : StringLocalizerParameterBase, ILineArguments<ILineHint, string, string>, ILineHint
+    public class StringLocalizerHint : StringLocalizerParameterBase, ILineArgument<ILineHint, string, string>, ILineHint
     {
-        string ILineArguments<ILineHint, string, string>.Argument0 => ParameterName;
-        string ILineArguments<ILineHint, string, string>.Argument1 => ParameterValue;
+        string ILineArgument<ILineHint, string, string>.Argument0 => ParameterName;
+        string ILineArgument<ILineHint, string, string>.Argument1 => ParameterValue;
 
         /// <summary>
         /// Create parameter part.
@@ -112,7 +112,7 @@ namespace Lexical.Localization
         public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineHint result)
         {
             // Try resolve
-            ILineArguments args;
+            ILineArgument args;
             ILine resolved;
             if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineHint castedResolved)
             {

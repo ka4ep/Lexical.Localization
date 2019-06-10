@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// "Assembly" key that carries <see cref="Assembly"/>. 
     /// </summary>
     [Serializable]
-    public class LineAssembly : LineKey, ILineAssembly, ILineNonCanonicalKey, ILineArguments<ILineAssembly, Assembly>
+    public class LineAssembly : LineKey, ILineAssembly, ILineNonCanonicalKey, ILineArgument<ILineAssembly, Assembly>
     {
         /// <summary>
         /// Assembly, null if non-standard assembly.
@@ -84,7 +84,7 @@ namespace Lexical.Localization
     /// "Assembly" key that carries <see cref="Assembly"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerAssembly : _StringLocalizerKey, ILineAssembly, ILineNonCanonicalKey, ILineArguments<ILineAssembly, Assembly>
+    public class StringLocalizerAssembly : _StringLocalizerKey, ILineAssembly, ILineNonCanonicalKey, ILineArgument<ILineAssembly, Assembly>
     {
         /// <summary>
         /// Assembly, null if non-standard assembly.

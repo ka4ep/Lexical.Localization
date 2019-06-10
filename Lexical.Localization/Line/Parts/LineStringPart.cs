@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// Line localization string value.
     /// </summary>
     [Serializable]
-    public class LineStringPart : LineParameterBase, ILineString, ILineHint, ILineArguments<ILineString, IString>
+    public class LineStringPart : LineParameterBase, ILineString, ILineHint, ILineArgument<ILineString, IString>
     {
         /// <summary>
         /// Value
@@ -84,7 +84,7 @@ namespace Lexical.Localization
     /// StringLocalizer localization string value.
     /// </summary>
     [Serializable]
-    public class StringLocalizerStringPart : StringLocalizerParameterBase, ILineString, ILineHint, ILineArguments<ILineString, IString>
+    public class StringLocalizerStringPart : StringLocalizerParameterBase, ILineString, ILineHint, ILineArgument<ILineString, IString>
     {
         /// <summary>
         /// Value

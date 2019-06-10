@@ -162,16 +162,16 @@ namespace Lexical.Localization.Resolver
         /// <param name="previous">(optional) previous parts</param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="resolvedLineArguments"></param>
+        /// <param name="resolvedLineArgument"></param>
         /// <returns></returns>
-        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments)
+        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArgument resolvedLineArgument)
         {
             List<IParameterResolver> list = resolversByParameterName.TryGetList(parameterName);
             if (list != null)
                 foreach (IParameterResolver resolver in list)
-                    if (resolver.TryResolveParameter(previous, parameterName, parameterValue, out resolvedLineArguments)) return true;
+                    if (resolver.TryResolveParameter(previous, parameterName, parameterValue, out resolvedLineArgument)) return true;
 
-            resolvedLineArguments = default;
+            resolvedLineArgument = default;
             return false;
         }
 

@@ -255,7 +255,7 @@ namespace Lexical.Localization
                     .AddInterface(typeof(ILineAppendable))
                     .AddInterface(typeof(ILineAsset))
                     .AddInterface(typeof(ILineAssembly))
-                    .AddInterface(typeof(ILineArguments))
+                    .AddInterface(typeof(ILineArgument))
                     .AddInterface(typeof(ILineKey))
                     .AddInterface(typeof(ILineCanonicalKey))
                     .AddInterface(typeof(ILineNonCanonicalKey))
@@ -348,19 +348,19 @@ namespace Lexical.Localization
                 for (ILine l = this; l != null; l = l.GetPreviousPart())
                 {
                     if (l == oldCultureKey) break; // Stop iteration
-                    if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+                    if (l is ILineArgument || l is ILineArgumentEnumerable) args.Add(l);
                 }
                 // Re-append everything but culture
                 part = oldCultureKey?.GetPreviousParameterPart();
                 for (int i = args.Count - 1; i >= 0; i--)
                 {
                     ILine l = args[i];
-                    if (l is ILineArgumentsEnumerable enumr)
-                        foreach (ILineArguments args_ in enumr)                            
-                            if (args_ is ILineArguments<ILineCulture, CultureInfo> == false && args_.GetParameterName() != "Culture")
+                    if (l is ILineArgumentEnumerable enumr)
+                        foreach (ILineArgument args_ in enumr)                            
+                            if (args_ is ILineArgument<ILineCulture, CultureInfo> == false && args_.GetParameterName() != "Culture")
                                 part = appender.Create(part, args_);
-                    if (l is ILineArguments arg)
-                        if (arg is ILineArguments<ILineCulture, CultureInfo> == false && arg.GetParameterName() != "Culture")
+                    if (l is ILineArgument arg)
+                        if (arg is ILineArgument<ILineCulture, CultureInfo> == false && arg.GetParameterName() != "Culture")
                             part = appender.Create(part, arg);
                 }
                 return (IStringLocalizer)part.Append<ILineCulture, CultureInfo>(newCulture);

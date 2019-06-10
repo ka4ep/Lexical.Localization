@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// Line part that carries <see cref="ILineResourceResolver"/>. 
     /// </summary>
     [Serializable]
-    public class LineResourceResolver : LineBase, ILineResourceResolver, ILineArguments<IResourceResolver>
+    public class LineResourceResolver : LineBase, ILineResourceResolver, ILineArgument<IResourceResolver>
     {
         /// <summary>
         /// Localization resolver.
@@ -84,7 +84,7 @@ namespace Lexical.Localization
     /// ResourceLocalizer part that carries <see cref="ILineResourceResolver"/>. 
     /// </summary>
     [Serializable]
-    public class ResourceLocalizerLineResolver : StringLocalizerBase, ILineResourceResolver, ILineArguments<IResourceResolver>
+    public class ResourceLocalizerLineResolver : StringLocalizerBase, ILineResourceResolver, ILineArgument<IResourceResolver>
     {
         /// <summary>
         /// Localization resolver.

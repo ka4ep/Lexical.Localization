@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// Line part that carries <see cref="ILineInlines"/>. 
     /// </summary>
     [Serializable]
-    public class LineInlines : LineBase, ILineInlines, ILineArguments<ILineInlines, IDictionary<ILine, ILine>>
+    public class LineInlines : LineBase, ILineInlines, ILineArgument<ILineInlines, IDictionary<ILine, ILine>>
     {
         /// <summary>
         /// Inlines.
@@ -117,7 +117,7 @@ namespace Lexical.Localization
     /// StringLocalizer part that carries <see cref="ILineInlines"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerInlines : StringLocalizerBase, ILineInlines, ILineArguments<ILineInlines, IDictionary<ILine, ILine>>
+    public class StringLocalizerInlines : StringLocalizerBase, ILineInlines, ILineArgument<ILineInlines, IDictionary<ILine, ILine>>
     {
         /// <summary>
         /// Inlines.

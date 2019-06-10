@@ -76,9 +76,9 @@ namespace Lexical.Localization.StringFormat
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="resolvedLineArguments"></param>
+        /// <param name="resolvedLineArgument"></param>
         /// <returns></returns>
-        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments)
+        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArgument resolvedLineArgument)
         {
             if (parameterValue != null && parameterValue != "")
             {
@@ -86,7 +86,7 @@ namespace Lexical.Localization.StringFormat
                 {
                     IStringFormat stringFormat = previous.FindStringFormat() ?? CSharpFormat.Default;
                     IString value = stringFormat.Parse(parameterValue);
-                    resolvedLineArguments = new LineArguments<ILineString, IString>(value);
+                    resolvedLineArgument = new LineArgument<ILineString, IString>(value);
                     return true;
                 }
                 else if (parameterName == "StringFormat")
@@ -94,13 +94,13 @@ namespace Lexical.Localization.StringFormat
                     IStringFormat stringFormat;
                     if (TryResolve(parameterValue, out stringFormat))
                     {
-                        resolvedLineArguments = new LineArguments<ILineStringFormat, IStringFormat>(stringFormat);
+                        resolvedLineArgument = new LineArgument<ILineStringFormat, IStringFormat>(stringFormat);
                         return true;
                     }
                 }
             }
 
-            resolvedLineArguments = default;
+            resolvedLineArgument = default;
             return false;
         }
     }

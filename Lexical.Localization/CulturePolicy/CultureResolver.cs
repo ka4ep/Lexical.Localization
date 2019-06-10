@@ -79,21 +79,21 @@ namespace Lexical.Localization
         /// <param name="previous">(optional)</param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="resolvedLineArguments"></param>
+        /// <param name="resolvedLineArgument"></param>
         /// <returns></returns>
-        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments)
+        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArgument resolvedLineArgument)
         {
             if (parameterValue != null && parameterValue != "" && parameterName == "Culture")
             {
                 CultureInfo cultureInfo;
                 if (TryResolve(parameterValue, out cultureInfo))
                 {
-                    resolvedLineArguments = new LineArguments<ILineCulture, CultureInfo>(cultureInfo);
+                    resolvedLineArgument = new LineArgument<ILineCulture, CultureInfo>(cultureInfo);
                     return true;
                 }
             }
 
-            resolvedLineArguments = default;
+            resolvedLineArgument = default;
             return false;
         }
     }

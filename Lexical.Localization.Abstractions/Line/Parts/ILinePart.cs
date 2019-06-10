@@ -177,7 +177,7 @@ namespace Lexical.Localization
             ILine startTail = line;
 
             // Qualified parts to append (to append in order of from appendIx to 0)
-            StructList12<ILineArguments> argsToAppend = new StructList12<ILineArguments>();
+            StructList12<ILineArgument> argsToAppend = new StructList12<ILineArgument>();
             // Index up until to append
             int appendIx = -1;
 
@@ -214,10 +214,10 @@ namespace Lexical.Localization
                     }
                     else
                     {
-                        if (l is ILineArgumentsEnumerable argses)
-                            foreach(ILineArguments _args in argses)
+                        if (l is ILineArgumentEnumerable argses)
+                            foreach(ILineArgument _args in argses)
                                 argsToAppend.Add(_args);
-                        if (l is ILineArguments args)
+                        if (l is ILineArgument args)
                             argsToAppend.Add(args);
                     }
                 }
@@ -248,10 +248,10 @@ namespace Lexical.Localization
                     }
                     else
                     {
-                        if (l is ILineArgumentsEnumerable argses)
-                            foreach (ILineArguments _args in argses)
+                        if (l is ILineArgumentEnumerable argses)
+                            foreach (ILineArgument _args in argses)
                                 argsToAppend.Add(_args);
-                        if (l is ILineArguments args)
+                        if (l is ILineArgument args)
                             argsToAppend.Add(args);
                     }
                 }
@@ -261,7 +261,7 @@ namespace Lexical.Localization
             ILine result = startTail;
             for (int i = appendIx; i >= 0; i--)
             {
-                ILineArguments arg = argsToAppend[i];
+                ILineArgument arg = argsToAppend[i];
                 if (lineFactory == null || !lineFactory.TryCreate(result, arg, out result))
                     if (appender1 == null || !appender1.TryCreate(result, arg, out result))
                         throw new LineException(line, $"LineFactory doesn't have capability to concat {arg}");

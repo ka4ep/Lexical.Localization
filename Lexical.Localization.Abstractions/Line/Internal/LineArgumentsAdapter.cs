@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 namespace Lexical.Localization.Line.Internal
 {
     /// <summary>
-    /// Creates adapters as <see cref="ILineFactoryByArgument"/> for classes that implement <see cref="ILineArguments"/>.
+    /// Creates adapters as <see cref="ILineFactoryByArgument"/> for classes that implement <see cref="ILineArgument"/>.
     /// </summary>
     public class LineFactoryByArgumentAdapter
     {
@@ -54,7 +54,7 @@ namespace Lexical.Localization.Line.Internal
         /// <summary>
         /// Get-or-Create adapter
         /// </summary>
-        /// <param name="argumentType">Argument class that implements <see cref="ILineArguments"/> once or more than once</param>
+        /// <param name="argumentType">Argument class that implements <see cref="ILineArgument"/> once or more than once</param>
         /// <param name="factory">Factory that forwards calls for the specific <paramref name="argumentType"/></param>
         /// <returns></returns>
         /// <exception cref="LineException">If adapter construction fails</exception>
@@ -66,9 +66,9 @@ namespace Lexical.Localization.Line.Internal
         }
 
         /// <summary>
-        /// Creates a line factory that is specialized for handling <see cref="ILineArguments"/> of specific implementing <paramref name="argumentType"/>.
+        /// Creates a line factory that is specialized for handling <see cref="ILineArgument"/> of specific implementing <paramref name="argumentType"/>.
         /// </summary>
-        /// <param name="argumentType">Argument class that implements <see cref="ILineArguments"/> once or more than once</param>
+        /// <param name="argumentType">Argument class that implements <see cref="ILineArgument"/> once or more than once</param>
         /// <returns>Factory that forwards calls for the specific <paramref name="argumentType"/> or null</returns>
         /// <exception cref="LineException">If adapter construction fails</exception>
         public ILineFactoryByArgument Build(Type argumentType)
@@ -85,14 +85,14 @@ namespace Lexical.Localization.Line.Internal
                     if (intfGeneric == null) continue;
                     Type[] typeArgs = intf.GetGenericArguments();
 
-                    // ILineArguments<>
-                    if (intfGeneric == typeof(ILineArguments<>)) factories.Add(Activator.CreateInstance(typeof(Adapter<>).MakeGenericType(typeArgs)) as ILineFactoryByArgument);
-                    // ILineArguments<,>
-                    else if (intfGeneric == typeof(ILineArguments<,>)) factories.Add(Activator.CreateInstance(typeof(Adapter<,>).MakeGenericType(typeArgs)) as ILineFactoryByArgument);
-                    // ILineArguments<,,>
-                    else if (intfGeneric == typeof(ILineArguments<,,>)) factories.Add(Activator.CreateInstance(typeof(Adapter<,,>).MakeGenericType(typeArgs)) as ILineFactoryByArgument);
-                    // ILineArguments<,,,>
-                    else if (intfGeneric == typeof(ILineArguments<,,,>)) factories.Add(Activator.CreateInstance(typeof(Adapter<,,>).MakeGenericType(typeArgs)) as ILineFactoryByArgument);
+                    // ILineArgument<>
+                    if (intfGeneric == typeof(ILineArgument<>)) factories.Add(Activator.CreateInstance(typeof(Adapter<>).MakeGenericType(typeArgs)) as ILineFactoryByArgument);
+                    // ILineArgument<,>
+                    else if (intfGeneric == typeof(ILineArgument<,>)) factories.Add(Activator.CreateInstance(typeof(Adapter<,>).MakeGenericType(typeArgs)) as ILineFactoryByArgument);
+                    // ILineArgument<,,>
+                    else if (intfGeneric == typeof(ILineArgument<,,>)) factories.Add(Activator.CreateInstance(typeof(Adapter<,,>).MakeGenericType(typeArgs)) as ILineFactoryByArgument);
+                    // ILineArgument<,,,>
+                    else if (intfGeneric == typeof(ILineArgument<,,,>)) factories.Add(Activator.CreateInstance(typeof(Adapter<,,>).MakeGenericType(typeArgs)) as ILineFactoryByArgument);
                 }
 
                 if (factories.Count == 0) return null;
@@ -114,7 +114,7 @@ namespace Lexical.Localization.Line.Internal
                 this.factories = factories ?? throw new ArgumentNullException(nameof(factories));
             }
 
-            public bool TryCreate(ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line)
+            public bool TryCreate(ILineFactory factory, ILine previous, ILineArgument arguments, out ILine line)
             {
                 ILine result = previous;
                 foreach (var f in factories)
@@ -126,9 +126,9 @@ namespace Lexical.Localization.Line.Internal
 
         class Adapter<Intf> : ILineFactoryByArgument where Intf : ILine
         {
-            public bool TryCreate(ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line)
+            public bool TryCreate(ILineFactory factory, ILine previous, ILineArgument arguments, out ILine line)
             {
-                if (arguments is ILineArguments<Intf>)
+                if (arguments is ILineArgument<Intf>)
                 {
                     Intf result;
                     if (factory is ILineFactory<Intf> casted && casted.TryCreate(factory, previous, out result)) { line = result; return true; }
@@ -142,9 +142,9 @@ namespace Lexical.Localization.Line.Internal
 
         class Adapter<Intf, A0> : ILineFactoryByArgument where Intf : ILine
         {
-            public bool TryCreate(ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line)
+            public bool TryCreate(ILineFactory factory, ILine previous, ILineArgument arguments, out ILine line)
             {
-                if (arguments is ILineArguments<Intf, A0> args)
+                if (arguments is ILineArgument<Intf, A0> args)
                 {
                     Intf result;
                     if (factory is ILineFactory<Intf, A0> casted && casted.TryCreate(factory, previous, args.Argument0, out result)) { line = result; return true; }
@@ -158,9 +158,9 @@ namespace Lexical.Localization.Line.Internal
 
         class Adapter<Intf, A0, A1> : ILineFactoryByArgument where Intf : ILine
         {
-            public bool TryCreate(ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line)
+            public bool TryCreate(ILineFactory factory, ILine previous, ILineArgument arguments, out ILine line)
             {
-                if (arguments is ILineArguments<Intf, A0, A1> args)
+                if (arguments is ILineArgument<Intf, A0, A1> args)
                 {
                     Intf result;
                     if (factory is ILineFactory<Intf, A0, A1> casted && casted.TryCreate(factory, previous, args.Argument0, args.Argument1, out result)) { line = result; return true; }
@@ -174,9 +174,9 @@ namespace Lexical.Localization.Line.Internal
 
         class Adapter<Intf, A0, A1, A2> : ILineFactoryByArgument where Intf : ILine
         {
-            public bool TryCreate(ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line)
+            public bool TryCreate(ILineFactory factory, ILine previous, ILineArgument arguments, out ILine line)
             {
-                if (arguments is ILineArguments<Intf, A0, A1, A2> args)
+                if (arguments is ILineArgument<Intf, A0, A1, A2> args)
                 {
                     Intf result;
                     if (factory is ILineFactory<Intf, A0, A1, A2> casted && casted.TryCreate(factory, previous, args.Argument0, args.Argument1, args.Argument2, out result)) { line = result; return true; }

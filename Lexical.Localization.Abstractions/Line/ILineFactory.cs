@@ -197,7 +197,7 @@ namespace Lexical.Localization
         /// <param name="line">create output</param>
         /// <returns>true if part was created</returns>
         /// <exception cref="LineException">If append failed due to unexpected reason</exception>
-        bool TryCreate(ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line);
+        bool TryCreate(ILineFactory factory, ILine previous, ILineArgument arguments, out ILine line);
     }
 
     /// <summary>
@@ -234,7 +234,7 @@ namespace Lexical.Localization
         /// <param name="arguments"></param>
         /// <returns>appended part</returns>
         /// <exception cref="LineException">If append failed due to unexpected reason</exception>
-        public static ILine Create(this ILineFactory factory, ILine previous, ILineArguments arguments)
+        public static ILine Create(this ILineFactory factory, ILine previous, ILineArgument arguments)
         {
             ILine result = null;
             if (factory.TryCreate(previous, arguments, out result)) return result;
@@ -252,7 +252,7 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <returns>try if create succeeded</returns>
         /// <exception cref="LineException">If append failed due to unexpected reason</exception>
-        public static bool TryCreate(this ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line)
+        public static bool TryCreate(this ILineFactory factory, ILine previous, ILineArgument arguments, out ILine line)
         {
             if (factory == null) { line = previous; return false; }
             if (factory is ILineFactoryByArgument argFactory && argFactory.TryCreate(factory, previous, arguments, out line)) return true;
@@ -278,7 +278,7 @@ namespace Lexical.Localization
             ILineFactory<Intf> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf>()) != null && casted.TryCreate(factory, previous, out result)) return result;
             ILine result_ = null;
-            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf>(), out result_) && result_ is Intf result__) return result__;
+            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArgument.Create<Intf>(), out result_) && result_ is Intf result__) return result__;
             throw new LineException(previous, $"Appender doesn't have capability to append {nameof(Intf)}.");
         }
 
@@ -298,7 +298,7 @@ namespace Lexical.Localization
             ILineFactory<Intf> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf>()) != null && casted.TryCreate(factory, previous, out result)) { line = result; return true; }
             ILine result_ = null;
-            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf>(), out result_) && result_ is Intf result__) { line = result__; return true; }
+            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArgument.Create<Intf>(), out result_) && result_ is Intf result__) { line = result__; return true; }
             line = default;
             return false;
         }
@@ -321,7 +321,7 @@ namespace Lexical.Localization
             ILineFactory<Intf, A0> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf, A0>()) != null && casted.TryCreate(factory, previous, a0, out result)) return result;
             ILine result_ = null;
-            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf, A0>(a0), out result_) && result_ is Intf result__) return result__;
+            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArgument.Create<Intf, A0>(a0), out result_) && result_ is Intf result__) return result__;
             throw new LineException(previous, $"Appender doesn't have capability to append {nameof(Intf)}.");
         }
 
@@ -343,7 +343,7 @@ namespace Lexical.Localization
             ILineFactory<Intf, A0> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf, A0>()) != null && casted.TryCreate(factory, previous, a0, out result)) { line = result; return true; }
             ILine result_ = null;
-            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf, A0>(a0), out result_) && result_ is Intf result__) { line = result__; return true; }
+            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArgument.Create<Intf, A0>(a0), out result_) && result_ is Intf result__) { line = result__; return true; }
             line = default;
             return false;
         }
@@ -368,7 +368,7 @@ namespace Lexical.Localization
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf, A0, A1>()) != null && casted.TryCreate(factory, previous, a0, a1, out result)) return result;
             if (factory is ILineFactory<Intf, A0, A1> _casted && _casted.TryCreate(factory, previous, a0, a1, out result)) return result;
             ILine result_ = null;
-            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf, A0, A1>(a0, a1), out result_) && result_ is Intf result__) return result__;
+            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArgument.Create<Intf, A0, A1>(a0, a1), out result_) && result_ is Intf result__) return result__;
             throw new LineException(previous, $"Appender doesn't have capability to append {nameof(Intf)}.");
         }
 
@@ -392,7 +392,7 @@ namespace Lexical.Localization
             ILineFactory<Intf, A0, A1> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf, A0, A1>()) != null && casted.TryCreate(factory, previous, a0, a1, out result)) { line = result; return true; }
             ILine result_ = null;
-            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf, A0, A1>(a0, a1), out result_) && result_ is Intf result__) { line = result__; return true; }
+            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArgument.Create<Intf, A0, A1>(a0, a1), out result_) && result_ is Intf result__) { line = result__; return true; }
             line = default;
             return false;
         }
@@ -419,7 +419,7 @@ namespace Lexical.Localization
             ILineFactory<Intf, A0, A1, A2> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf, A0, A1, A2>()) != null && casted.TryCreate(factory, previous, a0, a1, a2, out result)) return result;
             ILine result_ = null;
-            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf, A0, A1, A2>(a0, a1, a2), out result_) && result_ is Intf result__) return result__;
+            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArgument.Create<Intf, A0, A1, A2>(a0, a1, a2), out result_) && result_ is Intf result__) return result__;
             throw new LineException(previous, $"Appender doesn't have capability to append {nameof(Intf)}.");
         }
 
@@ -445,7 +445,7 @@ namespace Lexical.Localization
             ILineFactory<Intf, A0, A1, A2> casted;
             if (factory is ILineFactoryCastable castable && (casted = castable.Cast<Intf, A0, A1, A2>()) != null && casted.TryCreate(factory, previous, a0, a1, a2, out result)) { line = result; return true; }
             ILine result_ = null;
-            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArguments.Create<Intf, A0, A1, A2>(a0, a1, a2), out result_) && result_ is Intf result__) { line = result__; return true; }
+            if (factory is ILineFactoryByArgument __casted && __casted.TryCreate(factory, previous, LineArgument.Create<Intf, A0, A1, A2>(a0, a1, a2), out result_) && result_ is Intf result__) { line = result__; return true; }
             line = default;
             return false;
         }
@@ -510,17 +510,17 @@ namespace Lexical.Localization
             StructList16<ILine> args = new StructList16<ILine>();
             for (ILine l = right; l != null; l = l.GetPreviousPart())
             {
-                if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+                if (l is ILineArgument || l is ILineArgumentEnumerable) args.Add(l);
             }
 
             for (int i = args.Count - 1; i >= 0; i--)
             {
                 ILine l = args[i];
-                if (l is ILineArgumentsEnumerable enumr)
-                    foreach (ILineArguments args_ in enumr)
+                if (l is ILineArgumentEnumerable enumr)
+                    foreach (ILineArgument args_ in enumr)
                         result = factory.Create(result, args_);
 
-                if (l is ILineArguments arg)
+                if (l is ILineArgument arg)
                     result = factory.Create(result, arg);
             }
             return result;
@@ -537,15 +537,15 @@ namespace Lexical.Localization
         {
             ILine result = null;
             StructList16<ILine> args = new StructList16<ILine>();
-            for (ILine l = line; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+            for (ILine l = line; l != null; l = l.GetPreviousPart()) if (l is ILineArgument || l is ILineArgumentEnumerable) args.Add(l);
             for (int i = args.Count - 1; i >= 0; i--)
             {
                 ILine l = args[i];
-                if (l is ILineArgumentsEnumerable enumr)
-                    foreach (ILineArguments args_ in enumr)
+                if (l is ILineArgumentEnumerable enumr)
+                    foreach (ILineArgument args_ in enumr)
                         result = factory.Create(result, args_);
 
-                if (l is ILineArguments arg)
+                if (l is ILineArgument arg)
                     result = factory.Create(result, arg);
             }
             return result;
@@ -564,15 +564,15 @@ namespace Lexical.Localization
             if (factory == null) { clone = line; return false; }
             ILine result = null;
             StructList16<ILine> args = new StructList16<ILine>();
-            for (ILine l = line; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+            for (ILine l = line; l != null; l = l.GetPreviousPart()) if (l is ILineArgument || l is ILineArgumentEnumerable) args.Add(l);
             for (int i = args.Count - 1; i >= 0; i--)
             {
                 ILine l = args[i];
-                if (l is ILineArgumentsEnumerable enumr)
-                    foreach (ILineArguments args_ in enumr)
+                if (l is ILineArgumentEnumerable enumr)
+                    foreach (ILineArgument args_ in enumr)
                         if (!factory.TryCreate(result, args_, out result)) { clone = default; return false; }
 
-                if (l is ILineArguments arg)
+                if (l is ILineArgument arg)
                     if (!factory.TryCreate(result, args, out result)) { clone = default; return false; }
             }
             clone = result;
@@ -593,16 +593,16 @@ namespace Lexical.Localization
             if (factory == null) { result = left; return false; }
             ILine _result = left;
             StructList16<ILine> _args = new StructList16<ILine>();
-            for (ILine l = right; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) _args.Add(l);
+            for (ILine l = right; l != null; l = l.GetPreviousPart()) if (l is ILineArgument || l is ILineArgumentEnumerable) _args.Add(l);
             for (int i = _args.Count - 1; i >= 0; i--)
             {
                 ILine l = _args[i];
-                if (l is ILineArgumentsEnumerable enumr)
-                    foreach (ILineArguments args_ in enumr)
+                if (l is ILineArgumentEnumerable enumr)
+                    foreach (ILineArgument args_ in enumr)
                         if (!factory.TryCreate(args_, out _result)) { result = null; return false; }
 
 
-                if (l is ILineArguments args)
+                if (l is ILineArgument args)
                     if (!factory.TryCreate(args, out _result)) { result = null; return false; }
             }
             result = _result;
@@ -623,24 +623,24 @@ namespace Lexical.Localization
             KeyValuePair<string, string>[] parameters = null;
 
             StructList16<ILine> _args = new StructList16<ILine>();
-            for (ILine l = right; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) _args.Add(l);
+            for (ILine l = right; l != null; l = l.GetPreviousPart()) if (l is ILineArgument || l is ILineArgumentEnumerable) _args.Add(l);
             for (int i = _args.Count - 1; i >= 0; i--)
             {
                 ILine l = _args[i];
-                if (l is ILineArgumentsEnumerable enumr)
-                    foreach (ILineArguments args_ in enumr)
+                if (l is ILineArgumentEnumerable enumr)
+                    foreach (ILineArgument args_ in enumr)
                     {
-                        if (args_ is ILineArguments<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
-                        if (args_ is ILineArguments<ILineNonCanonicalKey, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
-                        if (args_ is ILineArguments<ILineCanonicalKey, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
+                        if (args_ is ILineArgument<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
+                        if (args_ is ILineArgument<ILineNonCanonicalKey, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
+                        if (args_ is ILineArgument<ILineCanonicalKey, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
                         result = factory.Create(result, args_);
                     }
 
-                if (l is ILineArguments args)
+                if (l is ILineArgument args)
                 {
-                    if (args is ILineArguments<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
-                    if (args is ILineArguments<ILineNonCanonicalKey, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
-                    if (args is ILineArguments<ILineCanonicalKey, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
+                    if (args is ILineArgument<ILineParameter, string, string> paramArgs && ContainsParameter(paramArgs.Argument0, paramArgs.Argument1)) continue;
+                    if (args is ILineArgument<ILineNonCanonicalKey, string, string> paramArgs_ && ContainsParameter(paramArgs_.Argument0, paramArgs_.Argument1)) continue;
+                    if (args is ILineArgument<ILineCanonicalKey, string, string> paramArgs__ && ContainsParameter(paramArgs__.Argument0, paramArgs__.Argument1)) continue;
                     result = factory.Create(result, args);
                 }
             }

@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// Line part that carries .Format arguments.
     /// </summary>
     [Serializable]
-    public class LineValue : LineBase, ILineValue, ILineArguments<ILineValue, object[]>
+    public class LineValue : LineBase, ILineValue, ILineArgument<ILineValue, object[]>
     {
         /// <summary>
         /// Format arguments.
@@ -83,7 +83,7 @@ namespace Lexical.Localization
     /// StringLocalizer part that carries .Format arguments.
     /// </summary>
     [Serializable]
-    public class StringLocalizerValue : StringLocalizerBase, ILineValue, ILineArguments<ILineValue, object[]>
+    public class StringLocalizerValue : StringLocalizerBase, ILineValue, ILineArgument<ILineValue, object[]>
     {
         /// <summary>
         /// Format arguments.

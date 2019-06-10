@@ -196,7 +196,7 @@ namespace Lexical.Localization
             if (parameterInfos == null) appender.TryGetParameterInfos(out parameterInfos);
 
             StructList16<ILine> args = new StructList16<ILine>();
-            for (ILine l = line; l != null; l = l.GetPreviousPart()) if (l is ILineArguments || l is ILineArgumentsEnumerable) args.Add(l);
+            for (ILine l = line; l != null; l = l.GetPreviousPart()) if (l is ILineArgument || l is ILineArgumentEnumerable) args.Add(l);
 
             for (int i = args.Count - 1; i >= 0; i--)
             {

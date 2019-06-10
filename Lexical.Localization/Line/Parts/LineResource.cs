@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// Line embedded resource bytes.
     /// </summary>
     [Serializable]
-    public class LineResource : LineBase, ILineResource, ILineArguments<ILineResource, byte[]>
+    public class LineResource : LineBase, ILineResource, ILineArgument<ILineResource, byte[]>
     {
         /// <summary>
         /// Value
@@ -83,7 +83,7 @@ namespace Lexical.Localization
     /// ResourceLocalizer localization string value.
     /// </summary>
     [Serializable]
-    public class StringLocalizerResource : StringLocalizerBase, ILineResource, ILineArguments<ILineResource, byte[]>
+    public class StringLocalizerResource : StringLocalizerBase, ILineResource, ILineArgument<ILineResource, byte[]>
     {
         /// <summary>
         /// Value

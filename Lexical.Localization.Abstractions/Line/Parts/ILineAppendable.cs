@@ -129,7 +129,7 @@ namespace Lexical.Localization
         /// <returns>Part</returns>
         /// <exception cref="ArgumentNullException">If appender is null</exception>
         /// <exception cref="LineException">If append failed</exception>
-        public static ILine Append(this ILine line, ILineArguments arguments)
+        public static ILine Append(this ILine line, ILineArgument arguments)
         {
             ILine result;
             if (line.GetAppender().TryCreate(line, arguments, out result)) return result;
@@ -217,7 +217,7 @@ namespace Lexical.Localization
         /// <returns>Part</returns>
         /// <exception cref="ArgumentNullException">If appender is null</exception>
         /// <exception cref="LineException">If append failed</exception>
-        public static bool TryAppend(this ILine line, ILineArguments arguments, out ILine result)
+        public static bool TryAppend(this ILine line, ILineArgument arguments, out ILine result)
             => line.GetAppender().TryCreate(line, arguments, out result);
 
         /// <summary>

@@ -80,14 +80,14 @@ namespace Lexical.Localization.Resolver
         /// <summary>
         /// Try to resolve parameter into line arguments. 
         /// 
-        /// For example parameter "Culture" is resolved to <see cref="ILineArguments"/> that produces <see cref="ILineCulture"/> with <see cref="CultureInfo"/>.
+        /// For example parameter "Culture" is resolved to <see cref="ILineArgument"/> that produces <see cref="ILineCulture"/> with <see cref="CultureInfo"/>.
         /// </summary>
         /// <param name="previous">(optional) previous parts</param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="resolvedLineArguments"></param>
+        /// <param name="resolvedLineArgument"></param>
         /// <returns></returns>
-        bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments);
+        bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArgument resolvedLineArgument);
     }
 
     /// <summary>
@@ -156,18 +156,18 @@ namespace Lexical.Localization
         /// <summary>
         /// Try to resolve parameter into line arguments. 
         /// 
-        /// For example parameter "Culture" is resolved to <see cref="ILineArguments"/> that produces <see cref="ILineCulture"/> with <see cref="CultureInfo"/>.
+        /// For example parameter "Culture" is resolved to <see cref="ILineArgument"/> that produces <see cref="ILineCulture"/> with <see cref="CultureInfo"/>.
         /// </summary>
         /// <param name="resolver"></param>
         /// <param name="previous">(optional) previous parts</param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="resolvedLineArguments"></param>
+        /// <param name="resolvedLineArgument"></param>
         /// <returns></returns>
-        public static bool TryResolveParameter(this IResolver resolver, ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments)
+        public static bool TryResolveParameter(this IResolver resolver, ILine previous, string parameterName, string parameterValue, out ILineArgument resolvedLineArgument)
         {
-            if (resolver is IParameterResolver parameterResolver) return parameterResolver.TryResolveParameter(previous, parameterName, parameterValue, out resolvedLineArguments);
-            resolvedLineArguments = default;
+            if (resolver is IParameterResolver parameterResolver) return parameterResolver.TryResolveParameter(previous, parameterName, parameterValue, out resolvedLineArgument);
+            resolvedLineArgument = default;
             return false;
         }
 

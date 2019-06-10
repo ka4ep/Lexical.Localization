@@ -285,21 +285,21 @@ namespace Lexical.Localization.Plurality
         /// <param name="previous">(optional)</param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="resolvedLineArguments"></param>
+        /// <param name="resolvedLineArgument"></param>
         /// <returns></returns>
-        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments)
+        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArgument resolvedLineArgument)
         {
             if (parameterValue != null && parameterValue != "" && parameterName == "PluralRules")
             {
                 IPluralRules value;
                 if (TryResolve(parameterValue, out value))
                 {
-                    resolvedLineArguments = new LineArguments<ILinePluralRules, IPluralRules>(value);
+                    resolvedLineArgument = new LineArgument<ILinePluralRules, IPluralRules>(value);
                     return true;
                 }
             }
 
-            resolvedLineArguments = default;
+            resolvedLineArgument = default;
             return false;
         }
 

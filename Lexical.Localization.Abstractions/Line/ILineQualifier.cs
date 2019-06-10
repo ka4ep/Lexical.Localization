@@ -70,16 +70,16 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Measures qualifications of <see cref="ILineArguments"/>s.
+    /// Measures qualifications of <see cref="ILineArgument"/>s.
     /// </summary>
-    public interface ILineArgumentsQualifier : ILineQualifier
+    public interface ILineArgumentQualifier : ILineQualifier
     {
         /// <summary>
         /// Qualify <paramref name="arguments"/>.
         /// </summary>
         /// <param name="arguments"></param>
         /// <returns>true if argument is qualified, false if disqualified</returns>
-        bool QualifyArguments(ILineArguments arguments);
+        bool QualifyArguments(ILineArgument arguments);
     }
 
     /// <summary>

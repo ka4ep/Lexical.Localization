@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// Line part that carries format provider.
     /// </summary>
     [Serializable]
-    public class LinePluralRules : LineParameterBase, ILinePluralRules, ILineHint, ILineArguments<ILinePluralRules, IPluralRules>
+    public class LinePluralRules : LineParameterBase, ILinePluralRules, ILineHint, ILineArgument<ILinePluralRules, IPluralRules>
     {
         /// <summary>
         /// Plural rules
@@ -84,7 +84,7 @@ namespace Lexical.Localization
     /// StringLocalizer part that carries format provider.
     /// </summary>
     [Serializable]
-    public class StringLocalizerPluralRules : StringLocalizerParameterBase, ILinePluralRules, ILineHint, ILineArguments<ILinePluralRules, IPluralRules>
+    public class StringLocalizerPluralRules : StringLocalizerParameterBase, ILinePluralRules, ILineHint, ILineArgument<ILinePluralRules, IPluralRules>
     {
         /// <summary>
         /// Plural rules

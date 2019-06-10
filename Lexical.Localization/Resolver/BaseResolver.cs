@@ -284,18 +284,18 @@ namespace Lexical.Localization.Resolver
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="resolvedLineArguments"></param>
+        /// <param name="resolvedLineArgument"></param>
         /// <returns></returns>
-        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments)
+        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArgument resolvedLineArgument)
         {
             T value;
             if (parameterValue != null && parameterValue != "" && parameterName == ParameterName && TryResolve(parameterValue, out value))
             {
-                resolvedLineArguments = new LineArguments<LineT, T>(value);
+                resolvedLineArgument = new LineArgument<LineT, T>(value);
                 return true;
             }
 
-            resolvedLineArguments = default;
+            resolvedLineArgument = default;
             return false;
         }
     }

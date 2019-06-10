@@ -37,10 +37,10 @@ namespace Lexical.Localization
     /// <summary>
     /// Non-canonically compared key
     /// </summary>
-    public class LineNonCanonicalKey : LineKey, ILineNonCanonicalKey, ILineArguments<ILineNonCanonicalKey, string, string>
+    public class LineNonCanonicalKey : LineKey, ILineNonCanonicalKey, ILineArgument<ILineNonCanonicalKey, string, string>
     {
-        string ILineArguments<ILineNonCanonicalKey, string, string>.Argument0 => ParameterName;
-        string ILineArguments<ILineNonCanonicalKey, string, string>.Argument1 => ParameterValue;
+        string ILineArgument<ILineNonCanonicalKey, string, string>.Argument0 => ParameterName;
+        string ILineArgument<ILineNonCanonicalKey, string, string>.Argument1 => ParameterValue;
 
         /// <summary>
         /// Create non-canonical key.
@@ -66,10 +66,10 @@ namespace Lexical.Localization
     /// <summary>
     /// Canonically compared key
     /// </summary>
-    public class LineCanonicalKey : LineKey, ILineCanonicalKey, ILineArguments<ILineCanonicalKey, string, string>
+    public class LineCanonicalKey : LineKey, ILineCanonicalKey, ILineArgument<ILineCanonicalKey, string, string>
     {
-        string ILineArguments<ILineCanonicalKey, string, string>.Argument0 => ParameterName;
-        string ILineArguments<ILineCanonicalKey, string, string>.Argument1 => ParameterValue;
+        string ILineArgument<ILineCanonicalKey, string, string>.Argument0 => ParameterName;
+        string ILineArgument<ILineCanonicalKey, string, string>.Argument1 => ParameterValue;
 
         /// <summary>
         /// Create canonical key.
@@ -106,7 +106,7 @@ namespace Lexical.Localization
         public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineNonCanonicalKey result)
         {
             // Try resolve
-            ILineArguments args;
+            ILineArgument args;
             ILine resolved;
             if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineNonCanonicalKey castedResolved)
             {
@@ -131,7 +131,7 @@ namespace Lexical.Localization
         public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineCanonicalKey result)
         {
             // Try resolve
-            ILineArguments args;
+            ILineArgument args;
             ILine resolved;
             if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineCanonicalKey castedResolved)
             {
@@ -174,10 +174,10 @@ namespace Lexical.Localization
     /// <summary>
     /// Non-canonically compared key
     /// </summary>
-    public class StringLocalizerNonCanonicalKey : _StringLocalizerKey, ILineNonCanonicalKey, ILineArguments<ILineNonCanonicalKey, string, string>
+    public class StringLocalizerNonCanonicalKey : _StringLocalizerKey, ILineNonCanonicalKey, ILineArgument<ILineNonCanonicalKey, string, string>
     {
-        string ILineArguments<ILineNonCanonicalKey, string, string>.Argument0 => ParameterName;
-        string ILineArguments<ILineNonCanonicalKey, string, string>.Argument1 => ParameterValue;
+        string ILineArgument<ILineNonCanonicalKey, string, string>.Argument0 => ParameterName;
+        string ILineArgument<ILineNonCanonicalKey, string, string>.Argument1 => ParameterValue;
 
         /// <summary>
         /// 
@@ -203,10 +203,10 @@ namespace Lexical.Localization
     /// <summary>
     /// Canonically compared key
     /// </summary>
-    public class StringLocalizerCanonicalKey : _StringLocalizerKey, ILineCanonicalKey, ILineArguments<ILineCanonicalKey, string, string>
+    public class StringLocalizerCanonicalKey : _StringLocalizerKey, ILineCanonicalKey, ILineArgument<ILineCanonicalKey, string, string>
     {
-        string ILineArguments<ILineCanonicalKey, string, string>.Argument0 => ParameterName;
-        string ILineArguments<ILineCanonicalKey, string, string>.Argument1 => ParameterValue;
+        string ILineArgument<ILineCanonicalKey, string, string>.Argument0 => ParameterName;
+        string ILineArgument<ILineCanonicalKey, string, string>.Argument1 => ParameterValue;
 
         /// <summary>
         /// 
@@ -243,7 +243,7 @@ namespace Lexical.Localization
         public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineNonCanonicalKey result)
         {
             // Try resolve
-            ILineArguments args;
+            ILineArgument args;
             ILine resolved;
             if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineNonCanonicalKey castedResolved)
             {
@@ -268,7 +268,7 @@ namespace Lexical.Localization
         public virtual bool TryCreate(ILineFactory appender, ILine previous, string parameterName, string parameterValue, out ILineCanonicalKey result)
         {
             // Try resolve
-            ILineArguments args;
+            ILineArgument args;
             ILine resolved;
             if (Resolver.TryResolveParameter(previous, parameterName, parameterValue, out args) && this.TryCreate(previous, args, out resolved) && resolved is ILineCanonicalKey castedResolved)
             {

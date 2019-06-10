@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// "Type" key that carries <see cref="Type"/>. 
     /// </summary>
     [Serializable]
-    public class LineType : LineKey, ILineType, ILineNonCanonicalKey, ILineArguments<ILineType, Type>
+    public class LineType : LineKey, ILineType, ILineNonCanonicalKey, ILineArgument<ILineType, Type>
     {
         /// <summary>
         /// Type, null if non-standard type.
@@ -181,7 +181,7 @@ namespace Lexical.Localization
     /// "Type" key that carries <see cref="Type"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerType : _StringLocalizerKey, ILineType, ILineNonCanonicalKey, ILineArguments<ILineType, Type>
+    public class StringLocalizerType : _StringLocalizerKey, ILineType, ILineNonCanonicalKey, ILineArgument<ILineType, Type>
     {
         /// <summary>
         /// Type, null if non-standard type.

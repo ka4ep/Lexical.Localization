@@ -516,7 +516,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public IEnumerable<ILineArguments> ParseArgs(string str)
+        public IEnumerable<ILineArgument> ParseArgs(string str)
         {
             // Match
             ILinePatternMatch match = this.Match(text: str, filledParameters: null);
@@ -527,7 +527,7 @@ namespace Lexical.Localization
             foreach (string partValue in match.PartValues) if (partValue != null) count++;
 
             // Create args
-            ILineArguments[] result = new ILineArguments[count];
+            ILineArgument[] result = new ILineArgument[count];
             int ix = 0;
             for (int i=0; i<match.PartValues.Length; i++)
             {
@@ -585,7 +585,7 @@ namespace Lexical.Localization
         /// <param name="str"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public bool TryParseArgs(string str, out IEnumerable<ILineArguments> args)
+        public bool TryParseArgs(string str, out IEnumerable<ILineArgument> args)
         {
             // Match
             ILinePatternMatch match = this.Match(text: str, filledParameters: null);
@@ -596,7 +596,7 @@ namespace Lexical.Localization
             foreach (string partValue in match.PartValues) if (partValue != null) count++;
 
             // Create args
-            ILineArguments[] result = new ILineArguments[count];
+            ILineArgument[] result = new ILineArgument[count];
             int ix = 0;
             for (int i = 0; i < match.PartValues.Length; i++)
             {
@@ -642,7 +642,7 @@ namespace Lexical.Localization
             return false;
         }
 
-        class ParameterArgument : ILineArguments<ILineParameter, string, string>
+        class ParameterArgument : ILineArgument<ILineParameter, string, string>
         {
             public string Argument0 => ParameterName;
             public string Argument1 => ParameterValue;

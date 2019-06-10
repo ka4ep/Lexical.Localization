@@ -12,7 +12,7 @@ namespace Lexical.Localization
     /// "Logger" key that carries <see cref="Logger"/>. 
     /// </summary>
     [Serializable]
-    public class LineLogger : LineBase, ILineLogger, ILineArguments<ILineLogger, ILogger>
+    public class LineLogger : LineBase, ILineLogger, ILineArgument<ILineLogger, ILogger>
     {
         /// <summary>
         /// Logger, null if non-standard assembly.
@@ -62,7 +62,7 @@ namespace Lexical.Localization
     /// "Logger" key that carries <see cref="Logger"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerLogger : StringLocalizerBase, ILineLogger, ILineArguments<ILineLogger, ILogger>
+    public class StringLocalizerLogger : StringLocalizerBase, ILineLogger, ILineArgument<ILineLogger, ILogger>
     {
         /// <summary>
         /// Logger, null if non-standard assembly.

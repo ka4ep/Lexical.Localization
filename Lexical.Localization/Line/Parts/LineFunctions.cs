@@ -14,7 +14,7 @@ namespace Lexical.Localization
     /// Line part that contains functions for string formats to use.
     /// </summary>
     [Serializable]
-    public class LineFunctions : LineParameterBase, ILineFunctions, ILineHint, ILineArguments<ILineFunctions, IFunctions>
+    public class LineFunctions : LineParameterBase, ILineFunctions, ILineHint, ILineArgument<ILineFunctions, IFunctions>
     {
         /// <summary>
         /// Functions for string formats to use
@@ -85,7 +85,7 @@ namespace Lexical.Localization
     /// StringLocalizer part that carries format provider.
     /// </summary>
     [Serializable]
-    public class StringLocalizerFunctions : StringLocalizerParameterBase, ILineFunctions, ILineHint, ILineArguments<ILineFunctions, IFunctions>
+    public class StringLocalizerFunctions : StringLocalizerParameterBase, ILineFunctions, ILineHint, ILineArgument<ILineFunctions, IFunctions>
     {
         /// <summary>
         /// Format provider

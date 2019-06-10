@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// Basic line part.
     /// </summary>
     [Serializable]
-    public class LinePart : LineBase, ILinePart, ILineArguments<ILinePart>
+    public class LinePart : LineBase, ILinePart, ILineArgument<ILinePart>
     {
         /// <summary>
         /// Create line part.
@@ -54,7 +54,7 @@ namespace Lexical.Localization
     /// Basic line part.
     /// </summary>
     [Serializable]
-    public class StringLocalizerPart : StringLocalizerBase, ILinePart, ILineArguments<ILinePart>
+    public class StringLocalizerPart : StringLocalizerBase, ILinePart, ILineArgument<ILinePart>
     {
         /// <summary>
         /// Create line part.
@@ -79,7 +79,7 @@ namespace Lexical.Localization
     /// Basic line part.
     /// </summary>
     [Serializable]
-    public class StringLocalizerPart<T> : StringLocalizerBase, ILinePart, ILineArguments<ILinePart>, IStringLocalizer<T>
+    public class StringLocalizerPart<T> : StringLocalizerBase, ILinePart, ILineArgument<ILinePart>, IStringLocalizer<T>
     {
         /// <summary>
         /// Create line part.

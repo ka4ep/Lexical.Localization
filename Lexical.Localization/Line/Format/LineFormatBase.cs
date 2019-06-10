@@ -238,14 +238,14 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public virtual IEnumerable<ILineArguments> ParseArgs(string str)
+        public virtual IEnumerable<ILineArgument> ParseArgs(string str)
         {
             StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
             Parse(str, ref parameters);
 
             if (Qualifier.NeedsOccuranceIndex())
             {
-                StructList12<ILineArguments> result = new StructList12<ILineArguments>();
+                StructList12<ILineArgument> result = new StructList12<ILineArgument>();
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
                 ILine prev = null;
                 for (int i = 0; i < parameters.Count; i++)
@@ -254,21 +254,21 @@ namespace Lexical.Localization
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref list, parameter.Key);
                     if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
-                    result.Add(LineArguments.ToArguments(lineParameter));
+                    result.Add(LineArgument.ToArgument(lineParameter));
                     prev = lineParameter;
                 }
                 return result.ToArray();
             }
             else
             {
-                ILineArguments[] result = new ILineArguments[parameters.Count];
+                ILineArgument[] result = new ILineArgument[parameters.Count];
                 ILine prev = null;
                 for (int i = 0; i < parameters.Count; i++)
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
-                    result[i] = LineArguments.ToArguments(lineParameter);
+                    result[i] = LineArgument.ToArgument(lineParameter);
                     prev = lineParameter;
                 }
                 return result;
@@ -332,14 +332,14 @@ namespace Lexical.Localization
         /// <param name="str"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public virtual bool TryParseArgs(string str, out IEnumerable<ILineArguments> args)
+        public virtual bool TryParseArgs(string str, out IEnumerable<ILineArgument> args)
         {
             StructList12<KeyValuePair<string, string>> parameters = new StructList12<KeyValuePair<string, string>>();
             if (!TryParse(str, ref parameters)) { args = default; return false; }
 
             if (Qualifier.NeedsOccuranceIndex())
             {
-                StructList12<ILineArguments> result = new StructList12<ILineArguments>();
+                StructList12<ILineArgument> result = new StructList12<ILineArgument>();
                 StructList8<(string, int)> list = new StructList8<(string, int)>();
                 ILine prev = null;
                 for (int i = 0; i < parameters.Count; i++)
@@ -348,7 +348,7 @@ namespace Lexical.Localization
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     int occ = AddOccurance(ref list, parameter.Key);
                     if (!Qualifier.QualifyParameter(lineParameter, occ)) continue;
-                    result.Add(LineArguments.ToArguments(lineParameter));
+                    result.Add(LineArgument.ToArgument(lineParameter));
                     prev = lineParameter;
                 }
                 args = result.ToArray();
@@ -356,14 +356,14 @@ namespace Lexical.Localization
             }
             else
             {
-                ILineArguments[] result = new ILineArguments[parameters.Count];
+                ILineArgument[] result = new ILineArgument[parameters.Count];
                 ILine prev = null;
                 for (int i = 0; i < parameters.Count; i++)
                 {
                     KeyValuePair<string, string> parameter = parameters[i];
                     ILineParameter lineParameter = lineFactory.Create<ILineParameter, string, string>(prev /*<-*/, parameter.Key, parameter.Value);
                     if (!Qualifier.QualifyParameter(lineParameter, -1)) continue;
-                    result[i] = LineArguments.ToArguments(lineParameter);
+                    result[i] = LineArgument.ToArgument(lineParameter);
                     prev = lineParameter;
                 }
                 args = result;
@@ -476,7 +476,7 @@ namespace Lexical.Localization
         }
 
         /// <summary></summary>
-        protected class ParameterArgument : ILineArguments<ILineParameter, string, string>, ILineParameter
+        protected class ParameterArgument : ILineArgument<ILineParameter, string, string>, ILineParameter
         {
             /// <summary></summary>
             public string Argument0 => ParameterName;

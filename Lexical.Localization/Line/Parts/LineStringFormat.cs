@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// Line part that carries format provider.
     /// </summary>
     [Serializable]
-    public class LineStringFormat : LineParameterBase, ILineStringFormat, ILineHint, ILineArguments<ILineStringFormat, IStringFormat>
+    public class LineStringFormat : LineParameterBase, ILineStringFormat, ILineHint, ILineArgument<ILineStringFormat, IStringFormat>
     {
         /// <summary>
         /// String format
@@ -84,7 +84,7 @@ namespace Lexical.Localization
     /// StringLocalizer part that carries format provider.
     /// </summary>
     [Serializable]
-    public class StringLocalizerStringFormat : StringLocalizerParameterBase, ILineStringFormat, ILineHint, ILineArguments<ILineStringFormat, IStringFormat>
+    public class StringLocalizerStringFormat : StringLocalizerParameterBase, ILineStringFormat, ILineHint, ILineArgument<ILineStringFormat, IStringFormat>
     {
         /// <summary>
         /// Format provider

@@ -85,21 +85,21 @@ namespace Lexical.Localization.Utils
         /// <param name="previous"></param>
         /// <param name="parameterName"></param>
         /// <param name="parameterValue"></param>
-        /// <param name="resolvedLineArguments"></param>
+        /// <param name="resolvedLineArgument"></param>
         /// <returns></returns>
-        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArguments resolvedLineArguments)
+        public bool TryResolveParameter(ILine previous, string parameterName, string parameterValue, out ILineArgument resolvedLineArgument)
         {
             IParameterInfo pi;
             if (TryGetValue(parameterName, out pi) && pi.InterfaceType != null)
             {
-                if (pi.InterfaceType == typeof(ILineParameter)) resolvedLineArguments = new LineArguments<ILineParameter, string, string>(parameterName, parameterValue);
-                else if (pi.InterfaceType == typeof(ILineCanonicalKey)) resolvedLineArguments = new LineArguments<ILineCanonicalKey, string, string>(parameterName, parameterValue);
-                else if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) resolvedLineArguments = new LineArguments<ILineNonCanonicalKey, string, string>(parameterName, parameterValue);
-                else if (pi.InterfaceType == typeof(ILineHint)) resolvedLineArguments = new LineArguments<ILineHint, string, string>(parameterName, parameterValue);
-                else resolvedLineArguments = (ILineArguments) Activator.CreateInstance(typeof(LineArguments<,,>).MakeGenericType(new Type[] { pi.InterfaceType, typeof(string), typeof(string) }));
+                if (pi.InterfaceType == typeof(ILineParameter)) resolvedLineArgument = new LineArgument<ILineParameter, string, string>(parameterName, parameterValue);
+                else if (pi.InterfaceType == typeof(ILineCanonicalKey)) resolvedLineArgument = new LineArgument<ILineCanonicalKey, string, string>(parameterName, parameterValue);
+                else if (pi.InterfaceType == typeof(ILineNonCanonicalKey)) resolvedLineArgument = new LineArgument<ILineNonCanonicalKey, string, string>(parameterName, parameterValue);
+                else if (pi.InterfaceType == typeof(ILineHint)) resolvedLineArgument = new LineArgument<ILineHint, string, string>(parameterName, parameterValue);
+                else resolvedLineArgument = (ILineArgument) Activator.CreateInstance(typeof(LineArgument<,,>).MakeGenericType(new Type[] { pi.InterfaceType, typeof(string), typeof(string) }));
                 return true;
             }
-            resolvedLineArguments = default;
+            resolvedLineArgument = default;
             return false;
         }
 

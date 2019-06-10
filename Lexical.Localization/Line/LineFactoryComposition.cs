@@ -305,7 +305,7 @@ namespace Lexical.Localization
         /// <param name="line"></param>
         /// <returns>try if create succeeded</returns>
         /// <exception cref="LineException">If append failed due to unexpected reason</exception>
-        public bool TryCreate(ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line)
+        public bool TryCreate(ILineFactory factory, ILine previous, ILineArgument arguments, out ILine line)
         {
             foreach (var argFactory in argFactories)
             {

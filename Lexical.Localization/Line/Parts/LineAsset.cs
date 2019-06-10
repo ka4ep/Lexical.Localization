@@ -13,7 +13,7 @@ namespace Lexical.Localization
     /// Line part that carries <see cref="ILineAsset"/>. 
     /// </summary>
     [Serializable]
-    public class LineAsset : LineBase, ILineAsset, ILineArguments<IAsset>
+    public class LineAsset : LineBase, ILineAsset, ILineArgument<IAsset>
     {
         /// <summary>
         /// Asset.
@@ -84,7 +84,7 @@ namespace Lexical.Localization
     /// Line part that carries <see cref="ILineAsset"/>. 
     /// </summary>
     [Serializable]
-    public class StringLocalizerLineAsset : StringLocalizerBase, ILineAsset, ILineArguments<IAsset>
+    public class StringLocalizerLineAsset : StringLocalizerBase, ILineAsset, ILineArgument<IAsset>
     {
         /// <summary>
         /// Asset.
