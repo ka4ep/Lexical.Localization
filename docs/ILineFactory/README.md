@@ -186,7 +186,7 @@ public interface ILineFactoryByArgument : ILineFactory
     /// <param name="line">create output</param>
     /// <returns>true if part was created</returns>
     /// <exception cref="LineException">If append failed due to unexpected reason</exception>
-    bool TryCreate(ILineFactory factory, ILine previous, ILineArguments arguments, out ILine line);
+    bool TryCreate(ILineFactory factory, ILine previous, ILineArgument arguments, out ILine line);
 }
 
 /// <summary>

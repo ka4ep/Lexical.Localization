@@ -261,7 +261,7 @@ It's recommended to put inlined lines to variables for better performance. Inlin
 ```csharp
 class MyController__
 {
-    static ILine localization = LineRoot.Global.Type<MyControllerB>();
+    static ILine localization = LineRoot.Global.Assembly("docs").Type<MyControllerB>();
     static ILine Success = localization.Key("Success").Format("Success").sv("Det funkar").fi("Onnistui");
 
     public string Do()
@@ -281,16 +281,11 @@ enum CarFeature
     // Fuel Type
     Electric = 0x0001,
     Petrol = 0x0002,
-
-    [Description("Natural gas")]
     NaturalGas = 0x0003,
 
     // Door count
-    [Description("Two doors")]
     TwoDoors = 0x0010,
-    [Description("Four doors")]
     FourDoors = 0x0020,
-    [Description("Five doors")]
     FiveDoors = 0x0030,
 
     // Color
@@ -312,13 +307,14 @@ ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>();
 ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>();
 ```
 
-Enum localization can be supplied from files.
+Enum localization strings can be supplied from files.
 
 ```csharp
-LineRoot.Builder.AddSource(LineReaderMap.Default.FileAssetSource("ILine\\CarFeature.ini")).Build();
+IAssetSource assetSource = LineReaderMap.Default.FileAssetSource(@"ILine\CarFeature.ini");
+LineRoot.Builder.AddSource(assetSource).Build();
 ```
 
-Keys should have reference of "Assembly:asm:Type:enumType:Key:case". The file **CarFeature.ini**.
+Files that supply enumeration localization should use key in format of <i>"Assembly:asm:Type:enumtype:Key:case"</i>. Example **.ini** below.
  
 
 ```ini
@@ -341,13 +337,25 @@ Key:White = Vit
 
 ```
 
-A single case can be matched with the "Assembly:asm:Type:enumType:Key:case" keys.
+A single enum case can be matched with <b>.Key(<i>case</i>)</b>. 
+
+```csharp
+Console.WriteLine( carFeature.Key(CarFeature.Petrol) );
+Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("fi"));
+Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("sv"));
+```
 
 The result of the example above.
 ```none
 Petrol
 Bensiini
 Bensin
+```
+
+If enum type is [Flags] and enum value contains multiple cases, it must be matched with <b>.Value(<i>Enum</i>)</b>.
+
+```csharp
+Console.WriteLine(carFeature.Value(CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black));
 ```
 
 <b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
@@ -366,7 +374,7 @@ ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>()
     .InlineEnum(CarFeature.White, "fi", "Valkoinen");
 ```
 
-When enumerations used in formatted string or <i>$string_interpolations</i>, the labels are searches with "Assembly:asm:Type:enumType:Key:case" keys.
+When enumerations are used in formatted string or <i>$string_interpolations</i>, the labels are searched with keys <i>"Assembly:asm:Type:enumtype:Key:case"</i>.
 
 ```csharp
 CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
@@ -377,9 +385,18 @@ Console.WriteLine( carFeature.Formulate($"{features}").Culture("sv") );
 
 The result of the example above.
 ```none
-Five doors, Petrol, Black
-Viisiovinen, Bensiini, Musta
-Femdörras, Bensin, Svart
+Petrol, FiveDoors, Black
+Bensiini, Viisiovinen, Musta
+Bensin, Femdörras, Svart
+```
+
+If placeholder format is "{enum:|}" then the printed string uses "|" as separator.
+
+```csharp
+Console.WriteLine(carFeature.Formulate($"{CarFeature.Petrol | CarFeature.Black:|}").Culture("fi"));
+```
+```none
+Bensiini|Musta
 ```
 
 # Resources
@@ -417,7 +434,7 @@ class MyController
 
     public MyController(ILineRoot localizationRoot)
     {
-        this.localization = localizationRoot.Type<MyController>();
+        this.localization = localizationRoot.Assembly("docs").Type<MyController>();
     }
 
     public void Do()
@@ -432,7 +449,7 @@ If class is designed to use static instance and without dependency injection, lo
 ```csharp
 class MyControllerB
 {
-    static ILine localization = LineRoot.Global.Type<MyControllerB>();
+    static ILine localization = LineRoot.Global.Assembly("docs").Type<MyControllerB>();
 
     public void Do()
     {

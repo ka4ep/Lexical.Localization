@@ -358,7 +358,7 @@ namespace docs
                 Console.WriteLine( carFeature.Formulate($"{features}").Culture("sv") );
                 #endregion Snippet_7m3
                 #region Snippet_7m5
-                Console.WriteLine(carFeature.Formulate($"{CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black:|}").Culture("fi"));
+                Console.WriteLine(carFeature.Formulate($"{CarFeature.Petrol | CarFeature.Black:|}").Culture("fi"));
                 #endregion Snippet_7m5
 
                 Console.WriteLine(carFeature.Formulate($"{features:g}").Culture("fi"));

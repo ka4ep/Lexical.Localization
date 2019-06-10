@@ -18,11 +18,23 @@ Console.WriteLine(LineRoot.Global.Format("It is now {0:d} at {0:t}").Value(DateT
 Console.WriteLine(String.Format("It is now {0:d} at {0:t}", DateTime.Now));
 ```
 
-<b>.Formulate(<i>$interpolated_string</i>)</b> uses interpolated strings. It simply appends **.Format()** and **.Value()** parts.
+<b>.Formulate(<i>$string</i>)</b> appends interpolated strings. It's equivalent to appending **.Format()** and **.Value()** parts.
 
 ```csharp
 DateTime time = DateTime.Now;
 Console.WriteLine(LineRoot.Global.Key("Time").Formulate($"It is now {time:d} at {time:t}"));
+```
+
+Enumeration localization strings are searched with key <i>"Assembly:asm:Type:enumType:Key:enumCase"</i>.
+
+```csharp
+Permissions permissions = Permissions.Add | Permissions.Modify | Permissions.Remove;
+Console.WriteLine( LineRoot.Global.Key("Permission").Formulate($"User permissions {permissions}") );
+```
+
+```csharp
+[Flags]
+public enum Permissions { Add = 1, Remove = 2, Modify = 4 }
 ```
 
 # Culture
@@ -247,6 +259,12 @@ public class MyClass
     public void DoError()
     {
         Console.WriteLine(error.Value(0x100));
+    }
+    
+    public void DoExample()
+    {
+        string msg = "";
+        Console.WriteLine(localization.Key("Msg").Formulate($"You received a message: \"{msg}\""));
     }
 }
 ```

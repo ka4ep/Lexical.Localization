@@ -129,7 +129,7 @@ Enumerables can be localized just as any other type.
 Enum localization strings can be supplied from files.
 [!code-csharp[Snippet](Examples.cs#Snippet_7l3)]
 
-Files that enumeration localization strings should use keys in format of "Assembly:asm:Type:enumtype:Key:case". Example **.ini** below.
+Files that supply enumeration localization should use key in format of <i>"Assembly:asm:Type:enumtype:Key:case"</i>. Example **.ini** below.
  
 [!code-ini[Snippet](CarFeature.ini)]
 
@@ -146,17 +146,10 @@ Bensin
 If enum type is [Flags] and enum value contains multiple cases, it must be matched with <b>.Value(<i>Enum</i>)</b>.
 [!code-csharp[Snippet](Examples.cs#Snippet_7m4)]
 
-If placeholder format is "{enum:|}" then flags separator is "|".
-[!code-csharp[Snippet](Examples.cs#Snippet_7m5)]
-```
-Bensiini|Viisiovinen|Musta
-```
-
-
 <b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
 [!code-csharp[Snippet](Examples.cs#Snippet_7m)]
 
-When enumerations are used in formatted string or <i>$string_interpolations</i>, the labels are searched with keys "Assembly:asm:Type:enumtype:Key:case".
+When enumerations are used in formatted string or <i>$string_interpolations</i>, the labels are searched with keys <i>"Assembly:asm:Type:enumtype:Key:case"</i>.
 [!code-csharp[Snippet](Examples.cs#Snippet_7m3)]
 
 The result of the example above.
@@ -164,6 +157,12 @@ The result of the example above.
 Petrol, FiveDoors, Black
 Bensiini, Viisiovinen, Musta
 Bensin, Femdörras, Svart
+```
+
+If placeholder format is "{enum:|}" then the printed string uses "|" as separator.
+[!code-csharp[Snippet](Examples.cs#Snippet_7m5)]
+```none
+Bensiini|Musta
 ```
 
 # Resources

@@ -11,7 +11,7 @@ Providing **.Format()** and **.Value()** is equivalent to **String.Format()**.
 <b>.Formulate(<i>$string</i>)</b> appends interpolated strings. It's equivalent to appending **.Format()** and **.Value()** parts.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c1)]
 
-If enumerables are refered as value, localization for the enumerable is searched with key "Assembly:asm:Type:enumType:Key:enumCase".
+Enumeration localization strings are searched with key <i>"Assembly:asm:Type:enumType:Key:enumCase"</i>.
 [!code-csharp[Snippet](Examples.cs#Snippet_1e)]
 [!code-csharp[Snippet](Examples.cs#Snippet_Enum)]
 
