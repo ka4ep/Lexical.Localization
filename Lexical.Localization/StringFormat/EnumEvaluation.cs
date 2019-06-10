@@ -41,18 +41,10 @@ namespace Lexical.Localization.StringFormat
                 IEnumInfo enumInfo = ctx.EnumResolver != null ? ctx.EnumResolver.GetEnumInfo(@enum.GetType()) : new EnumInfo(@enum.GetType());
                 // Get value
                 ulong value = EnumCase.ToUInt64(@enum);
-                // Create string
-                StringBuilder sb = new StringBuilder();
                 // Remove hash-equals comparable key parts.
-                ILine keyBase = ctx.Line.Prune(enum_key_prune_qualifier, LineAppender.NonResolving);
-
-                // ^^ 
-                //  Ekan "Key":n poisto ei toimi
-                //  TODO Poista "String" part
-                //  TODO Poista ILineValue part
-                //  Culture ei toimi oikein jos on resolvattu Linestä (Antaa väärn untulren)
-                //     voi olla esim "fi-FI", jolloin ICulturePOlicyn falbackia ei tapahdu
-
+                ILine keyBase = ctx.Line.Prune(LineEnumBaseKeyPruner.Default, LineAppender.NonResolving);
+                // Result cases
+                StructList8<(IEnumCase, string)> resultCases = new StructList8<(IEnumCase, string)>();
                 // Split into cases
                 while (value != 0UL)
                 {
@@ -75,6 +67,8 @@ namespace Lexical.Localization.StringFormat
                             caseStr = case_resolve.Value;
                             // Remove flag
                             value &= ~@case.Value;
+                            // Add to results
+                            resultCases.Add((@case, caseStr));
                             break;
                         }
                     }
@@ -93,6 +87,8 @@ namespace Lexical.Localization.StringFormat
                             status.UpPlaceholder(LineStatus.PlaceholderErrorEnumNoMatch);
                             // Remove flag
                             value &= ~@case.Value;
+                            // Add to results
+                            resultCases.Add((@case, caseStr));
                             break;
                         }
                     }
@@ -102,17 +98,44 @@ namespace Lexical.Localization.StringFormat
                     {
                         status.UpPlaceholder(LineStatus.PlaceholderWarningEnumCaseNotMatched);
                         caseStr = value.ToString(ctx.Culture);
+                        // Add to results
+                        resultCases.Add((null, caseStr));
                         value = 0UL;
                     }
+                }
 
-                    // Append to sb
-                    if (sb.Length > 0) sb.Append(separator);
-                    sb.Append(caseStr);
+                // Sort by to occurance order
+                if (resultCases.Count > 1) CaseSorter.Sorter.Sort(ref resultCases);
+
+                // Put together a result string
+                String text = null;
+                if (resultCases.Count == 0) text = "";
+                else if (resultCases.Count == 1) text = resultCases[0].Item2;
+                else
+                {
+                    int length = (resultCases.Count - 1) * separator.Length;
+                    for (int i = 0; i < resultCases.Count; i++) length += resultCases[i].Item2.Length;
+                    char[] chars = new char[length];
+                    int ix = 0;
+                    for (int i = 0; i < resultCases.Count; i++)
+                    {
+                        // Append separator
+                        if (i>0)
+                        {
+                            separator.CopyTo(0, chars, ix, separator.Length);
+                            ix += separator.Length;
+                        }
+                        // Append text
+                        String caseText = resultCases[i].Item2;
+                        caseText.CopyTo(0, chars, ix, caseText.Length);
+                        ix += caseText.Length;
+                    }
+                    text = new String(chars);
                 }
 
                 // Return result
                 status.UpPlaceholder(LineStatus.PlaceholderOkEnum);
-                return new LineString(ctx.Line, sb.ToString(), status);
+                return new LineString(ctx.Line, text, status);
             } catch (Exception e)
             {
                 status.UpPlaceholder(LineStatus.PlaceholderFailedEnum);
@@ -128,5 +151,75 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         public static readonly ILineQualifier enum_key_prune_qualifier = new LineQualifier().Rule("Key", -1, "").Rule("Assembly", -1, "").Rule("Type", -1, "").Rule("Section", -1, "");
 
+        /// <summary>
+        /// Used for pruning unwanted parts from base key, so that key can be used for base keys for enum localization.
+        /// 
+        /// Rules:
+        ///   1. Disqualify "Assembly", "Key", "Type" parameters.
+        ///   2. Disqualify <see cref="ILineString"/>, <see cref="ILineValue"/>.
+        ///  
+        /// </summary>
+        public class LineEnumBaseKeyPruner : ILineArgumentQualifier
+        {
+            private static readonly LineEnumBaseKeyPruner instance = new LineEnumBaseKeyPruner();
+
+            /// <summary>
+            /// Default singleton instance.
+            /// </summary>
+            public static LineEnumBaseKeyPruner Default => instance;
+
+            /// <summary>
+            /// Doesn't need occurance
+            /// </summary>
+            public bool NeedsOccuranceIndex => false;
+
+            /// <summary>
+            /// Evaluate argument
+            /// </summary>
+            /// <param name="argument"></param>
+            /// <param name="occuranceIndex"></param>
+            /// <returns></returns>
+            public bool QualifyArgument(ILineArgument argument, int occuranceIndex = -1)
+            {
+                if (argument is ILineArgument<ILineString, IString>) return false;
+                if (argument is ILineArgument<ILineValue, object[]>) return false;
+                //if (argument is ILineArgument<ILineInlines, IDictionary<ILine, ILine>>) return false;
+                string parameterName, parameterValue;
+                if (argument.TryGetParameter(out parameterName, out parameterValue))
+                {
+                    if (parameterName == "Assembly" || parameterName == "Type" || parameterName == "Key") return false;
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Sorts cases based their occurance
+        /// </summary>
+        public class CaseSorter : IComparer<(IEnumCase, string)>
+        {
+            private static StructListSorter<StructList8<(IEnumCase, string)>, (IEnumCase, string)> sorter = new StructListSorter<StructList8<(IEnumCase, string)>, (IEnumCase, string)>(new CaseSorter());
+
+            /// <summary>
+            /// List sorter
+            /// </summary>
+            public static StructListSorter<StructList8<(IEnumCase, string)>, (IEnumCase, string)> Sorter => sorter;
+
+            /// <summary>
+            /// Compare lines
+            /// </summary>
+            /// <param name="x"></param>
+            /// <param name="y"></param>
+            /// <returns></returns>
+            public int Compare((IEnumCase, string) x, (IEnumCase, string) y)
+            {
+                if (x.Item1 == null && y.Item1 == null) return 0;
+                if (x.Item1 == null) return -1;
+                if (y.Item1 == null) return 1;
+                return x.Item1.CaseIndex - y.Item1.CaseIndex;
+            }
+        }
     }
+
 }

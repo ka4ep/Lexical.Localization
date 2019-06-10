@@ -78,5 +78,10 @@ namespace Lexical.Localization.StringFormat
         /// Key to use to for searching from asset.
         /// </summary>
         ILine Key { get; }
+
+        /// <summary>
+        /// Case index in <see cref="IEnumInfo" />.
+        /// </summary>
+        int CaseIndex { get; }
     }
 }

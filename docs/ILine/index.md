@@ -136,15 +136,22 @@ Files that enumeration localization strings should use keys in format of "Assemb
 A single enum case can be matched with <b>.Key(<i>case</i>)</b>. 
 [!code-csharp[Snippet](Examples.cs#Snippet_7m2)]
 
-If enum type is [Flags] and enum value contains multiple cases, it must be matched with <b>.Value(<i>Enum</i>)</b>.
-[!code-csharp[Snippet](Examples.cs#Snippet_7m4)]
-
 The result of the example above.
 ```none
 Petrol
 Bensiini
 Bensin
 ```
+
+If enum type is [Flags] and enum value contains multiple cases, it must be matched with <b>.Value(<i>Enum</i>)</b>.
+[!code-csharp[Snippet](Examples.cs#Snippet_7m4)]
+
+If placeholder format is "{enum:|}" then flags separator is "|".
+[!code-csharp[Snippet](Examples.cs#Snippet_7m5)]
+```
+Bensiini|Viisiovinen|Musta
+```
+
 
 <b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
 [!code-csharp[Snippet](Examples.cs#Snippet_7m)]
@@ -154,9 +161,9 @@ When enumerations are used in formatted string or <i>$string_interpolations</i>,
 
 The result of the example above.
 ```none
-Five doors, Petrol, Black
-Viisiovinen, Bensiini, Musta
-Femdörras, Bensin, Svart
+Petrol, FiveDoors, Black
+Bensiini, Viisiovinen, Musta
+Bensin, Femdörras, Svart
 ```
 
 # Resources

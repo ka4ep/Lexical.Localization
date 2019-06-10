@@ -62,7 +62,7 @@ namespace Lexical.Localization.StringFormat
             this.Resolvers = Lexical.Localization.Resolver.Resolvers.Default;
             this.ResolveSequence = ResolverSequence.Default;
             this.maxPluralArguments = 3;
-            this.EnumResolver = new Lexical.Localization.Internal.EnumInfoResolver();
+            this.EnumResolver = new Lexical.Localization.StringFormat.EnumInfoResolver();
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Lexical.Localization.StringFormat
             this.Resolvers = resolvers ?? throw new ArgumentNullException(nameof(resolvers));
             this.ResolveSequence = resolveSequence ?? ResolverSequence.Default;
             this.maxPluralArguments = maxPluralArguments;
-            this.EnumResolver = enumResolver ?? new Lexical.Localization.Internal.EnumInfoResolver();
+            this.EnumResolver = enumResolver ?? new Lexical.Localization.StringFormat.EnumInfoResolver();
         }
 
         /// <summary>

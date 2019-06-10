@@ -11,7 +11,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
-namespace Lexical.Localization.Internal
+namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// Information about enumeration and its cases.
@@ -159,17 +159,24 @@ namespace Lexical.Localization.Internal
         public ILine Key { get; protected set; }
 
         /// <summary>
+        /// Case index in <see cref="IEnumInfo" />.
+        /// </summary>
+        public int CaseIndex { get; protected set; }
+
+        /// <summary>
         /// Create enumeration case record.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="description"></param>
         /// <param name="value"></param>
+        /// <param name="caseIndex">case index in <see cref="IEnumInfo"/></param>
         /// <param name="key"></param>
-        public EnumCase(string name, string description, ulong value, ILine key)
+        public EnumCase(string name, string description, ulong value, int caseIndex, ILine key)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Description = description;
             Value = value;
+            this.CaseIndex = caseIndex;
             Key = key ?? throw new ArgumentNullException(nameof(key));
         }
 
@@ -202,6 +209,11 @@ namespace Lexical.Localization.Internal
 
             // Key
             Key = key ?? LineAppender.NonResolving.Assembly(enumType.Assembly).Type(enumType).Key(Name);
+
+            // Case index
+            string[] names = Enum.GetNames(enumType);
+            for (int i = 0; i < names.Length; i++)
+                if (Name == names[i]) { CaseIndex = i; break; }
         }
 
         /// <summary>

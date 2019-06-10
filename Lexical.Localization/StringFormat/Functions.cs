@@ -80,7 +80,7 @@ namespace Lexical.Localization.StringFormat
             {
                 if (format == null || "".Equals(format) || "g".Equals(format) || "G".Equals(format) || "f".Equals(format) || "F".Equals(format) || "|".Equals(format))
                 {
-                    string separator = null;
+                    string separator = ", ";
                     if ("|".Equals(format)) separator = "|";
                     LineString enum_string = ctx.EvaluateEnum(@enum, separator);
                     if (enum_string.Value != null) { result = enum_string.Value; return true; }

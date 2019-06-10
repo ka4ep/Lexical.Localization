@@ -173,8 +173,10 @@ namespace Lexical.Localization
             // Qualified parts to append (to append in order of from appendIx to 0)
             StructList12<ILineArgument> list = new StructList12<ILineArgument>();
 
+            ILineArgumentQualifier lineArgumentQualifier = qualifier as ILineArgumentQualifier;
+
             // Earliest qualified line part. The start tail, where to start appending qualified parts
-            ILine startTail = null;
+            ILine startTail = line;
             // Index up until to append
             int appendIx = -1;
 
@@ -195,35 +197,39 @@ namespace Lexical.Localization
                 for (int i = tmp.Count - 1; i >= 0; i--)
                 {
                     ILineArgument a = tmp[i];
-                    list.Add(a);
-                    // Qualify as an argument.
-                    if (!a.IsNonCanonicalKey()) linePartQualifies &= qualifier.QualifyArgument(a);
-                    // Qualify as non-canonical parameter
-                    else if (a.TryGetParameter(out parameterName, out parameterValue))
+
+                    bool argumentQualifies = true;
+                    if (lineArgumentQualifier != null)
                     {
-                        // Calculate occurance index
-                        int occIx = -1;
-                        if (qualifier.NeedsOccuranceIndex())
+                        // Qualify as an argument.
+                        if (!a.IsNonCanonicalKey()) argumentQualifies = lineArgumentQualifier.QualifyArgument(a);
+                        // Qualify as non-canonical parameter
+                        else if (a.TryGetParameter(out parameterName, out parameterValue))
                         {
-                            occIx = 0;
-                            for (int j = i - 1; j >= 0; j--)
+                            // Calculate occurance index
+                            int occIx = -1;
+                            if (lineArgumentQualifier.NeedsOccuranceIndex)
                             {
-                                ILineArgument b = list[j];
-                                string parameterName2, parameterValue2;
-                                if (b.TryGetParameter(out parameterName2, out parameterValue2)) continue;
-                                if (parameterValue2 != null && parameterName == parameterName2) occIx++;
+                                occIx = 0;
+                                for (int j = i - 1; j >= 0; j--)
+                                {
+                                    ILineArgument b = list[j];
+                                    string parameterName2, parameterValue2;
+                                    if (b.TryGetParameter(out parameterName2, out parameterValue2)) continue;
+                                    if (parameterValue2 != null && parameterName == parameterName2) occIx++;
+                                }
                             }
+                            argumentQualifies = lineArgumentQualifier.QualifyArgument(a, occIx);
                         }
-                        linePartQualifies &= qualifier.QualifyArgument(a, occIx);
                     }
-                    if (!linePartQualifies) break;
+                    if (argumentQualifies) list.Add(a);
+                    linePartQualifies &= argumentQualifies;                    
                 }
 
                 if (!linePartQualifies)
-                {
                     startTail = l.GetPreviousPart();
+                else
                     appendIx = list.Count - 1;
-                }
             }
 
 
