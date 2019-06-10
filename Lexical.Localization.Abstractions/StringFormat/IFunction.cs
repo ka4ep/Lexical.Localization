@@ -143,12 +143,17 @@ namespace Lexical.Localization.StringFormat
         public IFunctions Functions;
 
         /// <summary>
-        /// (optional) The <see cref="ILine"/> that is being evaluated.
+        /// (optional) The original key, <see cref="ILine"/> that is being evaluated.
         /// </summary>
         public ILine Line;
 
         /// <summary>
-        /// (optional) The plural line <see cref="ILine"/> that is being evaluated.
+        /// (optional) The <see cref="ILine"/> that was matched from asset or inlines.
+        /// </summary>
+        public ILine ResolvedLine;
+
+        /// <summary>
+        /// (optional) The plural line <see cref="ILine"/> that was matched from asset or inlines.
         /// </summary>
         public ILine PluralLine;
 

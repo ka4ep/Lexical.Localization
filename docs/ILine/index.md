@@ -120,18 +120,15 @@ It's recommended to put inlined lines to variables for better performance. Inlin
 Enumerables can be localized just as any other type. 
 [!code-csharp[Snippet](Examples.cs#Snippet_7i)]
 
-<b>.Assembly&lt;T&gt;()</b> and <b>.Type&lt;T&gt;()</b> append "Assembly" and "Type" keys to refer to enumeration type.
+<b>.Assembly&lt;T&gt;()</b> and <b>.Type&lt;T&gt;()</b> appends "Assembly" and "Type" keys to refer to an enumeration type.
 [!code-csharp[Snippet](Examples.cs#Snippet_7l)]
 
-<b>.InlineEnum&lt;T&gt;()</b> adds every case of enum as-is to inlines for culture "". It applies *[Description]* attribute when available.
+<b>.InlineEnum&lt;T&gt;()</b> inlines every case of enum for culture "". It applies *[Description]* attribute when available.
 [!code-csharp[Snippet](Examples.cs#Snippet_7l2)]
 
-Enum localization strings can be supplied from files.
+Enum localization strings can be supplied from files. (See <a href="#CarFeatures.ini">CarFeatures.ini</a>)
 [!code-csharp[Snippet](Examples.cs#Snippet_7l3)]
 
-Files that supply enumeration localization should use key in format of <i>"Assembly:asm:Type:enumtype:Key:case"</i>. Example **.ini** below.
- 
-[!code-ini[Snippet](CarFeature.ini)]
 
 A single enum case can be matched with <b>.Key(<i>case</i>)</b>. 
 [!code-csharp[Snippet](Examples.cs#Snippet_7m2)]
@@ -143,14 +140,14 @@ Bensiini
 Bensin
 ```
 
-If enum type is [Flags] and enum value contains multiple cases, it must be matched with <b>.Value(<i>Enum</i>)</b>.
-[!code-csharp[Snippet](Examples.cs#Snippet_7m4)]
+If enum value contains multiple cases, it must be resolved with inside a formulated string.
+Localization strings for the refered enum value are matched against keys <i>"Assembly:asm:Type:enumtype:Key:case"</i> from the *IAsset*.
+Inlined strings only apply if the refered *ILine* instance contains the inlinings for the enum.
+[!code-csharp[Snippet](Examples.cs#Snippet_7m3)]
 
 <b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
 [!code-csharp[Snippet](Examples.cs#Snippet_7m)]
 
-When enumerations are used in formatted string or <i>$string_interpolations</i>, the labels are searched with keys <i>"Assembly:asm:Type:enumtype:Key:case"</i>.
-[!code-csharp[Snippet](Examples.cs#Snippet_7m3)]
 
 The result of the example above.
 ```none
@@ -159,11 +156,23 @@ Bensiini, Viisiovinen, Musta
 Bensin, Femdörras, Svart
 ```
 
-If placeholder format is "{enum:|}" then the printed string uses "|" as separator.
+If placeholder format is "{enum:|}" then the printed string uses "|" as separator. "{enum: |}" prints with " | ".
 [!code-csharp[Snippet](Examples.cs#Snippet_7m5)]
 ```none
 Bensiini|Musta
+Bensiini | Musta
 ```
+
+Inlines placed in one *ILine* instance are not applicable in another *ILine* instnace, unless 
+<i>Lexical.Localization.Tool</i> is used in the build process. *Tool* picks up inlining *ILine*s and copies them to the localization file, making them effective everywhere.
+[!code-csharp[Snippet](Examples.cs#Snippet_7m6)]
+
+<a id="CarFeatures.ini" />
+Files that supply enumeration localization should use key in format of <i>"Assembly:asm:Type:enumtype:Key:case"</i>.
+<details>
+<summary><b>CarFeatures.ini</b> example file (<u>Click here</u>)</summary>
+[!code-ini[Snippet](CarFeature.ini)]
+</details> 
 
 # Resources
 <b>.ResolveBytes()</b> resolves the line to bytes in the current executing context. The result struct is <b>LineResourceBytes</b>.

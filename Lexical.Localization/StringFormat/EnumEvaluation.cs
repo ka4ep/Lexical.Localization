@@ -135,11 +135,11 @@ namespace Lexical.Localization.StringFormat
 
                 // Return result
                 status.UpPlaceholder(LineStatus.PlaceholderOkEnum);
-                return new LineString(ctx.Line, text, status);
+                return new LineString(ctx.ResolvedLine, text, status);
             } catch (Exception e)
             {
                 status.UpPlaceholder(LineStatus.PlaceholderFailedEnum);
-                return new LineString(ctx.Line, e, status);
+                return new LineString(ctx.ResolvedLine, e, status);
             }
         }
 

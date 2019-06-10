@@ -78,10 +78,13 @@ namespace Lexical.Localization.StringFormat
 
             if (argument is Enum @enum)
             {
-                if (format == null || "".Equals(format) || "g".Equals(format) || "G".Equals(format) || "f".Equals(format) || "F".Equals(format) || "|".Equals(format))
+                string separator = null;
+                if (formatStr == null || formatStr == "" || formatStr == "g" || formatStr == "G" || formatStr == "f" || formatStr == "F") separator = ", ";
+                else if (formatStr == "|") separator = formatStr;
+                else if (formatStr == " |") separator = " | ";
+
+                if (separator != null)
                 {
-                    string separator = ", ";
-                    if ("|".Equals(format)) separator = "|";
                     LineString enum_string = ctx.EvaluateEnum(@enum, separator);
                     if (enum_string.Value != null) { result = enum_string.Value; return true; }
                 }

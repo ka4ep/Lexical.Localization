@@ -342,25 +342,67 @@ namespace docs
 
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("");
                 #region Snippet_7m2
-                Console.WriteLine( carFeature.Key(CarFeature.Petrol) );
-                Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("fi"));
-                Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("sv"));
+                Console.WriteLine(carFeature.Key(CarFeature.Petrol));
+                Console.WriteLine(carFeature.Key(CarFeature.Petrol).Culture("fi"));
+                Console.WriteLine(carFeature.Key(CarFeature.Petrol).Culture("sv"));
                 #endregion Snippet_7m2
-
-                #region Snippet_7m4
-                Console.WriteLine(carFeature.Value(CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black));
-                #endregion Snippet_7m4
 
                 #region Snippet_7m3
                 CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
-                Console.WriteLine( carFeature.Formulate($"{features}") );
-                Console.WriteLine( carFeature.Formulate($"{features}").Culture("fi") );
-                Console.WriteLine( carFeature.Formulate($"{features}").Culture("sv") );
+                Console.WriteLine(carFeature.Formulate($"{features}"));
+                Console.WriteLine(carFeature.Format("{0}").Value(features));
                 #endregion Snippet_7m3
                 #region Snippet_7m5
                 Console.WriteLine(carFeature.Formulate($"{CarFeature.Petrol | CarFeature.Black:|}").Culture("fi"));
+                Console.WriteLine(carFeature.Formulate($"{CarFeature.Petrol | CarFeature.Black: |}").Culture("fi"));
                 #endregion Snippet_7m5
+            }
+            {
+                #region Snippet_7m6
+                ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>()
+                    .InlineEnum(CarFeature.Electric, "de", "Elektroauto")
+                    .InlineEnum(CarFeature.Petrol, "de", "Benzinwagen")
+                    .InlineEnum(CarFeature.NaturalGas, "de", "Erdgasauto")
+                    .InlineEnum(CarFeature.TwoDoors, "de", "Zweitürig")
+                    .InlineEnum(CarFeature.FourDoors, "de", "Viertürig")
+                    .InlineEnum(CarFeature.FiveDoors, "de", "Fünftürige")
+                    .InlineEnum(CarFeature.Red, "de", "Rot")
+                    .InlineEnum(CarFeature.Black, "de", "Schwartz")
+                    .InlineEnum(CarFeature.White, "de", "Weiß")
+                    .Format("{0}");
 
+                ILine message = LineRoot.Global.Assembly("docs").Type("MyClass").Key("Msg")
+                    .Format("Your car has following features: {0}")
+                    .de("Ihr Auto hat folgende Eigenschaften: {0}");
+
+                Console.WriteLine(message.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("fi"));
+                Console.WriteLine(message.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("sv"));
+                Console.WriteLine(message.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("de"));
+                #endregion Snippet_7m6
+            }
+            {
+                #region Snippet_7m7
+                ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>()
+                    .InlineEnum(CarFeature.Electric, "de", "Elektroauto")
+                    .InlineEnum(CarFeature.Petrol, "de", "Benzinwagen")
+                    .InlineEnum(CarFeature.NaturalGas, "de", "Erdgasauto")
+                    .InlineEnum(CarFeature.TwoDoors, "de", "Zweitürig")
+                    .InlineEnum(CarFeature.FourDoors, "de", "Viertürig")
+                    .InlineEnum(CarFeature.FiveDoors, "de", "Fünftürige")
+                    .InlineEnum(CarFeature.Red, "de", "Rot")
+                    .InlineEnum(CarFeature.Black, "de", "Schwartz")
+                    .InlineEnum(CarFeature.White, "de", "Weiß")
+                    .Format("{0}");
+                ILine message = LineRoot.Global.Assembly("docs").Type("MyClass").Key("Msg")
+                    .Format("Your car has following features: {0}")
+                    .de("Ihr Auto hat folgende Eigenschaften:");
+                Console.WriteLine(message.Value(carFeature.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("de")).Culture("de"));
+                Console.WriteLine(message.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("sv"));
+                #endregion Snippet_7m7
+            }
+            {
+                ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>();
+                CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
                 Console.WriteLine(carFeature.Formulate($"{features:g}").Culture("fi"));
                 Console.WriteLine(carFeature.Formulate($"{features:G}").Culture("fi"));
                 Console.WriteLine(carFeature.Formulate($"{features:f}").Culture("fi"));

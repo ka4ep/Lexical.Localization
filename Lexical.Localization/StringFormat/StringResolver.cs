@@ -139,7 +139,7 @@ namespace Lexical.Localization.StringFormat
                     CultureInfo culture_for_format = features.Culture;
                     if (culture_for_format == null && features.CulturePolicy != null) { CultureInfo[] cultures = features.CulturePolicy.Cultures; if (cultures != null && cultures.Length > 0) culture_for_format = cultures[0]; }
                     if (culture_for_format == null) culture_for_format = RootCulture;
-                    EvaluatePlaceholderValues(line, null, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
+                    EvaluatePlaceholderValues(key, line, null, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
 
                     // Create permutation configuration
                     PluralCasePermutations permutations = new PluralCasePermutations(line);
@@ -259,7 +259,7 @@ namespace Lexical.Localization.StringFormat
                 CultureInfo culture_for_format = features.Culture;
                 if (culture_for_format == null && features.CulturePolicy != null) { CultureInfo[] cultures = features.CulturePolicy.Cultures; if (cultures != null && cultures.Length > 0) culture_for_format = cultures[0]; }
                 if (culture_for_format == null) culture_for_format = RootCulture;
-                EvaluatePlaceholderValues(line, null, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
+                EvaluatePlaceholderValues(key, line, null, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
 
                 // Plural Rules
                 if (value.HasPluralRules())
@@ -321,7 +321,7 @@ namespace Lexical.Localization.StringFormat
                                 // Return with match
                                 features.Status.UpPlurality(LineStatus.PluralityOkMatched);
                                 // Evaluate placeholders again
-                                if (!EqualPlaceholders(value, value_for_plurality)) { placeholder_values.Clear(); EvaluatePlaceholderValues(line, line_for_plurality_arguments, value_for_plurality.Placeholders, ref features, ref placeholder_values, culture); }
+                                if (!EqualPlaceholders(value, value_for_plurality)) { placeholder_values.Clear(); EvaluatePlaceholderValues(key, line, line_for_plurality_arguments, value_for_plurality.Placeholders, ref features, ref placeholder_values, culture); }
                                 // Update status codes
                                 features.Status.Up(value_for_plurality.Status);
                                 // Return values
@@ -682,18 +682,20 @@ namespace Lexical.Localization.StringFormat
         /// <summary>
         /// Evaluate placeholders into string values.
         /// </summary>
-        /// <param name="line"></param>
-        /// <param name="pluralLine">(optional)</param>
+        /// <param name="line">original requesting line</param>
+        /// <param name="resolvedLine">(optional Line that was matched from IAsset or inlines</param>
+        /// <param name="pluralLine">(optional) Line that was matched from IAsset or inlines for plural value</param>
         /// <param name="placeholders"></param>
         /// <param name="features">contextual data</param>
         /// <param name="placeholder_values">collection where strings are placed, one for each placeholder</param>
         /// <param name="culture">the culture in which to evaluate</param>
-        void EvaluatePlaceholderValues(ILine line, ILine pluralLine, IPlaceholder[] placeholders, ref LineFeatures features, ref StructList12<string> placeholder_values, CultureInfo culture)
+        void EvaluatePlaceholderValues(ILine line, ILine resolvedLine, ILine pluralLine, IPlaceholder[] placeholders, ref LineFeatures features, ref StructList12<string> placeholder_values, CultureInfo culture)
         {
             PlaceholderExpressionEvaluator placeholder_evaluator = new PlaceholderExpressionEvaluator();
             placeholder_evaluator.Args = features.ValueArgs;
             placeholder_evaluator.FunctionEvaluationCtx.Culture = culture;
             placeholder_evaluator.FunctionEvaluationCtx.Line = line;
+            placeholder_evaluator.FunctionEvaluationCtx.ResolvedLine = resolvedLine;
             placeholder_evaluator.FunctionEvaluationCtx.PluralLine = pluralLine;
             placeholder_evaluator.FunctionEvaluationCtx.StringResolver = this;
             placeholder_evaluator.FunctionEvaluationCtx.EnumResolver = EnumResolver;

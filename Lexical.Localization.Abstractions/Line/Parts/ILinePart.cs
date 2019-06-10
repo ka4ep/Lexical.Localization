@@ -170,17 +170,18 @@ namespace Lexical.Localization
         /// <exception cref="LineException"></exception>
         public static ILine Prune(this ILine line, ILineQualifier qualifier, ILineFactory lineFactory = null)
         {
-            // Qualified parts to append (to append in order of from appendIx to 0)
+            // Qualified parts to append. Order: tail to root. 
             StructList12<ILineArgument> list = new StructList12<ILineArgument>();
 
             ILineArgumentQualifier lineArgumentQualifier = qualifier as ILineArgumentQualifier;
 
             // Earliest qualified line part. The start tail, where to start appending qualified parts
             ILine startTail = line;
-            // Index up until to append
-            int appendIx = -1;
 
+            // Line part's arguments. Order: root to tail
             StructList8<ILineArgument> tmp = new StructList8<ILineArgument>();
+            // Start tail buffered args. Order: root to tail
+            StructList8<ILineArgument> startTailBuffer = new StructList8<ILineArgument>();
             // Add parts
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
@@ -222,14 +223,31 @@ namespace Lexical.Localization
                             argumentQualifies = lineArgumentQualifier.QualifyArgument(a, occIx);
                         }
                     }
-                    if (argumentQualifies) list.Add(a);
-                    linePartQualifies &= argumentQualifies;                    
+                    if (!argumentQualifies) tmp.RemoveAt(i);
+                    linePartQualifies &= argumentQualifies;
                 }
 
+                // This part didn't qualify
                 if (!linePartQualifies)
+                {
+                    // Append previous start tail to append args
+                    if (startTailBuffer.Count > 0)
+                    {
+                        for (int i = 0; i < startTailBuffer.Count; i++) list.Add(startTailBuffer[i]);
+                        startTailBuffer.Clear();
+                        startTail = null;
+                    }
+                    // Add parts that did qualify to append list
+                    for (int i = 0; i < tmp.Count; i++) list.Add(tmp[i]);
+                    // preceding part might be better for start tail
                     startTail = l.GetPreviousPart();
+                }
                 else
-                    appendIx = list.Count - 1;
+                // This part qualified
+                {
+                    // Add to start tail buffer, in case preceding startTail fails qualifications
+                    for (int i = 0; i < tmp.Count; i++) startTailBuffer.Add(tmp[i]);
+                }
             }
 
 
@@ -252,7 +270,7 @@ namespace Lexical.Localization
 
             // Append parts
             ILine result = startTail;
-            for (int i = appendIx; i >= 0; i--)
+            for (int i = list.Count-1; i >= 0; i--)
             {
                 ILineArgument arg = list[i];
                 if (lineFactory == null || !lineFactory.TryCreate(result, arg, out result))

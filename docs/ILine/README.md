@@ -295,54 +295,32 @@ enum CarFeature
 }
 ```
 
-<b>.Assembly&lt;T&gt;()</b> and <b>.Type&lt;T&gt;()</b> append "Assembly" and "Type" keys to refer to enumeration type.
+<b>.Assembly&lt;T&gt;()</b> and <b>.Type&lt;T&gt;()</b> appends "Assembly" and "Type" keys to refer to an enumeration type.
 
 ```csharp
 ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>();
 ```
 
-<b>.InlineEnum&lt;T&gt;()</b> adds every case of enum as-is to inlines for culture "". It applies *[Description]* attribute when available.
+<b>.InlineEnum&lt;T&gt;()</b> inlines every case of enum for culture "". It applies *[Description]* attribute when available.
 
 ```csharp
 ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>();
 ```
 
-Enum localization strings can be supplied from files.
+Enum localization strings can be supplied from files. (See <a href="#CarFeatures.ini">CarFeatures.ini</a>)
 
 ```csharp
 IAssetSource assetSource = LineReaderMap.Default.FileAssetSource(@"ILine\CarFeature.ini");
 LineRoot.Builder.AddSource(assetSource).Build();
 ```
 
-Files that supply enumeration localization should use key in format of <i>"Assembly:asm:Type:enumtype:Key:case"</i>. Example **.ini** below.
- 
-
-```ini
-[Assembly:docs:Type:docs.CarFeature:Culture:sv]
-// Fuel Type
-Key:Electric = El
-Key:Petrol = Bensin
-Key:NaturalGas = Naturgas
-
-// Door count
-Key:TwoDoors = Tvådörras
-Key:FourDoors = Fyrdörras
-Key:FiveDoors = Femdörras
-
-// Color
-Key:Red = Röd
-Key:Black = Svart
-Key:White = Vit
-
-
-```
 
 A single enum case can be matched with <b>.Key(<i>case</i>)</b>. 
 
 ```csharp
-Console.WriteLine( carFeature.Key(CarFeature.Petrol) );
-Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("fi"));
-Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("sv"));
+Console.WriteLine(carFeature.Key(CarFeature.Petrol));
+Console.WriteLine(carFeature.Key(CarFeature.Petrol).Culture("fi"));
+Console.WriteLine(carFeature.Key(CarFeature.Petrol).Culture("sv"));
 ```
 
 The result of the example above.
@@ -352,10 +330,14 @@ Bensiini
 Bensin
 ```
 
-If enum type is [Flags] and enum value contains multiple cases, it must be matched with <b>.Value(<i>Enum</i>)</b>.
+If enum value contains multiple cases, it must be resolved with inside a formulated string.
+Localization strings for the refered enum value are matched against keys <i>"Assembly:asm:Type:enumtype:Key:case"</i> from the *IAsset*.
+Inlined strings only apply if the refered *ILine* instance contains the inlinings for the enum.
 
 ```csharp
-Console.WriteLine(carFeature.Value(CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black));
+CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
+Console.WriteLine(carFeature.Formulate($"{features}"));
+Console.WriteLine(carFeature.Format("{0}").Value(features));
 ```
 
 <b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
@@ -374,14 +356,6 @@ ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>()
     .InlineEnum(CarFeature.White, "fi", "Valkoinen");
 ```
 
-When enumerations are used in formatted string or <i>$string_interpolations</i>, the labels are searched with keys <i>"Assembly:asm:Type:enumtype:Key:case"</i>.
-
-```csharp
-CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
-Console.WriteLine( carFeature.Formulate($"{features}") );
-Console.WriteLine( carFeature.Formulate($"{features}").Culture("fi") );
-Console.WriteLine( carFeature.Formulate($"{features}").Culture("sv") );
-```
 
 The result of the example above.
 ```none
@@ -390,14 +364,88 @@ Bensiini, Viisiovinen, Musta
 Bensin, Femdörras, Svart
 ```
 
-If placeholder format is "{enum:|}" then the printed string uses "|" as separator.
+If placeholder format is "{enum:|}" then the printed string uses "|" as separator. "{enum: |}" prints with " | ".
 
 ```csharp
 Console.WriteLine(carFeature.Formulate($"{CarFeature.Petrol | CarFeature.Black:|}").Culture("fi"));
+Console.WriteLine(carFeature.Formulate($"{CarFeature.Petrol | CarFeature.Black: |}").Culture("fi"));
 ```
 ```none
 Bensiini|Musta
+Bensiini | Musta
 ```
+
+Inlines placed in one *ILine* instance are not applicable in another *ILine* instnace, unless 
+<i>Lexical.Localization.Tool</i> is used in the build process. *Tool* picks up inlining *ILine*s and copies them to the localization file, making them effective everywhere.
+
+```csharp
+ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>()
+    .InlineEnum(CarFeature.Electric, "de", "Elektroauto")
+    .InlineEnum(CarFeature.Petrol, "de", "Benzinwagen")
+    .InlineEnum(CarFeature.NaturalGas, "de", "Erdgasauto")
+    .InlineEnum(CarFeature.TwoDoors, "de", "Zweitürig")
+    .InlineEnum(CarFeature.FourDoors, "de", "Viertürig")
+    .InlineEnum(CarFeature.FiveDoors, "de", "Fünftürige")
+    .InlineEnum(CarFeature.Red, "de", "Rot")
+    .InlineEnum(CarFeature.Black, "de", "Schwartz")
+    .InlineEnum(CarFeature.White, "de", "Weiß")
+    .Format("{0}");
+
+ILine message = LineRoot.Global.Assembly("docs").Type("MyClass").Key("Msg")
+    .Format("Your car has following features: {0}")
+    .de("Ihr Auto hat folgende Eigenschaften: {0}");
+
+Console.WriteLine(message.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("fi"));
+Console.WriteLine(message.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("sv"));
+Console.WriteLine(message.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("de"));
+```
+
+<a id="CarFeatures.ini" />
+Files that supply enumeration localization should use key in format of <i>"Assembly:asm:Type:enumtype:Key:case"</i>.
+<details>
+<summary><b>CarFeatures.ini</b> example file (<u>Click here</u>)</summary>
+
+```ini
+[Assembly:docs:Type:docs.CarFeature:Culture:sv]
+// Fuel Type
+Key:Electric = El
+Key:Petrol = Bensin
+Key:NaturalGas = Naturgas
+
+// Door count
+Key:TwoDoors = Tvådörras
+Key:FourDoors = Fyrdörras
+Key:FiveDoors = Femdörras
+
+// Color
+Key:Red = Röd
+Key:Black = Svart
+Key:White = Vit
+
+[Culture:sv]
+Assembly:docs:Type:MyClass:Key:Msg = Din bil har: {0}
+
+[Assembly:docs:Type:docs.CarFeature:Culture:fi]
+// Fuel Type
+Key:Electric = Sähkö
+Key:Petrol = Bensiini
+Key:NaturalGas = Maakaasu
+
+// Door count
+Key:TwoDoors = Kaksiovinen
+Key:FourDoors = Neliovinen
+Key:FiveDoors = Viisiovinen
+
+// Color
+Key:Red = Punainen
+Key:Black = Musta
+Key:White = Valkoinen
+
+[Culture:fi]
+Assembly:docs:Type:MyClass:Key:Msg = Autosi ominaisuudet: {0}
+
+```
+</details> 
 
 # Resources
 <b>.ResolveBytes()</b> resolves the line to bytes in the current executing context. The result struct is <b>LineResourceBytes</b>.
