@@ -321,7 +321,8 @@ namespace docs
             }
             {
                 #region Snippet_7l3
-                LineRoot.Builder.AddSource(LineReaderMap.Default.FileAssetSource("ILine\\CarFeature.ini")).Build();
+                IAssetSource assetSource = LineReaderMap.Default.FileAssetSource(@"ILine\CarFeature.ini");
+                LineRoot.Builder.AddSource(assetSource).Build();
                 #endregion Snippet_7l3
             }
             {
@@ -345,6 +346,11 @@ namespace docs
                 Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("fi"));
                 Console.WriteLine( carFeature.Key(CarFeature.Petrol).Culture("sv"));
                 #endregion Snippet_7m2
+
+                #region Snippet_7m4
+                Console.WriteLine(carFeature.Value(CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black));
+                #endregion Snippet_7m4
+
                 #region Snippet_7m3
                 CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
                 Console.WriteLine( carFeature.Formulate($"{features}") );
@@ -453,7 +459,7 @@ namespace docs
 
             public MyController(ILineRoot localizationRoot)
             {
-                this.localization = localizationRoot.Type<MyController>();
+                this.localization = localizationRoot.Assembly("docs").Type<MyController>();
             }
 
             public void Do()
@@ -466,7 +472,7 @@ namespace docs
         #region Snippet_9b
         class MyControllerB
         {
-            static ILine localization = LineRoot.Global.Type<MyControllerB>();
+            static ILine localization = LineRoot.Global.Assembly("docs").Type<MyControllerB>();
 
             public void Do()
             {
@@ -478,7 +484,7 @@ namespace docs
         #region Snippet_7h
         class MyController__
         {
-            static ILine localization = LineRoot.Global.Type<MyControllerB>();
+            static ILine localization = LineRoot.Global.Assembly("docs").Type<MyControllerB>();
             static ILine Success = localization.Key("Success").Format("Success").sv("Det funkar").fi("Onnistui");
 
             public string Do()
@@ -513,16 +519,11 @@ namespace docs
         // Fuel Type
         Electric = 0x0001,
         Petrol = 0x0002,
-
-        [Description("Natural gas")]
         NaturalGas = 0x0003,
 
         // Door count
-        [Description("Two doors")]
         TwoDoors = 0x0010,
-        [Description("Four doors")]
         FourDoors = 0x0020,
-        [Description("Five doors")]
         FiveDoors = 0x0030,
 
         // Color

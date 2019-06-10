@@ -8,8 +8,12 @@ Values are provided with <b>.Value(<i>object[]</i>)</b>.
 Providing **.Format()** and **.Value()** is equivalent to **String.Format()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c)]
 
-<b>.Formulate(<i>$interpolated_string</i>)</b> uses interpolated strings. It simply appends **.Format()** and **.Value()** parts.
+<b>.Formulate(<i>$string</i>)</b> appends interpolated strings. It's equivalent to appending **.Format()** and **.Value()** parts.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c1)]
+
+If enumerables are refered as value, localization for the enumerable is searched with key "Assembly:asm:Type:enumType:Key:enumCase".
+[!code-csharp[Snippet](Examples.cs#Snippet_1e)]
+[!code-csharp[Snippet](Examples.cs#Snippet_Enum)]
 
 # Culture
 The format culture can be enforced with <b>.Culture(<i>CultureInfo</i>)</b>, without changing the thread-local culture variable.

@@ -7,8 +7,6 @@
 using Lexical.Localization.Internal;
 using Lexical.Localization.StringFormat;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lexical.Localization
 {

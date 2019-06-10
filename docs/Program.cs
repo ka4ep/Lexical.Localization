@@ -6,6 +6,7 @@ namespace docs
     {
         static void Main(string[] args)
         {
+            Tutorial_Examples.Main(args);
             ILineQualifier_Examples.Main(args);
             ILine_Examples.Main(args);
             ILineFactory_Examples.Main(args);
@@ -15,7 +16,6 @@ namespace docs
             ILogger_Examples.Main(args);
 
             IStringFormat_Examples.Main(args);
-            Tutorial_Examples.Main(args);
 
             StringAsset_Examples.Main(args);
             TutorialProject.ExampleB.Main(args);

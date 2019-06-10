@@ -387,7 +387,7 @@ namespace Lexical.Localization
                 // This filter doesn't apply
                 if (parameter.ParameterName != ParameterName) return true;
                 // This filter applies
-                return parameter.ParameterValue != null && parameter.ParameterValue != "";
+                return parameter.ParameterValue == null || parameter.ParameterValue == "";
             }
 
             /// <summary>

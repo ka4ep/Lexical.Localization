@@ -37,6 +37,12 @@ namespace docs
         {
             Console.WriteLine(error.Value(0x100));
         }
+        
+        public void DoExample()
+        {
+            string msg = "";
+            Console.WriteLine(localization.Key("Msg").Formulate($"You received a message: \"{msg}\""));
+        }
     }
     #endregion Snippet
 }

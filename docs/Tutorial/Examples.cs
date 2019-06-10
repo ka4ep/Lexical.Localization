@@ -36,6 +36,10 @@ namespace docs
                 LineString resolved_string = line.Value("Corellia Melody").ResolveString();
                 Console.WriteLine(resolved_string.Status);
                 #endregion Snippet_1d
+                #region Snippet_1e
+                Permissions permissions = Permissions.Add | Permissions.Modify | Permissions.Remove;
+                Console.WriteLine( LineRoot.Global.Key("Permission").Formulate($"User permissions {permissions}") );
+                #endregion Snippet_1e
             }
             {
                 #region Snippet_2
@@ -174,6 +178,10 @@ namespace docs
     }
 
 
+    #region Snippet_Enum
+    [Flags]
+    public enum Permissions { Add = 1, Remove = 2, Modify = 4 }
+    #endregion Snippet_Enum
 
 
 }

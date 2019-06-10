@@ -20,6 +20,7 @@ namespace Lexical.Localization.StringFormat
         /// </summary>
         /// <param name="ctx"></param>
         /// <param name="enum"></param>
+        /// <param name="separator">(optional) separator to use between strings</param>
         /// <returns>
         /// Result codes:
         /// <list type="bullet">
@@ -30,7 +31,7 @@ namespace Lexical.Localization.StringFormat
         /// <item><see cref="LineStatus.PlaceholderFailedEnum">Failed</see></item>
         /// </list>
         /// </returns>
-        public static LineString EvaluateEnum(this ref FunctionEvaluationContext ctx, Enum @enum)
+        public static LineString EvaluateEnum(this ref FunctionEvaluationContext ctx, Enum @enum, string separator = ", ")
         {
             // Status
             LineStatus status = 0UL;
@@ -42,22 +43,26 @@ namespace Lexical.Localization.StringFormat
                 ulong value = EnumCase.ToUInt64(@enum);
                 // Create string
                 StringBuilder sb = new StringBuilder();
-                // Separator between cases
-                String separator = ", ";
                 // Remove hash-equals comparable key parts.
                 ILine keyBase = ctx.Line.Prune(enum_key_prune_qualifier, LineAppender.NonResolving);
-                // Append culture
-                if (ctx.Culture != null) keyBase = keyBase.Culture(ctx.Culture);
+
+                // ^^ 
+                //  Ekan "Key":n poisto ei toimi
+                //  TODO Poista "String" part
+                //  TODO Poista ILineValue part
+                //  Culture ei toimi oikein jos on resolvattu Linestä (Antaa väärn untulren)
+                //     voi olla esim "fi-FI", jolloin ICulturePOlicyn falbackia ei tapahdu
+
                 // Split into cases
                 while (value != 0UL)
                 {
                     string caseStr = null;
+
+                    // First run, find matching case
                     foreach (IEnumCase @case in enumInfo.EvalCases)
                     {
                         // Is applicable
                         if ((value & @case.Value) != @case.Value) continue;
-                        // Remove flag
-                        value &= ~@case.Value;
                         // Append other key parts
                         ILine key = keyBase.Concat(@case.Key);
                         // Resolve
@@ -68,6 +73,26 @@ namespace Lexical.Localization.StringFormat
                             if (case_resolve.Warning) status.UpPlaceholder(LineStatus.PlaceholderWarningEnum);
                             else if (case_resolve.Error) status.UpPlaceholder(LineStatus.PlaceholderErrorEnum);
                             caseStr = case_resolve.Value;
+                            // Remove flag
+                            value &= ~@case.Value;
+                            break;
+                        }
+                    }
+
+                    // Second run, name or description from @case
+                    if (caseStr == null)
+                    {
+                        // First run, find matching case
+                        foreach (IEnumCase @case in enumInfo.EvalCases)
+                        {
+                            // Is applicable
+                            if ((value & @case.Value) != @case.Value) continue;
+                            //
+                            caseStr = @case.Description ?? @case.Name;
+                            // 
+                            status.UpPlaceholder(LineStatus.PlaceholderErrorEnumNoMatch);
+                            // Remove flag
+                            value &= ~@case.Value;
                             break;
                         }
                     }

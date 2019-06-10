@@ -162,6 +162,8 @@ namespace Lexical.Localization
         PlaceholderWarningEnumCaseNotMatched = 0x32UL << Shift.Placeholder,
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
         PlaceholderError = 0x40UL << Shift.Placeholder,
+        /// <summary>Enum was not matched, reverting to default name from type</summary>
+        PlaceholderErrorEnumNoMatch = 0x42UL << Shift.Placeholder,        
         /// <summary>The argument object did not match the type in format string</summary>
         PlaceholderErrorTypeMismatch = 0x46UL << Shift.Placeholder,
         /// <summary>Expression </summary>

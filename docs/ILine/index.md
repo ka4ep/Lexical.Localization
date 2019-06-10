@@ -126,14 +126,18 @@ Enumerables can be localized just as any other type.
 <b>.InlineEnum&lt;T&gt;()</b> adds every case of enum as-is to inlines for culture "". It applies *[Description]* attribute when available.
 [!code-csharp[Snippet](Examples.cs#Snippet_7l2)]
 
-Enum localization can be supplied from files.
+Enum localization strings can be supplied from files.
 [!code-csharp[Snippet](Examples.cs#Snippet_7l3)]
 
-Keys should have reference of "Assembly:asm:Type:enumType:Key:case". The file **CarFeature.ini**.
+Files that enumeration localization strings should use keys in format of "Assembly:asm:Type:enumtype:Key:case". Example **.ini** below.
  
 [!code-ini[Snippet](CarFeature.ini)]
 
-A single case can be matched with the "Assembly:asm:Type:enumType:Key:case" keys.
+A single enum case can be matched with <b>.Key(<i>case</i>)</b>. 
+[!code-csharp[Snippet](Examples.cs#Snippet_7m2)]
+
+If enum type is [Flags] and enum value contains multiple cases, it must be matched with <b>.Value(<i>Enum</i>)</b>.
+[!code-csharp[Snippet](Examples.cs#Snippet_7m4)]
 
 The result of the example above.
 ```none
@@ -145,7 +149,7 @@ Bensin
 <b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
 [!code-csharp[Snippet](Examples.cs#Snippet_7m)]
 
-When enumerations used in formatted string or <i>$string_interpolations</i>, the labels are searches with "Assembly:asm:Type:enumType:Key:case" keys.
+When enumerations are used in formatted string or <i>$string_interpolations</i>, the labels are searched with keys "Assembly:asm:Type:enumtype:Key:case".
 [!code-csharp[Snippet](Examples.cs#Snippet_7m3)]
 
 The result of the example above.

@@ -287,10 +287,14 @@ namespace Lexical.Localization
         /// <param name="line">(optional) line to read parameters of</param>
         /// <param name="list">list to add parts in order of from tail to root</param>
         /// <param name="parameterInfos">(optional) for checking which parameters are keys</param>
-        public static void GetEffectiveParameterParts<LIST>(this ILine line, ref LIST list, IParameterInfos parameterInfos = null) where LIST : IList<ILineParameter>
+        /// <param name="parameterQualifier">(optional) for checking which parameters to add</param>
+        public static void GetEffectiveParameterParts<LIST>(this ILine line, ref LIST list, IParameterInfos parameterInfos = null, ILineQualifier parameterQualifier = null) where LIST : IList<ILineParameter>
         {
             ILineFactory f;
             if (parameterInfos == null && line.TryGetAppender(out f)) f.TryGetParameterInfos(out parameterInfos);
+
+            ILineParameterQualifier parameterQualifier1 = parameterQualifier as ILineParameterQualifier;
+            bool checkQualifier = parameterQualifier1 != null && !parameterQualifier1.NeedsOccuranceIndex;
 
             for (ILine l = line; l != null; l = l.GetPreviousPart())
             {
@@ -298,6 +302,7 @@ namespace Lexical.Localization
                 {
                     foreach (var parameter in lineParameters)
                     {
+                        if (checkQualifier) if (!parameterQualifier1.QualifyParameter(parameter, -1)) continue;
                         if (parameter.IsNonCanonicalKey(parameterInfos))
                         {
                             // Test if parameter already exists
@@ -314,6 +319,7 @@ namespace Lexical.Localization
                 {
                     if (l is ILineParameter parameter)
                     {
+                        if (checkQualifier) if (!parameterQualifier1.QualifyParameter(parameter, -1)) continue;
                         if (parameter.IsNonCanonicalKey(parameterInfos))
                         {
                             // Test if parameter already exists
@@ -325,6 +331,25 @@ namespace Lexical.Localization
                             list.Add(parameter);
                         }
                     }
+                }
+            }
+
+            // Remove if NeedsOccuranceIndex was true
+            if (parameterQualifier1 != null && parameterQualifier1.NeedsOccuranceIndex)
+            {
+                for (int i=list.Count-1; i>=0; i--)
+                {
+                    ILineParameter parameter = list[i];
+
+                    // Calc occIx
+                    int occIx = 0;
+                    for (int j=i-1; j>=0; j--)
+                    {
+                        ILineParameter p = list[j];
+                        if (p.ParameterValue!=null && p.ParameterName == parameter.ParameterName) occIx++;
+                    }
+
+                    if (!parameterQualifier1.QualifyParameter(parameter, occIx)) list.RemoveAt(i);
                 }
             }
         }

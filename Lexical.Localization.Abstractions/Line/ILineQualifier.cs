@@ -44,7 +44,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Can evaluate <see cref="ILineParameter"/> whether it qualifies or not.
+    /// Measures qualifications of <see cref="ILineParameter"/>s.
     /// </summary>
     public interface ILineParameterQualifier : ILineQualifier
     {
@@ -65,8 +65,21 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="parameter">parameter part of a compared line (note ParameterName="" for empty), or null if value did not occur</param>
         /// <param name="occuranceIndex">Occurance index of the parameterName. 0-first, 1-second, etc. Use -1 if occurance is unknown</param>
-        /// <returns>true if line is qualified, false if disqualified</returns>
+        /// <returns>true if parameter is qualified, false if disqualified</returns>
         bool QualifyParameter(ILineParameter parameter, int occuranceIndex);
+    }
+
+    /// <summary>
+    /// Measures qualifications of <see cref="ILineArguments"/>s.
+    /// </summary>
+    public interface ILineArgumentsQualifier : ILineQualifier
+    {
+        /// <summary>
+        /// Qualify <paramref name="arguments"/>.
+        /// </summary>
+        /// <param name="arguments"></param>
+        /// <returns>true if argument is qualified, false if disqualified</returns>
+        bool QualifyArguments(ILineArguments arguments);
     }
 
     /// <summary>
