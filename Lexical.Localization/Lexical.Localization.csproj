@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Version>0.28.0</Version>
@@ -16,13 +15,15 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageIconUrl>http://avalanche.fi/theme/logo_blue.svg</PackageIconUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <FileUpgradeFlags>40</FileUpgradeFlags>
+    <UpgradeBackupLocation>N:\Lexical\Localization\Backup\Lexical.Localization\</UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <Optimize>false</Optimize>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="2.0.0" PrivateAssets="all" />
@@ -32,15 +33,12 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.*" PrivateAssets="all" />
     <PackageReference Include="NLog" Version="4.0.0" PrivateAssets="all" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Lexical.Localization.Abstractions\Lexical.Localization.Abstractions.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Line\InlineExtensions.cs">
       <DesignTime>True</DesignTime>
@@ -48,12 +46,10 @@
       <DependentUpon>InlineExtensions.tt</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="Line\InlineExtensions.tt">
       <LastGenOutput>InlineExtensions.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
   </ItemGroup>
-
 </Project>

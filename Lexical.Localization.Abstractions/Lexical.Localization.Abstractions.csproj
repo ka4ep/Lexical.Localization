@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Version>0.28.0</Version>
@@ -17,19 +16,19 @@
     <PackageIconUrl>http://avalanche.fi/theme/logo_blue.svg</PackageIconUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RootNamespace>Lexical.Localization</RootNamespace>
+    <FileUpgradeFlags>40</FileUpgradeFlags>
+    <UpgradeBackupLocation>N:\Lexical\Localization\Backup\Lexical.Localization.Abstractions\</UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="2.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="2.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" PrivateAssets="all" />
   </ItemGroup>
-  
   <ItemGroup>
     <Compile Update="Inlines\InlineExtensions.cs">
       <DependentUpon>InlineExtensions.tt</DependentUpon>
@@ -37,16 +36,13 @@
       <AutoGen>True</AutoGen>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="Inlines\InlineExtensions.tt">
       <LastGenOutput>InlineExtensions.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-
 </Project>

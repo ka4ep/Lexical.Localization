@@ -1,16 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <LangVersion>7.2</LangVersion>
     <StartupObject>docs.Program</StartupObject>
+    <FileUpgradeFlags>40</FileUpgradeFlags>
+    <UpgradeBackupLocation>N:\Lexical\Localization\Backup1\</UpgradeBackupLocation>
+    <OldToolsVersion>Current</OldToolsVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="localization.ini" />
     <None Remove="Resources\res.ConsoleApp1.MyController.Icon.Error" />
@@ -30,7 +30,6 @@
     <None Remove="TutorialLibrary3-de.xml" />
     <None Remove="TutorialLibrary3-en.xml" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="localization.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -80,7 +79,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Lexical.FileProvider.Dll" Version="0.12.0" />
     <PackageReference Include="Lexical.FileProvider.Package" Version="0.12.1" />
@@ -100,13 +98,11 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NLog" Version="4.6.4" />
-  </ItemGroup>  
-  
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lexical.Localization.Abstractions\Lexical.Localization.Abstractions.csproj" />
     <ProjectReference Include="..\Lexical.Localization\Lexical.Localization.csproj" />
   </ItemGroup>
-  
   <ItemGroup>
     <None Update="Assets\localization.ini">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -187,11 +183,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Update="localization.resx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -212,6 +206,4 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-
-  
 </Project>

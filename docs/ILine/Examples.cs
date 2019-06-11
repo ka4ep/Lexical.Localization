@@ -311,12 +311,12 @@ namespace docs
             // Enumerations
             {
                 #region Snippet_7l
-                ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>();
+                ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().Format("{0}");
                 #endregion Snippet_7l
             }
             {
                 #region Snippet_7l2
-                ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>();
+                ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>().Format("{0}");
                 #endregion Snippet_7l2
             }
             {
@@ -337,7 +337,8 @@ namespace docs
                     .InlineEnum(CarFeature.FiveDoors, "fi", "Viisiovinen")
                     .InlineEnum(CarFeature.Red, "fi", "Punainen")
                     .InlineEnum(CarFeature.Black, "fi", "Musta")
-                    .InlineEnum(CarFeature.White, "fi", "Valkoinen");
+                    .InlineEnum(CarFeature.White, "fi", "Valkoinen")
+                    .Format("{0}");
                 #endregion Snippet_7m
 
                 CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("");
@@ -349,8 +350,7 @@ namespace docs
 
                 #region Snippet_7m3
                 CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
-                Console.WriteLine(carFeature.Formulate($"{features}"));
-                Console.WriteLine(carFeature.Format("{0}").Value(features));
+                Console.WriteLine(carFeature.Value(features));
                 #endregion Snippet_7m3
                 #region Snippet_7m5
                 Console.WriteLine(carFeature.Formulate($"{CarFeature.Petrol | CarFeature.Black:|}").Culture("fi"));

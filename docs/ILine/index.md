@@ -140,13 +140,13 @@ Bensiini
 Bensin
 ```
 
+<b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
+[!code-csharp[Snippet](Examples.cs#Snippet_7m)]
+
 If enum value contains multiple cases, it must be resolved with inside a formulated string.
 Localization strings for the refered enum value are matched against keys <i>"Assembly:asm:Type:enumtype:Key:case"</i> from the *IAsset*.
 Inlined strings only apply if the refered *ILine* instance contains the inlinings for the enum.
 [!code-csharp[Snippet](Examples.cs#Snippet_7m3)]
-
-<b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
-[!code-csharp[Snippet](Examples.cs#Snippet_7m)]
 
 
 The result of the example above.

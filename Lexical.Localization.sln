@@ -3,12 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28315.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexical.Localization", "Lexical.Localization\Lexical.Localization.csproj", "{96763C60-B44F-428D-A6AB-F3EFD5D41C3A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6392886C-40CC-4E06-AE46-9568D2394A4A}"
 	ProjectSection(SolutionItems) = preProject
 		index.md = index.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexical.Localization", "Lexical.Localization\Lexical.Localization.csproj", "{96763C60-B44F-428D-A6AB-F3EFD5D41C3A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "docs", "docs\docs.csproj", "{6D920DBB-BB29-4BAD-AF73-A422EA7B980A}"
 EndProject

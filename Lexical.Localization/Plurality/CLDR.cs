@@ -7,10 +7,8 @@ using Lexical.Localization.Plurality;
 namespace Unicode
 {
     /// <summary>
-    /// Unicode CLDR v35 Plurality Rules generic expressions.
-    /// 
     /// This class is derivate of Unicode CLDR plurals.xml and ordinals.xml, and is licensed as "Data Files".
-	/// Unicode CLDR is copyright of Unicode, Inc.
+	/// Unicode CLDR "Data Files" are copyright of Unicode, Inc.
     /// ----
     /// UNICODE, INC. LICENSE AGREEMENT - DATA FILES AND SOFTWARE
     /// 

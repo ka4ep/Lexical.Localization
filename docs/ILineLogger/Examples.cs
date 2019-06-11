@@ -103,4 +103,12 @@ namespace docs
         }
     }
 
+
+    public sealed class ConsoleTraceListener : TextWriterTraceListener
+    {
+        public ConsoleTraceListener() : base(Console.Out)
+        {
+        }
+    }
+
 }
