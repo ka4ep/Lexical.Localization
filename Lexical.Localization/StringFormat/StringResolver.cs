@@ -16,6 +16,15 @@ namespace Lexical.Localization.StringFormat
 {
     /// <summary>
     /// The default localization formatter implementation.
+    /// 
+    /// There are three sources of strings: asset, inlines and default value.
+    /// 
+    /// 
+    /// Culture Policy: 
+    /// 
+    /// The requesting <see cref="ILine"/> may contain a request for a specific culture.
+    /// 
+    /// 
     /// </summary>
     public class StringResolver : IStringResolver
     {
@@ -32,38 +41,21 @@ namespace Lexical.Localization.StringFormat
         public readonly IResolver Resolvers;
 
         /// <summary>
-        /// Resolve sequence
+        /// The resolve sequence that determines in which priority
+        /// lines are resolved.
         /// </summary>
         public readonly ResolveSource[] ResolveSequence;
 
         /// <summary>
-        /// Maximum plural arguments. If argument count is exceeded returns error with <see cref="LineStatus.PluralityErrorMaxPluralArgumentsExceeded"/>.
-        /// 
-        /// The higher the number, the more potential permutation overhead can occur.
-        /// For example "Hello {cardinal:0}, {cardinal:1}, {cardinal:2}" has 3 plural arguments. 
+        /// Maximum number of plurality arguments in formatted strings.
+        /// For example "{ordinal:0} {1:cardinal}-{2:cardinal}"
         /// </summary>
-        public virtual int MaxPluralArguments { get => maxPluralArguments; set => throw new InvalidOperationException("Immutable"); }
+        public readonly int MaxPluralArguments = 3;
 
         /// <summary>
-        /// Maximum plural arguments.
+        /// Enumerable info resolver
         /// </summary>
-        protected int maxPluralArguments;
-
-        /// <summary>
-        /// Enumeration resolver
-        /// </summary>
-        public IEnumInfoResolver EnumResolver { get; protected set; }
-
-        /// <summary>
-        /// Create string resolver 
-        /// </summary>
-        public StringResolver()
-        {
-            this.Resolvers = Lexical.Localization.Resolver.Resolvers.Default;
-            this.ResolveSequence = ResolverSequence.Default;
-            this.maxPluralArguments = 3;
-            this.EnumResolver = new Lexical.Localization.StringFormat.EnumInfoResolver();
-        }
+        public readonly IEnumInfoResolver EnumResolver;
 
         /// <summary>
         /// Create string resolver 
@@ -72,12 +64,12 @@ namespace Lexical.Localization.StringFormat
         /// <param name="resolveSequence"></param>
         /// <param name="maxPluralArguments">maximum plural arguments. The higher the number, the more permutation overhead can occur</param>
         /// <param name="enumResolver">(optional) enumeration information resolver. Determines the search key.</param>
-        public StringResolver(IResolver resolvers, ResolveSource[] resolveSequence = default, int maxPluralArguments = 3, IEnumInfoResolver enumResolver = default)
+        public StringResolver(IResolver resolvers = default, ResolveSource[] resolveSequence = default, int maxPluralArguments = 3, IEnumInfoResolver enumResolver = default)
         {
-            this.Resolvers = resolvers ?? throw new ArgumentNullException(nameof(resolvers));
+            this.Resolvers = resolvers ?? Lexical.Localization.Resolver.Resolvers.Default;
             this.ResolveSequence = resolveSequence ?? ResolverSequence.Default;
-            this.maxPluralArguments = maxPluralArguments;
-            this.EnumResolver = enumResolver ?? new Lexical.Localization.StringFormat.EnumInfoResolver();
+            this.MaxPluralArguments = maxPluralArguments;
+            this.EnumResolver = enumResolver ?? EnumInfoResolver.Default;
         }
 
         /// <summary>
@@ -138,7 +130,7 @@ namespace Lexical.Localization.StringFormat
                     StructList12<string> placeholder_values = new StructList12<string>();
                     CultureInfo culture_for_format = features.Culture;
                     if (culture_for_format == null && features.CulturePolicy != null) { CultureInfo[] cultures = features.CulturePolicy.Cultures; if (cultures != null && cultures.Length > 0) culture_for_format = cultures[0]; }
-                    if (culture_for_format == null) culture_for_format = RootCulture;
+                    if (culture_for_format == null) culture_for_format = CultureInfo.InvariantCulture;
                     EvaluatePlaceholderValues(key, line, null, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
 
                     // Create permutation configuration
@@ -258,7 +250,7 @@ namespace Lexical.Localization.StringFormat
                 StructList12<string> placeholder_values = new StructList12<string>();
                 CultureInfo culture_for_format = features.Culture;
                 if (culture_for_format == null && features.CulturePolicy != null) { CultureInfo[] cultures = features.CulturePolicy.Cultures; if (cultures != null && cultures.Length > 0) culture_for_format = cultures[0]; }
-                if (culture_for_format == null) culture_for_format = RootCulture;
+                if (culture_for_format == null) culture_for_format = CultureInfo.InvariantCulture;
                 EvaluatePlaceholderValues(key, line, null, value.Placeholders, ref features, ref placeholder_values, culture_for_format);
 
                 // Plural Rules
@@ -430,83 +422,126 @@ namespace Lexical.Localization.StringFormat
                 // Tmp variable
                 ILine line = null;
 
-                // Key has explicit culture
+                // Explicit culture request
                 if (culture != null)
                 {
-                    foreach (var stage in ResolveSequence)
-                        switch (stage)
-                        {
-                            // Try asset
-                            case ResolveSource.Asset:
-                                for (int i = 0; i < features.Assets.Count; i++)
-                                {
-                                    try
+                    // 0 - main preference, 1+ - fallback preferences
+                    int preferenceIndex = 0;
+                    for (CultureInfo ci = culture, prev = null; ci != null && ci != prev; prev = ci, ci = ci.Parent)
+                    {
+                        ILine key_with_culture = preferenceIndex == 0 ? key : key.Prune(NoCultureQualifier.Default).Culture(ci);
+
+                        // Should invariant culture be tested here??
+                        foreach (var stage in ResolveSequence)
+                            switch (stage)
+                            {
+                                // Try asset
+                                case ResolveSource.Asset:
+                                    for (int i = 0; i < features.Assets.Count; i++)
                                     {
-                                        IAsset asset = features.Assets[i];
-                                        if ((line = asset.GetLine(key)) != null)
+                                        try
                                         {
-                                            features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
-                                            features.Status.UpCulture(LineStatus.CultureOkMatchedKeyCulture);
-                                            features.ScanFeatures(line);
-                                            return line;
+                                            IAsset asset = features.Assets[i];
+                                            if ((line = asset.GetLine(key_with_culture)) != null)
+                                            {
+                                                // Up status with source info
+                                                features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
+
+                                                // Up status with culture info
+                                                LineStatus cultureStatus = preferenceIndex == 0
+                                                    // Request matched with first preference
+                                                    ? (ci.Name == "" ? LineStatus.CultureOkRequestMatchedInvariantCulture :
+                                                       ci.IsNeutralCulture ? LineStatus.CultureOkRequestMatchedLanguage : LineStatus.CultureOkRequestMatchedLanguageAndRegion)
+                                                    // Request matched with a fallback preference
+                                                    : (ci.Name == "" ? Localization.LineStatus.CultureErrorRequestMatchedInvariantCulture :
+                                                       ci.IsNeutralCulture ? LineStatus.CultureWarningRequestMatchedLanguage : Localization.LineStatus.CultureWarningRequestMatchedLanguageAndRegion);
+                                                features.Status.UpCulture(cultureStatus);
+
+                                                features.ScanFeatures(line);
+                                                return line;
+                                            }
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            features.Status.UpResolve(LineStatus.ResolveErrorAssetException);
+                                            features.Log(e);
                                         }
                                     }
-                                    catch (Exception e)
-                                    {
-                                        features.Status.UpResolve(LineStatus.ResolveErrorAssetException);
-                                        features.Log(e);
-                                    }
-                                }
-                                break;
+                                    break;
 
-                            // Try inlines
-                            case ResolveSource.Inline:
-                                for (int i = 0; i < features.Inlines.Count; i++)
-                                {
-                                    try
+                                // Try inlines
+                                case ResolveSource.Inline:
+                                    for (int i = 0; i < features.Inlines.Count; i++)
                                     {
-                                        if (features.Inlines[i].TryGetValue(key, out line))
+                                        try
                                         {
-                                            features.Status.UpResolve(LineStatus.ResolveOkFromInline);
-                                            features.Status.UpCulture(LineStatus.CultureOkMatchedKeyCulture);
-                                            features.ScanFeatures(line);
-                                            return line;
+                                            if (features.Inlines[i].TryGetValue(key_with_culture, out line))
+                                            {
+                                                // Up status with source info
+                                                features.Status.UpResolve(LineStatus.ResolveOkFromInline);
+
+                                                // Up status with culture info
+                                                LineStatus cultureStatus = preferenceIndex == 0
+                                                    // Request matched with first preference
+                                                    ? (ci.Name == "" ? LineStatus.CultureOkRequestMatchedInvariantCulture :
+                                                       ci.IsNeutralCulture ? LineStatus.CultureOkRequestMatchedLanguage : LineStatus.CultureOkRequestMatchedLanguageAndRegion)
+                                                    // Request matched with a fallback preference
+                                                    : (ci.Name == "" ? Localization.LineStatus.CultureErrorRequestMatchedInvariantCulture :
+                                                       ci.IsNeutralCulture ? LineStatus.CultureWarningRequestMatchedLanguage : Localization.LineStatus.CultureWarningRequestMatchedLanguageAndRegion);
+                                                features.Status.UpCulture(cultureStatus);
+
+                                                features.ScanFeatures(line);
+                                                return line;
+                                            }
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            features.Status.UpResolve(LineStatus.ResolveErrorInlinesException);
+                                            features.Log(e);
                                         }
                                     }
-                                    catch (Exception e)
-                                    {
-                                        features.Status.UpResolve(LineStatus.ResolveErrorInlinesException);
-                                        features.Log(e);
-                                    }
-                                }
-                                break;
+                                    break;
 
-                            case ResolveSource.Line:
-                                // Key has explicit culture and value, use the value
-                                if (features.String != null || features.StringText != null)
-                                {
-                                    if (culture == null) culture = RootCulture;
-                                    features.Status.UpResolve(LineStatus.ResolveOkFromKey);
-                                    features.Status.UpCulture(LineStatus.CultureOkMatchedKeyCulture);
-                                    return key;
-                                }
-                                break;
-                        }
+                                case ResolveSource.Line:
+                                    // Key has explicit culture and value, use the value
+                                    if (preferenceIndex == 0 && (features.String != null || features.StringText != null))
+                                    {
+                                        if (culture == null) culture = CultureInfo.InvariantCulture;
+
+                                        // Up status with source info
+                                        features.Status.UpResolve(LineStatus.CultureWarningRequestMatchedInvariantCulture);
+
+                                        // Up status with culture info
+                                        LineStatus cultureStatus =
+                                               culture.Name == "" ? LineStatus.CultureOkRequestMatchedInvariantCulture :
+                                               culture.IsNeutralCulture ? LineStatus.CultureOkRequestMatchedLanguage : LineStatus.CultureOkRequestMatchedLanguageAndRegion;
+                                        features.Status.UpCulture(cultureStatus);
+
+                                        return key;
+                                    }
+                                    break;
+                            }
+
+                        preferenceIndex++;
+                    }
 
                     // No matching value was found for the requested key and the explicit culture in the key.
-                    features.Status.UpCulture(LineStatus.CultureErrorCultureNoMatch);
+                    features.Status.UpCulture(LineStatus.CultureFailedRequestNoMatch);
                 }
 
                 // Try with cultures from the culture policy
                 CultureInfo[] cultures = features.CulturePolicy?.Cultures;
-                if (cultures != null)
+                if (culture == null && cultures != null)
                 {
                     try { 
-                        foreach (CultureInfo c in cultures)
+                        for (int preferenceIndex = 0; preferenceIndex<cultures.Length; preferenceIndex++)
                         {
+                            CultureInfo ci = cultures[preferenceIndex];
+
                             // Has already been tested above? Skip
-                            if (c == culture) continue;
-                            ILine key_with_culture = key.Culture(c);
+                            if (ci == culture) continue;
+
+                            ILine key_with_culture = key.Culture(ci);
                             foreach (var stage in ResolveSequence)
                                 switch (stage)
                                 {
@@ -519,9 +554,21 @@ namespace Lexical.Localization.StringFormat
                                                 IAsset asset = features.Assets[i];
                                                 if ((line = asset.GetLine(key_with_culture)) != null)
                                                 {
-                                                    culture = c;
+                                                    culture = ci;
+
+                                                    // Up status with source info
                                                     features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
-                                                    features.Status.UpCulture(c.Name == "" ? LineStatus.CultureWarningNoMatch : LineStatus.CultureOkMatchedCulturePolicy);
+
+                                                    // Up status with culture info
+                                                    LineStatus cultureStatus = preferenceIndex == 0
+                                                        // Request matched with first preference
+                                                        ? (ci.Name == "" ? LineStatus.CultureOkCulturePolicyMatchedInvariantCulture :
+                                                           ci.IsNeutralCulture ? LineStatus.CultureOkCulturePolicyMatchedLanguage : LineStatus.CultureOkCulturePolicyMatchedLanguageAndRegion)
+                                                        // Request matched with a fallback preference
+                                                        : (ci.Name == "" ? Localization.LineStatus.CultureErrorCulturePolicyMatchedInvariantCulture :
+                                                           ci.IsNeutralCulture ? LineStatus.CultureWarningCulturePolicyMatchedLanguage : Localization.LineStatus.CultureWarningCulturePolicyMatchedLanguageAndRegion);
+                                                    features.Status.UpCulture(cultureStatus);
+
                                                     features.ScanFeatures(line);
                                                     return line;
                                                 }
@@ -542,9 +589,20 @@ namespace Lexical.Localization.StringFormat
                                             {
                                                 if (features.Inlines[i].TryGetValue(key_with_culture, out line))
                                                 {
-                                                    culture = c;
+                                                    culture = ci;
+                                                    // Up status with source info
                                                     features.Status.UpResolve(LineStatus.ResolveOkFromInline);
-                                                    features.Status.UpCulture(c.Name == "" ? LineStatus.CultureWarningNoMatch : LineStatus.CultureOkMatchedCulturePolicy);
+
+                                                    // Up status with culture info
+                                                    LineStatus cultureStatus = preferenceIndex == 0
+                                                        // Request matched with first preference
+                                                        ? (ci.Name == "" ? LineStatus.CultureOkCulturePolicyMatchedInvariantCulture :
+                                                           ci.IsNeutralCulture ? LineStatus.CultureOkCulturePolicyMatchedLanguage : LineStatus.CultureOkCulturePolicyMatchedLanguageAndRegion)
+                                                        // Request matched with a fallback preference
+                                                        : (ci.Name == "" ? Localization.LineStatus.CultureErrorCulturePolicyMatchedInvariantCulture :
+                                                           ci.IsNeutralCulture ? LineStatus.CultureWarningCulturePolicyMatchedLanguage : Localization.LineStatus.CultureWarningCulturePolicyMatchedLanguageAndRegion);
+                                                    features.Status.UpCulture(cultureStatus);
+
                                                     features.ScanFeatures(line);
                                                     return line;
                                                 }
@@ -558,11 +616,22 @@ namespace Lexical.Localization.StringFormat
                                         break;
 
                                     case ResolveSource.Line:
-                                        if ((features.String != null || features.StringText != null) && c.Equals(features.Culture))
+                                        if ((features.String != null || features.StringText != null) && ci.Equals(features.Culture))
                                         {
-                                            if (culture == null) culture = c;
-                                            features.Status.UpResolve(LineStatus.ResolveOkFromKey);
-                                            features.Status.UpCulture(LineStatus.CultureOkMatchedCulturePolicy);
+                                            culture = ci;
+                                            // Up status with source info
+                                            features.Status.UpResolve(LineStatus.ResolveOkFromLine);
+
+                                            // Up status with culture info
+                                            LineStatus cultureStatus = preferenceIndex == 0
+                                                // Request matched with first preference
+                                                ? (ci.Name == "" ? LineStatus.CultureOkCulturePolicyMatchedInvariantCulture :
+                                                   ci.IsNeutralCulture ? LineStatus.CultureOkCulturePolicyMatchedLanguage : LineStatus.CultureOkCulturePolicyMatchedLanguageAndRegion)
+                                                // Request matched with a fallback preference
+                                                : (ci.Name == "" ? Localization.LineStatus.CultureErrorCulturePolicyMatchedInvariantCulture :
+                                                   ci.IsNeutralCulture ? LineStatus.CultureWarningCulturePolicyMatchedLanguage : Localization.LineStatus.CultureWarningCulturePolicyMatchedLanguageAndRegion);
+                                            features.Status.UpCulture(cultureStatus);
+
                                             return key;
                                         }
                                         break;
@@ -576,7 +645,7 @@ namespace Lexical.Localization.StringFormat
                     }
                 }
 
-                // Key has no explicit culture - try this _after_ culture policy
+                // No request culture - try this _after_ culture policy
                 if (culture == null)
                 {
                     foreach (var stage in ResolveSequence)
@@ -591,9 +660,20 @@ namespace Lexical.Localization.StringFormat
                                         IAsset asset = features.Assets[i];
                                         if ((line = asset.GetLine(key)) != null)
                                         {
+                                            // Up status with source info
                                             features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
-                                            features.Status.UpCulture(LineStatus.CultureOkMatchedNoCulture);
+
+                                            line.TryGetCultureInfo(out culture);
+                                            if (culture == null) culture = CultureInfo.InvariantCulture;
+
+                                            // Up status with culture info
+                                            LineStatus cultureStatus =
+                                                culture.Name == "" ? LineStatus.CultureOkMatchedInvariantCulture :
+                                                culture.IsNeutralCulture ? LineStatus.CultureOkMatchedLanguage : LineStatus.CultureOkMatchedLanguageAndRegion;
+                                            features.Status.UpCulture(cultureStatus);
+
                                             features.ScanFeatures(line);
+
                                             return line;
                                         }
                                     }
@@ -613,8 +693,18 @@ namespace Lexical.Localization.StringFormat
                                     {
                                         if (features.Inlines[i].TryGetValue(key, out line))
                                         {
+                                            // Up status with source info
                                             features.Status.UpResolve(LineStatus.ResolveOkFromInline);
-                                            features.Status.UpCulture(LineStatus.CultureOkMatchedNoCulture);
+
+                                            line.TryGetCultureInfo(out culture);
+                                            if (culture == null) culture = CultureInfo.InvariantCulture;
+
+                                            // Up status with culture info
+                                            LineStatus cultureStatus =
+                                                culture.Name == "" ? LineStatus.CultureOkMatchedInvariantCulture :
+                                                culture.IsNeutralCulture ? LineStatus.CultureOkMatchedLanguage : LineStatus.CultureOkMatchedLanguageAndRegion;
+                                            features.Status.UpCulture(cultureStatus);
+
                                             features.ScanFeatures(line);
                                             return line;
                                         }
@@ -631,9 +721,15 @@ namespace Lexical.Localization.StringFormat
                                 // Key has explicit culture and value, use the value
                                 if (features.String != null || features.StringText != null)
                                 {
-                                    if (culture == null) culture = RootCulture;
-                                    features.Status.UpResolve(LineStatus.ResolveOkFromKey);
-                                    features.Status.UpCulture(LineStatus.CultureOkMatchedNoCulture);
+                                    // Up status with source info
+                                    features.Status.UpResolve(LineStatus.ResolveOkFromLine);
+
+                                    if (culture == null) culture = CultureInfo.InvariantCulture;
+                                    LineStatus cultureStatus =
+                                        culture.Name == "" ? LineStatus.CultureOkMatchedInvariantCulture :
+                                        culture.IsNeutralCulture ? LineStatus.CultureOkMatchedLanguage : LineStatus.CultureOkMatchedLanguageAndRegion;
+                                    features.Status.UpCulture(cultureStatus);
+
                                     return key;
                                 }
                                 break;
@@ -641,7 +737,7 @@ namespace Lexical.Localization.StringFormat
                 }
 
                 // No matching value was found for the requested key and the explicit culture in the key.
-                features.Status.UpCulture(LineStatus.CultureErrorCultureNoMatch);
+                features.Status.UpCulture(cultures != null ? LineStatus.CultureFailedCulturePolicyNoMatch : LineStatus.CultureFailedRequestNoMatch);
                 // No match
                 features.Status.UpResolve(LineStatus.ResolveErrorNoMatch);
                 culture = null;
@@ -656,8 +752,6 @@ namespace Lexical.Localization.StringFormat
                 return null;
             }
         }
-
-        static CultureInfo RootCulture = CultureInfo.GetCultureInfo("");
 
         /// <summary>
         /// Compares whether two strings have equal placeholders.

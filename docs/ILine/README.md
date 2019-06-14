@@ -298,13 +298,13 @@ enum CarFeature
 <b>.Assembly&lt;T&gt;()</b> and <b>.Type&lt;T&gt;()</b> appends "Assembly" and "Type" keys to refer to an enumeration type.
 
 ```csharp
-ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>();
+ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().Format("{0}");
 ```
 
 <b>.InlineEnum&lt;T&gt;()</b> inlines every case of enum for culture "". It applies *[Description]* attribute when available.
 
 ```csharp
-ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>();
+ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>().Format("{0}");
 ```
 
 Enum localization strings can be supplied from files. (See <a href="#CarFeatures.ini">CarFeatures.ini</a>)
@@ -330,16 +330,6 @@ Bensiini
 Bensin
 ```
 
-If enum value contains multiple cases, it must be resolved with inside a formulated string.
-Localization strings for the refered enum value are matched against keys <i>"Assembly:asm:Type:enumtype:Key:case"</i> from the *IAsset*.
-Inlined strings only apply if the refered *ILine* instance contains the inlinings for the enum.
-
-```csharp
-CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
-Console.WriteLine(carFeature.Formulate($"{features}"));
-Console.WriteLine(carFeature.Format("{0}").Value(features));
-```
-
 <b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
 
 ```csharp
@@ -353,7 +343,17 @@ ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>()
     .InlineEnum(CarFeature.FiveDoors, "fi", "Viisiovinen")
     .InlineEnum(CarFeature.Red, "fi", "Punainen")
     .InlineEnum(CarFeature.Black, "fi", "Musta")
-    .InlineEnum(CarFeature.White, "fi", "Valkoinen");
+    .InlineEnum(CarFeature.White, "fi", "Valkoinen")
+    .Format("{0}");
+```
+
+If enum value contains multiple cases, it must be resolved with inside a formulated string.
+Localization strings for the refered enum value are matched against keys <i>"Assembly:asm:Type:enumtype:Key:case"</i> from the *IAsset*.
+Inlined strings only apply if the refered *ILine* instance contains the inlinings for the enum.
+
+```csharp
+CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
+Console.WriteLine(carFeature.Value(features));
 ```
 
 

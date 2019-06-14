@@ -7,6 +7,7 @@ using Lexical.Localization.Internal;
 using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lexical.Localization
 {
@@ -33,7 +34,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Policy whether occuranceIndex is needed for qualifying parameter.
         /// 
-        /// If true, <see cref="QualifyParameter(ILineParameter, int)"/> caller must have occurance index.
+        /// If true, <see cref="QualifyArgument(ILineArgument, int)"/> caller must have occurance index.
         /// If false, caller can use -1 for unknown.
         /// 
         /// Occurance describes the position of parameter of same parameter name.
@@ -484,9 +485,38 @@ namespace Lexical.Localization
                 return true;
             }
         }
+    }
 
+    /// <summary>
+    /// Qualifier that qualifies all but culture parts.
+    /// </summary>
+    public class NoCultureQualifier : ILineArgumentQualifier
+    {
+        private static NoCultureQualifier instance = new NoCultureQualifier();
 
+        /// <summary>
+        /// Default instance.
+        /// </summary>
+        public static NoCultureQualifier Default => instance;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool NeedsOccuranceIndex => false;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="argument"></param>
+        /// <param name="occuranceIndex"></param>
+        /// <returns></returns>
+        public bool QualifyArgument(ILineArgument argument, int occuranceIndex = -1)
+        {
+            if (argument is ILineArgument<ILineParameter, string, string> parameter) return parameter.Argument0 != "Culture";
+            if (argument is ILineArgument<ILineNonCanonicalKey, string, string> key) return key.Argument0 != "Culture";
+            if (argument is ILineArgument<ILineCulture, CultureInfo> culture) return false;
+            return true;
+        }
     }
 
 }

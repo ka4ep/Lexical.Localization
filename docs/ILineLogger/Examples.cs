@@ -39,7 +39,7 @@ namespace docs
 
             {
                 #region Snippet_2a
-                Trace.Listeners.Add(new ConsoleTraceListener());
+                Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
                 ILine root = LineRoot.Global.DiagnosticsTrace(LineStatusSeverity.Ok);
                 #endregion Snippet_2a
                 #region Snippet_2b
@@ -103,12 +103,5 @@ namespace docs
         }
     }
 
-
-    public sealed class ConsoleTraceListener : TextWriterTraceListener
-    {
-        public ConsoleTraceListener() : base(Console.Out)
-        {
-        }
-    }
 
 }

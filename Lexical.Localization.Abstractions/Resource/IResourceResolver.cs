@@ -23,7 +23,7 @@ namespace Lexical.Localization.Resource
         /// <list type="bullet">
         ///     <item><see cref="LineStatus.ResolveOkFromAsset"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveOkFromInline"/>Resource was acquired</item>
-        ///     <item><see cref="LineStatus.ResolveOkFromKey"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromLine"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
         ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceBytes.Exception"/></item>
@@ -44,7 +44,7 @@ namespace Lexical.Localization.Resource
         /// <list type="bullet">
         ///     <item><see cref="LineStatus.ResolveOkFromAsset"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveOkFromInline"/>Resource was acquired</item>
-        ///     <item><see cref="LineStatus.ResolveOkFromKey"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromLine"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
         ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceStream.Exception"/></item>
@@ -71,7 +71,7 @@ namespace Lexical.Localization
         /// <list type="bullet">
         ///     <item><see cref="LineStatus.ResolveOkFromAsset"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveOkFromInline"/>Resource was acquired</item>
-        ///     <item><see cref="LineStatus.ResolveOkFromKey"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromLine"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
         ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceBytes.Exception"/></item>
@@ -110,7 +110,7 @@ namespace Lexical.Localization
         /// <list type="bullet">
         ///     <item><see cref="LineStatus.ResolveOkFromAsset"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveOkFromInline"/>Resource was acquired</item>
-        ///     <item><see cref="LineStatus.ResolveOkFromKey"/>Resource was acquired</item>
+        ///     <item><see cref="LineStatus.ResolveOkFromLine"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
         ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceStream.Exception"/></item>

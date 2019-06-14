@@ -6,6 +6,7 @@
 using Lexical.Localization.Internal;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace Lexical.Localization.StringFormat
@@ -183,6 +184,8 @@ namespace Lexical.Localization.StringFormat
             {
                 if (argument is ILineArgument<ILineString, IString>) return false;
                 if (argument is ILineArgument<ILineValue, object[]>) return false;
+                if (argument is ILineArgument<ILineType, Type>) return false;
+                if (argument is ILineArgument<ILineAssembly, Assembly>) return false;
                 //if (argument is ILineArgument<ILineInlines, IDictionary<ILine, ILine>>) return false;
                 string parameterName, parameterValue;
                 if (argument.TryGetParameter(out parameterName, out parameterValue))

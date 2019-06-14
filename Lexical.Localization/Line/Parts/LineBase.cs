@@ -35,7 +35,7 @@ namespace Lexical.Localization
     /// </summary>
     [DebuggerDisplay("{DebugPrint()}")]
     [Serializable]
-    public class LineBase : ILinePart, ILineDefaultHashCode, IDynamicMetaObjectProvider, ILineAppendable
+    public class LineBase : ILinePart, ILineDefaultHashCode, IDynamicMetaObjectProvider, ILineAppendable, IFormattable
     {
         /// <summary>
         /// Comparer that compares <see cref="ILineKey"/> and <see cref="ILineValue"/> parts.
@@ -229,6 +229,25 @@ namespace Lexical.Localization
         /// <returns></returns>
         public override string ToString()
             => this.ResolveString().Value;
+
+        /// <summary>
+        /// Resolve within a culture.
+        /// </summary>
+        /// <param name="format"></param>
+        /// <param name="formatProvider"></param>
+        /// <returns></returns>
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            // Resolve with culture from formatProvider
+            ILine k;
+            if (formatProvider is CultureInfo cultureInfo && !this.TryGetCultureKey(out k))
+            {
+                return this.Culture(cultureInfo).ResolveString().Value;
+            }
+
+            // Resolve as is
+            return this.ResolveString().Value;
+        }
 
         /// <summary>
         /// A library of interfaces and extension methods that DynamicMetaObject implementation seaches from when 

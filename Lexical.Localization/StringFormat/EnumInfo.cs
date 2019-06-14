@@ -259,7 +259,8 @@ namespace Lexical.Localization.StringFormat
     /// </summary>
     public class EnumInfoResolver : ConcurrentDictionary<Type, IEnumInfo>, IEnumInfoResolver
     {
-        static EnumInfoResolver instance = new EnumInfoResolver();
+        static Func<Type, ILine> defaultEnumTypeKeyFactory = t => LineAppender.NonResolving.Assembly(t.Assembly).Type(t);
+        static Lazy<EnumInfoResolver> instance = new Lazy<EnumInfoResolver>();
 
         /// <summary>
         /// Singleton map.
@@ -267,7 +268,7 @@ namespace Lexical.Localization.StringFormat
         /// Note, keeps strong references to types and assemblies acquired with this map.
         /// At the time of writing, .net can't unload assemblies anyway.
         /// </summary>
-        public static EnumInfoResolver Default => instance;
+        public static EnumInfoResolver Default => instance.Value;
 
         /// <summary>
         /// Function that creates enuminfo from type.
@@ -286,15 +287,24 @@ namespace Lexical.Localization.StringFormat
         /// 
         /// Search key is used for searching enumeration localization strings from asset.
         /// </summary>
-        public static Func<Type, ILine> DefaultEnumTypeKeyFactory = t => LineAppender.NonResolving.Assembly(t.Assembly).Type(t);
+        public static Func<Type, ILine> DefaultEnumTypeKeyFactory => defaultEnumTypeKeyFactory;
 
         /// <summary>
         /// Create map of enum types.
         /// </summary>
-        /// <param name="enumTypeKeyFactory">(optional) function that creates search key for enum type.</param>
-        public EnumInfoResolver(Func<Type, ILine> enumTypeKeyFactory = default)
+        public EnumInfoResolver()
         {
-            this.enumTypeKeyFactory = enumTypeKeyFactory ?? DefaultEnumTypeKeyFactory;
+            this.enumTypeKeyFactory = DefaultEnumTypeKeyFactory;
+            this.infoFactory = t => new EnumInfo(t, this.enumTypeKeyFactory(t));
+        }
+
+        /// <summary>
+        /// Create map of enum types.
+        /// </summary>
+        /// <param name="enumTypeKeyFactory">function that creates search key for enum type.</param>
+        public EnumInfoResolver(Func<Type, ILine> enumTypeKeyFactory)
+        {
+            this.enumTypeKeyFactory = enumTypeKeyFactory ?? throw new ArgumentNullException(nameof(enumTypeKeyFactory));
             this.infoFactory = t => new EnumInfo(t, this.enumTypeKeyFactory(t));
         }
 

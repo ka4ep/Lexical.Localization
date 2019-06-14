@@ -27,7 +27,7 @@ namespace Lexical.Localization
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResolveOk = 0x01UL << Shift.Resolve,
         /// <summary>Resolved value from key</summary>
-        ResolveOkFromKey = 0x04UL << Shift.Resolve,
+        ResolveOkFromLine = 0x04UL << Shift.Resolve,
         /// <summary>Resolved value from asset</summary>
         ResolveOkFromAsset = 0x06UL << Shift.Resolve,
         /// <summary>Resolved value from inlines</summary>
@@ -76,26 +76,63 @@ namespace Lexical.Localization
         //// Culture - Step that matches active culture, culture policy to strings available in asset
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         CultureOk = 0x01UL << Shift.Culture,
-        /// <summary>Key contained no culture, and it matched to default line</summary>
-        CultureOkMatchedNoCulture = 0x04UL << Shift.Culture,
-        /// <summary>Key contained an explicit culture, and it matched to a line</summary>
-        CultureOkMatchedKeyCulture = 0x08UL << Shift.Culture,
-        /// <summary>Key contained culture policy which provided a culture that matched to a line</summary>
-        CultureOkMatchedCulturePolicy = 0x0CUL << Shift.Culture,
+        /// <summary>Requested invariant culture and matched to default value.</summary>
+        CultureOkRequestMatchedInvariantCulture = 0x04UL << Shift.Culture,
+        /// <summary>Culture policy preferred invariant culture was matched to default value.</summary>
+        CultureOkCulturePolicyMatchedInvariantCulture = 0x05UL << Shift.Culture,
+        /// <summary>There was not culture request, but matched to default value.</summary>
+        CultureOkMatchedInvariantCulture = 0x06UL << Shift.Culture,
+        /// <summary>Requested language was matched</summary>
+        CultureOkRequestMatchedLanguage = 0x06UL << Shift.Culture,
+        /// <summary>Culture policy preferred a language which was matched</summary>
+        CultureOkCulturePolicyMatchedLanguage = 0x08UL << Shift.Culture,
+        /// <summary>There was not culture request, but matched to line with a language.</summary>
+        CultureOkMatchedLanguage = 0x06UL << Shift.Culture,
+        /// <summary>Request for language and a region was matched</summary>
+        CultureOkRequestMatchedLanguageAndRegion = 0x09UL << Shift.Culture,
+        /// <summary>Culture policy preferred culture with language and region was matched</summary>
+        CultureOkCulturePolicyMatchedLanguageAndRegion = 0x0AUL << Shift.Culture,
+        /// <summary>There was not culture request, but matched to line with a language and a region.</summary>
+        CultureOkMatchedLanguageAndRegion = 0x06UL << Shift.Culture,
+
         /// <summary>Warning for unspecified reason. This flag used when comparing against SeverityMask</summary>
         CultureWarning = 0x20UL << Shift.Culture,
-        /// <summary>Culture did not match, fallback culture was used</summary>
-        CultureWarningNoMatch = 0x26UL << Shift.Culture,
+        /// <summary>Requested culture fallbacked to invariant culture which was matched to default value.</summary>
+        CultureWarningRequestMatchedInvariantCulture = 0x24UL << Shift.Culture,
+        /// <summary>Culture policy's fallback preference was invariant culture which was matched to default value.</summary>
+        CultureWarningCulturePolicyMatchedInvariantCulture = 0x25UL << Shift.Culture,
+        /// <summary>Requested culture's fallback culture matched to culture with language</summary>
+        CultureWarningRequestMatchedLanguage = 0x26UL << Shift.Culture,
+        /// <summary>Culture policy's fallback preference, a culture with language, was matched</summary>
+        CultureWarningCulturePolicyMatchedLanguage = 0x28UL << Shift.Culture,
+        /// <summary>Request's fallback culture with language and region was matched</summary>
+        CultureWarningRequestMatchedLanguageAndRegion = 0x29UL << Shift.Culture,
+        /// <summary>Culture policy's fallback preference, a culture with language and region, was matched</summary>
+        CultureWarningCulturePolicyMatchedLanguageAndRegion = 0x2AUL << Shift.Culture,
+
         /// <summary>Error for unspecified reason. This flag used when comparing against SeverityMask</summary>
         CultureError = 0x40UL << Shift.Culture,
-        /// <summary>No matching value was found for the requested key and the explicit culture in the key.</summary>
-        CultureErrorCultureNoMatch = 0x43UL << Shift.Culture,
-        /// <summary>No matching value was found for the requested key and the cultures that culture policy provided.</summary>
-        CultureErrorCulturePolicyNoMatch = 0x44UL << Shift.Culture,
+        /// <summary>Requested culture was fallbacked to invariant culture which was matched to default value.</summary>
+        CultureErrorRequestMatchedInvariantCulture = 0x44UL << Shift.Culture,
+        /// <summary>Culture policy's fallback preference was invariant culture which was matched to default value.</summary>
+        CultureErrorCulturePolicyMatchedInvariantCulture = 0x45UL << Shift.Culture,
+        /// <summary>Requested culture's fallback culture matched to culture with language</summary>
+        CultureErrorRequestMatchedLanguage = 0x46UL << Shift.Culture,
+        /// <summary>Culture policy's fallback preference, a culture with language, was matched</summary>
+        CultureErrorCulturePolicyMatchedLanguage = 0x48UL << Shift.Culture,
+        /// <summary>Request's fallback culture with language and region was matched</summary>
+        CultureErrorRequestMatchedLanguageAndRegion = 0x49UL << Shift.Culture,
+        /// <summary>Culture policy's fallback preference, a culture with language and region, was matched</summary>
+        CultureErrorCulturePolicyMatchedLanguageAndRegion = 0x4AUL << Shift.Culture,
+
         /// <summary>CulturePolicy throw exception</summary>
         CultureErrorCulturePolicyException = 0x45UL << Shift.Culture,
         /// <summary>Failed for unspecified reason. This flag used when comparing against SeverityMask</summary>
         CultureFailed = 0x60UL << Shift.Culture,
+        /// <summary>Requested culture was not matched</summary>
+        CultureFailedRequestNoMatch = 0x64UL << Shift.Culture,
+        /// <summary>Culture policy's culture was not matched</summary>
+        CultureFailedCulturePolicyNoMatch = 0x65UL << Shift.Culture,
         /// <summary>Result has not been processed</summary>
         CultureFailedNoResult = 0x7FUL << Shift.Culture,
         /// <summary>Mask for severity</summary>

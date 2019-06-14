@@ -76,7 +76,7 @@ ResolveOkFromKey|CultureOkMatchedNoCulture|PluralityOkNotUsed|StringFormatOkStri
 Logger can output to System.Diagnostics.Trace.
 
 ```csharp
-Trace.Listeners.Add(new ConsoleTraceListener());
+Trace.Listeners.Add(new TextWriterTraceListener(Console.Out));
 ILine root = LineRoot.Global.DiagnosticsTrace(LineStatusSeverity.Ok);
 ```
 

@@ -3,6 +3,7 @@
 // Date:           7.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.StringFormat;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -16,7 +17,8 @@ namespace Lexical.Localization
     public interface ICulturePolicy
     {
         /// <summary>
-        /// Enumerable that returns first the active culture, and then fallback cultures.
+        /// Array property returns the prefered culture as first element.
+        /// Other cultures are considered fallback cultures.
         /// 
         /// For example: "en-UK", "en", "".
         /// </summary>

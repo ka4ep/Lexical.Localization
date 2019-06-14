@@ -228,6 +228,18 @@ namespace Lexical.Localization.StringFormat
                 }
             }
 
+            // Append culture
+            ILine kk;
+            if (FunctionEvaluationCtx.Culture != null && a is ILine line && !line.TryGetCultureKey(out kk))
+            {
+                LineString lineString = line.Culture(FunctionEvaluationCtx.Culture).ResolveString();
+                if (lineString.Value != null)
+                {
+                    Status.Up(lineString.Status);
+                    return lineString.Value;
+                }
+            }
+
             // Call culture specific formattable 
             if (FunctionEvaluationCtx.Culture != null && a is IFormattable formattable)
             {
