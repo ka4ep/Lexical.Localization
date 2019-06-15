@@ -4,9 +4,13 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.Plurality;
+using Lexical.Localization.StringFormat;
 using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Reflection;
 
 namespace Lexical.Localization
 {
@@ -278,6 +282,17 @@ namespace Lexical.Localization
             if (argument is ILineArgument<ILineHint, string, string> lineHint) { parameterName = lineHint.Argument0; parameterValue = lineHint.Argument1; return true; }
             if (argument is ILineArgument<ILineCanonicalKey, string, string> lineCanonicalKey) { parameterName = lineCanonicalKey.Argument0; parameterValue = lineCanonicalKey.Argument1; return true; }
             if (argument is ILineArgument<ILineNonCanonicalKey, string, string> lineNonCanonicalKey) { parameterName = lineNonCanonicalKey.Argument0; parameterValue = lineNonCanonicalKey.Argument1; return true; }
+
+            if (argument is ILineArgument<ILineAssembly, Assembly> lineAssembly) { parameterName = "Assembly"; parameterValue = lineAssembly.Argument0?.GetName().Name; return true; }
+            if (argument is ILineArgument<ILineCulture, CultureInfo> lineCulture) { parameterName = "Culture"; parameterValue = lineCulture.Argument0?.Name; return true; }
+            if (argument is ILineArgument<ILineType, Type> lineType) { parameterName = "Type"; parameterValue = lineType.Argument0?.FullName; return true; }
+            if (argument is ILineArgument<ILineFormatProvider, Type> lineFormatProvider) { parameterName = "FormatProvider"; parameterValue = lineFormatProvider.Argument0?.GetType()?.FullName; return true; }
+            if (argument is ILineArgument<ILineFunctions, IFunctions> lineFunctions) { parameterName = "Functions"; parameterValue = lineFunctions.Argument0?.GetType()?.FullName; return true; }
+            if (argument is ILineArgument<ILinePluralRules, IPluralRules> linePluralRules) { parameterName = "PluralRules"; parameterValue = linePluralRules.Argument0?.GetType()?.FullName; return true; }
+            if (argument is ILineArgument<ILineStringFormat, IStringFormat> lineStringFormat) { parameterName = "StringFormat"; parameterValue = lineStringFormat.Argument0?.GetType()?.FullName; return true; }
+            if (argument is ILineArgument<ILineString, IString> lineString) { parameterName = "String"; parameterValue = lineString.Argument0?.GetType()?.FullName; return true; }
+            if (argument is ILineArgument<ILineCulturePolicy, ICulturePolicy> lineCulturePolicy) { parameterName = "CulturePolicy"; parameterValue = lineCulturePolicy.Argument0?.GetType()?.FullName; return true; }
+
             parameterName = default; parameterValue = default; return false;
         }
 
@@ -298,6 +313,11 @@ namespace Lexical.Localization
                 if (parameterInfos1 != null && parameterInfos1.TryGetValue(lineParameter.Argument0, out pi)) return typeof(ILineNonCanonicalKey).Equals(pi.InterfaceType);
                 if (parameterInfos2 != null && parameterInfos2.TryGetValue(lineParameter.Argument0, out pi)) return typeof(ILineNonCanonicalKey).Equals(pi.InterfaceType);
             }
+
+            if (argument is ILineArgument<ILineAssembly, Assembly> lineAssembly) return true;
+            if (argument is ILineArgument<ILineCulture, CultureInfo> lineCulture) return true;
+            if (argument is ILineArgument<ILineType, Type> lineType) return true;
+
             return false;
         }
 

@@ -62,10 +62,8 @@ namespace Lexical.Localization
         /// <returns></returns>
         public bool QualifyArgument(ILineArgument argument, int occuranceIndex = -1)
         {
-            if (argument is ILineArgument<ILineParameter, string, string> lineParameter) return QualifyParameter(lineParameter.Argument0, lineParameter.Argument1, occuranceIndex, typeof(ILineParameter));
-            else if (argument is ILineArgument<ILineHint, string, string> lineHint) return QualifyParameter(lineHint.Argument0, lineHint.Argument1, occuranceIndex, typeof(ILineHint));
-            else if (argument is ILineArgument<ILineCanonicalKey, string, string> lineCanonicalKey) return QualifyParameter(lineCanonicalKey.Argument0, lineCanonicalKey.Argument1, occuranceIndex, typeof(ILineCanonicalKey));
-            else if (argument is ILineArgument<ILineNonCanonicalKey, string, string> lineNonCanonicalKey) return QualifyParameter(lineNonCanonicalKey.Argument0, lineNonCanonicalKey.Argument1, occuranceIndex, typeof(ILineNonCanonicalKey));
+            string parameterName, parameterValue;
+            if (argument.TryGetParameter(out parameterName, out parameterValue)) return QualifyParameter(parameterName, parameterValue, occuranceIndex);
             return true;
         }
 
@@ -75,9 +73,8 @@ namespace Lexical.Localization
         /// <param name="parameterName"></param>
         /// <param name="parameterValue">value that occured in the compared key (note "" for empty)</param>
         /// <param name="occuranceIndex"></param>
-        /// <param name="intf"></param>
         /// <returns></returns>
-        public abstract bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex, Type intf);
+        public abstract bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex);
 
         /// <summary>
         /// Print rule
@@ -113,9 +110,8 @@ namespace Lexical.Localization
             /// <param name="parameterName"></param>
             /// <param name="parameterValue"></param>
             /// <param name="occuranceIndex"></param>
-            /// <param name="intf"></param>
             /// <returns></returns>
-            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex, Type intf)
+            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex)
             {
                 // This filter doesn't apply
                 if (OccuranceIndex >= 0 && OccuranceIndex != occuranceIndex) return true;
@@ -209,9 +205,8 @@ namespace Lexical.Localization
             /// <param name="parameterName"></param>
             /// <param name="parameterValue"></param>
             /// <param name="occuranceIndex"></param>
-            /// <param name="intf"></param>
             /// <returns>true if line is passed by the filter, false if rejected</returns>
-            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex, Type intf)
+            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex)
             {
                 // This filter doesn't apply
                 if (OccuranceIndex >= 0 && OccuranceIndex != occuranceIndex) return true;
@@ -316,9 +311,8 @@ namespace Lexical.Localization
             /// <param name="parameterName"></param>
             /// <param name="parameterValue"></param>
             /// <param name="occuranceIndex"></param>
-            /// <param name="intf"></param>
             /// <returns></returns>
-            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex, Type intf)
+            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex)
             {
                 // This filter doesn't apply
                 if (OccuranceIndex >= 0 && OccuranceIndex != occuranceIndex) return true;
@@ -404,9 +398,8 @@ namespace Lexical.Localization
             /// <param name="parameterName"></param>
             /// <param name="parameterValue"></param>
             /// <param name="occuranceIndex"></param>
-            /// <param name="intf"></param>
             /// <returns></returns>
-            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex, Type intf)
+            public override bool QualifyParameter(string parameterName, string parameterValue, int occuranceIndex)
             {
                 // This filter doesn't apply
                 if (OccuranceIndex >= 0 && OccuranceIndex != occuranceIndex) return true;
@@ -469,21 +462,7 @@ namespace Lexical.Localization
             /// <param name="occuranceIndex"></param>
             /// <returns>false if <paramref name="argument"/> is a key</returns>
             public bool QualifyArgument(ILineArgument argument, int occuranceIndex)
-            {
-                if (argument is ILineArgument<ILineHint, string, string> lineHint) return true;
-                if (argument is ILineArgument<ILineCanonicalKey, string, string> lineCanonicalKey) return false;
-                if (argument is ILineArgument<ILineNonCanonicalKey, string, string> lineNonCanonicalKey) return false;
-                if (argument is ILineArgument<ILineParameter, string, string> lineParameter)
-                {
-                    IParameterInfo pi;
-                    if (ParameterInfos.TryGetValue(lineParameter.Argument0, out pi))
-                    {
-                        if (typeof(ILineKey).Equals(pi.InterfaceType) || typeof(ILineCanonicalKey).Equals(pi.InterfaceType) || typeof(ILineNonCanonicalKey).Equals(pi.InterfaceType)) return false;
-                    }
-                }
-
-                return true;
-            }
+                => !argument.IsNonCanonicalKey(ParameterInfos);
         }
     }
 

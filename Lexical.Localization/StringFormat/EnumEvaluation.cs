@@ -4,6 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
+using Lexical.Localization.Utils;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -191,6 +192,67 @@ namespace Lexical.Localization.StringFormat
                 if (argument.TryGetParameter(out parameterName, out parameterValue))
                 {
                     if (parameterName == "Assembly" || parameterName == "Type" || parameterName == "Key") return false;
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Used for pruning unwanted parts from base key, so that key can be used for base keys for enum localization.
+        /// 
+        /// Rules:
+        ///   1. Disqualifies known key parameters.
+        ///   2. Disqualify <see cref="ILineString"/>, <see cref="ILineValue"/>.
+        ///  
+        /// </summary>
+        public class LineEnumBaseKeyPruner2 : ILineArgumentQualifier
+        {
+            private static readonly LineEnumBaseKeyPruner2 instance = new LineEnumBaseKeyPruner2(Lexical.Localization.Utils.ParameterInfos.Default);
+
+            /// <summary>
+            /// Default singleton instance.
+            /// </summary>
+            public static LineEnumBaseKeyPruner2 Default => instance;
+
+            /// <summary>
+            /// Doesn't need occurance
+            /// </summary>
+            public bool NeedsOccuranceIndex => false;
+
+            /// <summary>
+            /// Parameter infos for recognizing key parameters
+            /// </summary>
+            public readonly IParameterInfos ParameterInfos;
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="parameterInfos"></param>
+            public LineEnumBaseKeyPruner2(IParameterInfos parameterInfos)
+            {
+                ParameterInfos = parameterInfos;
+            }
+
+            /// <summary>
+            /// Evaluate argument
+            /// </summary>
+            /// <param name="argument"></param>
+            /// <param name="occuranceIndex"></param>
+            /// <returns></returns>
+            public bool QualifyArgument(ILineArgument argument, int occuranceIndex = -1)
+            {
+                if (argument is ILineArgument<ILineString, IString>) return false;
+                if (argument is ILineArgument<ILineValue, object[]>) return false;
+                if (argument is ILineArgument<ILineType, Type>) return false;
+                if (argument is ILineArgument<ILineAssembly, Assembly>) return false;
+                //if (argument is ILineArgument<ILineInlines, IDictionary<ILine, ILine>>) return false;
+                string parameterName, parameterValue;
+                if (argument.TryGetParameter(out parameterName, out parameterValue))
+                {
+                    IParameterInfo pi;
+                    if (ParameterInfos.TryGetValue(parameterName, out pi))
+                        return pi.InterfaceType == typeof(ILineNonCanonicalKey) || pi.InterfaceType == typeof(ILineCanonicalKey);
                 }
 
                 return true;
