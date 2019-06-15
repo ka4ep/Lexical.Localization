@@ -77,7 +77,7 @@ namespace docs
             // Configure to use CultureInfo.CurrentUICulture
             serviceCollection.AddSingleton<ICulturePolicy>(new CulturePolicy().SetToCurrentThreadUICulture().AsReadonly());
 
-            // Add localization services: ILineRoot, ILine<T>, IAssetBuilder, ICulturePolicy
+            // Add localization services: ILineRoot, ILine<T>, IAssetBuilder
             serviceCollection.AddLexicalLocalization(
                 addStringLocalizerService: false,
                 addCulturePolicyService: false,

@@ -273,3 +273,4 @@ public class MyClass
 * [Website](http://lexical.fi/Localization/index.html)
 * [Github](https://github.com/tagcode/Lexical.Localization)
 * [Nuget](https://www.nuget.org/packages/Lexical.Localization/)
+* [Slack](https://lexicalworkspace.slack.com) for questions.
