@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.29.0</Version>
+    <Version>0.28.1</Version>
     <Authors>Toni Kalajainen</Authors>
     <Company>Lexical</Company>
     <Description>Proper localization class library for C#.</Description>

@@ -2,6 +2,7 @@
 using Lexical.Localization.Asset;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace docs
 {
@@ -13,10 +14,13 @@ namespace docs
             // Create service collection
             IServiceCollection serviceCollection = new ServiceCollection();
 
+            // Configure to use CultureInfo.CurrentUICulture
+            serviceCollection.AddSingleton<ICulturePolicy>(new CulturePolicy().SetToCurrentThreadUICulture().AsReadonly());            
+
             // Add localization services: ILineRoot, ILine<T>, IAssetBuilder, ICulturePolicy
             serviceCollection.AddLexicalLocalization(
                 addStringLocalizerService: false,
-                addCulturePolicyService: true,
+                addCulturePolicyService: false,
                 useGlobalInstance: false,
                 addCache: false);
             #endregion Snippet_1

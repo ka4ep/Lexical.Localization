@@ -393,11 +393,17 @@ namespace docs
                     .InlineEnum(CarFeature.Black, "de", "Schwartz")
                     .InlineEnum(CarFeature.White, "de", "Weiß")
                     .Format("{0}");
+
                 ILine message = LineRoot.Global.Assembly("docs").Type("MyClass").Key("Msg")
                     .Format("Your car has following features: {0}")
-                    .de("Ihr Auto hat folgende Eigenschaften:");
-                Console.WriteLine(message.Value(carFeature.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("de")).Culture("de"));
-                Console.WriteLine(message.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("sv"));
+                    .de("Ihr Auto hat folgende Eigenschaften: {0}");
+
+                CarFeature features = CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors;
+
+                // Inlined enum strings don't work as Enum (unless tool is used)
+                Console.WriteLine(message.Value(features).Culture("de"));
+                // But works when ILine reference is used.
+                Console.WriteLine(message.Value(carFeature.Value(features)).Culture("de"));
                 #endregion Snippet_7m7
             }
             {

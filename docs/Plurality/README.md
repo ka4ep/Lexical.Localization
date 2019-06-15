@@ -45,29 +45,6 @@ a cat
 </details>
 
 <br/>
-
-If all cases are not used, then then **StringResolver** will revert to default string.
-For example, "N:one" is provided, and for values other than "1", the rules revert to default string.
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Localization xmlns:Culture="urn:lexical.fi:Culture"
-              xmlns:Key="urn:lexical.fi:Key"
-              xmlns:N="urn:lexical.fi:N"
-              xmlns="urn:lexical.fi"
-              PluralRules="Unicode.CLDR35">
-
-  <!-- Example: One plurality case for one numeric argument {0} -->
-  <Key:Cats>
-    {cardinal:0} cats
-    <N:one>a cat</N:one>
-  </Key:Cats>
-
-</Localization>
-
-```
-
-<br/>
 Translator adds localized strings for different cultures.
 The decision whether to use pluralization is left for the translator.
 
@@ -184,6 +161,53 @@ yksi kissa
 2 kissaa
 </pre>
 </details>
+<br/>
+
+Some cases are optional. For example for "en" culture and "cardinal" category, the case "zero" is optional.
+Translator can choose whether to supply a string for an optional case, such as "N:zero". 
+If a string is not provided, then string resolver reverts to a string from next valid case "N:other". 
+For value 0, the string "{0} cats" would be provided, which is just as valid, but not as humanized as "no cats".
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Key="urn:lexical.fi:Key"
+              xmlns:N="urn:lexical.fi:N"
+              xmlns="urn:lexical.fi"
+              PluralRules="Unicode.CLDR35">
+
+  <!-- Example: One plurality case for one numeric argument {0} -->
+  <Key:Cats>
+    {cardinal:0} cats
+    <N:one>a cat</N:one>
+    <N:other>{0} cats</N:other>
+  </Key:Cats>
+
+</Localization>
+
+```
+
+Even if a required case is missing, then **StringResolver** will revert to default string.
+For example, only "N:one" is provided, and for values other than "1", the rules revert to default string "{0} cats".
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Localization xmlns:Culture="urn:lexical.fi:Culture"
+              xmlns:Key="urn:lexical.fi:Key"
+              xmlns:N="urn:lexical.fi:N"
+              xmlns="urn:lexical.fi"
+              PluralRules="Unicode.CLDR35">
+
+  <!-- Example: One plurality case for one numeric argument {0} -->
+  <Key:Cats>
+    {cardinal:0} cats
+    <N:one>a cat</N:one>
+  </Key:Cats>
+
+</Localization>
+
+```
+
 <br/>
 
 Inlined strings are picked up by [inline scanner](~/sdk/Localization/docs/Tool/index.html) and placed to a localization file.

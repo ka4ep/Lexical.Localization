@@ -9,7 +9,6 @@
   <Key:Cats>
     {cardinal:0} cats
     <N:one>a cat</N:one>
-    <N:other>{0} cats</N:other>
   </Key:Cats>
 
 </Localization>

@@ -19,12 +19,6 @@ a cat
 </details>
 
 <br/>
-
-If all cases are not used, then then **StringResolver** will revert to default string.
-For example, "N:one" is provided, and for values other than "1", the rules revert to default string.
-[!code-xml[Snippet](../PluralityExample0c.xml)]
-
-<br/>
 Translator adds localized strings for different cultures.
 The decision whether to use pluralization is left for the translator.
 [!code-csharp[Snippet](Examples.cs#Snippet_0a)]
@@ -49,6 +43,18 @@ yksi kissa
 2 kissaa
 </pre>
 </details>
+<br/>
+
+Some cases are optional. For example for "en" culture and "cardinal" category, the case "zero" is optional.
+Translator can choose whether to supply a string for an optional case, such as "N:zero". 
+If a string is not provided, then string resolver reverts to a string from next valid case "N:other". 
+For value 0, the string "{0} cats" would be provided, which is just as valid, but not as humanized as "no cats".
+[!code-xml[Snippet](../PluralityExample0c.xml)]
+
+Even if a required case is missing, then **StringResolver** will revert to default string.
+For example, only "N:one" is provided, and for values other than "1", the rules revert to default string "{0} cats".
+[!code-xml[Snippet](../PluralityExample0c1.xml)]
+
 <br/>
 
 Inlined strings are picked up by [inline scanner](~/sdk/Localization/docs/Tool/index.html) and placed to a localization file.

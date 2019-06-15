@@ -140,6 +140,9 @@
     <None Update="PluralityExample0a.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="PluralityExample0c1.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="PluralityExample5.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

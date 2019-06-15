@@ -330,6 +330,22 @@ Bensiini
 Bensin
 ```
 
+If enum value contains multiple cases, it must be resolved with inside a formulated string.
+Localization strings for the refered enum value are matched against keys <i>"Assembly:asm:Type:enumtype:Key:case"</i> from the *IAsset*.
+Inlined strings only apply with *ILine* instance that contains the inlinings.
+
+```csharp
+CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
+Console.WriteLine(carFeature.Value(features));
+```
+
+The result of the example above.
+```none
+Petrol, FiveDoors, Black
+Bensiini, Viisiovinen, Musta
+Bensin, Femdörras, Svart
+```
+
 <b>.InlineEnum(<i>enumCase, culture, text</i>)</b> inlines culture specific texts to the *ILine* reference.
 
 ```csharp
@@ -347,22 +363,6 @@ ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>()
     .Format("{0}");
 ```
 
-If enum value contains multiple cases, it must be resolved with inside a formulated string.
-Localization strings for the refered enum value are matched against keys <i>"Assembly:asm:Type:enumtype:Key:case"</i> from the *IAsset*.
-Inlined strings only apply if the refered *ILine* instance contains the inlinings for the enum.
-
-```csharp
-CarFeature features = CarFeature.Petrol | CarFeature.FiveDoors | CarFeature.Black;
-Console.WriteLine(carFeature.Value(features));
-```
-
-
-The result of the example above.
-```none
-Petrol, FiveDoors, Black
-Bensiini, Viisiovinen, Musta
-Bensin, Femdörras, Svart
-```
 
 If placeholder format is "{enum:|}" then the printed string uses "|" as separator. "{enum: |}" prints with " | ".
 
@@ -375,8 +375,8 @@ Bensiini|Musta
 Bensiini | Musta
 ```
 
-Inlines placed in one *ILine* instance are not applicable in another *ILine* instnace, unless 
-<i>Lexical.Localization.Tool</i> is used in the build process. *Tool* picks up inlining *ILine*s and copies them to the localization file, making them effective everywhere.
+Inlines placed in an *ILine* instance are applicable in another *ILine* instances,
+if the .Value() is supplied as *ILine* with inlinings and not as *Enum*.
 
 ```csharp
 ILine carFeature = LineRoot.Global.Assembly("docs").Type<CarFeature>().InlineEnum<CarFeature>()
@@ -395,10 +395,28 @@ ILine message = LineRoot.Global.Assembly("docs").Type("MyClass").Key("Msg")
     .Format("Your car has following features: {0}")
     .de("Ihr Auto hat folgende Eigenschaften: {0}");
 
-Console.WriteLine(message.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("fi"));
-Console.WriteLine(message.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("sv"));
-Console.WriteLine(message.Value(CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors).Culture("de"));
+CarFeature features = CarFeature.Petrol | CarFeature.Red | CarFeature.TwoDoors;
+
+// Inlined enum strings don't work as Enum (unless tool is used)
+Console.WriteLine(message.Value(features).Culture("de"));
+// But works when ILine reference is used.
+Console.WriteLine(message.Value(carFeature.Value(features)).Culture("de"));
 ```
+
+```none
+Ihr Auto hat folgende Eigenschaften: Petrol, TwoDoors, Red
+Ihr Auto hat folgende Eigenschaften: Benzinwagen, Zweitürig, Rot
+```
+
+However, if <i>Lexical.Localization.Tool</i> is used in the build process, then inlined 
+strings are available as enums too. Tool picks up the inlined strings and places them into
+localization file.
+
+```none
+Ihr Auto hat folgende Eigenschaften: Benzinwagen, Zweitürig, Rot
+Ihr Auto hat folgende Eigenschaften: Benzinwagen, Zweitürig, Rot
+```
+
 
 <a id="CarFeatures.ini" />
 Files that supply enumeration localization should use key in format of <i>"Assembly:asm:Type:enumtype:Key:case"</i>.

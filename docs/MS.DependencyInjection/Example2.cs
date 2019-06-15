@@ -15,11 +15,14 @@ namespace docs
             // Create service collection
             IServiceCollection serviceCollection = new ServiceCollection();
 
-            // Add localization services: ILineRoot, ILine<T>, IAssetBuilder, ICulturePolicy
+            // Configure to use CultureInfo.CurrentUICulture
+            serviceCollection.AddSingleton<ICulturePolicy>(new CulturePolicy().SetToCurrentThreadUICulture().AsReadonly());
+
+            // Add localization services: ILineRoot, ILine<T>, IAssetBuilder, 
             //                            IStringLocalizer<T>, IStringLocalizerFactory
             serviceCollection.AddLexicalLocalization(
                 addStringLocalizerService: true,     // <- string localizer
-                addCulturePolicyService: true,
+                addCulturePolicyService: false,
                 useGlobalInstance: false,
                 addCache: false);
 
