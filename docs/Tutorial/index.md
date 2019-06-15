@@ -79,4 +79,4 @@ Keys can be placed in static references if the singleton **LineRoot.Global** is 
 * [Website](http://lexical.fi/Localization/index.html)
 * [Github](https://github.com/tagcode/Lexical.Localization)
 * [Nuget](https://www.nuget.org/packages/Lexical.Localization/)
-* [Slack](https://lexicalworkspace.slack.com) for questions.
+* [Slack](https://lexicalworkspace.slack.com/messages/CKLA0SUHK/)
