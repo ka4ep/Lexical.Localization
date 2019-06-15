@@ -45,4 +45,4 @@ Lexical.Localization is a localization class library for .NET.
 * [Website](http://lexical.fi/Localization/index.html)
 * [Github](https://github.com/tagcode/Lexical.Localization)
 * [Nuget](https://www.nuget.org/packages/Lexical.Localization/)
-* [Slack](https://lexicalworkspace.slack.com/messages/CKLA0SUHK/)
+* [Slack](https://lexicalworkspace.slack.com/messages/CKLADPL7P/)
