@@ -43,8 +43,12 @@ namespace Lexical.Localization.StringFormat
                 IEnumInfo enumInfo = ctx.EnumResolver != null ? ctx.EnumResolver.GetEnumInfo(@enum.GetType()) : new EnumInfo(@enum.GetType());
                 // Get value
                 ulong value = EnumCase.ToUInt64(@enum);
-                // Remove hash-equals comparable key parts.
+                // Remove hash-equals comparable key parts "Assembly" "Key" and "Type". This base preserves other key parts such as "Location", "Section", "Culture"
                 ILine keyBase = ctx.Line.Prune(LineEnumBaseKeyPruner.Default, LineAppender.NonResolving);
+                // Remove hash-equals non-canonical comparable key parts. This base preserves only "Culture" any other key pars.
+                ILine keyBase2 = ctx.Line.Prune(LineEnumBaseKeyPruner2.Default, LineAppender.NonResolving);
+                // 
+                if (LineComparer.Default.Equals(keyBase, keyBase2)) keyBase2 = null;
                 // Result cases
                 StructList8<(IEnumCase, string)> resultCases = new StructList8<(IEnumCase, string)>();
                 // Split into cases
@@ -61,6 +65,8 @@ namespace Lexical.Localization.StringFormat
                         ILine key = keyBase.Concat(@case.Key);
                         // Resolve
                         LineString case_resolve = ctx.StringResolver.ResolveString(key);
+                        // Try to resolve with another base
+                        if (case_resolve.Value == null && keyBase2 != null) case_resolve = ctx.StringResolver.ResolveString(keyBase2.Concat(@case.Key));
                         // Was localization string found?
                         if (case_resolve.Value != null)
                         {
@@ -248,11 +254,11 @@ namespace Lexical.Localization.StringFormat
                 if (argument is ILineArgument<ILineAssembly, Assembly>) return false;
                 //if (argument is ILineArgument<ILineInlines, IDictionary<ILine, ILine>>) return false;
                 string parameterName, parameterValue;
-                if (argument.TryGetParameter(out parameterName, out parameterValue))
+                if (argument.TryGetParameter(out parameterName, out parameterValue) && parameterName != "Culture")
                 {
                     IParameterInfo pi;
                     if (ParameterInfos.TryGetValue(parameterName, out pi))
-                        return pi.InterfaceType == typeof(ILineNonCanonicalKey) || pi.InterfaceType == typeof(ILineCanonicalKey);
+                        return pi.InterfaceType != typeof(ILineNonCanonicalKey) && pi.InterfaceType != typeof(ILineCanonicalKey);
                 }
 
                 return true;
