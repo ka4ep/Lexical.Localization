@@ -506,16 +506,17 @@ namespace Lexical.Localization.StringFormat
                                     // Key has explicit culture and value, use the value
                                     if (preferenceIndex == 0 && (features.String != null || features.StringText != null))
                                     {
-                                        if (culture == null) culture = CultureInfo.InvariantCulture;
 
                                         // Up status with source info
                                         features.Status.UpResolve(LineStatus.CultureWarningRequestMatchedInvariantCulture);
 
                                         // Up status with culture info
                                         LineStatus cultureStatus =
-                                               culture.Name == "" ? LineStatus.CultureOkRequestMatchedInvariantCulture :
-                                               culture.IsNeutralCulture ? LineStatus.CultureOkRequestMatchedLanguage : LineStatus.CultureOkRequestMatchedLanguageAndRegion;
+                                            culture == null || culture.Name == "" ? LineStatus.CultureOkRequestMatchedInvariantCulture :
+                                            LineStatus.CultureWarningRequestMatchedInvariantCulture;
                                         features.Status.UpCulture(cultureStatus);
+
+                                        if (culture == null) culture = CultureInfo.InvariantCulture;
 
                                         return key;
                                     }
@@ -667,7 +668,7 @@ namespace Lexical.Localization.StringFormat
                                             if (culture == null) culture = CultureInfo.InvariantCulture;
 
                                             // Up status with culture info
-                                            LineStatus cultureStatus =
+                                            LineStatus cultureStatus = 
                                                 culture.Name == "" ? LineStatus.CultureOkMatchedInvariantCulture :
                                                 culture.IsNeutralCulture ? LineStatus.CultureOkMatchedLanguage : LineStatus.CultureOkMatchedLanguageAndRegion;
                                             features.Status.UpCulture(cultureStatus);
@@ -725,9 +726,7 @@ namespace Lexical.Localization.StringFormat
                                     features.Status.UpResolve(LineStatus.ResolveOkFromLine);
 
                                     if (culture == null) culture = CultureInfo.InvariantCulture;
-                                    LineStatus cultureStatus =
-                                        culture.Name == "" ? LineStatus.CultureOkMatchedInvariantCulture :
-                                        culture.IsNeutralCulture ? LineStatus.CultureOkMatchedLanguage : LineStatus.CultureOkMatchedLanguageAndRegion;
+                                    LineStatus cultureStatus = LineStatus.CultureOkMatchedInvariantCulture;
                                     features.Status.UpCulture(cultureStatus);
 
                                     return key;
