@@ -60,8 +60,6 @@ When explicit culture is appended to the ILine, then it overrides the culture in
 # Links
 * [Lexical.Localization.Abstractions](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization.Abstractions) ([NuGet](https://www.nuget.org/packages/Lexical.Localization.Abstractions/))
  * [ICulturePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/CulturePolicy/ICulturePolicy.cs)
- * [ICulturePolicyAssignable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/CulturePolicy/ICulturePolicy.cs)
 * [Lexical.Localization](https://github.com/tagcode/Lexical.Localization/tree/master/Lexical.Localization) ([NuGet](https://www.nuget.org/packages/Lexical.Localization/))
  * [CulturePolicy](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/CulturePolicy/CulturePolicy.cs)
- * [CulturePolicyImmutable](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/CulturePolicy/CulturePolicyImmutable.cs)
- * [CulturePolicyExtensions](https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/CulturePolicy/CulturePolicyExtensions.cs)
+ 

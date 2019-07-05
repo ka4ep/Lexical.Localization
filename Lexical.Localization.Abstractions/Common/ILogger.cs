@@ -5,9 +5,9 @@
 // --------------------------------------------------------
 using System;
 
-#region Interface
 namespace Lexical.Localization.Common
 {
+    #region ILogger
     /// <summary>
     /// Localization logger.
     /// 
@@ -20,25 +20,29 @@ namespace Lexical.Localization.Common
     public interface ILogger
     {
     }
+    #endregion ILogger
 }
 
 namespace Lexical.Localization.StringFormat
 {
+    #region IStringResolverLogger
     /// <summary>
     /// Logger that logs string resolving of <see cref="IStringResolver"/>.
     /// </summary>
     public interface IStringResolverLogger : Lexical.Localization.Common.ILogger, IObserver<LineString>
     {
     }
+    #endregion IStringResolverLogger
 }
 
 namespace Lexical.Localization.Resource
 {
+    #region IResourceResolverLogger
     /// <summary>
     /// Logger that logs resource resolving of <see cref="IResourceResolver"/>.
     /// </summary>
     public interface IResourceResolverLogger : Lexical.Localization.Common.ILogger, IObserver<LineResourceBytes>, IObserver<LineResourceStream>
     {
     }
+    #endregion IResourceResolverLogger
 }
-#endregion Interface

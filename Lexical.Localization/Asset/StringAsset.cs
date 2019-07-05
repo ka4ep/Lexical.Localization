@@ -557,7 +557,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="observer"></param>
         /// <returns></returns>
-        public IDisposable Subscribe(IObserver<IAssetEvent> observer)
+        public IDisposable Subscribe(IObserver<IFileEvent> observer)
         {
             // TODO
             return null;
@@ -594,7 +594,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Collection of lines
     /// </summary>
-    public class Collection : IObserver<IAssetSourceEvent>, IEnumerable<ILine>, IEnumerable<KeyValuePair<string, IString>>
+    public class Collection : IObserver<IFileSourceEvent>, IEnumerable<ILine>, IEnumerable<KeyValuePair<string, IString>>
     {
         /// <summary>
         /// Reader, the original reference.
@@ -680,7 +680,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         public void SubscribeObserving()
         {
-            if (reader is IObservable<IAssetSourceEvent> observable)
+            if (reader is IObservable<IFileSourceEvent> observable)
             {
                 try
                 {
@@ -916,7 +916,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Asset source stopped sending events
         /// </summary>
-        void IObserver<IAssetSourceEvent>.OnCompleted()
+        void IObserver<IFileSourceEvent>.OnCompleted()
         {
             // Cancel observer
             Interlocked.CompareExchange(ref observerHandle, null, observerHandle)?.Dispose();
@@ -926,7 +926,7 @@ namespace Lexical.Localization.Asset
         /// Error while monitoring asset source
         /// </summary>
         /// <param name="error"></param>
-        void IObserver<IAssetSourceEvent>.OnError(Exception error)
+        void IObserver<IFileSourceEvent>.OnError(Exception error)
         {
         }
 
@@ -934,9 +934,9 @@ namespace Lexical.Localization.Asset
         /// Source file changed.
         /// </summary>
         /// <param name="value"></param>
-        void IObserver<IAssetSourceEvent>.OnNext(IAssetSourceEvent value)
+        void IObserver<IFileSourceEvent>.OnNext(IFileSourceEvent value)
         {
-            if (value is IAssetChangeEvent changeEvent)
+            if (value is IFileChangeEvent changeEvent)
             {
                 // Discard snapshot
                 keyLines = null;

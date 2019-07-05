@@ -102,9 +102,10 @@ namespace Lexical.Localization
         /// <returns>true if parse was successful</returns>
         bool TryParse(string str, out ILine key, ILine prevPart = default, ILineFactory appender = default);
     }
+    #endregion ILineParser
 
     /// <summary>
-    /// Line format that has assignable appender.
+    /// Line format that has a factory assigned.
     /// </summary>
     public interface ILineFormatFactory : ILineFormat
     {
@@ -113,7 +114,6 @@ namespace Lexical.Localization
         /// </summary>
         ILineFactory LineFactory { get; set; }
     }
-    #endregion ILineParser
 
     /// <summary>
     /// Extension functions for <see cref="ILineFormat"/>.

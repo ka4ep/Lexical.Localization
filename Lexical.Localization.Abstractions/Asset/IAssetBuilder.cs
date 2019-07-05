@@ -29,6 +29,24 @@ namespace Lexical.Localization.Asset
         /// <returns></returns>
         IAsset Build();
     }
+
+    /// <summary>
+    /// Component of <see cref="IAssetBuilder"/>.
+    /// </summary>
+    public interface IAssetBuilderPart
+    {
+    }
+
+    /// <summary>
+    /// Policy whether the built asset should be observed and reloaded when modified.
+    /// </summary>
+    public interface IAssetReloadPolicy : IAssetBuilderPart
+    {
+        /// <summary>
+        /// Policy whether assets should be observed and reloaded if they are modified.
+        /// </summary>
+        bool Reload { get; }
+    }
     #endregion interface
 }
 

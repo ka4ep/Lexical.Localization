@@ -85,7 +85,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="observer"></param>
         /// <returns></returns>
-        public IDisposable Subscribe(IObserver<IAssetSourceEvent> observer)
+        public IDisposable Subscribe(IObserver<IFileSourceEvent> observer)
             => new FileObserver(this, observer, FilePath);
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Associated observer
         /// </summary>
-        IObserver<IAssetSourceEvent> Observer;
+        IObserver<IFileSourceEvent> Observer;
 
         /// <summary>
         /// File to observe
@@ -176,7 +176,7 @@ namespace Lexical.Localization.Asset
         /// <param name="assetSource"></param>
         /// <param name="observer"></param>
         /// <param name="filePath"></param>
-        public FileObserver(IAssetSource assetSource, IObserver<IAssetSourceEvent> observer, string filePath)
+        public FileObserver(IAssetSource assetSource, IObserver<IFileSourceEvent> observer, string filePath)
         {
             this.AssetSource = assetSource ?? throw new ArgumentNullException(nameof(assetSource));
             Observer = observer ?? throw new ArgumentNullException(nameof(observer));
@@ -199,7 +199,7 @@ namespace Lexical.Localization.Asset
         {
             var _observer = Observer;
             if (_observer == null) return;
-            IAssetSourceEvent ae = new AssetSourceChangedEvent(AssetSource, e.ChangeType);
+            IFileSourceEvent ae = new FileSourceChangedEvent(AssetSource, e.ChangeType);
             Observer.OnNext(ae);
         }
 

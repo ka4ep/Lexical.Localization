@@ -1,11 +1,19 @@
 ﻿# Introduction
 <details>
-  <summary><b>Lexical.Localization.Common.ILogger</b> is interface for logging string and resource resolve results. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Common/ILogger.cs#Interface)]
+  <summary><b>Lexical.Localization.Common.ILogger</b> is the root interface for loggers. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Common/ILogger.cs#ILogger)]
+</details>
+<details>
+  <summary><b>Lexical.Localization.StringFormat.IStringResolverLogger</b> is for logging string resolve results. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Common/ILogger.cs#IStringResolverLogger)]
+</details>
+<details>
+  <summary><b>Lexical.Localization.Resource.IResourceResolverLogger</b> is for logging resource resolve results. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Common/ILogger.cs#IResourceResolverLogger)]
 </details>
 <br />
 
-**LineStatusSeverity** four severity levels.
+**LineStatusSeverity** has four severity levels.
 
 | Level | Description |
 |:-------|:-------|

@@ -23,7 +23,7 @@ namespace Lexical.Localization
     public static partial class ILineExtensions
     {
         /// <summary>
-        /// Append localizatoin asset.
+        /// Append localization asset.
         /// </summary>
         /// <param name="line"></param>
         /// <param name="asset"></param>
@@ -32,7 +32,7 @@ namespace Lexical.Localization
             => line.Append<ILineAsset, IAsset>(asset);
 
         /// <summary>
-        /// Append localizatoin asset.
+        /// Append localization asset.
         /// </summary>
         /// <param name="lineFactory"></param>
         /// <param name="asset"></param>
