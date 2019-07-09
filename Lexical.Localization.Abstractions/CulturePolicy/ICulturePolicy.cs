@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace Lexical.Localization
 {
-    #region ICulturePolicy
+    // <ICulturePolicy>
     /// <summary>
     /// Interface for policy that returns active culture policy, and fallback cultures.
     /// </summary>
@@ -24,9 +24,9 @@ namespace Lexical.Localization
         /// </summary>
         CultureInfo[] Cultures { get; }
     }
-    #endregion ICulturePolicy
+    // </ICulturePolicy>
 
-    #region ICulturePolicyAssignable
+    // <ICulturePolicyAssignable>
     /// <summary>
     /// Interface for culture policy where culture is assignable.
     /// </summary>
@@ -39,5 +39,5 @@ namespace Lexical.Localization
         /// <returns></returns>
         ICulturePolicyAssignable SetSource(ICulturePolicy cultureSource);
     }
-    #endregion ICulturePolicyAssignable
+    // </ICulturePolicyAssignable>
 }

@@ -10,155 +10,6 @@ retrieve language strings and binary resources.
 Asset interfaces are not called directly but used instead by calling extension methods of IAsset.
 [!code-csharp[Snippet](IAsset_Examples.cs#Snippet_2)]
 
-<details>
-<summary>Table of IAsset interfaces. (<u>Click to expand</u>)</summary>
-
-<table>
-    <thead> 
-    <tr> 
-       <th>Name</th> 
-       <th>Description</th> 
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAsset.cs">IAsset</a></td>
-       <td>Root interface.</td>
-    </tr>
-    <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IResourceAsset.cs">IResourceAsset</a></td>
-       <td>Provides culture specific binary resources, such as icons and sounds</td>
-    </tr>
-    <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/StringAsset/IStringAsset.cs">IStringAsset</a></td>
-       <td>Provides culture specific language strings</td>
-    </tr>
-    <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/StringAsset/IAssetCultureEnumerable.cs">IAssetCultureEnumerable</a></td>
-       <td>Enumerates available cultures</td>
-    </tr>
-    <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetCache.cs">IAssetCache</a></td>
-       <td>Cache feature</td>
-    </tr>
-    <tr>
-       <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetCache.cs">IAssetCachePart</a></td>
-       <td>Handles cache for specific interface</td>
-    </tr>
-    <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetComposition.cs">IAssetComposition</a></td>
-       <td>Composition of IAsset components</td>
-    </tr>
-    <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetProvider.cs">IAssetProvider</a></td>
-       <td>Loads IAssets from files as needed</td>
-    </tr>
-    <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetLoader.cs">IAssetLoader</a></td>
-       <td>Loads IAssets from files as needed, and is configurable</td>
-    </tr>
-    <tr>
-       <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetLoaderPart.cs">IAssetLoaderPart</a></td>
-       <td>Loader object</td>
-    </tr>
-    <tr>
-       <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAssetLoader/IAssetLoaderPartResourceManager.cs">IAssetLoaderPartResourceManager</a></td>
-       <td>Loader object for .resources files</td>
-    </tr>
-    <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetReloadable.cs">IAssetReloadable</a></td>
-       <td>Interface to reload content and clear caches.</td>
-    </tr>
-    <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetBuilder.cs">IAssetBuilder</a></td>
-       <td>Configurable to construct new IAsset instances</td>
-    </tr>
-    <tr>
-       <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IAssetSource.cs">IAssetSource</a></td>
-       <td>Used with IAssetBuilder for Dependency Injection (DI) cases</td>
-    </tr>
-    </tbody>
-</table>
-
-</details>
-
-
-
-<details>
-  <summary>Table of IAsset implementing classes. (<u>Click to expand</u>)</summary>
-<table>
-<thead>
-    <tr>
-    <th>Name</th>
-    <th>Description</th>
-    </tr>
-</thead>
-<tbody>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/AssetFunc.cs">AssetFunc</a></td>
-      <td>Calls delegate Func&lt;IAsset&gt; to provide IAsset</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringAsset.cs">StringAsset</a></td>
-      <td>Adapts Dictionary&lt;string, string&gt; to IAsset</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringAssetFunc.cs">StringAssetFunc</a></td>
-      <td>Adapts Func&lt;ILine, string&gt; to IAsset</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/ResourceManagerAsset.cs">ResourceManagerAsset</a></td>
-      <td>Adapts ResourceManager to IAsset</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringLocalizerAsset.cs">StringLocalizerAsset</a></td>
-      <td>Adapts IStringLocalizer to IAsset</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/StringLocalizerFactoryAsset.cs">StringLocalizerFactoryAsset</a></td>
-      <td>Adapts IStringLocalizerFactory to IAsset</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Asset/AssetBuilder.cs">AssetBuilder</a></td>
-      <td>Instantiates new IAsset</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Asset/AssetSource.cs">AssetSource</a></td>
-      <td>Adds asset as component when IAssetBuilder builds a new asset</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/ResourceManagerStringLocalizerAssetSource.cs">ResourceManagerStringLocalizerAssetSource</a></td>
-      <td>Adapts location of .resources file to IAssetSource</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Asset/AssetCache.cs">AssetCache</a></td>
-      <td>Requests are cached</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Asset/AssetCachePartResources.cs">AssetCachePartResources</a></td>
-      <td>A part that adds feature to cache resource requests.</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/AssetCachePartStrings.cs">AssetCachePartStrings</a></td>
-      <td>A part that adds feature to cache string requests.</td>
-    </tr>
-    <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/StringAsset/AssetCachePartCultures.cs">AssetCachePartCultures</a></td>
-      <td>A part that adds feature to cache culture enumeration requests.</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Asset/AssetComposition.cs">AssetComposition</a></td>
-      <td>Composes IAsset composites into an unifying IAsset</td>
-    </tr>
-    <tr>
-      <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization/Asset/AssetResourceDictionary.cs">AssetResourceDictionary</a></td>
-      <td>Converts Dictionary&lt;string, byte[]&gt; to IAsset</td>
-    </tr>
-</tbody>
-</table>
-
-</details>
-
 
 # Asset Composition
 
@@ -167,7 +18,7 @@ Asset interfaces are not called directly but used instead by calling extension m
 
 <details>
   <summary><b>IAssetComposition</b> is the interface for classes that composes IAsset components. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Asset/IAssetComposition.cs#interfaces)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Asset/IAssetComposition.cs#doc)]
 </details>
 
 
@@ -193,11 +44,11 @@ Extension method **AddLexicalLocalization()** adds IAsset, ILineRoot, ICulturePr
 
 <details>
   <summary><b>IAssetBuilder</b> is the interface for factory class(es) that instantiate IAssets. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Asset/IAssetBuilder.cs#interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Asset/IAssetBuilder.cs#doc)]
 </details>
 <details>
   <summary><b>IAssetSource</b> is the interface for sources that contribute asset(s) to the built result. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Asset/IAssetSource.cs#interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Asset/IAssetSource.cs#doc)]
 </details>
 
 
@@ -221,7 +72,7 @@ And then there is one extension method **CreateCache()** that wraps the asset in
 <p/>
 <details>
   <summary><b>IAssetCache</b> is the interface for cache implementatations. It is a composition of cache parts. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Asset/IAssetCache.cs#interfaces)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Asset/IAssetCache.cs#doc)]
 </details>
 
 ## Caching options

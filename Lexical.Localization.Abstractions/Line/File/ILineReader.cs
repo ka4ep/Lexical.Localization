@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Lexical.Localization
 {
-    #region Interface
+    // <doc>
     /// <summary>
     /// Signals that file format can read localization files.
     /// 
@@ -114,5 +114,5 @@ namespace Lexical.Localization
         /// <exception cref="IOException"></exception>
         IEnumerable<KeyValuePair<string, IString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default);
     }
-    #endregion Interface
+    // </doc>
 }

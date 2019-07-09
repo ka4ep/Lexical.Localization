@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Lexical.Localization
 {
-    #region Interface
+    // <Interface>
     /// <summary>
     /// Flags for write operation to localization files.
     /// </summary>
@@ -208,5 +208,5 @@ namespace Lexical.Localization
         /// <exception cref="IOException"></exception>
         void WriteLineTree(ILineTree tree, TextReader srcText, TextWriter dstText, ILineFormat lineFormat, LineFileWriteFlags flags);
     }
-    #endregion Interface
+    // </Interface>
 }

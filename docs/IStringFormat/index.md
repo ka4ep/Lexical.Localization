@@ -1,7 +1,7 @@
 ﻿# Introduction
 <details>
   <summary><b>IStringFormat</b> is interface for printers and parsers of string formats. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/StringFormat/IStringFormat.cs#Interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/StringFormat/IStringFormat.cs#doc)]
 </details>
 <br />
 

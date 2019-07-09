@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Lexical.Localization.Asset
 {
-    #region interface
+    // <doc>
     /// <summary>
     /// Source of assets. Adds resources to builder's list.
     /// </summary>
@@ -32,9 +32,9 @@ namespace Lexical.Localization.Asset
         /// <returns>asset or component</returns>
         IAsset PostBuild(IAsset asset);
     }
-    #endregion interface
+    // </doc>
 
-    #region interface_2
+    // <doc2>
     /// <summary>
     /// Signal for asset source that returns localization lines.
     /// </summary>
@@ -66,9 +66,9 @@ namespace Lexical.Localization.Asset
     public interface ILineTreeSource : ILineSource, IEnumerable<ILineTree>
     {
     }
-    #endregion interface_2
+    // </doc2>
 
-    #region attribute
+    // <attribute>
     /// <summary>
     /// Used with dependency injection as a service type of multiple <see cref="IAssetSource"/>s.
     /// 
@@ -84,5 +84,5 @@ namespace Lexical.Localization.Asset
     /// asset sources for the class library.
     /// </summary>
     public interface ILibraryAssetSources : IAssetSources { }
-    #endregion attribute
+    // </attribute>
 }

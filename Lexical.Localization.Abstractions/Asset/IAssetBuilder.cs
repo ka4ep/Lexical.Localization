@@ -10,7 +10,7 @@ using System;
 
 namespace Lexical.Localization.Asset
 {
-    #region interface
+    // <doc>
     /// <summary>
     /// Builder that can create <see cref="IAsset"/> instance(s).
     /// 
@@ -47,7 +47,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         bool Reload { get; }
     }
-    #endregion interface
+    // </doc>
 }
 
 namespace Lexical.Localization

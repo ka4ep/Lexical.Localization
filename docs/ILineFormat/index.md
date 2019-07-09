@@ -62,7 +62,7 @@ Example of escaped key "Success\\:Plural".
 # LinePattern
 <details>
   <summary><b>ILinePattern</b> is interface for name patterns. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILinePattern.cs#Interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Format/ILinePattern.cs#doc)]
 </details>
 <br />
 

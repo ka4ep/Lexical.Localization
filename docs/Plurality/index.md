@@ -1,5 +1,5 @@
 ﻿# Plurality
-Language strings with numeric arguments can be customized for declination of pluralized nouns.
+Language strings with numeric arguments, for example "There are {0} cats.", can be customized for pluralized nouns.
 
 Plural *category* is placed into argument placeholder, for example "There are {cardinal:0} cats.".
 The available cases depend on the culture and the *category*. 

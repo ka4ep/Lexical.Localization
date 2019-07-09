@@ -107,7 +107,7 @@ And into a tree.
 # Implementing
 <details>
   <summary><b>ILineReader</b> is the root interface for localization reader classes. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/File/ILineReader.cs#Interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/File/ILineReader.cs#doc)]
 </details>
 <br/>
 A class that implements **ILineReader** must to implement one of its sub-interfaces. A one that best suits the underlying format.

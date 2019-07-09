@@ -7,7 +7,7 @@ using System;
 
 namespace Lexical.Localization.Common
 {
-    #region ILogger
+    // <ILogger>
     /// <summary>
     /// Localization logger.
     /// 
@@ -20,29 +20,29 @@ namespace Lexical.Localization.Common
     public interface ILogger
     {
     }
-    #endregion ILogger
+    // </ILogger>
 }
 
 namespace Lexical.Localization.StringFormat
 {
-    #region IStringResolverLogger
+    // <IStringResolverLogger>
     /// <summary>
     /// Logger that logs string resolving of <see cref="IStringResolver"/>.
     /// </summary>
     public interface IStringResolverLogger : Lexical.Localization.Common.ILogger, IObserver<LineString>
     {
     }
-    #endregion IStringResolverLogger
+    // </IStringResolverLogger>
 }
 
 namespace Lexical.Localization.Resource
 {
-    #region IResourceResolverLogger
+    // <IResourceResolverLogger>
     /// <summary>
     /// Logger that logs resource resolving of <see cref="IResourceResolver"/>.
     /// </summary>
     public interface IResourceResolverLogger : Lexical.Localization.Common.ILogger, IObserver<LineResourceBytes>, IObserver<LineResourceStream>
     {
     }
-    #endregion IResourceResolverLogger
+    // </IResourceResolverLogger>
 }

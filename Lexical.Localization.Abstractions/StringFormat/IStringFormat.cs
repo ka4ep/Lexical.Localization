@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Lexical.Localization.StringFormat
 {
-    #region Interface
+    // <doc>
     /// <summary>
     /// String format of string value. 
     /// 
@@ -70,7 +70,7 @@ namespace Lexical.Localization.StringFormat
         /// <returns>format string</returns>
         LineString Print(IString str);
     }
-    #endregion Interface
+    // </doc>
 
     /// <summary>
     /// A map of formats

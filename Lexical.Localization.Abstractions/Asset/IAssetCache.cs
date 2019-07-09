@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Lexical.Localization.Asset
 {
-    #region interfaces
+    // <doc>
     /// <summary>
     /// Asset cache is decorator that caches requests of source object.
     /// 
@@ -34,9 +34,9 @@ namespace Lexical.Localization.Asset
     public interface IAssetCachePart : IAsset
     {
     }
-    #endregion interfaces
+    // </doc>
 
-    #region options
+    // <options>
     /// <summary>
     /// Cache options dictionary
     /// </summary>
@@ -66,7 +66,7 @@ namespace Lexical.Localization.Asset
         public override string ToString()
             => $"{GetType().Name}({String.Join(", ", this.Select(kp=>$"{kp.Key}={kp.Value}"))})";
     }
-    #endregion options
+    // <options>
 }
 
 namespace Lexical.Localization

@@ -12,7 +12,7 @@ using Lexical.Localization.Utils;
 
 namespace Lexical.Localization
 {
-    #region Interface
+    // <doc>
     /// <summary>
     /// A name pattern, akin to regular expression, that can be matched against filenames and <see cref="ILine"/> instances.
     /// Is a sequence of parameter and text parts.
@@ -211,7 +211,7 @@ namespace Lexical.Localization
         /// </summary>
         bool Success { get; }
     }
-    #endregion Interface
+    // </doc>
 
     /// <summary>
     /// Extension methods for <see cref="ILinePattern"/>.

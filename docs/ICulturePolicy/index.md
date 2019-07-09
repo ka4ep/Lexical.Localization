@@ -5,7 +5,7 @@
 </details>
 
 <details>
-  <summary><b>ICulturePolicyAssignable</b> is interface for classes where policy can be modified. (<u>click here</u>)</summary>
+  <summary><b>ICulturePolicyAssignable</b> is interface for modifiable culture policy. (<u>click here</u>)</summary>
 [!code-csharp[Snippet](../../Lexical.Localization.Abstractions/CulturePolicy/ICulturePolicy.cs#ICulturePolicyAssignable)]
 </details>
 <br/>

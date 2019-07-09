@@ -1,11 +1,11 @@
 ﻿# Introduction
 <details>
   <summary><b>ILineFactory</b> constructs ILine parts. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/ILineFactory.cs#Interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/ILineFactory.cs#doc)]
 </details>
 <details>
   <summary><b>ILineAppendable</b> is interface ILine parts that can be appended. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Parts/ILineAppendable.cs#Interface)]
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Line/Parts/ILineAppendable.cs#doc)]
 </details>
 <br />
 

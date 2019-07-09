@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Lexical.Localization.Asset
 {
-    #region interface
+    // <doc>
     /// <summary>
     /// Loads assets based on parameters in keys.
     /// </summary>
@@ -42,5 +42,5 @@ namespace Lexical.Localization.Asset
         /// <exception cref="AssetException">If loading failed</exception>
         IEnumerable<IAsset> LoadAllAssets(ILine key);
     }
-    #endregion interface
+    // </doc>
 }

@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Lexical.Localization.Asset
 {
-    #region interfaces
+    // <doc>
     /// <summary>
     /// Composition of <see cref="IAsset"/> components.
     /// </summary>
@@ -30,5 +30,5 @@ namespace Lexical.Localization.Asset
         /// <returns>enumerable or null</returns>
         IEnumerable<T> GetComponents<T>(bool recursive) where T : IAsset;
     }
-    #endregion interfaces
+    // </doc>
 }

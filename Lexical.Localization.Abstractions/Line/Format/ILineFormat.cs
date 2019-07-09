@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Lexical.Localization
 {
-    #region ILineFormat
+    // <ILineFormat>
     /// <summary>
     /// Line format makes conversions between <see cref="ILine"/> and <see cref="String"/>.
     /// 
@@ -24,9 +24,9 @@ namespace Lexical.Localization
     public interface ILineFormat
     {
     }
-    #endregion ILineFormat
+    // </ILineFormat>
 
-    #region ILinePrinter
+    // <ILinePrinter>
     /// <summary>
     /// Converts <see cref="ILine"/> to string.
     /// </summary>
@@ -41,9 +41,9 @@ namespace Lexical.Localization
         /// <returns>full name string</returns>
         string Print(ILine line);
     }
-    #endregion ILinePrinter
+    // </ILinePrinter>
 
-    #region ILineParser
+    // <ILineParser>
     /// <summary>
     /// Parses string into <see cref="ILine"/>.
     /// </summary>
@@ -102,7 +102,7 @@ namespace Lexical.Localization
         /// <returns>true if parse was successful</returns>
         bool TryParse(string str, out ILine key, ILine prevPart = default, ILineFactory appender = default);
     }
-    #endregion ILineParser
+    // </ILineParser>
 
     /// <summary>
     /// Line format that has a factory assigned.
