@@ -15,7 +15,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Asset file source.
     /// </summary>
-    public abstract class FileSource : IAssetSource, IAssetSourceObservable
+    public abstract class FileSource : IAssetSource//, IAssetSourceObservable
     {
         /// <summary>
         /// (optional) Overriding explicit path. 
@@ -85,8 +85,8 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="observer"></param>
         /// <returns></returns>
-        public IDisposable Subscribe(IObserver<IFileSourceEvent> observer)
-            => new FileObserver(this, observer, FilePath);
+        //public IDisposable Subscribe(IObserver<IFileSourceEvent> observer)
+            //=> new FileObserver(this, observer, FilePath);
 
         /// <summary>
         /// Print info of source
@@ -144,7 +144,7 @@ namespace Lexical.Localization.Asset
         public override string ToString()
             => System.IO.Path.Combine(Path, FilePattern.Pattern);
     }
-
+    /*
     /// <summary>
     /// File observer
     /// </summary>
@@ -241,5 +241,5 @@ namespace Lexical.Localization.Asset
             if (errors.Count > 0) throw new AggregateException(errors);
         }
     }
-
+    */
 }

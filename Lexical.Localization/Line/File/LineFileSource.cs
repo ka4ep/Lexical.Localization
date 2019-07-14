@@ -13,6 +13,7 @@ using System.Linq;
 
 namespace Lexical.Localization
 {
+
     /// <summary>
     /// Localization file source.
     /// </summary>

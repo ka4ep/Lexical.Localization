@@ -27,8 +27,7 @@ namespace Lexical.Localization.Asset
         IStringAssetLinesEnumerable,
         IAssetCultureEnumerable,
         IAssetReloadable,
-        IDisposable,
-        IAssetObservable
+        IDisposable
     {
         /// <summary>
         /// Get or load key-lines
@@ -444,7 +443,7 @@ namespace Lexical.Localization.Asset
             var _errorHandler = errorHandler ?? this.errorHandler;
             Collection collection = new Collection(reader, lineFormat, _errorHandler, this, disposeReader);
             // Start observing file changes
-            collection.SubscribeObserving();
+            //collection.SubscribeObserving();
             // Add to collection
             bool addedOk = collections.TryAdd(reader, collection);
 
@@ -553,17 +552,6 @@ namespace Lexical.Localization.Asset
         }
 
         /// <summary>
-        /// Subscribe for content change events
-        /// </summary>
-        /// <param name="observer"></param>
-        /// <returns></returns>
-        public IDisposable Subscribe(IObserver<IFileEvent> observer)
-        {
-            // TODO
-            return null;
-        }
-
-        /// <summary>
         /// Print name of the class.
         /// </summary>
         /// <returns></returns>
@@ -594,7 +582,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Collection of lines
     /// </summary>
-    public class Collection : IObserver<IFileSourceEvent>, IEnumerable<ILine>, IEnumerable<KeyValuePair<string, IString>>
+    public class Collection : IEnumerable<ILine>, IEnumerable<KeyValuePair<string, IString>>, IObserver<IFileSystemEntryEvent>
     {
         /// <summary>
         /// Reader, the original reference.
@@ -673,24 +661,6 @@ namespace Lexical.Localization.Asset
             else if (reader is IEnumerable<KeyValuePair<ILine, string>> keyLinesReader_) this.Type = CollectionType.KeyLines;
             else if (reader is IEnumerable<KeyValuePair<string, string>> stringLinesReader_) this.Type = CollectionType.StringLines;
             else throw new ArgumentException($"Cannot read from {reader.GetType().FullName}: {reader}");
-        }
-
-        /// <summary>
-        /// Start observing file changes
-        /// </summary>
-        public void SubscribeObserving()
-        {
-            if (reader is IObservable<IFileSourceEvent> observable)
-            {
-                try
-                {
-                    observerHandle = observable.Subscribe(this);
-                }
-                catch (Exception e) when (errorHandler != null && errorHandler(e))
-                {
-                    // Observing failed, but discard the problem as per error handler.
-                }
-            }
         }
 
         /// <summary>
@@ -916,7 +886,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Asset source stopped sending events
         /// </summary>
-        void IObserver<IFileSourceEvent>.OnCompleted()
+        void IObserver<IFileSystemEntryEvent>.OnCompleted()
         {
             // Cancel observer
             Interlocked.CompareExchange(ref observerHandle, null, observerHandle)?.Dispose();
@@ -926,7 +896,7 @@ namespace Lexical.Localization.Asset
         /// Error while monitoring asset source
         /// </summary>
         /// <param name="error"></param>
-        void IObserver<IFileSourceEvent>.OnError(Exception error)
+        void IObserver<IFileSystemEntryEvent>.OnError(Exception error)
         {
         }
 
@@ -934,15 +904,16 @@ namespace Lexical.Localization.Asset
         /// Source file changed.
         /// </summary>
         /// <param name="value"></param>
-        void IObserver<IFileSourceEvent>.OnNext(IFileSourceEvent value)
+        void IObserver<IFileSystemEntryEvent>.OnNext(IFileSystemEntryEvent value)
         {
+            /*
             if (value is IFileChangeEvent changeEvent)
             {
                 // Discard snapshot
                 keyLines = null;
                 // Start timer that reloads collections
                 parent.StartReloadTimer();
-            }
+            }*/
         }
 
         /// <summary>
