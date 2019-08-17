@@ -582,7 +582,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Collection of lines
     /// </summary>
-    public class Collection : IEnumerable<ILine>, IEnumerable<KeyValuePair<string, IString>>, IObserver<IFileSystemEntryEvent>
+    public class Collection : IEnumerable<ILine>, IEnumerable<KeyValuePair<string, IString>>, IObserver<FileSystemEntryEvent>
     {
         /// <summary>
         /// Reader, the original reference.
@@ -886,7 +886,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Asset source stopped sending events
         /// </summary>
-        void IObserver<IFileSystemEntryEvent>.OnCompleted()
+        void IObserver<FileSystemEntryEvent>.OnCompleted()
         {
             // Cancel observer
             Interlocked.CompareExchange(ref observerHandle, null, observerHandle)?.Dispose();
@@ -896,7 +896,7 @@ namespace Lexical.Localization.Asset
         /// Error while monitoring asset source
         /// </summary>
         /// <param name="error"></param>
-        void IObserver<IFileSystemEntryEvent>.OnError(Exception error)
+        void IObserver<FileSystemEntryEvent>.OnError(Exception error)
         {
         }
 
@@ -904,7 +904,7 @@ namespace Lexical.Localization.Asset
         /// Source file changed.
         /// </summary>
         /// <param name="value"></param>
-        void IObserver<IFileSystemEntryEvent>.OnNext(IFileSystemEntryEvent value)
+        void IObserver<FileSystemEntryEvent>.OnNext(FileSystemEntryEvent value)
         {
             /*
             if (value is IFileChangeEvent changeEvent)

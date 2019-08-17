@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Threading;
 
 namespace Lexical.Localization.Asset
@@ -21,10 +22,10 @@ namespace Lexical.Localization.Asset
     /// If file watchers have been created, and file system is disposed, then watchers will be disposed also. 
     /// <see cref="IObserver{T}.OnCompleted"/> event is forwarded to watchers.
     /// </summary>
-    public class FileSystem : AbstractFileSystem, IFileSystem, IFileSystemBrowser, IFileSystemObserver, IFileSystemReader, IFileSystemWriter
+    public class FileSystem : FileSystemBase, IFileSystem, IFileSystemBrowse, IFileSystemOpen, IFileSystemDelete, IFileSystemMove, IFileSystemCreateDirectory, IFileSystemObserve
     {
-        static FileSystem osRoot = new FileSystem("", false);
-        static Lazy<FileSystem> applicationRoot = new Lazy<FileSystem>( () => new FileSystem(AppDomain.CurrentDomain.BaseDirectory, false) );
+        static FileSystem osRoot = new FileSystem("");
+        static Lazy<FileSystem> applicationRoot = new Lazy<FileSystem>(() => new FileSystem(AppDomain.CurrentDomain.BaseDirectory));
 
         /// <summary>
         /// File system system that reads from application base directory (application resources).
@@ -42,103 +43,202 @@ namespace Lexical.Localization.Asset
         public readonly string RootPath;
 
         /// <summary>
-        /// Allow relative paths over root's parent. 
-        /// 
-        /// For example, relative "../dir/file.json" is over root's parent. If value is true, then this relative path is permitted.
-        /// </summary>
-        public readonly bool AllowRootParent;
-
-        /// <summary>
         /// Full absolute root path.
         /// <see cref="RootPath"/> ran with <see cref="System.IO.Path.GetFullPath(string)"/>.
         /// </summary>
         public readonly string AbsoluteRootPath;
-        
+
+        /// <summary>
+        /// Get capabilities.
+        /// </summary>
+        public override FileSystemCapabilities Capabilities =>
+            FileSystemCapabilities.Browse | FileSystemCapabilities.CreateDirectory | FileSystemCapabilities.Delete | FileSystemCapabilities.Move |
+            FileSystemCapabilities.Observe | 
+            FileSystemCapabilities.Open | FileSystemCapabilities.Write | FileSystemCapabilities.Read | FileSystemCapabilities.CreateFile;
+
         /// <summary>
         /// Create asset file system
         /// </summary>
         /// <param name="rootPath"></param>
-        /// <param name="allowRootParent">if true, allows relative paths that go over root's parent, e.g. "../somefile"</param>
-        public FileSystem(string rootPath, bool allowRootParent = false) : base()
+        public FileSystem(string rootPath) : base()
         {
             RootPath = rootPath ?? throw new ArgumentNullException(nameof(rootPath));
             AbsoluteRootPath = System.IO.Path.GetFullPath(rootPath);
-            AllowRootParent = allowRootParent;
         }
 
         /// <summary>
-        /// Try to open a file.
+        /// Open a file for reading and/or writing. File can be created when <paramref name="fileMode"/> is <see cref="FileMode.Create"/> or <see cref="FileMode.CreateNew"/>.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="stream"></param>
-        /// <param name="fileShare"></param>
-        /// <returns></returns>
-        public bool TryRead(string path, out Stream stream, FileShare fileShare = FileShare.ReadWrite | FileShare.Delete)
+        /// <param name="path">Relative path to file. Directory separator is "/". Root is without preceding "/", e.g. "dir/file.xml"</param>
+        /// <param name="fileMode">determines whether to open or to create the file</param>
+        /// <param name="fileAccess">how to access the file, read, write or read and write</param>
+        /// <param name="fileShare">how the file will be shared by processes</param>
+        /// <returns>open file stream</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support opening files</exception>
+        /// <exception cref="FileNotFoundException">The file cannot be found, such as when mode is FileMode.Truncate or FileMode.Open, and and the file specified by path does not exist. The file must already exist in these modes.</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="fileMode"/>, <paramref name="fileAccess"/> or <paramref name="fileShare"/> contains an invalid value.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        public Stream Open(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
         {
-            string concatenatedPath = System.IO.Path.Combine(AbsoluteRootPath, path);
-            string absolutePath = System.IO.Path.GetFullPath(concatenatedPath);
-            if (!AllowRootParent && !absolutePath.StartsWith(AbsoluteRootPath)) { stream = default; return false; }
-            FileInfo fi = new FileInfo(absolutePath);
-            if (!fi.Exists) { stream = default; return false; }
-            stream = new FileStream(absolutePath, FileMode.Open, FileAccess.Read, fileShare);
-            return true;
+            string concatenatedPath = Path.Combine(AbsoluteRootPath, path);
+            string absolutePath = Path.GetFullPath(concatenatedPath);
+            if (!absolutePath.StartsWith(AbsoluteRootPath)) throw new InvalidOperationException("Path cannot refer outside IFileSystem root");
+            return new FileStream(absolutePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, fileShare);
         }
 
         /// <summary>
-        /// Try to open a file for writing (and reading).
+        /// Create a directory, or multiple cascading directories.
+        /// 
+        /// If directory at <paramref name="path"/> already exists, then returns without exception.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="stream"></param>
-        /// <param name="fileShare"></param>
-        /// <returns></returns>
-        public bool TryWrite(string path, out Stream stream, FileShare fileShare = FileShare.ReadWrite | FileShare.Delete)
+        /// <param name="path">Relative path to file. Directory separator is "/". The root is without preceding slash "", e.g. "dir/dir2"</param>
+        /// <returns>true if directory exists after the method, false if directory doesn't exist</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support create directory</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        public void CreateDirectory(string path)
         {
-            string concatenatedPath = System.IO.Path.Combine(AbsoluteRootPath, path);
-            string absolutePath = System.IO.Path.GetFullPath(concatenatedPath);
-            if (!AllowRootParent && !absolutePath.StartsWith(AbsoluteRootPath)) { stream = default; return false; }
-            stream = new FileStream(absolutePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, fileShare);
-            return true;
+            string concatenatedPath = Path.Combine(AbsoluteRootPath, path);
+            string absolutePath = Path.GetFullPath(concatenatedPath);
+            if (!absolutePath.StartsWith(AbsoluteRootPath)) throw new InvalidOperationException("Path cannot refer outside IFileSystem root");
+            Directory.CreateDirectory(absolutePath);
         }
 
         /// <summary>
-        /// Try to observe a file.
+        /// Browse a directory for file and subdirectory entries.
         /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="observer"></param>
-        /// <param name="handle"></param>
-        /// <returns></returns>
-        public bool TryObserve(string filePath, IObserver<IFileSystemEntryEvent> observer, out IDisposable handle)
-        {
-            string concatenatedPath = System.IO.Path.Combine(AbsoluteRootPath, filePath);
-            string absolutePath = System.IO.Path.GetFullPath(concatenatedPath);
-            if (!AllowRootParent && !absolutePath.StartsWith(AbsoluteRootPath)) { handle = default; return false; }
-            handle = new Watcher(this, observer, absolutePath, filePath);
-            return true;
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="files"></param>
-        /// <returns></returns>
-        public bool TryBrowse(string path, out FileSystemEntry[] files)
+        /// <param name="path">path to directory, "" is root, separator is "/"</param>
+        /// <returns>a snapshot of file and directory entries</returns>
+        /// <exception cref="DirectoryNotFoundException"></exception>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support browse</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        public FileSystemEntry[] Browse(string path)
         {
             string concatenatedPath = RootPath == null ? path : (RootPath.EndsWith("/") || RootPath.EndsWith("\\")) ? RootPath + path : RootPath + "/" + path;
+            string absolutePath = Path.GetFullPath(concatenatedPath);
+            if (!absolutePath.StartsWith(AbsoluteRootPath)) throw new InvalidOperationException("Path cannot refer outside IFileSystem root");
 
             DirectoryInfo dir = new DirectoryInfo(concatenatedPath);
-            if (!dir.Exists) { files = default; return false; }
+            if (!dir.Exists) throw new DirectoryNotFoundException(path);
 
             StructList24<FileSystemEntry> list = new StructList24<FileSystemEntry>();
             foreach(DirectoryInfo di in dir.GetDirectories())
             {
-                list.Add(new FileSystemEntry { FileSystem = this, LastModified = di.LastWriteTimeUtc, Name = di.Name, Path = concatenatedPath + "/" + di.Name, Length = -1L, Type = FileSystemEntryType.Directory });
+                list.Add(new FileSystemEntry { FileSystem = this, LastModified = di.LastWriteTimeUtc, Name = di.Name, Path = path.Length>0 ? path + "/" + di.Name : di.Name, Length = -1L, Type = FileSystemEntryType.Directory });
             }
             foreach (FileInfo fi in dir.GetFiles())
             {
-                list.Add(new FileSystemEntry { FileSystem = this, LastModified = fi.LastWriteTimeUtc, Name = fi.Name, Path = concatenatedPath + "/" + fi.Name, Length = fi.Length, Type = FileSystemEntryType.File });
+                list.Add(new FileSystemEntry { FileSystem = this, LastModified = fi.LastWriteTimeUtc, Name = fi.Name, Path = path.Length > 0 ? path + "/" + fi.Name : fi.Name, Length = fi.Length, Type = FileSystemEntryType.File });
             }
-            files = list.ToArray();
-            return true;
+            return list.ToArray();
+        }
+
+        /// <summary>
+        /// Delete a file or directory.
+        /// 
+        /// If <paramref name="recursive"/> is false and <paramref name="path"/> is a directory that is not empty, then <see cref="InvalidOperationException"/> is thrown.
+        /// If <paramref name="recursive"/> is true, then any file or directory within <paramref name="path"/> is deleted as well.
+        /// </summary>
+        /// <param name="path">path to a file or directory</param>
+        /// <param name="recursive">if path refers to directory, recurse into sub directories</param>
+        /// <exception cref="FileNotFoundException">The specified path is invalid.</exception>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support deleting files</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refered to a directory that wasn't empty and <paramref name="recursive"/> is false, or <paramref name="path"/> refers to non-file device</exception>
+        public void Delete(string path, bool recursive = false)
+        {
+            string concatenatedPath = RootPath == null ? path : (RootPath.EndsWith("/") || RootPath.EndsWith("\\")) ? RootPath + path : RootPath + "/" + path;
+            string absolutePath = Path.GetFullPath(concatenatedPath);
+            if (!absolutePath.StartsWith(AbsoluteRootPath)) throw new InvalidOperationException("Path cannot refer outside IFileSystem root");
+
+            FileInfo fi = new FileInfo(concatenatedPath);
+            if (fi.Exists) { fi.Delete(); return; }
+
+            DirectoryInfo di = new DirectoryInfo(concatenatedPath);
+            if (di.Exists) { di.Delete(recursive); return; }
+
+            throw new FileNotFoundException(path);
+        }
+
+        /// <summary>
+        /// Try to move/rename a file or directory.
+        /// </summary>
+        /// <param name="oldPath">old path of a file or directory</param>
+        /// <param name="newPath">new path of a file or directory</param>
+        /// <exception cref="FileNotFoundException">The specified <paramref name="oldPath"/> is invalid.</exception>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="FileNotFoundException">The specified path is invalid.</exception>
+        /// <exception cref="ArgumentNullException">path is null</exception>
+        /// <exception cref="ArgumentException">path is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support renaming/moving files</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">path refers to non-file device, or an entry already exists at <paramref name="newPath"/></exception>
+        public void Move(string oldPath, string newPath)
+        {
+            string oldConcatenatedPath = RootPath == null ? oldPath : (RootPath.EndsWith("/") || RootPath.EndsWith("\\")) ? RootPath + oldPath : RootPath + "/" + oldPath;
+            string newConcatenatedPath = RootPath == null ? newPath : (RootPath.EndsWith("/") || RootPath.EndsWith("\\")) ? RootPath + newPath : RootPath + "/" + newPath;
+
+            string oldPathAbsolute = Path.GetFullPath(oldConcatenatedPath), newPathAbsolute = Path.GetFullPath(newConcatenatedPath);
+            if (!oldPathAbsolute.StartsWith(AbsoluteRootPath)) throw new InvalidOperationException("Path cannot refer outside IFileSystem root");
+            if (!newPathAbsolute.StartsWith(AbsoluteRootPath)) throw new InvalidOperationException("Path cannot refer outside IFileSystem root");
+
+            FileInfo fi = new FileInfo(oldConcatenatedPath);
+            if (fi.Exists) { fi.MoveTo(newConcatenatedPath); return; }
+
+            DirectoryInfo di = new DirectoryInfo(oldConcatenatedPath);
+            if (di.Exists) { di.MoveTo(newConcatenatedPath); return; }
+
+            throw new FileNotFoundException(oldPath);
+        }
+
+        /// <summary>
+        /// Attach an <paramref name="observer"/> on to a single file or directory. 
+        /// Observing a directory will observe the whole subtree.
+        /// </summary>
+        /// <param name="path">path to file or directory. The directory separator is "/". The root is without preceding slash "", e.g. "dir/dir2"</param>
+        /// <param name="observer"></param>
+        /// <returns>dispose handle</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support observe</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        public IDisposable Observe(string path, IObserver<FileSystemEntryEvent> observer)
+        {
+            string concatenatedPath = Path.Combine(AbsoluteRootPath, path);
+            string absolutePath = Path.GetFullPath(concatenatedPath);
+            if (!absolutePath.StartsWith(AbsoluteRootPath)) throw new InvalidOperationException("Path cannot refer outside IFileSystem root");
+
+            return new Watcher(this, observer, absolutePath, path);
         }
 
         /// <summary>
@@ -170,7 +270,7 @@ namespace Lexical.Localization.Asset
             /// <summary>
             /// Callback object.
             /// </summary>
-            protected IObserver<IFileSystemEntryEvent> observer;
+            protected IObserver<FileSystemEntryEvent> observer;
 
             /// <summary>
             /// Create observer for one file.
@@ -179,20 +279,22 @@ namespace Lexical.Localization.Asset
             /// <param name="observer">observer for callbacks</param>
             /// <param name="absolutePath">Absolute path</param>
             /// <param name="relativePath">Relative path (separator is '/')</param>
-            public Watcher(IFileSystem fileSystem, IObserver<IFileSystemEntryEvent> observer, string absolutePath, string relativePath)
+            public Watcher(IFileSystem fileSystem, IObserver<FileSystemEntryEvent> observer, string absolutePath, string relativePath)
             {
                 this.fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
                 this.AbsolutePath = absolutePath ?? throw new ArgumentNullException(nameof(absolutePath));
                 this.RelativePath = relativePath ?? throw new ArgumentNullException(nameof(relativePath));
                 this.observer = observer ?? throw new ArgumentNullException(nameof(observer));
                 relativePath = relativePath ?? throw new ArgumentNullException(nameof(relativePath));
-                FileInfo fi = new FileInfo(relativePath);
+                FileInfo fi = new FileInfo(absolutePath);
                 watcher = new FileSystemWatcher(fi.Directory.FullName, fi.Name);
-                watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime | NotifyFilters.FileName;
-                watcher.IncludeSubdirectories = false;
+                watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size;
+                watcher.IncludeSubdirectories = true;
                 watcher.Changed += OnEvent;
                 watcher.Created += OnEvent;
                 watcher.Deleted += OnEvent;
+                watcher.Renamed += OnEvent;
+                watcher.EnableRaisingEvents = true;
             }
 
             /// <summary>
@@ -210,7 +312,7 @@ namespace Lexical.Localization.Asset
                 if (_fileSystem == null) return; 
 
                 // Forward event.
-                IFileSystemEntryEvent ae = new FileSystemEvent(_fileSystem, e.ChangeType, RelativePath);
+                FileSystemEntryEvent ae = new FileSystemEntryEvent { FileSystem = _fileSystem, ChangeEvents = e.ChangeType, Path = RelativePath };
                 observer.OnNext(ae);
             }
 
@@ -225,7 +327,7 @@ namespace Lexical.Localization.Asset
 
                 // Clear file system reference, and remove watcher from dispose list.
                 IFileSystem _fileSystem = Interlocked.Exchange(ref fileSystem, null);
-                if (_fileSystem is AbstractFileSystem __fileSystem) __fileSystem.RemoveDisposable(this);
+                if (_fileSystem is FileSystemBase __fileSystem) __fileSystem.RemoveDisposable(this);
 
                 StructList2<Exception> errors = new StructList2<Exception>();
                 if (_observer != null)
@@ -258,41 +360,13 @@ namespace Lexical.Localization.Asset
                 if (errors.Count > 0) throw new AggregateException(errors);
             }
         }
-    }
-
-    /// <summary>
-    /// Default implementation of <see cref="IFileSystemEntryEvent"/>. 
-    /// Used by <see cref="IFileSystem"/> implementations.
-    /// </summary>
-    public class FileSystemEvent : IFileSystemEntryEvent
-    {
-        /// <summary>
-        /// System that sent the event.
-        /// </summary>
-        public IFileSystem FileSystem { get; protected set; }
 
         /// <summary>
-        /// Event Change type
+        /// Print info
         /// </summary>
-        public WatcherChangeTypes ChangeEvents { get; protected set; }
-
-        /// <summary>
-        /// Affected file, relative path.
-        /// </summary>
-        public string FilePath { get; protected set; }
-
-        /// <summary>
-        /// Change type
-        /// </summary>
-        /// <param name="system"></param>
-        /// <param name="changeEvents"></param>
-        /// <param name="filePath">affected file path</param>
-        public FileSystemEvent(IFileSystem system, WatcherChangeTypes changeEvents, string filePath)
-        {
-            FileSystem = system;
-            ChangeEvents = changeEvents;
-            FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
-        }
+        /// <returns></returns>
+        public override string ToString()
+            => RootPath;
     }
 
     /// <summary>
@@ -301,8 +375,13 @@ namespace Lexical.Localization.Asset
     /// Disposables can be attached to be disposed along with <see cref="IFileSystem"/>.
     /// Watchers can be attached as disposables, so that they forward <see cref="IObserver{T}.OnCompleted"/> event upon IFileSystem dispose.
     /// </summary>
-    public abstract class AbstractFileSystem : IFileSystem, IDisposable
+    public abstract class FileSystemBase : IFileSystem, IDisposable
     {
+        /// <summary>
+        /// Get capabilities.
+        /// </summary>
+        public virtual FileSystemCapabilities Capabilities { get; }
+
         /// <summary>
         /// Lock for modifying dispose list.
         /// </summary>
@@ -376,7 +455,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// File system that reads, observes and browses files from <see cref="IFileProvider"/> source.
     /// </summary>
-    public class FileSystemProvider : AbstractFileSystem, IFileSystemBrowser, IFileSystemObserver, IFileSystemReader
+    public class FileProviderSystem : FileSystemBase, IFileSystemBrowse, IFileSystemObserve, IFileSystemOpen
     {
         /// <summary>
         /// Optional subpath within the source <see cref="fileProvider"/>.
@@ -388,84 +467,118 @@ namespace Lexical.Localization.Asset
         /// </summary>
         protected IFileProvider fileProvider;
 
+        public override FileSystemCapabilities Capabilities => FileSystemCapabilities.Open | FileSystemCapabilities.Read | FileSystemCapabilities.Observe | FileSystemCapabilities.CreateDirectory;
+
         /// <summary>
         /// Create file provider based file system.
         /// </summary>
         /// <param name="fileProvider"></param>
         /// <param name="subpath">(optional) subpath within the file provider</param>
-        public FileSystemProvider(IFileProvider fileProvider, string subpath = null) : base()
+        public FileProviderSystem(IFileProvider fileProvider, string subpath = null) : base()
         {
             this.fileProvider = fileProvider ?? throw new ArgumentNullException(nameof(subpath));
             this.SubPath = subpath;
         }
 
         /// <summary>
-        /// Try to open file.
+        /// Open a file for reading. 
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="stream"></param>
-        /// <param name="fileShare">(not used)</param>
-        /// <returns></returns>
-        public bool TryRead(string path, out Stream stream, FileShare fileShare = FileShare.ReadWrite | FileShare.Delete)
+        /// <param name="path">Relative path to file. Directory separator is "/". Root is without preceding "/", e.g. "dir/file.xml"</param>
+        /// <param name="fileMode">determines whether to open or to create the file</param>
+        /// <param name="fileAccess">how to access the file, read, write or read and write</param>
+        /// <param name="fileShare">how the file will be shared by processes</param>
+        /// <returns>open file stream</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support opening files</exception>
+        /// <exception cref="FileNotFoundException">The file cannot be found, such as when mode is FileMode.Truncate or FileMode.Open, and and the file specified by path does not exist. The file must already exist in these modes.</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="fileMode"/>, <paramref name="fileAccess"/> or <paramref name="fileShare"/> contains an invalid value.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        public Stream Open(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
         {
+            // Check mode is for opening existing file
+            if (fileMode != FileMode.Open) throw new NotSupportedException("FileMode = "+fileMode+" is not supported");
+            // Check access is for reading
+            if (fileAccess != FileAccess.Read) throw new NotSupportedException("FileAccess = " + fileAccess + " is not supported");
             // Make path
             string concatenatedPath = SubPath == null ? path : (SubPath.EndsWith("/") || SubPath.EndsWith("\\")) ? SubPath + path : SubPath + "/" + path;
             // Is disposed?
             IFileProvider fp = fileProvider;
-            if (fp == null) { stream = null; return false; }
+            if (fp == null) throw new ObjectDisposedException(nameof(FileProviderSystem));
             // Does file exist?
             IFileInfo fi = fp.GetFileInfo(concatenatedPath);
-            if (!fi.Exists) { stream = null; return false; }
+            if (!fi.Exists) throw new FileNotFoundException(path);
             // Read
             Stream s = fi.CreateReadStream();
-            if (s == null) { stream = null; return false; }
-            // Failed
-            stream = s;
-            return true;
+            if (s == null) throw new FileNotFoundException(path);
+            // Ok
+            return s;
         }
 
         /// <summary>
-        /// Try to observe file.
+        /// Browse a directory for file and subdirectory entries.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="observer"></param>
-        /// <param name="handle"></param>
-        /// <returns></returns>
-        public bool TryObserve(string path, IObserver<IFileSystemEntryEvent> observer, out IDisposable handle)
+        /// <param name="path">path to directory, "" is root, separator is "/"</param>
+        /// <returns>a snapshot of file and directory entries</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support browse</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public FileSystemEntry[] Browse(string path)
         {
             // Make path
             string concatenatedPath = SubPath == null ? path : (SubPath.EndsWith("/") || SubPath.EndsWith("\\")) ? SubPath + path : SubPath + "/" + path;
             // Is disposed?
             IFileProvider fp = fileProvider;
-            if (fp == null) { handle = null; return false; }
-            // Observe
-            handle = new Watcher(this, fp, observer, concatenatedPath, path);
-            return true;
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="files"></param>
-        /// <returns></returns>
-        public bool TryBrowse(string path, out FileSystemEntry[] files)
-        {
-            // Make path
-            string concatenatedPath = SubPath == null ? path : (SubPath.EndsWith("/") || SubPath.EndsWith("\\")) ? SubPath + path : SubPath + "/" + path;
-            // Is disposed?
-            IFileProvider fp = fileProvider;
-            if (fp == null) { files = null; return false; }
+            if (fp == null) throw new ObjectDisposedException(nameof(FileProviderSystem));
             // Browse
             IDirectoryContents contents = fp.GetDirectoryContents(concatenatedPath);
-            if (!contents.Exists) { files = null; return false; }
+            if (!contents.Exists) throw new DirectoryNotFoundException(path);
             // Convert result
             StructList24<FileSystemEntry> list = new StructList24<FileSystemEntry>();
             foreach (IFileInfo fi in contents)
             {
-                list.Add(new FileSystemEntry { FileSystem = this, LastModified = fi.LastModified, Name = fi.Name, Path = concatenatedPath + "/" + fi.Name, Length = fi.IsDirectory?-1L:fi.Length, Type = fi.IsDirectory?FileSystemEntryType.Directory:FileSystemEntryType.File });
+                list.Add(new FileSystemEntry { FileSystem = this, LastModified = fi.LastModified, Name = fi.Name, Path = concatenatedPath.Length > 0 ? concatenatedPath + "/" + fi.Name : fi.Name, Length = fi.IsDirectory?-1L:fi.Length, Type = fi.IsDirectory?FileSystemEntryType.Directory:FileSystemEntryType.File });
             }
-            files = list.ToArray();
-            return true;
+            return list.ToArray();
+        }
+
+        /// <summary>
+        /// Attach an <paramref name="observer"/> on to a single file or directory. 
+        /// Observing a directory will observe the whole subtree.
+        /// </summary>
+        /// <param name="path">path to file or directory. The directory separator is "/". The root is without preceding slash "", e.g. "dir/dir2"</param>
+        /// <param name="observer"></param>
+        /// <returns>dispose handle</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support observe</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public IDisposable Observe(string path, IObserver<FileSystemEntryEvent> observer)
+        {
+            // Make path
+            string concatenatedPath = SubPath == null ? path : (SubPath.EndsWith("/") || SubPath.EndsWith("\\")) ? SubPath + path : SubPath + "/" + path;
+            // Is disposed?
+            IFileProvider fp = fileProvider;
+            if (fp == null) throw new ObjectDisposedException(nameof(FileProviderSystem));
+            // Observe
+            return new Watcher(this, fp, observer, concatenatedPath, path);
         }
 
         /// <summary>
@@ -486,7 +599,7 @@ namespace Lexical.Localization.Asset
             /// <summary>
             /// Associated observer
             /// </summary>
-            protected IObserver<IFileSystemEntryEvent> observer;
+            protected IObserver<FileSystemEntryEvent> observer;
 
             /// <summary>
             /// The parent file system.
@@ -514,6 +627,13 @@ namespace Lexical.Localization.Asset
             protected IChangeToken changeToken;
 
             /// <summary>
+            /// Print info
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+                => fileProvider?.ToString() ?? "disposed";
+
+            /// <summary>
             /// Create observer for one file.
             /// </summary>
             /// <param name="system"></param>
@@ -521,7 +641,7 @@ namespace Lexical.Localization.Asset
             /// <param name="observer"></param>
             /// <param name="fileProviderPath">Absolute path</param>
             /// <param name="relativePath">Relative path (separator is '/')</param>
-            public Watcher(IFileSystem system, IFileProvider fileProvider, IObserver<IFileSystemEntryEvent> observer, string fileProviderPath, string relativePath)
+            public Watcher(IFileSystem system, IFileProvider fileProvider, IObserver<FileSystemEntryEvent> observer, string fileProviderPath, string relativePath)
             {
                 this.fileSystem = system ?? throw new ArgumentNullException(nameof(system));
                 this.observer = observer ?? throw new ArgumentNullException(nameof(observer));
@@ -561,7 +681,7 @@ namespace Lexical.Localization.Asset
                     eventType = exists ? WatcherChangeTypes.Created : WatcherChangeTypes.Deleted;
                 }
 
-                IFileSystemEntryEvent ae = new FileSystemEvent(_fileSystem, eventType, RelativePath);
+                FileSystemEntryEvent ae = new FileSystemEntryEvent { FileSystem = _fileSystem, ChangeEvents = eventType, Path = RelativePath };
                 observer.OnNext(ae);
             }
 
@@ -575,7 +695,7 @@ namespace Lexical.Localization.Asset
 
                 // Clear file system reference, and remove watcher from dispose list.
                 IFileSystem _fileSystem = Interlocked.Exchange(ref fileSystem, null);
-                if (_fileSystem is AbstractFileSystem __fileSystem) __fileSystem.RemoveDisposable(this);
+                if (_fileSystem is FileSystemBase __fileSystem) __fileSystem.RemoveDisposable(this);
 
                 StructList2<Exception> errors = new StructList2<Exception>();
                 if (_observer != null)
@@ -614,7 +734,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Composition of multiple <see cref="IFileSystem"/>s.
     /// </summary>
-    public class FileSystemComposition : AbstractFileSystem, IEnumerable<IFileSystem>, IFileSystemBrowser, IFileSystemObserver, IFileSystemReader, IFileSystemWriter
+    public class FileSystemComposition : FileSystemBase, IEnumerable<IFileSystem>, IFileSystemBrowse, IFileSystemObserve, IFileSystemOpen, IFileSystemDelete, IFileSystemMove, IFileSystemCreateDirectory
     {
         /// <summary>
         /// File system components.
@@ -627,12 +747,23 @@ namespace Lexical.Localization.Asset
         public int Count => fileSystems.Length;
 
         /// <summary>
+        /// Union of capabilities
+        /// </summary>
+        protected FileSystemCapabilities capabilities;
+
+        /// <summary>
+        /// Union of capabilities.
+        /// </summary>
+        public override FileSystemCapabilities Capabilities => capabilities;
+
+        /// <summary>
         /// Create composition of file systems
         /// </summary>
         /// <param name="fileSystems"></param>
         public FileSystemComposition(params IFileSystem[] fileSystems)
         {
             this.fileSystems = fileSystems;
+            foreach (IFileSystem fs in fileSystems) capabilities |= fs.Capabilities;
         }
 
         /// <summary>
@@ -642,99 +773,246 @@ namespace Lexical.Localization.Asset
         public FileSystemComposition(IEnumerable<IFileSystem> fileSystems)
         {
             this.fileSystems = fileSystems.ToArray();
+            foreach (IFileSystem fs in this.fileSystems) capabilities |= fs.Capabilities;
         }
 
         /// <summary>
-        /// Try to list files and directories.
+        /// Browse a directory for file and subdirectory entries.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="files"></param>
-        /// <returns></returns>
-        public bool TryBrowse(string path, out FileSystemEntry[] files)
+        /// <param name="path">path to directory, "" is root, separator is "/"</param>
+        /// <returns>a snapshot of file and directory entries</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support browse</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public FileSystemEntry[] Browse(string path)
         {
             StructList24<FileSystemEntry> entries = new StructList24<FileSystemEntry>();
-            bool exists = false;
+            bool exists = false, supported = false;
             foreach (var filesystem in fileSystems)
             {
-                FileSystemEntry[] list;
-                if (!filesystem.TryBrowse(path, out list)) continue;
-                foreach (FileSystemEntry e in list)
-                    entries.Add( new FileSystemEntry { FileSystem = this, Name = e.Name, Path = e.Path, Length = e.Length, Type = FileSystemEntryType.File, LastModified = e.LastModified });
-                exists = true;
+                if ((filesystem.Capabilities & FileSystemCapabilities.Browse) == 0UL) continue;
+                try
+                {
+                    FileSystemEntry[] list = filesystem.Browse(path);
+                    exists = true; supported = true;
+                    foreach (FileSystemEntry e in list)
+                        entries.Add(new FileSystemEntry { FileSystem = this, Name = e.Name, Path = e.Path, Length = e.Length, Type = FileSystemEntryType.File, LastModified = e.LastModified });
+                }
+                catch (DirectoryNotFoundException) { supported = true; }
+                catch (NotSupportedException) { }
             }
-            files = exists ? entries.ToArray() : null;
-            return exists;
+            if (!supported) throw new NotSupportedException(nameof(Browse));
+            if (!exists) throw new DirectoryNotFoundException(path);
+            return entries.ToArray();
         }
 
         /// <summary>
-        /// Try to observe a directory or a file.
+        /// Open a file for reading and/or writing. File can be created when <paramref name="fileMode"/> is <see cref="FileMode.Create"/> or <see cref="FileMode.CreateNew"/>.
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">Relative path to file. Directory separator is "/". Root is without preceding "/", e.g. "dir/file.xml"</param>
+        /// <param name="fileMode">determines whether to open or to create the file</param>
+        /// <param name="fileAccess">how to access the file, read, write or read and write</param>
+        /// <param name="fileShare">how the file will be shared by processes</param>
+        /// <returns>open file stream</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support opening files</exception>
+        /// <exception cref="FileNotFoundException">The file cannot be found, such as when mode is FileMode.Truncate or FileMode.Open, and and the file specified by path does not exist. The file must already exist in these modes.</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="fileMode"/>, <paramref name="fileAccess"/> or <paramref name="fileShare"/> contains an invalid value.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public Stream Open(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
+        {
+            bool supported = false;
+            foreach (var filesystem in fileSystems)
+            {
+                if ((filesystem.Capabilities & FileSystemCapabilities.Open) == 0UL) continue;
+                try
+                {
+                    return filesystem.Open(path, fileMode, fileAccess, fileShare);
+                }
+                catch (FileNotFoundException) { supported = true; }
+                catch (NotSupportedException) { }
+            }
+            if (!supported) throw new NotSupportedException(nameof(Browse));
+            throw new FileNotFoundException(path);
+        }
+
+        /// <summary>
+        /// Delete a file or directory.
+        /// 
+        /// If <paramref name="recursive"/> is false and <paramref name="path"/> is a directory that is not empty, then <see cref="IOException"/> is thrown.
+        /// If <paramref name="recursive"/> is true, then any file or directory within <paramref name="path"/> is deleted as well.
+        /// </summary>
+        /// <param name="path">path to a file or directory</param>
+        /// <param name="recursive">if path refers to directory, recurse into sub directories</param>
+        /// <exception cref="FileNotFoundException">The specified path is invalid.</exception>
+        /// <exception cref="IOException">On unexpected IO error, or if <paramref name="path"/> refered to a directory that wasn't empty and <paramref name="recursive"/> is false</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support deleting files</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException"><paramref name="path"/> refers to non-file device</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public void Delete(string path, bool recursive = false)
+        {
+            bool supported = false;
+            bool ok = false;
+            foreach (var filesystem in fileSystems)
+            {
+                if ((filesystem.Capabilities & FileSystemCapabilities.Delete) == 0UL) continue;
+                try
+                {
+                    filesystem.Delete(path, recursive);
+                    ok = true; supported = true;
+                }
+                catch (FileNotFoundException) { supported = true; }
+                catch (NotSupportedException) { }
+            }
+            if (!supported) throw new NotSupportedException(nameof(Browse));
+            if (!ok) throw new FileNotFoundException(path);
+        }
+
+        /// <summary>
+        /// Try to move/rename a file or directory.
+        /// </summary>
+        /// <param name="oldPath">old path of a file or directory</param>
+        /// <param name="newPath">new path of a file or directory</param>
+        /// <exception cref="FileNotFoundException">The specified <paramref name="oldPath"/> is invalid.</exception>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="FileNotFoundException">The specified path is invalid.</exception>
+        /// <exception cref="ArgumentNullException">path is null</exception>
+        /// <exception cref="ArgumentException">path is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support renaming/moving files</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">path refers to non-file device, or an entry already exists at <paramref name="newPath"/></exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public void Move(string oldPath, string newPath)
+        {
+            bool supported = false;
+            bool ok = false;
+            foreach (IFileSystem filesystem in fileSystems)
+            {
+                if ((filesystem.Capabilities & FileSystemCapabilities.Move) == 0UL) continue;
+                try
+                { 
+                    filesystem.Move(oldPath, newPath);
+                    ok = true; supported = true;
+                }
+                catch (FileNotFoundException) { supported = true; }
+                catch (NotSupportedException) { }
+            }
+            if (!supported) throw new NotSupportedException(nameof(Browse));
+            if (!ok) throw new FileNotFoundException(oldPath);
+        }
+
+        /// <summary>
+        /// Create a directory, or multiple cascading directories.
+        /// 
+        /// If directory at <paramref name="path"/> already exists, then returns without exception.
+        /// </summary>
+        /// <param name="path">Relative path to file. Directory separator is "/". The root is without preceding slash "", e.g. "dir/dir2"</param>
+        /// <returns>true if directory exists after the method, false if directory doesn't exist</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support create directory</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public void CreateDirectory(string path)
+        {
+            bool supported = false;
+            bool ok = false;
+            foreach (IFileSystem filesystem in fileSystems)
+            {
+                if ((filesystem.Capabilities & FileSystemCapabilities.CreateDirectory) == 0UL) continue;
+                try
+                {
+                    filesystem.CreateDirectory(path);
+                    ok = true; supported = true;
+                }
+                catch (FileNotFoundException) { supported = true; }
+                catch (NotSupportedException) { }
+            }
+            if (!supported) throw new NotSupportedException(nameof(Browse));
+            if (!ok) throw new FileNotFoundException(path);
+        }
+
+        /// <summary>
+        /// Attach an <paramref name="observer"/> on to a single file or directory. 
+        /// Observing a directory will observe the whole subtree.
+        /// </summary>
+        /// <param name="path">path to file or directory. The directory separator is "/". The root is without preceding slash "", e.g. "dir/dir2"</param>
         /// <param name="observer"></param>
-        /// <param name="handle"></param>
-        /// <returns></returns>
-        public bool TryObserve(string path, IObserver<IFileSystemEntryEvent> observer, out IDisposable handle)
+        /// <returns>dispose handle</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support observe</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public IDisposable Observe(string path, IObserver<FileSystemEntryEvent> observer)
         {
             StructList12<IDisposable> disposables = new StructList12<IDisposable>();
+            ObserverAdapter adapter = new ObserverAdapter(this, observer);
             foreach (var filesystem in fileSystems)
             {
-                IDisposable disposable;
-                if (filesystem.TryObserve(path, observer, out disposable)) disposables.Add(disposable);
+                if ((filesystem.Capabilities & FileSystemCapabilities.Observe) == 0UL) continue;
+                try
+                {
+                    IDisposable disposable = filesystem.Observe(path, adapter);
+                    disposables.Add(disposable);
+                }
+                catch (NotSupportedException) { }
             }
-            if (disposables.Count == 1) { handle = disposables[0]; return true; }
-            if (disposables.Count > 1) { handle = new JointObserverHandle(disposables.ToArray()); return true; }
-            handle = null;
-            return false;
+            if (disposables.Count == 0) throw new NotSupportedException(nameof(Observe));
+            adapter.disposables = disposables.ToArray();
+            return adapter;
         }
 
-        /// <summary>
-        /// Try to open a file for reading.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="stream"></param>
-        /// <param name="fileShare"></param>
-        /// <returns></returns>
-        public bool TryRead(string path, out Stream stream, FileShare fileShare = FileShare.ReadWrite | FileShare.Delete)
+        class ObserverAdapter : IDisposable, IObserver<FileSystemEntryEvent>
         {
-            foreach (var filesystem in fileSystems)
-                if (filesystem.TryRead(path, out stream, fileShare)) return true;
-            stream = null;
-            return false;
-        }
+            IFileSystem filesystem;
+            IObserver<FileSystemEntryEvent> observer;
+            public IDisposable[] disposables;
 
-        /// <summary>
-        /// Try to open a file for writing.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="stream"></param>
-        /// <param name="fileShare"></param>
-        /// <returns></returns>
-        public bool TryWrite(string path, out Stream stream, FileShare fileShare = FileShare.ReadWrite | FileShare.Delete)
-        {
-            foreach (var filesystem in fileSystems)
-                if (filesystem.TryWrite(path, out stream, fileShare)) return true;
-            stream = null;
-            return false;
-        }
-
-        /// <summary>
-        /// Get file systems
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<IFileSystem> GetEnumerator()
-            => ((IEnumerable<IFileSystem>)fileSystems).GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator()
-            => fileSystems.GetEnumerator();
-
-        class JointObserverHandle : IDisposable
-        {
-            IDisposable[] disposables;
-
-            public JointObserverHandle(IDisposable[] disposables)
+            public ObserverAdapter(IFileSystem filesystem, IObserver<FileSystemEntryEvent> observer)
             {
-                this.disposables = disposables ?? throw new ArgumentNullException(nameof(disposables));
+                this.filesystem = filesystem;
+                this.observer = observer;
             }
+
+            public void OnCompleted()
+                => observer.OnCompleted();
+
+            public void OnError(Exception error)
+                => observer.OnError(error);
+
+            public void OnNext(FileSystemEntryEvent value)
+                => observer.OnNext(new FileSystemEntryEvent { FileSystem = filesystem, ChangeEvents = value.ChangeEvents, Path = value.Path });
 
             public void Dispose()
             {
@@ -758,6 +1036,24 @@ namespace Lexical.Localization.Asset
                 if (errors.Count > 0) throw new AggregateException(errors);
             }
         }
+
+        /// <summary>
+        /// Get file systems
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<IFileSystem> GetEnumerator()
+            => ((IEnumerable<IFileSystem>)fileSystems).GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator()
+            => fileSystems.GetEnumerator();
+
+        /// <summary>
+        /// Print info
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            => String.Join<IFileSystem>(", ", fileSystems);
+
     }
 
 }

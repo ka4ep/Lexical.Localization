@@ -5,6 +5,7 @@
 // --------------------------------------------------------
 using System;
 using System.IO;
+using System.Security;
 
 namespace Lexical.Localization.Asset
 {
@@ -12,77 +13,216 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Root interface for file system interfaces. See sub-interfaces:
     /// <list type="bullet">
-    ///     <item><see cref="IFileSystemReader"/></item>
-    ///     <item><see cref="IFileSystemWriter"/></item>
-    ///     <item><see cref="IFileSystemObserver"/></item>
-    ///     <item><see cref="IFileSystemBrowser"/></item>
+    ///     <item><see cref="IFileSystemOpen"/></item>
+    ///     <item><see cref="IFileSystemCreateDirectory"/></item>
+    ///     <item><see cref="IFileSystemBrowse"/></item>
+    ///     <item><see cref="IFileSystemDelete"/></item>
+    ///     <item><see cref="IFileSystemMove"/></item>
+    ///     <item><see cref="IFileSystemObserve"/></item>
     /// </list>
     /// </summary>
     public interface IFileSystem
     {
+        /// <summary>
+        /// The capabilities of the implementing class. 
+        /// 
+        /// Note, that even if class is capable of certain operation, for example delete,
+        /// the operation may be not supported for specific files, and the class may throw
+        /// <see cref="NotSupportedException"/>.
+        /// </summary>
+        FileSystemCapabilities Capabilities { get; }
     }
 
     /// <summary>
-    /// File system that can read files.
+    /// File system operation capabilities
     /// </summary>
-    public interface IFileSystemReader : IFileSystem
+    [Flags]
+    public enum FileSystemCapabilities : UInt64
+    {
+        /// <summary>Can open file stream (<see cref="IFileSystemOpen"/>).</summary>
+        Open = 1<<0,
+        /// <summary>Can open file for reading(<see cref="IFileSystemOpen"/>).</summary>
+        Read = 1 << 1,
+        /// <summary>Can open file for writing (<see cref="IFileSystemOpen"/>).</summary>
+        Write = 1<<2,
+        /// <summary>Can open and create file (<see cref="IFileSystemOpen"/>).</summary>
+        CreateFile = 1 << 3,
+        /// <summary>Can create directory (<see cref="IFileSystemCreateDirectory"/>)</summary>
+        CreateDirectory = 1<<6,
+        /// <summary>Can browse directories</summary>
+        Browse = 1<<8,
+        /// <summary>Can delete files and directories</summary>
+        Delete = 1<<10,
+        /// <summary>Can move and rename files and directories.</summary>
+        Move = 1<<16,
+        /// <summary>Can observe for directories and files</summary>
+        Observe = 1<<32,
+
+        /// <summary>Reserved for implementing classes to use for any purpose.</summary>
+        Reserved0 = 1 << 56,
+        /// <summary>Reserved for implementing classes to use for any purpose.</summary>
+        Reserved1 = 1 << 57,
+        /// <summary>Reserved for implementing classes to use for any purpose.</summary>
+        Reserved2 = 1 << 58,
+        /// <summary>Reserved for implementing classes to use for any purpose.</summary>
+        Reserved3 = 1 << 59,
+        /// <summary>Reserved for implementing classes to use for any purpose.</summary>
+        Reserved4 = 1 << 60,
+        /// <summary>Reserved for implementing classes to use for any purpose.</summary>
+        Reserved5 = 1 << 61,
+        /// <summary>Reserved for implementing classes to use for any purpose.</summary>
+        Reserved6 = 1 << 62,
+        /// <summary>Reserved for implementing classes to use for any purpose.</summary>
+        Reserved7 = 1UL << 63
+    }
+
+    /// <summary>
+    /// File system where files can be opened for reading and writing. 
+    /// </summary>
+    public interface IFileSystemOpen : IFileSystem
     {
         /// <summary>
-        /// Try to open a file for reading.
+        /// Open a file for reading and/or writing. File can be created when <paramref name="fileMode"/> is <see cref="FileMode.Create"/> or <see cref="FileMode.CreateNew"/>.
         /// </summary>
         /// <param name="path">Relative path to file. Directory separator is "/". Root is without preceding "/", e.g. "dir/file.xml"</param>
-        /// <param name="stream"></param>
-        /// <param name="fileShare"></param>
-        /// <returns>false if source or file is not found, if true opened file successfully</returns>
+        /// <param name="fileMode">determines whether to open or to create the file</param>
+        /// <param name="fileAccess">how to access the file, read, write or read and write</param>
+        /// <param name="fileShare">how the file will be shared by processes</param>
+        /// <returns>open file stream</returns>
         /// <exception cref="IOException">On unexpected IO error</exception>
-        bool TryRead(string path, out Stream stream, FileShare fileShare = FileShare.ReadWrite | FileShare.Delete);
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support opening files</exception>
+        /// <exception cref="FileNotFoundException">The file cannot be found, such as when mode is FileMode.Truncate or FileMode.Open, and and the file specified by path does not exist. The file must already exist in these modes.</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="fileMode"/>, <paramref name="fileAccess"/> or <paramref name="fileShare"/> contains an invalid value.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        Stream Open(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare);
     }
 
     /// <summary>
-    /// File system that can write files.
+    /// File system that where directories can be created.
     /// </summary>
-    public interface IFileSystemWriter : IFileSystem
+    public interface IFileSystemCreateDirectory : IFileSystem
     {
         /// <summary>
-        /// Try to open a file for writing (and reading).
+        /// Create a directory, or multiple cascading directories.
+        /// 
+        /// If directory at <paramref name="path"/> already exists, then returns without exception.
         /// </summary>
-        /// <param name="path">Relative path to file. Directory separator is "/". Root is without preceding "/", e.g. "dir/file.xml"</param>
-        /// <param name="stream"></param>
-        /// <param name="fileShare"></param>
-        /// <returns>false if source or file is not found, if true opened file successfully</returns>
+        /// <param name="path">Relative path to file. Directory separator is "/". The root is without preceding slash "", e.g. "dir/dir2"</param>
+        /// <returns>true if directory exists after the method, false if directory doesn't exist</returns>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
         /// <exception cref="IOException">On unexpected IO error</exception>
-        bool TryWrite(string path, out Stream stream, FileShare fileShare = FileShare.ReadWrite | FileShare.Delete);
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support create directory</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        void CreateDirectory(string path);
     }
 
     /// <summary>
-    /// File system that can observe files and directories.
+    /// File system that can be browsed for files and subdirectories.
     /// </summary>
-    public interface IFileSystemObserver : IFileSystem
+    public interface IFileSystemBrowse : IFileSystem
     {
         /// <summary>
-        /// Try to attach <paramref name="observer"/> a single file or folder.
-        /// </summary>
-        /// <param name="path">path to file or folder</param>
-        /// <param name="observer"></param>
-        /// <param name="handle">dispose handle</param>
-        /// <returns>false if file is not observable</returns>
-        /// <exception cref="IOException">On unexpected IO error</exception>
-        bool TryObserve(string path, IObserver<IFileSystemEntryEvent> observer, out IDisposable handle);
-    }
-
-    /// <summary>
-    /// File system that can browse directories for subfiles and subdirectories.
-    /// </summary>
-    public interface IFileSystemBrowser : IFileSystem
-    {
-        /// <summary>
-        /// Try to browse file and directory entries.
+        /// Browse a directory for file and subdirectory entries.
         /// </summary>
         /// <param name="path">path to directory, "" is root, separator is "/"</param>
-        /// <param name="files">a snapshot of file and directory entries</param>
-        /// <returns>true if directory was found, false if directory was not at <paramref name="path"/></returns>
+        /// <returns>a snapshot of file and directory entries</returns>
+        /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="IOException">On unexpected IO error</exception>
-        bool TryBrowse(string path, out FileSystemEntry[] files);
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support browse</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        FileSystemEntry[] Browse(string path);
+    }
+
+    /// <summary>
+    /// File system that can delete files and directories.
+    /// </summary>
+    public interface IFileSystemDelete : IFileSystem
+    {
+        /// <summary>
+        /// Delete a file or directory.
+        /// 
+        /// If <paramref name="recursive"/> is false and <paramref name="path"/> is a directory that is not empty, then <see cref="IOException"/> is thrown.
+        /// If <paramref name="recursive"/> is true, then any file or directory within <paramref name="path"/> is deleted as well.
+        /// </summary>
+        /// <param name="path">path to a file or directory</param>
+        /// <param name="recursive">if path refers to directory, recurse into sub directories</param>
+        /// <exception cref="FileNotFoundException">The specified path is invalid.</exception>
+        /// <exception cref="IOException">On unexpected IO error, or if <paramref name="path"/> refered to a directory that wasn't empty and <paramref name="recursive"/> is false</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support deleting files</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException"><paramref name="path"/> refers to non-file device</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        void Delete(string path, bool recursive = false);
+    }
+
+    /// <summary>
+    /// File system that can move/rename files and directories.
+    /// </summary>
+    public interface IFileSystemMove : IFileSystem
+    {
+        /// <summary>
+        /// Try to move/rename a file or directory.
+        /// </summary>
+        /// <param name="oldPath">old path of a file or directory</param>
+        /// <param name="newPath">new path of a file or directory</param>
+        /// <exception cref="FileNotFoundException">The specified <paramref name="oldPath"/> is invalid.</exception>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException">path is null</exception>
+        /// <exception cref="ArgumentException">path is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support renaming/moving files</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">path refers to non-file device, or an entry already exists at <paramref name="newPath"/></exception>
+        /// <exception cref="ObjectDisposedException"/>
+        void Move(string oldPath, string newPath);
+    }
+
+    /// <summary>
+    /// File system that can be observed for file and directory changes.
+    /// </summary>
+    public interface IFileSystemObserve : IFileSystem
+    {
+        /// <summary>
+        /// Attach an <paramref name="observer"/> on to a single file or directory. 
+        /// Observing a directory will observe the whole subtree.
+        /// </summary>
+        /// <param name="path">path to file or directory. The directory separator is "/". The root is without preceding slash "", e.g. "dir/dir2"</param>
+        /// <param name="observer"></param>
+        /// <returns>disposable handle</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support observe</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        IDisposable Observe(string path, IObserver<FileSystemEntryEvent> observer);
     }
 
     /// <summary>
@@ -121,6 +261,13 @@ namespace Lexical.Localization.Asset
         /// Date time of last modification.
         /// </summary>
         public DateTimeOffset LastModified;
+
+        /// <summary>
+        /// Print info (path).
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            => Path;
     }
 
     /// <summary>
@@ -137,15 +284,15 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// File entry event.
     /// </summary>
-    public interface IFileSystemEntryEvent
+    public struct FileSystemEntryEvent
     {
         /// <summary>
-        /// Sending file system.
+        /// The file system where the observer was attached.
         /// </summary>
-        IFileSystem FileSystem { get; }
+        public IFileSystem FileSystem;
 
         /// <summary>
-        /// The affected file or folder.
+        /// The affected file or directory.
         /// 
         /// Path is relative to the <see cref="FileSystem"/>'s root.
         /// 
@@ -153,12 +300,19 @@ namespace Lexical.Localization.Asset
         /// 
         /// Example: "dir/file.ext"
         /// </summary>
-        string FilePath { get; }
+        public string Path;
 
         /// <summary>
         /// Change events
         /// </summary>
-        WatcherChangeTypes ChangeEvents { get; }
+        public WatcherChangeTypes ChangeEvents;
+
+        /// <summary>
+        /// Print info
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            => Path + " " + ChangeEvents;
     }
     // </doc>
 }
@@ -173,125 +327,169 @@ namespace Lexical.Localization
     public static partial class IFileSystemExtensions
     {
         /// <summary>
-        /// Open a file for reading.
+        /// Open a file for reading and/or writing. File can be created when <paramref name="fileMode"/> is <see cref="FileMode.Create"/> or <see cref="FileMode.CreateNew"/>.
         /// </summary>
         /// <param name="fileSystem"></param>
         /// <param name="path">Relative path to file. Directory separator is "/". Root is without preceding "/", e.g. "dir/file.xml"</param>
-        /// <param name="fileShare"></param>
-        /// <exception cref="IOException">On unexpected IO error, or if file was not found</exception>
-        public static Stream Read(this IFileSystem fileSystem, string path, FileShare fileShare = FileShare.ReadWrite | FileShare.Delete)
-        {
-            Stream stream;
-            if (fileSystem is IFileSystemReader reader && reader.TryRead(path, out stream, fileShare)) return stream;
-            throw new FileNotFoundException("file not found " + path, path);
-        }
-
-        /// <summary>
-        /// Try to open a file for reading.
-        /// </summary>
-        /// <param name="fileSystem"></param>
-        /// <param name="path">Relative path to file. Directory separator is "/". Root is without preceding "/", e.g. "dir/file.xml"</param>
-        /// <param name="stream"></param>
-        /// <param name="fileShare"></param>
-        /// <returns>false if source or file is not found, if true opened file successfully</returns>
+        /// <param name="fileMode">determines whether to open or to create the file</param>
+        /// <param name="fileAccess">how to access the file, read, write or read and write</param>
+        /// <param name="fileShare">how the file will be shared by processes</param>
+        /// <returns>open file stream</returns>
         /// <exception cref="IOException">On unexpected IO error</exception>
-        public static bool TryRead(this IFileSystem fileSystem, string path, out Stream stream, FileShare fileShare = FileShare.ReadWrite | FileShare.Delete)
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support opening files</exception>
+        /// <exception cref="FileNotFoundException">The file cannot be found, such as when mode is FileMode.Truncate or FileMode.Open, and and the file specified by path does not exist. The file must already exist in these modes.</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="fileMode"/>, <paramref name="fileAccess"/> or <paramref name="fileShare"/> contains an invalid value.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public static Stream Open(this IFileSystem fileSystem, string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
         {
-            if (fileSystem is IFileSystemReader reader) return reader.TryRead(path, out stream, fileShare);
-            stream = null;
-            return false;
+            if (fileSystem is IFileSystemOpen opener) return opener.Open(path, fileMode, fileAccess, fileShare);
+            throw new NotSupportedException(nameof(Open));
         }
 
         /// <summary>
-        /// Open a file for writing.
+        /// Create a new file. If file exists, does nothing.
         /// </summary>
         /// <param name="fileSystem"></param>
-        /// <param name="path">Relative path to file. Directory separator is "/". Root is without preceding "/", e.g. "dir/file.xml"</param>
-        /// <param name="fileShare"></param>
-        /// <exception cref="IOException">On unexpected IO error, or if file was not found</exception>
-        public static Stream Write(this IFileSystem fileSystem, string path, FileShare fileShare = FileShare.ReadWrite | FileShare.Delete)
-        {
-            Stream stream;
-            if (fileSystem is IFileSystemWriter writer && writer.TryWrite(path, out stream, fileShare)) return stream;
-            throw new IOException("Could not open file for writing: " + path);
-        }
-
-        /// <summary>
-        /// Try to open a file for write.
-        /// </summary>
-        /// <param name="fileSystem"></param>
-        /// <param name="path">Relative path to file. Directory separator is "/". Root is without preceding "/", e.g. "dir/file.xml"</param>
-        /// <param name="stream"></param>
-        /// <param name="fileShare"></param>
-        /// <returns>false if source or file is not found, if true opened file successfully</returns>
+        /// <param name="path">Relative path to file. Directory separator is "/". The root is without preceding slash "", e.g. "dir/file"</param>
         /// <exception cref="IOException">On unexpected IO error</exception>
-        public static bool TryWrite(this IFileSystem fileSystem, string path, out Stream stream, FileShare fileShare = FileShare.ReadWrite | FileShare.Delete)
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support create directory</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public static void CreateFile(this IFileSystem fileSystem, string path)
         {
-            if (fileSystem is IFileSystemWriter writer) return writer.TryWrite(path, out stream, fileShare);
-            stream = null;
-            return false;
+            if (fileSystem is IFileSystemOpen opener) opener.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite).Dispose();
+            else throw new NotSupportedException(nameof(CreateDirectory));
         }
 
         /// <summary>
-        /// Attach observer to a single file or folder.
+        /// Create a directory, or multiple cascading directories.
+        /// 
+        /// If directory at <paramref name="path"/> already exists, then returns without exception.
         /// </summary>
         /// <param name="fileSystem"></param>
-        /// <param name="path">path to file or folder</param>
-        /// <param name="observer"></param>
-        /// <returns>dispose handle</returns>
+        /// <param name="path">Relative path to file. Directory separator is "/". The root is without preceding slash "", e.g. "dir/dir2"</param>
+        /// <returns>true if directory exists after the method, false if directory doesn't exist</returns>
         /// <exception cref="IOException">On unexpected IO error</exception>
-        public static IDisposable Observe(this IFileSystem fileSystem, string path, IObserver<IFileSystemEntryEvent> observer)
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support create directory</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public static void CreateDirectory(this IFileSystem fileSystem, string path)
         {
-            IDisposable disposable;
-            if (fileSystem is IFileSystemObserver observer_ && observer_.TryObserve(path, observer, out disposable)) return disposable;
-            throw new IOException("Could not observe: "+path);
+            if (fileSystem is IFileSystemCreateDirectory directoryConstructor) directoryConstructor.CreateDirectory(path);
+            else throw new NotSupportedException(nameof(CreateDirectory));
         }
 
         /// <summary>
-        /// Try to attach <paramref name="observer"/> a single file or folder.
-        /// </summary>
-        /// <param name="fileSystem"></param>
-        /// <param name="path">path to file or folder</param>
-        /// <param name="observer"></param>
-        /// <param name="handle">dispose handle</param>
-        /// <returns>false if file is not observable</returns>
-        /// <exception cref="IOException">On unexpected IO error</exception>
-        public static bool TryObserve(this IFileSystem fileSystem, string path, IObserver<IFileSystemEntryEvent> observer, out IDisposable handle)
-        {
-            if (fileSystem is IFileSystemObserver observer_) return observer_.TryObserve(path, observer, out handle);
-            handle = null;
-            return false;
-        }
-
-        /// <summary>
-        /// List file and directory entries.
+        /// Browse a directory for file and subdirectory entries.
         /// </summary>
         /// <param name="fileSystem"></param>
         /// <param name="path">path to directory, "" is root, separator is "/"</param>
         /// <returns>a snapshot of file and directory entries</returns>
         /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="DirectoryNotFoundException">The specified path is invalid, such as being on an unmapped drive.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support browse</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
         public static FileSystemEntry[] Browse(this IFileSystem fileSystem, string path)
         {
-            FileSystemEntry[] files;
-            if (fileSystem is IFileSystemBrowser browser && browser.TryBrowse(path, out files)) return files;
-            throw new IOException("Could not browse directory: "+path);
+            if (fileSystem is IFileSystemBrowse browser) return browser.Browse(path);
+            else throw new NotSupportedException(nameof(Browse));
         }
 
         /// <summary>
-        /// Try to list file and directory entries.
+        /// Delete a file or directory.
+        /// 
+        /// If <paramref name="recursive"/> is false and <paramref name="path"/> is a directory that is not empty, then <see cref="IOException"/> is thrown.
+        /// If <paramref name="recursive"/> is true, then any file or directory within <paramref name="path"/> is deleted as well.
         /// </summary>
         /// <param name="fileSystem"></param>
-        /// <param name="path">path to directory, "" is root, separator is "/"</param>
-        /// <param name="files">a snapshot of file and directory entries</param>
-        /// <returns>true if directory was found, false if directory was not at <paramref name="path"/></returns>
-        /// <exception cref="IOException">On unexpected IO error</exception>
-        public static bool TryBrowse(this IFileSystem fileSystem, string path, out FileSystemEntry[] files)
+        /// <param name="path">path to a file or directory</param>
+        /// <param name="recursive">if path refers to directory, recurse into sub directories</param>
+        /// <exception cref="FileNotFoundException">The specified path is invalid.</exception>
+        /// <exception cref="IOException">On unexpected IO error, or if <paramref name="path"/> refered to a directory that wasn't empty and <paramref name="recursive"/> is false</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support deleting files</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException"><paramref name="path"/> refers to non-file device</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public static void Delete(this IFileSystem fileSystem, string path, bool recursive = false)
         {
-            if (fileSystem is IFileSystemBrowser browser) return browser.TryBrowse(path, out files);
-            files = null;
-            return false;
+            if (fileSystem is IFileSystemDelete deleter) deleter.Delete(path, recursive);
+            else throw new NotSupportedException(nameof(Delete));
         }
 
+        /// <summary>
+        /// Try to move/rename a file or directory.
+        /// </summary>
+        /// <param name="fileSystem"></param>
+        /// <param name="oldPath">old path of a file or directory</param>
+        /// <param name="newPath">new path of a file or directory</param>
+        /// <exception cref="FileNotFoundException">The specified <paramref name="oldPath"/> is invalid.</exception>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="FileNotFoundException">The specified path is invalid.</exception>
+        /// <exception cref="ArgumentNullException">path is null</exception>
+        /// <exception cref="ArgumentException">path is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support renaming/moving files</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path, such as when access is Write or ReadWrite and the file or directory is set for read-only access.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters.</exception>
+        /// <exception cref="InvalidOperationException">path refers to non-file device, or an entry already exists at <paramref name="newPath"/></exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public static void Move(this IFileSystem fileSystem, string oldPath, string newPath)
+        {
+            if (fileSystem is IFileSystemMove mover) mover.Move(oldPath, newPath);
+            else throw new NotSupportedException(nameof(Move));
+        }
+
+        /// <summary>
+        /// Attach an <paramref name="observer"/> on to a single file or directory. 
+        /// Observing a directory will observe the whole subtree.
+        /// </summary>
+        /// <param name="fileSystem"></param>
+        /// <param name="path">path to file or directory. The directory separator is "/". The root is without preceding slash "", e.g. "dir/dir2"</param>
+        /// <param name="observer"></param>
+        /// <returns>dispose handle</returns>
+        /// <exception cref="IOException">On unexpected IO error</exception>
+        /// <exception cref="SecurityException">If caller did not have permission</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="path"/> is null</exception>
+        /// <exception cref="ArgumentException"><paramref name="path"/> is an empty string (""), contains only white space, or contains one or more invalid characters</exception>
+        /// <exception cref="NotSupportedException">The <see cref="IFileSystem"/> doesn't support observe</exception>
+        /// <exception cref="UnauthorizedAccessException">The access requested is not permitted by the operating system for the specified path.</exception>
+        /// <exception cref="PathTooLongException">The specified path, file name, or both exceed the system-defined maximum length. For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters.</exception>
+        /// <exception cref="InvalidOperationException">If <paramref name="path"/> refers to a non-file device, such as "con:", "com1:", "lpt1:", etc.</exception>
+        /// <exception cref="ObjectDisposedException"/>
+        public static IDisposable Observe(this IFileSystem fileSystem, string path, IObserver<FileSystemEntryEvent> observer)
+        {
+            if (fileSystem is IFileSystemObserve _observer) return _observer.Observe(path, observer);
+            else throw new NotSupportedException(nameof(Observe));
+        }
     }
 
 }
