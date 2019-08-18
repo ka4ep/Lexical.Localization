@@ -90,7 +90,7 @@ namespace Lexical.Localization.Asset
             string concatenatedPath = Path.Combine(AbsoluteRootPath, path);
             string absolutePath = Path.GetFullPath(concatenatedPath);
             if (!absolutePath.StartsWith(AbsoluteRootPath)) throw new InvalidOperationException("Path cannot refer outside IFileSystem root");
-            return new FileStream(absolutePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, fileShare);
+            return new FileStream(absolutePath, fileMode, fileAccess, fileShare);
         }
 
         /// <summary>
@@ -263,6 +263,11 @@ namespace Lexical.Localization.Asset
             public readonly string RelativePath;
 
             /// <summary>
+            /// Relative path that is passed for FileSystemWatcher.
+            /// </summary>
+            public readonly string WatcherDirectoryRelativePath;
+
+            /// <summary>
             /// Watcher
             /// </summary>
             protected FileSystemWatcher watcher;
@@ -287,14 +292,49 @@ namespace Lexical.Localization.Asset
                 this.observer = observer ?? throw new ArgumentNullException(nameof(observer));
                 relativePath = relativePath ?? throw new ArgumentNullException(nameof(relativePath));
                 FileInfo fi = new FileInfo(absolutePath);
-                watcher = new FileSystemWatcher(fi.Directory.FullName, fi.Name);
-                watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size;
-                watcher.IncludeSubdirectories = true;
+                DirectoryInfo di = new DirectoryInfo(absolutePath);
+                // Watch directory
+                if (di.Exists)
+                {
+                    watcher = new FileSystemWatcher(absolutePath, "*");
+                    watcher.IncludeSubdirectories = true;
+                    watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size;
+                    WatcherDirectoryRelativePath = RelativePath;
+                }
+                // Watch file
+                else //if (fi.Exists)
+                {
+                    watcher = new FileSystemWatcher(fi.Directory.FullName, fi.Name);
+                    watcher.IncludeSubdirectories = false;
+                    watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size;
+                    int ix = RelativePath.LastIndexOf('/');
+                    WatcherDirectoryRelativePath = ix < 0 ? "" : RelativePath.Substring(0, ix);
+                }
+
+                watcher.Error += OnError;
                 watcher.Changed += OnEvent;
                 watcher.Created += OnEvent;
                 watcher.Deleted += OnEvent;
                 watcher.Renamed += OnEvent;
                 watcher.EnableRaisingEvents = true;
+            }
+
+            /// <summary>
+            /// Handle (Forward) error event.
+            /// </summary>
+            /// <param name="sender"></param>
+            /// <param name="e"></param>
+            void OnError(object sender, ErrorEventArgs e)
+            {
+                var _observer = observer;
+                if (_observer == null) return;
+
+                // Disposed
+                IFileSystem _fileSystem = fileSystem;
+                if (_fileSystem == null) return;
+
+                // Forward event.
+                observer.OnError(e.GetException());
             }
 
             /// <summary>
@@ -312,7 +352,8 @@ namespace Lexical.Localization.Asset
                 if (_fileSystem == null) return; 
 
                 // Forward event.
-                FileSystemEntryEvent ae = new FileSystemEntryEvent { FileSystem = _fileSystem, ChangeEvents = e.ChangeType, Path = RelativePath };
+                FileSystemEntryEvent ae = new FileSystemEntryEvent { FileSystem = _fileSystem, ChangeEvents = e.ChangeType, Path = WatcherDirectoryRelativePath == "" ? e.Name : WatcherDirectoryRelativePath+"/"+e.Name };
+                if (Path.DirectorySeparatorChar != '/') ae.Path = ae.Path.Replace(Path.DirectorySeparatorChar, '/');
                 observer.OnNext(ae);
             }
 
