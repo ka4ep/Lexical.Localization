@@ -138,18 +138,35 @@ namespace Lexical.Localization.Asset
             if (!absolutePath.StartsWith(AbsoluteRootPath)) throw new InvalidOperationException("Path cannot refer outside IFileSystem root");
 
             DirectoryInfo dir = new DirectoryInfo(concatenatedPath);
-            if (!dir.Exists) throw new DirectoryNotFoundException(path);
+            if (dir.Exists)
+            {
+                StructList24<FileSystemEntry> list = new StructList24<FileSystemEntry>();
+                foreach (DirectoryInfo di in dir.GetDirectories())
+                {
+                    list.Add(new FileSystemEntry { FileSystem = this, LastModified = di.LastWriteTimeUtc, Name = di.Name, Path = path.Length > 0 ? path + "/" + di.Name : di.Name, Length = -1L, Type = FileSystemEntryType.Directory });
+                }
+                foreach (FileInfo _fi in dir.GetFiles())
+                {
+                    list.Add(new FileSystemEntry { FileSystem = this, LastModified = _fi.LastWriteTimeUtc, Name = _fi.Name, Path = path.Length > 0 ? path + "/" + _fi.Name : _fi.Name, Length = _fi.Length, Type = FileSystemEntryType.File });
+                }
+                return list.ToArray();
+            }
 
-            StructList24<FileSystemEntry> list = new StructList24<FileSystemEntry>();
-            foreach(DirectoryInfo di in dir.GetDirectories())
+            FileInfo fi = new FileInfo(concatenatedPath);
+            if (fi.Exists)
             {
-                list.Add(new FileSystemEntry { FileSystem = this, LastModified = di.LastWriteTimeUtc, Name = di.Name, Path = path.Length>0 ? path + "/" + di.Name : di.Name, Length = -1L, Type = FileSystemEntryType.Directory });
+                FileSystemEntry e = new FileSystemEntry {
+                    FileSystem = this,
+                    LastModified = fi.LastWriteTimeUtc,
+                    Name = fi.Name,
+                    Path = path,
+                    Length = fi.Length,
+                    Type = FileSystemEntryType.File
+                };
+                return new FileSystemEntry[] { e };
             }
-            foreach (FileInfo fi in dir.GetFiles())
-            {
-                list.Add(new FileSystemEntry { FileSystem = this, LastModified = fi.LastWriteTimeUtc, Name = fi.Name, Path = path.Length > 0 ? path + "/" + fi.Name : fi.Name, Length = fi.Length, Type = FileSystemEntryType.File });
-            }
-            return list.ToArray();
+
+            throw new DirectoryNotFoundException(path);
         }
 
         /// <summary>
@@ -508,17 +525,27 @@ namespace Lexical.Localization.Asset
         /// </summary>
         protected IFileProvider fileProvider;
 
-        public override FileSystemCapabilities Capabilities => FileSystemCapabilities.Open | FileSystemCapabilities.Read | FileSystemCapabilities.Observe | FileSystemCapabilities.CreateDirectory;
+        /// <summary>
+        /// IFileProvider capabilities
+        /// </summary>
+        protected FileSystemCapabilities capabilities;
+
+        /// <summary>
+        /// IFileProvider capabilities
+        /// </summary>
+        public override FileSystemCapabilities Capabilities => capabilities;
 
         /// <summary>
         /// Create file provider based file system.
         /// </summary>
         /// <param name="fileProvider"></param>
         /// <param name="subpath">(optional) subpath within the file provider</param>
-        public FileProviderSystem(IFileProvider fileProvider, string subpath = null) : base()
+        /// <param name="capabilities">file provider capabilities</param>
+        public FileProviderSystem(IFileProvider fileProvider, string subpath = null, FileSystemCapabilities capabilities = FileSystemCapabilities.Open | FileSystemCapabilities.Read | FileSystemCapabilities.Observe | FileSystemCapabilities.Browse) : base()
         {
             this.fileProvider = fileProvider ?? throw new ArgumentNullException(nameof(subpath));
             this.SubPath = subpath;
+            this.capabilities = capabilities;
         }
 
         /// <summary>
@@ -585,14 +612,25 @@ namespace Lexical.Localization.Asset
             if (fp == null) throw new ObjectDisposedException(nameof(FileProviderSystem));
             // Browse
             IDirectoryContents contents = fp.GetDirectoryContents(concatenatedPath);
-            if (!contents.Exists) throw new DirectoryNotFoundException(path);
-            // Convert result
-            StructList24<FileSystemEntry> list = new StructList24<FileSystemEntry>();
-            foreach (IFileInfo fi in contents)
+            if (contents.Exists)
             {
-                list.Add(new FileSystemEntry { FileSystem = this, LastModified = fi.LastModified, Name = fi.Name, Path = concatenatedPath.Length > 0 ? concatenatedPath + "/" + fi.Name : fi.Name, Length = fi.IsDirectory?-1L:fi.Length, Type = fi.IsDirectory?FileSystemEntryType.Directory:FileSystemEntryType.File });
+                // Convert result
+                StructList24<FileSystemEntry> list = new StructList24<FileSystemEntry>();
+                foreach (IFileInfo _fi in contents)
+                {
+                    list.Add(new FileSystemEntry { FileSystem = this, LastModified = _fi.LastModified, Name = _fi.Name, Path = concatenatedPath.Length > 0 ? concatenatedPath + "/" + _fi.Name : _fi.Name, Length = _fi.IsDirectory ? -1L : _fi.Length, Type = _fi.IsDirectory ? FileSystemEntryType.Directory : FileSystemEntryType.File });
+                }
+                return list.ToArray();
             }
-            return list.ToArray();
+
+            IFileInfo fi = fp.GetFileInfo(concatenatedPath);
+            if (fi.Exists)
+            {
+                FileSystemEntry e = new FileSystemEntry { FileSystem = this, LastModified = fi.LastModified, Name = fi.Name, Path = concatenatedPath, Length = fi.IsDirectory ? -1L : fi.Length, Type = fi.IsDirectory ? FileSystemEntryType.Directory : FileSystemEntryType.File };
+                return new FileSystemEntry[] { e };
+            }
+
+            throw new DirectoryNotFoundException(path);
         }
 
         /// <summary>

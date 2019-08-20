@@ -9,10 +9,10 @@ namespace Lexical.Localization.Plurality
 {
     /// <summary>
     /// Interface for numbers that have decimal string representation or truncated approximation. 
-    /// Base 2, 8 and 16 numbers are used aswell.
+    /// Uses number bases 2, 8, 10 and 16.
     /// 
-    /// This interface is for extracting features for the purpose of language string declinations, not mathematical operations.
-    /// For example numbers "1.1" and "1.10" are not equal in linquistic sense.
+    /// This interface is for extracting features for the purpose of language string declinations, not for mathematical operations.
+    /// For example numbers "1.1" and "1.10" are not exact equals in their linquistic features. In some languages, they would be declinated differently.
     /// 
     /// Following features are extracted:
     /// <list type="bullet">

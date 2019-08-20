@@ -137,7 +137,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Browse a directory for file and subdirectory entries.
         /// </summary>
-        /// <param name="path">path to directory, "" is root, separator is "/"</param>
+        /// <param name="path">path to a directory or to a single file, "" is root, separator is "/"</param>
         /// <returns>a snapshot of file and directory entries</returns>
         /// <exception cref="DirectoryNotFoundException"></exception>
         /// <exception cref="IOException">On unexpected IO error</exception>
@@ -402,7 +402,7 @@ namespace Lexical.Localization
         /// Browse a directory for file and subdirectory entries.
         /// </summary>
         /// <param name="fileSystem"></param>
-        /// <param name="path">path to directory, "" is root, separator is "/"</param>
+        /// <param name="path">path to a directory or to a single file, "" is root, separator is "/"</param>
         /// <returns>a snapshot of file and directory entries</returns>
         /// <exception cref="IOException">On unexpected IO error</exception>
         /// <exception cref="SecurityException">If caller did not have permission</exception>
