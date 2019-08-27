@@ -8,11 +8,11 @@ using System.Collections.Generic;
 namespace Lexical.Localization.Plurality
 {
     /// <summary>
-    /// Interface for numbers that have decimal string representation or truncated approximation. 
+    /// Interface for numbers that have decimal string representation. 
     /// Uses number bases 2, 8, 10 and 16.
     /// 
     /// This interface is for extracting features for the purpose of language string declinations, not for mathematical operations.
-    /// For example numbers "1.1" and "1.10" are not exact equals in their linquistic features. In some languages, they would be declinated differently.
+    /// For example numbers "1.1" and "1.10" are not exact equals by linquistic features. In some languages, they would be declinated differently.
     /// 
     /// Following features are extracted:
     /// <list type="bullet">
@@ -226,7 +226,7 @@ namespace Lexical.Localization.Plurality
             // Successful TryGets
             bool _lx = false, _ly = false, _dx = false, _dy = false;
 
-            // Compare doubles
+            // Compare int64s
             long lx = default, ly = default;
             if ((_lx=x.TryGet(out lx)) && (_ly=y.TryGet(out ly))) return lx < ly ? -1 : lx > ly ? 1 : 0;
 

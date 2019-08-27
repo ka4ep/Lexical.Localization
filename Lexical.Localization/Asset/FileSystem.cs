@@ -222,7 +222,7 @@ namespace Lexical.Localization.Asset
             string newConcatenatedPath = RootPath == null ? newPath : (RootPath.EndsWith("/") || RootPath.EndsWith("\\")) ? RootPath + newPath : RootPath + "/" + newPath;
 
             string oldPathAbsolute = Path.GetFullPath(oldConcatenatedPath), newPathAbsolute = Path.GetFullPath(newConcatenatedPath);
-            if (!oldPathAbsolute.StartsWith(AbsoluteRootPath)) throw new InvalidOperationException("Path cannot refer outside IFileSystem root");
+            if (!oldPathAbsolute.StartsWith(AbsoluteRootPath)) throw new FileNotFoundException("Path cannot refer outside IFileSystem root");
             if (!newPathAbsolute.StartsWith(AbsoluteRootPath)) throw new InvalidOperationException("Path cannot refer outside IFileSystem root");
 
             FileInfo fi = new FileInfo(oldConcatenatedPath);
@@ -313,7 +313,7 @@ namespace Lexical.Localization.Asset
                 // Watch directory
                 if (di.Exists)
                 {
-                    watcher = new FileSystemWatcher(absolutePath, "*");
+                    watcher = new FileSystemWatcher(absolutePath);
                     watcher.IncludeSubdirectories = true;
                     watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size;
                     WatcherDirectoryRelativePath = RelativePath;

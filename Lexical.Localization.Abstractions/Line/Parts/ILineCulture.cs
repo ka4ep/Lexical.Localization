@@ -10,7 +10,7 @@ using System.Globalization;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Key (may have) has "Culture" parameter assigned.
+    /// Key with "Culture" parameter.
     /// </summary>
     public interface ILineCulture : ILine
     {
