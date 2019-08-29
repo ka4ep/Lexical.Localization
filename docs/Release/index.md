@@ -57,19 +57,19 @@ Apr 1 2019
 # Upcoming Releases
 
 ## 0.29.0
-Aug 2019
-* Rewriting IAssetBuilder
+Mid September 2019
+* Rewritten IAssetBuilder, IAssetSource
  * Addresses how class libraries can request for resources that can be supplied by the deploying application from file sources that may not be inheritly supported by the class library. 
  * For example, application can add resources from IFileProvider, and class library doesn't need to have a dependency to FileProvider.
  * IAssetLoader back. File patterns can be given to resources, for example "Resources/[Assembly]{.culture}.dll".
 
 ## 0.30.0
-Aug 2019
+TBD
  * Support for .po files
   * Translates .po file plural rules
 
 ## 0.31.0
-Aug 2019
+TBD
 * Better support for external functions
  * Better placeholder expressions
 * StringFormat implementation that uses Humanizr functions, "There are {#0.Pluralize()} cats.".

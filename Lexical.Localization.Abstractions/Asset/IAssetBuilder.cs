@@ -45,7 +45,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Policy whether assets should be observed and reloaded if they are modified.
         /// </summary>
-        bool Reload { get; }
+        bool Reload { get; set; }
     }
     // </doc>
 }

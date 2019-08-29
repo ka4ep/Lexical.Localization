@@ -43,7 +43,15 @@ namespace Lexical.Localization.Asset
     }
 
     /// <summary>
-    /// Source that provides string based key-value lines
+    /// Source that provides string based key-value lines.
+    /// 
+    /// String line source is used for file types such as .resx and .resources, that do not carry
+    /// information about key parts within the file itself. 
+    /// 
+    /// <see cref="ILineFormat"/> is used to translate the string into <see cref="ILinePart"/>s.
+    /// 
+    /// For instance, if a string follows pattern "{Culture.}{Type.}[Key]" the <see cref="LineFormat"/> would 
+    /// convert lines such as "En.MyController.Success" into <see cref="ILine"/>.
     /// </summary>
     public interface IStringLineSource : ILineSource, IEnumerable<KeyValuePair<string, IString>>
     {

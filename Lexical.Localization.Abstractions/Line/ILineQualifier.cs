@@ -31,7 +31,7 @@ namespace Lexical.Localization
     }
 
     /// <summary>
-    /// Tests whether a <see cref="ILine"/> matches a criteria.
+    /// Tests each of an enumerable of <see cref="ILine"/>s against the criteria.
     /// </summary>
     public interface ILineQualifierLinesEvaluatable : ILineQualifier
     {
@@ -82,7 +82,7 @@ namespace Lexical.Localization
     public interface ILineQualifierComposition : ILineQualifier
     {
         /// <summary>
-        /// Is collection in read-only state.
+        /// Is the collection in read-only state.
         /// </summary>
         bool ReadOnly { get; set; }
 
