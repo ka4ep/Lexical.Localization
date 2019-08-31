@@ -62,7 +62,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that opens an embedded resource and reads as IEnumerable&lt;KeyValuePair&lt;string, string&gt;gt;
     /// </summary>
-    public class LineEmbeddedStringLinesSource : LineEmbeddedSource, IStringLineSource
+    public class LineEmbeddedStringLinesSource : LineEmbeddedSource, IStringLinesSource
     {
         /// <summary>
         /// Create embedded localization reader that reads as string lines.
@@ -127,7 +127,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that opens an embedded resource and reads as IEnumerable&lt;KeyValuePair&lt;ILine, string&gt;&gt;
     /// </summary>
-    public class LineEmbeddedKeyLinesSource : LineEmbeddedSource, IKeyLineSource
+    public class LineEmbeddedKeyLinesSource : LineEmbeddedSource, IKeyLinesSource
     {
         /// <summary>
         /// Create embedded localization reader that reads as key lines.
@@ -189,7 +189,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that opens an embedded resource and reads as <see cref="IEnumerable{ILineTree}"/>.
     /// </summary>
-    public class LineEmbeddedLineTreeSource : LineEmbeddedSource, ILineTreeSource
+    public class LineEmbeddedLineTreeSource : LineEmbeddedSource, ITreeLinesSource
     {
         /// <summary>
         /// Create embedded localization reader that reads as key tree.

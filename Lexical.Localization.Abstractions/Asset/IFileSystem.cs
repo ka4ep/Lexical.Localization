@@ -248,7 +248,7 @@ namespace Lexical.Localization.Asset
         public string Path;
 
         /// <summary>
-        /// File length. -1 if is folder.
+        /// File length. -1 if is folder or length is unknown.
         /// </summary>
         public long Length;
 

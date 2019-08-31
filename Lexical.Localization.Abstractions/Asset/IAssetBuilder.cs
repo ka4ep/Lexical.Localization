@@ -12,40 +12,117 @@ namespace Lexical.Localization.Asset
 {
     // <doc>
     /// <summary>
-    /// Builder that can create <see cref="IAsset"/> instance(s).
+    /// Asset builder constructs <see cref="IAsset"/>s from parts.
     /// 
-    /// For dependency injection.
+    /// It's main purpose address how to inject assets, lazily constructed assets, files and file patterns
+    /// in dependency injection use case.
+    /// 
+    /// <see cref="Build"/> method assembles different parts into one <see cref="IAsset"/>.
+    /// The implementation determines how parts are assembled together.
+    /// 
+    /// <see cref="Asset"/> are added as is.
+    /// <see cref="Sources"/> are constructed on <see cref="Build"/>.
+    /// <see cref="AssetFiles"/> and <see cref="AssetFilePatterns"/> are added as file references. They are from associated <see cref="FileSystems"/>.
+    /// For example, and asset file pattern can refere to "{Culture/}localizaiton.xml".
+    /// 
+    /// <see cref="IAsset"/>, <see cref="IAssetSource"/>, <see cref="IAssetFile"/> and <see cref="IAssetFilePattern"/> must signal whether the 
+    /// asset produces strings or resources.
     /// </summary>
     public interface IAssetBuilder
     {
         /// <summary>
-        /// List of asset sources that can construct assets.
+        /// List of assets that are added on <see cref="Build"/> call.
+        /// </summary>
+        IList<IAsset> Asset { get; }
+
+        /// <summary>
+        /// List of asset sources that are constructed into <see cref="IAsset"/> on <see cref="Build"/> call.
         /// </summary>
         IList<IAssetSource> Sources { get; }
 
         /// <summary>
-        /// Build language strings.
+        /// List of <see cref="IFileSystem"/>s that are used as file sources for asset files.
         /// </summary>
-        /// <returns></returns>
+        IList<IFileSystem> FileSystems { get; }
+
+        /// <summary>
+        /// List of asset files. File is searched with a <see cref="IFileSystem"/>.
+        /// </summary>
+        IList<IAssetFile> AssetFiles { get; }
+
+        /// <summary>
+        /// List of asset file patterns. File is searched with a <see cref="IFileSystem"/>.
+        /// </summary>
+        IList<IAssetFilePattern> AssetFilePatterns { get; }
+
+        /// <summary>
+        /// List of asset post build actions.
+        /// </summary>
+        IList<IAssetPostBuild> AssetPostBuild { get; }
+
+        /// <summary>
+        /// Asset file observe policy to be attached to the built asset.
+        /// </summary>
+        IAssetFileObservePolicy ObservePolicy { get; set; }
+
+        /// <summary>
+        /// Build asset. 
+        /// </summary>
+        /// <returns>asset</returns>
+        /// <exception cref="AssetException">If the asset builder implementation could not build from the configuration.</exception>
         IAsset Build();
     }
 
     /// <summary>
-    /// Component of <see cref="IAssetBuilder"/>.
+    /// Policy whether asset files should be observed and reloaded when modified.
     /// </summary>
-    public interface IAssetBuilderPart
-    {
-    }
-
-    /// <summary>
-    /// Policy whether the built asset should be observed and reloaded when modified.
-    /// </summary>
-    public interface IAssetReloadPolicy : IAssetBuilderPart
+    public interface IAssetFileObservePolicy : IObservable<bool>
     {
         /// <summary>
         /// Policy whether assets should be observed and reloaded if they are modified.
         /// </summary>
-        bool Reload { get; set; }
+        bool Observe { get; set; }
+    }
+
+    /// <summary>
+    /// Reference to asset file. Is used with a <see cref="IFileSystem"/>.
+    /// </summary>
+    public interface IAssetFile
+    {
+        /// <summary>
+        /// Path to asset file. Directory separator is '/'. Root is without a separator. 
+        /// 
+        /// For Example: "resources/localization-en.xml".
+        /// </summary>
+        string FilePath { get; set; }
+    }
+
+    /// <summary>
+    /// File name pattern to asset files. Is used with a <see cref="IFileSystem"/>.
+    /// </summary>
+    public interface IAssetFilePattern
+    {
+        /// <summary>
+        /// Path to asset files. Directory separator is '/'. Root is without a separator.
+        /// 
+        /// For example: "resources/{Culture/}localization.xml"
+        /// </summary>
+        ILinePattern FilePattern { get; set; }
+    }
+
+    /// <summary>
+    /// Post build action for <see cref="IAssetBuilder"/>.
+    /// </summary>
+    public interface IAssetPostBuild
+    {
+        /// <summary>
+        /// Allows source to do post build action and to decorate already built asset.
+        /// 
+        /// This allows a source to provide decoration such as cache.
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <returns>asset or component</returns>
+        IAsset PostBuild(IAsset asset);
     }
     // </doc>
 }

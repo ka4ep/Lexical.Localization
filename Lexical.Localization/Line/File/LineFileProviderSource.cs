@@ -53,7 +53,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that opens an embedded resource and reads as IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;
     /// </summary>
-    public class StringLineFileProviderSource : LineFileProviderSource, IStringLineSource
+    public class StringLineFileProviderSource : LineFileProviderSource, IStringLinesSource
     {
         /// <summary>
         /// Create source to localization file in a <paramref name="fileProvider"/>.
@@ -114,7 +114,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that opens an embedded resource and reads as IEnumerable&lt;KeyValuePair&lt;ILine, string&gt;&gt;.
     /// </summary>
-    public class KeyLineFileProviderSource : LineFileProviderSource, IKeyLineSource
+    public class KeyLineFileProviderSource : LineFileProviderSource, IKeyLinesSource
     {
         /// <summary>
         /// Create source to localization file in a <paramref name="fileProvider"/>.
@@ -176,7 +176,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that opens an embedded resource and reads as <see cref="IEnumerable{ILineTree}"/>.
     /// </summary>
-    public class LineTreeFileProviderSource : LineFileProviderSource, ILineTreeSource
+    public class LineTreeFileProviderSource : LineFileProviderSource, ITreeLinesSource
     {
         /// <summary>
         /// Create source to localization file in a <paramref name="fileProvider"/>.

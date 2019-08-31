@@ -13,6 +13,13 @@ namespace Lexical.Localization.Asset
     // <doc>
     /// <summary>
     /// Source of assets. Adds resources to builder's list.
+    /// 
+    /// The implementation of this class must use one of the more specific sub-interfaces:
+    /// <list type="table">
+    /// <item><see cref="ILinesSource"/></item>
+    /// <item><see cref="IResourcesSource"/></item>
+    /// </list>
+    /// </summary>
     /// </summary>
     public interface IAssetSource
     {
@@ -22,23 +29,21 @@ namespace Lexical.Localization.Asset
         /// <param name="list">list to add provider(s) to</param>
         /// <returns>self</returns>
         void Build(IList<IAsset> list);
-
-        /// <summary>
-        /// Allows source to do post build action and to decorate already built asset.
-        /// 
-        /// This allows a source to provide decoration such as cache.
-        /// </summary>
-        /// <param name="asset"></param>
-        /// <returns>asset or component</returns>
-        IAsset PostBuild(IAsset asset);
     }
     // </doc>
 
     // <doc2>
     /// <summary>
-    /// Signal for asset source that returns localization lines.
+    /// Signals that <see cref="IAssetSource"/> constructs lines asset.
+    /// 
+    /// The implementation of this class must use one of the more specific sub-interfaces:
+    /// <list type="table">
+    /// <item><see cref="IStringLinesSource"/></item>
+    /// <item><see cref="IKeyLinesSource"/></item>
+    /// <item><see cref="ITreeLinesSource"/></item>
+    /// </list>
     /// </summary>
-    public interface ILineSource : IAssetSource
+    public interface ILinesSource : IAssetSource
     {
     }
 
@@ -53,7 +58,7 @@ namespace Lexical.Localization.Asset
     /// For instance, if a string follows pattern "{Culture.}{Type.}[Key]" the <see cref="LineFormat"/> would 
     /// convert lines such as "En.MyController.Success" into <see cref="ILine"/>.
     /// </summary>
-    public interface IStringLineSource : ILineSource, IEnumerable<KeyValuePair<string, IString>>
+    public interface IStringLinesSource : ILinesSource, IEnumerable<KeyValuePair<string, IString>>
     {
         /// <summary>
         /// Format that is used for converting string to <see cref="ILine"/>.
@@ -64,17 +69,27 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Source that provides <see cref="ILine"/> based key-value lines.
     /// </summary>
-    public interface IKeyLineSource : ILineSource, IEnumerable<ILine>
+    public interface IKeyLinesSource : ILinesSource, IEnumerable<ILine>
     {
     }
 
     /// <summary>
     /// Source that provides <see cref="ILineTree"/> based key-value lines.
     /// </summary>
-    public interface ILineTreeSource : ILineSource, IEnumerable<ILineTree>
+    public interface ITreeLinesSource : ILinesSource, IEnumerable<ILineTree>
     {
     }
     // </doc2>
+
+    // <doc3>
+    /// <summary>
+    /// Signals that <see cref="IAssetSource"/> constructs resources asset.
+    /// </summary>
+    public interface IResourcesSource : IAssetSource
+    {
+    }
+    // </doc3>
+
 
     // <attribute>
     /// <summary>

@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Asset source that constructs an asset from re-openable IEnumerable&lt;KeyValuePair&lt;String, String&gt;&gt; string based key-value lines.
     /// </summary>
-    public class StringLinesSource : IAssetSource, IStringLineSource
+    public class StringLinesSource : IAssetSource, IStringLinesSource
     {
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
@@ -69,7 +69,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Asset source that provides an asset from re-openable IEnumerable&lt;ILine&lt;.
     /// </summary>
-    public class KeyLineSource : IAssetSource, IKeyLineSource
+    public class KeyLineSource : IAssetSource, IKeyLinesSource
     {
         /// <summary>
         /// Source of lines
@@ -109,7 +109,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Asset source that provides an asset from re-openable IEnumerable&lt;ILineTree&lt;.
     /// </summary>
-    public class LineTreeSource : IAssetSource, ILineTreeSource
+    public class LineTreeSource : IAssetSource, ITreeLinesSource
     {
         /// <summary>
         /// Source of lines

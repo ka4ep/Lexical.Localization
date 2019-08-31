@@ -53,7 +53,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Localization file source that reads as IEnumerable&lt;KeyValuePair&lt;string, string&gt;&gt;.
     /// </summary>
-    public class StringLineFileSource : LineFileSource, IStringLineSource
+    public class StringLineFileSource : LineFileSource, IStringLinesSource
     {
         /// <summary>
         /// Create localization file source that reads as string lines.
@@ -114,7 +114,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Localization file source that reads as IEnumerable&lt;KeyValuePair&lt;ILine, string&gt;&gt;.
     /// </summary>
-    public class KeyLineFileSource : LineFileSource, IKeyLineSource
+    public class KeyLineFileSource : LineFileSource, IKeyLinesSource
     {
         /// <summary>
         /// Create localization file source that reads as key lines.
@@ -175,7 +175,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Localization file source that reads as ILineTree.
     /// </summary>
-    public class LineTreeFileSource : LineFileSource, ILineTreeSource
+    public class LineTreeFileSource : LineFileSource, ITreeLinesSource
     {
         /// <summary>
         /// Create localization file source that reads as key tree.

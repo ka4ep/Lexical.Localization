@@ -3,6 +3,7 @@
 // Date:           14.7.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.FileSystem;
 using Lexical.Localization.Internal;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
@@ -11,13 +12,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security;
 using System.Threading;
 
 namespace Lexical.Localization.Asset
 {
     /// <summary>
-    /// File system based <see cref="IFileSystem"/> that loads localization files.
+    /// File system based <see cref="IFileSystem"/> that loads local file system files.
     /// 
     /// If file watchers have been created, and file system is disposed, then watchers will be disposed also. 
     /// <see cref="IObserver{T}.OnCompleted"/> event is forwarded to watchers.
@@ -385,7 +387,7 @@ namespace Lexical.Localization.Asset
 
                 // Clear file system reference, and remove watcher from dispose list.
                 IFileSystem _fileSystem = Interlocked.Exchange(ref fileSystem, null);
-                if (_fileSystem is FileSystemBase __fileSystem) __fileSystem.RemoveDisposable(this);
+                if (_fileSystem is FileSystemBase __fileSystem) __fileSystem.RemoveDisposableBase(this);
 
                 StructList2<Exception> errors = new StructList2<Exception>();
                 if (_observer != null)
@@ -418,6 +420,20 @@ namespace Lexical.Localization.Asset
                 if (errors.Count > 0) throw new AggregateException(errors);
             }
         }
+
+        /// <summary>
+        /// Add <paramref name="disposable"/> to list of objects to be disposed along with the system.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns>filesystem</returns>
+        public FileSystem AddDisposable(object disposable) => AddDisposableBase(disposable) as FileSystem;
+
+        /// <summary>
+        /// Remove disposable from dispose list.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
+        public FileSystem RemoveDisposable(object disposable) => RemoveDisposableBase(disposable) as FileSystem;
 
         /// <summary>
         /// Print info
@@ -455,13 +471,15 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="disposable"></param>
         /// <returns>filesystem</returns>
-        public IFileSystem AddDisposable(IDisposable disposable)
+        internal protected IFileSystem AddDisposableBase(object disposable)
         {
-            if (disposable == null) throw new ArgumentNullException(nameof(disposable));
-            lock (m_lock)
+            if (disposable is IDisposable disp)
             {
-                if (this.disposeList == null) this.disposeList = new List<IDisposable>();
-                this.disposeList.Add(disposable);
+                lock (m_lock)
+                {
+                    if (this.disposeList == null) this.disposeList = new List<IDisposable>();
+                    this.disposeList.Add(disp);
+                }
             }
             return this;
         }
@@ -471,12 +489,14 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="disposable"></param>
         /// <returns></returns>
-        public IFileSystem RemoveDisposable(IDisposable disposable)
+        internal protected IFileSystem RemoveDisposableBase(object disposable)
         {
-            if (disposable == null) throw new ArgumentNullException(nameof(disposable));
-            lock (m_lock)
+            if (disposable is IDisposable disp)
             {
-                if (this.disposeList != null) this.disposeList.Remove(disposable);
+                lock (m_lock)
+                {
+                    if (this.disposeList != null) this.disposeList.Remove(disp);
+                }
             }
             return this;
         }
@@ -774,7 +794,7 @@ namespace Lexical.Localization.Asset
 
                 // Clear file system reference, and remove watcher from dispose list.
                 IFileSystem _fileSystem = Interlocked.Exchange(ref fileSystem, null);
-                if (_fileSystem is FileSystemBase __fileSystem) __fileSystem.RemoveDisposable(this);
+                if (_fileSystem is FileSystemBase __fileSystem) __fileSystem.RemoveDisposableBase(this);
 
                 StructList2<Exception> errors = new StructList2<Exception>();
                 if (_observer != null)
@@ -808,6 +828,131 @@ namespace Lexical.Localization.Asset
             }
         }
 
+        /// <summary>
+        /// Add <paramref name="disposable"/> to list of objects to be disposed along with the system.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns>filesystem</returns>
+        public FileProviderSystem AddDisposable(object disposable) => AddDisposableBase(disposable) as FileProviderSystem;
+
+        /// <summary>
+        /// Remove disposable from dispose list.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
+        public FileProviderSystem RemoveDisposable(object disposable) => RemoveDisposableBase(disposable) as FileProviderSystem;
+    }
+
+    /// <summary>
+    /// File System that represents embedded resources of an <see cref="Assembly"/>.
+    /// </summary>
+    public class EmbeddedFileSystem : FileSystemBase, IFileSystemBrowse, IFileSystemOpen
+    {
+        /// <summary>
+        /// Associated Assembly
+        /// </summary>
+        public readonly Assembly Assembly;
+
+        /// <summary>
+        /// Get capabilities.
+        /// </summary>
+        public override FileSystemCapabilities Capabilities => FileSystemCapabilities.Browse | FileSystemCapabilities.Open | FileSystemCapabilities.Read;
+
+        /// <summary>
+        /// Snapshot of entries.
+        /// </summary>
+        protected FileSystemEntry[] entries;
+
+        /// <summary>
+        /// Create embedded 
+        /// </summary>
+        /// <param name="assembly"></param>
+        public EmbeddedFileSystem(Assembly assembly)
+        {
+            this.Assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
+        }
+
+        /// <summary>
+        /// Create a snapshot of entries.
+        /// </summary>
+        /// <returns></returns>
+        protected FileSystemEntry[] CreateEntries()
+        {
+            string[] names = Assembly.GetManifestResourceNames();
+
+            // Get file time, or use Unix time 0.
+            DateTimeOffset time;
+            if (Assembly.Location != null && File.Exists(Assembly.Location))
+                time = new FileInfo(Assembly.Location).LastWriteTimeUtc;
+            else
+                time = DateTimeOffset.FromUnixTimeSeconds(0L);
+
+            FileSystemEntry[] result = new FileSystemEntry[names.Length];
+            for (int i = 0; i < names.Length; i++)
+            {
+                result[i] = new FileSystemEntry
+                {
+                    FileSystem = this,
+                    LastModified = time,
+                    Length = -1L,
+                    Name = names[i],
+                    Path = names[i],
+                    Type = FileSystemEntryType.File
+                };
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Browse a list of embedded resources.
+        /// 
+        /// For example:
+        ///     "assembly.res1"
+        ///     "assembly.res2"
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public FileSystemEntry[] Browse(string path)
+            => entries ?? (entries = CreateEntries());
+
+        /// <summary>
+        /// Open embedded resource for reading.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="fileMode"></param>
+        /// <param name="fileAccess"></param>
+        /// <param name="fileShare"></param>
+        /// <returns></returns>
+        public Stream Open(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
+        {
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (fileMode != FileMode.Open) throw new IOException($"Cannot open embedded resouce in FileMode={fileMode}");
+            if (fileAccess != FileAccess.Read) throw new IOException($"Cannot open embedded resouce in FileAccess={fileAccess}");
+            Stream s = Assembly.GetManifestResourceStream(path);
+            if (s == null) throw new FileNotFoundException(path);
+            return s;
+        }
+
+        /// <summary>
+        /// Add <paramref name="disposable"/> to list of objects to be disposed along with the system.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns>filesystem</returns>
+        public EmbeddedFileSystem AddDisposable(object disposable) => AddDisposableBase(disposable) as EmbeddedFileSystem;
+
+        /// <summary>
+        /// Remove disposable from dispose list.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
+        public EmbeddedFileSystem RemoveDisposable(object disposable) => RemoveDisposableBase(disposable) as EmbeddedFileSystem;
+
+        /// <summary>
+        /// Print info
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            => Assembly.FullName;
     }
 
     /// <summary>
@@ -1117,6 +1262,20 @@ namespace Lexical.Localization.Asset
         }
 
         /// <summary>
+        /// Add <paramref name="disposable"/> to list of objects to be disposed along with the system.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns>filesystem</returns>
+        public FileSystemComposition AddDisposable(object disposable) => AddDisposableBase(disposable) as FileSystemComposition;
+
+        /// <summary>
+        /// Remove disposable from dispose list.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
+        public FileSystemComposition RemoveDisposable(object disposable) => RemoveDisposableBase(disposable) as FileSystemComposition;
+
+        /// <summary>
         /// Get file systems
         /// </summary>
         /// <returns></returns>
@@ -1133,6 +1292,109 @@ namespace Lexical.Localization.Asset
         public override string ToString()
             => String.Join<IFileSystem>(", ", fileSystems);
 
+    }
+
+    /// <summary>
+    /// Adapts <see cref="Lexical.FileSystem.IFileSystem"/> to <see cref="Lexical.Localization.Asset.IFileSystem"/>.
+    /// </summary>
+    public class FileSystemAdapter : FileSystemBase, IFileSystem, IFileSystemBrowse, IFileSystemOpen, IFileSystemObserve, IFileSystemMove, IFileSystemDelete, IFileSystemCreateDirectory
+    {
+        /// <summary>
+        /// <see cref="Lexical.FileSystem.IFileSystem"/>
+        /// </summary>
+        public readonly Lexical.FileSystem.IFileSystem FileSystem;
+
+        /// <summary>
+        /// Create adapter that adapts <see cref="Lexical.FileSystem.IFileSystem"/> to <see cref="Lexical.Localization.Asset.IFileSystem"/>.
+        /// </summary>
+        /// <param name="fileSystem"></param>
+        public FileSystemAdapter(Lexical.FileSystem.IFileSystem fileSystem)
+        {
+            FileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+        }
+
+        /// <inheritdoc/>
+        public FileSystemEntry[] Browse(string path)
+        {
+            Lexical.FileSystem.FileSystemEntry[] files = FileSystem.Browse(path);
+            FileSystemEntry[] result = new FileSystemEntry[files.Length];
+            for (int i = 0; i < files.Length; i++)
+            {
+                Lexical.FileSystem.FileSystemEntry e = files[i];
+                result[i] = new FileSystemEntry { FileSystem = this, LastModified = e.LastModified, Length = e.Length, Name = e.Name, Path = e.Path, Type = (FileSystemEntryType)(UInt32)e.Type };
+            }
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public void CreateDirectory(string path)
+            => FileSystem.CreateDirectory(path);
+
+        /// <inheritdoc/>
+        public void Delete(string path, bool recursive = false)
+            => FileSystem.Delete(path, recursive);
+
+        /// <inheritdoc/>
+        public void Move(string oldPath, string newPath)
+            => FileSystem.Move(oldPath, newPath);
+
+        /// <inheritdoc/>
+        public Stream Open(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
+            => FileSystem.Open(path, fileMode, fileAccess, fileShare);
+
+        /// <inheritdoc/>
+        public IDisposable Observe(string path, IObserver<FileSystemEntryEvent> observer)
+            => FileSystem.Observe(path, new Observer(this, observer));
+
+        /// <summary>
+        /// Observer adapter
+        /// </summary>
+        class Observer : IObserver<Lexical.FileSystem.FileSystemEntryEvent>
+        {
+            IObserver<FileSystemEntryEvent> observer;
+            IFileSystem parent;
+
+            public Observer(IFileSystem parent, IObserver<FileSystemEntryEvent> observer)
+            {
+                this.parent = parent;
+                this.observer = observer ?? throw new ArgumentNullException(nameof(observer));
+            }
+
+            public void OnCompleted()
+                => observer.OnCompleted();
+
+            public void OnError(Exception error)
+                => observer.OnError(error);
+
+            public void OnNext(Lexical.FileSystem.FileSystemEntryEvent value)
+                => observer.OnNext(new FileSystemEntryEvent
+                {
+                    ChangeEvents = value.ChangeEvents,
+                    FileSystem = parent,
+                    Path = value.Path
+                });
+        }
+
+        /// <summary>
+        /// Add <paramref name="disposable"/> to list of objects to be disposed along with the system.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns>filesystem</returns>
+        public FileSystemAdapter AddDisposable(object disposable) => AddDisposableBase(disposable) as FileSystemAdapter;
+
+        /// <summary>
+        /// Remove disposable from dispose list.
+        /// </summary>
+        /// <param name="disposable"></param>
+        /// <returns></returns>
+        public FileSystemAdapter RemoveDisposable(object disposable) => RemoveDisposableBase(disposable) as FileSystemAdapter;
+
+        /// <summary>
+        /// Print info
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+            => FileSystem.ToString();
     }
 
 }

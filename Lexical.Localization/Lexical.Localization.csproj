@@ -13,7 +13,7 @@
     <LangVersion>8.0</LangVersion>
     <PackageTags>Localization Lexical</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageIconUrl>http://avalanche.fi/theme/logo_blue.svg</PackageIconUrl>
+    <PackageIconUrl>http://lexical.fi/theme/logo_blue.svg</PackageIconUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <FileUpgradeFlags>40</FileUpgradeFlags>
     <UpgradeBackupLocation>N:\Lexical\Localization\Backup\Lexical.Localization\</UpgradeBackupLocation>
@@ -32,6 +32,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="12.*" PrivateAssets="all" />
     <PackageReference Include="NLog" Version="4.0.0" PrivateAssets="all" />
+    <PackageReference Include="Lexical.FileSystem" Version="0.9.1" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lexical.Localization.Abstractions\Lexical.Localization.Abstractions.csproj" />
