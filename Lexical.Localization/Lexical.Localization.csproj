@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/tagcode/Lexical.Localization</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <LangVersion>8.0</LangVersion>
-    <PackageTags>Localization Lexical</PackageTags>
+    <PackageTags>Localization Lexical cldr plural-rules</PackageTags>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageIconUrl>http://lexical.fi/theme/logo_blue.svg</PackageIconUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
