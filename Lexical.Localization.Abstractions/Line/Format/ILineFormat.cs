@@ -11,7 +11,7 @@ namespace Lexical.Localization
 {
     // <ILineFormat>
     /// <summary>
-    /// Line format makes conversions between <see cref="ILine"/> and <see cref="String"/>.
+    /// Line format makes conversions between <see cref="ILine"/> and unformed <see cref="String"/>.
     /// 
     /// Class that implements to this interface should implement one or both of the following interfaces:
     /// <list type="bullet">

@@ -16,7 +16,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that reads Microsoft's binary ".resources" files as key,value lines.
     /// </summary>
-    public class ResourcesLineReader : ILineFileFormat, ILineStringStreamReader
+    public class ResourcesLineReader : ILineFileFormat, IUnformedLineStreamReader
     {
         private readonly static ResourcesLineReader instance = new ResourcesLineReader();
 

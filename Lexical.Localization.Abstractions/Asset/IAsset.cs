@@ -3,6 +3,7 @@
 // Date:           8.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
+using Lexical.Localization.Resource;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,10 +13,18 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// This interface is a signal that the object carries an asset that is queryable with other interfaces.
     /// 
-    /// There are more specific interfaces on how. 
-    ///  See <see cref="IAsset"/>
-    ///      <see cref="IStringAssetStringLinesEnumerable"/>
-    ///      <see cref="IAssetCultureEnumerable"/>.
+    /// See subinterfaces:
+    /// <list type="bullet">
+    ///     <item><see cref="IAssetCultureEnumerable"/></item>
+    ///     <item><see cref="IAssetComposition"/></item>
+    ///     <item><see cref="IAssetReloadable"/></item>
+    ///     <item><see cref="IStringAsset"/></item>
+    ///     <item><see cref="IStringAssetLinesEnumerable"/></item>
+    ///     <item><see cref="IStringAssetUnformedLinesEnumerable"/></item>
+    ///     <item><see cref="IResourceAsset"/></item>
+    ///     <item><see cref="IResourceAssetKeysEnumerable"/></item>
+    ///     <item><see cref="IResourceAssetNamesEnumerable"/></item>
+    /// </list>
     /// </summary>
     public interface IAsset
     {

@@ -27,7 +27,7 @@ namespace Lexical.Localization.Asset
     /// </summary>
     public class StringLocalizerAsset : 
         IStringAsset, 
-        IStringAssetStringLinesEnumerable,  // Doesn't work
+        IStringAssetUnformedLinesEnumerable,  // Doesn't work
         IAssetReloadable
     {
         /// <summary>
@@ -289,7 +289,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IString>> GetStringLines(ILine key = null)
+        public IEnumerable<KeyValuePair<string, IString>> GetUnformedLines(ILine key = null)
         {
             CultureInfo key_culture = null;
             key.TryGetCultureInfo(out key_culture);
@@ -319,9 +319,9 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IString>> GetAllStringLines(ILine key = null)
+        public IEnumerable<KeyValuePair<string, IString>> GetAllUnformedLines(ILine key = null)
         {
-            return GetStringLines(key);
+            return GetUnformedLines(key);
         }
 
         /// <summary>

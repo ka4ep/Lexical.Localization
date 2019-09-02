@@ -265,7 +265,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Cache part that caches calls to <see cref="IStringAssetLinesEnumerable" /> and <see cref="IStringAsset"/>.
     /// </summary>
-    public class AssetCachePartStrings : IAssetCachePart, IStringAssetLinesEnumerable, IStringAssetStringLinesEnumerable, IStringAsset, IAssetReloadable, IDisposable
+    public class AssetCachePartStrings : IAssetCachePart, IStringAssetLinesEnumerable, IStringAssetUnformedLinesEnumerable, IStringAsset, IAssetReloadable, IDisposable
     {
         /// <summary>
         /// Source asset that this is cache of.
@@ -519,10 +519,10 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IString>> GetStringLines(ILine key = null)
+        public IEnumerable<KeyValuePair<string, IString>> GetUnformedLines(ILine key = null)
         {
             // Filtered queries are not cached
-            if (key != null) return Source.GetStringLines(key);
+            if (key != null) return Source.GetUnformedLines(key);
 
             // Get cache instance
             Cache _cache = this.cache;
@@ -535,7 +535,7 @@ namespace Lexical.Localization.Asset
             if (_cache.stringLinesPartialIsNull) return null;
 
             // Read from source
-            IEnumerable<KeyValuePair<string, IString>> lines = Source.GetStringLines(null);
+            IEnumerable<KeyValuePair<string, IString>> lines = Source.GetUnformedLines(null);
 
             // Got no results
             if (lines == null)
@@ -567,10 +567,10 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IString>> GetAllStringLines(ILine key = null)
+        public IEnumerable<KeyValuePair<string, IString>> GetAllUnformedLines(ILine key = null)
         {
             // Filtered queries are not cached
-            if (key != null) return Source.GetAllStringLines(key);
+            if (key != null) return Source.GetAllUnformedLines(key);
 
             // Get cache instance
             Cache _cache = this.cache;
@@ -583,7 +583,7 @@ namespace Lexical.Localization.Asset
             if (_cache.stringLinesAllIsNull) return null;
 
             // Read from source
-            IEnumerable<KeyValuePair<string, IString>> lines = Source.GetAllStringLines(null);
+            IEnumerable<KeyValuePair<string, IString>> lines = Source.GetAllUnformedLines(null);
 
             // Got no results
             if (lines == null)

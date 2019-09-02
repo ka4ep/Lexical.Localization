@@ -41,7 +41,7 @@ namespace Lexical.Localization
                 return new StringAsset().Add(fileFormat.ReadLines(stream, lineFormat), lineFormat).Load();
             }
             else
-            if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
+            if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
                 return new StringAsset().Add(fileFormat.ReadStringLines(stream, lineFormat), lineFormat).Load();
             }

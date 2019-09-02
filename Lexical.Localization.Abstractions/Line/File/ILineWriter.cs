@@ -79,55 +79,13 @@ namespace Lexical.Localization
     /// <list type="Bullet">
     /// <item><see cref="ILineTextWriter"/></item>
     /// <item><see cref="ILineStreamWriter"/></item>
-    /// <item><see cref="ILineStringTextWriter"/></item>
-    /// <item><see cref="ILineStringStreamWriter"/></item>
+    /// <item><see cref="IUnformedLineTextWriter"/></item>
+    /// <item><see cref="IUnformedLineStreamWriter"/></item>
     /// <item><see cref="ILineTreeTextWriter"/></item>
     /// <item><see cref="ILineTreeStreamWriter"/></item>
     /// </list>
     /// </summary>
     public interface ILineWriter : ILineFileFormat { }
-
-    /// <summary>
-    /// Writer that can write localization key-values with text writers.
-    /// </summary>
-    public interface ILineStringTextWriter : ILineWriter
-    {
-        /// <summary>
-        /// Create a container where localization key-values can be written to.
-        /// 
-        /// If <paramref name="srcText"/> contains previous content, it is updated and rewritten to <paramref name="dstText"/> according to rules in <paramref name="flags"/>.
-        /// 
-        /// The implementation must not close either <paramref name="srcText"/> or <paramref name="dstText"/>.
-        /// </summary>
-        /// <param name="lines"></param>
-        /// <param name="srcText">(optional) source text, used if previous content are updated.</param>
-        /// <param name="dstText"></param>
-        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
-        /// <param name="flags"></param>
-        /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, IString>> lines, TextReader srcText, TextWriter dstText, ILineFormat lineFormat, LineFileWriteFlags flags);
-    }
-
-    /// <summary>
-    /// Writer that can write localization key-values to streams.
-    /// </summary>
-    public interface ILineStringStreamWriter : ILineWriter
-    {
-        /// <summary>
-        /// Write <paramref name="lines"/> to <paramref name="dstStream"/>.
-        /// 
-        /// If <paramref name="srcStream"/> contains previous content, it is updated and rewritten to <paramref name="dstStream"/> according to rules in <paramref name="flags"/>.
-        /// 
-        /// The implementation must not close either <paramref name="srcStream"/> or <paramref name="dstStream"/>.
-        /// </summary>
-        /// <param name="lines"></param>
-        /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
-        /// <param name="dstStream">stream to write to.</param>
-        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
-        /// <param name="flags"></param>
-        /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, IString>> lines, Stream srcStream, Stream dstStream, ILineFormat lineFormat, LineFileWriteFlags flags);
-    }
 
     /// <summary>
     /// Writer that can write localization key-values with text writers.
@@ -207,6 +165,52 @@ namespace Lexical.Localization
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
         void WriteLineTree(ILineTree tree, TextReader srcText, TextWriter dstText, ILineFormat lineFormat, LineFileWriteFlags flags);
+    }
+
+    /// <summary>
+    /// Writer that can write localization key-values with text writers.
+    /// 
+    /// This interfaces writes lines from sources which have keys that are plain strings and are unstructured so that <see cref="ILine"/> parts cannot be extracted.
+    /// </summary>
+    public interface IUnformedLineTextWriter : ILineWriter
+    {
+        /// <summary>
+        /// Create a container where localization key-values can be written to.
+        /// 
+        /// If <paramref name="srcText"/> contains previous content, it is updated and rewritten to <paramref name="dstText"/> according to rules in <paramref name="flags"/>.
+        /// 
+        /// The implementation must not close either <paramref name="srcText"/> or <paramref name="dstText"/>.
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="srcText">(optional) source text, used if previous content are updated.</param>
+        /// <param name="dstText"></param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
+        /// <param name="flags"></param>
+        /// <exception cref="IOException"></exception>
+        void WriteStringLines(IEnumerable<KeyValuePair<string, IString>> lines, TextReader srcText, TextWriter dstText, ILineFormat lineFormat, LineFileWriteFlags flags);
+    }
+
+    /// <summary>
+    /// Writer that can write localization key-values to streams.
+    /// 
+    /// This interfaces writes lines from sources which have keys that are plain strings and are unstructured so that <see cref="ILine"/> parts cannot be extracted.
+    /// </summary>
+    public interface IUnformedLineStreamWriter : ILineWriter
+    {
+        /// <summary>
+        /// Write <paramref name="lines"/> to <paramref name="dstStream"/>.
+        /// 
+        /// If <paramref name="srcStream"/> contains previous content, it is updated and rewritten to <paramref name="dstStream"/> according to rules in <paramref name="flags"/>.
+        /// 
+        /// The implementation must not close either <paramref name="srcStream"/> or <paramref name="dstStream"/>.
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="srcStream">(optional) source data, used if previous content is updated</param>
+        /// <param name="dstStream">stream to write to.</param>
+        /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
+        /// <param name="flags"></param>
+        /// <exception cref="IOException"></exception>
+        void WriteStringLines(IEnumerable<KeyValuePair<string, IString>> lines, Stream srcStream, Stream dstStream, ILineFormat lineFormat, LineFileWriteFlags flags);
     }
     // </Interface>
 }

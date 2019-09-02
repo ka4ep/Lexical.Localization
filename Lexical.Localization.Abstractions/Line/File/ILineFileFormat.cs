@@ -12,8 +12,8 @@ namespace Lexical.Localization
     /// <list type="Bullet">
     /// <item><see cref="ILineStreamReader"/></item>
     /// <item><see cref="ILineTextReader"/></item>
-    /// <item><see cref="ILineStringTextReader"/></item>
-    /// <item><see cref="ILineStringStreamReader"/></item>
+    /// <item><see cref="IUnformedLineTextReader"/></item>
+    /// <item><see cref="IUnformedLineStreamReader"/></item>
     /// <item><see cref="ILineTreeTextReader"/></item>
     /// <item><see cref="ILineTreeStreamReader"/></item>
     /// </list>
@@ -22,8 +22,8 @@ namespace Lexical.Localization
     /// <list type="Bullet">
     /// <item><see cref="ILineStreamWriter"/></item>
     /// <item><see cref="ILineTextWriter"/></item>
-    /// <item><see cref="ILineStringTextWriter"/></item>
-    /// <item><see cref="ILineStringStreamWriter"/></item>
+    /// <item><see cref="IUnformedLineTextWriter"/></item>
+    /// <item><see cref="IUnformedLineStreamWriter"/></item>
     /// <item><see cref="ILineTreeTextWriter"/></item>
     /// <item><see cref="ILineTreeStreamWriter"/></item>
     /// </list>

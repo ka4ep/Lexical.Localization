@@ -80,7 +80,7 @@ namespace docs
                 IAsset asset = new StringAsset().Add(source, "{Culture:}[Type:][Key]").Load();
                 #region Snippet_3a
                 // Extract all keys
-                foreach (var _key in asset.GetStringLines(null))
+                foreach (var _key in asset.GetUnformedLines(null))
                     Console.WriteLine(_key);
                 #endregion Snippet_3a
             }

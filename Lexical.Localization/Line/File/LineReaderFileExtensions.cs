@@ -33,8 +33,8 @@ namespace Lexical.Localization
             if (!throwIfNotFound && !File.Exists(srcFilename)) return no_stringlines;
             try
             {
-                if (fileFormat is ILineStringTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), lineFormat);
-                if (fileFormat is ILineStringStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), lineFormat);
+                if (fileFormat is IUnformedLineTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), lineFormat);
+                if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), lineFormat);
                 if (fileFormat is ILineTextReader r1) return r1.ReadLines(srcFilename.ReadText(), lineFormat).ToStringLines(lineFormat);
                 if (fileFormat is ILineStreamReader r3) return r3.ReadLines(srcFilename.ReadStream(), lineFormat).ToStringLines(lineFormat);
                 if (fileFormat is ILineTreeTextReader r2) return r2.ReadLineTree(srcFilename.ReadText(), lineFormat).ToStringLines(lineFormat);
@@ -66,8 +66,8 @@ namespace Lexical.Localization
                 if (fileFormat is ILineStreamReader r3) return r3.ReadLines(srcFilename.ReadStream(), lineFormat);
                 if (fileFormat is ILineTreeTextReader r2) return r2.ReadLineTree(srcFilename.ReadText(), lineFormat).ToLines();
                 if (fileFormat is ILineTreeStreamReader r4) return r4.ReadLineTree(srcFilename.ReadStream(), lineFormat).ToLines();
-                if (fileFormat is ILineStringTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), lineFormat).ToLines(lineFormat);
-                if (fileFormat is ILineStringStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), lineFormat).ToLines(lineFormat);
+                if (fileFormat is IUnformedLineTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), lineFormat).ToLines(lineFormat);
+                if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), lineFormat).ToLines(lineFormat);
             }
             catch (FileNotFoundException) when (!throwIfNotFound)
             {
@@ -95,8 +95,8 @@ namespace Lexical.Localization
                 if (fileFormat is ILineTextReader r1) return r1.ReadLines(srcFilename.ReadText(), lineFormat).ToLineTree(lineFormat);
                 if (fileFormat is ILineTreeStreamReader r4) return r4.ReadLineTree(srcFilename.ReadStream(), lineFormat);
                 if (fileFormat is ILineStreamReader r3) return r3.ReadLines(srcFilename.ReadStream(), lineFormat).ToLineTree(lineFormat);
-                if (fileFormat is ILineStringTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), lineFormat).ToLineTree(lineFormat);
-                if (fileFormat is ILineStringStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), lineFormat).ToLineTree(lineFormat);
+                if (fileFormat is IUnformedLineTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), lineFormat).ToLineTree(lineFormat);
+                if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), lineFormat).ToLineTree(lineFormat);
             }
             catch (FileNotFoundException) when (!throwIfNotFound)
             {
@@ -158,7 +158,7 @@ namespace Lexical.Localization
             {
                 return new StringAsset().Add(fileFormat.FileReader(filename, lineFormat, throwIfNotFound), lineFormat).Load();
             }
-            else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
+            else if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
                 return new StringAsset().Add(fileFormat.FileReaderAsStringLines(filename, lineFormat, throwIfNotFound), lineFormat).Load();
             }
@@ -183,7 +183,7 @@ namespace Lexical.Localization
             {
                 return new KeyLineFileSource(fileFormat, null, filename, lineFormat, throwIfNotFound);
             }
-            else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
+            else if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
                 return new StringLineFileSource(fileFormat, null, filename, lineFormat, throwIfNotFound);
             }
@@ -209,7 +209,7 @@ namespace Lexical.Localization
             {
                 return new KeyLineFileSource(fileFormat, path, filename, lineFormat, throwIfNotFound);
             }
-            else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
+            else if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
                 return new StringLineFileSource(fileFormat, path, filename, lineFormat, throwIfNotFound);
             }

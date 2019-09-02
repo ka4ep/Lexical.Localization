@@ -11,7 +11,7 @@ namespace Lexical.Localization.Asset
     /// </summary>
     public class AssetFunc :
         IAsset,
-        IStringAsset, IStringAssetStringLinesEnumerable, IStringAssetLinesEnumerable,
+        IStringAsset, IStringAssetUnformedLinesEnumerable, IStringAssetLinesEnumerable,
         IResourceAsset, IResourceAssetNamesEnumerable, IResourceAssetKeysEnumerable
     {
         /// <summary>
@@ -28,8 +28,8 @@ namespace Lexical.Localization.Asset
             Func = func ?? throw new ArgumentNullException(nameof(func));
         }
 
-        IEnumerable<KeyValuePair<string, IString>> IStringAssetStringLinesEnumerable.GetAllStringLines(ILine key)
-            => (Func() as IStringAssetStringLinesEnumerable)?.GetAllStringLines(key);
+        IEnumerable<KeyValuePair<string, IString>> IStringAssetUnformedLinesEnumerable.GetAllUnformedLines(ILine key)
+            => (Func() as IStringAssetUnformedLinesEnumerable)?.GetAllUnformedLines(key);
 
         LineResourceBytes IResourceAsset.GetResourceBytes(ILine key)
             => Func() is IResourceAsset resourceAsset ? resourceAsset.GetResourceBytes(key) : new LineResourceBytes(key, (Exception)null, LineStatus.ResolveFailedNoResult);
@@ -55,8 +55,8 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IString>> GetStringLines(ILine filterKey = null)
-            => (Func() as IStringAsset)?.GetStringLines(filterKey);
+        public IEnumerable<KeyValuePair<string, IString>> GetUnformedLines(ILine filterKey = null)
+            => (Func() as IStringAsset)?.GetUnformedLines(filterKey);
 
         /// <summary>
         /// 

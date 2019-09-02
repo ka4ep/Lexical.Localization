@@ -75,7 +75,7 @@ namespace Lexical.Localization
             {
                 return new StringAsset().Add(fileFormat.EmbeddedReader(assembly, resourceName, lineFormat, throwIfNotFound), lineFormat).Load();
             }
-            else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
+            else if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
                 return new StringAsset().Add(fileFormat.EmbeddedReaderAsStringLines(assembly, resourceName, lineFormat, throwIfNotFound), lineFormat).Load();
             }
@@ -101,7 +101,7 @@ namespace Lexical.Localization
             {
                 return new LineEmbeddedKeyLinesSource(fileFormat, assembly, resourceName, lineFormat, throwIfNotFound);
             }
-            else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
+            else if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
                 return new LineEmbeddedStringLinesSource(fileFormat, assembly, resourceName, lineFormat, throwIfNotFound);
             }

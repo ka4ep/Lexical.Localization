@@ -19,14 +19,17 @@ namespace Lexical.Localization
     /// <item><see cref="ILineTreeStreamReader"/></item>
     /// <item><see cref="ILineTextReader"/></item>
     /// <item><see cref="ILineTreeTextReader"/></item>
-    /// <item><see cref="ILineStringTextReader"/></item>
-    /// <item><see cref="ILineStringStreamReader"/></item>
+    /// <item><see cref="IUnformedLineTextReader"/></item>
+    /// <item><see cref="IUnformedLineStreamReader"/></item>
     /// </list>
     /// </summary>
     public interface ILineReader : ILineFileFormat { }
 
     /// <summary>
     /// Reader that can read lines from a <see cref="Stream"/>.
+    /// 
+    /// This interfaces reads lines from sources that have keys which are formulated so that <see cref="ILine"/> parts can be extracted.
+    /// The source is context-free of information that the caller must know. It doesn't need <see cref="ILineFormat"/>.
     /// </summary>
     public interface ILineStreamReader : ILineReader
     {
@@ -42,6 +45,9 @@ namespace Lexical.Localization
 
     /// <summary>
     /// Reader that can read tree format from a <see cref="Stream"/>.
+    /// 
+    /// This interfaces reads lines from sources that have keys which are formulated so that <see cref="ILine"/> parts can be extracted.
+    /// The source is context-free of information that the caller must know. It doesn't need <see cref="ILineFormat"/>.
     /// </summary>
     public interface ILineTreeStreamReader : ILineReader
     {
@@ -57,6 +63,9 @@ namespace Lexical.Localization
 
     /// <summary>
     /// Reader that can read localization lines from a <see cref="TextReader"/>.
+    /// 
+    /// This interfaces reads lines from sources that have keys which are formulated so that <see cref="ILine"/> parts can be extracted.
+    /// The source is context-free of information that the caller must know. It doesn't need <see cref="ILineFormat"/>.
     /// </summary>
     public interface ILineTextReader : ILineReader
     {
@@ -72,6 +81,9 @@ namespace Lexical.Localization
 
     /// <summary>
     /// Reader that can read localization lines from a <see cref="TextReader"/>.
+    /// 
+    /// This interfaces reads lines from sources that have keys which are formulated so that <see cref="ILine"/> parts can be extracted.
+    /// The source is context-free of information that the caller must know. It doesn't need <see cref="ILineFormat"/>.
     /// </summary>
     public interface ILineTreeTextReader : ILineReader
     {
@@ -87,8 +99,11 @@ namespace Lexical.Localization
 
     /// <summary>
     /// Reader that can read string key-values from a <see cref="TextReader"/>.
+    /// 
+    /// This interfaces reads lines from sources which keys which are plain strings and are unstructured so that <see cref="ILine"/> parts cannot be extracted.
+    /// The source is context-dependent of information that the caller must know. <see cref="ILineFormat"/> is needed to formulate <see cref="ILine"/>.
     /// </summary>
-    public interface ILineStringTextReader : ILineReader
+    public interface IUnformedLineTextReader : ILineReader
     {
         /// <summary>
         /// Read <paramref name="text"/> into lines.
@@ -102,8 +117,11 @@ namespace Lexical.Localization
 
     /// <summary>
     /// Reader that can read string key-values from a <see cref="Stream"/>.
+    /// 
+    /// This interfaces reads lines from sources that have keys which are plain strings and unstructured so that <see cref="ILine"/> parts cannot be extracted.
+    /// The source is context-dependent of information that the caller must know. <see cref="ILineFormat"/> is needed to formulate <see cref="ILine"/>.
     /// </summary>
-    public interface ILineStringStreamReader : ILineReader
+    public interface IUnformedLineStreamReader : ILineReader
     {
         /// <summary>
         /// Read <paramref name="stream"/> into lines.

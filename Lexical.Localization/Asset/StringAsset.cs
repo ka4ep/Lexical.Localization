@@ -23,7 +23,7 @@ namespace Lexical.Localization.Asset
     /// </summary>
     public class StringAsset :
         IStringAsset,
-        IStringAssetStringLinesEnumerable,
+        IStringAssetUnformedLinesEnumerable,
         IStringAssetLinesEnumerable,
         IAssetCultureEnumerable,
         IAssetReloadable,
@@ -357,7 +357,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="filterKey">(optional) filter key</param>
         /// <returns>lines or null</returns>
-        public IEnumerable<KeyValuePair<string, IString>> GetStringLines(ILine filterKey = null)
+        public IEnumerable<KeyValuePair<string, IString>> GetUnformedLines(ILine filterKey = null)
         {
             // Return all 
             if (filterKey == null) return StringLines.Select(kv => new KeyValuePair<string, IString>(kv.Key, kv.Value.GetString()));
@@ -391,7 +391,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="filterKey">(optional) filter key</param>
         /// <returns>lines or null</returns>
-        public IEnumerable<KeyValuePair<string, IString>> GetAllStringLines(ILine filterKey = null)
+        public IEnumerable<KeyValuePair<string, IString>> GetAllUnformedLines(ILine filterKey = null)
         {
             // Return all 
             if (filterKey == null) return StringLines.Select(kv => new KeyValuePair<string, IString>(kv.Key, kv.Value.GetString()));

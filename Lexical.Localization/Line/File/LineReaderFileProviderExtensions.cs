@@ -74,7 +74,7 @@ namespace Lexical.Localization
             {
                 return new StringAsset().Add(fileFormat.FileProviderReader(fileProvider, filepath, lineFormat, throwIfNotFound), lineFormat).Load();
             }
-            else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
+            else if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
                 return new StringAsset().Add(fileFormat.FileProviderReaderAsStringLines(fileProvider, filepath, lineFormat, throwIfNotFound), lineFormat).Load();
             }
@@ -100,7 +100,7 @@ namespace Lexical.Localization
             {
                 return new KeyLineFileProviderSource(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound);
             }
-            else if (fileFormat is ILineStringTextReader || fileFormat is ILineStringStreamReader)
+            else if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
                 return new StringLineFileProviderSource(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound);
             }

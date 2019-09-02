@@ -18,6 +18,12 @@ namespace Lexical.Localization.Resource
     /// Interface for reading binary resources.
     /// 
     /// Consumers of this interface should always call with <see cref="IAssetExtensions.GetResourceBytes(IAsset, ILine)"/>.
+    /// 
+    /// See subinterfaces:
+    /// <list type="bullet">
+    ///     <item><see cref="IResourceAssetKeysEnumerable"/></item>
+    ///     <item><see cref="IResourceAssetNamesEnumerable"/></item>
+    /// </list>
     /// </summary>
     public interface IResourceAsset : IAsset
     {

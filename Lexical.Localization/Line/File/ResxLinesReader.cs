@@ -18,7 +18,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Reader that reads Microsoft's binary ".resx" files as key,value lines.
     /// </summary>
-    public class ResxLinesReader : ILineFileFormat, ILineStringStreamReader, ILineStringTextReader
+    public class ResxLinesReader : ILineFileFormat, IUnformedLineStreamReader, IUnformedLineTextReader
     {
         private readonly static ResxLinesReader instance = new ResxLinesReader();
 

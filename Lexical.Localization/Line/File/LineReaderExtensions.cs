@@ -58,8 +58,8 @@ namespace Lexical.Localization
             if (fileFormat is ILineStreamReader r3) return r3.ReadLines(srcText.ReadStream(), lineFormat);
             if (fileFormat is ILineTreeTextReader r2) return r2.ReadLineTree(srcText, lineFormat).ToLines();
             if (fileFormat is ILineTreeStreamReader r4) return r4.ReadLineTree(srcText.ReadStream(), lineFormat).ToLines();
-            if (fileFormat is ILineStringTextReader r5) return r5.ReadStringLines(srcText, lineFormat).ToLines(lineFormat);
-            if (fileFormat is ILineStringStreamReader r6) return r6.ReadStringLines(srcText.ReadStream(), lineFormat).ToLines(lineFormat);
+            if (fileFormat is IUnformedLineTextReader r5) return r5.ReadStringLines(srcText, lineFormat).ToLines(lineFormat);
+            if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(srcText.ReadStream(), lineFormat).ToLines(lineFormat);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
 
@@ -76,8 +76,8 @@ namespace Lexical.Localization
             if (fileFormat is ILineTextReader r1) using (var txt = stream.ReadText()) return r1.ReadLines(txt, lineFormat);
             if (fileFormat is ILineTreeStreamReader r4) return r4.ReadLineTree(stream, lineFormat).ToLines();
             if (fileFormat is ILineTreeTextReader r2) using (var txt = stream.ReadText()) return r2.ReadLineTree(txt, lineFormat).ToLines();
-            if (fileFormat is ILineStringStreamReader r6) return r6.ReadStringLines(stream, lineFormat).ToLines(lineFormat);
-            if (fileFormat is ILineStringTextReader r5) using (var txt = stream.ReadText()) return r5.ReadStringLines(txt, lineFormat).ToLines(lineFormat);
+            if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(stream, lineFormat).ToLines(lineFormat);
+            if (fileFormat is IUnformedLineTextReader r5) using (var txt = stream.ReadText()) return r5.ReadStringLines(txt, lineFormat).ToLines(lineFormat);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
 
@@ -94,8 +94,8 @@ namespace Lexical.Localization
             if (fileFormat is ILineTextReader r1) return r1.ReadLines(srcText, lineFormat).ToLineTree(lineFormat);
             if (fileFormat is ILineTreeStreamReader r4) return r4.ReadLineTree(srcText.ReadStream(), lineFormat);
             if (fileFormat is ILineStreamReader r3) return r3.ReadLines(srcText.ReadStream(), lineFormat).ToLineTree(lineFormat);
-            if (fileFormat is ILineStringTextReader r5) return r5.ReadStringLines(srcText, lineFormat).ToLineTree(lineFormat);
-            if (fileFormat is ILineStringStreamReader r6) return r6.ReadStringLines(srcText.ReadStream(), lineFormat).ToLineTree(lineFormat);
+            if (fileFormat is IUnformedLineTextReader r5) return r5.ReadStringLines(srcText, lineFormat).ToLineTree(lineFormat);
+            if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(srcText.ReadStream(), lineFormat).ToLineTree(lineFormat);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
 
@@ -112,8 +112,8 @@ namespace Lexical.Localization
             if (fileFormat is ILineTreeTextReader r2) using (var txt = stream.ReadText()) return r2.ReadLineTree(txt, lineFormat);
             if (fileFormat is ILineStreamReader r3) return r3.ReadLines(stream, lineFormat).ToLineTree(lineFormat);
             if (fileFormat is ILineTextReader r1) using (var txt = stream.ReadText()) return r1.ReadLines(txt, lineFormat).ToLineTree(lineFormat);
-            if (fileFormat is ILineStringStreamReader r6) return r6.ReadStringLines(stream, lineFormat).ToLineTree(lineFormat);
-            if (fileFormat is ILineStringTextReader r5) using (var txt = stream.ReadText()) return r5.ReadStringLines(txt, lineFormat).ToLineTree(lineFormat);
+            if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(stream, lineFormat).ToLineTree(lineFormat);
+            if (fileFormat is IUnformedLineTextReader r5) using (var txt = stream.ReadText()) return r5.ReadStringLines(txt, lineFormat).ToLineTree(lineFormat);
             throw new FileLoadException($"Cannot read localization with {fileFormat.GetType().FullName}");
         }
 
@@ -127,8 +127,8 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IEnumerable<KeyValuePair<string, IString>> ReadStringLines(this ILineFileFormat fileFormat, TextReader srcText, ILineFormat lineFormat = default)
         {
-            if (fileFormat is ILineStringTextReader r5) return r5.ReadStringLines(srcText, lineFormat);
-            if (fileFormat is ILineStringStreamReader r6) return r6.ReadStringLines(srcText.ReadStream(), lineFormat);
+            if (fileFormat is IUnformedLineTextReader r5) return r5.ReadStringLines(srcText, lineFormat);
+            if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(srcText.ReadStream(), lineFormat);
             if (fileFormat is ILineTextReader r1) return r1.ReadLines(srcText, lineFormat).ToStringLines(lineFormat);
             if (fileFormat is ILineStreamReader r3) return r3.ReadLines(srcText.ReadStream(), lineFormat).ToStringLines(lineFormat);
             if (fileFormat is ILineTreeTextReader r2) return r2.ReadLineTree(srcText, lineFormat).ToStringLines(lineFormat);
@@ -145,8 +145,8 @@ namespace Lexical.Localization
         /// <returns></returns>
         public static IEnumerable<KeyValuePair<string, IString>> ReadStringLines(this ILineFileFormat fileFormat, Stream stream, ILineFormat lineFormat = default)
         {
-            if (fileFormat is ILineStringStreamReader r6) return r6.ReadStringLines(stream, lineFormat);
-            if (fileFormat is ILineStringTextReader r5) using (var txt = stream.ReadText()) return r5.ReadStringLines(txt, lineFormat);
+            if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(stream, lineFormat);
+            if (fileFormat is IUnformedLineTextReader r5) using (var txt = stream.ReadText()) return r5.ReadStringLines(txt, lineFormat);
             if (fileFormat is ILineStreamReader r3) return r3.ReadLines(stream, lineFormat).ToStringLines(lineFormat);
             if (fileFormat is ILineTreeStreamReader r4) return r4.ReadLineTree(stream, lineFormat).ToStringLines(lineFormat);
             if (fileFormat is ILineTextReader r1) using (var txt = stream.ReadText()) return r1.ReadLines(txt, lineFormat).ToStringLines(lineFormat);
