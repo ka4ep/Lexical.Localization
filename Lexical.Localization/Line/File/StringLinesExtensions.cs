@@ -62,7 +62,7 @@ namespace Lexical.Localization
         /// <param name="policy"></param>
         /// <returns></returns>
         public static IAssetSource ToAssetSource(this IEnumerable<KeyValuePair<string, IString>> lines, ILineFormat policy)
-            => new StringLinesSource(lines, policy);
+            => new UnformedLinesSource(lines, policy);
 
         /// <summary>
         /// Add prefix parameters to each key.

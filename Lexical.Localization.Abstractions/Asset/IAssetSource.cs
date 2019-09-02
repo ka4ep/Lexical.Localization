@@ -3,10 +3,7 @@
 // Date:           8.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.StringFormat;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Lexical.Localization.Asset
 {
@@ -16,12 +13,74 @@ namespace Lexical.Localization.Asset
     /// 
     /// The implementation of this class must use one of the more specific sub-interfaces:
     /// <list type="table">
-    /// <item><see cref="ILinesSource"/></item>
-    /// <item><see cref="IResourcesSource"/></item>
+    /// <item><see cref="IStringAssetSource"/></item>
+    /// <item><see cref="IResourceAssetSource"/></item>
+    /// <item><see cref="IBuildableAssetSource"/></item>
+    /// <item><see cref="IFileAssetSource"/></item>
+    /// <item><see cref="IFilePatternAssetSource"/></item>
+    /// <item><see cref="IPostBuildAssetSource"/></item>
     /// </list>
     /// </summary>
-    /// </summary>
     public interface IAssetSource
+    {
+    }
+
+    /// <summary>
+    /// Provides a specific <see cref="IFileSystem"/> that is to be used with the <see cref="IAssetSource"/>.
+    /// </summary>
+    public interface IAssetSourceFileSystem : IAssetSource
+    {
+        /// <summary>
+        /// Specific <see cref="IFileSystem"/> to load the asset source from.
+        /// 
+        /// If null, then file-system is unspecified, and the caller have a reference to known file-system.
+        /// </summary>
+        IFileSystem FileSystem { get; }
+    }
+
+    /// <summary>
+    /// Asset source that originates from one specific file.
+    /// 
+    /// The implementing class can implement <see cref="IAssetSourceFileSystem"/> which 
+    /// gives a reference to <see cref="IFileSystem"/> from which the file is to be loaded.
+    /// 
+    /// The implementing class can implement <see cref="IStringAssetSource"/> or <see cref="IResourceAssetSource"/> to signal
+    /// the content type of the asset file.
+    /// </summary>
+    public interface IFileAssetSource : IAssetSource
+    {
+        /// <summary>
+        /// Reference to an asset file. Used within <see cref="IFileSystem"/>. Directory separator is '/'. Root doesn't use separator.
+        /// 
+        /// Example: "resources/localization.xml".
+        /// </summary>
+        string FilePath { get; }
+    }
+
+    /// <summary>
+    /// Asset source that referers to a pattern of filenames.
+    /// 
+    /// The implementing class can implement <see cref="IAssetSourceFileSystem"/> which 
+    /// gives a reference to <see cref="IFileSystem"/> from which the file is to be loaded.
+    /// 
+    /// The implementing class can implement <see cref="IStringAssetSource"/> or <see cref="IResourceAssetSource"/> to signal
+    /// the content type of the asset file.
+    /// </summary>
+    public interface IFilePatternAssetSource : IAssetSource
+    {
+        /// <summary>
+        /// Reference to a pattern of asset files. Used within <see cref="IFileSystem"/>.
+        /// 
+        /// Separator character is '/'. Root doesn't use separator.
+        /// Example: "resources/{Culture/}localization.xml".
+        /// </summary>
+        ILinePattern FilePattern { get; }
+    }
+
+    /// <summary>
+    /// Source that can build <see cref="IAsset"/>(s). 
+    /// </summary>
+    public interface IBuildableAssetSource : IAssetSource
     {
         /// <summary>
         /// Source adds its <see cref="IAsset"/>s to list.
@@ -30,62 +89,41 @@ namespace Lexical.Localization.Asset
         /// <returns>self</returns>
         void Build(IList<IAsset> list);
     }
+
+    /// <summary>
+    /// Post build action for <see cref="IAssetBuilder"/>.
+    /// </summary>
+    public interface IPostBuildAssetSource
+    {
+        /// <summary>
+        /// Allows source to do post build action and to decorate already built asset.
+        /// 
+        /// This allows a source to provide decoration such as cache.
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <returns>asset or component</returns>
+        IAsset PostBuild(IAsset asset);
+    }
     // </doc>
 
     // <doc2>
     /// <summary>
-    /// Signals that <see cref="IAssetSource"/> constructs lines asset.
-    /// 
-    /// The implementation of this class must use one of the more specific sub-interfaces:
-    /// <list type="table">
-    /// <item><see cref="IStringLinesSource"/></item>
-    /// <item><see cref="IKeyLinesSource"/></item>
-    /// <item><see cref="ITreeLinesSource"/></item>
-    /// </list>
+    /// Signals that <see cref="IAssetSource"/> constructs string lines asset.
     /// </summary>
-    public interface ILinesSource : IAssetSource
-    {
-    }
-
-    /// <summary>
-    /// Source that provides string based key-value lines.
-    /// 
-    /// String line source is used for file types such as .resx and .resources, that do not carry
-    /// information about key parts within the file itself. 
-    /// 
-    /// <see cref="ILineFormat"/> is used to translate the string into <see cref="ILinePart"/>s.
-    /// 
-    /// For instance, if a string follows pattern "{Culture.}{Type.}[Key]" the <see cref="LineFormat"/> would 
-    /// convert lines such as "En.MyController.Success" into <see cref="ILine"/>.
-    /// </summary>
-    public interface IStringLinesSource : ILinesSource, IEnumerable<KeyValuePair<string, IString>>
+    public interface IStringAssetSource : IAssetSource
     {
         /// <summary>
-        /// Format that is used for converting string to <see cref="ILine"/>.
+        /// File format to use to read the file. 
         /// </summary>
-        ILineFormat LineFormat { get; }
-    }
-
-    /// <summary>
-    /// Source that provides <see cref="ILine"/> based key-value lines.
-    /// </summary>
-    public interface IKeyLinesSource : ILinesSource, IEnumerable<ILine>
-    {
-    }
-
-    /// <summary>
-    /// Source that provides <see cref="ILineTree"/> based key-value lines.
-    /// </summary>
-    public interface ITreeLinesSource : ILinesSource, IEnumerable<ILineTree>
-    {
+        ILineFileFormat FileFormat { get; }
     }
     // </doc2>
 
     // <doc3>
     /// <summary>
-    /// Signals that <see cref="IAssetSource"/> constructs resources asset.
+    /// Signals that <see cref="IAssetSource"/> constructs <see cref="IResourceAsset"/>.
     /// </summary>
-    public interface IResourcesSource : IAssetSource
+    public interface IResourceAssetSource : IAssetSource
     {
     }
     // </doc3>

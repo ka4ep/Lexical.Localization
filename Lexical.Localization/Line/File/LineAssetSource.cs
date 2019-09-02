@@ -15,7 +15,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Asset source that constructs an asset from re-openable IEnumerable&lt;KeyValuePair&lt;String, String&gt;&gt; string based key-value lines.
     /// </summary>
-    public class StringLinesSource : IAssetSource, IStringLinesSource
+    public class UnformedLinesSource : IAssetSource, IEnumerable<KeyValuePair<string, IString>>
     {
         /// <summary>
         /// Name policy to apply to file, if applicable. Depends on file format.
@@ -32,7 +32,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="lineSource"></param>
         /// <param name="lineFormat"></param>
-        public StringLinesSource(IEnumerable<KeyValuePair<string, IString>> lineSource, ILineFormat lineFormat)
+        public UnformedLinesSource(IEnumerable<KeyValuePair<string, IString>> lineSource, ILineFormat lineFormat)
         {
             this.LineSource = lineSource ?? throw new ArgumentNullException(nameof(lineSource));
             this.LineFormat = lineFormat;
@@ -48,15 +48,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="list"></param>
         public void Build(IList<IAsset> list)
-            => list.Add(new StringAsset(this, LineFormat));
-
-        /// <summary>
-        /// Post build action.
-        /// </summary>
-        /// <param name="asset"></param>
-        /// <returns></returns>
-        public IAsset PostBuild(IAsset asset)
-            => asset;
+            => list.Add(new StringAsset(LineSource, LineFormat));
 
         /// <summary>
         /// Print info.
@@ -69,7 +61,7 @@ namespace Lexical.Localization
     /// <summary>
     /// Asset source that provides an asset from re-openable IEnumerable&lt;ILine&lt;.
     /// </summary>
-    public class KeyLineSource : IAssetSource, IKeyLinesSource
+    public class KeyLineSource : IAssetSource, IEnumerable<ILine>
     {
         /// <summary>
         /// Source of lines
@@ -96,20 +88,12 @@ namespace Lexical.Localization
         /// <param name="list"></param>
         public void Build(IList<IAsset> list)
             => list.Add(new StringAsset().Add(LineSource).Load());
-
-        /// <summary>
-        /// Post build action.
-        /// </summary>
-        /// <param name="asset"></param>
-        /// <returns></returns>
-        public IAsset PostBuild(IAsset asset)
-            => asset;
     }
 
     /// <summary>
     /// Asset source that provides an asset from re-openable IEnumerable&lt;ILineTree&lt;.
     /// </summary>
-    public class LineTreeSource : IAssetSource, ITreeLinesSource
+    public class LineTreeSource : IAssetSource, IEnumerable<ILineTree>
     {
         /// <summary>
         /// Source of lines
@@ -136,14 +120,6 @@ namespace Lexical.Localization
         /// <param name="list"></param>
         public void Build(IList<IAsset> list)
             => list.Add(new StringAsset().Add(LineSource).Load());
-
-        /// <summary>
-        /// Post build action.
-        /// </summary>
-        /// <param name="asset"></param>
-        /// <returns></returns>
-        public IAsset PostBuild(IAsset asset)
-            => asset;
     }
 
     /// <summary>

@@ -43,7 +43,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// List of asset post build actions.
         /// </summary>
-        IList<IAssetPostBuild> AssetPostBuild { get; }
+        IList<IPostBuildAssetSource> AssetPostBuild { get; }
 
         /// <summary>
         /// Asset file observe policy to be attached to the built asset.

@@ -38,7 +38,7 @@ namespace Lexical.Localization.Asset
 
         public IList<IAssetFilePattern> AssetFilePatterns => new List<IAssetFilePattern>();
 
-        public IList<IAssetPostBuild> AssetPostBuild => new List<IAssetPostBuild>();
+        public IList<IPostBuildAssetSource> AssetPostBuild => new List<IPostBuildAssetSource>();
 
         public IAssetFileObservePolicy ObservePolicy { get; set; }
 
@@ -73,7 +73,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Builds a list of assets. Adds the following:
         ///   1. The list of <see cref="assets"/> as is
-        ///   2. Build from <see cref="sources"/> elements that dont' implement <see cref="ILinesSource"/>
+        ///   2. Build from <see cref="sources"/> elements that dont' implement <see cref="IStringAssetSource"/>
         ///   3. One asset for each <see cref="IStringLinesSource"/> that share <see cref="ILineFormat"/>.
         ///   4. One asset for all <see cref="IKeyLinesSource"/>.
         ///   
@@ -88,7 +88,7 @@ namespace Lexical.Localization.Asset
             list.AddRange(assets);
 
             // Build IAssetSources
-            foreach (IAssetSource src in sources.Where(s => s is ILinesSource == false))
+            foreach (IAssetSource src in sources.Where(s => s is IStringAssetSource == false))
                 src.Build(list);
 
             // Build one asset for all IEnumerable<KeyValuePair<ILine, IString>> sources
@@ -130,10 +130,10 @@ namespace Lexical.Localization.Asset
             IAsset asset = new AssetComposition.Immutable(list);
 
             // Post-build
-            foreach (IAssetPostBuild src in AssetPostBuild.ToArray())
+            foreach (IPostBuildAssetSource src in AssetPostBuild.ToArray())
             {
                 IAsset newAsset = src.PostBuild(asset);
-                if (newAsset == null) throw new AssetException($"{src.GetType().Name}.{nameof(IAssetPostBuild.PostBuild)} returned null");
+                if (newAsset == null) throw new AssetException($"{src.GetType().Name}.{nameof(IPostBuildAssetSource.PostBuild)} returned null");
                 asset = newAsset;
             }
 
@@ -184,10 +184,10 @@ namespace Lexical.Localization.Asset
 
                 // Post-build
                 IAsset post_built_asset = built_asset;
-                foreach (IAssetPostBuild src in AssetPostBuild)
+                foreach (IPostBuildAssetSource src in AssetPostBuild)
                 {
                     post_built_asset = src.PostBuild(post_built_asset);
-                    if (post_built_asset == null) throw new AssetException($"{src.GetType().Name}.{nameof(IAssetPostBuild.PostBuild)} returned null");
+                    if (post_built_asset == null) throw new AssetException($"{src.GetType().Name}.{nameof(IPostBuildAssetSource.PostBuild)} returned null");
                 }
 
                 // Get old assets

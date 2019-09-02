@@ -20,9 +20,7 @@ namespace Lexical.Localization.Asset
     /// <see cref="Build"/> method assembles different parts into one <see cref="IAsset"/>.
     /// The implementation determines how parts are assembled together.
     /// 
-    /// <see cref="Asset"/> are added as is.
     /// <see cref="Sources"/> are constructed on <see cref="Build"/>.
-    /// <see cref="AssetFiles"/> and <see cref="AssetFilePatterns"/> are added as file references. They are from associated <see cref="FileSystems"/>.
     /// For example, and asset file pattern can refere to "{Culture/}localizaiton.xml".
     /// 
     /// <see cref="IAsset"/>, <see cref="IAssetSource"/>, <see cref="IAssetFile"/> and <see cref="IAssetFilePattern"/> must signal whether the 
@@ -30,11 +28,6 @@ namespace Lexical.Localization.Asset
     /// </summary>
     public interface IAssetBuilder
     {
-        /// <summary>
-        /// List of assets that are added on <see cref="Build"/> call.
-        /// </summary>
-        IList<IAsset> Asset { get; }
-
         /// <summary>
         /// List of asset sources that are constructed into <see cref="IAsset"/> on <see cref="Build"/> call.
         /// </summary>
@@ -44,21 +37,6 @@ namespace Lexical.Localization.Asset
         /// List of <see cref="IFileSystem"/>s that are used as file sources for asset files.
         /// </summary>
         IList<IFileSystem> FileSystems { get; }
-
-        /// <summary>
-        /// List of asset files. File is searched with a <see cref="IFileSystem"/>.
-        /// </summary>
-        IList<IAssetFile> AssetFiles { get; }
-
-        /// <summary>
-        /// List of asset file patterns. File is searched with a <see cref="IFileSystem"/>.
-        /// </summary>
-        IList<IAssetFilePattern> AssetFilePatterns { get; }
-
-        /// <summary>
-        /// List of asset post build actions.
-        /// </summary>
-        IList<IAssetPostBuild> AssetPostBuild { get; }
 
         /// <summary>
         /// Asset file observe policy to be attached to the built asset.
@@ -83,47 +61,6 @@ namespace Lexical.Localization.Asset
         /// </summary>
         bool Observe { get; set; }
     }
-
-    /// <summary>
-    /// Reference to asset file. Is used with a <see cref="IFileSystem"/>.
-    /// </summary>
-    public interface IAssetFile
-    {
-        /// <summary>
-        /// Path to asset file. Directory separator is '/'. Root is without a separator. 
-        /// 
-        /// For Example: "resources/localization-en.xml".
-        /// </summary>
-        string FilePath { get; set; }
-    }
-
-    /// <summary>
-    /// File name pattern to asset files. Is used with a <see cref="IFileSystem"/>.
-    /// </summary>
-    public interface IAssetFilePattern
-    {
-        /// <summary>
-        /// Path to asset files. Directory separator is '/'. Root is without a separator.
-        /// 
-        /// For example: "resources/{Culture/}localization.xml"
-        /// </summary>
-        ILinePattern FilePattern { get; set; }
-    }
-
-    /// <summary>
-    /// Post build action for <see cref="IAssetBuilder"/>.
-    /// </summary>
-    public interface IAssetPostBuild
-    {
-        /// <summary>
-        /// Allows source to do post build action and to decorate already built asset.
-        /// 
-        /// This allows a source to provide decoration such as cache.
-        /// </summary>
-        /// <param name="asset"></param>
-        /// <returns>asset or component</returns>
-        IAsset PostBuild(IAsset asset);
-    }
     // </doc>
 }
 
@@ -144,6 +81,28 @@ namespace Lexical.Localization
         public static IAssetBuilder AddSource(this IAssetBuilder assetBuilder, IAssetSource assetSource)
         {
             assetBuilder.Sources.Add(assetSource);
+            return assetBuilder;
+        }
+
+        /// <summary>
+        /// Add <paramref name="fileSystem"/> to builder.
+        /// </summary>
+        /// <param name="assetBuilder"></param>
+        /// <param name="fileSystem"></param>
+        public static IAssetBuilder AddFileSystem(this IAssetBuilder assetBuilder, IFileSystem fileSystem)
+        {
+            assetBuilder.FileSystems.Add(fileSystem);
+            return assetBuilder;
+        }
+
+        /// <summary>
+        /// Set <paramref name="observePolicy"/> to the builder.
+        /// </summary>
+        /// <param name="assetBuilder"></param>
+        /// <param name="observePolicy">observe policy, or null to remove</param>
+        public static IAssetBuilder SetObservePolicy(this IAssetBuilder assetBuilder, IAssetFileObservePolicy observePolicy)
+        {
+            assetBuilder.ObservePolicy = observePolicy;
             return assetBuilder;
         }
 

@@ -13,7 +13,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Adapts single instance to <see cref="IAssetSource"/>.
     /// </summary>
-    public class AssetInstanceSource : IAssetSource
+    public class AssetInstanceSource : IAssetSource, IBuildableAssetSource
     {
         /// <summary>
         /// Asset to add

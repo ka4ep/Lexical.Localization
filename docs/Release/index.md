@@ -62,6 +62,9 @@ Mid September 2019
  * Addresses how class libraries can request for resources that can be supplied by the deploying application from file sources that may not be inheritly supported by the class library. 
  * For example, application can add resources from IFileProvider, and class library doesn't need to have a dependency to FileProvider.
  * IAssetLoader back. File patterns can be given to resources, for example "Resources/[Assembly]{.culture}.dll".
+* Renames
+ * Binary files uses now word "Binary", was "Resource". Renamed due to another meaning for the word "Resource".
+ * "StringLines" renamed to "UnformedLines". These are lines that have a string keys that don't contain semantic format.
 
 ## 0.30.0
 TBD

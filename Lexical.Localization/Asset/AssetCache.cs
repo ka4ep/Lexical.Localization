@@ -128,7 +128,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Add <see cref="AssetCacheSource"/> to <see cref="IAssetBuilder"/> to have it add cache instances on new asset builds.
     /// </summary>
-    public class AssetCacheSource : IAssetSource
+    public class AssetCacheSource : IPostBuildAssetSource
     {
         Action<IAssetCache> configurer;
 
@@ -139,13 +139,6 @@ namespace Lexical.Localization.Asset
         public AssetCacheSource(Action<IAssetCache> configurer)
         {
             this.configurer = configurer;
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="list"></param>
-        public void Build(IList<IAsset> list)
-        {
         }
 
         /// <summary>

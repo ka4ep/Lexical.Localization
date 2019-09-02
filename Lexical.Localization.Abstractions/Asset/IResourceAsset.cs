@@ -4,7 +4,6 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization;
-using Lexical.Localization.Asset;
 using Lexical.Localization.Resource;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Lexical.Localization.Resource
+namespace Lexical.Localization.Asset
 {
     /// <summary>
     /// Interface for reading binary resources.
