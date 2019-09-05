@@ -8,54 +8,54 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Lexical.Localization.Resource
+namespace Lexical.Localization.Binary
 {
     /// <summary>
     /// Result of an operation that resolves a <see cref="ILine"/> into a string within an executing context, such as one that includes current active culture.
     /// </summary>
-    public struct LineResourceStream : IDisposable
+    public struct LineBinaryStream : IDisposable
     {
         /// <summary>
         /// Return stream.
         /// </summary>
         /// <param name="bytes"></param>
-        public static implicit operator LineResourceStream(LineResourceBytes bytes)
-            => new LineResourceStream(bytes.Line, bytes.Value == null ? null : new MemoryStream(bytes.Value), bytes.Exception, bytes.Status);
+        public static implicit operator LineBinaryStream(LineBinaryBytes bytes)
+            => new LineBinaryStream(bytes.Line, bytes.Value == null ? null : new MemoryStream(bytes.Value), bytes.Exception, bytes.Status);
 
         /// <summary>
         /// Return stream.
         /// </summary>
         /// <param name="str"></param>
-        public static implicit operator Stream(LineResourceStream str)
+        public static implicit operator Stream(LineBinaryStream str)
             => str.Value;
 
         /// <summary>
-        /// Convert stream to <see cref="LineResourceStream"/>.
+        /// Convert stream to <see cref="LineBinaryStream"/>.
         /// </summary>
         /// <param name="str"></param>
-        public static implicit operator LineResourceStream(Stream str)
-            => new LineResourceStream(null, str, LineStatus.StringFormatOkString);
+        public static implicit operator LineBinaryStream(Stream str)
+            => new LineBinaryStream(null, str, LineStatus.StringFormatOkString);
 
         /// <summary>
-        /// Convert bytes to <see cref="LineResourceStream"/>.
+        /// Convert bytes to <see cref="LineBinaryStream"/>.
         /// </summary>
         /// <param name="data"></param>
-        public static implicit operator LineResourceStream(byte[] data)
-            => new LineResourceStream(null, new MemoryStream(data), LineStatus.StringFormatOkString);
+        public static implicit operator LineBinaryStream(byte[] data)
+            => new LineBinaryStream(null, new MemoryStream(data), LineStatus.StringFormatOkString);
 
         /// <summary>
         /// Return status.
         /// </summary>
         /// <param name="str"></param>
-        public static implicit operator LineStatus(LineResourceStream str)
+        public static implicit operator LineStatus(LineBinaryStream str)
             => str.Status;
 
         /// <summary>
         /// Convert from status code.
         /// </summary>
         /// <param name="status"></param>
-        public static implicit operator LineResourceStream(LineStatus status)
-            => new LineResourceStream(null, status);
+        public static implicit operator LineBinaryStream(LineStatus status)
+            => new LineBinaryStream(null, status);
 
         /// <summary>
         /// Status code
@@ -130,7 +130,7 @@ namespace Lexical.Localization.Resource
         /// <param name="line">(optional) source line</param>
         /// <param name="value">resolved bytes</param>
         /// <param name="status">resolve reslut</param>
-        public LineResourceStream(ILine line, Stream value, LineStatus status)
+        public LineBinaryStream(ILine line, Stream value, LineStatus status)
         {
             Line = line;
             Value = value;
@@ -144,7 +144,7 @@ namespace Lexical.Localization.Resource
         /// <param name="line">(optional) source line</param>
         /// <param name="error">error</param>
         /// <param name="status">resolve reslut</param>
-        public LineResourceStream(ILine line, Exception error, LineStatus status)
+        public LineBinaryStream(ILine line, Exception error, LineStatus status)
         {
             Line = line;
             Value = null;
@@ -157,7 +157,7 @@ namespace Lexical.Localization.Resource
         /// </summary>
         /// <param name="line">(optional) source line</param>
         /// <param name="status">resolve reslut</param>
-        public LineResourceStream(ILine line, LineStatus status)
+        public LineBinaryStream(ILine line, LineStatus status)
         {
             Line = line;
             Value = null;
@@ -172,7 +172,7 @@ namespace Lexical.Localization.Resource
         /// <param name="value">resolved bytes</param>
         /// <param name="error"></param>
         /// <param name="status">resolve reslut</param>
-        public LineResourceStream(ILine line, Stream value, Exception error, LineStatus status)
+        public LineBinaryStream(ILine line, Stream value, Exception error, LineStatus status)
         {
             Line = line;
             Value = value;

@@ -4,7 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Common;
-using Lexical.Localization.Resource;
+using Lexical.Localization.Binary;
 using Lexical.Localization.StringFormat;
 using System;
 using System.Diagnostics;
@@ -15,7 +15,7 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Observes resolved keys and writes log lines to <see cref="TextWriter"/>.
     /// </summary>
-    public class LineTextLogger : ILogger, IStringResolverLogger, IResourceResolverLogger
+    public class LineTextLogger : ILogger, IStringResolverLogger, IBinaryResolverLogger
     {
         /// <summary>
         /// Text output stream.
@@ -94,7 +94,7 @@ namespace Lexical.Localization.Internal
         /// Log byte resolve
         /// </summary>
         /// <param name="value"></param>
-        public void OnNext(LineResourceBytes value)
+        public void OnNext(LineBinaryBytes value)
         {
             // Get reference
             var _logger = logger;
@@ -115,7 +115,7 @@ namespace Lexical.Localization.Internal
         /// Log stream resolve
         /// </summary>
         /// <param name="value"></param>
-        public void OnNext(LineResourceStream value)
+        public void OnNext(LineBinaryStream value)
         {
             // Get reference
             var _logger = logger;
@@ -136,7 +136,7 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Observes resolved keys and writes log lines to <see cref="Trace"/>.
     /// </summary>
-    public class LineDiagnosticsTrace : IStringResolverLogger, IResourceResolverLogger
+    public class LineDiagnosticsTrace : IStringResolverLogger, IBinaryResolverLogger
     {
         /// <summary>
         /// Severity to log
@@ -230,10 +230,10 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
-        /// Log resource resolve
+        /// Log resolve outcome of binary resources
         /// </summary>
         /// <param name="value"></param>
-        public void OnNext(LineResourceBytes value)
+        public void OnNext(LineBinaryBytes value)
         {
             if (disposed) return;
             // Get severity
@@ -278,10 +278,10 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
-        /// Log resource resolve
+        /// Log resolve outcome of binary resources
         /// </summary>
         /// <param name="value"></param>
-        public void OnNext(LineResourceStream value)
+        public void OnNext(LineBinaryStream value)
         {
             if (disposed) return;
             // Get severity

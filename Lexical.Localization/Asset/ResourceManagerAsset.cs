@@ -3,7 +3,7 @@
 // Date:           19.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Resource;
+using Lexical.Localization.Binary;
 using Lexical.Localization.StringFormat;
 using System;
 using System.Globalization;
@@ -18,7 +18,7 @@ namespace Lexical.Localization.Asset
     /// </summary>
     public class ResourceManagerAsset :
         IStringAsset,
-        IResourceAsset
+        IBinaryAsset
     {
         /// <summary>
         /// 
@@ -153,7 +153,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public LineResourceBytes GetResourceBytes(ILine key)
+        public LineBinaryBytes GetBytes(ILine key)
         {
             string id = namePolicy.Print(key);
             CultureInfo culture = null;
@@ -161,10 +161,10 @@ namespace Lexical.Localization.Asset
             try
             {
                 object obj = (culture == null ? ResourceManager.GetObject(id) : ResourceManager.GetObject(id, culture)) as byte[];
-                if (obj == null) return new LineResourceBytes(key, LineStatus.ResolveFailedNoValue);
+                if (obj == null) return new LineBinaryBytes(key, LineStatus.ResolveFailedNoValue);
                 return obj is byte[] data ? 
-                    new LineResourceBytes(key, data, LineStatus.ResolveOkFromAsset) :
-                    new LineResourceBytes(key, LineStatus.ResolveFailedNoValue | LineStatus.ResourceFailedConversionError);
+                    new LineBinaryBytes(key, data, LineStatus.ResolveOkFromAsset) :
+                    new LineBinaryBytes(key, LineStatus.ResolveFailedNoValue | LineStatus.ResourceFailedConversionError);
             }
             catch (Exception e)
             {
@@ -177,7 +177,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public LineResourceStream GetResourceStream(ILine key)
+        public LineBinaryStream GetStream(ILine key)
         {
             string id = namePolicy.Print(key);
             CultureInfo culture = null;
@@ -185,10 +185,10 @@ namespace Lexical.Localization.Asset
             try
             {
                 object obj = (culture == null ? ResourceManager.GetObject(id) : ResourceManager.GetObject(id, culture)) as byte[];
-                if (obj == null) return new LineResourceStream(key, LineStatus.ResolveFailedNoValue);
+                if (obj == null) return new LineBinaryStream(key, LineStatus.ResolveFailedNoValue);
                 return obj is byte[] data ?
-                    new LineResourceStream(key, new MemoryStream(data), LineStatus.ResolveOkFromAsset) :
-                    new LineResourceStream(key, LineStatus.ResolveFailedNoValue | LineStatus.ResourceFailedConversionError);
+                    new LineBinaryStream(key, new MemoryStream(data), LineStatus.ResolveOkFromAsset) :
+                    new LineBinaryStream(key, LineStatus.ResolveFailedNoValue | LineStatus.ResourceFailedConversionError);
             }
             catch (Exception e)
             {

@@ -8,12 +8,12 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Lexical.Localization.Resource
+namespace Lexical.Localization.Binary
 {
     /// <summary>
     /// Result of an operation that resolves a <see cref="ILine"/> into a string within an executing context, such as one that includes current active culture.
     /// </summary>
-    public struct LineResourceBytes
+    public struct LineBinaryBytes
     {
         /// <summary>
         /// Converts to bytes by reading the stream and returning the position.
@@ -23,9 +23,9 @@ namespace Lexical.Localization.Resource
         /// If position could not be returned, then leaves it were it is.
         /// </summary>
         /// <param name="str"></param>
-        public static implicit operator LineResourceBytes(LineResourceStream str)
+        public static implicit operator LineBinaryBytes(LineBinaryStream str)
         {
-            if (str.Value == null) return new LineResourceStream(str.Line, str.Exception, str.Status);
+            if (str.Value == null) return new LineBinaryStream(str.Line, str.Exception, str.Status);
 
             try
             {
@@ -57,31 +57,31 @@ namespace Lexical.Localization.Resource
         /// Return bytes.
         /// </summary>
         /// <param name="bytes"></param>
-        public static implicit operator byte[](LineResourceBytes bytes)
+        public static implicit operator byte[](LineBinaryBytes bytes)
             => bytes.Value;
 
         /// <summary>
-        /// Convert bytes to <see cref="LineResourceBytes"/>.
+        /// Convert bytes to <see cref="LineBinaryBytes"/>.
         /// </summary>
         /// <param name="data"></param>
-        public static implicit operator LineResourceBytes(byte[] data)
+        public static implicit operator LineBinaryBytes(byte[] data)
             => data == null ?
-                new LineResourceBytes(null, data, LineStatus.ResourceFailedNull) :
-                new LineResourceBytes(null, data, LineStatus.ResourceOk);
+                new LineBinaryBytes(null, data, LineStatus.ResourceFailedNull) :
+                new LineBinaryBytes(null, data, LineStatus.ResourceOk);
 
         /// <summary>
         /// Return status.
         /// </summary>
         /// <param name="str"></param>
-        public static implicit operator LineStatus(LineResourceBytes str)
+        public static implicit operator LineStatus(LineBinaryBytes str)
             => str.Status;
 
         /// <summary>
         /// Convert from status code.
         /// </summary>
         /// <param name="status"></param>
-        public static implicit operator LineResourceBytes(LineStatus status)
-            => new LineResourceBytes(null, status);
+        public static implicit operator LineBinaryBytes(LineStatus status)
+            => new LineBinaryBytes(null, status);
 
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Lexical.Localization.Resource
         /// <param name="line">(optional) source line</param>
         /// <param name="value">resolved bytes</param>
         /// <param name="status">resolve reslut</param>
-        public LineResourceBytes(ILine line, byte[] value, LineStatus status)
+        public LineBinaryBytes(ILine line, byte[] value, LineStatus status)
         {
             Line = line;
             Value = value;
@@ -171,7 +171,7 @@ namespace Lexical.Localization.Resource
         /// <param name="line">(optional) source line</param>
         /// <param name="error">error</param>
         /// <param name="status">resolve reslut</param>
-        public LineResourceBytes(ILine line, Exception error, LineStatus status)
+        public LineBinaryBytes(ILine line, Exception error, LineStatus status)
         {
             Line = line;
             Value = null;
@@ -184,7 +184,7 @@ namespace Lexical.Localization.Resource
         /// </summary>
         /// <param name="line">(optional) source line</param>
         /// <param name="status">resolve reslut</param>
-        public LineResourceBytes(ILine line, LineStatus status)
+        public LineBinaryBytes(ILine line, LineStatus status)
         {
             Line = line;
             Value = null;
@@ -247,10 +247,10 @@ namespace Lexical.Localization.Resource
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        static LineResourceBytes ReadFully(LineResourceStream str)
+        static LineBinaryBytes ReadFully(LineBinaryStream str)
         {
             Stream s = str.Value;
-            if (s == null) return new LineResourceBytes(str.Line, str.Exception, str.Status.Up_(LineStatus.ResourceFailedNull));
+            if (s == null) return new LineBinaryBytes(str.Line, str.Exception, str.Status.Up_(LineStatus.ResourceFailedNull));
 
             try
             {
@@ -268,7 +268,7 @@ namespace Lexical.Localization.Resource
                         return ms.ToArray();
                 }
 
-                if (length > int.MaxValue) return new LineResourceBytes(str.Line, str.Exception, str.Status.Up_(LineStatus.ResourceFailed2GBLimit));
+                if (length > int.MaxValue) return new LineBinaryBytes(str.Line, str.Exception, str.Status.Up_(LineStatus.ResourceFailed2GBLimit));
 
                 int _len = (int)length;
                 byte[] data = new byte[_len];
@@ -287,11 +287,11 @@ namespace Lexical.Localization.Resource
                 if (ix == _len) return data;
 
                 // Failed to read stream fully
-                return new LineResourceBytes(str.Line, str.Exception, str.Status.Up_(LineStatus.ResourceFailedConversionError));
+                return new LineBinaryBytes(str.Line, str.Exception, str.Status.Up_(LineStatus.ResourceFailedConversionError));
             }
             catch (IOException e)
             {
-                return new LineResourceBytes(str.Line, e, str.Status.Up_(LineStatus.ResourceFailedException));
+                return new LineBinaryBytes(str.Line, e, str.Status.Up_(LineStatus.ResourceFailedException));
             }
         }
     }

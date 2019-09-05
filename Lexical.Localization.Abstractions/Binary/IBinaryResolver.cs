@@ -3,15 +3,15 @@
 // Date:           3.6.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Resource;
+using Lexical.Localization.Binary;
 using System;
 
-namespace Lexical.Localization.Resource
+namespace Lexical.Localization.Binary
 {
     /// <summary>
     /// Resolver that resolves <see cref="ILine"/> into binary resource. 
     /// </summary>
-    public interface IResourceResolver
+    public interface IBinaryResolver
     {
         /// <summary>
         /// Resolve <paramref name="line"/> into bytes.
@@ -26,17 +26,17 @@ namespace Lexical.Localization.Resource
         ///     <item><see cref="LineStatus.ResolveOkFromLine"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
-        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceBytes.Exception"/></item>
-        ///     <item><see cref="LineStatus.ResolveFailedNoResourceResolver"/>Resolver was not found.</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineBinaryBytes.Exception"/></item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoBinaryResolver"/>Resolver was not found.</item>
         /// </list>
         /// </summary>
         /// <param name="line"></param>
         /// <returns>result status</returns>
-        LineResourceBytes ResolveBytes(ILine line);
+        LineBinaryBytes ResolveBytes(ILine line);
 
         /// <summary>
-        /// Resolve <paramref name="line"/> into <see cref="LineResourceStream"/>.
-        /// If Stream (<see cref="LineResourceStream.Value"/>) is provided, then the caller is responsible for disposing it.
+        /// Resolve <paramref name="line"/> into <see cref="LineBinaryStream"/>.
+        /// If Stream (<see cref="LineBinaryStream.Value"/>) is provided, then the caller is responsible for disposing it.
         /// 
         /// Applies contextual information, such as culture, from the executing context.
         /// 
@@ -47,13 +47,13 @@ namespace Lexical.Localization.Resource
         ///     <item><see cref="LineStatus.ResolveOkFromLine"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
-        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceStream.Exception"/></item>
-        ///     <item><see cref="LineStatus.ResolveFailedNoResourceResolver"/>Resolver was not found.</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineBinaryStream.Exception"/></item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoBinaryResolver"/>Resolver was not found.</item>
         /// </list>
         /// </summary>
         /// <param name="line"></param>
         /// <returns>result status</returns>
-        LineResourceStream ResolveStream(ILine line);
+        LineBinaryStream ResolveStream(ILine line);
     }
 }
 
@@ -74,21 +74,21 @@ namespace Lexical.Localization
         ///     <item><see cref="LineStatus.ResolveOkFromLine"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
-        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceBytes.Exception"/></item>
-        ///     <item><see cref="LineStatus.ResolveFailedNoResourceResolver"/>Resolver was not found.</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineBinaryBytes.Exception"/></item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoBinaryResolver"/>Resolver was not found.</item>
         /// </list>
         /// </summary>
         /// <param name="line"></param>
         /// <returns>result status</returns>
-        public static LineResourceBytes ResolveBytes(this ILine line)
+        public static LineBinaryBytes ResolveBytes(this ILine line)
         {
-            LineResourceBytes result = new LineResourceBytes(line, (Exception)null, LineStatus.ResolveFailedNoResourceResolver);
+            LineBinaryBytes result = new LineBinaryBytes(line, (Exception)null, LineStatus.ResolveFailedNoBinaryResolver);
             for (ILine k = line; k != null; k = k.GetPreviousPart())
             {
-                IResourceResolver resolver;
-                if (k is ILineResourceResolver resolverAssigned && ((resolver = resolverAssigned.ResourceResolver) != null))
+                IBinaryResolver resolver;
+                if (k is ILineBinaryResolver resolverAssigned && ((resolver = resolverAssigned.BinaryResolver) != null))
                 {
-                    LineResourceBytes str = resolver.ResolveBytes(line);
+                    LineBinaryBytes str = resolver.ResolveBytes(line);
 
                     // Return bytes
                     if (str.Value != null) return str;
@@ -101,8 +101,8 @@ namespace Lexical.Localization
         }
 
         /// <summary>
-        /// Resolve <paramref name="line"/> into <see cref="LineResourceStream"/>.
-        /// If Stream (<see cref="LineResourceStream.Value"/>) is provided, then the caller is responsible for disposing it.
+        /// Resolve <paramref name="line"/> into <see cref="LineBinaryStream"/>.
+        /// If Stream (<see cref="LineBinaryStream.Value"/>) is provided, then the caller is responsible for disposing it.
         /// 
         /// Applies contextual information, such as culture, from the executing context.
         /// 
@@ -113,21 +113,21 @@ namespace Lexical.Localization
         ///     <item><see cref="LineStatus.ResolveOkFromLine"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
-        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceStream.Exception"/></item>
-        ///     <item><see cref="LineStatus.ResolveFailedNoResourceResolver"/>Resolver was not found.</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineBinaryStream.Exception"/></item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoBinaryResolver"/>Resolver was not found.</item>
         /// </list>
         /// </summary>
         /// <param name="line"></param>
         /// <returns>result status</returns>
-        public static LineResourceStream ResolveStream(this ILine line)
+        public static LineBinaryStream ResolveStream(this ILine line)
         {
-            LineResourceStream result = new LineResourceStream(line, (Exception)null, LineStatus.ResolveFailedNoResourceResolver);
+            LineBinaryStream result = new LineBinaryStream(line, (Exception)null, LineStatus.ResolveFailedNoBinaryResolver);
             for (ILine k = line; k != null; k = k.GetPreviousPart())
             {
-                IResourceResolver resolver;
-                if (k is ILineResourceResolver resolverAssigned && ((resolver = resolverAssigned.ResourceResolver) != null))
+                IBinaryResolver resolver;
+                if (k is ILineBinaryResolver resolverAssigned && ((resolver = resolverAssigned.BinaryResolver) != null))
                 {
-                    LineResourceStream str = resolver.ResolveStream(line);
+                    LineBinaryStream str = resolver.ResolveStream(line);
 
                     // Return an open stream
                     if (str.Value != null) return str;

@@ -11,133 +11,131 @@ using System.Collections.Generic;
 namespace Lexical.Localization.Asset
 {
     /// <summary>
-    /// Asset builder compiles <see cref="IAsset"/>s from <see cref="IAssetSource"/> into one asset.
+    /// Asset builder compiles an <see cref="IAsset"/> from <see cref="IAssetConfiguration"/>.
     /// </summary>
     public class AssetBuilder : IAssetBuilder
     {
-        /// <summary>
-        /// Asset sources
-        /// </summary>
-        protected List<IAssetSource> sources = new List<IAssetSource>();
-
-        /// <summary>
-        /// Fixed assets
-        /// </summary>
-        protected List<IAsset> assets = new List<IAsset>();
-
-        /// <summary>
-        /// List of asset sources
-        /// </summary>
-        public IList<IAssetSource> Sources => sources;
-
-        public IList<IAsset> Asset => new List<IAsset>();
-
-        public IList<IFileSystem> FileSystems => new List<IFileSystem>();
-
-        public IList<IAssetFile> AssetFiles => new List<IAssetFile>();
-
-        public IList<IAssetFilePattern> AssetFilePatterns => new List<IAssetFilePattern>();
-
-        public IList<IPostBuildAssetSource> AssetPostBuild => new List<IPostBuildAssetSource>();
-
-        public IAssetFileObservePolicy ObservePolicy { get; set; }
-
         /// <summary>
         /// Create asset builder.
         /// </summary>
         public AssetBuilder() : base() { }
 
         /// <summary>
-        /// Create asset builder.
+        /// Build asset.
+        /// 
+        /// String assets are constructed into <see cref="StringAsset"/>, binary assets are into <see cref="BinaryAsset"/>.
+        /// 
+        /// Adds assets in following order:
+        /// <list type="number">
+        ///     <item>1. <see cref="IAssetConfiguration.Assets"/></item>
+        ///     <item>2. <see cref="IAssetConfiguration.AssetFactories"/></item>
+        ///     <item>3. <see cref="IAssetConfiguration.AssetSources"/></item>
+        ///     <item>4. <see cref="IAssetConfiguration.AssetPostBuilds"/></item>
+        /// </list>
         /// </summary>
-        /// <param name="list"></param>
-        public AssetBuilder(IEnumerable<IAssetSource> list) : base() { if (list != null) this.sources.AddRange(list); }
-
-        /// <summary>
-        /// Create asset builder.
-        /// </summary>
-        /// <param name="list"></param>
-        public AssetBuilder(params IAssetSource[] list) : base() { if (list != null) this.sources.AddRange(list); }
-
-        /// <summary>
-        /// Add fixed asset.
-        /// </summary>
-        /// <param name="source"></param>
+        /// <param name="configuration"></param>
         /// <returns></returns>
-        public IAssetBuilder AddAsset(IAsset source)
-        {
-            assets.Add(source);
-            return this;
-        }
-
-        /// <summary>
-        /// Builds a list of assets. Adds the following:
-        ///   1. The list of <see cref="assets"/> as is
-        ///   2. Build from <see cref="sources"/> elements that dont' implement <see cref="IStringAssetSource"/>
-        ///   3. One asset for each <see cref="IStringLinesSource"/> that share <see cref="ILineFormat"/>.
-        ///   4. One asset for all <see cref="IKeyLinesSource"/>.
-        ///   
-        /// </summary>
-        /// <returns></returns>
-        protected List<IAsset> BuildAssets()
-        {
-            // Result asset list
-            List<IAsset> list = new List<IAsset>();
-
-            // Add direct IAssets
-            list.AddRange(assets);
-
-            // Build IAssetSources
-            foreach (IAssetSource src in sources.Where(s => s is IStringAssetSource == false))
-                src.Build(list);
-
-            // Build one asset for all IEnumerable<KeyValuePair<ILine, IString>> sources
-            StringAsset __asset = null;
-            foreach (IStringLinesSource src in sources.Where(s => s is IStringLinesSource).Cast<IStringLinesSource>())
-            {
-                if (__asset == null) __asset = new StringAsset();
-                __asset.Add(src, src.LineFormat);
-            }
-            // Build one asset for all IEnumerable<KeyValuePair<ILine, IString>> sources
-            foreach (IKeyLinesSource src in sources.Where(s => s is IKeyLinesSource).Cast<IKeyLinesSource>())
-            {
-                if (__asset == null) __asset = new StringAsset();
-                __asset.Add(src);
-            }
-            // ... and IEnumerable<ILineTree> sources
-            foreach (ITreeLinesSource src in sources.Where(s => s is ITreeLinesSource).Cast<ITreeLinesSource>())
-            {
-                if (__asset == null) __asset = new StringAsset();
-                __asset.Add(src);
-            }
-            if (__asset != null) list.Add(__asset.Load());
-
-            return list;
-        }
-
-        /// <summary>
-        /// Build asset
-        /// </summary>
-        /// <returns></returns>
-        public virtual IAsset Build()
+        /// <exception cref="AssetException">If doesn't know how to build <paramref name="configuration"/> into <see cref="IAsset"/>.</exception>
+        public virtual IAsset Build(IAssetConfiguration configuration)
         {
             // Create list of assets
-            List<IAsset> list = BuildAssets();
+            IList<IAsset> list = BuildList(configuration);
 
-            // Build
+            // Compose assets into one IAsset reference
             if (list.Count == 0) return new AssetComposition.Immutable();
             if (list.Count == 1) return list[0];
             IAsset asset = new AssetComposition.Immutable(list);
 
             // Post-build
-            foreach (IPostBuildAssetSource src in AssetPostBuild.ToArray())
+            foreach (IAssetPostBuild src in configuration.AssetPostBuilds)
             {
                 IAsset newAsset = src.PostBuild(asset);
-                if (newAsset == null) throw new AssetException($"{src.GetType().Name}.{nameof(IPostBuildAssetSource.PostBuild)} returned null");
+                if (newAsset == null) throw new AssetException($"{src.GetType().Name}.{nameof(IAssetPostBuild.PostBuild)} returned null");
                 asset = newAsset;
             }
 
             return asset;
+        }
+
+        /// <summary>
+        /// Build into a list of assets.
+        /// 
+        /// String assets are constructed into <see cref="StringAsset"/>, binary assets are into <see cref="BinaryAsset"/>.
+        /// 
+        /// Add assets into the following order:
+        /// <list type="number">
+        ///     <item>1. <see cref="IAssetConfiguration.Assets"/></item>
+        ///     <item>2. <see cref="IAssetConfiguration.AssetFactories"/></item>
+        ///     <item>3. <see cref="IAssetConfiguration.AssetSources"/></item>
+        ///     <item>4. <see cref="IAssetConfiguration.AssetPostBuilds"/></item>
+        /// </list>
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <returns></returns>
+        /// <exception cref="AssetException">If doesn't know how to build <paramref name="configuration"/> into <see cref="IAsset"/>.</exception>
+        protected virtual IList<IAsset> BuildList(IAssetConfiguration configuration)
+        {
+            // Sorted lists
+            List<IStringAsset> stringAssets = new List<IStringAsset>();
+            List<IBinaryAsset> binaryAssets = new List<IBinaryAsset>();
+            List<IAsset> otherAssets = new List<IAsset>();
+            List<IStringAssetSource> stringAssetSources = new List<IStringAssetSource>();
+            List<IBinaryAssetSource> binaryAssetSources = new List<IBinaryAssetSource>();
+            List<IAssetSource> otherAssetSources = new List<IAssetSource>();
+
+            // Sort Assets
+            foreach(IAsset asset in configuration.Assets)
+            {
+                IStringAsset asStringAsset = asset as IStringAsset;
+                IBinaryAsset asBinaryAsset = asset as IBinaryAsset;
+
+                if (asStringAsset != null) stringAssets.Add(asStringAsset);
+                if (asBinaryAsset != null) binaryAssets.Add(asBinaryAsset);
+                if (asStringAsset == null && asBinaryAsset == null) otherAssets.Add(asset);
+            }
+
+            // Run AssetFactories
+            foreach (IAssetFactory assetFactory in configuration.AssetFactories)
+            {
+                foreach (IAsset asset in configuration.AssetFactories)
+                {
+                    IStringAsset asStringAsset = asset as IStringAsset;
+                    IBinaryAsset asBinaryAsset = asset as IBinaryAsset;
+
+                    if (asStringAsset != null) stringAssets.Add(asStringAsset);
+                    if (asBinaryAsset != null) binaryAssets.Add(asBinaryAsset);
+                    if (asStringAsset == null && asBinaryAsset == null) otherAssets.Add(asset);
+                }
+            }
+
+            // Sort AssetSources
+            foreach (IAssetSource assetSource in configuration.AssetSources)
+            {
+                IStringAssetSource asStringAssetSource = assetSource as IStringAssetSource;
+                IBinaryAssetSource asBinaryAssetSource = assetSource as IBinaryAssetSource;
+
+                if (asStringAssetSource != null) stringAssetSources.Add(asStringAssetSource);
+                if (asBinaryAssetSource != null) binaryAssetSources.Add(asBinaryAssetSource);
+                if (asStringAssetSource == null && asBinaryAssetSource == null) otherAssetSources.Add(assetSource);
+            }
+
+            // Build BinaryAsset
+            if (binaryAssets.Count > 0 || binaryAssetSources.Count > 0)
+            {
+                BinaryAsset binaryAsset = new BinaryAsset();
+                // TODO add binary assets
+                otherAssets.Insert(0, binaryAsset);
+            }
+
+            // Build StringAsset
+            if (stringAssets.Count>0 || stringAssetSources.Count>0)
+            {
+                StringAsset stringAsset = new StringAsset();
+                // TODO add string assets
+                otherAssets.Insert(0, stringAsset);
+            }
+
+            return otherAssets;
         }
 
         /// <summary>
@@ -169,14 +167,27 @@ namespace Lexical.Localization.Asset
             }
 
             /// <summary>
-            /// Build assets. The contents of <see cref="Asset"/> is updated.
+            /// Build asset.
+            /// 
+            /// String assets are constructed into <see cref="StringAsset"/>, binary assets are into <see cref="BinaryAsset"/>.
+            /// 
+            /// Adds assets in following order:
+            /// <list type="number">
+            ///     <item>1. <see cref="IAssetConfiguration.Assets"/></item>
+            ///     <item>2. <see cref="IAssetConfiguration.AssetFactories"/></item>
+            ///     <item>3. <see cref="IAssetConfiguration.AssetSources"/></item>
+            ///     <item>4. <see cref="IAssetConfiguration.AssetPostBuilds"/></item>
+            /// </list>
             /// </summary>
-            /// <returns><see cref="Asset"/></returns>
-            public override IAsset Build()
+            /// <param name="configuration"></param>
+            /// <returns></returns>
+            /// <exception cref="AssetException">If doesn't know how to build <paramref name="configuration"/> into <see cref="IAsset"/>.</exception>
+            public override IAsset Build(IAssetConfiguration configuration)
             {
                 // Create list of assets
-                List<IAsset> new_assets = BuildAssets();
+                IList<IAsset> new_assets = BuildList(configuration);
 
+                // Compose assets into one IAsset reference
                 IAsset built_asset;
                 if (new_assets.Count == 0) built_asset = new AssetComposition(); // Dummy
                 else if (new_assets.Count == 1) built_asset = new_assets[0]; // as-is
@@ -184,10 +195,10 @@ namespace Lexical.Localization.Asset
 
                 // Post-build
                 IAsset post_built_asset = built_asset;
-                foreach (IPostBuildAssetSource src in AssetPostBuild)
+                foreach (IAssetPostBuild src in configuration.AssetPostBuilds)
                 {
                     post_built_asset = src.PostBuild(post_built_asset);
-                    if (post_built_asset == null) throw new AssetException($"{src.GetType().Name}.{nameof(IPostBuildAssetSource.PostBuild)} returned null");
+                    if (post_built_asset == null) throw new AssetException($"{src.GetType().Name}.{nameof(IAssetPostBuild.PostBuild)} returned null");
                 }
 
                 // Get old assets
@@ -220,5 +231,6 @@ namespace Lexical.Localization.Asset
         /// <returns></returns>
         public override string ToString()
             => $"{GetType().Name}";
+
     }
 }

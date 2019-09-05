@@ -1,4 +1,4 @@
-﻿using Lexical.Localization.Resource;
+﻿using Lexical.Localization.Binary;
 using Lexical.Localization.StringFormat;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace Lexical.Localization.Asset
     public class AssetFunc :
         IAsset,
         IStringAsset, IStringAssetUnformedLinesEnumerable, IStringAssetLinesEnumerable,
-        IResourceAsset, IResourceAssetNamesEnumerable, IResourceAssetKeysEnumerable
+        IBinaryAsset, IBinaryAssetNamesEnumerable, IBinaryAssetKeysEnumerable
     {
         /// <summary>
         /// Delegate that reads asset.
@@ -31,17 +31,17 @@ namespace Lexical.Localization.Asset
         IEnumerable<KeyValuePair<string, IString>> IStringAssetUnformedLinesEnumerable.GetAllUnformedLines(ILine key)
             => (Func() as IStringAssetUnformedLinesEnumerable)?.GetAllUnformedLines(key);
 
-        LineResourceBytes IResourceAsset.GetResourceBytes(ILine key)
-            => Func() is IResourceAsset resourceAsset ? resourceAsset.GetResourceBytes(key) : new LineResourceBytes(key, (Exception)null, LineStatus.ResolveFailedNoResult);
+        LineBinaryBytes IBinaryAsset.GetBytes(ILine key)
+            => Func() is IBinaryAsset resourceAsset ? resourceAsset.GetBytes(key) : new LineBinaryBytes(key, (Exception)null, LineStatus.ResolveFailedNoResult);
 
-        IEnumerable<string> IResourceAssetNamesEnumerable.GetResourceNames(ILine key)
-            => (Func() as IResourceAssetNamesEnumerable)?.GetResourceNames(key);
+        IEnumerable<string> IBinaryAssetNamesEnumerable.GetBinaryNames(ILine key)
+            => (Func() as IBinaryAssetNamesEnumerable)?.GetBinaryNames(key);
 
         ILine IStringAsset.GetLine(ILine key)
             => (Func() as IStringAsset)?.GetLine(key);
 
-        LineResourceStream IResourceAsset.GetResourceStream(ILine key)
-            => Func() is IResourceAsset resourceAsset ? resourceAsset.GetResourceStream(key) : new LineResourceStream(key, (Exception)null, LineStatus.ResolveFailedNoResult);
+        LineBinaryStream IBinaryAsset.GetStream(ILine key)
+            => Func() is IBinaryAsset resourceAsset ? resourceAsset.GetStream(key) : new LineBinaryStream(key, (Exception)null, LineStatus.ResolveFailedNoResult);
 
         /// <summary>
         /// 
@@ -79,24 +79,24 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetAllResourceNames(ILine filterKey = null)
-            => (Func() as IStringAsset)?.GetAllResourceNames(filterKey);
+        public IEnumerable<string> GetAllBinaryNames(ILine filterKey = null)
+            => (Func() as IStringAsset)?.GetAllBinaryNames(filterKey);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public IEnumerable<ILine> GetResourceKeys(ILine filterKey = null)
-            => (Func() as IStringAsset)?.GetResourceKeys(filterKey);
+        public IEnumerable<ILine> GetBinaryKeys(ILine filterKey = null)
+            => (Func() as IStringAsset)?.GetBinaryKeys(filterKey);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public IEnumerable<ILine> GetAllResourceKeys(ILine filterKey = null)
-            => (Func() as IStringAsset)?.GetAllResourceKeys(filterKey);
+        public IEnumerable<ILine> GetAllBinaryKeys(ILine filterKey = null)
+            => (Func() as IStringAsset)?.GetAllBinaryKeys(filterKey);
     }
 
     /// <summary></summary>

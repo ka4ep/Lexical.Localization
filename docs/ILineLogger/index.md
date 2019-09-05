@@ -8,8 +8,8 @@
 [!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Common/ILogger.cs#IStringResolverLogger)]
 </details>
 <details>
-  <summary><b>Lexical.Localization.Resource.IResourceResolverLogger</b> is for logging resource resolve results. (<u>Click here</u>)</summary>
-[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Common/ILogger.cs#IResourceResolverLogger)]
+  <summary><b>Lexical.Localization.Binary.IBinaryResolverLogger</b> is for logging resource resolve results. (<u>Click here</u>)</summary>
+[!code-csharp[Snippet](../../Lexical.Localization.Abstractions/Common/ILogger.cs#IBinaryResolverLogger)]
 </details>
 <br />
 

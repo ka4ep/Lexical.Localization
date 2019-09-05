@@ -13,7 +13,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Adapts single instance to <see cref="IAssetSource"/>.
     /// </summary>
-    public class AssetInstanceSource : IAssetSource, IBuildableAssetSource
+    public class AssetInstanceSource : IAssetSource, IAssetFactory
     {
         /// <summary>
         /// Asset to add
@@ -33,7 +33,7 @@ namespace Lexical.Localization.Asset
         /// Add <see cref="asset"/> to <paramref name="list"/>.
         /// </summary>
         /// <param name="list"></param>
-        public void Build(IList<IAsset> list)
+        public void Create(IList<IAsset> list)
         {
             list.Add(asset);
         }

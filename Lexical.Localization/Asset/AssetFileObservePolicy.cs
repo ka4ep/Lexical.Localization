@@ -10,27 +10,27 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Policy whether asset files should be observed and reloaded when modified.
     /// </summary>
-    public class AssetFileObservePolicy : ObservableValue<bool>, IAssetFileObservePolicy
+    public class AssetFileObservePolicy : ObservableValue<bool>, IAssetObservePolicy
     {
         /// <summary>
         /// Read-only static instance for policy that observes files.
         /// </summary>
-        protected static IAssetFileObservePolicy observing = new AssetFileObservePolicy(true, true);
+        protected static IAssetObservePolicy observing = new AssetFileObservePolicy(true, true);
 
         /// <summary>
         /// Read-only static instance for policy that doesn't observe files.
         /// </summary>
-        protected static IAssetFileObservePolicy noObserving = new AssetFileObservePolicy(false, true);
+        protected static IAssetObservePolicy noObserving = new AssetFileObservePolicy(false, true);
 
         /// <summary>
         /// Read-only static instance for policy that observes files.
         /// </summary>
-        public static IAssetFileObservePolicy Observing => observing;
+        public static IAssetObservePolicy Observing => observing;
 
         /// <summary>
         /// Read-only static instance for policy that doesn't observe files.
         /// </summary>
-        public static IAssetFileObservePolicy NoObserving => noObserving;
+        public static IAssetObservePolicy NoObserving => noObserving;
 
         /// <summary>
         /// Policy whether assest files should be observed.

@@ -14,7 +14,7 @@ namespace Lexical.Localization.Common
     /// See sub-interfaces
     /// <list type="bullet">
     ///     <item><see cref="Lexical.Localization.StringFormat.IStringResolverLogger"/></item>
-    ///     <item><see cref="Lexical.Localization.Resource.IResourceResolverLogger"/></item>
+    ///     <item><see cref="Lexical.Localization.Binary.IBinaryResolverLogger"/></item>
     /// </list>
     /// </summary>
     public interface ILogger
@@ -35,14 +35,14 @@ namespace Lexical.Localization.StringFormat
     // </IStringResolverLogger>
 }
 
-namespace Lexical.Localization.Resource
+namespace Lexical.Localization.Binary
 {
-    // <IResourceResolverLogger>
+    // <IBinaryResolverLogger>
     /// <summary>
-    /// Logger that logs resource resolving of <see cref="IResourceResolver"/>.
+    /// Logger that logs resource resolving of <see cref="IBinaryResolver"/>.
     /// </summary>
-    public interface IResourceResolverLogger : Lexical.Localization.Common.ILogger, IObserver<LineResourceBytes>, IObserver<LineResourceStream>
+    public interface IBinaryResolverLogger : Lexical.Localization.Common.ILogger, IObserver<LineBinaryBytes>, IObserver<LineBinaryStream>
     {
     }
-    // </IResourceResolverLogger>
+    // </IBinaryResolverLogger>
 }

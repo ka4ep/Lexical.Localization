@@ -10,15 +10,14 @@ using System.Globalization;
 namespace Lexical.Localization.Resolver
 {
     /// <summary>
-    /// Resolver
+    /// Resolver of unspecified Type.
     /// </summary>
     public interface IResolver
     {
-
     }
 
     /// <summary>
-    /// Resolves name to <typeparamref name="T"/>.
+    /// Resolves identifier to <typeparamref name="T"/>.
     /// </summary>
     public interface IResolver<T> : IResolver
     {

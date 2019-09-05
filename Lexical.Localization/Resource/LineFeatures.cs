@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Lexical.Localization.Resource
+namespace Lexical.Localization.Binary
 {
     /// <summary>
     /// Features that were extracted from the key, key's inlines and asset's line.
@@ -75,7 +75,7 @@ namespace Lexical.Localization.Resource
                 if (l is ILineCulturePolicy cp && cp != null) CulturePolicy = cp.CulturePolicy;
                 if (l is ILineCulture c && c.Culture != null) Culture = c.Culture;
                 if (l is ILineInlines inlines) Inlines.AddIfNew(inlines);
-                if (l is ILineResource resource && resource.Resource != null) Resource = resource.Resource;
+                if (l is ILineBinary resource && resource.Binary != null) Resource = resource.Binary;
                 if (l is ILineLogger ll && ll.Logger != null) Loggers.AddIfNew(ll.Logger);
                 if (l is ILineAsset la && la.Asset != null) Assets.AddIfNew(la.Asset);
 
@@ -107,7 +107,7 @@ namespace Lexical.Localization.Resource
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
-                if (Loggers[i] is IObserver<LineResourceStream> lineLogger) lineLogger.OnError(e);
+                if (Loggers[i] is IObserver<LineBinaryStream> lineLogger) lineLogger.OnError(e);
             }
         }
 
@@ -115,11 +115,11 @@ namespace Lexical.Localization.Resource
         /// Log <paramref name="str"/>, if loggers are configured.
         /// </summary>
         /// <param name="str"></param>
-        public void LogResolveStream(LineResourceStream str)
+        public void LogResolveStream(LineBinaryStream str)
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
-                if (Loggers[i] is IObserver<LineResourceStream> lineLogger) lineLogger.OnNext(str);
+                if (Loggers[i] is IObserver<LineBinaryStream> lineLogger) lineLogger.OnNext(str);
             }
         }
 
@@ -128,11 +128,11 @@ namespace Lexical.Localization.Resource
         /// </summary>
         /// <param name="e"></param>
         /// <param name="stream"></param>
-        public void LogResolveStream(Exception e, LineResourceStream stream)
+        public void LogResolveStream(Exception e, LineBinaryStream stream)
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
-                if (Loggers[i] is IObserver<LineResourceStream> logger)
+                if (Loggers[i] is IObserver<LineBinaryStream> logger)
                 {
                     logger.OnNext(stream);
                     logger.OnError(e);
@@ -149,7 +149,7 @@ namespace Lexical.Localization.Resource
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
-                if (Loggers[i] is IObserver<LineResourceBytes> lineLogger) lineLogger.OnError(e);
+                if (Loggers[i] is IObserver<LineBinaryBytes> lineLogger) lineLogger.OnError(e);
             }
         }
 
@@ -157,11 +157,11 @@ namespace Lexical.Localization.Resource
         /// Log <paramref name="str"/>, if loggers are configured.
         /// </summary>
         /// <param name="str"></param>
-        public void LogResolveBytes(LineResourceBytes str)
+        public void LogResolveBytes(LineBinaryBytes str)
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
-                if (Loggers[i] is IObserver<LineResourceBytes> lineLogger) lineLogger.OnNext(str);
+                if (Loggers[i] is IObserver<LineBinaryBytes> lineLogger) lineLogger.OnNext(str);
             }
         }
 
@@ -170,11 +170,11 @@ namespace Lexical.Localization.Resource
         /// </summary>
         /// <param name="e"></param>
         /// <param name="stream"></param>
-        public void LogResolveBytes(Exception e, LineResourceBytes stream)
+        public void LogResolveBytes(Exception e, LineBinaryBytes stream)
         {
             for (int i = 0; i < Loggers.Count; i++)
             {
-                if (Loggers[i] is IObserver<LineResourceBytes> logger)
+                if (Loggers[i] is IObserver<LineBinaryBytes> logger)
                 {
                     logger.OnNext(stream);
                     logger.OnError(e);

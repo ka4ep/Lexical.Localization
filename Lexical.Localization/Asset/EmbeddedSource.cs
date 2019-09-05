@@ -14,7 +14,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// File source to a embedded resource.
     /// </summary>
-    public abstract class EmbeddedSource : IAssetSource, IAssetSourceFileSystem, IBuildableAssetSource, IFileAssetSource
+    public abstract class EmbeddedSource : IAssetSource, IAssetSourceFileSystem, IAssetFactory, IFileAssetSource
     {
         /// <summary>
         /// Assembly
@@ -64,7 +64,7 @@ namespace Lexical.Localization.Asset
         /// (IAssetSource) Build asset into list.
         /// </summary>
         /// <param name="list"></param>
-        public abstract void Build(IList<IAsset> list);
+        public abstract void Create(IList<IAsset> list);
 
         /// <summary>
         /// Asset source of embedded resource that contains strings.
@@ -99,7 +99,7 @@ namespace Lexical.Localization.Asset
             /// 
             /// </summary>
             /// <param name="list"></param>
-            public override void Build(IList<IAsset> list)
+            public override void Create(IList<IAsset> list)
             {
                 IEnumerable reader = FileFormat.EmbeddedReader(Assembly, FilePath, LineFormat, ThrowIfNotFound);
                 IAsset asset = new StringAsset().Add(reader).Load();
@@ -110,7 +110,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Asset source of embedded resource that contains binary resource.
         /// </summary>
-        public class Resource : EmbeddedSource, IResourceAssetSource
+        public class Resource : EmbeddedSource, IBinaryAssetSource
         {
             /// <summary>
             /// Key for this particular file.
@@ -131,7 +131,7 @@ namespace Lexical.Localization.Asset
             /// 
             /// </summary>
             /// <param name="list"></param>
-            public override void Build(IList<IAsset> list)
+            public override void Create(IList<IAsset> list)
             {
                 throw new NotImplementedException();
             }
@@ -150,7 +150,7 @@ namespace Lexical.Localization.Asset
     /// 
     /// For example if pattern is "{Assembly}.{Culture.}Localization.resx" then file name is resolved based on "Culture" and "Assembly" parametrs.
     /// </summary>
-    public abstract class EmbeddedPatternSource : IAssetSource, IAssetSourceFileSystem, IBuildableAssetSource, IFilePatternAssetSource
+    public abstract class EmbeddedPatternSource : IAssetSource, IAssetSourceFileSystem, IAssetFactory, IFilePatternAssetSource
     {
         /// <summary>
         /// Assembly
@@ -199,7 +199,7 @@ namespace Lexical.Localization.Asset
         /// (IAssetSource) Build asset into list.
         /// </summary>
         /// <param name="list"></param>
-        public abstract void Build(IList<IAsset> list);
+        public abstract void Create(IList<IAsset> list);
 
         /// <summary>
         /// Asset source of embedded string resources.
@@ -234,7 +234,7 @@ namespace Lexical.Localization.Asset
             /// Build into <see cref="IAsset"/>.
             /// </summary>
             /// <param name="list"></param>
-            public override void Build(IList<IAsset> list)
+            public override void Create(IList<IAsset> list)
             {
                 //IAsset asset = new BinaryAsset().Add(this).Load();
                 //list.Add(asset);
@@ -245,7 +245,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Asset source of embedded binary resources.
         /// </summary>
-        public class Resource : EmbeddedSource, IResourceAssetSource
+        public class Resource : EmbeddedSource, IBinaryAssetSource
         {
             /// <summary>
             /// Key for this particular file.
@@ -266,7 +266,7 @@ namespace Lexical.Localization.Asset
             /// Build into <see cref="IAsset"/>.
             /// </summary>
             /// <param name="list"></param>
-            public override void Build(IList<IAsset> list)
+            public override void Create(IList<IAsset> list)
             {
                 //IAsset asset = new BinaryAsset().Add(this).Load();
                 //list.Add(asset);

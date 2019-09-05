@@ -9,10 +9,10 @@ using System.Runtime.Serialization;
 namespace Lexical.Localization
 {
     /// <summary>
-    /// Line embedded resource bytes.
+    /// Line embedded binary resource.
     /// </summary>
     [Serializable]
-    public class LineResource : LineBase, ILineResource, ILineArgument<ILineResource, byte[]>
+    public class LineBinary : LineBase, ILineBinary, ILineArgument<ILineBinary, byte[]>
     {
         /// <summary>
         /// Value
@@ -22,7 +22,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Value property
         /// </summary>
-        public byte[] Resource { get => value; set => throw new InvalidOperationException(); }
+        public byte[] Binary { get => value; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
@@ -35,7 +35,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="value"></param>
-        public LineResource(ILineFactory appender, ILine prevKey, byte[] value) : base(appender, prevKey)
+        public LineBinary(ILineFactory appender, ILine prevKey, byte[] value) : base(appender, prevKey)
         {
             this.value = value;
         }
@@ -45,7 +45,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public LineResource(SerializationInfo info, StreamingContext context) : base(info, context)
+        public LineBinary(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.value = info.GetValue("Resource", typeof(byte[])) as byte[];
         }
@@ -62,7 +62,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class LineAppender : ILineFactory<ILineResource, byte[]>
+    public partial class LineAppender : ILineFactory<ILineBinary, byte[]>
     {
         /// <summary>
         /// Append part.
@@ -72,9 +72,9 @@ namespace Lexical.Localization
         /// <param name="value"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, byte[] value, out ILineResource line)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, byte[] value, out ILineBinary line)
         {
-            line = new LineResource(appender, previous, value);
+            line = new LineBinary(appender, previous, value);
             return true;
         }
     }
@@ -83,7 +83,7 @@ namespace Lexical.Localization
     /// ResourceLocalizer localization string value.
     /// </summary>
     [Serializable]
-    public class StringLocalizerResource : StringLocalizerBase, ILineResource, ILineArgument<ILineResource, byte[]>
+    public class StringLocalizerBinary : StringLocalizerBase, ILineBinary, ILineArgument<ILineBinary, byte[]>
     {
         /// <summary>
         /// Value
@@ -93,7 +93,7 @@ namespace Lexical.Localization
         /// <summary>
         /// Value property
         /// </summary>
-        public byte[] Resource { get => value; set => throw new InvalidOperationException(); }
+        public byte[] Binary { get => value; set => throw new InvalidOperationException(); }
 
         /// <summary>
         /// Appending arguments.
@@ -106,7 +106,7 @@ namespace Lexical.Localization
         /// <param name="appender"></param>
         /// <param name="prevKey"></param>
         /// <param name="value"></param>
-        public StringLocalizerResource(ILineFactory appender, ILine prevKey, byte[] value) : base(appender, prevKey)
+        public StringLocalizerBinary(ILineFactory appender, ILine prevKey, byte[] value) : base(appender, prevKey)
         {
             this.value = value;
         }
@@ -116,7 +116,7 @@ namespace Lexical.Localization
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public StringLocalizerResource(SerializationInfo info, StreamingContext context) : base(info, context)
+        public StringLocalizerBinary(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             this.value = info.GetValue("Resource", typeof(byte[])) as byte[];
         }
@@ -133,7 +133,7 @@ namespace Lexical.Localization
         }
     }
 
-    public partial class StringLocalizerAppender : ILineFactory<ILineResource, byte[]>
+    public partial class StringLocalizerAppender : ILineFactory<ILineBinary, byte[]>
     {
         /// <summary>
         /// Append part.
@@ -143,9 +143,9 @@ namespace Lexical.Localization
         /// <param name="value"></param>
         /// <param name="ResourceLocalizer"></param>
         /// <returns></returns>
-        public virtual bool TryCreate(ILineFactory appender, ILine previous, byte[] value, out ILineResource ResourceLocalizer)
+        public virtual bool TryCreate(ILineFactory appender, ILine previous, byte[] value, out ILineBinary ResourceLocalizer)
         {
-            ResourceLocalizer = new StringLocalizerResource(appender, previous, value);
+            ResourceLocalizer = new StringLocalizerBinary(appender, previous, value);
             return true;
         }
     }
@@ -172,7 +172,7 @@ namespace Lexical.Localization
             }
             else
             {
-                inlines[subkey] = subkey.Resource(value);
+                inlines[subkey] = subkey.Binary(value);
             }
             return line;
         }
@@ -194,7 +194,7 @@ namespace Lexical.Localization
                 inlines.Remove(subkey);
             } else
             {
-                inlines[subkey] = subkey.Resource(value);
+                inlines[subkey] = subkey.Binary(value);
             }
             return inlines;
         }

@@ -4,7 +4,7 @@ Sources are typically files, embedded resources, and plain code.
 [!code-csharp[Snippet](IAsset_Examples.cs#Snippet_1)]
 
 IAsset is the root interface for assets. It serves as a signal that the implementing class has further asset features.
-There are more specific interfaces such as **IStringAsset** and **IResourceAsset** which 
+There are more specific interfaces such as **IStringAsset** and **IBinaryAsset** which 
 retrieve language strings and binary resources.
 
 Asset interfaces are not called directly but used instead by calling extension methods of IAsset.
@@ -85,7 +85,7 @@ Table of Asset cache option's keys
 | Key      | Method  | Default | Description |
 |----------|:--------|:--------|:------------|
 | CloneKeys | .SetCloneKeys(bool) | true | Should cache create clones of keys, or should it use the keys that come from requests in its cache structures. |
-| CacheStreams | .SetCacheStreams(bool) | true | Should IResourceAsset#OpenStream requests be cached. |
+| CacheStreams | .SetCacheStreams(bool) | true | Should IBinaryAsset#OpenStream requests be cached. |
 | MaxResourceCount | .SetMaxResourceCount(int) | 2147483647 | Maximum number of resources to cache. |
 | MaxResourceSize | .SetMaxResourceSize(int) | 4096 | Maximum size of a resource. |
 | MaxResourceTotalSize | .SetMaxResourceTotalSize(int) | 1048576 | Maximum total number of bytes to reserve for all cached resources. |

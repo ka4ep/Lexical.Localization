@@ -116,20 +116,20 @@ ILine line = LineRoot.Global.StringResolver(stringResolver);
 ILine line = LineRoot.Global.StringResolver("Lexical.Localization.StringFormat.StringResolver");
 ```
 
-<b>.ResourceResolver(<i>IResourceResolver</i>)</b> adds *IResourceResolver* as line part.
+<b>.BinaryResolver(<i>IBinaryResolver</i>)</b> adds *IBinaryResolver* as line part.
 
 ```csharp
 ResolveSource[] resolveSequence = 
     new ResolveSource[] { ResolveSource.Inline, ResolveSource.Asset, ResolveSource.Line };
 
-IResourceResolver resourceResolver = new ResourceResolver(Resolvers.Default, resolveSequence);
-ILine line = LineRoot.Global.ResourceResolver(resourceResolver);
+IBinaryResolver BinaryResolver = new BinaryResolver(Resolvers.Default, resolveSequence);
+ILine line = LineRoot.Global.BinaryResolver(BinaryResolver);
 ```
 
-<b>.ResourceResolver(<i>string</i>)</b> adds assembly qualified class name to *IResourceResolver*.
+<b>.BinaryResolver(<i>string</i>)</b> adds assembly qualified class name to *IBinaryResolver*.
 
 ```csharp
-ILine line = LineRoot.Global.ResourceResolver("Lexical.Localization.Resource.ResourceResolver");
+ILine line = LineRoot.Global.BinaryResolver("Lexical.Localization.Binary.BinaryResolver");
 ```
 
 # Canonically compared keys

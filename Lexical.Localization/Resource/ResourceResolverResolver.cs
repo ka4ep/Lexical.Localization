@@ -8,22 +8,22 @@ using Lexical.Localization.Resolver;
 using System;
 using System.Reflection;
 
-namespace Lexical.Localization.Resource
+namespace Lexical.Localization.Binary
 {
     /// <summary>
-    /// Resolves function class name to <see cref="IResourceResolver"/>.
+    /// Resolves function class name to <see cref="IBinaryResolver"/>.
     /// </summary>
-    public class ResourceResolverResolver : ParameterResolver<ILineResourceResolver, IResourceResolver>, IResolver<IResourceResolver>
+    public class BinaryResolverResolver : ParameterResolver<ILineBinaryResolver, IBinaryResolver>, IResolver<IBinaryResolver>
     {
         /// <summary>
         /// Default instance.
         /// </summary>
-        static readonly Lazy<ResourceResolverResolver> instance = new Lazy<ResourceResolverResolver>();
+        static readonly Lazy<BinaryResolverResolver> instance = new Lazy<BinaryResolverResolver>();
 
         /// <summary>
         /// Default instance.
         /// </summary>
-        public static ResourceResolverResolver Default => instance.Value;
+        public static BinaryResolverResolver Default => instance.Value;
 
         /// <summary>
         /// Create type resolver with default settings.
@@ -31,7 +31,7 @@ namespace Lexical.Localization.Resource
         /// Parses expressions and instantiates types that are found in the app domain.
         /// Does not load external dll files.
         /// </summary>
-        public ResourceResolverResolver() : base("ResourceResolver", DefaultAssemblyResolver, DefaultTypeResolver)
+        public BinaryResolverResolver() : base("BinaryResolver", DefaultAssemblyResolver, DefaultTypeResolver)
         {
         }
 
@@ -40,7 +40,7 @@ namespace Lexical.Localization.Resource
         /// </summary>
         /// <param name="assemblyLoader">(optional) function that reads assembly from file.</param>
         /// <param name="typeResolver">(optional) Function that resolves type name into <see cref="Type"/>.</param>
-        public ResourceResolverResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base("ResourceResolver", assemblyLoader, typeResolver)
+        public BinaryResolverResolver(Func<AssemblyName, Assembly> assemblyLoader, Func<Assembly, string, bool, Type> typeResolver) : base("BinaryResolver", assemblyLoader, typeResolver)
         {
         }
 

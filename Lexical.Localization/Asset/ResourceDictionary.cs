@@ -3,7 +3,7 @@
 // Date:           12.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Resource;
+using Lexical.Localization.Binary;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,9 +13,9 @@ using System.Linq;
 namespace Lexical.Localization.Asset
 {
     /// <summary>
-    /// This class adapts IDictionary&lt;ILine, byte[]&gt; to <see cref="IResourceAsset"/> and <see cref="IResourceAssetKeysEnumerable"/>.
+    /// This class adapts IDictionary&lt;ILine, byte[]&gt; to <see cref="IBinaryAsset"/> and <see cref="IBinaryAssetKeysEnumerable"/>.
     /// </summary>
-    public class ResourceDictionary : IResourceAsset, IResourceAssetKeysEnumerable, IAssetCultureEnumerable
+    public class ResourceDictionary : IBinaryAsset, IBinaryAssetKeysEnumerable, IAssetCultureEnumerable
     {
         /// <summary>
         /// Source dictionary
@@ -36,7 +36,7 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public IEnumerable<ILine> GetResourceKeys(ILine filterKey)
+        public IEnumerable<ILine> GetBinaryKeys(ILine filterKey)
         {
             // Return all 
             if (filterKey == null) return dictionary.Keys.ToList();
@@ -51,8 +51,8 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="filterKey"></param>
         /// <returns></returns>
-        public IEnumerable<ILine> GetAllResourceKeys(ILine filterKey)
-            => GetResourceKeys(filterKey);
+        public IEnumerable<ILine> GetAllBinaryKeys(ILine filterKey)
+            => GetBinaryKeys(filterKey);
 
         /// <summary>
         /// Get cultures
@@ -66,14 +66,14 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public LineResourceBytes GetResourceBytes(ILine key)
+        public LineBinaryBytes GetBytes(ILine key)
         {
             byte[] result = null;
             // Search dictionary
             if (dictionary.TryGetValue(key, out result))
-                return new LineResourceBytes(key, result, LineStatus.ResolveOkFromAsset);
+                return new LineBinaryBytes(key, result, LineStatus.ResolveOkFromAsset);
             else
-                return new LineResourceBytes(key, LineStatus.ResolveFailedNoValue);
+                return new LineBinaryBytes(key, LineStatus.ResolveFailedNoValue);
         }
 
         /// <summary>
@@ -81,14 +81,14 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public LineResourceStream GetResourceStream(ILine key)
+        public LineBinaryStream GetStream(ILine key)
         {
             byte[] data = null;
             // Search dictionary
             if (dictionary.TryGetValue(key, out data))
-                return new LineResourceStream(key, new MemoryStream(data), LineStatus.ResolveOkFromAsset);
+                return new LineBinaryStream(key, new MemoryStream(data), LineStatus.ResolveOkFromAsset);
             else
-                return new LineResourceStream(key, LineStatus.ResolveFailedNoValue);
+                return new LineBinaryStream(key, LineStatus.ResolveFailedNoValue);
         }
 
         /// <summary>

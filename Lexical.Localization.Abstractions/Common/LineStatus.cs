@@ -4,7 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Exp;
-using Lexical.Localization.Resource;
+using Lexical.Localization.Binary;
 using Lexical.Localization.StringFormat;
 using System;
 using System.IO;
@@ -23,7 +23,7 @@ namespace Lexical.Localization
         /// <summary>Unknown error</summary>
         FailedUnknownReason = ResolveFailed|CultureFailed|PluralityFailed|PlaceholderFailed|StringFormatFailed|ResourceFailed,
 
-        //// IResolver, IStringResolver and IResourceResolver error codes
+        //// IResolver, IStringResolver and IBinaryResolver error codes
         /// <summary>Ok for unspecified reason. This flag used when comparing against SeverityMask</summary>
         ResolveOk = 0x01UL << Shift.Resolve,
         /// <summary>Resolved value from key</summary>
@@ -44,8 +44,8 @@ namespace Lexical.Localization
         ResolveErrorInlinesException = 0x46UL << Shift.Resolve,
         /// <summary>Resolve "StringResolver" failed</summary>
         ResolveErrorStringResolverResolveFailed = 0x50UL << Shift.Resolve,
-        /// <summary>Resolve "ResourceResolver" failed</summary>
-        ResolveErrorResourceResolverResolveFailed = 0x51UL << Shift.Resolve,
+        /// <summary>Resolve "BinaryResolver" failed</summary>
+        ResolveErrorBinaryResolverResolveFailed = 0x51UL << Shift.Resolve,
         /// <summary>Resolve "FormatProvider" failed</summary>
         ResolveErrorFormatProviderResolveFailed = 0x52UL << Shift.Resolve,
         /// <summary>Resolve "Functions" failed</summary>
@@ -60,8 +60,8 @@ namespace Lexical.Localization
         ResolveFailed = 0x60UL << Shift.Resolve,
         /// <summary><see cref="IStringResolver"/> was not detected</summary>
         ResolveFailedNoStringResolver = 0x62UL << Shift.Resolve,
-        /// <summary><see cref="IResourceResolver"/> was not detected</summary>
-        ResolveFailedNoResourceResolver = 0x63UL << Shift.Resolve,
+        /// <summary><see cref="IBinaryResolver"/> was not detected</summary>
+        ResolveFailedNoBinaryResolver = 0x63UL << Shift.Resolve,
         /// <summary>Could not find a line with a value</summary>
         ResolveFailedNoValue = 0x64UL << Shift.Resolve,
         /// <summary>Expected exception was thrown during resolve process</summary>
@@ -276,7 +276,7 @@ namespace Lexical.Localization
         /// <summary>Mask for argument status</summary>
         StringFormatMask = 0x7FUL << Shift.StringFormat,
 
-        //// Resource - IResourceAsset error codes
+        //// Resource - IBinaryAsset error codes
         /// <summary>Ok, resource was read successfully from unspecified source.</summary>
         ResourceOk = 0x01UL << Shift.Resource,
         /// <summary>Ok, resource was read from a stream of specified .</summary>

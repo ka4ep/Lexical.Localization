@@ -4,7 +4,7 @@
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using Lexical.Localization.Internal;
-using Lexical.Localization.Resource;
+using Lexical.Localization.Binary;
 using Lexical.Localization.StringFormat;
 using Microsoft.Extensions.Logging;
 using System;
@@ -44,7 +44,7 @@ namespace Lexical.Localization.Internal
     /// <summary>
     /// Observes resolved localization strings and logs into <see cref="Microsoft.Extensions.Logging.ILogger"/>.
     /// </summary>
-    public class MSLogger : Common.ILogger, IStringResolverLogger, IResourceResolverLogger
+    public class MSLogger : Common.ILogger, IStringResolverLogger, IBinaryResolverLogger
     {
         Microsoft.Extensions.Logging.ILogger logger;
 
@@ -103,7 +103,7 @@ namespace Lexical.Localization.Internal
         /// Log resource resolve
         /// </summary>
         /// <param name="value"></param>
-        public void OnNext(LineResourceBytes value)
+        public void OnNext(LineBinaryBytes value)
         {
             // Get reference
             var _logger = logger;
@@ -121,7 +121,7 @@ namespace Lexical.Localization.Internal
         /// Log resource resolve
         /// </summary>
         /// <param name="value"></param>
-        public void OnNext(LineResourceStream value)
+        public void OnNext(LineBinaryStream value)
         {
             // Get reference
             var _logger = logger;
@@ -141,7 +141,7 @@ namespace Lexical.Localization.Internal
     /// 
     /// Uses type specific <see cref="ILogger{TCategoryName}"/>.
     /// </summary>
-    public class MSLoggerFactory : Common.ILogger, IStringResolverLogger, IResourceResolverLogger
+    public class MSLoggerFactory : Common.ILogger, IStringResolverLogger, IBinaryResolverLogger
     {
         Microsoft.Extensions.Logging.ILoggerFactory loggerFactory;
         Microsoft.Extensions.Logging.ILogger fallbackLogger;
@@ -219,7 +219,7 @@ namespace Lexical.Localization.Internal
         /// Log resource resolve
         /// </summary>
         /// <param name="value"></param>
-        public void OnNext(LineResourceBytes value)
+        public void OnNext(LineBinaryBytes value)
         {
             // Get reference
             var _logger = Logger(value.Line);
@@ -237,7 +237,7 @@ namespace Lexical.Localization.Internal
         /// Log resource resolve
         /// </summary>
         /// <param name="value"></param>
-        public void OnNext(LineResourceStream value)
+        public void OnNext(LineBinaryStream value)
         {
             // Get reference
             var _logger = Logger(value.Line);

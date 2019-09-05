@@ -10,14 +10,21 @@ using System.Collections.Generic;
 namespace Lexical.Localization.Internal
 {
     /// <summary>
-    /// This class is a simple list of T. Modifications are done under a lock. 
+    /// Thread-safe <see cref="IList{T}"/> collection. 
     /// 
-    /// There is an internal copy-on-write array that is recreated on reading.
-    /// Reading is done from the copy-on-write snapshot.
-    /// Reading while writing is synchronous in acid sense.
+    /// Write operations are done under mutually exclusive lock <see cref="m_lock"/>.
+    /// 
+    /// Creates an array copy when list is read or enumerated. 
+    /// 
+    /// Enumerator is an array snapshot, so it will not throw <see cref="InvalidOperationException"/>.
     /// </summary>
     public class CopyOnWriteList<T> : IList<T>
     {
+        /// <summary>
+        /// Empty array
+        /// </summary>
+        static T[] EmptyArray = new T[0];
+
         /// <summary>
         /// Get or set an element at <paramref name="index"/>.
         /// </summary>
@@ -29,7 +36,7 @@ namespace Lexical.Localization.Internal
         }
 
         /// <summary>
-        /// Count
+        /// Calculate the number of elements. 
         /// </summary>
         public int Count
         {
@@ -52,7 +59,7 @@ namespace Lexical.Localization.Internal
         protected internal object m_lock = new object();
 
         /// <summary>
-        /// a snapshot. 
+        /// Last snapshot. This snapshot is cleared when internal <see cref="list"/> is modified.
         /// </summary>
         protected T[] snapshot;
 
@@ -60,19 +67,27 @@ namespace Lexical.Localization.Internal
         /// Get-or-create a snapshot. Make a new copy if write has occured.
         /// </summary>
         public T[] Array 
-            => snapshot ?? BuildCow();
+            => snapshot ?? BuildArray();
 
         /// <summary>
-        /// List of elements
+        /// Internal list. Allocated lazily.
         /// </summary>
-        protected List<T> list;
+        protected List<T> _list;
+
+        /// <summary>
+        /// Internal list. Allocated lazily.
+        /// </summary>
+        protected List<T> list {
+            get {
+                lock (m_lock) return _list ?? (_list = new List<T>());
+            }
+        }
 
         /// <summary>
         /// Create copy-on-write list
         /// </summary>
         public CopyOnWriteList()
         {
-            list = new List<T>();
         }
 
         /// <summary>
@@ -81,69 +96,19 @@ namespace Lexical.Localization.Internal
         /// <param name="strsEnumr"></param>
         public CopyOnWriteList(IEnumerable<T> strsEnumr)
         {
-            this.list = new List<T>(strsEnumr);
-        }
-
-        /// <summary>
-        /// Immutable version of composition where components can only be added in the constructor.
-        /// </summary>
-        public class Immutable : CopyOnWriteList<T>
-        {
-            /// <summary>
-            /// Is read-only
-            /// </summary>
-            public override bool IsReadOnly => true;
-
-            /// <summary>
-            /// Create immutable version of copy-on-write-list.
-            /// </summary>
-            public Immutable() : base() { }
-
-            /// <summary>
-            /// Create immutable version of copy-on-write-list.
-            /// </summary>
-            /// <param name="strsEnumr"></param>
-            public Immutable(IEnumerable<T> strsEnumr) : base(strsEnumr) { }
-
-            /// <summary>
-            /// Insert
-            /// </summary>
-            /// <param name="index"></param>
-            /// <param name="item"></param>
-            public override void Insert(int index, T item) => throw new InvalidOperationException("Immutable");
-
-            /// <summary>
-            /// Remove
-            /// </summary>
-            /// <param name="item"></param>
-            /// <returns></returns>
-            public override bool Remove(T item) => throw new InvalidOperationException("Immutable");
-
-            /// <summary>
-            /// Remove At
-            /// </summary>
-            /// <param name="index"></param>
-            public override void RemoveAt(int index) => throw new InvalidOperationException("Immutable");
-
-            /// <summary>
-            /// Add
-            /// </summary>
-            /// <param name="item"></param>
-            public override void Add(T item) => throw new InvalidOperationException("Immutable");
-
-            /// <summary>
-            /// Clear
-            /// </summary>
-            public override void Clear() => throw new InvalidOperationException("Immutable");
+            this._list = new List<T>(strsEnumr);
         }
 
         /// <summary>
         /// Construct array
         /// </summary>
         /// <returns></returns>
-        protected virtual T[] BuildCow()
+        protected virtual T[] BuildArray()
         {
-            lock (m_lock) return snapshot = list.ToArray();
+            lock (m_lock)
+            {
+                return snapshot = list.Count == 0 ? EmptyArray : list.ToArray();
+            }
         }
 
         /// <summary>

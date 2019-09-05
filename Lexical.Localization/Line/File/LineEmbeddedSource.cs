@@ -112,7 +112,7 @@ namespace Lexical.Localization
         /// Add reader to list.
         /// </summary>
         /// <param name="list"></param>
-        public override void Build(IList<IAsset> list)
+        public override void Create(IList<IAsset> list)
             => list.Add(new StringAsset(this, LineFormat));
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace Lexical.Localization
         /// Add reader to <paramref name="list"/>.
         /// </summary>
         /// <param name="list"></param>
-        public override void Build(IList<IAsset> list)
+        public override void Create(IList<IAsset> list)
             => list.Add(new StringAsset().Add(this).Load());
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace Lexical.Localization
         /// Add reader to <paramref name="list"/>.
         /// </summary>
         /// <param name="list"></param>
-        public override void Build(IList<IAsset> list)
+        public override void Create(IList<IAsset> list)
             => list.Add(new StringAsset().Add(this).Load());
 
         /// <summary>

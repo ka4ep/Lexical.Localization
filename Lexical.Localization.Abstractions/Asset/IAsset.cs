@@ -3,7 +3,7 @@
 // Date:           8.10.2018
 // Url:            http://lexical.fi
 // --------------------------------------------------------
-using Lexical.Localization.Resource;
+using Lexical.Localization.Binary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +21,9 @@ namespace Lexical.Localization.Asset
     ///     <item><see cref="IStringAsset"/></item>
     ///     <item><see cref="IStringAssetLinesEnumerable"/></item>
     ///     <item><see cref="IStringAssetUnformedLinesEnumerable"/></item>
-    ///     <item><see cref="IResourceAsset"/></item>
-    ///     <item><see cref="IResourceAssetKeysEnumerable"/></item>
-    ///     <item><see cref="IResourceAssetNamesEnumerable"/></item>
+    ///     <item><see cref="IBinaryAsset"/></item>
+    ///     <item><see cref="IBinaryAssetKeysEnumerable"/></item>
+    ///     <item><see cref="IBinaryAssetNamesEnumerable"/></item>
     /// </list>
     /// </summary>
     public interface IAsset

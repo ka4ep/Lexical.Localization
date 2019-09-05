@@ -10,7 +10,7 @@ IAsset asset = new StringAsset(src, LineParameterPrinter.Default);
 ```
 
 IAsset is the root interface for assets. It serves as a signal that the implementing class has further asset features.
-There are more specific interfaces such as **IStringAsset** and **IResourceAsset** which 
+There are more specific interfaces such as **IStringAsset** and **IBinaryAsset** which 
 retrieve language strings and binary resources.
 
 Asset interfaces are not called directly but used instead by calling extension methods of IAsset.
@@ -38,7 +38,7 @@ IString str = asset.GetLine(key).GetString();
        <td>Root interface.</td>
     </tr>
     <tr>
-       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IResourceAsset.cs">IResourceAsset</a></td>
+       <td><a href="https://github.com/tagcode/Lexical.Localization/blob/master/Lexical.Localization.Abstractions/Asset/IBinaryAsset.cs">IBinaryAsset</a></td>
        <td>Provides culture specific binary resources, such as icons and sounds</td>
     </tr>
     <tr>
@@ -391,7 +391,7 @@ IAsset asset = new StringAsset(source, LineFormat.Parameters);
 
 // Create cache
 IAssetCache asset_cached = new AssetCache(asset);
-// Adds feature to cache IResourceAsset specific requests
+// Adds feature to cache IBinaryAsset specific requests
 asset_cached.Add(new AssetCachePartResources(asset_cached.Source, asset_cached.Options));
 // Adds feature to cache IStringAsset specific requests
 asset_cached.Add(new AssetCachePartStrings(asset_cached.Source, asset_cached.Options));
@@ -478,7 +478,7 @@ Table of Asset cache option's keys
 | Key      | Method  | Default | Description |
 |----------|:--------|:--------|:------------|
 | CloneKeys | .SetCloneKeys(bool) | true | Should cache create clones of keys, or should it use the keys that come from requests in its cache structures. |
-| CacheStreams | .SetCacheStreams(bool) | true | Should IResourceAsset#OpenStream requests be cached. |
+| CacheStreams | .SetCacheStreams(bool) | true | Should IBinaryAsset#OpenStream requests be cached. |
 | MaxResourceCount | .SetMaxResourceCount(int) | 2147483647 | Maximum number of resources to cache. |
 | MaxResourceSize | .SetMaxResourceSize(int) | 4096 | Maximum size of a resource. |
 | MaxResourceTotalSize | .SetMaxResourceTotalSize(int) | 1048576 | Maximum total number of bytes to reserve for all cached resources. |

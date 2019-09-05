@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using Lexical.Localization.Internal;
-using Lexical.Localization.Resource;
+using Lexical.Localization.Binary;
 using Lexical.Localization.StringFormat;
 
 namespace Lexical.Localization.Asset
@@ -128,7 +128,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Add <see cref="AssetCacheSource"/> to <see cref="IAssetBuilder"/> to have it add cache instances on new asset builds.
     /// </summary>
-    public class AssetCacheSource : IPostBuildAssetSource
+    public class AssetCacheSource : IAssetPostBuild
     {
         Action<IAssetCache> configurer;
 
@@ -621,9 +621,9 @@ namespace Lexical.Localization.Asset
     }
 
     /// <summary>
-    /// Cache part that caches the results of <see cref="IResourceAssetKeysEnumerable"/>, <see cref="IResourceAssetNamesEnumerable"/> and <see cref="IResourceAsset"/>.
+    /// Cache part that caches the results of <see cref="IBinaryAssetKeysEnumerable"/>, <see cref="IBinaryAssetNamesEnumerable"/> and <see cref="IBinaryAsset"/>.
     /// </summary>
-    public class AssetCachePartResources : IAssetCachePart, IResourceAssetKeysEnumerable, IResourceAssetNamesEnumerable, IResourceAsset, IAssetReloadable, IDisposable
+    public class AssetCachePartResources : IAssetCachePart, IBinaryAssetKeysEnumerable, IBinaryAssetNamesEnumerable, IBinaryAsset, IAssetReloadable, IDisposable
     {
         /// <summary>
         /// Source this is cache of
@@ -672,7 +672,7 @@ namespace Lexical.Localization.Asset
             /// <summary>
             /// Cached result of individual GetString() fetches
             /// </summary>
-            public Dictionary<ILine, LineResourceBytes> data;
+            public Dictionary<ILine, LineBinaryBytes> data;
 
             /// <summary>
             /// GetResourceKeys(null) was read and it was null.
@@ -696,7 +696,7 @@ namespace Lexical.Localization.Asset
 
             public Cache(LineComparer comparer)
             {
-                this.data = new Dictionary<ILine, LineResourceBytes>(comparer);
+                this.data = new Dictionary<ILine, LineBinaryBytes>(comparer);
             }
         }
 
@@ -731,12 +731,12 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public LineResourceBytes GetResourceBytes(ILine key)
+        public LineBinaryBytes GetBytes(ILine key)
         {
             Cache _cache = this.cache;
 
             // Try to read previously cached value
-            LineResourceBytes value = default;
+            LineBinaryBytes value = default;
             _cache.m_lock.EnterReadLock();
             try
             {
@@ -748,7 +748,7 @@ namespace Lexical.Localization.Asset
             }
 
             // Read from backend and write to cache
-            value = Source.GetResourceBytes(key);
+            value = Source.GetBytes(key);
 
             // Write to cache, be that null or not
             if (value.Value != null && value.Value.Length <= Options.GetMaxResourceSize())
@@ -773,19 +773,19 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public LineResourceStream GetResourceStream(ILine key)
+        public LineBinaryStream GetStream(ILine key)
         {
             Cache _cache = this.cache;
 
             // Try to read previously cached value
-            LineResourceBytes value = default;
+            LineBinaryBytes value = default;
             _cache.m_lock.EnterReadLock();
             try
             {
                 if (_cache.data.TryGetValue(key, out value))
                 {
                     if (value.Value!=null)
-                        return new LineResourceStream(value.Line, value.Value == null ? null : new MemoryStream(value.Value), value.Exception, value.Status);
+                        return new LineBinaryStream(value.Line, value.Value == null ? null : new MemoryStream(value.Value), value.Exception, value.Status);
                 }
             }
             finally
@@ -794,7 +794,7 @@ namespace Lexical.Localization.Asset
             }
 
             // Open stream
-            LineResourceStream stream = Source.GetResourceStream(key);
+            LineBinaryStream stream = Source.GetStream(key);
 
             // Store into cache?
             if (Options.GetCacheStreams())
@@ -807,7 +807,7 @@ namespace Lexical.Localization.Asset
                     _cache.m_lock.EnterWriteLock();
                     try
                     {
-                        _cache.data[cacheKey] = new LineResourceBytes(value.Line, value.Exception, value.Status);
+                        _cache.data[cacheKey] = new LineBinaryBytes(value.Line, value.Exception, value.Status);
                         return stream;
                     }
                     finally
@@ -852,9 +852,9 @@ namespace Lexical.Localization.Asset
                             _cache.m_lock.EnterWriteLock();
                             try
                             {
-                                _cache.data[cacheKey] = new LineResourceBytes(value.Line, data, value.Status);
+                                _cache.data[cacheKey] = new LineBinaryBytes(value.Line, data, value.Status);
                                 // Wrap to new stream.
-                                return new LineResourceStream(value.Line, new MemoryStream(data), value.Status);
+                                return new LineBinaryStream(value.Line, new MemoryStream(data), value.Status);
                             }
                             finally
                             {
@@ -885,11 +885,11 @@ namespace Lexical.Localization.Asset
                     if (ix > 0)
                     {
                         stream.Value.Dispose();
-                        return Source.GetResourceStream(key);
+                        return Source.GetStream(key);
                     }
                 }
             }
-            return new LineResourceStream(key, (Exception)null, LineStatus.ResolveFailedNoResult);
+            return new LineBinaryStream(key, (Exception)null, LineStatus.ResolveFailedNoResult);
         }
 
         /// <summary>
@@ -897,10 +897,10 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<ILine> GetResourceKeys(ILine key = null)
+        public IEnumerable<ILine> GetBinaryKeys(ILine key = null)
         {
             // Filtered queries are not cached
-            if (key != null) return Source.GetResourceKeys(key);
+            if (key != null) return Source.GetBinaryKeys(key);
 
             // Get cache instance
             Cache _cache = this.cache;
@@ -913,7 +913,7 @@ namespace Lexical.Localization.Asset
             if (_cache.keysPartialIsNull) return null;
 
             // Read from source
-            IEnumerable<ILine> lines = Source.GetResourceKeys(null);
+            IEnumerable<ILine> lines = Source.GetBinaryKeys(null);
 
             // Got no results
             if (lines == null)
@@ -948,10 +948,10 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<ILine> GetAllResourceKeys(ILine key = null)
+        public IEnumerable<ILine> GetAllBinaryKeys(ILine key = null)
         {
             // Filtered queries are not cached
-            if (key != null) return Source.GetAllResourceKeys(key);
+            if (key != null) return Source.GetAllBinaryKeys(key);
 
             // Get cache instance
             Cache _cache = this.cache;
@@ -964,7 +964,7 @@ namespace Lexical.Localization.Asset
             if (_cache.keysAllIsNull) return null;
 
             // Read from source
-            IEnumerable<ILine> lines = Source.GetAllResourceKeys(null);
+            IEnumerable<ILine> lines = Source.GetAllBinaryKeys(null);
 
             // Got no results
             if (lines == null)
@@ -999,10 +999,10 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetResourceNames(ILine key = null)
+        public IEnumerable<string> GetBinaryNames(ILine key = null)
         {
             // Filtered queries are not cached
-            if (key != null) return Source.GetResourceNames(key);
+            if (key != null) return Source.GetBinaryNames(key);
 
             // Get cache instance
             Cache _cache = this.cache;
@@ -1015,7 +1015,7 @@ namespace Lexical.Localization.Asset
             if (_cache.namesPartialIsNull) return null;
 
             // Read from source
-            IEnumerable<string> lines = Source.GetResourceNames(null);
+            IEnumerable<string> lines = Source.GetBinaryNames(null);
 
             // Got no results
             if (lines == null)
@@ -1047,10 +1047,10 @@ namespace Lexical.Localization.Asset
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public IEnumerable<string> GetAllResourceNames(ILine key = null)
+        public IEnumerable<string> GetAllBinaryNames(ILine key = null)
         {
             // Filtered queries are not cached
-            if (key != null) return Source.GetAllResourceNames(key);
+            if (key != null) return Source.GetAllBinaryNames(key);
 
             // Get cache instance
             Cache _cache = this.cache;
@@ -1063,7 +1063,7 @@ namespace Lexical.Localization.Asset
             if (_cache.namesAllIsNull) return null;
 
             // Read from source
-            IEnumerable<string> lines = Source.GetAllResourceNames(null);
+            IEnumerable<string> lines = Source.GetAllBinaryNames(null);
 
             // Got no results
             if (lines == null)

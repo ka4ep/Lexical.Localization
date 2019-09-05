@@ -6,7 +6,7 @@
     <Company>Lexical</Company>
     <Description>Localization class library abstractions</Description>
     <Copyright>Toni Kalajainen</Copyright>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/tagcode/Lexical.Localization/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://lexical.fi/Localization/index.html</PackageProjectUrl>
     <RepositoryUrl>https://github.com/tagcode/Lexical.Localization</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -19,6 +19,7 @@
     <FileUpgradeFlags>40</FileUpgradeFlags>
     <UpgradeBackupLocation>N:\Lexical\Localization\Backup\Lexical.Localization.Abstractions\</UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -40,6 +41,10 @@
     <None Update="Inlines\InlineExtensions.tt">
       <LastGenOutput>InlineExtensions.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
     </None>
   </ItemGroup>
   <ItemGroup>

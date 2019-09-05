@@ -44,10 +44,10 @@ Hints are line parts that can be appended from localization file as well as from
 <b>.StringResolver(<i>string</i>)</b> adds assembly qualified class name to *IStringResolver*.
 [!code-csharp[Snippet](Examples.cs#Snippet_3f)]
 
-<b>.ResourceResolver(<i>IResourceResolver</i>)</b> adds *IResourceResolver* as line part.
+<b>.BinaryResolver(<i>IBinaryResolver</i>)</b> adds *IBinaryResolver* as line part.
 [!code-csharp[Snippet](Examples.cs#Snippet_3g)]
 
-<b>.ResourceResolver(<i>string</i>)</b> adds assembly qualified class name to *IResourceResolver*.
+<b>.BinaryResolver(<i>string</i>)</b> adds assembly qualified class name to *IBinaryResolver*.
 [!code-csharp[Snippet](Examples.cs#Snippet_3h)]
 
 # Canonically compared keys

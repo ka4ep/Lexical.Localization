@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------
 // Copyright:      Toni Kalajainen
-// Date:           8.10.2018
+// Date:           5.9.2019
 // Url:            http://lexical.fi
 // --------------------------------------------------------
 using System.Collections.Generic;
@@ -13,12 +13,12 @@ namespace Lexical.Localization.Asset
     /// 
     /// The implementation of this class must use one of the more specific sub-interfaces:
     /// <list type="table">
-    /// <item><see cref="IStringAssetSource"/></item>
-    /// <item><see cref="IResourceAssetSource"/></item>
-    /// <item><see cref="IBuildableAssetSource"/></item>
-    /// <item><see cref="IFileAssetSource"/></item>
-    /// <item><see cref="IFilePatternAssetSource"/></item>
-    /// <item><see cref="IPostBuildAssetSource"/></item>
+    ///     <item><see cref="IFileAssetSource"/></item>
+    ///     <item><see cref="IFilePatternAssetSource"/></item>
+    ///     <item><see cref="IStringAssetSource"/></item>
+    ///     <item><see cref="IBinaryAssetSource"/></item>
+    ///     <item><see cref="IAssetSourceFileSystem"/></item>
+    ///     <item><see cref="IAssetSourceObservePolicy"/></item>
     /// </list>
     /// </summary>
     public interface IAssetSource
@@ -26,7 +26,7 @@ namespace Lexical.Localization.Asset
     }
 
     /// <summary>
-    /// Provides a specific <see cref="IFileSystem"/> that is to be used with the <see cref="IAssetSource"/>.
+    /// Provides a specific <see cref="IFileSystem"/> to be used with the <see cref="IAssetSource"/>.
     /// </summary>
     public interface IAssetSourceFileSystem : IAssetSource
     {
@@ -39,12 +39,23 @@ namespace Lexical.Localization.Asset
     }
 
     /// <summary>
+    /// Provides a specific <see cref="IAssetObservePolicy"/> for the <see cref="IAssetSource"/>.
+    /// </summary>
+    public interface IAssetSourceObservePolicy : IAssetSource
+    {
+        /// <summary>
+        /// Asset file observe policy for asset source.
+        /// </summary>
+        IAssetObservePolicy ObservePolicy { get; set; }
+    }
+
+    /// <summary>
     /// Asset source that originates from one specific file.
     /// 
     /// The implementing class can implement <see cref="IAssetSourceFileSystem"/> which 
     /// gives a reference to <see cref="IFileSystem"/> from which the file is to be loaded.
     /// 
-    /// The implementing class can implement <see cref="IStringAssetSource"/> or <see cref="IResourceAssetSource"/> to signal
+    /// The implementing class can implement <see cref="IStringAssetSource"/> or <see cref="IBinaryAssetSource"/> to signal
     /// the content type of the asset file.
     /// </summary>
     public interface IFileAssetSource : IAssetSource
@@ -63,7 +74,7 @@ namespace Lexical.Localization.Asset
     /// The implementing class can implement <see cref="IAssetSourceFileSystem"/> which 
     /// gives a reference to <see cref="IFileSystem"/> from which the file is to be loaded.
     /// 
-    /// The implementing class can implement <see cref="IStringAssetSource"/> or <see cref="IResourceAssetSource"/> to signal
+    /// The implementing class can implement <see cref="IStringAssetSource"/> or <see cref="IBinaryAssetSource"/> to signal
     /// the content type of the asset file.
     /// </summary>
     public interface IFilePatternAssetSource : IAssetSource
@@ -78,37 +89,7 @@ namespace Lexical.Localization.Asset
     }
 
     /// <summary>
-    /// Source that can build <see cref="IAsset"/>(s). 
-    /// </summary>
-    public interface IBuildableAssetSource : IAssetSource
-    {
-        /// <summary>
-        /// Source adds its <see cref="IAsset"/>s to list.
-        /// </summary>
-        /// <param name="list">list to add provider(s) to</param>
-        /// <returns>self</returns>
-        void Build(IList<IAsset> list);
-    }
-
-    /// <summary>
-    /// Post build action for <see cref="IAssetBuilder"/>.
-    /// </summary>
-    public interface IPostBuildAssetSource
-    {
-        /// <summary>
-        /// Allows source to do post build action and to decorate already built asset.
-        /// 
-        /// This allows a source to provide decoration such as cache.
-        /// </summary>
-        /// <param name="asset"></param>
-        /// <returns>asset or component</returns>
-        IAsset PostBuild(IAsset asset);
-    }
-    // </doc>
-
-    // <doc2>
-    /// <summary>
-    /// Signals that <see cref="IAssetSource"/> constructs string lines asset.
+    /// Signals that the implementing <see cref="IAssetSource"/> constructs a <see cref="IStringAsset"/>.
     /// </summary>
     public interface IStringAssetSource : IAssetSource
     {
@@ -117,19 +98,14 @@ namespace Lexical.Localization.Asset
         /// </summary>
         ILineFileFormat FileFormat { get; }
     }
-    // </doc2>
 
-    // <doc3>
     /// <summary>
-    /// Signals that <see cref="IAssetSource"/> constructs <see cref="IResourceAsset"/>.
+    /// Signals that the implementing <see cref="IAssetSource"/> constructs a <see cref="IBinaryAsset"/>.
     /// </summary>
-    public interface IResourceAssetSource : IAssetSource
+    public interface IBinaryAssetSource : IAssetSource
     {
     }
-    // </doc3>
 
-
-    // <attribute>
     /// <summary>
     /// Used with dependency injection as a service type of multiple <see cref="IAssetSource"/>s.
     /// 
@@ -139,11 +115,5 @@ namespace Lexical.Localization.Asset
     /// of <see cref="IAssetSource"/>.
     /// </summary>
     public interface IAssetSources : IEnumerable<IAssetSource> { }
-
-    /// <summary>
-    /// This interface signals that the implementing class provides
-    /// asset sources for the class library.
-    /// </summary>
-    public interface ILibraryAssetSources : IAssetSources { }
-    // </attribute>
+    // </doc>
 }

@@ -9,7 +9,7 @@ using Lexical.Localization.Asset;
 using Lexical.Localization.Inlines;
 using Lexical.Localization.Plurality;
 using Lexical.Localization.Resolver;
-using Lexical.Localization.Resource;
+using Lexical.Localization.Binary;
 using Lexical.Localization.StringFormat;
 #endregion Snippet_7b1
 
@@ -134,14 +134,14 @@ namespace docs
                 ResolveSource[] resolveSequence = 
                     new ResolveSource[] { ResolveSource.Inline, ResolveSource.Asset, ResolveSource.Line };
 
-                IResourceResolver resourceResolver = new ResourceResolver(Resolvers.Default, resolveSequence);
-                ILine line = LineRoot.Global.ResourceResolver(resourceResolver);
+                IBinaryResolver BinaryResolver = new BinaryResolver(Resolvers.Default, resolveSequence);
+                ILine line = LineRoot.Global.BinaryResolver(BinaryResolver);
                 #endregion Snippet_3g
                 Console.WriteLine(line);
             }
             {
                 #region Snippet_3h
-                ILine line = LineRoot.Global.ResourceResolver("Lexical.Localization.Resource.ResourceResolver");
+                ILine line = LineRoot.Global.BinaryResolver("Lexical.Localization.Binary.BinaryResolver");
                 #endregion Snippet_3h
                 Console.WriteLine(line);
             }
@@ -458,14 +458,14 @@ namespace docs
             // 10. Resources
             {
                 #region Snippet_10a
-                ILine line = LineRoot.Global.Key("Error").Resource(new byte[] { 1, 2, 3 });
-                LineResourceBytes result = line.ResolveBytes();
+                ILine line = LineRoot.Global.Key("Error").Binary(new byte[] { 1, 2, 3 });
+                LineBinaryBytes result = line.ResolveBytes();
                 #endregion Snippet_10a
             }
             {
                 #region Snippet_10b
-                ILine line = LineRoot.Global.Key("Error").Resource(new byte[] { 1, 2, 3 });
-                using (LineResourceStream result = line.ResolveStream())
+                ILine line = LineRoot.Global.Key("Error").Binary(new byte[] { 1, 2, 3 });
+                using (LineBinaryStream result = line.ResolveStream())
                 {
 
                 }

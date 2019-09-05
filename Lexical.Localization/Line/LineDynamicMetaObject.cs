@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Lexical.Localization.Internal;
-using Lexical.Localization.Resource;
+using Lexical.Localization.Binary;
 
 namespace Lexical.Localization
 {
@@ -96,7 +96,7 @@ namespace Lexical.Localization
             // (byte[]) maps to LineExtensions.GetResource(obj)
             if (typeof(byte[]).IsAssignableFrom(binder.ReturnType))
             {
-                if (miGetResource == null) miGetResource = typeof(ILineExtensions).GetMethod(nameof(ILineExtensions.GetResourceBytes));
+                if (miGetResource == null) miGetResource = typeof(ILineExtensions).GetMethod(nameof(ILineExtensions.GetBytes));
                 mi = miGetResource;
             }
 
@@ -196,7 +196,7 @@ namespace Lexical.Localization
 
                 BindingRestrictions restrictions = BindingRestrictions.GetTypeRestriction(Expression, LimitType);
                 Expression exp = Expression.Call(mi, selfExpression);
-                FieldInfo fi = typeof(LineResourceBytes).GetField(nameof(LineResourceBytes.Value));
+                FieldInfo fi = typeof(LineBinaryBytes).GetField(nameof(LineBinaryBytes.Value));
                 exp = Expression.Field(exp, fi);
                 return new DynamicMetaObject(exp, restrictions);
             }

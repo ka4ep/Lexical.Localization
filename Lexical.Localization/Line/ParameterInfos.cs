@@ -54,7 +54,7 @@ namespace Lexical.Localization.Utils
             .Add("Functions", interfaceType: typeof(ILineHint), sortingOrder: -21000, pattern: null)
             .Add("PluralRules", interfaceType: typeof(ILineHint), sortingOrder: -22000, pattern: null)
             .Add("StringResolver", interfaceType: typeof(ILineHint), sortingOrder: -201000, pattern: null)
-            .Add("ResourceResolver", interfaceType: typeof(ILineHint), sortingOrder: -202000, pattern: null)
+            .Add("BinaryResolver", interfaceType: typeof(ILineHint), sortingOrder: -202000, pattern: null)
             as ParameterInfos;
 
         /// <summary>

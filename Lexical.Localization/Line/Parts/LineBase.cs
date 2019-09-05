@@ -286,7 +286,7 @@ namespace Lexical.Localization
                     .AddInterface(typeof(ILineStringResolver))
                     .AddInterface(typeof(ILineStringResolver))
                     .AddInterface(typeof(ILineValue))
-                    .AddInterface(typeof(ILineResourceResolver))
+                    .AddInterface(typeof(ILineBinaryResolver))
                     .AddInterface(typeof(ILineLogger))
                     .AddInterface(typeof(ILinePluralRules))
                     .AddInterface(typeof(ILineRoot))

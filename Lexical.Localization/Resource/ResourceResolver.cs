@@ -11,19 +11,19 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Lexical.Localization.Resource
+namespace Lexical.Localization.Binary
 {
     /// <summary>
     /// Resolves keys to resources by applying contextual information such as culture.
     /// </summary>
-    public class ResourceResolver : IResourceResolver
+    public class BinaryResolver : IBinaryResolver
     {
-        private static ResourceResolver instance = new ResourceResolver();
+        private static BinaryResolver instance = new BinaryResolver();
 
         /// <summary>
         /// Default instance
         /// </summary>
-        public static ResourceResolver Default => instance;
+        public static BinaryResolver Default => instance;
 
         /// <summary>
         /// Resolvers
@@ -38,7 +38,7 @@ namespace Lexical.Localization.Resource
         /// <summary>
         /// Create resource resolver 
         /// </summary>
-        public ResourceResolver()
+        public BinaryResolver()
         {
             this.Resolvers = Lexical.Localization.Resolver.Resolvers.Default;
             this.ResolveSequence = ResolverSequence.Default;
@@ -49,7 +49,7 @@ namespace Lexical.Localization.Resource
         /// </summary>
         /// <param name="resolvers"></param>
         /// <param name="resolveSequence"></param>
-        public ResourceResolver(IResolver resolvers, ResolveSource[] resolveSequence = default)
+        public BinaryResolver(IResolver resolvers, ResolveSource[] resolveSequence = default)
         {
             this.Resolvers = resolvers ?? throw new ArgumentNullException(nameof(resolvers));
             this.ResolveSequence = resolveSequence ?? ResolverSequence.Default;
@@ -68,13 +68,13 @@ namespace Lexical.Localization.Resource
         ///     <item><see cref="LineStatus.ResolveOkFromLine"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
-        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceBytes.Exception"/></item>
-        ///     <item><see cref="LineStatus.ResolveFailedNoResourceResolver"/>Resolver was not found.</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineBinaryBytes.Exception"/></item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoBinaryResolver"/>Resolver was not found.</item>
         /// </list>
         /// </summary>
         /// <param name="key"></param>
         /// <returns>result status</returns>
-        public LineResourceBytes ResolveBytes(ILine key)
+        public LineBinaryBytes ResolveBytes(ILine key)
         {
             // Extract parameters from line
             LineFeatures features = new LineFeatures { Resolvers = Resolvers };
@@ -88,7 +88,7 @@ namespace Lexical.Localization.Resource
             {
                 features.LogResolveBytes(e);
                 features.Status.UpResolve(LineStatus.ResolveFailedException);
-                return new LineResourceBytes(key, e, features.Status);
+                return new LineBinaryBytes(key, e, features.Status);
             }
 
             try
@@ -97,7 +97,7 @@ namespace Lexical.Localization.Resource
                 CultureInfo culture = features.Culture;
 
                 // Resolve to bytes
-                LineResourceBytes result = ResolveKeyToBytes(key, ref features, ref culture);
+                LineBinaryBytes result = ResolveKeyToBytes(key, ref features, ref culture);
 
                 // Synchronize status codes to result
                 result.Status.Up(features.Status);
@@ -113,7 +113,7 @@ namespace Lexical.Localization.Resource
                 // Capture unexpected error
                 features.LogResolveBytes(e);
                 features.Status.UpResolve(LineStatus.ResolveFailedException);
-                LineResourceBytes lineString = new LineResourceBytes(key, e, features.Status);
+                LineBinaryBytes lineString = new LineBinaryBytes(key, e, features.Status);
                 features.LogResolveBytes(lineString);
                 return lineString;
             }
@@ -126,12 +126,12 @@ namespace Lexical.Localization.Resource
         /// <param name="features"></param>
         /// <param name="culture">The culture that matched</param>
         /// <returns>result</returns>
-        LineResourceBytes ResolveKeyToBytes(ILine key, ref LineFeatures features, ref CultureInfo culture)
+        LineBinaryBytes ResolveKeyToBytes(ILine key, ref LineFeatures features, ref CultureInfo culture)
         {
             try
             {
                 // Tmp variable
-                LineResourceBytes failedResult = new LineResourceBytes(key, LineStatus.NoResult);
+                LineBinaryBytes failedResult = new LineBinaryBytes(key, LineStatus.NoResult);
 
                 // Key has explicit culture
                 if (culture != null)
@@ -152,7 +152,7 @@ namespace Lexical.Localization.Resource
                                         try
                                         {
                                             IAsset asset = features.Assets[i];
-                                            LineResourceBytes result = asset.GetResourceBytes(key_with_culture);
+                                            LineBinaryBytes result = asset.GetBytes(key_with_culture);
                                             if (result.Value != null)
                                             {
                                                 features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
@@ -189,10 +189,10 @@ namespace Lexical.Localization.Resource
                                         try
                                         {
                                             ILine line;
-                                            LineResourceBytes result;
+                                            LineBinaryBytes result;
                                             if (features.Inlines[i].TryGetValue(key_with_culture, out line))
                                             {
-                                                result = line.GetResourceBytes();
+                                                result = line.GetBytes();
                                                 if (result.Value != null)
                                                 {
                                                     features.Status.UpResolve(LineStatus.ResolveOkFromInline);
@@ -236,7 +236,7 @@ namespace Lexical.Localization.Resource
                                             LineStatus.CultureWarningRequestMatchedInvariantCulture;
                                         features.Status.UpCulture(cultureStatus);
 
-                                        return new LineResourceBytes(key, features.Resource, LineStatus.ResolveOkFromLine);
+                                        return new LineBinaryBytes(key, features.Resource, LineStatus.ResolveOkFromLine);
                                     }
                                     break;
                             }
@@ -270,7 +270,7 @@ namespace Lexical.Localization.Resource
                                             try
                                             {
                                                 IAsset asset = features.Assets[i];
-                                                LineResourceBytes result = asset.GetResourceBytes(key_with_culture);
+                                                LineBinaryBytes result = asset.GetBytes(key_with_culture);
                                                 if (result.Value != null)
                                                 {
                                                     culture = ci;
@@ -308,10 +308,10 @@ namespace Lexical.Localization.Resource
                                             try
                                             {
                                                 ILine line;
-                                                LineResourceBytes result;
+                                                LineBinaryBytes result;
                                                 if (features.Inlines[i].TryGetValue(key_with_culture, out line))
                                                 {
-                                                    result = line.GetResourceBytes();
+                                                    result = line.GetBytes();
                                                     if (result.Value != null)
                                                     {
                                                         culture = ci;
@@ -360,7 +360,7 @@ namespace Lexical.Localization.Resource
                                                    ci.IsNeutralCulture ? LineStatus.CultureWarningCulturePolicyMatchedLanguage : Localization.LineStatus.CultureWarningCulturePolicyMatchedLanguageAndRegion);
                                             features.Status.UpCulture(cultureStatus);
 
-                                            return new LineResourceBytes(key_with_culture, features.Resource, LineStatus.ResolveOkFromLine);
+                                            return new LineBinaryBytes(key_with_culture, features.Resource, LineStatus.ResolveOkFromLine);
                                         }
                                         break;
                                 }
@@ -386,7 +386,7 @@ namespace Lexical.Localization.Resource
                                     try
                                     {
                                         IAsset asset = features.Assets[i];
-                                        LineResourceBytes result = asset.GetResourceBytes(key);
+                                        LineBinaryBytes result = asset.GetBytes(key);
                                         if (result.Value != null)
                                         {
                                             features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
@@ -420,10 +420,10 @@ namespace Lexical.Localization.Resource
                                     try
                                     {
                                         ILine line;
-                                        LineResourceBytes result;
+                                        LineBinaryBytes result;
                                         if (features.Inlines[i].TryGetValue(key, out line))
                                         {
-                                            result = line.GetResourceBytes();
+                                            result = line.GetBytes();
                                             if (result.Value != null)
                                             {
                                                 features.Status.UpResolve(LineStatus.ResolveOkFromInline);
@@ -464,7 +464,7 @@ namespace Lexical.Localization.Resource
                                     LineStatus cultureStatus = LineStatus.CultureOkMatchedInvariantCulture;
                                     features.Status.UpCulture(cultureStatus);
 
-                                    return new LineResourceBytes(key, features.Resource, LineStatus.ResolveOkFromLine);
+                                    return new LineBinaryBytes(key, features.Resource, LineStatus.ResolveOkFromLine);
                                 }
                                 break;
                         }
@@ -483,7 +483,7 @@ namespace Lexical.Localization.Resource
                 // Uncaptured error
                 features.Status.UpResolve(LineStatus.ResolveError);
                 features.LogResolveBytes(e);
-                return new LineResourceBytes(key, e, features.Status);
+                return new LineBinaryBytes(key, e, features.Status);
             }
         }
 
@@ -500,13 +500,13 @@ namespace Lexical.Localization.Resource
         ///     <item><see cref="LineStatus.ResolveOkFromLine"/>Resource was acquired</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoValue"/>If resource could not be found</item>
         ///     <item><see cref="LineStatus.ResolveFailedNoResult"/>Request was not processed</item>
-        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineResourceStream.Exception"/></item>
-        ///     <item><see cref="LineStatus.ResolveFailedNoResourceResolver"/>Resolver was not found.</item>
+        ///     <item><see cref="LineStatus.ResolveFailedException"/>Unexpected exception was thrown, <see cref="LineBinaryStream.Exception"/></item>
+        ///     <item><see cref="LineStatus.ResolveFailedNoBinaryResolver"/>Resolver was not found.</item>
         /// </list>
         /// </summary>
         /// <param name="key"></param>
         /// <returns>result status</returns>
-        public LineResourceStream ResolveStream(ILine key)
+        public LineBinaryStream ResolveStream(ILine key)
         {
             // Extract parameters from line
             LineFeatures features = new LineFeatures { Resolvers = Resolvers };
@@ -520,7 +520,7 @@ namespace Lexical.Localization.Resource
             {
                 features.LogResolveStream(e);
                 features.Status.UpResolve(LineStatus.ResolveFailedException);
-                return new LineResourceStream(key, e, features.Status);
+                return new LineBinaryStream(key, e, features.Status);
             }
 
             try
@@ -529,7 +529,7 @@ namespace Lexical.Localization.Resource
                 CultureInfo culture = features.Culture;
 
                 // Resolve to bytes
-                LineResourceStream result = ResolveKeyToStream(key, ref features, ref culture);
+                LineBinaryStream result = ResolveKeyToStream(key, ref features, ref culture);
 
                 // Synchronize status codes to result
                 result.Status.Up(features.Status);
@@ -545,7 +545,7 @@ namespace Lexical.Localization.Resource
                 // Capture unexpected error
                 features.LogResolveStream(e);
                 features.Status.UpResolve(LineStatus.ResolveFailedException);
-                LineResourceStream lineString = new LineResourceStream(key, e, features.Status);
+                LineBinaryStream lineString = new LineBinaryStream(key, e, features.Status);
                 features.LogResolveStream(lineString);
                 return lineString;
             }
@@ -558,12 +558,12 @@ namespace Lexical.Localization.Resource
         /// <param name="features"></param>
         /// <param name="culture">The culture that matched</param>
         /// <returns>result</returns>
-        LineResourceStream ResolveKeyToStream(ILine key, ref LineFeatures features, ref CultureInfo culture)
+        LineBinaryStream ResolveKeyToStream(ILine key, ref LineFeatures features, ref CultureInfo culture)
         {
             try
             {
                 // Tmp variable
-                LineResourceStream failedResult = new LineResourceStream(key, LineStatus.NoResult);
+                LineBinaryStream failedResult = new LineBinaryStream(key, LineStatus.NoResult);
 
                 // Key has explicit culture
                 if (culture != null)
@@ -584,7 +584,7 @@ namespace Lexical.Localization.Resource
                                         try
                                         {
                                             IAsset asset = features.Assets[i];
-                                            LineResourceStream result = asset.GetResourceStream(key_with_culture);
+                                            LineBinaryStream result = asset.GetStream(key_with_culture);
                                             if (result.Value != null)
                                             {
                                                 features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
@@ -621,10 +621,10 @@ namespace Lexical.Localization.Resource
                                         try
                                         {
                                             ILine line;
-                                            LineResourceStream result;
+                                            LineBinaryStream result;
                                             if (features.Inlines[i].TryGetValue(key_with_culture, out line))
                                             {
-                                                result = line.GetResourceStream();
+                                                result = line.GetStream();
                                                 if (result.Value != null)
                                                 {
                                                     features.Status.UpResolve(LineStatus.ResolveOkFromInline);
@@ -668,7 +668,7 @@ namespace Lexical.Localization.Resource
                                             LineStatus.CultureWarningRequestMatchedInvariantCulture;
                                         features.Status.UpCulture(cultureStatus);
 
-                                        return new LineResourceStream(key, new MemoryStream(features.Resource), LineStatus.ResolveOkFromLine);
+                                        return new LineBinaryStream(key, new MemoryStream(features.Resource), LineStatus.ResolveOkFromLine);
                                     }
                                     break;
                             }
@@ -702,7 +702,7 @@ namespace Lexical.Localization.Resource
                                             try
                                             {
                                                 IAsset asset = features.Assets[i];
-                                                LineResourceStream result = asset.GetResourceStream(key_with_culture);
+                                                LineBinaryStream result = asset.GetStream(key_with_culture);
                                                 if (result.Value != null)
                                                 {
                                                     culture = ci;
@@ -740,10 +740,10 @@ namespace Lexical.Localization.Resource
                                             try
                                             {
                                                 ILine line;
-                                                LineResourceStream result;
+                                                LineBinaryStream result;
                                                 if (features.Inlines[i].TryGetValue(key_with_culture, out line))
                                                 {
-                                                    result = line.GetResourceStream();
+                                                    result = line.GetStream();
                                                     if (result.Value != null)
                                                     {
                                                         culture = ci;
@@ -793,7 +793,7 @@ namespace Lexical.Localization.Resource
                                                    ci.IsNeutralCulture ? LineStatus.CultureWarningCulturePolicyMatchedLanguage : Localization.LineStatus.CultureWarningCulturePolicyMatchedLanguageAndRegion);
                                             features.Status.UpCulture(cultureStatus);
 
-                                            return new LineResourceStream(key_with_culture, new MemoryStream(features.Resource), LineStatus.ResolveOkFromLine);
+                                            return new LineBinaryStream(key_with_culture, new MemoryStream(features.Resource), LineStatus.ResolveOkFromLine);
                                         }
                                         break;
                                 }
@@ -819,7 +819,7 @@ namespace Lexical.Localization.Resource
                                     try
                                     {
                                         IAsset asset = features.Assets[i];
-                                        LineResourceStream result = asset.GetResourceStream(key);
+                                        LineBinaryStream result = asset.GetStream(key);
                                         if (result.Value != null)
                                         {
                                             features.Status.UpResolve(LineStatus.ResolveOkFromAsset);
@@ -854,10 +854,10 @@ namespace Lexical.Localization.Resource
                                     try
                                     {
                                         ILine line;
-                                        LineResourceStream result;
+                                        LineBinaryStream result;
                                         if (features.Inlines[i].TryGetValue(key, out line))
                                         {
-                                            result = line.GetResourceStream();
+                                            result = line.GetStream();
                                             if (result.Value != null)
                                             {
                                                 features.Status.UpResolve(LineStatus.ResolveOkFromInline);
@@ -895,7 +895,7 @@ namespace Lexical.Localization.Resource
                                     LineStatus cultureStatus = LineStatus.CultureOkMatchedInvariantCulture;
                                     features.Status.UpCulture(cultureStatus);
 
-                                    return new LineResourceStream(key, new MemoryStream(features.Resource), LineStatus.ResolveOkFromLine);
+                                    return new LineBinaryStream(key, new MemoryStream(features.Resource), LineStatus.ResolveOkFromLine);
                                 }
                                 break;
                         }
@@ -914,7 +914,7 @@ namespace Lexical.Localization.Resource
                 // Uncaptured error
                 features.Status.UpResolve(LineStatus.ResolveError);
                 features.LogResolveStream(e);
-                return new LineResourceStream(key, e, features.Status);
+                return new LineBinaryStream(key, e, features.Status);
             }
         }
 
