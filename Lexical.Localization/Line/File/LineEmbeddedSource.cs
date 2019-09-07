@@ -91,7 +91,7 @@ namespace Lexical.Localization
                 using (Stream s = Assembly.GetManifestResourceStream(ResourceName))
                 {
                     if (s == null) return !ThrowIfNotFound ? empty.GetEnumerator() : throw new FileNotFoundException(ResourceName);
-                    return FileFormat.ReadStringLines(s, LineFormat).GetEnumerator();
+                    return FileFormat.ReadUnformedLines(s, LineFormat).GetEnumerator();
                 }
             }
             catch (FileNotFoundException) when (!ThrowIfNotFound)

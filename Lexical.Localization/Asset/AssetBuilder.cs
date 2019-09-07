@@ -151,17 +151,13 @@ namespace Lexical.Localization.Asset
             /// <summary>
             /// Create asset builder that always builds result to one instance <see cref="Asset"/>.
             /// </summary>
-            public OneBuildInstance() : this(null, null) { }
+            public OneBuildInstance() : this(null) { }
 
             /// <summary>
             /// Create asset builder that always builds result to one instance <see cref="Asset"/>.
             /// </summary>
-            public OneBuildInstance(IEnumerable<IAssetSource> list) : this(null, list) { }
-
-            /// <summary>
-            /// Create asset builder that always builds result to one instance <see cref="Asset"/>.
-            /// </summary>
-            public OneBuildInstance(IAssetComposition composition, IEnumerable<IAssetSource> list) : base(list)
+            /// <param name="composition">composition instance to use in <see cref="Asset"/></param>
+            public OneBuildInstance(IAssetComposition composition) : base()
             {
                 this.Asset = composition ?? new AssetComposition();
             }

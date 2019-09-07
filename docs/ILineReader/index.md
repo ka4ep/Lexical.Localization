@@ -50,7 +50,7 @@ Different file formats have different intrinsic formats.
 
 Localization file can be read right away into key lines with **.ReadLines()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1a)]
-Into string lines with **.ReadStringLines()**.
+Into string lines with **.ReadUnformedLines()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1b)]
 And into a tree **.ReadLineTree()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_1c)]
@@ -59,7 +59,7 @@ And into a tree **.ReadLineTree()**.
 A file reader can be constructed with respective **.FileReader()**.
 File reader reads the refered file when **.GetEnumerator()** is called, and will re-read the file again every time.
 [!code-csharp[Snippet](Examples.cs#Snippet_2a)]
-**.FileReaderAsStringLines()** creates a reader that returns string lines.
+**.FileReaderAsUnformedLines()** creates a reader that returns string lines.
 [!code-csharp[Snippet](Examples.cs#Snippet_2b)]
 And **.FileReaderAsLineTree()** a tree reader.
 [!code-csharp[Snippet](Examples.cs#Snippet_2c)]
@@ -67,7 +67,7 @@ And **.FileReaderAsLineTree()** a tree reader.
 # Embedded Reader
 Embedded resource reader is created with **.EmbeddedReader()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_3a)]
-**.EmbeddedReaderAsStringLines()** creates embedded reader of string lines.
+**.EmbeddedReaderAsUnformedLines()** creates embedded reader of string lines.
 [!code-csharp[Snippet](Examples.cs#Snippet_3b)]
 And **.EmbeddedReaderAsLineTree()** reader of trees
 [!code-csharp[Snippet](Examples.cs#Snippet_3c)]
@@ -75,7 +75,7 @@ And **.EmbeddedReaderAsLineTree()** reader of trees
 # IFileProvider Reader
 File provider reader is created with **.FileProviderReader()**.
 [!code-csharp[Snippet](Examples.cs#Snippet_4a)]
-**.FileProviderReaderAsStringLines()** creates string lines reader
+**.FileProviderReaderAsUnformedLines()** creates string lines reader
 [!code-csharp[Snippet](Examples.cs#Snippet_4b)]
 And **.FileProviderReaderAsLineTree()** tree reader.
 [!code-csharp[Snippet](Examples.cs#Snippet_4c)]

@@ -51,7 +51,7 @@ namespace Lexical.Localization
         /// <param name="lineFormat"></param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        public static LineEmbeddedStringLinesSource EmbeddedReaderAsStringLines(this ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+        public static LineEmbeddedStringLinesSource EmbeddedReaderAsUnformedLines(this ILineFileFormat fileFormat, Assembly assembly, string resourceName, ILineFormat lineFormat = default, bool throwIfNotFound = true)
             => new LineEmbeddedStringLinesSource(fileFormat, assembly, resourceName, lineFormat, throwIfNotFound);
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Lexical.Localization
             }
             else if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
-                return new StringAsset().Add(fileFormat.EmbeddedReaderAsStringLines(assembly, resourceName, lineFormat, throwIfNotFound), lineFormat).Load();
+                return new StringAsset().Add(fileFormat.EmbeddedReaderAsUnformedLines(assembly, resourceName, lineFormat, throwIfNotFound), lineFormat).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -144,8 +144,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static LineEmbeddedStringLinesSource EmbeddedReaderAsStringLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, Assembly assembly, string resourceName, ILineFormat lineFormat = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LineFileFormatMap.GetExtension(resourceName)].EmbeddedReaderAsStringLines(assembly, resourceName, lineFormat, throwIfNotFound);
+        public static LineEmbeddedStringLinesSource EmbeddedReaderAsUnformedLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, Assembly assembly, string resourceName, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(resourceName)].EmbeddedReaderAsUnformedLines(assembly, resourceName, lineFormat, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset from embedded resource<paramref name="resourceName"/>.

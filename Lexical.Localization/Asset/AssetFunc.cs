@@ -108,7 +108,7 @@ namespace Lexical.Localization.Asset
         /// <param name="assetProvider"></param>
         /// <returns></returns>
         public static IAssetSource ToSource(this Func<IAsset> assetProvider)
-            => new AssetInstanceSource(new AssetFunc(assetProvider));
+            => new AssetFactory(new AssetFunc(assetProvider));
 
         /// <summary>
         /// 

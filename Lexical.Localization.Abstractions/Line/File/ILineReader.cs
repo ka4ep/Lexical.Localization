@@ -112,7 +112,7 @@ namespace Lexical.Localization
         /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <returns>the read string key-values</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<string, IString>> ReadStringLines(TextReader text, ILineFormat lineFormat = default);
+        IEnumerable<KeyValuePair<string, IString>> ReadUnformedLines(TextReader text, ILineFormat lineFormat = default);
     }
 
     /// <summary>
@@ -130,7 +130,7 @@ namespace Lexical.Localization
         /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <returns>the read string key-values</returns>
         /// <exception cref="IOException"></exception>
-        IEnumerable<KeyValuePair<string, IString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default);
+        IEnumerable<KeyValuePair<string, IString>> ReadUnformedLines(Stream stream, ILineFormat lineFormat = default);
     }
     // </doc>
 }

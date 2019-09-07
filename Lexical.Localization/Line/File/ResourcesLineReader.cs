@@ -57,7 +57,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="lineFormat">unused</param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default)
+        public IEnumerable<KeyValuePair<string, IString>> ReadUnformedLines(Stream stream, ILineFormat lineFormat = default)
         {
             using (var reader = new System.Resources.ResourceReader(stream))
             {

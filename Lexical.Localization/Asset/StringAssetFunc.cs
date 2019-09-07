@@ -48,7 +48,7 @@ namespace Lexical.Localization.Asset
         /// <param name="stringFunc"></param>
         /// <returns></returns>
         public static IAssetSource ToSource(this Func<ILine, ILine> stringFunc)
-            => new AssetInstanceSource(new StringAssetFunc(stringFunc));
+            => new AssetFactory(new StringAssetFunc(stringFunc));
 
         /// <summary>
         /// 
@@ -79,7 +79,7 @@ namespace Lexical.Localization.Asset
         /// <returns>builder</returns>
         public static IAssetBuilder AddSourceFunc(this IAssetBuilder builder, Func<ILine, ILine> resolver)
         {
-            builder.Sources.Add(new AssetInstanceSource(new StringAssetFunc(resolver)));
+            builder.Sources.Add(new AssetFactory(new StringAssetFunc(resolver)));
             return builder;
         }
     }

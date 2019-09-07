@@ -12,20 +12,24 @@ namespace Lexical.Localization
     /// <list type="Bullet">
     /// <item><see cref="ILineStreamReader"/></item>
     /// <item><see cref="ILineTextReader"/></item>
-    /// <item><see cref="IUnformedLineTextReader"/></item>
-    /// <item><see cref="IUnformedLineStreamReader"/></item>
+    /// 
     /// <item><see cref="ILineTreeTextReader"/></item>
     /// <item><see cref="ILineTreeStreamReader"/></item>
+    /// 
+    /// <item><see cref="IUnformedLineTextReader"/></item>
+    /// <item><see cref="IUnformedLineStreamReader"/></item>
     /// </list>
     /// 
     /// For writing capability, must implement one of:
     /// <list type="Bullet">
     /// <item><see cref="ILineStreamWriter"/></item>
     /// <item><see cref="ILineTextWriter"/></item>
-    /// <item><see cref="IUnformedLineTextWriter"/></item>
-    /// <item><see cref="IUnformedLineStreamWriter"/></item>
+    /// 
     /// <item><see cref="ILineTreeTextWriter"/></item>
     /// <item><see cref="ILineTreeStreamWriter"/></item>
+    /// 
+    /// <item><see cref="IUnformedLineTextWriter"/></item>
+    /// <item><see cref="IUnformedLineStreamWriter"/></item>
     /// </list>
     /// </summary>
     public interface ILineFileFormat

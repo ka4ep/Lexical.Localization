@@ -33,6 +33,7 @@ namespace Lexical.Localization.Asset
         /// <exception cref="ObjectDisposedException"/>
         IDisposable Observe(string path, IObserver<FileSystemEntryEvent> observer);
     }
+
     /// <summary>
     /// File entry event.
     /// </summary>

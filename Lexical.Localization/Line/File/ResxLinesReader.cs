@@ -59,7 +59,7 @@ namespace Lexical.Localization
         /// <param name="stream"></param>
         /// <param name="lineFormat">unused</param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default) => ReadElement(XDocument.Load(stream).Root, lineFormat);
+        public IEnumerable<KeyValuePair<string, IString>> ReadUnformedLines(Stream stream, ILineFormat lineFormat = default) => ReadElement(XDocument.Load(stream).Root, lineFormat);
 
         /// <summary>
         /// Read resx content from <paramref name="text"/>.
@@ -67,7 +67,7 @@ namespace Lexical.Localization
         /// <param name="text"></param>
         /// <param name="lineFormat">unused</param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, IString>> ReadStringLines(TextReader text, ILineFormat lineFormat = default) => ReadElement(XDocument.Load(text).Root, lineFormat);
+        public IEnumerable<KeyValuePair<string, IString>> ReadUnformedLines(TextReader text, ILineFormat lineFormat = default) => ReadElement(XDocument.Load(text).Root, lineFormat);
 
         /// <summary>
         /// Reads lines from xml element.

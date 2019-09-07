@@ -39,6 +39,11 @@ namespace Lexical.Localization.Asset
         public override FileSystemCapabilities Capabilities => capabilities;
 
         /// <summary>
+        /// File system components.
+        /// </summary>
+        public IFileSystem[] FileSystems => fileSystems;
+
+        /// <summary>
         /// Create composition of file systems
         /// </summary>
         /// <param name="fileSystems"></param>
@@ -56,7 +61,8 @@ namespace Lexical.Localization.Asset
         public FileSystemComposition(IEnumerable<IFileSystem> fileSystems)
         {
             this.fileSystems = fileSystems.ToArray();
-            foreach (IFileSystem fs in this.fileSystems) capabilities |= fs.Capabilities;
+            foreach (IFileSystem fs in this.fileSystems)
+                capabilities |= fs.Capabilities;
         }
 
         /// <summary>

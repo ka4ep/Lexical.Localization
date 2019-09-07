@@ -79,7 +79,7 @@ namespace Lexical.Localization
                 IFileInfo fi = FileProvider.GetFileInfo(FilePath);
                 if (!ThrowIfNotFound && !fi.Exists) return empty.GetEnumerator();
                 using (Stream s = fi.CreateReadStream())
-                    return FileFormat.ReadStringLines(s, LineFormat).GetEnumerator();
+                    return FileFormat.ReadUnformedLines(s, LineFormat).GetEnumerator();
             }
             catch (FileNotFoundException) when (!ThrowIfNotFound)
             {

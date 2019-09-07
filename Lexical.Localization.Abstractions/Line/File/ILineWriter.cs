@@ -187,7 +187,7 @@ namespace Lexical.Localization
         /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, IString>> lines, TextReader srcText, TextWriter dstText, ILineFormat lineFormat, LineFileWriteFlags flags);
+        void WriteUnformedLines(IEnumerable<KeyValuePair<string, IString>> lines, TextReader srcText, TextWriter dstText, ILineFormat lineFormat, LineFileWriteFlags flags);
     }
 
     /// <summary>
@@ -210,7 +210,7 @@ namespace Lexical.Localization
         /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="flags"></param>
         /// <exception cref="IOException"></exception>
-        void WriteStringLines(IEnumerable<KeyValuePair<string, IString>> lines, Stream srcStream, Stream dstStream, ILineFormat lineFormat, LineFileWriteFlags flags);
+        void WriteUnformedLines(IEnumerable<KeyValuePair<string, IString>> lines, Stream srcStream, Stream dstStream, ILineFormat lineFormat, LineFileWriteFlags flags);
     }
     // </Interface>
 }

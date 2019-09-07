@@ -28,13 +28,13 @@ namespace Lexical.Localization
         /// <returns>lines</returns>
         /// <exception cref="FileNotFoundException">thrown if file was not found and <paramref name="throwIfNotFound"/> is true</exception>
         /// <exception cref="IOException">on io error</exception>
-        public static IEnumerable<KeyValuePair<string, IString>> ReadStringLines(this ILineFileFormat fileFormat, string srcFilename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+        public static IEnumerable<KeyValuePair<string, IString>> ReadUnformedLines(this ILineFileFormat fileFormat, string srcFilename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
         {
             if (!throwIfNotFound && !File.Exists(srcFilename)) return no_stringlines;
             try
             {
-                if (fileFormat is IUnformedLineTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), lineFormat);
-                if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), lineFormat);
+                if (fileFormat is IUnformedLineTextReader r5) return r5.ReadUnformedLines(srcFilename.ReadText(), lineFormat);
+                if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadUnformedLines(srcFilename.ReadStream(), lineFormat);
                 if (fileFormat is ILineTextReader r1) return r1.ReadLines(srcFilename.ReadText(), lineFormat).ToStringLines(lineFormat);
                 if (fileFormat is ILineStreamReader r3) return r3.ReadLines(srcFilename.ReadStream(), lineFormat).ToStringLines(lineFormat);
                 if (fileFormat is ILineTreeTextReader r2) return r2.ReadLineTree(srcFilename.ReadText(), lineFormat).ToStringLines(lineFormat);
@@ -66,8 +66,8 @@ namespace Lexical.Localization
                 if (fileFormat is ILineStreamReader r3) return r3.ReadLines(srcFilename.ReadStream(), lineFormat);
                 if (fileFormat is ILineTreeTextReader r2) return r2.ReadLineTree(srcFilename.ReadText(), lineFormat).ToLines();
                 if (fileFormat is ILineTreeStreamReader r4) return r4.ReadLineTree(srcFilename.ReadStream(), lineFormat).ToLines();
-                if (fileFormat is IUnformedLineTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), lineFormat).ToLines(lineFormat);
-                if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), lineFormat).ToLines(lineFormat);
+                if (fileFormat is IUnformedLineTextReader r5) return r5.ReadUnformedLines(srcFilename.ReadText(), lineFormat).ToLines(lineFormat);
+                if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadUnformedLines(srcFilename.ReadStream(), lineFormat).ToLines(lineFormat);
             }
             catch (FileNotFoundException) when (!throwIfNotFound)
             {
@@ -95,8 +95,8 @@ namespace Lexical.Localization
                 if (fileFormat is ILineTextReader r1) return r1.ReadLines(srcFilename.ReadText(), lineFormat).ToLineTree(lineFormat);
                 if (fileFormat is ILineTreeStreamReader r4) return r4.ReadLineTree(srcFilename.ReadStream(), lineFormat);
                 if (fileFormat is ILineStreamReader r3) return r3.ReadLines(srcFilename.ReadStream(), lineFormat).ToLineTree(lineFormat);
-                if (fileFormat is IUnformedLineTextReader r5) return r5.ReadStringLines(srcFilename.ReadText(), lineFormat).ToLineTree(lineFormat);
-                if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadStringLines(srcFilename.ReadStream(), lineFormat).ToLineTree(lineFormat);
+                if (fileFormat is IUnformedLineTextReader r5) return r5.ReadUnformedLines(srcFilename.ReadText(), lineFormat).ToLineTree(lineFormat);
+                if (fileFormat is IUnformedLineStreamReader r6) return r6.ReadUnformedLines(srcFilename.ReadStream(), lineFormat).ToLineTree(lineFormat);
             }
             catch (FileNotFoundException) when (!throwIfNotFound)
             {
@@ -135,7 +135,7 @@ namespace Lexical.Localization
         /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        public static StringLineFileSource FileReaderAsStringLines(this ILineFileFormat fileFormat, string filename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+        public static StringLineFileSource FileReaderAsUnformedLines(this ILineFileFormat fileFormat, string filename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
             => new StringLineFileSource(fileFormat, null, filename, lineFormat, throwIfNotFound);
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace Lexical.Localization
             }
             else if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
-                return new StringAsset().Add(fileFormat.FileReaderAsStringLines(filename, lineFormat, throwIfNotFound), lineFormat).Load();
+                return new StringAsset().Add(fileFormat.FileReaderAsUnformedLines(filename, lineFormat, throwIfNotFound), lineFormat).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -249,8 +249,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static IEnumerable<KeyValuePair<string, IString>> ReadStringLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, string filename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LineFileFormatMap.GetExtension(filename)].ReadStringLines(filename, lineFormat, throwIfNotFound);
+        public static IEnumerable<KeyValuePair<string, IString>> ReadUnformedLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, string filename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(filename)].ReadUnformedLines(filename, lineFormat, throwIfNotFound);
 
         /// <summary>
         /// Create a reader that opens <paramref name="filename"/> on <see cref="IEnumerable.GetEnumerator"/>.
@@ -285,8 +285,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static StringLineFileSource FileReaderAsStringLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, string filename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LineFileFormatMap.GetExtension(filename)].FileReaderAsStringLines(filename, lineFormat, throwIfNotFound);
+        public static StringLineFileSource FileReaderAsUnformedLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, string filename, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(filename)].FileReaderAsUnformedLines(filename, lineFormat, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset that reads file <paramref name="filename"/>.

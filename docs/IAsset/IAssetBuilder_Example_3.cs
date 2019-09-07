@@ -24,7 +24,7 @@ namespace docs
 
             // Add dictionary of strings
             Dictionary<string, string> strings = new Dictionary<string, string> { { "en:hello", "Hello World!" } };
-            serviceCollection.AddSingleton<IAssetSource>(new AssetInstanceSource(new StringAsset(strings, LineParameterPrinter.Default)));
+            serviceCollection.AddSingleton<IAssetSource>(new AssetFactory(new StringAsset(strings, LineParameterPrinter.Default)));
 
             // Create service scope
             using (ServiceProvider serviceScope = serviceCollection.BuildServiceProvider())

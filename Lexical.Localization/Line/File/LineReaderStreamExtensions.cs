@@ -43,7 +43,7 @@ namespace Lexical.Localization
             else
             if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
-                return new StringAsset().Add(fileFormat.ReadStringLines(stream, lineFormat), lineFormat).Load();
+                return new StringAsset().Add(fileFormat.ReadUnformedLines(stream, lineFormat), lineFormat).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }

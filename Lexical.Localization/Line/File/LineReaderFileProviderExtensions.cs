@@ -52,7 +52,7 @@ namespace Lexical.Localization
         /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
-        public static StringLineFileProviderSource FileProviderReaderAsStringLines(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+        public static StringLineFileProviderSource FileProviderReaderAsUnformedLines(this ILineFileFormat fileFormat, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
             => new StringLineFileProviderSource(fileFormat, fileProvider, filepath, lineFormat, throwIfNotFound);
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Lexical.Localization
             }
             else if (fileFormat is IUnformedLineTextReader || fileFormat is IUnformedLineStreamReader)
             {
-                return new StringAsset().Add(fileFormat.FileProviderReaderAsStringLines(fileProvider, filepath, lineFormat, throwIfNotFound), lineFormat).Load();
+                return new StringAsset().Add(fileFormat.FileProviderReaderAsUnformedLines(fileProvider, filepath, lineFormat, throwIfNotFound), lineFormat).Load();
             }
             throw new ArgumentException($"Cannot create asset for {fileFormat}.");
         }
@@ -143,8 +143,8 @@ namespace Lexical.Localization
         /// <param name="throwIfNotFound">if file is not found and value is true, <see cref="FileNotFoundException"/> is thrown, otherwise zero elements are returned</param>
         /// <returns>lines</returns>
         /// <exception cref="System.Collections.Generic.KeyNotFoundException">If file format was not found in <paramref name="fileFormatProvider"/></exception>
-        public static StringLineFileProviderSource FileProviderReaderAsStringLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
-            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderReaderAsStringLines(fileProvider, filepath, lineFormat, throwIfNotFound);
+        public static StringLineFileProviderSource FileProviderReaderAsUnformedLines(this IReadOnlyDictionary<string, ILineFileFormat> fileFormatProvider, IFileProvider fileProvider, string filepath, ILineFormat lineFormat = default, bool throwIfNotFound = true)
+            => fileFormatProvider[LineFileFormatMap.GetExtension(filepath)].FileProviderReaderAsUnformedLines(fileProvider, filepath, lineFormat, throwIfNotFound);
 
         /// <summary>
         /// Create localization asset source that reads FileProvider resource at <paramref name="filepath"/>.

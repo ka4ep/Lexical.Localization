@@ -135,10 +135,10 @@ IEnumerable<ILine> key_lines = LineReaderMap.Default.ReadLines(
     filename: "localization.ini", 
     throwIfNotFound: true);
 ```
-Into string lines with **.ReadStringLines()**.
+Into string lines with **.ReadUnformedLines()**.
 
 ```csharp
-IEnumerable<KeyValuePair<string, IString>> string_lines = LineReaderMap.Default.ReadStringLines(
+IEnumerable<KeyValuePair<string, IString>> string_lines = LineReaderMap.Default.ReadUnformedLines(
     filename: "localization.ini", 
     lineFormat: LineFormat.Parameters,
     throwIfNotFound: true);
@@ -161,11 +161,11 @@ IEnumerable<ILine> key_lines_reader =
         filename: "localization.ini", 
         throwIfNotFound: true);
 ```
-**.FileReaderAsStringLines()** creates a reader that returns string lines.
+**.FileReaderAsUnformedLines()** creates a reader that returns string lines.
 
 ```csharp
 IEnumerable<KeyValuePair<string, IString>> string_lines_reader = 
-    LineReaderMap.Default.FileReaderAsStringLines(
+    LineReaderMap.Default.FileReaderAsUnformedLines(
         filename: "localization.ini",
         lineFormat: LineFormat.Parameters,
         throwIfNotFound: true);
@@ -190,11 +190,11 @@ IEnumerable<ILine> key_lines_reader =
         resourceName: "docs.localization.ini", 
         throwIfNotFound: true);
 ```
-**.EmbeddedReaderAsStringLines()** creates embedded reader of string lines.
+**.EmbeddedReaderAsUnformedLines()** creates embedded reader of string lines.
 
 ```csharp
 IEnumerable<KeyValuePair<string, IString>> string_lines_reader = 
-    LineReaderMap.Default.EmbeddedReaderAsStringLines(
+    LineReaderMap.Default.EmbeddedReaderAsUnformedLines(
         assembly: asm, 
         resourceName: "docs.localization.ini", 
         lineFormat: LineFormat.Parameters,
@@ -221,12 +221,12 @@ IEnumerable<ILine> key_lines_reader =
         filepath: "localization.ini", 
         throwIfNotFound: true);
 ```
-**.FileProviderReaderAsStringLines()** creates string lines reader
+**.FileProviderReaderAsUnformedLines()** creates string lines reader
 
 ```csharp
 IFileProvider fileProvider = new PhysicalFileProvider(Directory.GetCurrentDirectory());
 IEnumerable<KeyValuePair<string, IString>> string_lines_reader = 
-    LineReaderMap.Default.FileProviderReaderAsStringLines(
+    LineReaderMap.Default.FileProviderReaderAsUnformedLines(
         fileProvider: fileProvider, 
         filepath: "localization.ini", 
         throwIfNotFound: true);
@@ -256,7 +256,7 @@ Into string lines.
 ```csharp
 using (Stream s = new FileStream("localization.ini", FileMode.Open, FileAccess.Read))
 {
-    IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadStringLines(
+    IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadUnformedLines(
         stream: s,
         lineFormat: LineFormat.Parameters);
 }
@@ -285,7 +285,7 @@ Into string lines.
 ```csharp
 using (TextReader tr = new StringReader(text))
 {
-    IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadStringLines(
+    IEnumerable<KeyValuePair<string, IString>> string_lines = IniLinesReader.Default.ReadUnformedLines(
         srcText: tr,
         lineFormat: LineFormat.Parameters);
 }
@@ -312,7 +312,7 @@ Into string lines.
 
 ```csharp
 IEnumerable<KeyValuePair<string, IString>> string_lines = 
-    IniLinesReader.Default.ReadStringAsStringLines(
+    IniLinesReader.Default.ReadStringAsUnformedLines(
         srcText: text,
         lineFormat: LineFormat.Parameters);
 ```
@@ -416,7 +416,7 @@ public interface ILineStringTextReader : ILineReader
     /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
     /// <returns>the read string key-values</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<string, IString>> ReadStringLines(TextReader text, ILineFormat lineFormat = default);
+    IEnumerable<KeyValuePair<string, IString>> ReadUnformedLines(TextReader text, ILineFormat lineFormat = default);
 }
 
 /// <summary>
@@ -431,7 +431,7 @@ public interface ILineStringStreamReader : ILineReader
     /// <param name="lineFormat">(optional) possibly needed for string and line conversions. Used also for choosing whether to instantiate parameter into hint or key</param>
     /// <returns>the read string key-values</returns>
     /// <exception cref="IOException"></exception>
-    IEnumerable<KeyValuePair<string, IString>> ReadStringLines(Stream stream, ILineFormat lineFormat = default);
+    IEnumerable<KeyValuePair<string, IString>> ReadUnformedLines(Stream stream, ILineFormat lineFormat = default);
 }
 ```
 </details>
