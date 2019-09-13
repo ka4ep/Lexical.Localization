@@ -14,7 +14,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// File source to a embedded resource.
     /// </summary>
-    public abstract class EmbeddedSource : IAssetSource, IAssetSourceFileSystem, IAssetFactory, IFileAssetSource
+    public abstract class EmbeddedSource : IAssetSource, IAssetSourceFileSystem, IAssetFactory, IAssetSourceFile
     {
         /// <summary>
         /// Assembly
@@ -69,7 +69,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Asset source of embedded resource that contains strings.
         /// </summary>
-        public class String : EmbeddedSource, IStringAssetSource
+        public class String : EmbeddedSource, IAssetSourceStrings
         {
             /// <summary>
             /// String asset file format.
@@ -110,7 +110,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Asset source of embedded resource that contains binary resource.
         /// </summary>
-        public class Resource : EmbeddedSource, IBinaryAssetSource
+        public class Resource : EmbeddedSource, IAssetSourceBinary
         {
             /// <summary>
             /// Key for this particular file.
@@ -150,7 +150,7 @@ namespace Lexical.Localization.Asset
     /// 
     /// For example if pattern is "{Assembly}.{Culture.}Localization.resx" then file name is resolved based on "Culture" and "Assembly" parametrs.
     /// </summary>
-    public abstract class EmbeddedPatternSource : IAssetSource, IAssetSourceFileSystem, IAssetFactory, IFilePatternAssetSource
+    public abstract class EmbeddedPatternSource : IAssetSource, IAssetSourceFileSystem, IAssetFactory, IAssetSourceFilePattern
     {
         /// <summary>
         /// Assembly
@@ -204,7 +204,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Asset source of embedded string resources.
         /// </summary>
-        public class String : EmbeddedSource, IStringAssetSource
+        public class String : EmbeddedSource, IAssetSourceStrings
         {
             /// <summary>
             /// String asset file format.
@@ -245,7 +245,7 @@ namespace Lexical.Localization.Asset
         /// <summary>
         /// Asset source of embedded binary resources.
         /// </summary>
-        public class Resource : EmbeddedSource, IBinaryAssetSource
+        public class Resource : EmbeddedSource, IAssetSourceBinary
         {
             /// <summary>
             /// Key for this particular file.

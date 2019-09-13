@@ -29,6 +29,7 @@
     <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="2.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="2.0.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" PrivateAssets="all" />
+    <PackageReference Include="Lexical.FileSystem.Abstractions" Version="0.11.0" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Inlines\InlineExtensions.cs">

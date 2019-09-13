@@ -22,7 +22,7 @@ namespace Lexical.Localization.Asset
     /// </list>
     /// 
     /// </summary>
-    public abstract class StringAssetSource : IAssetSource, IFileAssetSource, IStringAssetSource, ILineAssetSource, IUnformedLineAssetSource, ILineTreeAssetSource
+    public abstract class StringAssetSource : IAssetSource, IAssetSourceFile, IAssetSourceStrings, IAssetSourceLines, IAssetSourceUnformedLines, IAssetSourceLineTree
     {
         /// <summary>
         /// Reference to an asset file. Used within <see cref="IFileSystem"/>. Directory separator is '/'. Root doesn't use separator.
@@ -214,7 +214,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Asset source that refers to and reads an individual string asset file from abstract filesystem source.
     /// </summary>
-    public class FileStringAssetFile : StringAssetSource, IObservableAssetSource
+    public class FileStringAssetFile : StringAssetSource, IAssetSourceObservable
     {
         /// <summary>
         /// Is source observable.

@@ -33,7 +33,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="12.*" PrivateAssets="all" />
     <PackageReference Include="NLog" Version="4.6.0" PrivateAssets="all" />
-    <PackageReference Include="Lexical.FileSystem" Version="0.9.7" PrivateAssets="all" />
+    <PackageReference Include="Lexical.FileSystem" Version="0.11.0" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lexical.Localization.Abstractions\Lexical.Localization.Abstractions.csproj" />

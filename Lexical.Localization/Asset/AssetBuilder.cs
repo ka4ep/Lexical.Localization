@@ -79,8 +79,8 @@ namespace Lexical.Localization.Asset
             List<IStringAsset> stringAssets = new List<IStringAsset>();
             List<IBinaryAsset> binaryAssets = new List<IBinaryAsset>();
             List<IAsset> otherAssets = new List<IAsset>();
-            List<IStringAssetSource> stringAssetSources = new List<IStringAssetSource>();
-            List<IBinaryAssetSource> binaryAssetSources = new List<IBinaryAssetSource>();
+            List<IAssetSourceStrings> stringAssetSources = new List<IAssetSourceStrings>();
+            List<IAssetSourceBinary> binaryAssetSources = new List<IAssetSourceBinary>();
             List<IAssetSource> otherAssetSources = new List<IAssetSource>();
 
             // Sort Assets
@@ -111,8 +111,8 @@ namespace Lexical.Localization.Asset
             // Sort AssetSources
             foreach (IAssetSource assetSource in configuration.AssetSources)
             {
-                IStringAssetSource asStringAssetSource = assetSource as IStringAssetSource;
-                IBinaryAssetSource asBinaryAssetSource = assetSource as IBinaryAssetSource;
+                IAssetSourceStrings asStringAssetSource = assetSource as IAssetSourceStrings;
+                IAssetSourceBinary asBinaryAssetSource = assetSource as IAssetSourceBinary;
 
                 if (asStringAssetSource != null) stringAssetSources.Add(asStringAssetSource);
                 if (asBinaryAssetSource != null) binaryAssetSources.Add(asBinaryAssetSource);

@@ -17,17 +17,17 @@ namespace Lexical.Localization.Asset
     /// 
     /// The implementation of this class must use one of the more specific sub-interfaces:
     /// <list type="table">
-    ///     <item><see cref="ILineAssetSource"/></item>
-    ///     <item><see cref="IUnformedLineAssetSource"/></item>
-    ///     <item><see cref="ILineTreeAssetSource"/></item>
-    ///     <item><see cref="IFileAssetSource"/></item>
-    ///     <item><see cref="IFilePatternAssetSource"/></item>
-    ///     <item><see cref="IStringAssetSource"/></item>
-    ///     <item><see cref="IBinaryAssetSource"/></item>
+    ///     <item><see cref="IAssetSourceLines"/></item>
+    ///     <item><see cref="IAssetSourceUnformedLines"/></item>
+    ///     <item><see cref="IAssetSourceLineTree"/></item>
+    ///     <item><see cref="IAssetSourceFile"/></item>
+    ///     <item><see cref="IAssetSourceFilePattern"/></item>
+    ///     <item><see cref="IAssetSourceStrings"/></item>
+    ///     <item><see cref="IAssetSourceBinary"/></item>
     ///     <item><see cref="IAssetSourceFileSystem"/></item>
     ///     <item><see cref="IAssetSourceObservePolicy"/></item>
-    ///     <item><see cref="IObservableAssetSource"/></item>
-    ///     <item><see cref="IAssetLoaderSource"/></item>
+    ///     <item><see cref="IAssetSourceObservable"/></item>
+    ///     <item><see cref="IAssetSourceLoader"/></item>
     /// </list>
     /// 
     /// IAssetSource should implement hash-equals comparisons to distinguish similar sources.
@@ -74,10 +74,10 @@ namespace Lexical.Localization.Asset
     /// The implementing class can implement <see cref="IAssetSourceFileSystem"/> which 
     /// gives a reference to <see cref="IFileSystem"/> from which the file is to be loaded.
     /// 
-    /// The implementing class can implement <see cref="IStringAssetSource"/> or <see cref="IBinaryAssetSource"/> to signal
+    /// The implementing class can implement <see cref="IAssetSourceStrings"/> or <see cref="IAssetSourceBinary"/> to signal
     /// the content type of the asset file.
     /// </summary>
-    public interface IFileAssetSource : IAssetSource
+    public interface IAssetSourceFile : IAssetSource
     {
         /// <summary>
         /// Reference to an asset file. Used within <see cref="IFileSystem"/>. Directory separator is '/'. Root doesn't use separator.
@@ -93,10 +93,10 @@ namespace Lexical.Localization.Asset
     /// The implementing class can implement <see cref="IAssetSourceFileSystem"/> which 
     /// gives a reference to <see cref="IFileSystem"/> from which the file is to be loaded.
     /// 
-    /// The implementing class can implement <see cref="IStringAssetSource"/> or <see cref="IBinaryAssetSource"/> to signal
+    /// The implementing class can implement <see cref="IAssetSourceStrings"/> or <see cref="IAssetSourceBinary"/> to signal
     /// the content type of the asset file.
     /// </summary>
-    public interface IFilePatternAssetSource : IAssetSource
+    public interface IAssetSourceFilePattern : IAssetSource
     {
         /// <summary>
         /// Reference to a pattern of asset files. Used within <see cref="IFileSystem"/>.
@@ -110,7 +110,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Signals that the implementing <see cref="IAssetSource"/> constructs a <see cref="IStringAsset"/>.
     /// </summary>
-    public interface IStringAssetSource : IAssetSource
+    public interface IAssetSourceStrings : IAssetSource
     {
         /// <summary>
         /// File format to use to read the file. 
@@ -128,7 +128,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Signals that the implementing <see cref="IAssetSource"/> constructs a <see cref="IBinaryAsset"/>.
     /// </summary>
-    public interface IBinaryAssetSource : IAssetSource
+    public interface IAssetSourceBinary : IAssetSource
     {
         /// <summary>
         /// Information whether the asset contains binary lines.
@@ -141,22 +141,22 @@ namespace Lexical.Localization.Asset
     /// 
     /// The implementation of this class must use one of the more specific sub-interfaces:
     /// <list type="table">
-    ///     <item><see cref="ILineAssetSource"/></item>
-    ///     <item><see cref="IUnformedLineAssetSource"/></item>
-    ///     <item><see cref="ILineTreeAssetSource"/></item>
+    ///     <item><see cref="IAssetSourceLines"/></item>
+    ///     <item><see cref="IAssetSourceUnformedLines"/></item>
+    ///     <item><see cref="IAssetSourceLineTree"/></item>
     /// </list>
     /// 
     /// <see cref="IEnumerable.GetEnumerator"/> may throw exception such as <see cref="IOException"/>
     /// if the source file is not available.
     /// </summary>
-    public interface IEnumerableAssetSource : IAssetSource
+    public interface IAssetSourceEnumerable : IAssetSource
     {
     }
 
     /// <summary>
     /// Asset source that reads lines every time <see cref="IEnumerable{T}.GetEnumerator"/> is called.
     /// </summary>
-    public interface ILineAssetSource : IEnumerableAssetSource, IEnumerable<ILine>
+    public interface IAssetSourceLines : IAssetSourceEnumerable, IEnumerable<ILine>
     {
         /// <summary>
         /// Information whether asset source can enumerate <see cref="ILine"/>s.
@@ -167,7 +167,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Asset source that reads lines every time <see cref="IEnumerable{T}.GetEnumerator"/> is called.
     /// </summary>
-    public interface IUnformedLineAssetSource : IEnumerableAssetSource, IEnumerable<KeyValuePair<string, IString>>
+    public interface IAssetSourceUnformedLines : IAssetSourceEnumerable, IEnumerable<KeyValuePair<string, IString>>
     {
         /// <summary>
         /// Information whether asset source can enumerate unformed lines KeyValuePair&lt;<see cref="string"/>, <see cref="IString"/>&gt;
@@ -178,7 +178,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Asset source that reads lines every time <see cref="IEnumerable{T}.GetEnumerator"/> is called.
     /// </summary>
-    public interface ILineTreeAssetSource : IEnumerableAssetSource, IEnumerable<ILineTree>
+    public interface IAssetSourceLineTree : IAssetSourceEnumerable, IEnumerable<ILineTree>
     {
         /// <summary>
         /// Information whether asset source can enumerate as <see cref="ILineTree"/>.
@@ -187,9 +187,9 @@ namespace Lexical.Localization.Asset
     }
 
     /// <summary>
-    /// Enumerable asset source that can be observed for changes.
+    /// Asset source that can be observed for changes.
     /// </summary>
-    public interface IObservableAssetSource : IEnumerableAssetSource, IObservable<IAssetSourceEvent>
+    public interface IAssetSourceObservable : IAssetSource, IObservable<IAssetSourceEvent>
     {
         /// <summary>
         /// If returns true, the asset source is observable.
@@ -216,7 +216,7 @@ namespace Lexical.Localization.Asset
     /// <summary>
     /// Asset loader loads assets based on key parts in a <see cref="ILine"/>.
     /// </summary>
-    public interface IAssetLoaderSource : IAssetSource
+    public interface IAssetSourceLoader : IAssetSource
     {
         /// <summary>
         /// Match the key parts in <paramref name="line"/> to <see cref="IAssetSource"/>.
