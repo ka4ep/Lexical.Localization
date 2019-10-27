@@ -1,6 +1,11 @@
 # Introduction
 Lexical.Localization is a localization class library for .NET.
 
+* [Website](http://lexical.fi/Localization/index.html)
+* [Github](https://github.com/tagcode/Lexical.Localization)
+* [Nuget](https://www.nuget.org/packages/Lexical.Localization/)
+* License [Apache-2.0 license](http://www.apache.org/licenses/LICENSE-2.0)
+
 **Deployment features**
 * Dependency Injection
 * File providers
@@ -40,9 +45,3 @@ Lexical.Localization is a localization class library for .NET.
  * Unicode CLDR Plural Rules
  * Multiple pluralized arguments per string
  * Optional pluralization cases
-
-**Links**
-* [Website](http://lexical.fi/Localization/index.html)
-* [Github](https://github.com/tagcode/Lexical.Localization)
-* [Nuget](https://www.nuget.org/packages/Lexical.Localization/)
-* [Slack](https://lexicalworkspace.slack.com/messages/CKLADPL7P/)
